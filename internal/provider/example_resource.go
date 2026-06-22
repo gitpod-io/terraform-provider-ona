@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	onaclient "github.com/ona/terraform-provider-ona/internal/client"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -78,6 +79,9 @@ func (r *ExampleResource) Configure(ctx context.Context, req resource.ConfigureR
 	client, ok := req.ProviderData.(*http.Client)
 
 	if !ok {
+		if _, ok := req.ProviderData.(*onaclient.Client); ok {
+			return
+		}
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
 			fmt.Sprintf("Expected *http.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),

@@ -12,14 +12,52 @@ The target workflow is:
 
 ## Current Status
 
-The repository does not yet have real Ona resources such as `ona_runner`, `ona_runner_environment_class`, or `ona_project` implemented in the provider. Terraform cannot discover or import those resource types natively until each resource has:
+The provider now includes an import/read-only `ona_runner` resource for the first brownfield dogfood slice. Other resources such as `ona_runner_environment_class` and `ona_project` still need native provider implementations before Terraform can import them directly.
+
+Terraform cannot discover or import a resource type natively until each resource has:
 
 - `ImportState` support,
 - a `Read` implementation that fully refreshes Terraform state from the Ona API,
 - resource identity where stable identity fields exist, and
 - list-resource support for discoverable resource families.
 
-Until those provider primitives exist, the helper in `./scripts` prepares Terraform-native import configuration for the same workflow: it discovers resources, writes import blocks, runs Terraform config generation, rewrites references, splits files, and checks for a no-op plan.
+Until those provider primitives exist for the rest of the resource graph, the helper in `./scripts` prepares Terraform-native import configuration for the broader workflow: it discovers resources, writes import blocks, runs Terraform config generation, rewrites references, splits files, and checks for a no-op plan.
+
+## Native Runner Import
+
+For the Runner-only dogfood slice, use Terraform import blocks directly:
+
+```hcl
+terraform {
+  required_providers {
+    ona = {
+      source  = "ona/ona"
+      version = "~> 0.1"
+    }
+  }
+}
+
+provider "ona" {}
+
+resource "ona_runner" "frankfurt" {}
+
+import {
+  to = ona_runner.frankfurt
+  id = "01980ed3-a090-7b5b-a74c-9bf5d8cfe53c"
+}
+```
+
+Then run:
+
+```shell
+export ONA_TOKEN="<service-account-or-personal-access-token>"
+terraform init
+terraform plan -generate-config-out=generated.tf
+terraform apply
+terraform plan
+```
+
+The final `terraform plan` should be a no-op. In this beta slice, `ona_runner` reads existing Runner `id` and `name` only. Create and update are intentionally unsupported, and deleting the Terraform resource only removes it from state.
 
 Run the helper from the repository root:
 

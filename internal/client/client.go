@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -19,6 +20,8 @@ const (
 	DefaultHost = "https://app.gitpod.io"
 	UserAgent   = "terraform-provider-ona/dev"
 )
+
+var ErrMissingToken = errors.New("missing Ona token: set provider token or ONA_TOKEN")
 
 type Config struct {
 	Host      string
@@ -41,7 +44,7 @@ func New(cfg Config) (*Client, error) {
 	host := resolveHost(cfg.Host)
 	token := resolveToken(cfg.Token)
 	if token == "" {
-		return nil, fmt.Errorf("missing Ona token: set provider token or ONA_TOKEN")
+		return nil, ErrMissingToken
 	}
 
 	apiBaseURL, err := APIBaseURL(host)
