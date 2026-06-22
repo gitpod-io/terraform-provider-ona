@@ -1,3 +1,1 @@
-provider "ona" {
-  # example configuration here
-}
+provider "ona" {}

@@ -5,16 +5,20 @@ package provider
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-framework/action"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
 	"github.com/hashicorp/terraform-plugin-framework/function"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	onaclient "github.com/ona/terraform-provider-ona/internal/client"
 )
 
 // Ensure OnaProvider satisfies various provider interfaces.
@@ -33,7 +37,8 @@ type OnaProvider struct {
 
 // OnaProviderModel describes the provider data model.
 type OnaProviderModel struct {
-	Endpoint types.String `tfsdk:"endpoint"`
+	Host  types.String `tfsdk:"host"`
+	Token types.String `tfsdk:"token"`
 }
 
 func (p *OnaProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -44,9 +49,14 @@ func (p *OnaProvider) Metadata(ctx context.Context, req provider.MetadataRequest
 func (p *OnaProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"endpoint": schema.StringAttribute{
-				MarkdownDescription: "Example provider attribute",
+			"host": schema.StringAttribute{
+				MarkdownDescription: "Ona host. Defaults to `ONA_HOST` when set, otherwise `https://app.gitpod.io`.",
 				Optional:            true,
+			},
+			"token": schema.StringAttribute{
+				MarkdownDescription: "Ona API token. Defaults to `ONA_TOKEN` when set. Use service-account tokens for Terraform automation.",
+				Optional:            true,
+				Sensitive:           true,
 			},
 		},
 	}
@@ -61,19 +71,54 @@ func (p *OnaProvider) Configure(ctx context.Context, req provider.ConfigureReque
 		return
 	}
 
-	// Configuration values are now available.
-	// if data.Endpoint.IsNull() { /* ... */ }
+	if data.Host.IsUnknown() {
+		resp.Diagnostics.AddAttributeError(
+			pathRoot("host"),
+			"Unknown Ona Host",
+			"The provider cannot configure the Ona API client with an unknown host.",
+		)
+	}
+	if data.Token.IsUnknown() {
+		resp.Diagnostics.AddAttributeError(
+			pathRoot("token"),
+			"Unknown Ona Token",
+			"The provider cannot configure the Ona API client with an unknown token.",
+		)
+	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
-	// Example client configuration for data sources and resources
-	client := http.DefaultClient
-	resp.DataSourceData = client
-	resp.ResourceData = client
+	var cfg onaclient.Config
+	if !data.Host.IsNull() {
+		cfg.Host = data.Host.ValueString()
+	}
+	if !data.Token.IsNull() {
+		cfg.Token = data.Token.ValueString()
+	}
+	cfg.UserAgent = fmt.Sprintf("terraform-provider-ona/%s", p.version)
+
+	api, err := onaclient.New(cfg)
+	if err != nil {
+		if !errors.Is(err, onaclient.ErrMissingToken) {
+			resp.Diagnostics.AddError("Unable to Configure Ona API Client", err.Error())
+			return
+		}
+	}
+
+	resp.DataSourceData = http.DefaultClient
+	resp.ResourceData = api
 }
 
 func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewExampleResource,
+		NewRunnerResource,
 	}
+}
+
+func pathRoot(name string) path.Path {
+	return path.Root(name)
 }
 
 func (p *OnaProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {
