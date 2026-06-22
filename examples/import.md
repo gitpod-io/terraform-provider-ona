@@ -31,7 +31,7 @@ For the Runner-only dogfood slice, use Terraform import blocks directly:
 terraform {
   required_providers {
     ona = {
-      source  = "ona/ona"
+      source  = "gitpod-io/ona"
       version = "~> 0.1"
     }
   }
@@ -127,7 +127,7 @@ The helper prepares and validates the Terraform workflow in these stages:
 4. Add reference resources needed by the selection, such as runner environment classes and service accounts.
 5. Write `versions.tf`, `provider.tf`, `references.tf`, and `imports.tf`.
 6. Build the local provider binary into `<workdir>/.bin/terraform-provider-ona`.
-7. Write `terraformrc` with a provider development override for `registry.terraform.io/ona/ona`.
+7. Write `terraformrc` with a provider development override for `registry.terraform.io/gitpod-io/ona`.
 8. Run `terraform plan -generate-config-out=generated.tf`.
 9. Save the raw generated file as `generated.raw.tf.txt`.
 10. Rewrite known UUID literals to Terraform references.

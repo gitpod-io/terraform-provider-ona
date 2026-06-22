@@ -62,7 +62,7 @@ To run Terraform against a locally built provider binary, install the provider:
 go install .
 ```
 
-Then configure a Terraform CLI development override for `ona/ona` pointing at
+Then configure a Terraform CLI development override for `gitpod-io/ona` pointing at
 the directory containing the built binary.
 
 ## Import Existing Resources

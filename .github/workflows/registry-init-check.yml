@@ -7,7 +7,7 @@ on:
       source:
         description: Terraform provider source address
         required: true
-        default: ona/ona
+        default: gitpod-io/ona
       version:
         description: Provider version without the leading v
         required: true
