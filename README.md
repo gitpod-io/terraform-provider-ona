@@ -1,74 +1,60 @@
 # Terraform Provider for Ona
 
-This module contains the in-repository Terraform provider for Ona.
+This repository contains the Terraform provider for Ona. It is built with the
+[Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework).
 
-The provider manages Ona projects, runners, runner environment classes, security policies, organization policies, product Automations, teams, groups, and AI budget policies. Product Automations are exposed as `ona_automation` resources and are backed by the Ona Workflow API internally.
+The provider is intended to manage Ona projects, runners, runner environment
+classes, security policies, organization policies, product Automations, teams,
+groups, and AI budget policies.
 
-## Authentication
+The repository is currently bootstrapped from HashiCorp's framework template.
+The example resource, data source, ephemeral resource, action, and function are
+placeholders and should be replaced with real Ona API-backed implementations.
 
-Use environment variables for credentials. This is the normal Terraform provider pattern: it keeps tokens out of `.tf` and `.tfvars` files, and lets CI systems or Terraform Cloud inject secrets without committing them to the repository.
+## Requirements
 
-```bash
-export ONA_TOKEN="<personal-access-token>"
-export ONA_HOST="https://app.gitpod.io"
+- [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.0
+- [Go](https://go.dev/doc/install) >= 1.25.8
+
+## Building the Provider
+
+```shell
+go install .
 ```
 
-The provider also supports a sensitive `token` argument for cases where the value is supplied by a secret manager or CI variable. Do not commit token values in `.tf` or `.tfvars` files; Terraform `sensitive` values are redacted from output, but they are not a secret storage mechanism.
+## Developing the Provider
 
-## Example
+Download dependencies:
 
-Project configuration:
-
-```hcl
-terraform {
-  required_providers {
-    ona = {
-      source = "registry.terraform.io/ona/ona"
-    }
-  }
-}
-
-provider "ona" {}
-
-resource "ona_project" "example" {
-  name = "backend-service"
-
-  initializer = {
-    spec = [
-      {
-        git = {
-          remote_uri        = "https://github.com/acme/backend-service"
-          target_mode       = "remote_branch"
-          clone_target      = "main"
-          checkout_location = "backend-service"
-        }
-      }
-    ]
-  }
-}
+```shell
+go mod download
 ```
 
-See `examples/project.tf` for a fuller project sample, `examples/workflow.tf` for a product Automation workflow sample, and `examples/policies.tf` for security and organization policy samples. Generated-style provider documentation lives in `docs/`.
+Run unit tests:
 
-Resources that operate at organization scope use the organization associated with the authenticated token. Terraform configuration does not set organization IDs.
-
-## Export Existing Resources
-
-The export script can discover organization resources, generate Terraform import blocks, run Terraform's native config generation, and split the generated HCL into resource files.
-
-```bash
-go run ./frontend/terraform-provider-ona/scripts \
-  -resource-type ona_project \
-  -resource-id 01900000-0000-7000-8000-000000000000
+```shell
+go test ./...
 ```
 
-Use `-resource-type` or `-resource-kind` to export every resource of a type, and add one or more `-resource-id` values to narrow that selection by UUID or import ID. Both flags can be repeated or comma-separated.
+Run acceptance tests:
 
-Runner environment classes are exported as `ona_runner_environment_class` resources. The exporter also uses inventory reference data to rewrite project environment class IDs, runner IDs, and service account IDs to Terraform references where possible.
-
-Import existing policy resources with:
-
-```bash
-terraform import ona_security_policy.restricted 0391457c-99ec-7374-9c50-5f51ecc33fc9
-terraform import ona_organization_policies.example current
+```shell
+TF_ACC=1 make testacc
 ```
+
+Generate documentation:
+
+```shell
+make generate
+```
+
+## Local Terraform Override
+
+To run Terraform against a locally built provider binary, install the provider:
+
+```shell
+go install .
+```
+
+Then configure a Terraform CLI development override for `ona/ona` pointing at
+the directory containing the built binary.

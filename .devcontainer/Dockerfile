@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/go:1.24-bookworm
+FROM mcr.microsoft.com/devcontainers/go:1.25-bookworm
 
 ARG TERRAFORM_DOCS_VERSION=0.20.0
 
