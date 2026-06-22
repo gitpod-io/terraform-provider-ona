@@ -1,0 +1,48 @@
+tasks:
+  installDeps:
+    name: Install dependencies
+    description: Install Go modules and local development hooks when their configs exist.
+    command: |
+      if [ -f go.mod ]; then
+        go mod download
+      else
+        echo "No go.mod found; skipping Go module download."
+      fi
+
+      if [ -f .pre-commit-config.yaml ]; then
+        pre-commit install --install-hooks
+      else
+        echo "No .pre-commit-config.yaml found; skipping pre-commit hook installation."
+      fi
+    triggeredBy:
+      - manual
+      - postDevcontainerStart
+      - prebuild
+
+  build:
+    name: Build
+    description: Build the provider packages when the Go module exists.
+    command: |
+      if [ -f go.mod ]; then
+        go build ./...
+      else
+        echo "No go.mod found; skipping Go build."
+      fi
+    triggeredBy:
+      - manual
+    dependsOn:
+      - installDeps
+
+  test:
+    name: Test
+    description: Run provider tests when the Go module exists.
+    command: |
+      if [ -f go.mod ]; then
+        go test ./...
+      else
+        echo "No go.mod found; skipping Go tests."
+      fi
+    triggeredBy:
+      - manual
+    dependsOn:
+      - installDeps
