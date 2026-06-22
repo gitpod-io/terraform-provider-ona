@@ -28,7 +28,7 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/ona/ona",
+		Address: "registry.terraform.io/gitpod-io/ona",
 		Debug:   debug,
 	}
 

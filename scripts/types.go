@@ -2,7 +2,7 @@ package main
 
 import onaclient "github.com/ona/terraform-provider-ona/internal/client"
 
-const providerSource = "registry.terraform.io/ona/ona"
+const providerSource = "registry.terraform.io/gitpod-io/ona"
 const importMapFileName = "import-map.json"
 
 type config struct {
