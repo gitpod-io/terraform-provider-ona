@@ -21,4 +21,8 @@ test:
 testacc:
 	TF_ACC=1 go test -v -cover -timeout 120m ./...
 
-.PHONY: fmt lint test testacc build install generate
+release-snapshot:
+	goreleaser check
+	goreleaser release --snapshot --clean --skip=publish,sign
+
+.PHONY: fmt lint test testacc build install generate release-snapshot

@@ -48,6 +48,12 @@ Generate documentation:
 make generate
 ```
 
+## Releasing
+
+Beta releases are published from semver prerelease tags such as
+`v0.1.0-beta.1`. See [docs/release.md](docs/release.md) for the release
+checklist, required secrets, and registry smoke test.
+
 ## Local Terraform Override
 
 To run Terraform against a locally built provider binary, install the provider:
