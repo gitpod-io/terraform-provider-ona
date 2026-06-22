@@ -1,15 +1,16 @@
-## Related Issue
-
-Fixes # <!-- INSERT ISSUE NUMBER -->
-
 ## Description
+<!-- Describe your changes in detail -->
 
-In plain English, describe your approach to addressing the issue linked above. For example, if you made a particular design decision, let us know why you chose this path instead of another solution.
+## Related Issue(s)
+<!-- List the issue(s) this PR solves -->
+Fixes <issue-ref>
 
-## Rollback Plan
+## How to test
+<!-- Provide steps to test this PR -->
 
-- [ ] If a change needs to be reverted, we will roll out an update to the code within 7 days.
-
-## Changes to Security Controls
-
-Are there any changes to security controls (access controls, encryption, logging) in this pull request? If so, explain.
+## Documentation
+<!--
+Does this PR require updates to the public documentation at ona.com/docs?
+* Yes → Update files in the `documentation/` directory within this repo
+* No → Are you sure? If so, nothing to do here.
+-->
