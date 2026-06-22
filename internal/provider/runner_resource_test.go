@@ -11,9 +11,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
-	"github.com/hashicorp/terraform-plugin-testing/statecheck"
-	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	onaclient "github.com/ona/terraform-provider-ona/internal/client"
 )
 
@@ -26,22 +24,24 @@ func TestAccRunnerResourceImport(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config:            testAccRunnerResourceConfig(server.URL),
-				ResourceName:      "ona_runner.test",
-				ImportState:       true,
-				ImportStateId:     "runner-1",
-				ImportStateVerify: true,
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(
-						"ona_runner.test",
-						tfjsonpath.New("id"),
-						knownvalue.StringExact("runner-1"),
-					),
-					statecheck.ExpectKnownValue(
-						"ona_runner.test",
-						tfjsonpath.New("name"),
-						knownvalue.StringExact("Frankfurt Runner"),
-					),
+				Config:        testAccRunnerResourceConfig(server.URL),
+				ResourceName:  "ona_runner.test",
+				ImportState:   true,
+				ImportStateId: "runner-1",
+				ImportStateCheck: func(states []*terraform.InstanceState) error {
+					if len(states) != 1 {
+						return fmt.Errorf("expected 1 imported resource; got %d", len(states))
+					}
+					if got := states[0].ID; got != "runner-1" {
+						return fmt.Errorf("imported state ID = %q, want runner-1", got)
+					}
+					if got := states[0].Attributes["id"]; got != "runner-1" {
+						return fmt.Errorf("imported attribute id = %q, want runner-1", got)
+					}
+					if got := states[0].Attributes["name"]; got != "Frankfurt Runner" {
+						return fmt.Errorf("imported attribute name = %q, want Frankfurt Runner", got)
+					}
+					return nil
 				},
 			},
 		},
