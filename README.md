@@ -7,9 +7,8 @@ The provider is intended to manage Ona projects, runners, runner environment
 classes, security policies, organization policies, product Automations, teams,
 groups, and AI budget policies.
 
-The repository is currently bootstrapped from HashiCorp's framework template.
-The example resource, data source, ephemeral resource, action, and function are
-placeholders and should be replaced with real Ona API-backed implementations.
+The provider currently includes an import/read-only `ona_runner` resource for
+the first brownfield dogfood workflow.
 
 ## Requirements
 

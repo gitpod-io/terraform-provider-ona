@@ -1,1 +1,0 @@
-terraform import ona_example.test "id-123"
