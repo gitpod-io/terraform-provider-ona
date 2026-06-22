@@ -9,10 +9,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/hashicorp/terraform-plugin-framework/action"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
-	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
@@ -23,9 +20,6 @@ import (
 
 // Ensure OnaProvider satisfies various provider interfaces.
 var _ provider.Provider = &OnaProvider{}
-var _ provider.ProviderWithFunctions = &OnaProvider{}
-var _ provider.ProviderWithEphemeralResources = &OnaProvider{}
-var _ provider.ProviderWithActions = &OnaProvider{}
 
 // OnaProvider defines the provider implementation.
 type OnaProvider struct {
@@ -112,7 +106,6 @@ func (p *OnaProvider) Configure(ctx context.Context, req provider.ConfigureReque
 
 func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		NewExampleResource,
 		NewRunnerResource,
 	}
 }
@@ -121,28 +114,8 @@ func pathRoot(name string) path.Path {
 	return path.Root(name)
 }
 
-func (p *OnaProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {
-	return []func() ephemeral.EphemeralResource{
-		NewExampleEphemeralResource,
-	}
-}
-
 func (p *OnaProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{
-		NewExampleDataSource,
-	}
-}
-
-func (p *OnaProvider) Functions(ctx context.Context) []func() function.Function {
-	return []func() function.Function{
-		NewExampleFunction,
-	}
-}
-
-func (p *OnaProvider) Actions(ctx context.Context) []func() action.Action {
-	return []func() action.Action{
-		NewExampleAction,
-	}
+	return nil
 }
 
 func New(version string) func() provider.Provider {
