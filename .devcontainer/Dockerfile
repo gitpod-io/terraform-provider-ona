@@ -12,6 +12,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         make \
         pre-commit \
         python3 \
+        ripgrep \
         shellcheck \
         unzip \
         wget \
