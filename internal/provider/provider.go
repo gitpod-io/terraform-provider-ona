@@ -92,7 +92,7 @@ func (p *OnaProvider) Configure(ctx context.Context, req provider.ConfigureReque
 	}
 	cfg.UserAgent = fmt.Sprintf("terraform-provider-ona/%s", p.version)
 
-	api, err := onaclient.New(cfg)
+	api, _, err := onaclient.NewSDK(cfg)
 	if err != nil {
 		if !errors.Is(err, onaclient.ErrMissingToken) {
 			resp.Diagnostics.AddError("Unable to Configure Ona API Client", err.Error())

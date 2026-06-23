@@ -1,19 +1,16 @@
 package client
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"net/http"
 	"net/url"
 	"os"
-	"strconv"
 	"strings"
 	"sync"
-	"time"
+
+	gitpod "github.com/gitpod-io/gitpod-sdk-go"
+	"github.com/gitpod-io/gitpod-sdk-go/option"
 )
 
 const (
@@ -32,36 +29,44 @@ type Config struct {
 type Client struct {
 	APIBaseURL string
 
-	httpClient *http.Client
-	token      string
-	userAgent  string
+	sdk *gitpod.Client
 
 	mu             sync.Mutex
 	organizationID string
 }
 
 func New(cfg Config) (*Client, error) {
+	sdk, apiBaseURL, err := NewSDK(cfg)
+	if err != nil {
+		return nil, err
+	}
+	return &Client{
+		APIBaseURL: apiBaseURL,
+		sdk:        sdk,
+	}, nil
+}
+
+func NewSDK(cfg Config) (*gitpod.Client, string, error) {
 	host := resolveHost(cfg.Host)
 	token := resolveToken(cfg.Token)
 	if token == "" {
-		return nil, ErrMissingToken
+		return nil, "", ErrMissingToken
 	}
 
 	apiBaseURL, err := APIBaseURL(host)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	userAgent := strings.TrimSpace(cfg.UserAgent)
 	if userAgent == "" {
 		userAgent = UserAgent
 	}
-	return &Client{
-		APIBaseURL: apiBaseURL,
-		httpClient: http.DefaultClient,
-		token:      token,
-		userAgent:  userAgent,
-	}, nil
+	return gitpod.NewClient(
+		option.WithBaseURL(apiBaseURL),
+		option.WithBearerToken(token),
+		option.WithHeader("User-Agent", userAgent),
+	), apiBaseURL, nil
 }
 
 func (c *Client) AuthenticatedOrganizationID(ctx context.Context) (string, error) {
@@ -195,69 +200,7 @@ func (c *Client) GetOrganizationPolicies(ctx context.Context, req GetOrganizatio
 }
 
 func (c *Client) post(ctx context.Context, path string, in any, out any) error {
-	data, err := json.Marshal(in)
-	if err != nil {
-		return fmt.Errorf("marshal request: %w", err)
-	}
-
-	var lastErr error
-	for attempt := 0; attempt <= 20; attempt++ {
-		req, err := http.NewRequestWithContext(ctx, http.MethodPost, strings.TrimRight(c.APIBaseURL, "/")+path, bytes.NewReader(data))
-		if err != nil {
-			return err
-		}
-		req.Header.Set("Authorization", "Bearer "+c.token)
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Accept", "application/json")
-		req.Header.Set("User-Agent", c.userAgent)
-
-		resp, err := c.httpClient.Do(req)
-		if err != nil {
-			return err
-		}
-		body, readErr := io.ReadAll(resp.Body)
-		closeErr := resp.Body.Close()
-		if readErr != nil {
-			return readErr
-		}
-		if closeErr != nil {
-			return closeErr
-		}
-
-		if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-			if len(bytes.TrimSpace(body)) == 0 {
-				return nil
-			}
-			if err := json.Unmarshal(body, out); err != nil {
-				return fmt.Errorf("decode response from %s: %w", path, err)
-			}
-			return nil
-		}
-
-		apiErr := apiErrorFromResponse(resp.StatusCode, body)
-		if resp.StatusCode == http.StatusTooManyRequests && attempt < 20 {
-			lastErr = apiErr
-			time.Sleep(retryDelay(resp.Header.Get("Retry-After"), attempt))
-			continue
-		}
-		return apiErr
-	}
-	return lastErr
-}
-
-func retryDelay(value string, attempt int) time.Duration {
-	if seconds, err := strconv.Atoi(strings.TrimSpace(value)); err == nil && seconds > 0 {
-		delay := time.Duration(seconds) * time.Second
-		if delay > 30*time.Second {
-			return 30 * time.Second
-		}
-		return delay
-	}
-	delay := time.Duration(1<<minInt(attempt, 5)) * time.Second
-	if delay > 30*time.Second {
-		return 30 * time.Second
-	}
-	return delay
+	return c.sdk.Post(ctx, strings.TrimLeft(path, "/"), in, out)
 }
 
 func APIBaseURL(host string) (string, error) {
@@ -304,11 +247,4 @@ func resolveToken(configured string) string {
 		return v
 	}
 	return ""
-}
-
-func minInt(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }

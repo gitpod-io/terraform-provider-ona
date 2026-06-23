@@ -1,9 +1,11 @@
 package client
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
-	"strings"
+	"net/http"
+
+	gitpod "github.com/gitpod-io/gitpod-sdk-go"
 )
 
 type APIError struct {
@@ -20,18 +22,12 @@ func (e *APIError) Error() string {
 }
 
 func IsNotFound(err error) bool {
-	apiErr, ok := err.(*APIError)
-	return ok && (apiErr.StatusCode == 404 || apiErr.Code == "not_found")
-}
-
-func apiErrorFromResponse(statusCode int, body []byte) error {
-	var apiErr APIError
-	_ = json.Unmarshal(body, &apiErr)
-	apiErr.StatusCode = statusCode
-	if apiErr.Message == "" {
-		apiErr.Message = strings.TrimSpace(string(body))
+	var sdkErr *gitpod.Error
+	if errors.As(err, &sdkErr) {
+		return sdkErr.StatusCode == http.StatusNotFound || string(sdkErr.Code) == "not_found"
 	}
-	return &apiErr
+	var apiErr *APIError
+	return errors.As(err, &apiErr) && (apiErr.StatusCode == http.StatusNotFound || apiErr.Code == "not_found")
 }
 
 type PaginationRequest struct {

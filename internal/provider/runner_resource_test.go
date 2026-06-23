@@ -10,9 +10,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	gitpod "github.com/gitpod-io/gitpod-sdk-go"
+	"github.com/gitpod-io/gitpod-sdk-go/option"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
-	onaclient "github.com/ona/terraform-provider-ona/internal/client"
 )
 
 func TestAccRunnerResourceImport(t *testing.T) {
@@ -54,24 +55,19 @@ func TestRunnerResourceFindRunner(t *testing.T) {
 	server := newRunnerAPIServer(t)
 	defer server.Close()
 
-	api, err := onaclient.New(onaclient.Config{
-		Host:  server.URL,
-		Token: "test-token",
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	r := &RunnerResource{client: api}
+	r := &RunnerResource{client: gitpod.NewClient(
+		option.WithBaseURL(server.URL+"/api"),
+		option.WithBearerToken("test-token"),
+	)}
 	got, err := r.findRunner(t.Context(), "runner-2")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got.GetRunnerId() != "runner-2" {
-		t.Fatalf("runner ID = %q, want runner-2", got.GetRunnerId())
+	if got.RunnerID != "runner-2" {
+		t.Fatalf("runner ID = %q, want runner-2", got.RunnerID)
 	}
-	if got.GetName() != "London Runner" {
-		t.Fatalf("runner name = %q, want London Runner", got.GetName())
+	if got.Name != "London Runner" {
+		t.Fatalf("runner name = %q, want London Runner", got.Name)
 	}
 
 	missing, err := r.findRunner(t.Context(), "missing")
@@ -106,32 +102,47 @@ func newRunnerAPIServer(t *testing.T) *httptest.Server {
 			t.Errorf("Authorization header = %q, want Bearer test-token", got)
 		}
 
-		var req onaclient.ListRunnersRequest
+		var req struct {
+			Pagination struct {
+				Token string `json:"token"`
+			} `json:"pagination"`
+		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			t.Errorf("decode request: %v", err)
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		token := ""
-		if req.Pagination != nil {
+		token := r.URL.Query().Get("token")
+		if token == "" {
 			token = req.Pagination.Token
 		}
 		switch token {
 		case "":
-			if err := json.NewEncoder(w).Encode(onaclient.ListRunnersResponse{
-				Runners: []*onaclient.Runner{
+			if err := json.NewEncoder(w).Encode(struct {
+				Runners    []gitpod.Runner `json:"runners"`
+				Pagination struct {
+					NextToken string `json:"nextToken"`
+				} `json:"pagination"`
+			}{
+				Runners: []gitpod.Runner{
 					{RunnerID: "runner-1", Name: "Frankfurt Runner"},
 				},
-				Pagination: &onaclient.PaginationResponse{NextToken: "next"},
+				Pagination: struct {
+					NextToken string `json:"nextToken"`
+				}{NextToken: "next"},
 			}); err != nil {
 				t.Errorf("encode response: %v", err)
 			}
 		case "next":
-			if err := json.NewEncoder(w).Encode(onaclient.ListRunnersResponse{
-				Runners: []*onaclient.Runner{
+			if err := json.NewEncoder(w).Encode(struct {
+				Runners    []gitpod.Runner `json:"runners"`
+				Pagination struct {
+					NextToken string `json:"nextToken"`
+				} `json:"pagination"`
+			}{
+				Runners: []gitpod.Runner{
 					{RunnerID: "runner-2", Name: "London Runner"},
 				},
-				Pagination: &onaclient.PaginationResponse{},
 			}); err != nil {
 				t.Errorf("encode response: %v", err)
 			}

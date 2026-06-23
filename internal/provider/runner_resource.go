@@ -7,13 +7,13 @@ import (
 	"context"
 	"fmt"
 
+	gitpod "github.com/gitpod-io/gitpod-sdk-go"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	onaclient "github.com/ona/terraform-provider-ona/internal/client"
 )
 
 var _ resource.Resource = &RunnerResource{}
@@ -25,7 +25,7 @@ func NewRunnerResource() resource.Resource {
 }
 
 type RunnerResource struct {
-	client *onaclient.Client
+	client *gitpod.Client
 }
 
 type RunnerResourceModel struct {
@@ -61,11 +61,11 @@ func (r *RunnerResource) Configure(ctx context.Context, req resource.ConfigureRe
 		return
 	}
 
-	api, ok := req.ProviderData.(*onaclient.Client)
+	api, ok := req.ProviderData.(*gitpod.Client)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *client.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *gitpod.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return
 	}
@@ -106,8 +106,8 @@ func (r *RunnerResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	data.ID = types.StringValue(runner.GetRunnerId())
-	data.Name = types.StringValue(runner.GetName())
+	data.ID = types.StringValue(runner.RunnerID)
+	data.Name = types.StringValue(runner.Name)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -130,32 +130,24 @@ func (r *RunnerResource) ImportState(ctx context.Context, req resource.ImportSta
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
-func (r *RunnerResource) findRunner(ctx context.Context, id string) (*onaclient.Runner, error) {
+func (r *RunnerResource) findRunner(ctx context.Context, id string) (*gitpod.Runner, error) {
 	if id == "" {
 		return nil, fmt.Errorf("runner ID is empty")
 	}
 
-	token := ""
-	for {
-		resp, err := r.client.ListRunners(ctx, onaclient.ListRunnersRequest{
-			Pagination: &onaclient.PaginationRequest{
-				PageSize: 100,
-				Token:    token,
-			},
-		})
-		if err != nil {
-			return nil, fmt.Errorf("list runners: %w", err)
+	pager := r.client.Runners.ListAutoPaging(ctx, gitpod.RunnerListParams{
+		Pagination: gitpod.F(gitpod.RunnerListParamsPagination{
+			PageSize: gitpod.F(int64(100)),
+		}),
+	})
+	for pager.Next() {
+		runner := pager.Current()
+		if runner.RunnerID == id {
+			return &runner, nil
 		}
-
-		for _, runner := range resp.Runners {
-			if runner.GetRunnerId() == id {
-				return runner, nil
-			}
-		}
-
-		if resp.Pagination == nil || resp.Pagination.GetNextToken() == "" {
-			return nil, nil
-		}
-		token = resp.Pagination.GetNextToken()
 	}
+	if err := pager.Err(); err != nil {
+		return nil, fmt.Errorf("list runners: %w", err)
+	}
+	return nil, nil
 }
