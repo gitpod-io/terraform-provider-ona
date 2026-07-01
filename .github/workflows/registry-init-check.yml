@@ -1,0 +1,144 @@
+# Verify that a published provider version can be installed by Terraform.
+name: Registry Init Check
+
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: Terraform provider source address
+        required: true
+        default: gitpod-io/ona
+      version:
+        description: Provider version without the leading v
+        required: true
+      timeout_minutes:
+        description: Maximum minutes to wait for registry availability
+        required: true
+        default: '60'
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  wait-for-registry:
+    name: Wait for Terraform Registry
+    runs-on: ubuntu-latest
+    outputs:
+      source: ${{ steps.release.outputs.source }}
+      version: ${{ steps.release.outputs.version }}
+      timeout_minutes: ${{ steps.release.outputs.timeout_minutes }}
+    steps:
+      - name: Capture release inputs
+        id: release
+        env:
+          SOURCE: ${{ inputs.source }}
+          VERSION: ${{ inputs.version }}
+          TIMEOUT_MINUTES: ${{ inputs.timeout_minutes }}
+        run: |
+          {
+            echo "source=${SOURCE}"
+            echo "version=${VERSION}"
+            echo "timeout_minutes=${TIMEOUT_MINUTES}"
+          } >> "$GITHUB_OUTPUT"
+      - name: Wait for provider version
+        env:
+          SOURCE: ${{ inputs.source }}
+          VERSION: ${{ inputs.version }}
+          TIMEOUT_MINUTES: ${{ inputs.timeout_minutes }}
+        run: |
+          set -euo pipefail
+
+          IFS=/ read -r first second third rest <<< "$SOURCE"
+
+          if [[ -n "${rest:-}" || -z "${second:-}" ]]; then
+            echo "Expected source to be namespace/type or registry.terraform.io/namespace/type."
+            exit 1
+          fi
+
+          if [[ -z "${third:-}" ]]; then
+            namespace="$first"
+            type="$second"
+          elif [[ "$first" == "registry.terraform.io" ]]; then
+            namespace="$second"
+            type="$third"
+          else
+            echo "Only registry.terraform.io sources are supported by this check."
+            exit 1
+          fi
+
+          endpoint="https://registry.terraform.io/v1/providers/${namespace}/${type}/versions"
+          deadline=$((SECONDS + TIMEOUT_MINUTES * 60))
+
+          while true; do
+            if curl -fsSL "$endpoint" | jq -e --arg version "$VERSION" '.versions[]? | select(.version == $version)' >/dev/null; then
+              echo "Terraform Registry has ${SOURCE} ${VERSION}."
+              exit 0
+            fi
+
+            if (( SECONDS >= deadline )); then
+              echo "Timed out waiting for ${SOURCE} ${VERSION} in the Terraform Registry."
+              exit 1
+            fi
+
+            echo "Waiting for ${SOURCE} ${VERSION}..."
+            sleep 60
+          done
+
+  init-check:
+    name: Terraform init (${{ matrix.runner }})
+    needs: wait-for-registry
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+    steps:
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_wrapper: false
+      - name: Write Terraform config
+        env:
+          SOURCE: ${{ needs.wait-for-registry.outputs.source }}
+          VERSION: ${{ needs.wait-for-registry.outputs.version }}
+        run: |
+          cat > main.tf <<EOF
+          terraform {
+            required_providers {
+              ona = {
+                source  = "${SOURCE}"
+                version = "= ${VERSION}"
+              }
+            }
+          }
+
+          provider "ona" {}
+          EOF
+      - name: Initialize provider
+        env:
+          TIMEOUT_MINUTES: ${{ needs.wait-for-registry.outputs.timeout_minutes }}
+        run: |
+          set +e
+          deadline=$((SECONDS + TIMEOUT_MINUTES * 60))
+
+          while true; do
+            terraform init -upgrade -no-color
+            status=$?
+
+            if [[ $status -eq 0 ]]; then
+              exit 0
+            fi
+
+            if (( SECONDS >= deadline )); then
+              echo "Timed out waiting for terraform init to succeed."
+              exit "$status"
+            fi
+
+            rm -rf .terraform .terraform.lock.hcl
+            sleep 60
+          done

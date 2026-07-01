@@ -1,0 +1,13 @@
+.DS_Store
+*.log
+*.bak
+*~
+.*.swp
+
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+*.tfplan
+
+dist/
