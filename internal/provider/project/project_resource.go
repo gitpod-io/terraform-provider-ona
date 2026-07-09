@@ -1,0 +1,330 @@
+// Copyright IBM Corp. 2021, 2026
+// SPDX-License-Identifier: MPL-2.0
+
+package project
+
+import (
+	"context"
+	"fmt"
+
+	"connectrpc.com/connect"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
+	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
+var _ resource.Resource = &Resource{}
+var _ resource.ResourceWithConfigure = &Resource{}
+var _ resource.ResourceWithImportState = &Resource{}
+var _ resource.ResourceWithValidateConfig = &Resource{}
+
+func NewResource() resource.Resource {
+	return &Resource{}
+}
+
+type Resource struct {
+	client *managementclient.ManagementPlane
+}
+
+func (r *Resource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_project"
+}
+
+func (r *Resource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = resourceSchema()
+}
+
+func (r *Resource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
+
+	api, ok := req.ProviderData.(*managementclient.ManagementPlane)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Resource Configure Type",
+			fmt.Sprintf("Expected *client.ManagementPlane, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+		return
+	}
+
+	r.client = api
+}
+
+func (r *Resource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
+	var data ProjectModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	validateProjectModel(ctx, data, &resp.Diagnostics)
+}
+
+func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data ProjectModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if r.client == nil {
+		resp.Diagnostics.AddError(
+			"Ona API Client Is Not Configured",
+			"Set the provider token argument or ONA_TOKEN before creating ona_project resources.",
+		)
+		return
+	}
+
+	createReq, diags := projectCreateRequest(ctx, data)
+	resp.Diagnostics.Append(diags...)
+	environmentClasses, classDiags := projectEnvironmentClassesFromModel(data.EnvironmentClasses, path.Root("environment_class"), false)
+	resp.Diagnostics.Append(classDiags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	result, err := r.client.ProjectService().CreateProject(ctx, connect.NewRequest(createReq))
+	if err != nil {
+		resp.Diagnostics.AddError("Unable to Create Ona Project", err.Error())
+		return
+	}
+
+	data.ID = types.StringValue(result.Msg.GetProject().GetId())
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if err := r.updateEnvironmentClasses(ctx, data.ID.ValueString(), environmentClasses); err != nil {
+		resp.Diagnostics.AddError("Unable to Update Ona Project Environment Classes", err.Error())
+		return
+	}
+
+	project, err := r.getProject(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Unable to Read Created Ona Project", err.Error())
+		return
+	}
+	if project == nil {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
+	planned := data
+	resp.Diagnostics.Append(populateProjectModel(ctx, &data, project)...)
+	preserveProjectPlannedInputs(&data, planned)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data ProjectModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if r.client == nil {
+		resp.Diagnostics.AddError(
+			"Ona API Client Is Not Configured",
+			"Set the provider token argument or ONA_TOKEN before reading ona_project resources.",
+		)
+		return
+	}
+
+	id := data.ID.ValueString()
+	if id == "" {
+		resp.Diagnostics.AddError("Unable to Read Ona Project", "Project ID is empty.")
+		return
+	}
+
+	project, err := r.getProject(ctx, id)
+	if err != nil {
+		resp.Diagnostics.AddError("Unable to Read Ona Project", err.Error())
+		return
+	}
+	if project == nil {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
+	prior := data
+	data = ProjectModel{}
+	resp.Diagnostics.Append(populateProjectModel(ctx, &data, project)...)
+	preserveProjectPlannedInputs(&data, prior)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data ProjectModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	var prior ProjectModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &prior)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if r.client == nil {
+		resp.Diagnostics.AddError(
+			"Ona API Client Is Not Configured",
+			"Set the provider token argument or ONA_TOKEN before updating ona_project resources.",
+		)
+		return
+	}
+
+	updateReq, diags := projectUpdateRequest(ctx, data, prior)
+	resp.Diagnostics.Append(diags...)
+	environmentClasses, classDiags := projectEnvironmentClassesFromModel(data.EnvironmentClasses, path.Root("environment_class"), false)
+	resp.Diagnostics.Append(classDiags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if _, err := r.client.ProjectService().UpdateProject(ctx, connect.NewRequest(updateReq)); err != nil {
+		resp.Diagnostics.AddError("Unable to Update Ona Project", err.Error())
+		return
+	}
+	if err := r.updateEnvironmentClasses(ctx, data.ID.ValueString(), environmentClasses); err != nil {
+		resp.Diagnostics.AddError("Unable to Update Ona Project Environment Classes", err.Error())
+		return
+	}
+
+	project, err := r.getProject(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Unable to Read Updated Ona Project", err.Error())
+		return
+	}
+	if project == nil {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
+	planned := data
+	resp.Diagnostics.Append(populateProjectModel(ctx, &data, project)...)
+	preserveProjectPlannedInputs(&data, planned)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data ProjectModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if r.client == nil {
+		resp.Diagnostics.AddError(
+			"Ona API Client Is Not Configured",
+			"Set the provider token argument or ONA_TOKEN before deleting ona_project resources.",
+		)
+		return
+	}
+
+	id := data.ID.ValueString()
+	if id == "" {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
+	_, err := r.client.ProjectService().DeleteProject(ctx, connect.NewRequest(&v1.DeleteProjectRequest{ProjectId: id}))
+	if err != nil && connect.CodeOf(err) != connect.CodeNotFound {
+		resp.Diagnostics.AddError("Unable to Delete Ona Project", err.Error())
+		return
+	}
+
+	resp.State.RemoveResource(ctx)
+}
+
+func (r *Resource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+}
+
+func (r *Resource) getProject(ctx context.Context, id string) (*v1.Project, error) {
+	result, err := r.client.ProjectService().GetProject(ctx, connect.NewRequest(&v1.GetProjectRequest{ProjectId: id}))
+	if err != nil {
+		if connect.CodeOf(err) == connect.CodeNotFound {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("get project: %w", err)
+	}
+	return result.Msg.GetProject(), nil
+}
+
+func (r *Resource) updateEnvironmentClasses(ctx context.Context, projectID string, classes []*v1.ProjectEnvironmentClass) error {
+	if len(classes) == 0 {
+		return invalidMappingError("missing environment classes")
+	}
+	_, err := r.client.ProjectService().UpdateProjectEnvironmentClasses(ctx, connect.NewRequest(&v1.UpdateProjectEnvironmentClassesRequest{
+		ProjectId:                 projectID,
+		ProjectEnvironmentClasses: classes,
+	}))
+	if err != nil {
+		return fmt.Errorf("update project environment classes: %w", err)
+	}
+	return nil
+}
+
+func populateProjectModel(ctx context.Context, data *ProjectModel, project *v1.Project) diag.Diagnostics {
+	model, diags := projectModelFromProto(ctx, project)
+	if diags.HasError() {
+		return diags
+	}
+	*data = model
+	return diags
+}
+
+func validateProjectModel(ctx context.Context, data ProjectModel, diags *diag.Diagnostics) {
+	validateName(data.Name, diags)
+	validateRequiredString(data.RepositoryCloneURL, path.Root("repository_clone_url"), "Repository Clone URL", diags)
+	validateRequiredString(data.Branch, path.Root("branch"), "Branch", diags)
+	validateRelativePath(data.DevcontainerFilePath, path.Root("devcontainer_file_path"), "devcontainer_file_path", diags)
+	validateRelativePath(data.AutomationsFilePath, path.Root("automations_file_path"), "automations_file_path", diags)
+	_, classDiags := projectEnvironmentClassesFromModel(data.EnvironmentClasses, path.Root("environment_class"), true)
+	diags.Append(classDiags...)
+	if len(data.Prebuild) > 0 {
+		_, prebuildDiags := prebuildConfigurationFromModel(ctx, data.Prebuild, path.Root("prebuild_configuration"))
+		diags.Append(prebuildDiags...)
+	}
+}
+
+func validateName(value types.String, diags *diag.Diagnostics) {
+	if value.IsNull() || value.IsUnknown() {
+		return
+	}
+	name := value.ValueString()
+	if len(name) < 1 || len(name) > 80 {
+		diags.AddAttributeError(path.Root("name"), "Invalid Project Name", "Project name must be between 1 and 80 characters.")
+	}
+}
+
+func validateRequiredString(value types.String, p path.Path, name string, diags *diag.Diagnostics) {
+	if value.IsUnknown() {
+		return
+	}
+	if value.IsNull() || value.ValueString() == "" {
+		diags.AddAttributeError(p, "Missing Project "+name, name+" must not be empty.")
+	}
+}
+
+func validateRelativePath(value types.String, p path.Path, name string, diags *diag.Diagnostics) {
+	if value.IsNull() || value.IsUnknown() {
+		return
+	}
+	if len(value.ValueString()) > 0 && value.ValueString()[0] == '/' {
+		diags.AddAttributeError(p, "Invalid Project File Path", fmt.Sprintf("%s must be relative and must not start with /.", name))
+	}
+}
