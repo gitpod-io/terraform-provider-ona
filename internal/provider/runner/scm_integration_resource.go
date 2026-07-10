@@ -11,6 +11,8 @@ import (
 	"connectrpc.com/connect"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -126,16 +128,16 @@ func (r *SCMIntegrationResource) Configure(ctx context.Context, req resource.Con
 		return
 	}
 
-	api, ok := req.ProviderData.(*managementclient.ManagementPlane)
+	data, ok := req.ProviderData.(*providerdata.Data)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *client.ManagementPlane, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return
 	}
 
-	r.client = api
+	r.client = data.Client
 }
 
 func (r *SCMIntegrationResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -193,7 +195,7 @@ func (r *SCMIntegrationResource) Create(ctx context.Context, req resource.Create
 
 	integration, err := r.getSCMIntegration(ctx, result.Msg.GetId())
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Read Created Ona SCM Integration", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Created Ona SCM Integration", "reading the created Ona runner SCM integration", err)
 		return
 	}
 	if integration == nil {
@@ -230,7 +232,7 @@ func (r *SCMIntegrationResource) Read(ctx context.Context, req resource.ReadRequ
 
 	integration, err := r.getSCMIntegration(ctx, id)
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Read Ona SCM Integration", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona SCM Integration", "reading the Ona runner SCM integration", err)
 		return
 	}
 	if integration == nil {
@@ -288,7 +290,7 @@ func (r *SCMIntegrationResource) Update(ctx context.Context, req resource.Update
 
 	integration, err := r.getSCMIntegration(ctx, data.ID.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Read Updated Ona SCM Integration", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Updated Ona SCM Integration", "reading the updated Ona runner SCM integration", err)
 		return
 	}
 	if integration == nil {
@@ -325,7 +327,7 @@ func (r *SCMIntegrationResource) Delete(ctx context.Context, req resource.Delete
 
 	_, err := r.client.RunnerConfigurationService().DeleteSCMIntegration(ctx, connect.NewRequest(&v1.DeleteSCMIntegrationRequest{Id: id}))
 	if err != nil && connect.CodeOf(err) != connect.CodeNotFound {
-		resp.Diagnostics.AddError("Unable to Delete Ona SCM Integration", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Delete Ona SCM Integration", "deleting the Ona runner SCM integration", err)
 		return
 	}
 
@@ -473,7 +475,7 @@ func addSCMIntegrationWriteError(diags *diag.Diagnostics, summary string, data S
 		return
 	}
 
-	diags.AddError(summary, err.Error())
+	providerdiag.AddAPIError(diags, summary, "writing the Ona runner SCM integration", err)
 }
 
 func isRunnerPublicKeyMissingError(err error) bool {

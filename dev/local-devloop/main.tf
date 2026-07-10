@@ -11,6 +11,33 @@ provider "ona" {
   token = var.ona_token
 }
 
+resource "ona_service_account" "devloop" {
+  name        = var.service_account_name
+  description = "Service account created by the Terraform provider local dev loop."
+  valid_until = var.service_account_valid_until
+}
+
+resource "ona_group" "devloop" {
+  name        = var.group_name
+  description = "Group created by the Terraform provider local dev loop."
+}
+
+resource "ona_group_membership" "devloop" {
+  group_id           = ona_group.devloop.id
+  service_account_id = ona_service_account.devloop.id
+}
+
+resource "ona_organization_role_assignment" "devloop" {
+  for_each = toset([
+    "organization_admin",
+    "runners_admin",
+    "projects_admin",
+  ])
+
+  group_id = ona_group.devloop.id
+  role     = each.value
+}
+
 resource "ona_runner" "devloop" {
   name            = var.runner_name
   runner_provider = var.runner_provider

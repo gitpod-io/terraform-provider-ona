@@ -13,6 +13,28 @@ output "managed_runner_name_from_data_source" {
   value       = data.ona_runner.devloop.name
 }
 
+output "managed_service_account_id" {
+  description = "ID of the service account managed by this module."
+  value       = ona_service_account.devloop.id
+}
+
+output "managed_group_id" {
+  description = "ID of the group managed by this module."
+  value       = ona_group.devloop.id
+}
+
+output "managed_group_membership_id" {
+  description = "ID of the group membership managed by this module."
+  value       = ona_group_membership.devloop.id
+}
+
+output "managed_organization_role_assignment_id" {
+  description = "IDs of the organization role assignments managed by this module, keyed by role."
+  value = {
+    for role, assignment in ona_organization_role_assignment.devloop : role => assignment.id
+  }
+}
+
 output "managed_project_id" {
   description = "ID of the project managed by this module."
   value       = ona_project.devloop.id

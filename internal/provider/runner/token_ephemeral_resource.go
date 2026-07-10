@@ -10,6 +10,8 @@ import (
 	"connectrpc.com/connect"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
 	ephemeralschema "github.com/hashicorp/terraform-plugin-framework/ephemeral/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -58,16 +60,16 @@ func (r *TokenEphemeralResource) Configure(ctx context.Context, req ephemeral.Co
 		return
 	}
 
-	api, ok := req.ProviderData.(*managementclient.ManagementPlane)
+	data, ok := req.ProviderData.(*providerdata.Data)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Ephemeral Resource Configure Type",
-			fmt.Sprintf("Expected *client.ManagementPlane, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return
 	}
 
-	r.client = api
+	r.client = data.Client
 }
 
 func (r *TokenEphemeralResource) Open(ctx context.Context, req ephemeral.OpenRequest, resp *ephemeral.OpenResponse) {
@@ -89,7 +91,7 @@ func (r *TokenEphemeralResource) Open(ctx context.Context, req ephemeral.OpenReq
 		RunnerId: data.RunnerID.ValueString(),
 	}))
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Create Ona Runner Token", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Create Ona Runner Token", "creating a short-lived Ona runner registration token", err)
 		return
 	}
 

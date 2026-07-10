@@ -144,6 +144,22 @@ func TestAccRunnerResourceRequiresRegionForAWSEC2(t *testing.T) {
 	})
 }
 
+func TestAccRunnerResourceUnauthenticatedDiagnostic(t *testing.T) {
+	server := newRunnerAPIServer(t, nil)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccRunnerResourceConfigWithToken(server.URL, "wrong-token"),
+				ExpectError: regexp.MustCompile("Ona rejected the API token[\\s\\S]*`ONA_TOKEN`[\\s\\S]*authorization header"),
+			},
+		},
+	})
+}
+
 func TestAccRunnerResourceAllowsGCPWithoutRegion(t *testing.T) {
 	server := newRunnerAPIServer(t, nil)
 	t.Cleanup(server.Close)
@@ -231,6 +247,24 @@ resource "ona_runner" "test" {
   }
 }
 `, host)
+}
+
+func testAccRunnerResourceConfigWithToken(host string, token string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = %[2]q
+}
+
+resource "ona_runner" "test" {
+  name            = "Unauthenticated Runner"
+  runner_provider = "aws_ec2"
+
+  configuration {
+    region = "eu-central-1"
+  }
+}
+`, host, token)
 }
 
 func testAccRunnerResourceConfigWithoutUpdateWindow(host string) string {

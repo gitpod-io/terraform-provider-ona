@@ -12,7 +12,7 @@ lint:
 	golangci-lint run
 
 generate:
-	go generate ./...
+	go generate .
 	cd tools; GOWORK=off go generate ./...
 
 fmt:

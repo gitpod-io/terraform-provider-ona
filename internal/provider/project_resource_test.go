@@ -75,7 +75,7 @@ func TestAccProjectResourceLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr("ona_project.api", "environment_class.0.local_runner", "true"),
 					resource.TestCheckResourceAttr("ona_project.api", "prebuild_configuration.0.enabled", "true"),
 					resource.TestCheckResourceAttr("ona_project.api", "prebuild_configuration.0.environment_class_ids.#", "1"),
-					resource.TestCheckResourceAttr("ona_project.api", "prebuild_configuration.0.timeout", "30m"),
+					resource.TestCheckResourceAttr("ona_project.api", "prebuild_configuration.0.timeout", "30m0s"),
 					resource.TestCheckResourceAttr("ona_project.api", "prebuild_configuration.0.daily_schedule.0.hour_utc", "3"),
 					resource.TestCheckResourceAttr("ona_project.api", "prebuild_configuration.0.executor.0.id", "service-account-1"),
 					resource.TestCheckResourceAttr("ona_project.api", "prebuild_configuration.0.executor.0.principal", "service_account"),
@@ -132,7 +132,7 @@ resource "ona_project" "api" {
   prebuild_configuration {
     enabled               = true
     environment_class_ids = ["class-2"]
-    timeout               = "30m"
+    timeout               = "30m0s"
 
     daily_schedule {
       hour_utc = 3

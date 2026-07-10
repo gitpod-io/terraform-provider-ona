@@ -11,6 +11,8 @@ import (
 	"connectrpc.com/connect"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -332,16 +334,16 @@ func (r *PolicyResource) Configure(ctx context.Context, req resource.ConfigureRe
 		return
 	}
 
-	api, ok := req.ProviderData.(*managementclient.ManagementPlane)
+	data, ok := req.ProviderData.(*providerdata.Data)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *client.ManagementPlane, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return
 	}
 
-	r.client = api
+	r.client = data.Client
 }
 
 func (r *PolicyResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -377,7 +379,7 @@ func (r *PolicyResource) Create(ctx context.Context, req resource.CreateRequest,
 
 	result, err := r.client.SecurityService().CreateSecurityPolicy(ctx, connect.NewRequest(createReq))
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Create Ona Security Policy", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Create Ona Security Policy", "creating the Ona security policy", err)
 		return
 	}
 	policy := result.Msg.GetSecurityPolicy()
@@ -424,7 +426,7 @@ func (r *PolicyResource) Read(ctx context.Context, req resource.ReadRequest, res
 
 	policy, err := r.getPolicy(ctx, id)
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Read Ona Security Policy", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona Security Policy", "reading the Ona security policy", err)
 		return
 	}
 	if policy == nil {
@@ -465,7 +467,7 @@ func (r *PolicyResource) Update(ctx context.Context, req resource.UpdateRequest,
 
 	result, err := r.client.SecurityService().UpdateSecurityPolicy(ctx, connect.NewRequest(updateReq))
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Update Ona Security Policy", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Security Policy", "updating the Ona security policy", err)
 		return
 	}
 	policy := result.Msg.GetSecurityPolicy()
@@ -508,7 +510,7 @@ func (r *PolicyResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		SecurityPolicyId: id,
 	}))
 	if err != nil && connect.CodeOf(err) != connect.CodeNotFound {
-		resp.Diagnostics.AddError("Unable to Delete Ona Security Policy", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Delete Ona Security Policy", "deleting the Ona security policy", err)
 		return
 	}
 

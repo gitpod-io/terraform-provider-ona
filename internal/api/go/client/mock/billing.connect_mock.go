@@ -582,21 +582,6 @@ func (mr *MockBillingServiceClientMockRecorder) ReconcileBilling(arg0, arg1 any)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReconcileBilling", reflect.TypeOf((*MockBillingServiceClient)(nil).ReconcileBilling), arg0, arg1)
 }
 
-// RequestRecoveryCredit mocks base method.
-func (m *MockBillingServiceClient) RequestRecoveryCredit(arg0 context.Context, arg1 *connect.Request[v1.RequestRecoveryCreditRequest]) (*connect.Response[v1.RequestRecoveryCreditResponse], error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RequestRecoveryCredit", arg0, arg1)
-	ret0, _ := ret[0].(*connect.Response[v1.RequestRecoveryCreditResponse])
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// RequestRecoveryCredit indicates an expected call of RequestRecoveryCredit.
-func (mr *MockBillingServiceClientMockRecorder) RequestRecoveryCredit(arg0, arg1 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RequestRecoveryCredit", reflect.TypeOf((*MockBillingServiceClient)(nil).RequestRecoveryCredit), arg0, arg1)
-}
-
 // SetBYOKRateCardRate mocks base method.
 func (m *MockBillingServiceClient) SetBYOKRateCardRate(arg0 context.Context, arg1 *connect.Request[v1.SetBYOKRateCardRateRequest]) (*connect.Response[v1.SetBYOKRateCardRateResponse], error) {
 	m.ctrl.T.Helper()
@@ -1339,21 +1324,6 @@ func (m *MockBillingServiceHandler) ReconcileBilling(arg0 context.Context, arg1 
 func (mr *MockBillingServiceHandlerMockRecorder) ReconcileBilling(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReconcileBilling", reflect.TypeOf((*MockBillingServiceHandler)(nil).ReconcileBilling), arg0, arg1)
-}
-
-// RequestRecoveryCredit mocks base method.
-func (m *MockBillingServiceHandler) RequestRecoveryCredit(arg0 context.Context, arg1 *connect.Request[v1.RequestRecoveryCreditRequest]) (*connect.Response[v1.RequestRecoveryCreditResponse], error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RequestRecoveryCredit", arg0, arg1)
-	ret0, _ := ret[0].(*connect.Response[v1.RequestRecoveryCreditResponse])
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// RequestRecoveryCredit indicates an expected call of RequestRecoveryCredit.
-func (mr *MockBillingServiceHandlerMockRecorder) RequestRecoveryCredit(arg0, arg1 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RequestRecoveryCredit", reflect.TypeOf((*MockBillingServiceHandler)(nil).RequestRecoveryCredit), arg0, arg1)
 }
 
 // SetBYOKRateCardRate mocks base method.

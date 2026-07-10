@@ -11,6 +11,8 @@ import (
 	"connectrpc.com/connect"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -242,16 +244,16 @@ func (r *PoliciesResource) Configure(ctx context.Context, req resource.Configure
 		return
 	}
 
-	api, ok := req.ProviderData.(*managementclient.ManagementPlane)
+	data, ok := req.ProviderData.(*providerdata.Data)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *client.ManagementPlane, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return
 	}
 
-	r.client = api
+	r.client = data.Client
 }
 
 func (r *PoliciesResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -275,7 +277,7 @@ func (r *PoliciesResource) Create(ctx context.Context, req resource.CreateReques
 
 	current, err := r.getPolicies(ctx, data.OrganizationID.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Read Ona Organization Policies", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona Organization Policies", "reading current Ona organization policies before update", err)
 		return
 	}
 	updateReq, diags := updatePoliciesRequestFromConfig(ctx, data, req.Config, current)
@@ -285,13 +287,13 @@ func (r *PoliciesResource) Create(ctx context.Context, req resource.CreateReques
 	}
 
 	if _, err := r.client.OrganizationService().UpdateOrganizationPolicies(ctx, connect.NewRequest(updateReq)); err != nil {
-		resp.Diagnostics.AddError("Unable to Update Ona Organization Policies", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Organization Policies", "updating Ona organization policies", err)
 		return
 	}
 
 	policies, err := r.getPolicies(ctx, data.OrganizationID.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Read Updated Ona Organization Policies", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Updated Ona Organization Policies", "reading updated Ona organization policies", err)
 		return
 	}
 	planned := data
@@ -332,7 +334,7 @@ func (r *PoliciesResource) Read(ctx context.Context, req resource.ReadRequest, r
 			resp.State.RemoveResource(ctx)
 			return
 		}
-		resp.Diagnostics.AddError("Unable to Read Ona Organization Policies", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona Organization Policies", "reading Ona organization policies", err)
 		return
 	}
 	prior := data
@@ -361,7 +363,7 @@ func (r *PoliciesResource) Update(ctx context.Context, req resource.UpdateReques
 
 	current, err := r.getPolicies(ctx, data.OrganizationID.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Read Ona Organization Policies", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona Organization Policies", "reading current Ona organization policies before update", err)
 		return
 	}
 	updateReq, diags := updatePoliciesRequestFromConfig(ctx, data, req.Config, current)
@@ -371,13 +373,13 @@ func (r *PoliciesResource) Update(ctx context.Context, req resource.UpdateReques
 	}
 
 	if _, err := r.client.OrganizationService().UpdateOrganizationPolicies(ctx, connect.NewRequest(updateReq)); err != nil {
-		resp.Diagnostics.AddError("Unable to Update Ona Organization Policies", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Organization Policies", "updating Ona organization policies", err)
 		return
 	}
 
 	policies, err := r.getPolicies(ctx, data.OrganizationID.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Read Updated Ona Organization Policies", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Updated Ona Organization Policies", "reading updated Ona organization policies", err)
 		return
 	}
 	planned := data
@@ -402,6 +404,9 @@ func (r *PoliciesResource) Delete(ctx context.Context, req resource.DeleteReques
 
 func (r *PoliciesResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("organization_id"), req.ID)...)
 }
 

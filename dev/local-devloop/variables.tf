@@ -17,6 +17,24 @@ variable "runner_name" {
   default     = "terraform-provider-devloop"
 }
 
+variable "service_account_name" {
+  type        = string
+  description = "Name for the service account managed by this local development module."
+  default     = "terraform-provider-devloop"
+}
+
+variable "service_account_valid_until" {
+  type        = string
+  description = "RFC3339 expiration timestamp for the managed service account."
+  default     = "2099-01-01T00:00:00Z"
+}
+
+variable "group_name" {
+  type        = string
+  description = "Name for the group managed by this local development module."
+  default     = "Terraform Provider Dev Loop"
+}
+
 variable "runner_provider" {
   type        = string
   description = "Runner provider to use for the managed runner."
