@@ -1,0 +1,44 @@
+tasks:
+  install-dependencies:
+    name: Install dependencies
+    command: make install-dependencies
+    triggeredBy:
+      - manual
+      - prebuild
+
+  build:
+    name: Build
+    command: make build
+    dependsOn:
+      - install-dependencies
+      - lint
+    triggeredBy:
+      - manual
+      - prebuild
+
+  lint:
+    name: Lint
+    command: make lint
+    dependsOn:
+      - install-dependencies
+    triggeredBy:
+      - manual
+      - prebuild
+
+  test:
+    name: Test
+    command: make test testacc
+    dependsOn:
+      - build
+    triggeredBy:
+      - manual
+      - prebuild
+
+  generate:
+    name: Generate
+    command: make generate
+    dependsOn:
+      - install-dependencies
+    triggeredBy:
+      - manual
+      - prebuild
