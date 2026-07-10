@@ -6,6 +6,7 @@
 api/go/client
 api/go/v1
 api/go/tools/logfields
+api/go/tools/notyetpublic
 api/go/tools/stainless
 api/go/tools/terraform
 # The synced client package (api/go/client) imports its generated mock
