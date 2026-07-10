@@ -234,8 +234,8 @@ jobs:
           TIMEOUT_MINUTES: ${{ env.REGISTRY_TIMEOUT_MINUTES }}
         run: scripts/wait-for-registry-provider.sh
 
-  registry-init-check:
-    name: Terraform init (${{ matrix.runner }})
+  verify-registry-install:
+    name: Verify Registry install (${{ matrix.runner }})
     needs: [wait-for-registry]
     if: ${{ inputs.publish_release }}
     runs-on: ${{ matrix.runner }}

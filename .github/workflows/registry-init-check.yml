@@ -1,5 +1,5 @@
 # Verify that a published provider version can be installed by Terraform.
-name: Registry Init Check
+name: Verify Registry Install
 
 on:
   workflow_dispatch:
@@ -43,8 +43,8 @@ jobs:
           TIMEOUT_MINUTES: ${{ inputs.timeout_minutes }}
         run: scripts/wait-for-registry-provider.sh
 
-  init-check:
-    name: Terraform init (${{ matrix.runner }})
+  verify-registry-install:
+    name: Verify Registry install (${{ matrix.runner }})
     needs: wait-for-registry
     runs-on: ${{ matrix.runner }}
     strategy:
