@@ -4,7 +4,12 @@
     "context": ".",
     "dockerfile": "Dockerfile"
   },
-  "remoteUser": "vscode",
+  "mounts": [
+    "source=profile,target=/root,type=volume",
+    "target=/root/.vscode-server,type=volume"
+  ],
+  "containerUser": "root",
+  "remoteUser": "root",
   "customizations": {
     "vscode": {
       "extensions": [

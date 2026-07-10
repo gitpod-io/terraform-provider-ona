@@ -1,5 +1,9 @@
 FROM mcr.microsoft.com/devcontainers/go:2.1-1.25-bookworm
 
+ENV HOME=/root
+ENV GOPATH=$HOME/go-packages
+ENV PATH=$GOPATH/bin:$PATH
+
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -15,11 +19,6 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends terraform \
     && rm -rf /var/lib/apt/lists/*
 
-RUN GOPATH=/tmp/gopath \
-    GOMODCACHE=/tmp/gopath/pkg/mod \
-    GOCACHE=/tmp/go-build-cache \
-    GOBIN=/usr/local/bin \
+RUN GOBIN=/usr/local/bin \
     go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest \
-    && rm -rf /tmp/gopath /tmp/go-build-cache \
-    && install -d -o vscode -g golang -m 2775 /go/pkg /go/pkg/mod \
-    && chmod -R g+rwX /go
+    && rm -rf "$HOME/.cache" "$HOME/go-packages/pkg"
