@@ -36,15 +36,15 @@ key files.
 Pull requests run the branch build. It checks formatting, generated docs, lint,
 tests, normal build output, and unsigned release artifact packaging.
 
-Pushes to `main` run the main build. By default, the main build verifies the
-provider and release packaging without publishing. Set the repository variable
-`PUBLISH_TERRAFORM_PROVIDER_PRERELEASE_ON_MAIN=true` to publish a prerelease from
-each successful `main` push. The manual `Build main` workflow can also publish a
+Pushes to `main` run the main build and publish a prerelease GitHub release after
+the provider checks pass. The manual `Build main` workflow can also publish a
 specific prerelease version.
 
 Published prereleases are GitHub releases in
-`gitpod-io/terraform-provider-ona`. After publishing, CI waits for Terraform
-Registry ingestion and runs `terraform init` on Linux amd64 and Linux arm64.
+`gitpod-io/terraform-provider-ona`. After creating the GitHub release, CI starts
+the separate `Verify Terraform Registry` workflow. That workflow waits for
+Terraform Registry ingestion and runs `terraform init` on Linux amd64 and Linux
+arm64 without blocking the main build.
 
 ## Local Verification
 
