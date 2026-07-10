@@ -3,7 +3,6 @@
 set -euo pipefail
 
 PROVIDER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-REPO_ROOT="$(git -C "$PROVIDER_DIR" rev-parse --show-toplevel)"
 RELEASE_REPOSITORY="${RELEASE_REPOSITORY:-gitpod-io/terraform-provider-ona}"
 VERSION="${VERSION:-}"
 DRY_RUN="${DRY_RUN:-0}"

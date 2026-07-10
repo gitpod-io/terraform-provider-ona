@@ -31,9 +31,24 @@ environments.
 Do not upload the private key to Terraform Registry, and do not commit exported
 key files.
 
-## Verification
+## CI
 
-Before publishing, run:
+Pull requests run the branch build. It checks formatting, generated docs, lint,
+tests, normal build output, and unsigned release artifact packaging.
+
+Pushes to `main` run the main build. By default, the main build verifies the
+provider and release packaging without publishing. Set the repository variable
+`PUBLISH_TERRAFORM_PROVIDER_PRERELEASE_ON_MAIN=true` to publish a prerelease from
+each successful `main` push. The manual `Build main` workflow can also publish a
+specific prerelease version.
+
+Published prereleases are GitHub releases in
+`gitpod-io/terraform-provider-ona`. After publishing, CI waits for Terraform
+Registry ingestion and runs `terraform init` on Linux amd64 and Linux arm64.
+
+## Local Verification
+
+Before publishing locally, run:
 
 ```shell
 make build
@@ -122,5 +137,5 @@ terraform {
 provider "ona" {}
 ```
 
-Stable release promotion and CI-driven publishing are intentionally left for a
-follow-up workflow after the source migration lands.
+Stable release promotion remains a separate follow-up from the prerelease CI
+path.

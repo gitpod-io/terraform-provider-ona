@@ -1,0 +1,303 @@
+name: Terraform Provider Ona
+run-name: "${{ inputs.publish_release && '[Publish]' || '[Verify]' }} Terraform Provider Ona"
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish_release:
+        description: "Publish a prerelease to GitHub releases"
+        required: false
+        type: boolean
+        default: false
+      version:
+        description: "Optional prerelease version, for example v0.1.0-beta.1. Defaults to v0.1.0-beta.<run number> when publishing."
+        required: false
+        type: string
+        default: ""
+  workflow_call:
+    inputs:
+      publish_release:
+        description: "Publish a prerelease to GitHub releases"
+        required: false
+        type: boolean
+        default: false
+      version:
+        description: "Optional prerelease version, for example v0.1.0-beta.1. Defaults to v0.1.0-beta.<run number> when publishing."
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+env:
+  DEFAULT_PRERELEASE_PREFIX: v0.1.0-beta
+  RELEASE_REPOSITORY: gitpod-io/terraform-provider-ona
+  REGISTRY_PROVIDER_SOURCE: gitpod-io/ona
+  REGISTRY_TIMEOUT_MINUTES: "60"
+  TERRAFORM_VERSION: 1.15.8
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  verify:
+    name: Verify provider
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Setup Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: |
+            go.sum
+            tools/go.sum
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
+
+      - name: Download dependencies
+        run: |
+          set -euo pipefail
+          go mod download
+          (cd tools && GOWORK=off go mod download)
+
+      - name: Check formatting
+        run: |
+          set -euo pipefail
+          unformatted="$(gofmt -l .)"
+          if [[ -n "$unformatted" ]]; then
+            echo "::error::Go files need gofmt:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: Generate provider docs
+        run: make generate
+
+      - name: Verify generated files are current
+        run: git diff --exit-code
+
+      - name: Run lint
+        uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
+        with:
+          version: v2.11.4
+          args: --timeout=5m
+
+      - name: Run tests
+        run: make test
+
+      - name: Build provider
+        run: make build
+
+  release-snapshot:
+    name: Verify release packaging
+    needs: [verify]
+    if: ${{ !inputs.publish_release }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Setup Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: |
+            go.sum
+            tools/go.sum
+
+      - name: Build snapshot release artifacts
+        run: make release-snapshot RELEASE_SNAPSHOT_VERSION=0.0.0-SNAPSHOT
+
+  resolve-prerelease-version:
+    name: Resolve prerelease version
+    if: ${{ inputs.publish_release }}
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      version_no_v: ${{ steps.version.outputs.version_no_v }}
+    steps:
+      - name: Resolve version
+        id: version
+        env:
+          DEFAULT_PRERELEASE_PREFIX: ${{ env.DEFAULT_PRERELEASE_PREFIX }}
+          INPUT_VERSION: ${{ inputs.version || '' }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          set -euo pipefail
+
+          version="${INPUT_VERSION//[[:space:]]/}"
+          if [[ -z "$version" ]]; then
+            version="${DEFAULT_PRERELEASE_PREFIX}.${RUN_NUMBER}"
+          fi
+          [[ "$version" == v* ]] || version="v${version}"
+
+          if ! [[ "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-[0-9A-Za-z][0-9A-Za-z.-]*$ ]]; then
+            echo "::error::Version must be a prerelease semver such as v0.1.0-beta.1, got: ${version}"
+            exit 1
+          fi
+
+          echo "version=${version}" >>"$GITHUB_OUTPUT"
+          echo "version_no_v=${version#v}" >>"$GITHUB_OUTPUT"
+          echo "Resolved prerelease version: ${version}"
+
+  publish-preflight:
+    name: Validate publish prerequisites
+    needs: [resolve-prerelease-version]
+    if: ${{ inputs.publish_release }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GPG_FINGERPRINT: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_FINGERPRINT }}
+      GPG_PRIVATE_KEY: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_PRIVATE_KEY }}
+      RELEASE_REPOSITORY: gitpod-io/terraform-provider-ona
+      VERSION: ${{ needs.resolve-prerelease-version.outputs.version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Validate publish inputs and external prerequisites
+        run: scripts/preflight-publish-release.sh
+
+  publish-release:
+    name: Publish public provider release
+    needs: [verify, resolve-prerelease-version, publish-preflight]
+    if: ${{ inputs.publish_release }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GITHUB_TOKEN: ${{ github.token }}
+      GPG_FINGERPRINT: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_FINGERPRINT }}
+      GPG_PASSPHRASE: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_PASSPHRASE }}
+      GPG_PRIVATE_KEY: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_PRIVATE_KEY }}
+      RELEASE_REPOSITORY: gitpod-io/terraform-provider-ona
+      VERSION: ${{ needs.resolve-prerelease-version.outputs.version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Setup Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: |
+            go.sum
+            tools/go.sum
+
+      - name: Publish release
+        run: scripts/publish-release.sh
+
+  wait-for-registry:
+    name: Wait for Terraform Registry
+    needs: [publish-release, resolve-prerelease-version]
+    if: ${{ inputs.publish_release }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      source: ${{ steps.registry.outputs.source }}
+      version: ${{ steps.registry.outputs.version }}
+    steps:
+      - name: Wait for provider version
+        id: registry
+        env:
+          SOURCE: ${{ env.REGISTRY_PROVIDER_SOURCE }}
+          VERSION: ${{ needs.resolve-prerelease-version.outputs.version_no_v }}
+          TIMEOUT_MINUTES: ${{ env.REGISTRY_TIMEOUT_MINUTES }}
+        run: |
+          set -euo pipefail
+
+          IFS=/ read -r first second third rest <<< "$SOURCE"
+
+          if [[ -n "${rest:-}" || -z "${second:-}" ]]; then
+            echo "Expected source to be namespace/type or registry.terraform.io/namespace/type."
+            exit 1
+          fi
+
+          if [[ -z "${third:-}" ]]; then
+            namespace="$first"
+            type="$second"
+          elif [[ "$first" == "registry.terraform.io" ]]; then
+            namespace="$second"
+            type="$third"
+          else
+            echo "Only registry.terraform.io sources are supported by this check."
+            exit 1
+          fi
+
+          endpoint="https://registry.terraform.io/v1/providers/${namespace}/${type}/versions"
+          deadline=$((SECONDS + TIMEOUT_MINUTES * 60))
+
+          while true; do
+            if curl -fsSL "$endpoint" | jq -e --arg version "$VERSION" '.versions[]? | select(.version == $version)' >/dev/null; then
+              echo "Terraform Registry has ${SOURCE} ${VERSION}."
+              echo "source=${SOURCE}" >>"$GITHUB_OUTPUT"
+              echo "version=${VERSION}" >>"$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            if (( SECONDS >= deadline )); then
+              echo "Timed out waiting for ${SOURCE} ${VERSION} in the Terraform Registry."
+              exit 1
+            fi
+
+            echo "Waiting for ${SOURCE} ${VERSION}..."
+            sleep 60
+          done
+
+  registry-init-check:
+    name: Terraform init (${{ matrix.runner }})
+    needs: [wait-for-registry]
+    if: ${{ inputs.publish_release }}
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+    steps:
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
+
+      - name: Write Terraform config
+        env:
+          SOURCE: ${{ needs.wait-for-registry.outputs.source }}
+          VERSION: ${{ needs.wait-for-registry.outputs.version }}
+        run: |
+          cat > main.tf <<EOF
+          terraform {
+            required_providers {
+              ona = {
+                source  = "${SOURCE}"
+                version = "= ${VERSION}"
+              }
+            }
+          }
+
+          provider "ona" {}
+          EOF
+
+      - name: Initialize provider
+        run: terraform init -upgrade -no-color

@@ -1,0 +1,28 @@
+name: Build main
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish_release:
+        description: "Publish a prerelease to GitHub releases"
+        required: false
+        type: boolean
+        default: false
+      version:
+        description: "Optional prerelease version, for example v0.1.0-beta.1. Defaults to v0.1.0-beta.<run number> when publishing."
+        required: false
+        type: string
+        default: ""
+  push:
+    branches:
+      - main
+
+jobs:
+  build-terraform-provider:
+    uses: ./.github/workflows/build-terraform-provider.yml
+    permissions:
+      contents: write
+    secrets: inherit
+    with:
+      publish_release: ${{ (github.event_name == 'push' && vars.PUBLISH_TERRAFORM_PROVIDER_PRERELEASE_ON_MAIN == 'true') || (github.event_name == 'workflow_dispatch' && inputs.publish_release) }}
+      version: ${{ github.event_name == 'workflow_dispatch' && inputs.version || '' }}

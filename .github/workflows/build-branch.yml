@@ -1,0 +1,19 @@
+name: Build branch
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  build-terraform-provider:
+    uses: ./.github/workflows/build-terraform-provider.yml
+    permissions:
+      contents: read
+    secrets: inherit
+    with:
+      publish_release: false
