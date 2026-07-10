@@ -7,7 +7,7 @@ tasks:
       - prebuild
 
   build:
-    name: Build provider
+    name: Build
     command: make build
     dependsOn:
       - install-dependencies
@@ -17,7 +17,7 @@ tasks:
       - prebuild
 
   lint:
-    name: Lint provider
+    name: Lint
     command: make lint
     dependsOn:
       - install-dependencies
@@ -26,7 +26,7 @@ tasks:
       - prebuild
 
   test:
-    name: Run tests
+    name: Test
     command: make test
     dependsOn:
       - build
@@ -35,7 +35,7 @@ tasks:
       - prebuild
 
   generate:
-    name: Generate provider docs
+    name: Generate
     command: make generate
     dependsOn:
       - install-dependencies
