@@ -1,5 +1,5 @@
 name: Terraform provider CI
-run-name: "${{ inputs.publish_release && 'Publish' || 'Verify' }} Terraform provider"
+run-name: "${{ inputs.publish_release && 'Create Terraform provider release' || 'Build Terraform provider' }}"
 
 on:
   workflow_dispatch:
