@@ -8,6 +8,7 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
+	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/notyetpublic"
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -2241,13 +2242,13 @@ var File_agentops_v1_agentops_proto protoreflect.FileDescriptor
 
 const file_agentops_v1_agentops_proto_rawDesc = "" +
 	"\n" +
-	"\x1aagentops/v1/agentops.proto\x12\vagentops.v1\x1a\x1bbuf/validate/validate.proto\x1a\x15gitpod/v1/agent.proto\x1a\x15gitpod/v1/model.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"T\n" +
+	"\x1aagentops/v1/agentops.proto\x12\vagentops.v1\x1a\x1bbuf/validate/validate.proto\x1a$gitpod/tools/v1/not_yet_public.proto\x1a\x15gitpod/v1/agent.proto\x1a\x15gitpod/v1/model.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"Z\n" +
 	"\fConversation\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\"[\n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription:\x04\xe2\xab\x1e\x00\"a\n" +
 	"\fCapabilities\x12K\n" +
-	"\"supports_conversation_streaming_v2\x18\x01 \x01(\bR\x1fsupportsConversationStreamingV2\"\x8f\a\n" +
+	"\"supports_conversation_streaming_v2\x18\x01 \x01(\bR\x1fsupportsConversationStreamingV2:\x04\xe2\xab\x1e\x00\"\x95\a\n" +
 	"\x19CreateConversationRequest\x12,\n" +
 	"\x12agent_execution_id\x18\x01 \x01(\tR\x10agentExecutionId\x12(\n" +
 	"\x10llm_access_token\x18\x02 \x01(\tR\x0ellmAccessToken\x12!\n" +
@@ -2266,27 +2267,27 @@ const file_agentops_v1_agentops_proto_rawDesc = "" +
 	"\x15disabled_capabilities\x18\x0f \x03(\x0e2 .gitpod.v1.LLMDisabledCapabilityR\x14disabledCapabilities\x1a>\n" +
 	"\x10AnnotationsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01J\x04\b\b\x10\t\"\x84\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01:\x04\xe2\xab\x1e\x00J\x04\b\b\x10\t\"\x8a\x01\n" +
 	"\x1aCreateConversationResponse\x12'\n" +
 	"\x0fconversation_id\x18\x01 \x01(\tR\x0econversationId\x12=\n" +
-	"\fcapabilities\x18\x02 \x01(\v2\x19.agentops.v1.CapabilitiesR\fcapabilities\"\xfb\x01\n" +
+	"\fcapabilities\x18\x02 \x01(\v2\x19.agentops.v1.CapabilitiesR\fcapabilities:\x04\xe2\xab\x1e\x00\"\x81\x02\n" +
 	"\x19UpdateConversationRequest\x12'\n" +
 	"\x0fconversation_id\x18\x01 \x01(\tR\x0econversationId\x12(\n" +
 	"\x10mcp_access_token\x18\x02 \x01(\tR\x0emcpAccessToken\x12D\n" +
 	"\x10mcp_token_expiry\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x0emcpTokenExpiry\x12/\n" +
-	"\x11scm_tools_enabled\x18\x04 \x01(\bH\x00R\x0fscmToolsEnabled\x88\x01\x01B\x14\n" +
-	"\x12_scm_tools_enabled\"\x1c\n" +
-	"\x1aUpdateConversationResponse\"G\n" +
+	"\x11scm_tools_enabled\x18\x04 \x01(\bH\x00R\x0fscmToolsEnabled\x88\x01\x01:\x04\xe2\xab\x1e\x00B\x14\n" +
+	"\x12_scm_tools_enabled\"\"\n" +
+	"\x1aUpdateConversationResponse:\x04\xe2\xab\x1e\x00\"M\n" +
 	"\x1cInterruptConversationRequest\x12'\n" +
-	"\x0fconversation_id\x18\x01 \x01(\tR\x0econversationId\"\x1f\n" +
-	"\x1dInterruptConversationResponse\"A\n" +
+	"\x0fconversation_id\x18\x01 \x01(\tR\x0econversationId:\x04\xe2\xab\x1e\x00\"%\n" +
+	"\x1dInterruptConversationResponse:\x04\xe2\xab\x1e\x00\"G\n" +
 	"\x16GetConversationRequest\x12'\n" +
-	"\x0fconversation_id\x18\x01 \x01(\tR\x0econversationId\"X\n" +
+	"\x0fconversation_id\x18\x01 \x01(\tR\x0econversationId:\x04\xe2\xab\x1e\x00\"^\n" +
 	"\x17GetConversationResponse\x12=\n" +
-	"\fconversation\x18\x01 \x01(\v2\x19.agentops.v1.ConversationR\fconversation\"\x1a\n" +
-	"\x18ListConversationsRequest\"\\\n" +
+	"\fconversation\x18\x01 \x01(\v2\x19.agentops.v1.ConversationR\fconversation:\x04\xe2\xab\x1e\x00\" \n" +
+	"\x18ListConversationsRequest:\x04\xe2\xab\x1e\x00\"b\n" +
 	"\x19ListConversationsResponse\x12?\n" +
-	"\rconversations\x18\x01 \x03(\v2\x19.agentops.v1.ConversationR\rconversations\"\x89\x03\n" +
+	"\rconversations\x18\x01 \x03(\v2\x19.agentops.v1.ConversationR\rconversations:\x04\xe2\xab\x1e\x00\"\x8f\x03\n" +
 	"\x12SendMessageRequest\x12'\n" +
 	"\x0fconversation_id\x18\x01 \x01(\tR\x0econversationId\x12@\n" +
 	"\n" +
@@ -2295,15 +2296,15 @@ const file_agentops_v1_agentops_proto_rawDesc = "" +
 	"\asession\x18\x04 \x01(\tR\asession\x12?\n" +
 	"\x0ecodex_settings\x18\x05 \x01(\v2\x18.gitpod.v1.CodexSettingsR\rcodexSettings\x12A\n" +
 	"\rcontrol_input\x18\x06 \x01(\v2\x1c.gitpod.v1.AgentControlInputR\fcontrolInput\x129\n" +
-	"\fturn_options\x18\a \x01(\v2\x16.gitpod.v1.TurnOptionsR\vturnOptions\"\x15\n" +
-	"\x13SendMessageResponse\"Y\n" +
+	"\fturn_options\x18\a \x01(\v2\x16.gitpod.v1.TurnOptionsR\vturnOptions:\x04\xe2\xab\x1e\x00\"\x1b\n" +
+	"\x13SendMessageResponse:\x04\xe2\xab\x1e\x00\"_\n" +
 	"\x14UpdateSessionRequest\x12'\n" +
 	"\x0fconversation_id\x18\x01 \x01(\tR\x0econversationId\x12\x18\n" +
-	"\asession\x18\x02 \x01(\tR\asession\"\x17\n" +
-	"\x15UpdateSessionResponse\"r\n" +
+	"\asession\x18\x02 \x01(\tR\asession:\x04\xe2\xab\x1e\x00\"\x1d\n" +
+	"\x15UpdateSessionResponse:\x04\xe2\xab\x1e\x00\"x\n" +
 	"\x1eSubscribeToConversationRequest\x12'\n" +
 	"\x0fconversation_id\x18\x01 \x01(\tR\x0econversationId\x12'\n" +
-	"\x0fafter_iteration\x18\x02 \x01(\x03R\x0eafterIteration\"\xb0\n" +
+	"\x0fafter_iteration\x18\x02 \x01(\x03R\x0eafterIteration:\x04\xe2\xab\x1e\x00\"\xce\n" +
 	"\n" +
 	"\x1fSubscribeToConversationResponse\x129\n" +
 	"\x05block\x18\x01 \x01(\v2\x1f.agentops.v1.AgentResponseBlockB\x02\x18\x01R\x05block\x12;\n" +
@@ -2313,29 +2314,29 @@ const file_agentops_v1_agentops_proto_rawDesc = "" +
 	"\x04name\x18\x1e \x01(\tH\x00R\x04name\x12o\n" +
 	"\x12iteration_complete\x18# \x01(\v2>.agentops.v1.SubscribeToConversationResponse.IterationCompleteH\x00R\x11iterationComplete\x12r\n" +
 	"\x0fsubagent_update\x182 \x01(\v2G.agentops.v1.SubscribeToConversationResponse.SubagentConversationUpdateH\x00R\x0esubagentUpdate\x12c\n" +
-	"\rtrace_context\x18( \x03(\v2>.agentops.v1.SubscribeToConversationResponse.TraceContextEntryR\ftraceContext\x1a\xfa\x04\n" +
+	"\rtrace_context\x18( \x03(\v2>.agentops.v1.SubscribeToConversationResponse.TraceContextEntryR\ftraceContext\x1a\x8c\x05\n" +
 	"\x1aSubagentConversationUpdate\x12G\n" +
 	"\bsubagent\x18\x01 \x01(\v2).gitpod.v1.AgentExecution.Status.SubagentH\x00R\bsubagent\x12n\n" +
 	"\bresponse\x18\x02 \x01(\v2P.agentops.v1.SubscribeToConversationResponse.SubagentConversationUpdate.ResponseH\x00R\bresponse\x12\x8a\x01\n" +
-	"\x12iteration_complete\x18\x03 \x01(\v2Y.agentops.v1.SubscribeToConversationResponse.SubagentConversationUpdate.IterationCompleteH\x00R\x11iterationComplete\x1af\n" +
+	"\x12iteration_complete\x18\x03 \x01(\v2Y.agentops.v1.SubscribeToConversationResponse.SubagentConversationUpdate.IterationCompleteH\x00R\x11iterationComplete\x1al\n" +
 	"\bResponse\x12\x1f\n" +
 	"\vsubagent_id\x18\x01 \x01(\tR\n" +
 	"subagentId\x129\n" +
-	"\bresponse\x18\x02 \x01(\v2\x1d.gitpod.v1.AgentResponseBlockR\bresponse\x1a\xa3\x01\n" +
+	"\bresponse\x18\x02 \x01(\v2\x1d.gitpod.v1.AgentResponseBlockR\bresponse:\x04\xe2\xab\x1e\x00\x1a\xa9\x01\n" +
 	"\x11IterationComplete\x12\x1f\n" +
 	"\vsubagent_id\x18\x01 \x01(\tR\n" +
 	"subagentId\x12m\n" +
-	"\x12iteration_complete\x18\x02 \x01(\v2>.agentops.v1.SubscribeToConversationResponse.IterationCompleteR\x11iterationCompleteB\b\n" +
-	"\x06update\x1a1\n" +
+	"\x12iteration_complete\x18\x02 \x01(\v2>.agentops.v1.SubscribeToConversationResponse.IterationCompleteR\x11iterationComplete:\x04\xe2\xab\x1e\x00:\x04\xe2\xab\x1e\x00B\b\n" +
+	"\x06update\x1a7\n" +
 	"\x11IterationComplete\x12\x1c\n" +
-	"\titeration\x18\x01 \x01(\x03R\titeration\x1a?\n" +
+	"\titeration\x18\x01 \x01(\x03R\titeration:\x04\xe2\xab\x1e\x00\x1a?\n" +
 	"\x11TraceContextEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\b\n" +
-	"\x06update\"3\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01:\x04\xe2\xab\x1e\x00B\b\n" +
+	"\x06update\"9\n" +
 	"\x10UserInputMessage\x12\x14\n" +
-	"\x04text\x18\x01 \x01(\tH\x00R\x04textB\t\n" +
-	"\acontent\"\xdb\x0f\n" +
+	"\x04text\x18\x01 \x01(\tH\x00R\x04text:\x04\xe2\xab\x1e\x00B\t\n" +
+	"\acontent\"\x9f\x10\n" +
 	"\x12AgentResponseBlock\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\tR\bparentId\x12>\n" +
@@ -2350,46 +2351,46 @@ const file_agentops_v1_agentops_proto_rawDesc = "" +
 	"\x0fcode_annotation\x182 \x01(\v2..agentops.v1.AgentResponseBlock.CodeAnnotationH\x00R\x0ecodeAnnotation\x12~\n" +
 	"\x1chost_authentication_required\x18< \x01(\v2:.agentops.v1.AgentResponseBlock.HostAuthenticationRequiredH\x00R\x1ahostAuthenticationRequired\x12G\n" +
 	"\ttodo_item\x18F \x01(\v2(.agentops.v1.AgentResponseBlock.TodoItemH\x00R\btodoItem\x12C\n" +
-	"\athought\x18P \x01(\v2'.agentops.v1.AgentResponseBlock.ThoughtH\x00R\athought\x1a\xb9\x01\n" +
+	"\athought\x18P \x01(\v2'.agentops.v1.AgentResponseBlock.ThoughtH\x00R\athought\x1a\xc5\x01\n" +
 	"\n" +
 	"TextOutput\x12C\n" +
 	"\x04type\x18\x01 \x01(\x0e2/.agentops.v1.AgentResponseBlock.TextOutput.TypeR\x04type\x12\x18\n" +
-	"\acontent\x18\x02 \x01(\tR\acontent\"L\n" +
+	"\acontent\x18\x02 \x01(\tR\acontent\"R\n" +
 	"\x04Type\x12\x14\n" +
 	"\x10TYPE_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17TYPE_USER_FACING_OUTPUT\x10\x01\x12\x11\n" +
-	"\rTYPE_THOUGHTS\x10\x02\x1ad\n" +
+	"\rTYPE_THOUGHTS\x10\x02\x1a\x04\xe2\xab\x1e\x00:\x04\xe2\xab\x1e\x00\x1aj\n" +
 	"\rActionStarted\x12$\n" +
 	"\taction_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bactionId\x12-\n" +
-	"\x12intent_description\x18\x02 \x01(\tR\x11intentDescription\x1a~\n" +
+	"\x12intent_description\x18\x02 \x01(\tR\x11intentDescription:\x04\xe2\xab\x1e\x00\x1a\x84\x01\n" +
 	"\x0fActionCompleted\x12$\n" +
 	"\taction_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bactionId\x12-\n" +
 	"\x12result_description\x18\x02 \x01(\tR\x11resultDescription\x12\x16\n" +
-	"\x06failed\x18\x03 \x01(\bR\x06failed\x1ao\n" +
+	"\x06failed\x18\x03 \x01(\bR\x06failed:\x04\xe2\xab\x1e\x00\x1au\n" +
 	"\x10FileModification\x12\x1b\n" +
 	"\taction_id\x18\x01 \x01(\tR\bactionId\x12$\n" +
 	"\tfile_path\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bfilePath\x12\x18\n" +
-	"\acontent\x18\x03 \x01(\tR\acontent\x1al\n" +
+	"\acontent\x18\x03 \x01(\tR\acontent:\x04\xe2\xab\x1e\x00\x1ar\n" +
 	"\x13EnvironmentCreation\x12$\n" +
 	"\taction_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bactionId\x12/\n" +
-	"\x0eenvironment_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x1a}\n" +
+	"\x0eenvironment_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId:\x04\xe2\xab\x1e\x00\x1a\x83\x01\n" +
 	"\x1aHostAuthenticationRequired\x12$\n" +
 	"\taction_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bactionId\x12\x12\n" +
 	"\x04host\x18\x02 \x01(\tR\x04host\x12%\n" +
-	"\trunner_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x1a\x92\x01\n" +
+	"\trunner_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId:\x04\xe2\xab\x1e\x00\x1a\x98\x01\n" +
 	"\x0eCodeAnnotation\x12$\n" +
 	"\tfile_path\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bfilePath\x12\x1d\n" +
 	"\n" +
 	"start_line\x18\x02 \x01(\x05R\tstartLine\x12\x19\n" +
 	"\bend_line\x18\x03 \x01(\x05R\aendLine\x12 \n" +
-	"\vdescription\x18\x04 \x01(\tR\vdescription\x1aW\n" +
+	"\vdescription\x18\x04 \x01(\tR\vdescription:\x04\xe2\xab\x1e\x00\x1a]\n" +
 	"\bTodoItem\x12\x17\n" +
 	"\x02id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x1c\n" +
-	"\tcompleted\x18\x03 \x01(\bR\tcompleted\x1a#\n" +
+	"\tcompleted\x18\x03 \x01(\bR\tcompleted:\x04\xe2\xab\x1e\x00\x1a)\n" +
 	"\aThought\x12\x18\n" +
-	"\acontent\x18\x01 \x01(\tR\acontentB\x0f\n" +
-	"\x06output\x12\x05\xbaH\x02\b\x012\xc3\x06\n" +
+	"\acontent\x18\x01 \x01(\tR\acontent:\x04\xe2\xab\x1e\x00:\x04\xe2\xab\x1e\x00B\x0f\n" +
+	"\x06output\x12\x05\xbaH\x02\b\x012\xc9\x06\n" +
 	"\x0fAgentOpsService\x12g\n" +
 	"\x12CreateConversation\x12&.agentops.v1.CreateConversationRequest\x1a'.agentops.v1.CreateConversationResponse\"\x00\x12g\n" +
 	"\x12UpdateConversation\x12&.agentops.v1.UpdateConversationRequest\x1a'.agentops.v1.UpdateConversationResponse\"\x00\x12p\n" +
@@ -2398,7 +2399,7 @@ const file_agentops_v1_agentops_proto_rawDesc = "" +
 	"\x11ListConversations\x12%.agentops.v1.ListConversationsRequest\x1a&.agentops.v1.ListConversationsResponse\"\x00\x12R\n" +
 	"\vSendMessage\x12\x1f.agentops.v1.SendMessageRequest\x1a .agentops.v1.SendMessageResponse\"\x00\x12X\n" +
 	"\rUpdateSession\x12!.agentops.v1.UpdateSessionRequest\x1a\".agentops.v1.UpdateSessionResponse\"\x00\x12x\n" +
-	"\x17SubscribeToConversation\x12+.agentops.v1.SubscribeToConversationRequest\x1a,.agentops.v1.SubscribeToConversationResponse\"\x000\x01B5Z3github.com/gitpod-io/gitpod-next/api/go/agentops/v1b\x06proto3"
+	"\x17SubscribeToConversation\x12+.agentops.v1.SubscribeToConversationRequest\x1a,.agentops.v1.SubscribeToConversationResponse\"\x000\x01\x1a\x04\xe2\xab\x1e\x00B5Z3github.com/gitpod-io/gitpod-next/api/go/agentops/v1b\x06proto3"
 
 var (
 	file_agentops_v1_agentops_proto_rawDescOnce sync.Once
