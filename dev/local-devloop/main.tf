@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     ona = {
-      source = "registry.terraform.io/gitpod-io/ona"
+      source = "gitpod-io/ona"
     }
   }
 }
@@ -101,6 +101,32 @@ resource "ona_project" "devloop" {
     environment_class_id = ona_environment_class.devloop.id
     order                = 0
   }
+
+  prebuild_configuration {
+    enabled               = true
+    environment_class_ids = [ona_environment_class.devloop.id]
+    timeout               = "1h"
+
+    daily_schedule {
+      hour_utc = 5
+    }
+  }
+}
+
+resource "ona_warm_pool" "devloop" {
+  project_id           = ona_project.devloop.id
+  environment_class_id = ona_environment_class.devloop.id
+  min_size             = 0
+  max_size             = 1
+}
+
+data "ona_warm_pool" "devloop" {
+  warm_pool_id = ona_warm_pool.devloop.id
+}
+
+data "ona_warm_pools" "devloop" {
+  project_ids           = [ona_project.devloop.id]
+  environment_class_ids = [ona_environment_class.devloop.id]
 }
 
 resource "ona_scm_integration" "github_oauth" {

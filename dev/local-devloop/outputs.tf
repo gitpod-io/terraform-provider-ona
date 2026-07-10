@@ -40,6 +40,16 @@ output "managed_project_id" {
   value       = ona_project.devloop.id
 }
 
+output "managed_warm_pool_id" {
+  description = "ID of the warm pool managed by this module."
+  value       = ona_warm_pool.devloop.id
+}
+
+output "warm_pool_count_from_collection_data_source" {
+  description = "Number of warm pools returned by the collection data source."
+  value       = length(data.ona_warm_pools.devloop.warm_pools)
+}
+
 output "runner_count_from_collection_data_source" {
   description = "Number of runners returned by the collection data source."
   value       = length(data.ona_runners.all.runners)

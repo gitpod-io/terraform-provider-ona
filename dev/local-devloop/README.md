@@ -9,6 +9,7 @@ This module exercises all Terraform provider resources and both runner data sour
 - `ona_organization_role_assignment.devloop`
 - `ona_environment_class.devloop`
 - `ona_project.devloop`
+- `ona_warm_pool.devloop`
 - `ona_scm_integration.github_oauth`
 - `ona_scm_integration.gitlab_pat`
 - `ona_scm_integration.azuredevops_entra`
@@ -16,6 +17,8 @@ This module exercises all Terraform provider resources and both runner data sour
 - `ephemeral.ona_runner_token.devloop`
 - `data.ona_runners.all`
 - `data.ona_runner.devloop`
+- `data.ona_warm_pool.devloop`
+- `data.ona_warm_pools.devloop`
 
 Build the provider and configure Terraform to use the local binary:
 
@@ -50,10 +53,11 @@ TF_CLI_CONFIG_FILE="${PWD}/terraformrc" \
 terraform -chdir=dev/local-devloop apply -auto-approve -input=false
 ```
 
-The apply output includes `cloudformation_template_url` for AWS EC2 runners and
-`managed_service_account_id` for the managed service account. Runner
-registration tokens are consumed through `ephemeral.ona_runner_token` during
-apply, so they are not written as normal Terraform outputs or stored in state.
+The apply output includes `cloudformation_template_url` for AWS EC2 runners,
+`managed_service_account_id` for the managed service account, and the managed
+warm pool ID. Runner registration tokens are consumed through
+`ephemeral.ona_runner_token` during apply, so they are not written as normal
+Terraform outputs or stored in state.
 
 The dev loop passes the token from the ephemeral resource into an ephemeral
 module input:

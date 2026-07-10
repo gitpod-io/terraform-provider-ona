@@ -100,7 +100,7 @@ func environmentClassBlock() resourceschema.ListNestedBlock {
 
 func prebuildConfigurationBlock() resourceschema.ListNestedBlock {
 	return resourceschema.ListNestedBlock{
-		MarkdownDescription: "Prebuild configuration for the project. Set no more than one block.",
+		MarkdownDescription: "Prebuild configuration for the project. Set no more than one block. Warm pools for prebuilt environment classes are managed separately with `ona_warm_pool` resources.",
 		NestedObject: resourceschema.NestedBlockObject{
 			Attributes: map[string]resourceschema.Attribute{
 				"enabled": resourceschema.BoolAttribute{

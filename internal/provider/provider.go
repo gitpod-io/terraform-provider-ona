@@ -17,6 +17,7 @@ import (
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/runner"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/security"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/serviceaccount"
+	warmpool "github.com/gitpod-io/terraform-provider-ona/internal/provider/warm_pool"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -129,6 +130,7 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		project.NewResource,
 		security.NewPolicyResource,
 		organization.NewPoliciesResource,
+		warmpool.NewWarmPoolResource,
 		serviceaccount.NewResource,
 		accesscontrol.NewGroupResource,
 		accesscontrol.NewGroupMembershipResource,
@@ -151,6 +153,8 @@ func (p *OnaProvider) DataSources(ctx context.Context) []func() datasource.DataS
 	return []func() datasource.DataSource{
 		runner.NewSingularDataSource,
 		runner.NewCollectionDataSource,
+		warmpool.NewWarmPoolDataSource,
+		warmpool.NewWarmPoolCollectionDataSource,
 		security.NewPolicyCollectionDataSource,
 	}
 }

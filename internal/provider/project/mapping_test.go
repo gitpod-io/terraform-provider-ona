@@ -284,6 +284,70 @@ func TestPrebuildConfigurationFromModel(t *testing.T) {
 				Err: "Invalid Prebuild Timeout",
 			},
 		},
+		{
+			Name: "uses_default_timeout_when_unknown",
+			Input: []PrebuildConfigurationModel{{
+				Enabled: types.BoolValue(true),
+				EnvironmentClassIDs: types.SetValueMust(types.StringType, []attr.Value{
+					types.StringValue("class-1"),
+				}),
+				Timeout: types.StringUnknown(),
+			}},
+			Expected: Expectation{
+				Result: &v1.ProjectPrebuildConfiguration{
+					Enabled:             true,
+					EnvironmentClassIds: []string{"class-1"},
+					Timeout:             durationpb.New(time.Hour),
+				},
+			},
+		},
+		{
+			Name: "rejects_daily_schedule_hour_out_of_range",
+			Input: []PrebuildConfigurationModel{{
+				Enabled:               types.BoolValue(true),
+				EnvironmentClassIDs:   types.SetNull(types.StringType),
+				Timeout:               types.StringValue("1h"),
+				EnableJetbrainsWarmup: types.BoolValue(false),
+				DailySchedule: []DailyScheduleModel{{
+					HourUTC: types.Int64Value(24),
+				}},
+			}},
+			Expected: Expectation{
+				Err: "Invalid Daily Schedule Hour",
+			},
+		},
+		{
+			Name: "rejects_missing_executor_id",
+			Input: []PrebuildConfigurationModel{{
+				Enabled:               types.BoolValue(true),
+				EnvironmentClassIDs:   types.SetNull(types.StringType),
+				Timeout:               types.StringValue("1h"),
+				EnableJetbrainsWarmup: types.BoolValue(false),
+				Executor: []SubjectModel{{
+					ID:        types.StringValue(""),
+					Principal: types.StringValue(principalServiceAccount),
+				}},
+			}},
+			Expected: Expectation{
+				Err: "Missing Prebuild Executor ID",
+			},
+		},
+		{
+			Name: "rejects_invalid_executor_principal",
+			Input: []PrebuildConfigurationModel{{
+				Enabled:               types.BoolValue(true),
+				EnvironmentClassIDs:   types.SetNull(types.StringType),
+				Timeout:               types.StringValue("1h"),
+				EnableJetbrainsWarmup: types.BoolValue(false),
+				Executor: []SubjectModel{{
+					ID:        types.StringValue("executor-1"),
+					Principal: types.StringValue("runner"),
+				}},
+			}},
+			Expected: Expectation{
+				Err: "Invalid Prebuild Executor Principal",
+			},
+		},
 	}
 
 	for _, tc := range tests {

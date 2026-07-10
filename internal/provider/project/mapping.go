@@ -191,10 +191,14 @@ func prebuildConfigurationFromModel(ctx context.Context, values []PrebuildConfig
 	}
 	value := values[0]
 
-	timeout, err := time.ParseDuration(value.Timeout.ValueString())
-	if err != nil {
-		diags.AddAttributeError(root.AtName("timeout"), "Invalid Prebuild Timeout", err.Error())
-		return nil, diags
+	timeout := time.Hour
+	if !value.Timeout.IsNull() && !value.Timeout.IsUnknown() {
+		parsed, err := time.ParseDuration(value.Timeout.ValueString())
+		if err != nil {
+			diags.AddAttributeError(root.AtName("timeout"), "Invalid Prebuild Timeout", err.Error())
+			return nil, diags
+		}
+		timeout = parsed
 	}
 	if timeout < 5*time.Minute || timeout > 2*time.Hour {
 		diags.AddAttributeError(root.AtName("timeout"), "Invalid Prebuild Timeout", "Timeout must be between 5m and 2h.")
@@ -221,6 +225,10 @@ func prebuildConfigurationFromModel(ctx context.Context, values []PrebuildConfig
 		return nil, diags
 	}
 	if len(value.DailySchedule) == 1 {
+		if value.DailySchedule[0].HourUTC.IsNull() || value.DailySchedule[0].HourUTC.IsUnknown() {
+			diags.AddAttributeError(root.AtName("daily_schedule").AtListIndex(0).AtName("hour_utc"), "Missing Daily Schedule Hour", "hour_utc must be known and must be between 0 and 23.")
+			return nil, diags
+		}
 		hour := value.DailySchedule[0].HourUTC.ValueInt64()
 		if hour < 0 || hour > 23 {
 			diags.AddAttributeError(root.AtName("daily_schedule").AtListIndex(0).AtName("hour_utc"), "Invalid Daily Schedule Hour", "hour_utc must be between 0 and 23.")
@@ -237,6 +245,14 @@ func prebuildConfigurationFromModel(ctx context.Context, values []PrebuildConfig
 		return nil, diags
 	}
 	if len(value.Executor) == 1 {
+		if value.Executor[0].ID.IsNull() || value.Executor[0].ID.IsUnknown() || value.Executor[0].ID.ValueString() == "" {
+			diags.AddAttributeError(root.AtName("executor").AtListIndex(0).AtName("id"), "Missing Prebuild Executor ID", "Executor id must not be empty.")
+			return nil, diags
+		}
+		if value.Executor[0].Principal.IsNull() || value.Executor[0].Principal.IsUnknown() {
+			diags.AddAttributeError(root.AtName("executor").AtListIndex(0).AtName("principal"), "Missing Prebuild Executor Principal", "Supported values are user and service_account.")
+			return nil, diags
+		}
 		principal, ok := principalFromString(value.Executor[0].Principal.ValueString())
 		if !ok {
 			diags.AddAttributeError(root.AtName("executor").AtListIndex(0).AtName("principal"), "Invalid Prebuild Executor Principal", "Supported values are user and service_account.")
