@@ -15,7 +15,7 @@ import (
 
 func resourceSchema() resourceschema.Schema {
 	return resourceschema.Schema{
-		MarkdownDescription: "Ona project.",
+		MarkdownDescription: "Ona project backed by a Git repository. Use this resource to define the repository, branch, environment classes, and optional prebuild settings that Ona should use for environments created from the project.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
 				Computed:            true,
@@ -33,25 +33,25 @@ func resourceSchema() resourceschema.Schema {
 			},
 			"name": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Project display name.",
+				MarkdownDescription: "Project display name shown in Ona.",
 			},
 			"repository_clone_url": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Repository clone URL.",
+				MarkdownDescription: "Git repository clone URL. Use an HTTP(S) or SSH clone URL, such as `https://github.com/ona/example.git` or `git@github.com:ona/example.git`.",
 			},
 			"branch": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Git branch.",
+				MarkdownDescription: "Git branch name Ona should use when creating environments and prebuilds.",
 			},
 			"devcontainer_file_path": resourceschema.StringAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Path to the devcontainer file, relative to the repository root.",
+				MarkdownDescription: "Path to the devcontainer file, relative to the repository root. Omit to let Ona use its default discovery behavior.",
 			},
 			"automations_file_path": resourceschema.StringAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Path to the automations file, relative to the repository root.",
+				MarkdownDescription: "Path to the automations file, relative to the repository root. Omit to let Ona use its default discovery behavior.",
 			},
 			"created_at": resourceschema.StringAttribute{
 				Computed:            true,
@@ -78,20 +78,20 @@ func resourceSchema() resourceschema.Schema {
 
 func environmentClassBlock() resourceschema.ListNestedBlock {
 	return resourceschema.ListNestedBlock{
-		MarkdownDescription: "Environment classes available to this project, in priority order.",
+		MarkdownDescription: "Environment classes available to this project, in priority order. Configure at least one block. Each block must set exactly one of `environment_class_id` or `local_runner = true`.",
 		NestedObject: resourceschema.NestedBlockObject{
 			Attributes: map[string]resourceschema.Attribute{
 				"environment_class_id": resourceschema.StringAttribute{
 					Optional:            true,
-					MarkdownDescription: "Fixed runner environment class ID.",
+					MarkdownDescription: "Runner environment class ID to make available to this project. Omit when `local_runner` is true.",
 				},
 				"local_runner": resourceschema.BoolAttribute{
 					Optional:            true,
-					MarkdownDescription: "Whether this entry uses the user's local runner.",
+					MarkdownDescription: "Whether this entry represents the user's local runner. Set to `true` instead of `environment_class_id` for local-runner projects.",
 				},
 				"order": resourceschema.Int64Attribute{
 					Required:            true,
-					MarkdownDescription: "Priority order for this environment class entry.",
+					MarkdownDescription: "Priority order for this environment class entry. Lower values are preferred first and values must be unique within the project.",
 				},
 			},
 		},
@@ -100,31 +100,31 @@ func environmentClassBlock() resourceschema.ListNestedBlock {
 
 func prebuildConfigurationBlock() resourceschema.ListNestedBlock {
 	return resourceschema.ListNestedBlock{
-		MarkdownDescription: "Prebuild configuration for the project. Set no more than one block. Warm pools for prebuilt environment classes are managed separately with `ona_warm_pool` resources.",
+		MarkdownDescription: "Prebuild configuration for the project. Set no more than one block. Omitting the block disables Terraform management of prebuild settings. Warm pools for prebuilt environment classes are managed separately with `ona_warm_pool` resources.",
 		NestedObject: resourceschema.NestedBlockObject{
 			Attributes: map[string]resourceschema.Attribute{
 				"enabled": resourceschema.BoolAttribute{
 					Optional:            true,
 					Computed:            true,
 					Default:             booldefault.StaticBool(true),
-					MarkdownDescription: "Whether prebuilds are enabled for this project.",
+					MarkdownDescription: "Whether prebuilds are enabled for this project. Defaults to the provider value `true` when the prebuild block is present.",
 				},
 				"environment_class_ids": resourceschema.SetAttribute{
 					Optional:            true,
 					ElementType:         types.StringType,
-					MarkdownDescription: "Environment class IDs for which prebuilds should be created.",
+					MarkdownDescription: "Environment class IDs for which prebuilds should be created. Omit to let Ona use project defaults.",
 				},
 				"timeout": resourceschema.StringAttribute{
 					Optional:            true,
 					Computed:            true,
 					Default:             stringdefault.StaticString("1h"),
-					MarkdownDescription: "Maximum duration allowed for a prebuild to complete. Must be between `5m` and `2h`.",
+					MarkdownDescription: "Maximum duration allowed for a prebuild to complete, as a Go duration string. Must be between `5m` and `2h`; defaults to the provider value `1h`.",
 				},
 				"enable_jetbrains_warmup": resourceschema.BoolAttribute{
 					Optional:            true,
 					Computed:            true,
 					Default:             booldefault.StaticBool(false),
-					MarkdownDescription: "Whether JetBrains IDE warmup runs during prebuilds.",
+					MarkdownDescription: "Whether JetBrains IDE warmup runs during prebuilds. Defaults to the provider value `false`.",
 				},
 			},
 			Blocks: map[string]resourceschema.Block{
@@ -140,7 +140,7 @@ func prebuildConfigurationBlock() resourceschema.ListNestedBlock {
 					},
 				},
 				"executor": resourceschema.ListNestedBlock{
-					MarkdownDescription: "Subject whose SCM credentials are used to run prebuilds. Set no more than one block.",
+					MarkdownDescription: "Subject whose SCM credentials are used to run prebuilds. Set no more than one block. Omit to use Ona defaults.",
 					NestedObject: resourceschema.NestedBlockObject{
 						Attributes: map[string]resourceschema.Attribute{
 							"id": resourceschema.StringAttribute{

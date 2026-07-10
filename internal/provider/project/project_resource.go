@@ -6,6 +6,9 @@ package project
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"regexp"
+	"strings"
 
 	"connectrpc.com/connect"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
@@ -292,6 +295,7 @@ func populateProjectModel(ctx context.Context, data *ProjectModel, project *v1.P
 func validateProjectModel(ctx context.Context, data ProjectModel, diags *diag.Diagnostics) {
 	validateName(data.Name, diags)
 	validateRequiredString(data.RepositoryCloneURL, path.Root("repository_clone_url"), "Repository Clone URL", diags)
+	validateRepositoryCloneURL(data.RepositoryCloneURL, diags)
 	validateRequiredString(data.Branch, path.Root("branch"), "Branch", diags)
 	validateRelativePath(data.DevcontainerFilePath, path.Root("devcontainer_file_path"), "devcontainer_file_path", diags)
 	validateRelativePath(data.AutomationsFilePath, path.Root("automations_file_path"), "automations_file_path", diags)
@@ -317,8 +321,34 @@ func validateRequiredString(value types.String, p path.Path, name string, diags 
 	if value.IsUnknown() {
 		return
 	}
-	if value.IsNull() || value.ValueString() == "" {
+	if value.IsNull() || strings.TrimSpace(value.ValueString()) == "" {
 		diags.AddAttributeError(p, "Missing Project "+name, name+" must not be empty.")
+	}
+}
+
+var scpLikeGitURLPattern = regexp.MustCompile(`^[^@\s]+@[^:\s]+:.+$`)
+
+func validateRepositoryCloneURL(value types.String, diags *diag.Diagnostics) {
+	if value.IsNull() || value.IsUnknown() || value.ValueString() == "" {
+		return
+	}
+	raw := strings.TrimSpace(value.ValueString())
+	if raw != value.ValueString() {
+		diags.AddAttributeError(path.Root("repository_clone_url"), "Invalid Project Repository Clone URL", "repository_clone_url must not include leading or trailing whitespace.")
+		return
+	}
+	if scpLikeGitURLPattern.MatchString(raw) {
+		return
+	}
+	parsed, err := url.Parse(raw)
+	if err != nil || parsed.Scheme == "" || parsed.Host == "" || parsed.Path == "" || parsed.Path == "/" {
+		diags.AddAttributeError(path.Root("repository_clone_url"), "Invalid Project Repository Clone URL", "Use an HTTP(S) or SSH Git clone URL, such as https://github.com/ona/example.git or git@github.com:ona/example.git.")
+		return
+	}
+	switch parsed.Scheme {
+	case "http", "https", "ssh", "git":
+	default:
+		diags.AddAttributeError(path.Root("repository_clone_url"), "Invalid Project Repository Clone URL", "Supported clone URL schemes are http, https, ssh, and git.")
 	}
 }
 
@@ -326,7 +356,18 @@ func validateRelativePath(value types.String, p path.Path, name string, diags *d
 	if value.IsNull() || value.IsUnknown() {
 		return
 	}
-	if len(value.ValueString()) > 0 && value.ValueString()[0] == '/' {
-		diags.AddAttributeError(p, "Invalid Project File Path", fmt.Sprintf("%s must be relative and must not start with /.", name))
+	raw := value.ValueString()
+	if raw == "" {
+		return
+	}
+	if raw[0] == '/' || strings.Contains(raw, `\`) || strings.Contains(raw, "://") {
+		diags.AddAttributeError(p, "Invalid Project File Path", fmt.Sprintf("%s must be a repository-relative path using forward slashes.", name))
+		return
+	}
+	for _, segment := range strings.Split(raw, "/") {
+		if segment == ".." {
+			diags.AddAttributeError(p, "Invalid Project File Path", fmt.Sprintf("%s must stay within the repository and must not contain .. path segments.", name))
+			return
+		}
 	}
 }

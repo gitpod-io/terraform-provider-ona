@@ -68,7 +68,7 @@ func (r *OrganizationRoleAssignmentResource) Metadata(ctx context.Context, req r
 
 func (r *OrganizationRoleAssignmentResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = resourceschema.Schema{
-		MarkdownDescription: "Ona organization-level role assignment for a group.",
+		MarkdownDescription: "Ona organization-level role assignment for a group. The assignment targets the organization associated with the authenticated provider token.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
 				Computed:            true,
@@ -79,7 +79,7 @@ func (r *OrganizationRoleAssignmentResource) Schema(ctx context.Context, req res
 			},
 			"group_id": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Group ID receiving the organization role.",
+				MarkdownDescription: "Group ID receiving the organization role. Changing this value replaces the assignment.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -93,7 +93,7 @@ func (r *OrganizationRoleAssignmentResource) Schema(ctx context.Context, req res
 			},
 			"role": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Organization role. Supported values are `organization_admin`, `runners_admin`, `projects_admin`, `automations_admin`, `groups_admin`, `environments_reader`, `insights_viewer`, `audit_log_reader`, and `billing_viewer`.",
+				MarkdownDescription: "Organization role. Supported values are `organization_admin`, `runners_admin`, `projects_admin`, `automations_admin`, `groups_admin`, `environments_reader`, `insights_viewer`, `audit_log_reader`, and `billing_viewer`. Changing this value replaces the assignment.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},

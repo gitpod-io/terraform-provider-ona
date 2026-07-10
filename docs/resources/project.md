@@ -3,12 +3,12 @@
 page_title: "ona_project Resource - ona"
 subcategory: ""
 description: |-
-  Ona project.
+  Ona project backed by a Git repository. Use this resource to define the repository, branch, environment classes, and optional prebuild settings that Ona should use for environments created from the project.
 ---
 
 # ona_project (Resource)
 
-Ona project.
+Ona project backed by a Git repository. Use this resource to define the repository, branch, environment classes, and optional prebuild settings that Ona should use for environments created from the project.
 
 ## Example Usage
 
@@ -50,16 +50,16 @@ resource "ona_project" "api" {
 
 ### Required
 
-- `branch` (String) Git branch.
-- `name` (String) Project display name.
-- `repository_clone_url` (String) Repository clone URL.
+- `branch` (String) Git branch name Ona should use when creating environments and prebuilds.
+- `name` (String) Project display name shown in Ona.
+- `repository_clone_url` (String) Git repository clone URL. Use an HTTP(S) or SSH clone URL, such as `https://github.com/ona/example.git` or `git@github.com:ona/example.git`.
 
 ### Optional
 
-- `automations_file_path` (String) Path to the automations file, relative to the repository root.
-- `devcontainer_file_path` (String) Path to the devcontainer file, relative to the repository root.
-- `environment_class` (Block List) Environment classes available to this project, in priority order. (see [below for nested schema](#nestedblock--environment_class))
-- `prebuild_configuration` (Block List) Prebuild configuration for the project. Set no more than one block. Warm pools for prebuilt environment classes are managed separately with `ona_warm_pool` resources. (see [below for nested schema](#nestedblock--prebuild_configuration))
+- `automations_file_path` (String) Path to the automations file, relative to the repository root. Omit to let Ona use its default discovery behavior.
+- `devcontainer_file_path` (String) Path to the devcontainer file, relative to the repository root. Omit to let Ona use its default discovery behavior.
+- `environment_class` (Block List) Environment classes available to this project, in priority order. Configure at least one block. Each block must set exactly one of `environment_class_id` or `local_runner = true`. (see [below for nested schema](#nestedblock--environment_class))
+- `prebuild_configuration` (Block List) Prebuild configuration for the project. Set no more than one block. Omitting the block disables Terraform management of prebuild settings. Warm pools for prebuilt environment classes are managed separately with `ona_warm_pool` resources. (see [below for nested schema](#nestedblock--prebuild_configuration))
 
 ### Read-Only
 
@@ -74,12 +74,12 @@ resource "ona_project" "api" {
 
 Required:
 
-- `order` (Number) Priority order for this environment class entry.
+- `order` (Number) Priority order for this environment class entry. Lower values are preferred first and values must be unique within the project.
 
 Optional:
 
-- `environment_class_id` (String) Fixed runner environment class ID.
-- `local_runner` (Boolean) Whether this entry uses the user's local runner.
+- `environment_class_id` (String) Runner environment class ID to make available to this project. Omit when `local_runner` is true.
+- `local_runner` (Boolean) Whether this entry represents the user's local runner. Set to `true` instead of `environment_class_id` for local-runner projects.
 
 
 <a id="nestedblock--prebuild_configuration"></a>
@@ -88,11 +88,11 @@ Optional:
 Optional:
 
 - `daily_schedule` (Block List) Daily UTC prebuild schedule. Set no more than one block. (see [below for nested schema](#nestedblock--prebuild_configuration--daily_schedule))
-- `enable_jetbrains_warmup` (Boolean) Whether JetBrains IDE warmup runs during prebuilds.
-- `enabled` (Boolean) Whether prebuilds are enabled for this project.
-- `environment_class_ids` (Set of String) Environment class IDs for which prebuilds should be created.
-- `executor` (Block List) Subject whose SCM credentials are used to run prebuilds. Set no more than one block. (see [below for nested schema](#nestedblock--prebuild_configuration--executor))
-- `timeout` (String) Maximum duration allowed for a prebuild to complete. Must be between `5m` and `2h`.
+- `enable_jetbrains_warmup` (Boolean) Whether JetBrains IDE warmup runs during prebuilds. Defaults to the provider value `false`.
+- `enabled` (Boolean) Whether prebuilds are enabled for this project. Defaults to the provider value `true` when the prebuild block is present.
+- `environment_class_ids` (Set of String) Environment class IDs for which prebuilds should be created. Omit to let Ona use project defaults.
+- `executor` (Block List) Subject whose SCM credentials are used to run prebuilds. Set no more than one block. Omit to use Ona defaults. (see [below for nested schema](#nestedblock--prebuild_configuration--executor))
+- `timeout` (String) Maximum duration allowed for a prebuild to complete, as a Go duration string. Must be between `5m` and `2h`; defaults to the provider value `1h`.
 
 <a id="nestedblock--prebuild_configuration--daily_schedule"></a>
 ### Nested Schema for `prebuild_configuration.daily_schedule`

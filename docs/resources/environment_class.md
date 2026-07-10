@@ -3,12 +3,12 @@
 page_title: "ona_environment_class Resource - ona"
 subcategory: ""
 description: |-
-  Ona runner environment class. Destroying this resource disables the remote environment class and removes it from Terraform state because the Ona API does not expose an environment class delete operation.
+  Ona runner environment class used by projects to select runner capacity. Destroying this resource disables the remote environment class and removes it from Terraform state because the Ona API does not expose an environment class delete operation.
 ---
 
 # ona_environment_class (Resource)
 
-Ona runner environment class. Destroying this resource disables the remote environment class and removes it from Terraform state because the Ona API does not expose an environment class delete operation.
+Ona runner environment class used by projects to select runner capacity. Destroying this resource disables the remote environment class and removes it from Terraform state because the Ona API does not expose an environment class delete operation.
 
 ## Example Usage
 
@@ -31,14 +31,14 @@ resource "ona_environment_class" "large" {
 
 ### Required
 
-- `configuration` (Map of String) Provider-specific environment class configuration as key/value strings.
-- `display_name` (String) Environment class display name.
-- `runner_id` (String) Runner ID this environment class belongs to.
+- `configuration` (Map of String) Provider-specific environment class configuration as key/value strings, such as machine type and disk size. Valid keys depend on the runner provider. Changing this map replaces the environment class.
+- `display_name` (String) Environment class display name shown to project and environment users.
+- `runner_id` (String) Runner ID this environment class belongs to. Changing this value replaces the environment class.
 
 ### Optional
 
-- `description` (String) Environment class description.
-- `enabled` (Boolean) Whether the environment class can be used to create environments.
+- `description` (String) Environment class description. Defaults to `Environment class managed by Terraform.` when omitted.
+- `enabled` (Boolean) Whether the environment class can be selected for new environments. Defaults to the provider value `true`.
 
 ### Read-Only
 

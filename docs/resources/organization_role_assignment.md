@@ -3,12 +3,12 @@
 page_title: "ona_organization_role_assignment Resource - ona"
 subcategory: ""
 description: |-
-  Ona organization-level role assignment for a group.
+  Ona organization-level role assignment for a group. The assignment targets the organization associated with the authenticated provider token.
 ---
 
 # ona_organization_role_assignment (Resource)
 
-Ona organization-level role assignment for a group.
+Ona organization-level role assignment for a group. The assignment targets the organization associated with the authenticated provider token.
 
 ## Example Usage
 
@@ -29,8 +29,8 @@ resource "ona_organization_role_assignment" "terraform_admin" {
 
 ### Required
 
-- `group_id` (String) Group ID receiving the organization role.
-- `role` (String) Organization role. Supported values are `organization_admin`, `runners_admin`, `projects_admin`, `automations_admin`, `groups_admin`, `environments_reader`, `insights_viewer`, `audit_log_reader`, and `billing_viewer`.
+- `group_id` (String) Group ID receiving the organization role. Changing this value replaces the assignment.
+- `role` (String) Organization role. Supported values are `organization_admin`, `runners_admin`, `projects_admin`, `automations_admin`, `groups_admin`, `environments_reader`, `insights_viewer`, `audit_log_reader`, and `billing_viewer`. Changing this value replaces the assignment.
 
 ### Read-Only
 

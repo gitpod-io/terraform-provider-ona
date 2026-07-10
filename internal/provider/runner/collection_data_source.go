@@ -118,15 +118,15 @@ func (d *CollectionDataSource) listRunners(ctx context.Context) ([]*v1.Runner, e
 
 func collectionDataSourceSchema() datasourceschema.Schema {
 	return datasourceschema.Schema{
-		MarkdownDescription: "Fetches Ona runners.",
+		MarkdownDescription: "Fetches all Ona runners visible to the configured provider token. This data source does not currently support server-side filters.",
 		Attributes: map[string]datasourceschema.Attribute{
 			"id": datasourceschema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "Terraform data source ID.",
+				MarkdownDescription: "Terraform data source ID. Always `runners`.",
 			},
 			"runners": datasourceschema.ListNestedAttribute{
 				Computed:            true,
-				MarkdownDescription: "Ona runners.",
+				MarkdownDescription: "Runner records sorted by runner ID for deterministic plans.",
 				NestedObject: datasourceschema.NestedAttributeObject{
 					Attributes: dataSourceRunnerAttributes(datasourceschema.StringAttribute{
 						Computed:            true,

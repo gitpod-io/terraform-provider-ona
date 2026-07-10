@@ -130,7 +130,7 @@ func (r *PolicyResource) Schema(ctx context.Context, req resource.SchemaRequest,
 
 func policyResourceSchema() resourceschema.Schema {
 	return resourceschema.Schema{
-		MarkdownDescription: "Ona security policy for environment runtime controls.",
+		MarkdownDescription: "Ona security policy for environment runtime controls. Attach the resulting policy through organization policy settings to make it the default for new environments.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
 				Computed:            true,
@@ -141,14 +141,14 @@ func policyResourceSchema() resourceschema.Schema {
 			},
 			"organization_id": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Organization ID that owns the security policy.",
+				MarkdownDescription: "Organization ID that owns the security policy. Changing this value replaces the policy.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"name": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Security policy name.",
+				MarkdownDescription: "Security policy name shown in Ona. Must be between 1 and 80 characters.",
 			},
 			"created_at": resourceschema.StringAttribute{
 				Computed:            true,
@@ -170,7 +170,7 @@ func policyResourceSchema() resourceschema.Schema {
 
 func specBlock() resourceschema.SingleNestedBlock {
 	return resourceschema.SingleNestedBlock{
-		MarkdownDescription: "Runtime security controls enforced for environments using this policy.",
+		MarkdownDescription: "Runtime security controls enforced for environments using this policy. Configure one or more policy sections depending on what the policy should control.",
 		Blocks: map[string]resourceschema.Block{
 			"ports":         portPolicyBlock(),
 			"executables":   executablePolicyBlock(),
@@ -183,7 +183,7 @@ func specBlock() resourceschema.SingleNestedBlock {
 
 func portPolicyBlock() resourceschema.SingleNestedBlock {
 	return resourceschema.SingleNestedBlock{
-		MarkdownDescription: "Port access policy.",
+		MarkdownDescription: "Port access policy. Rules match inclusive TCP/UDP port ranges from 0 through 65535.",
 		Attributes: map[string]resourceschema.Attribute{
 			"default_effect": effectAttribute("Default port access effect."),
 		},
@@ -194,11 +194,11 @@ func portPolicyBlock() resourceschema.SingleNestedBlock {
 					Attributes: map[string]resourceschema.Attribute{
 						"range_from": resourceschema.Int64Attribute{
 							Required:            true,
-							MarkdownDescription: "First port in the range.",
+							MarkdownDescription: "First port in the inclusive range. Must be between 0 and 65535.",
 						},
 						"range_to": resourceschema.Int64Attribute{
 							Required:            true,
-							MarkdownDescription: "Last port in the range.",
+							MarkdownDescription: "Last port in the inclusive range. Must be between `range_from` and 65535.",
 						},
 						"effect": effectAttribute("Effect for this port range."),
 					},
@@ -210,7 +210,7 @@ func portPolicyBlock() resourceschema.SingleNestedBlock {
 
 func executablePolicyBlock() resourceschema.SingleNestedBlock {
 	return resourceschema.SingleNestedBlock{
-		MarkdownDescription: "Executable access policy.",
+		MarkdownDescription: "Executable access policy. Rules match executable paths inside the environment.",
 		Attributes: map[string]resourceschema.Attribute{
 			"default_effect": effectAttribute("Default executable access effect."),
 		},
@@ -221,7 +221,7 @@ func executablePolicyBlock() resourceschema.SingleNestedBlock {
 					Attributes: map[string]resourceschema.Attribute{
 						"path": resourceschema.StringAttribute{
 							Required:            true,
-							MarkdownDescription: "Executable path.",
+							MarkdownDescription: "Executable path inside the environment.",
 						},
 						"effect": effectAttribute("Effect for this executable path."),
 					},
@@ -233,14 +233,14 @@ func executablePolicyBlock() resourceschema.SingleNestedBlock {
 
 func filePolicyBlock() resourceschema.SingleNestedBlock {
 	return resourceschema.SingleNestedBlock{
-		MarkdownDescription: "File access policy.",
+		MarkdownDescription: "File access policy. Rules match file paths inside the environment and can control read and write actions separately.",
 		Attributes: map[string]resourceschema.Attribute{
 			"default_effect": effectAttribute("Default file access effect."),
 			"default_actions": resourceschema.SetAttribute{
 				Optional:            true,
 				Computed:            true,
 				ElementType:         types.StringType,
-				MarkdownDescription: "Actions applied to file rules that omit actions. Supported values are `read` and `write`.",
+				MarkdownDescription: "Actions applied to file rules that omit actions. Supported values are `read` and `write`; omit to use the API default.",
 			},
 		},
 		Blocks: map[string]resourceschema.Block{
@@ -250,13 +250,13 @@ func filePolicyBlock() resourceschema.SingleNestedBlock {
 					Attributes: map[string]resourceschema.Attribute{
 						"path": resourceschema.StringAttribute{
 							Required:            true,
-							MarkdownDescription: "File path.",
+							MarkdownDescription: "File path inside the environment.",
 						},
 						"actions": resourceschema.SetAttribute{
 							Optional:            true,
 							Computed:            true,
 							ElementType:         types.StringType,
-							MarkdownDescription: "File actions controlled by this rule. Supported values are `read` and `write`.",
+							MarkdownDescription: "File actions controlled by this rule. Supported values are `read` and `write`; omit to use `default_actions`.",
 						},
 						"effect": effectAttribute("Effect for this file path."),
 					},
@@ -268,7 +268,7 @@ func filePolicyBlock() resourceschema.SingleNestedBlock {
 
 func blockDevicePolicyBlock() resourceschema.SingleNestedBlock {
 	return resourceschema.SingleNestedBlock{
-		MarkdownDescription: "Block device access policy.",
+		MarkdownDescription: "Block device access policy for environment runtime controls.",
 		Attributes: map[string]resourceschema.Attribute{
 			"default_effect": effectAttribute("Default block device access effect."),
 		},
@@ -277,7 +277,7 @@ func blockDevicePolicyBlock() resourceschema.SingleNestedBlock {
 
 func dataPolicyBlock() resourceschema.SingleNestedBlock {
 	return resourceschema.SingleNestedBlock{
-		MarkdownDescription: "Data flow policy.",
+		MarkdownDescription: "Data flow policy. Rules describe allowed or blocked movement from a source to a destination.",
 		Attributes: map[string]resourceschema.Attribute{
 			"default_effect": effectAttribute("Default data flow effect."),
 		},
@@ -302,7 +302,7 @@ func dataPolicyBlock() resourceschema.SingleNestedBlock {
 								},
 								"selector": resourceschema.StringAttribute{
 									Optional:            true,
-									MarkdownDescription: "Source-dependent selector.",
+									MarkdownDescription: "Source-dependent selector for narrowing what data within the source is matched.",
 								},
 							},
 						},

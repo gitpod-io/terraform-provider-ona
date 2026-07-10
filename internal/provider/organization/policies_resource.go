@@ -88,7 +88,7 @@ func (r *PoliciesResource) Metadata(ctx context.Context, req resource.MetadataRe
 
 func (r *PoliciesResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = resourceschema.Schema{
-		MarkdownDescription: "Singleton Ona organization policy settings. Destroying this resource removes Terraform state only; it does not reset remote organization settings.",
+		MarkdownDescription: "Singleton Ona organization policy settings. This resource updates the remote organization policy object in place. Destroying it removes Terraform state only; it does not reset remote organization settings.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
 				Computed:            true,
@@ -99,7 +99,7 @@ func (r *PoliciesResource) Schema(ctx context.Context, req resource.SchemaReques
 			},
 			"organization_id": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Organization ID whose singleton policy object is managed.",
+				MarkdownDescription: "Organization ID whose singleton policy object is managed. Changing this value replaces the Terraform resource address but still manages the target organization's singleton policies.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -108,12 +108,12 @@ func (r *PoliciesResource) Schema(ctx context.Context, req resource.SchemaReques
 			"members_require_projects": resourceschema.BoolAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Whether non-admin users can only create environments from projects.",
+				MarkdownDescription: "Whether non-admin users can only create environments from projects. Configure together with `members_create_projects`.",
 			},
 			"members_create_projects": resourceschema.BoolAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Whether organization members can create projects.",
+				MarkdownDescription: "Whether organization members can create projects. Configure together with `members_require_projects`.",
 			},
 			"allowed_editor_ids": resourceschema.SetAttribute{
 				Optional:            true,
@@ -129,29 +129,29 @@ func (r *PoliciesResource) Schema(ctx context.Context, req resource.SchemaReques
 			"maximum_running_environments_per_user": resourceschema.Int64Attribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Maximum simultaneously running environments per user.",
+				MarkdownDescription: "Maximum simultaneously running environments per user. Omit to leave the remote setting unmanaged.",
 			},
 			"maximum_environments_per_user": resourceschema.Int64Attribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Maximum total environments per user.",
+				MarkdownDescription: "Maximum total environments per user. Omit to leave the remote setting unmanaged.",
 			},
 			"default_environment_image": stringOptionalComputedAttribute("Default container image when no repository image is defined."),
 			"port_sharing_disabled": resourceschema.BoolAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Whether user-initiated port sharing is disabled.",
+				MarkdownDescription: "Whether user-initiated port sharing is disabled. Omit to leave the remote setting unmanaged.",
 			},
 			"delete_archived_environments_after": durationAttribute("How long archived environments are kept before automatic deletion. `0s` disables automatic deletion; maximum is 672h."),
 			"maximum_environment_lifetime":       durationAttribute("How long environments may be reused. `0s` means no maximum; maximum is 4320h."),
 			"require_custom_domain_access": resourceschema.BoolAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Whether users must access via a configured custom domain.",
+				MarkdownDescription: "Whether users must access via a configured custom domain. Omit to leave the remote setting unmanaged.",
 			},
 			"editor_version_restriction": resourceschema.ListNestedAttribute{
 				Optional:            true,
-				MarkdownDescription: "Editor version restrictions keyed by editor ID.",
+				MarkdownDescription: "Editor version restrictions keyed by editor ID. Omit to leave editor version restrictions unmanaged.",
 				NestedObject: resourceschema.NestedAttributeObject{
 					Attributes: map[string]resourceschema.Attribute{
 						"editor_id": resourceschema.StringAttribute{
@@ -169,23 +169,23 @@ func (r *PoliciesResource) Schema(ctx context.Context, req resource.SchemaReques
 			"restrict_account_creation_to_scim": resourceschema.BoolAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Whether account creation is restricted to SCIM-provisioned users.",
+				MarkdownDescription: "Whether account creation is restricted to SCIM-provisioned users. Omit to leave the remote setting unmanaged.",
 			},
 			"web_browser_disabled": resourceschema.BoolAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Whether users can open the built-in web browser from environment pages.",
+				MarkdownDescription: "Whether users can open the built-in web browser from environment pages. Omit to leave the remote setting unmanaged.",
 			},
 			"disable_from_scratch": resourceschema.BoolAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Whether non-admin users can create blank environments without a Git or URL initializer.",
+				MarkdownDescription: "Whether non-admin users can create blank environments without a Git or URL initializer. Omit to leave the remote setting unmanaged.",
 			},
 			"security_policy_id":         stringOptionalComputedAttribute("Default security policy ID assigned to newly created environments. Set an empty string to clear."),
 			"archive_environments_after": durationAttribute("How long stopped environments remain inactive before archival. Must be a whole number of days between 24h and 720h."),
 			"agent_policy": resourceschema.SingleNestedAttribute{
 				Optional:            true,
-				MarkdownDescription: "Agent-specific organization policy settings.",
+				MarkdownDescription: "Agent-specific organization policy settings. Omit the block to leave agent policy fields unmanaged.",
 				Attributes: map[string]resourceschema.Attribute{
 					"mcp_disabled": resourceschema.BoolAttribute{
 						Optional:            true,
@@ -194,7 +194,7 @@ func (r *PoliciesResource) Schema(ctx context.Context, req resource.SchemaReques
 					"command_deny_list": resourceschema.SetAttribute{
 						Optional:            true,
 						ElementType:         types.StringType,
-						MarkdownDescription: "Commands agents are not allowed to execute.",
+						MarkdownDescription: "Commands agents are not allowed to execute. Omit to leave the deny list unmanaged.",
 					},
 					"scm_tools_disabled": resourceschema.BoolAttribute{
 						Optional:            true,

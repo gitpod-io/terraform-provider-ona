@@ -3,12 +3,12 @@
 page_title: "ona_runner Data Source - ona"
 subcategory: ""
 description: |-
-  Fetches an Ona runner by ID.
+  Fetches an Ona runner by ID and exposes the same computed fields as the ona_runner resource.
 ---
 
 # ona_runner (Data Source)
 
-Fetches an Ona runner by ID.
+Fetches an Ona runner by ID and exposes the same computed fields as the `ona_runner` resource.
 
 ## Example Usage
 
@@ -23,18 +23,18 @@ data "ona_runner" "example" {
 
 ### Required
 
-- `runner_id` (String) Runner ID.
+- `runner_id` (String) Ona runner ID to look up.
 
 ### Read-Only
 
-- `cloudformation_template_url` (String) CloudFormation template URL for AWS EC2 runner setup. This is null for non-AWS runners.
+- `cloudformation_template_url` (String) CloudFormation template URL for AWS EC2 runner setup. This is populated only for `aws_ec2` runners and is null for GCP runners.
 - `configuration` (Attributes) Runner configuration. (see [below for nested schema](#nestedatt--configuration))
 - `created_at` (String) Time when the runner was created.
 - `creator` (Attributes) Identity that created the runner. (see [below for nested schema](#nestedatt--creator))
 - `id` (String) Terraform data source ID. This is the same value as `runner_id`.
 - `kind` (String) Runner kind deduced by the API from the provider.
 - `name` (String) Runner display name.
-- `runner_provider` (String) Runner provider.
+- `runner_provider` (String) Runner cloud provider, such as `aws_ec2` or `gcp`.
 - `status` (Attributes) Runner status reported by the runner. (see [below for nested schema](#nestedatt--status))
 - `updated_at` (String) Time when the runner was last updated.
 
@@ -45,9 +45,9 @@ Read-Only:
 
 - `auto_update` (Boolean) Whether the runner automatically updates itself.
 - `devcontainer_image_cache_enabled` (Boolean) Whether the shared devcontainer build cache is enabled for this runner.
-- `log_level` (String) Runner log level.
-- `region` (String) Region hint for remote runners.
-- `release_channel` (String) Runner release channel.
+- `log_level` (String) Runner log level, such as `debug`, `info`, `warn`, or `error`.
+- `region` (String) Cloud region configured for the runner, when the runner provider uses a region.
+- `release_channel` (String) Runner release channel, such as `stable` or `latest`.
 - `update_window` (Attributes) Daily UTC window during which auto-updates may run. (see [below for nested schema](#nestedatt--configuration--update_window))
 
 <a id="nestedatt--configuration--update_window"></a>

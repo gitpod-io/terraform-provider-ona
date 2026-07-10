@@ -27,6 +27,7 @@ import (
 var _ resource.Resource = &Resource{}
 var _ resource.ResourceWithConfigure = &Resource{}
 var _ resource.ResourceWithImportState = &Resource{}
+var _ resource.ResourceWithValidateConfig = &Resource{}
 
 func NewResource() resource.Resource {
 	return &Resource{}
@@ -54,7 +55,7 @@ func (r *Resource) Metadata(ctx context.Context, req resource.MetadataRequest, r
 
 func (r *Resource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = resourceschema.Schema{
-		MarkdownDescription: "Ona service account.",
+		MarkdownDescription: "Ona service account for non-human API access. Use service accounts for Terraform automation and issue tokens with the `ona_service_account_token` ephemeral resource.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
 				Computed:            true,
@@ -79,16 +80,16 @@ func (r *Resource) Schema(ctx context.Context, req resource.SchemaRequest, resp 
 			},
 			"name": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Service account display name.",
+				MarkdownDescription: "Service account display name shown in Ona.",
 			},
 			"description": resourceschema.StringAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Service account description.",
+				MarkdownDescription: "Service account description. Omit to leave the description empty.",
 			},
 			"valid_until": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "RFC3339 timestamp when this service account expires.",
+				MarkdownDescription: "RFC3339 timestamp when this service account expires, for example `2030-01-02T03:04:05Z`. Changing this value replaces the service account.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -122,7 +123,7 @@ func (r *Resource) Schema(ctx context.Context, req resource.SchemaRequest, resp 
 			},
 			"system_managed": resourceschema.BoolAttribute{
 				Computed:            true,
-				MarkdownDescription: "Whether this service account is system-managed.",
+				MarkdownDescription: "Whether this service account is system-managed by Ona rather than customer-managed.",
 			},
 		},
 	}
@@ -143,6 +144,15 @@ func (r *Resource) Configure(ctx context.Context, req resource.ConfigureRequest,
 	}
 
 	r.client = data.Client
+}
+
+func (r *Resource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
+	var validUntil types.String
+	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("valid_until"), &validUntil)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	validateServiceAccountValidUntil(validUntil, time.Now().UTC(), &resp.Diagnostics)
 }
 
 func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -373,14 +383,34 @@ func serviceAccountID(data Model) string {
 }
 
 func timestampFromRFC3339(value types.String) (*timestamppb.Timestamp, error) {
+	parsed, err := serviceAccountValidUntilTime(value, time.Now().UTC())
+	if err != nil {
+		return nil, err
+	}
+	return timestamppb.New(parsed), nil
+}
+
+func validateServiceAccountValidUntil(value types.String, now time.Time, diags *diag.Diagnostics) {
 	if value.IsNull() || value.IsUnknown() {
-		return nil, fmt.Errorf("valid_until must be known")
+		return
+	}
+	if _, err := serviceAccountValidUntilTime(value, now); err != nil {
+		diags.AddAttributeError(path.Root("valid_until"), "Invalid Service Account Expiration", err.Error())
+	}
+}
+
+func serviceAccountValidUntilTime(value types.String, now time.Time) (time.Time, error) {
+	if value.IsNull() || value.IsUnknown() {
+		return time.Time{}, fmt.Errorf("valid_until must be known")
 	}
 	parsed, err := time.Parse(time.RFC3339, value.ValueString())
 	if err != nil {
-		return nil, fmt.Errorf("valid_until must be an RFC3339 timestamp: %w", err)
+		return time.Time{}, fmt.Errorf("valid_until must be an RFC3339 timestamp: %w", err)
 	}
-	return timestamppb.New(parsed), nil
+	if !parsed.After(now) {
+		return time.Time{}, fmt.Errorf("valid_until must be in the future")
+	}
+	return parsed, nil
 }
 
 func timestampValue(value *timestamppb.Timestamp) types.String {

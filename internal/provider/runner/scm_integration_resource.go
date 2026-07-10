@@ -63,7 +63,7 @@ func (r *SCMIntegrationResource) Metadata(ctx context.Context, req resource.Meta
 
 func (r *SCMIntegrationResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = resourceschema.Schema{
-		MarkdownDescription: "Ona runner SCM integration.",
+		MarkdownDescription: "Ona runner SCM integration. Use this to configure how a runner authenticates to source control systems for projects assigned to that runner.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
 				Computed:            true,
@@ -74,42 +74,42 @@ func (r *SCMIntegrationResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"runner_id": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Runner ID this SCM integration belongs to.",
+				MarkdownDescription: "Runner ID this SCM integration belongs to. Changing this value replaces the integration.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"scm_id": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "SCM ID from the runner configuration schema.",
+				MarkdownDescription: "SCM provider ID from the runner configuration schema. Use values such as `github`, `azuredevops_entra`, or `azuredevops_server`. Changing this value replaces the integration.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"host": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "SCM host.",
+				MarkdownDescription: "SCM host name, for example `github.com` or an Azure DevOps Server host. Changing this value replaces the integration.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"auth_mode": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Authentication mode. Supported values are `oauth` and `pat`.",
+				MarkdownDescription: "Authentication mode. Supported values are `oauth` and `pat`. Azure DevOps Server currently requires `pat`.",
 			},
 			"oauth_client_id": resourceschema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: "OAuth app client ID.",
+				MarkdownDescription: "OAuth app client ID. Required when `auth_mode` is `oauth`; omit when `auth_mode` is `pat`.",
 			},
 			"oauth_client_secret": resourceschema.StringAttribute{
 				Optional:            true,
 				Sensitive:           true,
 				WriteOnly:           true,
-				MarkdownDescription: "OAuth app client secret. This write-only value is sent to Ona but not stored in Terraform plan or state.",
+				MarkdownDescription: "OAuth app client secret. This write-only value is sent to Ona but is not stored in Terraform plan or state. Required when creating an OAuth integration or rotating the OAuth secret.",
 			},
 			"oauth_client_secret_version": resourceschema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: "User-managed version marker for resubmitting `oauth_client_secret` during rotation.",
+				MarkdownDescription: "User-managed version marker for resubmitting `oauth_client_secret` during rotation. Increment or otherwise change this value when supplying a new secret.",
 			},
 			"issuer_url": resourceschema.StringAttribute{
 				Optional:            true,
