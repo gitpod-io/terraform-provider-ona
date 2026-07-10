@@ -16,7 +16,6 @@ lint:
 	golangci-lint run
 
 generate:
-	go generate generate.go
 	cd tools; GOWORK=off go generate tools.go
 
 fmt:

@@ -1,5 +1,7 @@
 FROM mcr.microsoft.com/devcontainers/go:2.1-1.25-bookworm
 
+USER root
+
 ENV HOME=/root
 ENV GOPATH=$HOME/go-packages
 ENV PATH=$GOPATH/bin:$PATH
