@@ -43,7 +43,7 @@ func (r *GroupMembershipResource) Metadata(ctx context.Context, req resource.Met
 
 func (r *GroupMembershipResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = resourceschema.Schema{
-		MarkdownDescription: "Ona service-account group membership.",
+		MarkdownDescription: "Ona service-account group membership. Use this resource to add one service account to one group.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
 				Computed:            true,
@@ -54,14 +54,14 @@ func (r *GroupMembershipResource) Schema(ctx context.Context, req resource.Schem
 			},
 			"group_id": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Group ID.",
+				MarkdownDescription: "Group ID to add the service account to. Changing this value replaces the membership.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"service_account_id": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Service account ID to add to the group.",
+				MarkdownDescription: "Service account ID to add to the group. Changing this value replaces the membership.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},

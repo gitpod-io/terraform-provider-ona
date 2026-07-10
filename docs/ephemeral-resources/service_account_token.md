@@ -3,12 +3,12 @@
 page_title: "ona_service_account_token Ephemeral Resource - ona"
 subcategory: ""
 description: |-
-  Creates an Ona service-account token without storing the token value in Terraform plan or state. Use this in bootstrap or rotation workflows with a human/admin token, store the returned token in an external secret target, then use it as ONA_TOKEN on later Terraform runs. Reference the token only from Terraform ephemeral contexts such as provider configurations, write-only arguments, or child module ephemeral outputs.
+  Creates an Ona service-account token without storing the token value in Terraform plan or state. Use this in bootstrap or rotation workflows with a human or admin token, store the returned token in an external secret target, then use it as ONA_TOKEN on later Terraform runs. Reference the token only from Terraform ephemeral contexts such as provider configurations, write-only arguments, or child module ephemeral outputs.
 ---
 
 # ona_service_account_token (Ephemeral Resource)
 
-Creates an Ona service-account token without storing the token value in Terraform plan or state. Use this in bootstrap or rotation workflows with a human/admin token, store the returned token in an external secret target, then use it as `ONA_TOKEN` on later Terraform runs. Reference the token only from Terraform ephemeral contexts such as provider configurations, write-only arguments, or child module ephemeral outputs.
+Creates an Ona service-account token without storing the token value in Terraform plan or state. Use this in bootstrap or rotation workflows with a human or admin token, store the returned token in an external secret target, then use it as `ONA_TOKEN` on later Terraform runs. Reference the token only from Terraform ephemeral contexts such as provider configurations, write-only arguments, or child module ephemeral outputs.
 
 ## Example Usage
 
@@ -29,8 +29,8 @@ ephemeral "ona_service_account_token" "ci" {
 
 ### Optional
 
-- `description` (String) Service account token description.
-- `valid_for` (String) How long the token should be valid, as a Go duration string such as `720h`, `2160h`, or `8760h`. Omit to use the Ona API default. The API caps validity to the service account expiry.
+- `description` (String) Service account token description shown in Ona token metadata.
+- `valid_for` (String) How long the token should be valid, as a non-negative Go duration string such as `720h`, `2160h`, or `8760h`. Omit to use the Ona API default. The API caps validity to the service account expiry.
 
 ### Read-Only
 

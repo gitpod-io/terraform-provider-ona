@@ -121,11 +121,11 @@ func (d *SingularDataSource) Read(ctx context.Context, req datasource.ReadReques
 func singularDataSourceSchema() datasourceschema.Schema {
 	attributes := dataSourceRunnerAttributes(datasourceschema.StringAttribute{
 		Required:            true,
-		MarkdownDescription: "Runner ID.",
+		MarkdownDescription: "Ona runner ID to look up.",
 	})
 
 	return datasourceschema.Schema{
-		MarkdownDescription: "Fetches an Ona runner by ID.",
+		MarkdownDescription: "Fetches an Ona runner by ID and exposes the same computed fields as the `ona_runner` resource.",
 		Attributes:          attributes,
 	}
 }
@@ -143,7 +143,7 @@ func dataSourceRunnerAttributes(runnerID datasourceschema.StringAttribute) map[s
 		},
 		"runner_provider": datasourceschema.StringAttribute{
 			Computed:            true,
-			MarkdownDescription: "Runner provider.",
+			MarkdownDescription: "Runner cloud provider, such as `aws_ec2` or `gcp`.",
 		},
 		"kind": datasourceschema.StringAttribute{
 			Computed:            true,
@@ -151,7 +151,7 @@ func dataSourceRunnerAttributes(runnerID datasourceschema.StringAttribute) map[s
 		},
 		"cloudformation_template_url": datasourceschema.StringAttribute{
 			Computed:            true,
-			MarkdownDescription: "CloudFormation template URL for AWS EC2 runner setup. This is null for non-AWS runners.",
+			MarkdownDescription: "CloudFormation template URL for AWS EC2 runner setup. This is populated only for `aws_ec2` runners and is null for GCP runners.",
 		},
 		"created_at": datasourceschema.StringAttribute{
 			Computed:            true,
@@ -174,11 +174,11 @@ func dataSourceConfigurationSchema() datasourceschema.SingleNestedAttribute {
 		Attributes: map[string]datasourceschema.Attribute{
 			"region": datasourceschema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "Region hint for remote runners.",
+				MarkdownDescription: "Cloud region configured for the runner, when the runner provider uses a region.",
 			},
 			"release_channel": datasourceschema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "Runner release channel.",
+				MarkdownDescription: "Runner release channel, such as `stable` or `latest`.",
 			},
 			"auto_update": datasourceschema.BoolAttribute{
 				Computed:            true,
@@ -190,7 +190,7 @@ func dataSourceConfigurationSchema() datasourceschema.SingleNestedAttribute {
 			},
 			"log_level": datasourceschema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "Runner log level.",
+				MarkdownDescription: "Runner log level, such as `debug`, `info`, `warn`, or `error`.",
 			},
 			"update_window": datasourceschema.SingleNestedAttribute{
 				Computed:            true,

@@ -24,6 +24,7 @@ import (
 var _ ephemeral.EphemeralResource = &TokenEphemeralResource{}
 var _ ephemeral.EphemeralResourceWithConfigure = &TokenEphemeralResource{}
 var _ ephemeral.EphemeralResourceWithClose = &TokenEphemeralResource{}
+var _ ephemeral.EphemeralResourceWithValidateConfig = &TokenEphemeralResource{}
 
 func NewTokenEphemeralResource() ephemeral.EphemeralResource {
 	return &TokenEphemeralResource{}
@@ -49,7 +50,7 @@ func (r *TokenEphemeralResource) Metadata(ctx context.Context, req ephemeral.Met
 
 func (r *TokenEphemeralResource) Schema(ctx context.Context, req ephemeral.SchemaRequest, resp *ephemeral.SchemaResponse) {
 	resp.Schema = ephemeralschema.Schema{
-		MarkdownDescription: "Creates an Ona service-account token without storing the token value in Terraform plan or state. Use this in bootstrap or rotation workflows with a human/admin token, store the returned token in an external secret target, then use it as `ONA_TOKEN` on later Terraform runs. Reference the token only from Terraform ephemeral contexts such as provider configurations, write-only arguments, or child module ephemeral outputs.",
+		MarkdownDescription: "Creates an Ona service-account token without storing the token value in Terraform plan or state. Use this in bootstrap or rotation workflows with a human or admin token, store the returned token in an external secret target, then use it as `ONA_TOKEN` on later Terraform runs. Reference the token only from Terraform ephemeral contexts such as provider configurations, write-only arguments, or child module ephemeral outputs.",
 		Attributes: map[string]ephemeralschema.Attribute{
 			"service_account_id": ephemeralschema.StringAttribute{
 				Required:            true,
@@ -57,11 +58,11 @@ func (r *TokenEphemeralResource) Schema(ctx context.Context, req ephemeral.Schem
 			},
 			"description": ephemeralschema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: "Service account token description.",
+				MarkdownDescription: "Service account token description shown in Ona token metadata.",
 			},
 			"valid_for": ephemeralschema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: "How long the token should be valid, as a Go duration string such as `720h`, `2160h`, or `8760h`. Omit to use the Ona API default. The API caps validity to the service account expiry.",
+				MarkdownDescription: "How long the token should be valid, as a non-negative Go duration string such as `720h`, `2160h`, or `8760h`. Omit to use the Ona API default. The API caps validity to the service account expiry.",
 			},
 			"token": ephemeralschema.StringAttribute{
 				Computed:            true,
@@ -99,6 +100,15 @@ func (r *TokenEphemeralResource) Configure(ctx context.Context, req ephemeral.Co
 	}
 
 	r.data = data
+}
+
+func (r *TokenEphemeralResource) ValidateConfig(ctx context.Context, req ephemeral.ValidateConfigRequest, resp *ephemeral.ValidateConfigResponse) {
+	var validFor types.String
+	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("valid_for"), &validFor)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	validateServiceAccountTokenValidFor(validFor, &resp.Diagnostics)
 }
 
 func (r *TokenEphemeralResource) Open(ctx context.Context, req ephemeral.OpenRequest, resp *ephemeral.OpenResponse) {
@@ -172,12 +182,32 @@ func createServiceAccountTokenRequest(data TokenEphemeralModel) (*v1.CreateServi
 		req.Description = data.Description.ValueString()
 	}
 	if !data.ValidFor.IsNull() && !data.ValidFor.IsUnknown() {
-		duration, err := time.ParseDuration(data.ValidFor.ValueString())
+		duration, err := serviceAccountTokenValidFor(data.ValidFor)
 		if err != nil {
-			diags.AddAttributeError(path.Root("valid_for"), "Invalid Service Account Token Validity", fmt.Sprintf("valid_for must be a Go duration string: %s", err))
+			diags.AddAttributeError(path.Root("valid_for"), "Invalid Service Account Token Validity", err.Error())
 			return nil, diags
 		}
 		req.ValidFor = durationpb.New(duration)
 	}
 	return req, diags
+}
+
+func validateServiceAccountTokenValidFor(value types.String, diags *diag.Diagnostics) {
+	if value.IsNull() || value.IsUnknown() {
+		return
+	}
+	if _, err := serviceAccountTokenValidFor(value); err != nil {
+		diags.AddAttributeError(path.Root("valid_for"), "Invalid Service Account Token Validity", err.Error())
+	}
+}
+
+func serviceAccountTokenValidFor(value types.String) (time.Duration, error) {
+	duration, err := time.ParseDuration(value.ValueString())
+	if err != nil {
+		return 0, fmt.Errorf("valid_for must be a Go duration string: %w", err)
+	}
+	if duration < 0 {
+		return 0, fmt.Errorf("valid_for must not be negative")
+	}
+	return duration, nil
 }

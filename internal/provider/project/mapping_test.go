@@ -10,6 +10,7 @@ import (
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"google.golang.org/protobuf/testing/protocmp"
@@ -203,6 +204,66 @@ func TestProjectEnvironmentClassesFromModel(t *testing.T) {
 				Err: "Invalid Project Environment Class",
 			},
 		},
+		{
+			Name: "rejects_duplicate_order",
+			Input: []EnvironmentClassModel{
+				{
+					EnvironmentClassID: types.StringValue("class-1"),
+					Order:              types.Int64Value(0),
+				},
+				{
+					EnvironmentClassID: types.StringValue("class-2"),
+					Order:              types.Int64Value(0),
+				},
+			},
+			Expected: Expectation{
+				Err: "Duplicate Project Environment Class Order",
+			},
+		},
+		{
+			Name: "rejects_duplicate_environment_class_id",
+			Input: []EnvironmentClassModel{
+				{
+					EnvironmentClassID: types.StringValue("class-1"),
+					Order:              types.Int64Value(0),
+				},
+				{
+					EnvironmentClassID: types.StringValue("class-1"),
+					Order:              types.Int64Value(1),
+				},
+			},
+			Expected: Expectation{
+				Err: "Duplicate Project Environment Class",
+			},
+		},
+		{
+			Name: "rejects_duplicate_local_runner",
+			Input: []EnvironmentClassModel{
+				{
+					LocalRunner: types.BoolValue(true),
+					Order:       types.Int64Value(0),
+				},
+				{
+					LocalRunner: types.BoolValue(true),
+					Order:       types.Int64Value(1),
+				},
+			},
+			Expected: Expectation{
+				Err: "Duplicate Local Runner Environment Class",
+			},
+		},
+		{
+			Name: "rejects_negative_order",
+			Input: []EnvironmentClassModel{
+				{
+					EnvironmentClassID: types.StringValue("class-1"),
+					Order:              types.Int64Value(-1),
+				},
+			},
+			Expected: Expectation{
+				Err: "Invalid Project Environment Class Order",
+			},
+		},
 	}
 
 	for _, tc := range tests {
@@ -221,6 +282,107 @@ func TestProjectEnvironmentClassesFromModel(t *testing.T) {
 				t.Errorf("projectEnvironmentClassesFromModel() mismatch (-want +got):\n%s", diff)
 			}
 		})
+	}
+}
+
+func TestValidateProjectModel(t *testing.T) {
+	t.Parallel()
+
+	type Expectation struct {
+		Err string
+	}
+
+	tests := []struct {
+		Name     string
+		Mutate   func(*ProjectModel)
+		Expected Expectation
+	}{
+		{
+			Name:     "accepts_https_clone_url_and_relative_paths",
+			Expected: Expectation{},
+		},
+		{
+			Name: "accepts_scp_like_ssh_clone_url",
+			Mutate: func(input *ProjectModel) {
+				input.RepositoryCloneURL = types.StringValue("git@github.com:ona/example.git")
+			},
+			Expected: Expectation{},
+		},
+		{
+			Name: "rejects_bare_repository_value",
+			Mutate: func(input *ProjectModel) {
+				input.RepositoryCloneURL = types.StringValue("ona/example")
+			},
+			Expected: Expectation{
+				Err: "Invalid Project Repository Clone URL",
+			},
+		},
+		{
+			Name: "rejects_blank_branch",
+			Mutate: func(input *ProjectModel) {
+				input.Branch = types.StringValue("  ")
+			},
+			Expected: Expectation{
+				Err: "Missing Project Branch",
+			},
+		},
+		{
+			Name: "rejects_absolute_devcontainer_path",
+			Mutate: func(input *ProjectModel) {
+				input.DevcontainerFilePath = types.StringValue("/.devcontainer/devcontainer.json")
+			},
+			Expected: Expectation{
+				Err: "Invalid Project File Path",
+			},
+		},
+		{
+			Name: "rejects_parent_directory_automations_path",
+			Mutate: func(input *ProjectModel) {
+				input.AutomationsFilePath = types.StringValue("../automations.yaml")
+			},
+			Expected: Expectation{
+				Err: "Invalid Project File Path",
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			input := validProjectModel()
+			if tc.Mutate != nil {
+				tc.Mutate(&input)
+			}
+
+			var diags diag.Diagnostics
+			validateProjectModel(t.Context(), input, &diags)
+
+			var got Expectation
+			if diags.HasError() {
+				got.Err = diags[0].Summary()
+			}
+
+			if diff := cmp.Diff(tc.Expected, got); diff != "" {
+				t.Errorf("validateProjectModel() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func validProjectModel() ProjectModel {
+	return ProjectModel{
+		Name:                 types.StringValue("Example"),
+		RepositoryCloneURL:   types.StringValue("https://github.com/ona/example.git"),
+		Branch:               types.StringValue("main"),
+		DevcontainerFilePath: types.StringValue(".devcontainer/devcontainer.json"),
+		AutomationsFilePath:  types.StringValue(".ona/automations.yaml"),
+		EnvironmentClasses: []EnvironmentClassModel{
+			{
+				EnvironmentClassID: types.StringValue("class-1"),
+				Order:              types.Int64Value(0),
+			},
+		},
 	}
 }
 

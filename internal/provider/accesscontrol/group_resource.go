@@ -49,7 +49,7 @@ func (r *GroupResource) Metadata(ctx context.Context, req resource.MetadataReque
 
 func (r *GroupResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = resourceschema.Schema{
-		MarkdownDescription: "Ona custom group for organization access control.",
+		MarkdownDescription: "Ona custom group for organization access control. The group is created in the organization associated with the authenticated provider token.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
 				Computed:            true,
@@ -67,16 +67,16 @@ func (r *GroupResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 			},
 			"name": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Group name. Must be between 3 and 80 characters.",
+				MarkdownDescription: "Group name shown in Ona. Must be between 3 and 80 characters.",
 			},
 			"description": resourceschema.StringAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Group description. Must be at most 255 characters.",
+				MarkdownDescription: "Group description. Must be at most 255 characters. Omit to leave the description empty.",
 			},
 			"system_managed": resourceschema.BoolAttribute{
 				Computed:            true,
-				MarkdownDescription: "Whether this group is system-managed.",
+				MarkdownDescription: "Whether this group is system-managed by Ona rather than customer-managed.",
 				PlanModifiers: []planmodifier.Bool{
 					// Existing imports should not show unknown for stable API metadata during planning.
 					boolUseStateForUnknown(),
@@ -84,7 +84,7 @@ func (r *GroupResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 			},
 			"direct_share": resourceschema.BoolAttribute{
 				Computed:            true,
-				MarkdownDescription: "Whether this group is used for direct resource sharing.",
+				MarkdownDescription: "Whether this group is used by Ona for direct resource sharing.",
 				PlanModifiers: []planmodifier.Bool{
 					boolUseStateForUnknown(),
 				},

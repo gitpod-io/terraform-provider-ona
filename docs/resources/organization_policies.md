@@ -3,12 +3,12 @@
 page_title: "ona_organization_policies Resource - ona"
 subcategory: ""
 description: |-
-  Singleton Ona organization policy settings. Destroying this resource removes Terraform state only; it does not reset remote organization settings.
+  Singleton Ona organization policy settings. This resource updates the remote organization policy object in place. Destroying it removes Terraform state only; it does not reset remote organization settings.
 ---
 
 # ona_organization_policies (Resource)
 
-Singleton Ona organization policy settings. Destroying this resource removes Terraform state only; it does not reset remote organization settings.
+Singleton Ona organization policy settings. This resource updates the remote organization policy object in place. Destroying it removes Terraform state only; it does not reset remote organization settings.
 
 ## Example Usage
 
@@ -48,30 +48,30 @@ resource "ona_organization_policies" "example" {
 
 ### Required
 
-- `organization_id` (String) Organization ID whose singleton policy object is managed.
+- `organization_id` (String) Organization ID whose singleton policy object is managed. Changing this value replaces the Terraform resource address but still manages the target organization's singleton policies.
 
 ### Optional
 
-- `agent_policy` (Attributes) Agent-specific organization policy settings. (see [below for nested schema](#nestedatt--agent_policy))
+- `agent_policy` (Attributes) Agent-specific organization policy settings. Omit the block to leave agent policy fields unmanaged. (see [below for nested schema](#nestedatt--agent_policy))
 - `allow_local_runners` (Boolean) Whether local runners are allowed. The Ona API rejects enabling local runners through organization policies.
 - `allowed_editor_ids` (Set of String) Editor IDs allowed in the organization. The current Ona API cannot clear this field through Terraform; omit it to leave it unmanaged.
 - `archive_environments_after` (String) How long stopped environments remain inactive before archival. Must be a whole number of days between 24h and 720h. Use Go duration strings such as `30m`, `24h`, or `0s`.
 - `default_editor_id` (String) Default editor ID.
 - `default_environment_image` (String) Default container image when no repository image is defined.
 - `delete_archived_environments_after` (String) How long archived environments are kept before automatic deletion. `0s` disables automatic deletion; maximum is 672h. Use Go duration strings such as `30m`, `24h`, or `0s`.
-- `disable_from_scratch` (Boolean) Whether non-admin users can create blank environments without a Git or URL initializer.
-- `editor_version_restriction` (Attributes List) Editor version restrictions keyed by editor ID. (see [below for nested schema](#nestedatt--editor_version_restriction))
+- `disable_from_scratch` (Boolean) Whether non-admin users can create blank environments without a Git or URL initializer. Omit to leave the remote setting unmanaged.
+- `editor_version_restriction` (Attributes List) Editor version restrictions keyed by editor ID. Omit to leave editor version restrictions unmanaged. (see [below for nested schema](#nestedatt--editor_version_restriction))
 - `maximum_environment_lifetime` (String) How long environments may be reused. `0s` means no maximum; maximum is 4320h. Use Go duration strings such as `30m`, `24h`, or `0s`.
 - `maximum_environment_timeout` (String) Maximum timeout allowed for environments. `0s` means no limit; non-zero values must be at least `30m`. Use Go duration strings such as `30m`, `24h`, or `0s`.
-- `maximum_environments_per_user` (Number) Maximum total environments per user.
-- `maximum_running_environments_per_user` (Number) Maximum simultaneously running environments per user.
-- `members_create_projects` (Boolean) Whether organization members can create projects.
-- `members_require_projects` (Boolean) Whether non-admin users can only create environments from projects.
-- `port_sharing_disabled` (Boolean) Whether user-initiated port sharing is disabled.
-- `require_custom_domain_access` (Boolean) Whether users must access via a configured custom domain.
-- `restrict_account_creation_to_scim` (Boolean) Whether account creation is restricted to SCIM-provisioned users.
+- `maximum_environments_per_user` (Number) Maximum total environments per user. Omit to leave the remote setting unmanaged.
+- `maximum_running_environments_per_user` (Number) Maximum simultaneously running environments per user. Omit to leave the remote setting unmanaged.
+- `members_create_projects` (Boolean) Whether organization members can create projects. Configure together with `members_require_projects`.
+- `members_require_projects` (Boolean) Whether non-admin users can only create environments from projects. Configure together with `members_create_projects`.
+- `port_sharing_disabled` (Boolean) Whether user-initiated port sharing is disabled. Omit to leave the remote setting unmanaged.
+- `require_custom_domain_access` (Boolean) Whether users must access via a configured custom domain. Omit to leave the remote setting unmanaged.
+- `restrict_account_creation_to_scim` (Boolean) Whether account creation is restricted to SCIM-provisioned users. Omit to leave the remote setting unmanaged.
 - `security_policy_id` (String) Default security policy ID assigned to newly created environments. Set an empty string to clear.
-- `web_browser_disabled` (Boolean) Whether users can open the built-in web browser from environment pages.
+- `web_browser_disabled` (Boolean) Whether users can open the built-in web browser from environment pages. Omit to leave the remote setting unmanaged.
 
 ### Read-Only
 
@@ -83,7 +83,7 @@ resource "ona_organization_policies" "example" {
 Optional:
 
 - `allowed_agent_ids` (Set of String) Agent IDs users may select. Empty means all agents are allowed.
-- `command_deny_list` (Set of String) Commands agents are not allowed to execute.
+- `command_deny_list` (Set of String) Commands agents are not allowed to execute. Omit to leave the deny list unmanaged.
 - `conversation_sharing_policy` (String) Conversation sharing policy. Supported values are `disabled` and `organization`.
 - `max_subagents_per_environment` (Number) Maximum non-terminal sub-agents per environment. Valid range is 0-10.
 - `mcp_disabled` (Boolean) Whether MCP is disabled for agents.

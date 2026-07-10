@@ -20,5 +20,5 @@ provider "ona" {}
 
 ### Optional
 
-- `host` (String) Ona host. Defaults to `ONA_HOST` when set, otherwise `https://app.gitpod.io`.
-- `token` (String, Sensitive) Ona API token. Defaults to `ONA_TOKEN` when set. Use service-account tokens for Terraform automation.
+- `host` (String) Ona application host, including scheme when a custom host is used. Defaults to `ONA_HOST` when set, otherwise `https://app.gitpod.io`. Most configurations should omit this attribute.
+- `token` (String, Sensitive) Ona API token used by the provider. Defaults to `ONA_TOKEN` when set. Use a service-account token for automation and avoid committing this value to configuration.

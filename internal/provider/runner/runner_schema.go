@@ -13,7 +13,7 @@ import (
 
 func resourceSchema() resourceschema.Schema {
 	return resourceschema.Schema{
-		MarkdownDescription: "Ona runner.",
+		MarkdownDescription: "Ona runner registration. Use this resource to create a remote runner record, then deploy the runner with the generated setup output for the selected provider.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
 				Computed:            true,
@@ -24,39 +24,39 @@ func resourceSchema() resourceschema.Schema {
 			},
 			"runner_id": resourceschema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "Runner ID.",
+				MarkdownDescription: "Ona runner ID. Use this value when configuring runner environment classes, SCM integrations, and runner token flows.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 			"name": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Runner display name.",
+				MarkdownDescription: "Runner display name shown in Ona.",
 			},
 			"runner_provider": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Runner provider. Supported values are `aws_ec2` and `gcp`.",
+				MarkdownDescription: "Cloud provider for the runner. Supported values are `aws_ec2` and `gcp`. Changing this value replaces the runner.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"runner_manager_id": resourceschema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: "Runner manager ID for managed runners.",
+				MarkdownDescription: "Runner manager ID for managed runners. Most customer-managed runner configurations should omit this value. Changing it replaces the runner.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"kind": resourceschema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "Runner kind deduced by the API from the provider.",
+				MarkdownDescription: "Runner kind assigned by the Ona API from the selected provider.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 			"cloudformation_template_url": resourceschema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "CloudFormation template URL for AWS EC2 runner setup. This is null for non-AWS runners.",
+				MarkdownDescription: "CloudFormation template URL for AWS EC2 runner setup. This is populated only for `aws_ec2` runners and is null for GCP runners.",
 			},
 			"created_at": resourceschema.StringAttribute{
 				Computed:            true,
@@ -80,11 +80,11 @@ func resourceSchema() resourceschema.Schema {
 
 func resourceConfigurationSchema() resourceschema.SingleNestedBlock {
 	return resourceschema.SingleNestedBlock{
-		MarkdownDescription: "Runner configuration.",
+		MarkdownDescription: "Runner configuration applied to the remote runner. Some fields are provider defaults and are preserved in Terraform state after creation.",
 		Attributes: map[string]resourceschema.Attribute{
 			"region": resourceschema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: "Region hint for remote runners. Required for `aws_ec2` runners.",
+				MarkdownDescription: "Cloud region for the runner. Required for `aws_ec2` runners and omitted for providers that do not use this setting. Changing this value replaces the runner.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -92,31 +92,31 @@ func resourceConfigurationSchema() resourceschema.SingleNestedBlock {
 			"release_channel": resourceschema.StringAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Runner release channel. Supported values are `stable` and `latest`. Defaults to `stable`.",
+				MarkdownDescription: "Runner release channel. Supported values are `stable` and `latest`. Defaults to the provider value `stable`.",
 				Default:             stringdefault.StaticString("stable"),
 			},
 			"auto_update": resourceschema.BoolAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Whether the runner should automatically update itself. Defaults to `true`.",
+				MarkdownDescription: "Whether the runner should automatically update itself. Defaults to the provider value `true`.",
 				Default:             booldefault.StaticBool(true),
 			},
 			"devcontainer_image_cache_enabled": resourceschema.BoolAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Whether the shared devcontainer build cache is enabled for this runner. Defaults to `true`.",
+				MarkdownDescription: "Whether the shared devcontainer image build cache is enabled for this runner. Defaults to the provider value `true`.",
 				Default:             booldefault.StaticBool(true),
 			},
 			"log_level": resourceschema.StringAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Runner log level. Supported values are `debug`, `info`, `warn`, and `error`. Defaults to `info`.",
+				MarkdownDescription: "Runner log level. Supported values are `debug`, `info`, `warn`, and `error`. Defaults to the provider value `info`.",
 				Default:             stringdefault.StaticString("info"),
 			},
 		},
 		Blocks: map[string]resourceschema.Block{
 			"update_window": resourceschema.SingleNestedBlock{
-				MarkdownDescription: "Daily UTC window during which auto-updates may run.",
+				MarkdownDescription: "Daily UTC window during which runner auto-updates may run.",
 				Attributes: map[string]resourceschema.Attribute{
 					"start": resourceschema.StringAttribute{
 						Optional:            true,

@@ -54,7 +54,7 @@ func (r *EnvironmentClassResource) Metadata(ctx context.Context, req resource.Me
 
 func (r *EnvironmentClassResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = resourceschema.Schema{
-		MarkdownDescription: "Ona runner environment class. Destroying this resource disables the remote environment class and removes it from Terraform state because the Ona API does not expose an environment class delete operation.",
+		MarkdownDescription: "Ona runner environment class used by projects to select runner capacity. Destroying this resource disables the remote environment class and removes it from Terraform state because the Ona API does not expose an environment class delete operation.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
 				Computed:            true,
@@ -65,25 +65,25 @@ func (r *EnvironmentClassResource) Schema(ctx context.Context, req resource.Sche
 			},
 			"runner_id": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Runner ID this environment class belongs to.",
+				MarkdownDescription: "Runner ID this environment class belongs to. Changing this value replaces the environment class.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"display_name": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Environment class display name.",
+				MarkdownDescription: "Environment class display name shown to project and environment users.",
 			},
 			"description": resourceschema.StringAttribute{
 				Optional:            true,
 				Computed:            true,
 				Default:             stringdefault.StaticString(defaultEnvironmentClassDescription),
-				MarkdownDescription: "Environment class description.",
+				MarkdownDescription: "Environment class description. Defaults to `Environment class managed by Terraform.` when omitted.",
 			},
 			"configuration": resourceschema.MapAttribute{
 				Required:            true,
 				ElementType:         types.StringType,
-				MarkdownDescription: "Provider-specific environment class configuration as key/value strings.",
+				MarkdownDescription: "Provider-specific environment class configuration as key/value strings, such as machine type and disk size. Valid keys depend on the runner provider. Changing this map replaces the environment class.",
 				PlanModifiers: []planmodifier.Map{
 					mapplanmodifier.RequiresReplace(),
 				},
@@ -92,7 +92,7 @@ func (r *EnvironmentClassResource) Schema(ctx context.Context, req resource.Sche
 				Optional:            true,
 				Computed:            true,
 				Default:             booldefault.StaticBool(true),
-				MarkdownDescription: "Whether the environment class can be used to create environments.",
+				MarkdownDescription: "Whether the environment class can be selected for new environments. Defaults to the provider value `true`.",
 			},
 		},
 	}

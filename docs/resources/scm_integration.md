@@ -3,12 +3,12 @@
 page_title: "ona_scm_integration Resource - ona"
 subcategory: ""
 description: |-
-  Ona runner SCM integration.
+  Ona runner SCM integration. Use this to configure how a runner authenticates to source control systems for projects assigned to that runner.
 ---
 
 # ona_scm_integration (Resource)
 
-Ona runner SCM integration.
+Ona runner SCM integration. Use this to configure how a runner authenticates to source control systems for projects assigned to that runner.
 
 ## Example Usage
 
@@ -31,19 +31,19 @@ resource "ona_scm_integration" "github" {
 
 ### Required
 
-- `auth_mode` (String) Authentication mode. Supported values are `oauth` and `pat`.
-- `host` (String) SCM host.
-- `runner_id` (String) Runner ID this SCM integration belongs to.
-- `scm_id` (String) SCM ID from the runner configuration schema.
+- `auth_mode` (String) Authentication mode. Supported values are `oauth` and `pat`. Azure DevOps Server currently requires `pat`.
+- `host` (String) SCM host name, for example `github.com` or an Azure DevOps Server host. Changing this value replaces the integration.
+- `runner_id` (String) Runner ID this SCM integration belongs to. Changing this value replaces the integration.
+- `scm_id` (String) SCM provider ID from the runner configuration schema. Use values such as `github`, `azuredevops_entra`, or `azuredevops_server`. Changing this value replaces the integration.
 
 ### Optional
 
 > **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
 
 - `issuer_url` (String) Issuer URL for Azure DevOps Entra ID OAuth integrations. Required when `scm_id` is `azuredevops_entra` and `auth_mode` is `oauth`.
-- `oauth_client_id` (String) OAuth app client ID.
-- `oauth_client_secret` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) OAuth app client secret. This write-only value is sent to Ona but not stored in Terraform plan or state.
-- `oauth_client_secret_version` (String) User-managed version marker for resubmitting `oauth_client_secret` during rotation.
+- `oauth_client_id` (String) OAuth app client ID. Required when `auth_mode` is `oauth`; omit when `auth_mode` is `pat`.
+- `oauth_client_secret` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) OAuth app client secret. This write-only value is sent to Ona but is not stored in Terraform plan or state. Required when creating an OAuth integration or rotating the OAuth secret.
+- `oauth_client_secret_version` (String) User-managed version marker for resubmitting `oauth_client_secret` during rotation. Increment or otherwise change this value when supplying a new secret.
 - `virtual_directory` (String) Virtual directory path for Azure DevOps Server integrations, such as `/tfs`. Required only when `scm_id` is `azuredevops_server`.
 
 ### Read-Only

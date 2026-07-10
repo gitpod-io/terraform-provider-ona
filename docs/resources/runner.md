@@ -3,12 +3,12 @@
 page_title: "ona_runner Resource - ona"
 subcategory: ""
 description: |-
-  Ona runner.
+  Ona runner registration. Use this resource to create a remote runner record, then deploy the runner with the generated setup output for the selected provider.
 ---
 
 # ona_runner (Resource)
 
-Ona runner.
+Ona runner registration. Use this resource to create a remote runner record, then deploy the runner with the generated setup output for the selected provider.
 
 ## Example Usage
 
@@ -41,22 +41,22 @@ output "cloudformation_template_url" {
 
 ### Required
 
-- `name` (String) Runner display name.
-- `runner_provider` (String) Runner provider. Supported values are `aws_ec2` and `gcp`.
+- `name` (String) Runner display name shown in Ona.
+- `runner_provider` (String) Cloud provider for the runner. Supported values are `aws_ec2` and `gcp`. Changing this value replaces the runner.
 
 ### Optional
 
-- `configuration` (Block, Optional) Runner configuration. (see [below for nested schema](#nestedblock--configuration))
-- `runner_manager_id` (String) Runner manager ID for managed runners.
+- `configuration` (Block, Optional) Runner configuration applied to the remote runner. Some fields are provider defaults and are preserved in Terraform state after creation. (see [below for nested schema](#nestedblock--configuration))
+- `runner_manager_id` (String) Runner manager ID for managed runners. Most customer-managed runner configurations should omit this value. Changing it replaces the runner.
 
 ### Read-Only
 
-- `cloudformation_template_url` (String) CloudFormation template URL for AWS EC2 runner setup. This is null for non-AWS runners.
+- `cloudformation_template_url` (String) CloudFormation template URL for AWS EC2 runner setup. This is populated only for `aws_ec2` runners and is null for GCP runners.
 - `created_at` (String) Time when the runner was created.
 - `creator` (Attributes) Identity that created the runner. (see [below for nested schema](#nestedatt--creator))
 - `id` (String) Terraform resource ID. This is the same value as `runner_id`.
-- `kind` (String) Runner kind deduced by the API from the provider.
-- `runner_id` (String) Runner ID.
+- `kind` (String) Runner kind assigned by the Ona API from the selected provider.
+- `runner_id` (String) Ona runner ID. Use this value when configuring runner environment classes, SCM integrations, and runner token flows.
 - `status` (Attributes) Runner status reported by the runner. (see [below for nested schema](#nestedatt--status))
 - `updated_at` (String) Time when the runner was last updated.
 
@@ -65,12 +65,12 @@ output "cloudformation_template_url" {
 
 Optional:
 
-- `auto_update` (Boolean) Whether the runner should automatically update itself. Defaults to `true`.
-- `devcontainer_image_cache_enabled` (Boolean) Whether the shared devcontainer build cache is enabled for this runner. Defaults to `true`.
-- `log_level` (String) Runner log level. Supported values are `debug`, `info`, `warn`, and `error`. Defaults to `info`.
-- `region` (String) Region hint for remote runners. Required for `aws_ec2` runners.
-- `release_channel` (String) Runner release channel. Supported values are `stable` and `latest`. Defaults to `stable`.
-- `update_window` (Block, Optional) Daily UTC window during which auto-updates may run. (see [below for nested schema](#nestedblock--configuration--update_window))
+- `auto_update` (Boolean) Whether the runner should automatically update itself. Defaults to the provider value `true`.
+- `devcontainer_image_cache_enabled` (Boolean) Whether the shared devcontainer image build cache is enabled for this runner. Defaults to the provider value `true`.
+- `log_level` (String) Runner log level. Supported values are `debug`, `info`, `warn`, and `error`. Defaults to the provider value `info`.
+- `region` (String) Cloud region for the runner. Required for `aws_ec2` runners and omitted for providers that do not use this setting. Changing this value replaces the runner.
+- `release_channel` (String) Runner release channel. Supported values are `stable` and `latest`. Defaults to the provider value `stable`.
+- `update_window` (Block, Optional) Daily UTC window during which runner auto-updates may run. (see [below for nested schema](#nestedblock--configuration--update_window))
 
 <a id="nestedblock--configuration--update_window"></a>
 ### Nested Schema for `configuration.update_window`

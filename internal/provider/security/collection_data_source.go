@@ -51,7 +51,7 @@ func (d *PolicyCollectionDataSource) Metadata(ctx context.Context, req datasourc
 
 func (d *PolicyCollectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = datasourceschema.Schema{
-		MarkdownDescription: "Lists Ona security policies for an organization.",
+		MarkdownDescription: "Lists Ona security policies for an organization, optionally filtered by name search or explicit IDs.",
 		Attributes: map[string]datasourceschema.Attribute{
 			"organization_id": datasourceschema.StringAttribute{
 				Required:            true,
@@ -59,12 +59,12 @@ func (d *PolicyCollectionDataSource) Schema(ctx context.Context, req datasource.
 			},
 			"search": datasourceschema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: "Search string for filtering security policies by name.",
+				MarkdownDescription: "Search string for filtering security policies by name. Omit to list policies without a name search filter.",
 			},
 			"security_policy_ids": datasourceschema.SetAttribute{
 				Optional:            true,
 				ElementType:         types.StringType,
-				MarkdownDescription: "Security policy IDs to include. The API accepts at most 25 IDs.",
+				MarkdownDescription: "Security policy IDs to include. The API accepts at most 25 IDs. Omit to list policies without an ID filter.",
 			},
 			"policies": datasourceschema.ListNestedAttribute{
 				Computed:            true,

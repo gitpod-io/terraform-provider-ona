@@ -3,12 +3,12 @@
 page_title: "ona_service_account Resource - ona"
 subcategory: ""
 description: |-
-  Ona service account.
+  Ona service account for non-human API access. Use service accounts for Terraform automation and issue tokens with the ona_service_account_token ephemeral resource.
 ---
 
 # ona_service_account (Resource)
 
-Ona service account.
+Ona service account for non-human API access. Use service accounts for Terraform automation and issue tokens with the `ona_service_account_token` ephemeral resource.
 
 ## Example Usage
 
@@ -25,12 +25,12 @@ resource "ona_service_account" "ci" {
 
 ### Required
 
-- `name` (String) Service account display name.
-- `valid_until` (String) RFC3339 timestamp when this service account expires.
+- `name` (String) Service account display name shown in Ona.
+- `valid_until` (String) RFC3339 timestamp when this service account expires, for example `2030-01-02T03:04:05Z`. Changing this value replaces the service account.
 
 ### Optional
 
-- `description` (String) Service account description.
+- `description` (String) Service account description. Omit to leave the description empty.
 
 ### Read-Only
 
@@ -39,7 +39,7 @@ resource "ona_service_account" "ci" {
 - `id` (String) Terraform resource ID. This is the same value as `service_account_id`.
 - `organization_id` (String) Organization ID that owns the service account.
 - `service_account_id` (String) Service account ID.
-- `system_managed` (Boolean) Whether this service account is system-managed.
+- `system_managed` (Boolean) Whether this service account is system-managed by Ona rather than customer-managed.
 
 <a id="nestedatt--creator"></a>
 ### Nested Schema for `creator`

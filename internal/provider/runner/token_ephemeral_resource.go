@@ -40,7 +40,7 @@ func (r *TokenEphemeralResource) Metadata(ctx context.Context, req ephemeral.Met
 
 func (r *TokenEphemeralResource) Schema(ctx context.Context, req ephemeral.SchemaRequest, resp *ephemeral.SchemaResponse) {
 	resp.Schema = ephemeralschema.Schema{
-		MarkdownDescription: "Creates a short-lived Ona runner registration token without storing it in Terraform plan or state. Reference the token only from Terraform ephemeral contexts such as provider configurations, write-only arguments, or child module ephemeral outputs.",
+		MarkdownDescription: "Creates a short-lived Ona runner registration token without storing it in Terraform plan or state. Use it only from Terraform ephemeral contexts such as provider configurations, write-only arguments, or child module ephemeral outputs.",
 		Attributes: map[string]ephemeralschema.Attribute{
 			"runner_id": ephemeralschema.StringAttribute{
 				Required:            true,

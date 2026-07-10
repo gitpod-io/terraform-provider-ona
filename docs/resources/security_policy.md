@@ -3,12 +3,12 @@
 page_title: "ona_security_policy Resource - ona"
 subcategory: ""
 description: |-
-  Ona security policy for environment runtime controls.
+  Ona security policy for environment runtime controls. Attach the resulting policy through organization policy settings to make it the default for new environments.
 ---
 
 # ona_security_policy (Resource)
 
-Ona security policy for environment runtime controls.
+Ona security policy for environment runtime controls. Attach the resulting policy through organization policy settings to make it the default for new environments.
 
 ## Example Usage
 
@@ -74,12 +74,12 @@ resource "ona_security_policy" "baseline" {
 
 ### Required
 
-- `name` (String) Security policy name.
-- `organization_id` (String) Organization ID that owns the security policy.
+- `name` (String) Security policy name shown in Ona. Must be between 1 and 80 characters.
+- `organization_id` (String) Organization ID that owns the security policy. Changing this value replaces the policy.
 
 ### Optional
 
-- `spec` (Block, Optional) Runtime security controls enforced for environments using this policy. (see [below for nested schema](#nestedblock--spec))
+- `spec` (Block, Optional) Runtime security controls enforced for environments using this policy. Configure one or more policy sections depending on what the policy should control. (see [below for nested schema](#nestedblock--spec))
 
 ### Read-Only
 
@@ -92,11 +92,11 @@ resource "ona_security_policy" "baseline" {
 
 Optional:
 
-- `block_devices` (Block, Optional) Block device access policy. (see [below for nested schema](#nestedblock--spec--block_devices))
-- `data` (Block, Optional) Data flow policy. (see [below for nested schema](#nestedblock--spec--data))
-- `executables` (Block, Optional) Executable access policy. (see [below for nested schema](#nestedblock--spec--executables))
-- `files` (Block, Optional) File access policy. (see [below for nested schema](#nestedblock--spec--files))
-- `ports` (Block, Optional) Port access policy. (see [below for nested schema](#nestedblock--spec--ports))
+- `block_devices` (Block, Optional) Block device access policy for environment runtime controls. (see [below for nested schema](#nestedblock--spec--block_devices))
+- `data` (Block, Optional) Data flow policy. Rules describe allowed or blocked movement from a source to a destination. (see [below for nested schema](#nestedblock--spec--data))
+- `executables` (Block, Optional) Executable access policy. Rules match executable paths inside the environment. (see [below for nested schema](#nestedblock--spec--executables))
+- `files` (Block, Optional) File access policy. Rules match file paths inside the environment and can control read and write actions separately. (see [below for nested schema](#nestedblock--spec--files))
+- `ports` (Block, Optional) Port access policy. Rules match inclusive TCP/UDP port ranges from 0 through 65535. (see [below for nested schema](#nestedblock--spec--ports))
 
 <a id="nestedblock--spec--block_devices"></a>
 ### Nested Schema for `spec.block_devices`
@@ -144,7 +144,7 @@ Optional:
 
 - `file` (String) Source file path.
 - `integration` (String) Source integration ID.
-- `selector` (String) Source-dependent selector.
+- `selector` (String) Source-dependent selector for narrowing what data within the source is matched.
 
 
 
@@ -166,7 +166,7 @@ Optional:
 Required:
 
 - `effect` (String) Effect for this executable path. Supported values are `allow`, `block`, and `audit`.
-- `path` (String) Executable path.
+- `path` (String) Executable path inside the environment.
 
 
 
@@ -179,7 +179,7 @@ Required:
 
 Optional:
 
-- `default_actions` (Set of String) Actions applied to file rules that omit actions. Supported values are `read` and `write`.
+- `default_actions` (Set of String) Actions applied to file rules that omit actions. Supported values are `read` and `write`; omit to use the API default.
 - `rule` (Block List) File path rule. (see [below for nested schema](#nestedblock--spec--files--rule))
 
 <a id="nestedblock--spec--files--rule"></a>
@@ -188,11 +188,11 @@ Optional:
 Required:
 
 - `effect` (String) Effect for this file path. Supported values are `allow`, `block`, and `audit`.
-- `path` (String) File path.
+- `path` (String) File path inside the environment.
 
 Optional:
 
-- `actions` (Set of String) File actions controlled by this rule. Supported values are `read` and `write`.
+- `actions` (Set of String) File actions controlled by this rule. Supported values are `read` and `write`; omit to use `default_actions`.
 
 
 
@@ -213,8 +213,8 @@ Optional:
 Required:
 
 - `effect` (String) Effect for this port range. Supported values are `allow`, `block`, and `audit`.
-- `range_from` (Number) First port in the range.
-- `range_to` (Number) Last port in the range.
+- `range_from` (Number) First port in the inclusive range. Must be between 0 and 65535.
+- `range_to` (Number) Last port in the inclusive range. Must be between `range_from` and 65535.
 
 ## Import
 

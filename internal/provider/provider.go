@@ -55,11 +55,11 @@ func (p *OnaProvider) Schema(ctx context.Context, req provider.SchemaRequest, re
 		MarkdownDescription: "The Ona provider manages Ona resources with Terraform.",
 		Attributes: map[string]schema.Attribute{
 			"host": schema.StringAttribute{
-				MarkdownDescription: "Ona host. Defaults to `ONA_HOST` when set, otherwise `https://app.gitpod.io`.",
+				MarkdownDescription: "Ona application host, including scheme when a custom host is used. Defaults to `ONA_HOST` when set, otherwise `https://app.gitpod.io`. Most configurations should omit this attribute.",
 				Optional:            true,
 			},
 			"token": schema.StringAttribute{
-				MarkdownDescription: "Ona API token. Defaults to `ONA_TOKEN` when set. Use service-account tokens for Terraform automation.",
+				MarkdownDescription: "Ona API token used by the provider. Defaults to `ONA_TOKEN` when set. Use a service-account token for automation and avoid committing this value to configuration.",
 				Optional:            true,
 				Sensitive:           true,
 			},

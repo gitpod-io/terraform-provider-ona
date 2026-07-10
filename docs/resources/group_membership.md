@@ -3,12 +3,12 @@
 page_title: "ona_group_membership Resource - ona"
 subcategory: ""
 description: |-
-  Ona service-account group membership.
+  Ona service-account group membership. Use this resource to add one service account to one group.
 ---
 
 # ona_group_membership (Resource)
 
-Ona service-account group membership.
+Ona service-account group membership. Use this resource to add one service account to one group.
 
 ## Example Usage
 
@@ -35,8 +35,8 @@ resource "ona_group_membership" "terraform_service_account" {
 
 ### Required
 
-- `group_id` (String) Group ID.
-- `service_account_id` (String) Service account ID to add to the group.
+- `group_id` (String) Group ID to add the service account to. Changing this value replaces the membership.
+- `service_account_id` (String) Service account ID to add to the group. Changing this value replaces the membership.
 
 ### Read-Only
 

@@ -3,12 +3,12 @@
 page_title: "ona_runner_token Ephemeral Resource - ona"
 subcategory: ""
 description: |-
-  Creates a short-lived Ona runner registration token without storing it in Terraform plan or state. Reference the token only from Terraform ephemeral contexts such as provider configurations, write-only arguments, or child module ephemeral outputs.
+  Creates a short-lived Ona runner registration token without storing it in Terraform plan or state. Use it only from Terraform ephemeral contexts such as provider configurations, write-only arguments, or child module ephemeral outputs.
 ---
 
 # ona_runner_token (Ephemeral Resource)
 
-Creates a short-lived Ona runner registration token without storing it in Terraform plan or state. Reference the token only from Terraform ephemeral contexts such as provider configurations, write-only arguments, or child module ephemeral outputs.
+Creates a short-lived Ona runner registration token without storing it in Terraform plan or state. Use it only from Terraform ephemeral contexts such as provider configurations, write-only arguments, or child module ephemeral outputs.
 
 ## Example Usage
 

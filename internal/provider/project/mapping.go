@@ -6,6 +6,7 @@ package project
 import (
 	"context"
 	"fmt"
+	"math"
 	"sort"
 	"time"
 
@@ -144,8 +145,32 @@ func projectEnvironmentClassesFromModel(values []EnvironmentClassModel, root pat
 		return nil, diags
 	}
 	classes := make([]*v1.ProjectEnvironmentClass, 0, len(values))
+	seenOrders := map[int64]int{}
+	seenEnvironmentClassIDs := map[string]int{}
+	localRunnerIndex := -1
 	for i, value := range values {
 		p := root.AtListIndex(i)
+		if value.Order.IsUnknown() {
+			if !allowUnknown {
+				diags.AddAttributeError(p.AtName("order"), "Unknown Project Environment Class Order", "order must be known before apply.")
+			}
+			continue
+		}
+		if value.Order.IsNull() {
+			diags.AddAttributeError(p.AtName("order"), "Missing Project Environment Class Order", "Set order for each environment_class block.")
+			continue
+		}
+		order := value.Order.ValueInt64()
+		if order < 0 || order > math.MaxInt32 {
+			diags.AddAttributeError(p.AtName("order"), "Invalid Project Environment Class Order", "order must be between 0 and 2147483647.")
+			continue
+		}
+		if previous, ok := seenOrders[order]; ok {
+			diags.AddAttributeError(p.AtName("order"), "Duplicate Project Environment Class Order", fmt.Sprintf("order must be unique across environment_class blocks; this value is already used by environment_class.%d.", previous))
+			continue
+		}
+		seenOrders[order] = i
+
 		idUnknown := value.EnvironmentClassID.IsUnknown()
 		hasID := isKnownString(value.EnvironmentClassID) || (allowUnknown && idUnknown)
 		hasLocalRunner := isKnownBool(value.LocalRunner) && value.LocalRunner.ValueBool()
@@ -159,8 +184,23 @@ func projectEnvironmentClassesFromModel(values []EnvironmentClassModel, root pat
 			}
 			continue
 		}
+		if hasID {
+			id := value.EnvironmentClassID.ValueString()
+			if previous, ok := seenEnvironmentClassIDs[id]; ok {
+				diags.AddAttributeError(p.AtName("environment_class_id"), "Duplicate Project Environment Class", fmt.Sprintf("environment_class_id must be unique across environment_class blocks; this value is already used by environment_class.%d.", previous))
+				continue
+			}
+			seenEnvironmentClassIDs[id] = i
+		}
+		if hasLocalRunner {
+			if localRunnerIndex >= 0 {
+				diags.AddAttributeError(p.AtName("local_runner"), "Duplicate Local Runner Environment Class", fmt.Sprintf("Only one environment_class block can set local_runner = true; it is already set by environment_class.%d.", localRunnerIndex))
+				continue
+			}
+			localRunnerIndex = i
+		}
 		class := &v1.ProjectEnvironmentClass{
-			Order: int32(value.Order.ValueInt64()),
+			Order: int32(order),
 		}
 		if hasID {
 			class.EnvironmentClass = &v1.ProjectEnvironmentClass_EnvironmentClassId{

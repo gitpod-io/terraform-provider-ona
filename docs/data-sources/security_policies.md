@@ -3,12 +3,12 @@
 page_title: "ona_security_policies Data Source - ona"
 subcategory: ""
 description: |-
-  Lists Ona security policies for an organization.
+  Lists Ona security policies for an organization, optionally filtered by name search or explicit IDs.
 ---
 
 # ona_security_policies (Data Source)
 
-Lists Ona security policies for an organization.
+Lists Ona security policies for an organization, optionally filtered by name search or explicit IDs.
 
 ## Example Usage
 
@@ -28,8 +28,8 @@ data "ona_security_policies" "example" {
 
 ### Optional
 
-- `search` (String) Search string for filtering security policies by name.
-- `security_policy_ids` (Set of String) Security policy IDs to include. The API accepts at most 25 IDs.
+- `search` (String) Search string for filtering security policies by name. Omit to list policies without a name search filter.
+- `security_policy_ids` (Set of String) Security policy IDs to include. The API accepts at most 25 IDs. Omit to list policies without an ID filter.
 
 ### Read-Only
 
