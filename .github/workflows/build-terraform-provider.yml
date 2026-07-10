@@ -173,8 +173,8 @@ jobs:
       - name: Validate publish inputs and external prerequisites
         run: scripts/preflight-publish-release.sh
 
-  publish-release:
-    name: Publish public provider release
+  create-release:
+    name: Create GitHub release
     needs: [verify, resolve-prerelease-version, publish-preflight]
     if: ${{ inputs.publish_release }}
     runs-on: ubuntu-latest
@@ -200,7 +200,7 @@ jobs:
             go.sum
             tools/go.sum
 
-      - name: Publish release
+      - name: Create GitHub release
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
@@ -213,7 +213,7 @@ jobs:
 
   wait-for-registry:
     name: Wait for Terraform Registry
-    needs: [publish-release, resolve-prerelease-version]
+    needs: [create-release, resolve-prerelease-version]
     if: ${{ inputs.publish_release }}
     runs-on: ubuntu-latest
     permissions:
