@@ -6,6 +6,15 @@ tasks:
       - manual
       - prebuild
 
+  format:
+    name: Format
+    command: make fmt
+    dependsOn:
+      - install-dependencies
+    triggeredBy:
+      - manual
+      - prebuild
+
   build:
     name: Build
     command: make build
@@ -21,13 +30,14 @@ tasks:
     command: make lint
     dependsOn:
       - install-dependencies
+      - format
     triggeredBy:
       - manual
       - prebuild
 
   test:
     name: Test
-    command: make test testacc
+    command: make test
     dependsOn:
       - build
     triggeredBy:
