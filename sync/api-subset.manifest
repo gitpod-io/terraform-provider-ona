@@ -15,3 +15,4 @@ api/go/tools/terraform
 # synced module to compile in isolation. It only depends on already-synced
 # paths (api/go/v1 and api/go/tools/logfields), so the graph stays closed.
 api/go/agentops/v1
+api/go/tools/notyetpublic
