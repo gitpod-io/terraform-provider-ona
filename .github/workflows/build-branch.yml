@@ -14,7 +14,6 @@ jobs:
     name: Terraform provider CI
     uses: ./.github/workflows/build-terraform-provider.yml
     permissions:
-      actions: write
       contents: read
     secrets: inherit
     with:

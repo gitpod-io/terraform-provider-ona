@@ -26,6 +26,13 @@ on:
         required: false
         type: string
         default: ""
+    outputs:
+      version:
+        description: Published release version, including the leading v.
+        value: ${{ jobs.resolve-prerelease-version.outputs.version }}
+      version_no_v:
+        description: Published release version without the leading v.
+        value: ${{ jobs.resolve-prerelease-version.outputs.version_no_v }}
 
 permissions:
   contents: read
@@ -210,31 +217,3 @@ jobs:
           RELEASE_REPOSITORY: gitpod-io/terraform-provider-ona
           VERSION: ${{ needs.resolve-prerelease-version.outputs.version }}
         run: scripts/publish-release.sh
-
-  trigger-registry-verification:
-    name: Start Registry verification
-    needs: [create-release, resolve-prerelease-version]
-    if: ${{ inputs.publish_release }}
-    runs-on: ubuntu-latest
-    permissions:
-      actions: write
-      contents: read
-    steps:
-      - name: Start Registry verification workflow
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REF_NAME: ${{ github.ref_name }}
-          REGISTRY_WORKFLOW: registry-init-check.yml
-          SOURCE: ${{ env.REGISTRY_PROVIDER_SOURCE }}
-          VERSION: ${{ needs.resolve-prerelease-version.outputs.version_no_v }}
-          TIMEOUT_MINUTES: ${{ env.REGISTRY_TIMEOUT_MINUTES }}
-        run: |
-          set -euo pipefail
-
-          gh workflow run "$REGISTRY_WORKFLOW" \
-            --ref "$REF_NAME" \
-            --field source="$SOURCE" \
-            --field version="$VERSION" \
-            --field timeout_minutes="$TIMEOUT_MINUTES"
-
-          echo "Started Terraform Registry verification for ${SOURCE} ${VERSION}."
