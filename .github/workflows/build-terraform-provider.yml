@@ -221,53 +221,18 @@ jobs:
     outputs:
       source: ${{ steps.registry.outputs.source }}
       version: ${{ steps.registry.outputs.version }}
+      timeout_minutes: ${{ steps.registry.outputs.timeout_minutes }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
       - name: Wait for provider version
         id: registry
         env:
           SOURCE: ${{ env.REGISTRY_PROVIDER_SOURCE }}
           VERSION: ${{ needs.resolve-prerelease-version.outputs.version_no_v }}
           TIMEOUT_MINUTES: ${{ env.REGISTRY_TIMEOUT_MINUTES }}
-        run: |
-          set -euo pipefail
-
-          IFS=/ read -r first second third rest <<< "$SOURCE"
-
-          if [[ -n "${rest:-}" || -z "${second:-}" ]]; then
-            echo "Expected source to be namespace/type or registry.terraform.io/namespace/type."
-            exit 1
-          fi
-
-          if [[ -z "${third:-}" ]]; then
-            namespace="$first"
-            type="$second"
-          elif [[ "$first" == "registry.terraform.io" ]]; then
-            namespace="$second"
-            type="$third"
-          else
-            echo "Only registry.terraform.io sources are supported by this check."
-            exit 1
-          fi
-
-          endpoint="https://registry.terraform.io/v1/providers/${namespace}/${type}/versions"
-          deadline=$((SECONDS + TIMEOUT_MINUTES * 60))
-
-          while true; do
-            if curl -fsSL "$endpoint" | jq -e --arg version "$VERSION" '.versions[]? | select(.version == $version)' >/dev/null; then
-              echo "Terraform Registry has ${SOURCE} ${VERSION}."
-              echo "source=${SOURCE}" >>"$GITHUB_OUTPUT"
-              echo "version=${VERSION}" >>"$GITHUB_OUTPUT"
-              exit 0
-            fi
-
-            if (( SECONDS >= deadline )); then
-              echo "Timed out waiting for ${SOURCE} ${VERSION} in the Terraform Registry."
-              exit 1
-            fi
-
-            echo "Waiting for ${SOURCE} ${VERSION}..."
-            sleep 60
-          done
+        run: scripts/wait-for-registry-provider.sh
 
   registry-init-check:
     name: Terraform init (${{ matrix.runner }})
@@ -308,4 +273,25 @@ jobs:
           EOF
 
       - name: Initialize provider
-        run: terraform init -upgrade -no-color
+        env:
+          TIMEOUT_MINUTES: ${{ needs.wait-for-registry.outputs.timeout_minutes }}
+        run: |
+          set +e
+          deadline=$((SECONDS + TIMEOUT_MINUTES * 60))
+
+          while true; do
+            terraform init -upgrade -no-color
+            status=$?
+
+            if [[ $status -eq 0 ]]; then
+              exit 0
+            fi
+
+            if ((SECONDS >= deadline)); then
+              echo "Timed out waiting for terraform init to succeed."
+              exit "$status"
+            fi
+
+            rm -rf .terraform .terraform.lock.hcl
+            sleep 60
+          done

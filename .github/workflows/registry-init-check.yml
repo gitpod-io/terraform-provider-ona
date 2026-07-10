@@ -28,65 +28,20 @@ jobs:
     name: Wait for Terraform Registry
     runs-on: ubuntu-latest
     outputs:
-      source: ${{ steps.release.outputs.source }}
-      version: ${{ steps.release.outputs.version }}
-      timeout_minutes: ${{ steps.release.outputs.timeout_minutes }}
+      source: ${{ steps.registry.outputs.source }}
+      version: ${{ steps.registry.outputs.version }}
+      timeout_minutes: ${{ steps.registry.outputs.timeout_minutes }}
     steps:
-      - name: Capture release inputs
-        id: release
-        env:
-          SOURCE: ${{ inputs.source }}
-          VERSION: ${{ inputs.version }}
-          TIMEOUT_MINUTES: ${{ inputs.timeout_minutes }}
-        run: |
-          {
-            echo "source=${SOURCE}"
-            echo "version=${VERSION}"
-            echo "timeout_minutes=${TIMEOUT_MINUTES}"
-          } >> "$GITHUB_OUTPUT"
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
       - name: Wait for provider version
+        id: registry
         env:
           SOURCE: ${{ inputs.source }}
           VERSION: ${{ inputs.version }}
           TIMEOUT_MINUTES: ${{ inputs.timeout_minutes }}
-        run: |
-          set -euo pipefail
-
-          IFS=/ read -r first second third rest <<< "$SOURCE"
-
-          if [[ -n "${rest:-}" || -z "${second:-}" ]]; then
-            echo "Expected source to be namespace/type or registry.terraform.io/namespace/type."
-            exit 1
-          fi
-
-          if [[ -z "${third:-}" ]]; then
-            namespace="$first"
-            type="$second"
-          elif [[ "$first" == "registry.terraform.io" ]]; then
-            namespace="$second"
-            type="$third"
-          else
-            echo "Only registry.terraform.io sources are supported by this check."
-            exit 1
-          fi
-
-          endpoint="https://registry.terraform.io/v1/providers/${namespace}/${type}/versions"
-          deadline=$((SECONDS + TIMEOUT_MINUTES * 60))
-
-          while true; do
-            if curl -fsSL "$endpoint" | jq -e --arg version "$VERSION" '.versions[]? | select(.version == $version)' >/dev/null; then
-              echo "Terraform Registry has ${SOURCE} ${VERSION}."
-              exit 0
-            fi
-
-            if (( SECONDS >= deadline )); then
-              echo "Timed out waiting for ${SOURCE} ${VERSION} in the Terraform Registry."
-              exit 1
-            fi
-
-            echo "Waiting for ${SOURCE} ${VERSION}..."
-            sleep 60
-          done
+        run: scripts/wait-for-registry-provider.sh
 
   init-check:
     name: Terraform init (${{ matrix.runner }})
@@ -135,7 +90,7 @@ jobs:
               exit 0
             fi
 
-            if (( SECONDS >= deadline )); then
+            if ((SECONDS >= deadline)); then
               echo "Timed out waiting for terraform init to succeed."
               exit "$status"
             fi
