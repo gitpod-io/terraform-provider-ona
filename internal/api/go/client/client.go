@@ -103,6 +103,7 @@ type ManagementPlaneMock struct {
 	UserService                  *mock.MockUserServiceClient
 	SecurityService              *mock.MockSecurityServiceClient
 	SecretService                *mock.MockSecretServiceClient
+	ServiceAccountService        *mock.MockServiceAccountServiceClient
 	SessionService               *mock.MockSessionServiceClient
 	GatewayService               *mock.MockGatewayServiceClient
 	RunnerManagerService         *mock.MockRunnerManagerServiceClient
@@ -136,6 +137,7 @@ func (m *ManagementPlaneMock) Client() *ManagementPlane {
 		userService:                  m.UserService,
 		securityService:              m.SecurityService,
 		secretService:                m.SecretService,
+		serviceAccountService:        m.ServiceAccountService,
 		sessionService:               m.SessionService,
 		gatewayService:               m.GatewayService,
 		runnerManagerService:         m.RunnerManagerService,
@@ -170,6 +172,7 @@ func NewMock(ctrl *gomock.Controller) *ManagementPlaneMock {
 		UserService:                  mock.NewMockUserServiceClient(ctrl),
 		SecurityService:              mock.NewMockSecurityServiceClient(ctrl),
 		SecretService:                mock.NewMockSecretServiceClient(ctrl),
+		ServiceAccountService:        mock.NewMockServiceAccountServiceClient(ctrl),
 		SessionService:               mock.NewMockSessionServiceClient(ctrl),
 		GatewayService:               mock.NewMockGatewayServiceClient(ctrl),
 		RunnerManagerService:         mock.NewMockRunnerManagerServiceClient(ctrl),
@@ -223,6 +226,7 @@ func New(baseURL string, opts ...Option) (*ManagementPlane, error) {
 		userService:                  v1connect.NewUserServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		securityService:              v1connect.NewSecurityServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		secretService:                v1connect.NewSecretServiceClient(o.httpClient, o.baseURL, clientOpts...),
+		serviceAccountService:        v1connect.NewServiceAccountServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		sessionService:               v1connect.NewSessionServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		gatewayService:               v1connect.NewGatewayServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		runnerManagerService:         v1connect.NewRunnerManagerServiceClient(o.httpClient, o.baseURL, clientOpts...),
@@ -255,6 +259,7 @@ type ManagementPlane struct {
 	userService                  v1connect.UserServiceClient
 	securityService              v1connect.SecurityServiceClient
 	secretService                v1connect.SecretServiceClient
+	serviceAccountService        v1connect.ServiceAccountServiceClient
 	sessionService               v1connect.SessionServiceClient
 	gatewayService               v1connect.GatewayServiceClient
 	runnerManagerService         v1connect.RunnerManagerServiceClient
@@ -348,6 +353,10 @@ func (g *ManagementPlane) SecurityService() v1connect.SecurityServiceClient {
 
 func (g *ManagementPlane) SecretService() v1connect.SecretServiceClient {
 	return g.secretService
+}
+
+func (g *ManagementPlane) ServiceAccountService() v1connect.ServiceAccountServiceClient {
+	return g.serviceAccountService
 }
 
 func (g *ManagementPlane) SessionService() v1connect.SessionServiceClient {

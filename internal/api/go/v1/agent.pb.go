@@ -106,7 +106,10 @@ const (
 	// Deprecated: Marked as deprecated in gitpod/v1/agent.proto.
 	CodexOpenAIModel_CODEX_OPEN_AI_MODEL_GPT_5_3_CODEX_SPARK CodexOpenAIModel = 5
 	// Deprecated: Marked as deprecated in gitpod/v1/agent.proto.
-	CodexOpenAIModel_CODEX_OPEN_AI_MODEL_GPT_5_2 CodexOpenAIModel = 6
+	CodexOpenAIModel_CODEX_OPEN_AI_MODEL_GPT_5_2       CodexOpenAIModel = 6
+	CodexOpenAIModel_CODEX_OPEN_AI_MODEL_GPT_5_6_SOL   CodexOpenAIModel = 7
+	CodexOpenAIModel_CODEX_OPEN_AI_MODEL_GPT_5_6_TERRA CodexOpenAIModel = 8
+	CodexOpenAIModel_CODEX_OPEN_AI_MODEL_GPT_5_6_LUNA  CodexOpenAIModel = 9
 )
 
 // Enum value maps for CodexOpenAIModel.
@@ -119,6 +122,9 @@ var (
 		4: "CODEX_OPEN_AI_MODEL_GPT_5_3_CODEX",
 		5: "CODEX_OPEN_AI_MODEL_GPT_5_3_CODEX_SPARK",
 		6: "CODEX_OPEN_AI_MODEL_GPT_5_2",
+		7: "CODEX_OPEN_AI_MODEL_GPT_5_6_SOL",
+		8: "CODEX_OPEN_AI_MODEL_GPT_5_6_TERRA",
+		9: "CODEX_OPEN_AI_MODEL_GPT_5_6_LUNA",
 	}
 	CodexOpenAIModel_value = map[string]int32{
 		"CODEX_OPEN_AI_MODEL_UNSPECIFIED":         0,
@@ -128,6 +134,9 @@ var (
 		"CODEX_OPEN_AI_MODEL_GPT_5_3_CODEX":       4,
 		"CODEX_OPEN_AI_MODEL_GPT_5_3_CODEX_SPARK": 5,
 		"CODEX_OPEN_AI_MODEL_GPT_5_2":             6,
+		"CODEX_OPEN_AI_MODEL_GPT_5_6_SOL":         7,
+		"CODEX_OPEN_AI_MODEL_GPT_5_6_TERRA":       8,
+		"CODEX_OPEN_AI_MODEL_GPT_5_6_LUNA":        9,
 	}
 )
 
@@ -11342,7 +11351,7 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x13AGENT_MODE_PLANNING\x10\x02\x12\x14\n" +
 	"\x10AGENT_MODE_RALPH\x10\x03\x12\x13\n" +
 	"\x0fAGENT_MODE_SPEC\x10\x04\x12\x13\n" +
-	"\x0fAGENT_MODE_GOAL\x10\x05*\xa4\x02\n" +
+	"\x0fAGENT_MODE_GOAL\x10\x05*\x96\x03\n" +
 	"\x10CodexOpenAIModel\x12#\n" +
 	"\x1fCODEX_OPEN_AI_MODEL_UNSPECIFIED\x10\x00\x12\x1f\n" +
 	"\x1bCODEX_OPEN_AI_MODEL_GPT_5_5\x10\x01\x12\x1f\n" +
@@ -11350,7 +11359,10 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	" CODEX_OPEN_AI_MODEL_GPT_5_4_MINI\x10\x03\x1a\x02\b\x01\x12)\n" +
 	"!CODEX_OPEN_AI_MODEL_GPT_5_3_CODEX\x10\x04\x1a\x02\b\x01\x12/\n" +
 	"'CODEX_OPEN_AI_MODEL_GPT_5_3_CODEX_SPARK\x10\x05\x1a\x02\b\x01\x12#\n" +
-	"\x1bCODEX_OPEN_AI_MODEL_GPT_5_2\x10\x06\x1a\x02\b\x01*\xc9\x01\n" +
+	"\x1bCODEX_OPEN_AI_MODEL_GPT_5_2\x10\x06\x1a\x02\b\x01\x12#\n" +
+	"\x1fCODEX_OPEN_AI_MODEL_GPT_5_6_SOL\x10\a\x12%\n" +
+	"!CODEX_OPEN_AI_MODEL_GPT_5_6_TERRA\x10\b\x12$\n" +
+	" CODEX_OPEN_AI_MODEL_GPT_5_6_LUNA\x10\t*\xc9\x01\n" +
 	"\x14CodexReasoningEffort\x12&\n" +
 	"\"CODEX_REASONING_EFFORT_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aCODEX_REASONING_EFFORT_LOW\x10\x01\x12!\n" +

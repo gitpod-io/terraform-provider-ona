@@ -10,6 +10,8 @@ import (
 	"connectrpc.com/connect"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	datasourceschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -54,16 +56,16 @@ func (d *SingularDataSource) Configure(ctx context.Context, req datasource.Confi
 		return
 	}
 
-	api, ok := req.ProviderData.(*managementclient.ManagementPlane)
+	data, ok := req.ProviderData.(*providerdata.Data)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected *client.ManagementPlane, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return
 	}
 
-	d.client = api
+	d.client = data.Client
 }
 
 func (d *SingularDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -103,7 +105,7 @@ func (d *SingularDataSource) Read(ctx context.Context, req datasource.ReadReques
 			)
 			return
 		}
-		resp.Diagnostics.AddError("Unable to Read Ona Runner", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona Runner", "reading the Ona runner data source", err)
 		return
 	}
 	if result.Msg.GetRunner() == nil {

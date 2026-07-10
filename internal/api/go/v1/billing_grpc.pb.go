@@ -60,7 +60,6 @@ const (
 	BillingService_GetEnterpriseAIUserBudgetPolicy_FullMethodName    = "/gitpod.v1.BillingService/GetEnterpriseAIUserBudgetPolicy"
 	BillingService_SetEnterpriseAIUserBudgetPolicy_FullMethodName    = "/gitpod.v1.BillingService/SetEnterpriseAIUserBudgetPolicy"
 	BillingService_DeleteEnterpriseAIUserBudgetPolicy_FullMethodName = "/gitpod.v1.BillingService/DeleteEnterpriseAIUserBudgetPolicy"
-	BillingService_RequestRecoveryCredit_FullMethodName              = "/gitpod.v1.BillingService/RequestRecoveryCredit"
 	BillingService_GetCumulativeCreditUsage_FullMethodName           = "/gitpod.v1.BillingService/GetCumulativeCreditUsage"
 	BillingService_ListEnterpriseUserCreditUsage_FullMethodName      = "/gitpod.v1.BillingService/ListEnterpriseUserCreditUsage"
 	BillingService_CreateTeamCreditAllocation_FullMethodName         = "/gitpod.v1.BillingService/CreateTeamCreditAllocation"
@@ -395,13 +394,95 @@ type BillingServiceClient interface {
 	UpdateAutoTopupSettings(ctx context.Context, in *UpdateAutoTopupSettingsRequest, opts ...grpc.CallOption) (*UpdateAutoTopupSettingsResponse, error)
 	// Retrieves auto-topup settings for an organization.
 	GetAutoTopupSettings(ctx context.Context, in *GetAutoTopupSettingsRequest, opts ...grpc.CallOption) (*GetAutoTopupSettingsResponse, error)
-	// Returns a daily credit usage report for an enterprise organization,
-	// broken down by usage type and by user.
+	// Returns a daily credit usage report for an enterprise organization.
+	//
+	// Each day reports org-wide credits by usage type, plus per-user, per-team,
+	// per-environment, and per-conversation breakdowns (top consumers with the
+	// remainder aggregated into an "Others" bucket) and a per-model breakdown
+	// of intelligence usage.
+	//
+	// Use this method to:
+	// - Chart daily credit consumption over a date range
+	// - Attribute credit usage to users, teams, environments, and conversations
+	// - Restrict the report to a single user or service account
+	//
+	// ### Examples
+	//
+	// - Get the report for January:
+	//
+	//	Both dates are inclusive and the range must not exceed 31 days.
+	//
+	//	```yaml
+	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+	//	dateRange:
+	//	  startTime: "2024-01-01T00:00:00Z"
+	//	  endTime: "2024-01-31T00:00:00Z"
+	//	```
+	//
+	// ### Authorization
+	//
+	// Requires `billing:read_usage` permission on the organization. A user
+	// without it can read their own usage by setting filter.subject to their
+	// own user identity; this self-access path is not available to service
+	// accounts.
 	GetCreditUsageReport(ctx context.Context, in *GetCreditUsageReportRequest, opts ...grpc.CallOption) (*GetCreditUsageReportResponse, error)
-	// Returns a signed download URL for a CSV export of per-user credit usage.
-	// The URL points to an HTTP endpoint that streams gzip-compressed CSV.
+	// Returns a signed download URL for a CSV export of credit usage.
+	//
+	// The URL points to an HTTP endpoint that streams gzip-compressed CSV and
+	// is valid for five minutes. The download must be made by the same principal
+	// that requested it, carrying its own bearer token. The export range may
+	// cover up to a year.
+	//
+	// For organizations without enterprise credit usage enabled (no billing
+	// contract start date), the export instead contains BYOK cost usage with a
+	// different column set, and groupBy=RESOURCE is rejected.
+	//
+	// Use this method to:
+	// - Export per-user daily credit usage for external reporting
+	// - Export a per-environment and per-conversation resource breakdown
+	//
+	// ### Examples
+	//
+	// - Export January's daily summary:
+	//
+	//	```yaml
+	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+	//	dateRange:
+	//	  startTime: "2024-01-01T00:00:00Z"
+	//	  endTime: "2024-01-31T00:00:00Z"
+	//	groupBy: CREDIT_USAGE_EXPORT_GROUP_BY_DAILY_SUMMARY
+	//	```
+	//
+	// ### Authorization
+	//
+	// Requires `billing:read_usage` permission on the organization.
 	GetCreditUsageExport(ctx context.Context, in *GetCreditUsageExportRequest, opts ...grpc.CallOption) (*GetCreditUsageExportResponse, error)
 	// Returns organization-level enterprise AI usage totals for reporting.
+	//
+	// Reports BYOK (bring-your-own-key) token spend: cost in the
+	// organization's billing currency plus token counts, with a per-model
+	// breakdown. Credit-based usage from managed models is not included and
+	// the credits field is not populated by this endpoint.
+	//
+	// Use this method to:
+	// - Report total BYOK AI spend (cost and tokens) for a date range
+	// - Break down organization usage by model
+	//
+	// Only available for enterprise organizations.
+	//
+	// ### Examples
+	//
+	// - Get usage totals for January:
+	//
+	//	Returns organization-wide BYOK spend for the month. Both dates are
+	//	inclusive and the range must not exceed 31 days.
+	//
+	//	```yaml
+	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+	//	dateRange:
+	//	  startTime: "2024-01-01T00:00:00Z"
+	//	  endTime: "2024-01-31T00:00:00Z"
+	//	```
 	//
 	// ### Authorization
 	//
@@ -409,17 +490,109 @@ type BillingServiceClient interface {
 	GetEnterpriseAIUsageSummary(ctx context.Context, in *GetEnterpriseAIUsageSummaryRequest, opts ...grpc.CallOption) (*GetEnterpriseAIUsageSummaryResponse, error)
 	// Lists enterprise AI usage grouped by team.
 	//
+	// Reports BYOK token spend per team (cost and tokens) with each team's
+	// monthly budget when one applies. The credits field is not populated by
+	// this endpoint.
+	//
+	// Use this method to:
+	// - Compare BYOK AI spend across teams
+	// - Track team budget utilization
+	// - Filter usage to specific teams
+	//
+	// Only available for enterprise organizations.
+	//
+	// ### Examples
+	//
+	// - List team usage for January:
+	//
+	//	Returns BYOK spend per team with monthly budgets. Both dates are
+	//	inclusive and the range must not exceed 31 days.
+	//
+	//	```yaml
+	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+	//	dateRange:
+	//	  startTime: "2024-01-01T00:00:00Z"
+	//	  endTime: "2024-01-31T00:00:00Z"
+	//	```
+	//
 	// ### Authorization
 	//
 	// Requires `billing:read_usage` permission on the organization.
 	ListEnterpriseAITeamUsage(ctx context.Context, in *ListEnterpriseAITeamUsageRequest, opts ...grpc.CallOption) (*ListEnterpriseAITeamUsageResponse, error)
 	// Lists enterprise AI usage grouped by user with effective monthly budget data.
 	//
+	// Reports BYOK token spend (cost and tokens) for each user and service
+	// account with attributed usage in the date range, including each
+	// subject's effective monthly budget. Usage not attributed to a user or
+	// service account is excluded, so the sum across subjects can be less
+	// than the organization totals from GetEnterpriseAIUsageSummary. The
+	// credits field is not populated by this endpoint.
+	//
+	// Budget fields (month_to_date_usage, utilization_percent, over_budget)
+	// are computed from usage inside the requested date range measured
+	// against the monthly limit. Send a range that starts on the first day
+	// of the month for true month-to-date figures.
+	//
+	// Use this method to:
+	// - Export per-user BYOK AI spend to external reporting
+	// - Identify the highest spenders in the organization
+	// - Track per-user budget utilization and over-budget users
+	//
+	// Only available for enterprise organizations.
+	//
+	// ### Examples
+	//
+	// - List user usage for January:
+	//
+	//	Returns per-user BYOK spend with effective budgets, highest spend
+	//	first. Both dates are inclusive and the range must not exceed 31 days.
+	//
+	//	```yaml
+	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+	//	dateRange:
+	//	  startTime: "2024-01-01T00:00:00Z"
+	//	  endTime: "2024-01-31T00:00:00Z"
+	//	```
+	//
 	// ### Authorization
 	//
-	// Requires `billing:read_usage` permission on the organization.
+	// Requires `billing:read_usage` permission on the organization. Callers
+	// without it can read their own usage by setting filter.subject to
+	// themselves.
 	ListEnterpriseAIUserUsage(ctx context.Context, in *ListEnterpriseAIUserUsageRequest, opts ...grpc.CallOption) (*ListEnterpriseAIUserUsageResponse, error)
 	// Returns daily enterprise AI usage totals for the organization.
+	//
+	// Each day reports BYOK token spend (cost and tokens) with per-user,
+	// per-team, and per-model breakdowns. Per-user entries cover the top
+	// spenders with the remainder aggregated into an "Others" bucket; usage
+	// not attributed to a user or service account appears only in the daily
+	// totals. The credits field is not populated by this endpoint.
+	//
+	// When filter.subject is set the response contains only that subject's
+	// usage: daily totals and the team breakdown are omitted, and the model
+	// breakdown covers the subject only.
+	//
+	// Use this method to:
+	// - Chart daily BYOK AI spend over a date range
+	// - Feed daily per-user usage into external dashboards
+	// - Restrict the response to a single user or service account
+	//
+	// Only available for enterprise organizations.
+	//
+	// ### Examples
+	//
+	// - Get daily usage for January:
+	//
+	//	Returns one entry per day with per-user, per-team, and per-model
+	//	breakdowns. Both dates are inclusive and the range must not exceed
+	//	31 days.
+	//
+	//	```yaml
+	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+	//	dateRange:
+	//	  startTime: "2024-01-01T00:00:00Z"
+	//	  endTime: "2024-01-31T00:00:00Z"
+	//	```
 	//
 	// ### Authorization
 	//
@@ -488,10 +661,6 @@ type BillingServiceClient interface {
 	//
 	// Requires `billing:delete` permission on the organization.
 	DeleteEnterpriseAIUserBudgetPolicy(ctx context.Context, in *DeleteEnterpriseAIUserBudgetPolicyRequest, opts ...grpc.CallOption) (*DeleteEnterpriseAIUserBudgetPolicyResponse, error)
-	// Requests a one-time recovery credit grant for an organization that is out of credits.
-	// Grants a small amount of free credits so the user can start an environment and push
-	// uncommitted work. Can only be used once per organization.
-	RequestRecoveryCredit(ctx context.Context, in *RequestRecoveryCreditRequest, opts ...grpc.CallOption) (*RequestRecoveryCreditResponse, error)
 	// Returns cumulative credit usage for an organization and its teams.
 	//
 	// Use this method to:
@@ -525,9 +694,31 @@ type BillingServiceClient interface {
 	// appear first, with user_id as a stable tiebreaker. Use cursor pagination
 	// to walk the full set for large organizations.
 	//
+	// The default SORT_FIELD_USAGE ordering supports cursor pagination over any
+	// number of users. Sorting by display name, budget, or budget utilization
+	// computes the order in memory and is limited to organizations with at most
+	// 10,000 users; beyond that, use SORT_FIELD_USAGE. Because month-to-date
+	// figures are recomputed per request, hold a date range stable across a
+	// paginated walk to keep page tokens valid.
+	//
+	// Use this method to:
+	// - Export per-user credit usage to external reporting
+	// - Identify the highest spenders in the organization
+	// - Track per-user budget utilization and over-budget users
+	//
+	// ### Examples
+	//
+	// - List user usage for the current month:
+	//
+	//	```yaml
+	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+	//	pagination:
+	//	  pageSize: 50
+	//	```
+	//
 	// ### Authorization
 	//
-	// Requires `billing:read` permission on the organization.
+	// Requires `billing:read_usage` permission on the organization.
 	ListEnterpriseUserCreditUsage(ctx context.Context, in *ListEnterpriseUserCreditUsageRequest, opts ...grpc.CallOption) (*ListEnterpriseUserCreditUsageResponse, error)
 	// Creates a credit allocation (budget) for a team.
 	//
@@ -1032,16 +1223,6 @@ func (c *billingServiceClient) DeleteEnterpriseAIUserBudgetPolicy(ctx context.Co
 	return out, nil
 }
 
-func (c *billingServiceClient) RequestRecoveryCredit(ctx context.Context, in *RequestRecoveryCreditRequest, opts ...grpc.CallOption) (*RequestRecoveryCreditResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RequestRecoveryCreditResponse)
-	err := c.cc.Invoke(ctx, BillingService_RequestRecoveryCredit_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *billingServiceClient) GetCumulativeCreditUsage(ctx context.Context, in *GetCumulativeCreditUsageRequest, opts ...grpc.CallOption) (*GetCumulativeCreditUsageResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetCumulativeCreditUsageResponse)
@@ -1437,13 +1618,95 @@ type BillingServiceServer interface {
 	UpdateAutoTopupSettings(context.Context, *UpdateAutoTopupSettingsRequest) (*UpdateAutoTopupSettingsResponse, error)
 	// Retrieves auto-topup settings for an organization.
 	GetAutoTopupSettings(context.Context, *GetAutoTopupSettingsRequest) (*GetAutoTopupSettingsResponse, error)
-	// Returns a daily credit usage report for an enterprise organization,
-	// broken down by usage type and by user.
+	// Returns a daily credit usage report for an enterprise organization.
+	//
+	// Each day reports org-wide credits by usage type, plus per-user, per-team,
+	// per-environment, and per-conversation breakdowns (top consumers with the
+	// remainder aggregated into an "Others" bucket) and a per-model breakdown
+	// of intelligence usage.
+	//
+	// Use this method to:
+	// - Chart daily credit consumption over a date range
+	// - Attribute credit usage to users, teams, environments, and conversations
+	// - Restrict the report to a single user or service account
+	//
+	// ### Examples
+	//
+	// - Get the report for January:
+	//
+	//	Both dates are inclusive and the range must not exceed 31 days.
+	//
+	//	```yaml
+	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+	//	dateRange:
+	//	  startTime: "2024-01-01T00:00:00Z"
+	//	  endTime: "2024-01-31T00:00:00Z"
+	//	```
+	//
+	// ### Authorization
+	//
+	// Requires `billing:read_usage` permission on the organization. A user
+	// without it can read their own usage by setting filter.subject to their
+	// own user identity; this self-access path is not available to service
+	// accounts.
 	GetCreditUsageReport(context.Context, *GetCreditUsageReportRequest) (*GetCreditUsageReportResponse, error)
-	// Returns a signed download URL for a CSV export of per-user credit usage.
-	// The URL points to an HTTP endpoint that streams gzip-compressed CSV.
+	// Returns a signed download URL for a CSV export of credit usage.
+	//
+	// The URL points to an HTTP endpoint that streams gzip-compressed CSV and
+	// is valid for five minutes. The download must be made by the same principal
+	// that requested it, carrying its own bearer token. The export range may
+	// cover up to a year.
+	//
+	// For organizations without enterprise credit usage enabled (no billing
+	// contract start date), the export instead contains BYOK cost usage with a
+	// different column set, and groupBy=RESOURCE is rejected.
+	//
+	// Use this method to:
+	// - Export per-user daily credit usage for external reporting
+	// - Export a per-environment and per-conversation resource breakdown
+	//
+	// ### Examples
+	//
+	// - Export January's daily summary:
+	//
+	//	```yaml
+	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+	//	dateRange:
+	//	  startTime: "2024-01-01T00:00:00Z"
+	//	  endTime: "2024-01-31T00:00:00Z"
+	//	groupBy: CREDIT_USAGE_EXPORT_GROUP_BY_DAILY_SUMMARY
+	//	```
+	//
+	// ### Authorization
+	//
+	// Requires `billing:read_usage` permission on the organization.
 	GetCreditUsageExport(context.Context, *GetCreditUsageExportRequest) (*GetCreditUsageExportResponse, error)
 	// Returns organization-level enterprise AI usage totals for reporting.
+	//
+	// Reports BYOK (bring-your-own-key) token spend: cost in the
+	// organization's billing currency plus token counts, with a per-model
+	// breakdown. Credit-based usage from managed models is not included and
+	// the credits field is not populated by this endpoint.
+	//
+	// Use this method to:
+	// - Report total BYOK AI spend (cost and tokens) for a date range
+	// - Break down organization usage by model
+	//
+	// Only available for enterprise organizations.
+	//
+	// ### Examples
+	//
+	// - Get usage totals for January:
+	//
+	//	Returns organization-wide BYOK spend for the month. Both dates are
+	//	inclusive and the range must not exceed 31 days.
+	//
+	//	```yaml
+	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+	//	dateRange:
+	//	  startTime: "2024-01-01T00:00:00Z"
+	//	  endTime: "2024-01-31T00:00:00Z"
+	//	```
 	//
 	// ### Authorization
 	//
@@ -1451,17 +1714,109 @@ type BillingServiceServer interface {
 	GetEnterpriseAIUsageSummary(context.Context, *GetEnterpriseAIUsageSummaryRequest) (*GetEnterpriseAIUsageSummaryResponse, error)
 	// Lists enterprise AI usage grouped by team.
 	//
+	// Reports BYOK token spend per team (cost and tokens) with each team's
+	// monthly budget when one applies. The credits field is not populated by
+	// this endpoint.
+	//
+	// Use this method to:
+	// - Compare BYOK AI spend across teams
+	// - Track team budget utilization
+	// - Filter usage to specific teams
+	//
+	// Only available for enterprise organizations.
+	//
+	// ### Examples
+	//
+	// - List team usage for January:
+	//
+	//	Returns BYOK spend per team with monthly budgets. Both dates are
+	//	inclusive and the range must not exceed 31 days.
+	//
+	//	```yaml
+	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+	//	dateRange:
+	//	  startTime: "2024-01-01T00:00:00Z"
+	//	  endTime: "2024-01-31T00:00:00Z"
+	//	```
+	//
 	// ### Authorization
 	//
 	// Requires `billing:read_usage` permission on the organization.
 	ListEnterpriseAITeamUsage(context.Context, *ListEnterpriseAITeamUsageRequest) (*ListEnterpriseAITeamUsageResponse, error)
 	// Lists enterprise AI usage grouped by user with effective monthly budget data.
 	//
+	// Reports BYOK token spend (cost and tokens) for each user and service
+	// account with attributed usage in the date range, including each
+	// subject's effective monthly budget. Usage not attributed to a user or
+	// service account is excluded, so the sum across subjects can be less
+	// than the organization totals from GetEnterpriseAIUsageSummary. The
+	// credits field is not populated by this endpoint.
+	//
+	// Budget fields (month_to_date_usage, utilization_percent, over_budget)
+	// are computed from usage inside the requested date range measured
+	// against the monthly limit. Send a range that starts on the first day
+	// of the month for true month-to-date figures.
+	//
+	// Use this method to:
+	// - Export per-user BYOK AI spend to external reporting
+	// - Identify the highest spenders in the organization
+	// - Track per-user budget utilization and over-budget users
+	//
+	// Only available for enterprise organizations.
+	//
+	// ### Examples
+	//
+	// - List user usage for January:
+	//
+	//	Returns per-user BYOK spend with effective budgets, highest spend
+	//	first. Both dates are inclusive and the range must not exceed 31 days.
+	//
+	//	```yaml
+	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+	//	dateRange:
+	//	  startTime: "2024-01-01T00:00:00Z"
+	//	  endTime: "2024-01-31T00:00:00Z"
+	//	```
+	//
 	// ### Authorization
 	//
-	// Requires `billing:read_usage` permission on the organization.
+	// Requires `billing:read_usage` permission on the organization. Callers
+	// without it can read their own usage by setting filter.subject to
+	// themselves.
 	ListEnterpriseAIUserUsage(context.Context, *ListEnterpriseAIUserUsageRequest) (*ListEnterpriseAIUserUsageResponse, error)
 	// Returns daily enterprise AI usage totals for the organization.
+	//
+	// Each day reports BYOK token spend (cost and tokens) with per-user,
+	// per-team, and per-model breakdowns. Per-user entries cover the top
+	// spenders with the remainder aggregated into an "Others" bucket; usage
+	// not attributed to a user or service account appears only in the daily
+	// totals. The credits field is not populated by this endpoint.
+	//
+	// When filter.subject is set the response contains only that subject's
+	// usage: daily totals and the team breakdown are omitted, and the model
+	// breakdown covers the subject only.
+	//
+	// Use this method to:
+	// - Chart daily BYOK AI spend over a date range
+	// - Feed daily per-user usage into external dashboards
+	// - Restrict the response to a single user or service account
+	//
+	// Only available for enterprise organizations.
+	//
+	// ### Examples
+	//
+	// - Get daily usage for January:
+	//
+	//	Returns one entry per day with per-user, per-team, and per-model
+	//	breakdowns. Both dates are inclusive and the range must not exceed
+	//	31 days.
+	//
+	//	```yaml
+	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+	//	dateRange:
+	//	  startTime: "2024-01-01T00:00:00Z"
+	//	  endTime: "2024-01-31T00:00:00Z"
+	//	```
 	//
 	// ### Authorization
 	//
@@ -1530,10 +1885,6 @@ type BillingServiceServer interface {
 	//
 	// Requires `billing:delete` permission on the organization.
 	DeleteEnterpriseAIUserBudgetPolicy(context.Context, *DeleteEnterpriseAIUserBudgetPolicyRequest) (*DeleteEnterpriseAIUserBudgetPolicyResponse, error)
-	// Requests a one-time recovery credit grant for an organization that is out of credits.
-	// Grants a small amount of free credits so the user can start an environment and push
-	// uncommitted work. Can only be used once per organization.
-	RequestRecoveryCredit(context.Context, *RequestRecoveryCreditRequest) (*RequestRecoveryCreditResponse, error)
 	// Returns cumulative credit usage for an organization and its teams.
 	//
 	// Use this method to:
@@ -1567,9 +1918,31 @@ type BillingServiceServer interface {
 	// appear first, with user_id as a stable tiebreaker. Use cursor pagination
 	// to walk the full set for large organizations.
 	//
+	// The default SORT_FIELD_USAGE ordering supports cursor pagination over any
+	// number of users. Sorting by display name, budget, or budget utilization
+	// computes the order in memory and is limited to organizations with at most
+	// 10,000 users; beyond that, use SORT_FIELD_USAGE. Because month-to-date
+	// figures are recomputed per request, hold a date range stable across a
+	// paginated walk to keep page tokens valid.
+	//
+	// Use this method to:
+	// - Export per-user credit usage to external reporting
+	// - Identify the highest spenders in the organization
+	// - Track per-user budget utilization and over-budget users
+	//
+	// ### Examples
+	//
+	// - List user usage for the current month:
+	//
+	//	```yaml
+	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+	//	pagination:
+	//	  pageSize: 50
+	//	```
+	//
 	// ### Authorization
 	//
-	// Requires `billing:read` permission on the organization.
+	// Requires `billing:read_usage` permission on the organization.
 	ListEnterpriseUserCreditUsage(context.Context, *ListEnterpriseUserCreditUsageRequest) (*ListEnterpriseUserCreditUsageResponse, error)
 	// Creates a credit allocation (budget) for a team.
 	//
@@ -1786,9 +2159,6 @@ func (UnimplementedBillingServiceServer) SetEnterpriseAIUserBudgetPolicy(context
 }
 func (UnimplementedBillingServiceServer) DeleteEnterpriseAIUserBudgetPolicy(context.Context, *DeleteEnterpriseAIUserBudgetPolicyRequest) (*DeleteEnterpriseAIUserBudgetPolicyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteEnterpriseAIUserBudgetPolicy not implemented")
-}
-func (UnimplementedBillingServiceServer) RequestRecoveryCredit(context.Context, *RequestRecoveryCreditRequest) (*RequestRecoveryCreditResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RequestRecoveryCredit not implemented")
 }
 func (UnimplementedBillingServiceServer) GetCumulativeCreditUsage(context.Context, *GetCumulativeCreditUsageRequest) (*GetCumulativeCreditUsageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCumulativeCreditUsage not implemented")
@@ -2570,24 +2940,6 @@ func _BillingService_DeleteEnterpriseAIUserBudgetPolicy_Handler(srv interface{},
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BillingService_RequestRecoveryCredit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestRecoveryCreditRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BillingServiceServer).RequestRecoveryCredit(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BillingService_RequestRecoveryCredit_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BillingServiceServer).RequestRecoveryCredit(ctx, req.(*RequestRecoveryCreditRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _BillingService_GetCumulativeCreditUsage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetCumulativeCreditUsageRequest)
 	if err := dec(in); err != nil {
@@ -2884,10 +3236,6 @@ var BillingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteEnterpriseAIUserBudgetPolicy",
 			Handler:    _BillingService_DeleteEnterpriseAIUserBudgetPolicy_Handler,
-		},
-		{
-			MethodName: "RequestRecoveryCredit",
-			Handler:    _BillingService_RequestRecoveryCredit_Handler,
 		},
 		{
 			MethodName: "GetCumulativeCreditUsage",

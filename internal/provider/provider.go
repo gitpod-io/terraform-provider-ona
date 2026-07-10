@@ -9,10 +9,14 @@ import (
 	"fmt"
 
 	onaclient "github.com/gitpod-io/terraform-provider-ona/internal/client"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/accesscontrol"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/organization"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/project"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/runner"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/security"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/serviceaccount"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -98,17 +102,23 @@ func (p *OnaProvider) Configure(ctx context.Context, req provider.ConfigureReque
 	}
 	cfg.UserAgent = fmt.Sprintf("terraform-provider-ona/%s", p.version)
 
-	api, _, err := onaclient.NewManagementPlane(cfg)
+	api, apiBaseURL, err := onaclient.NewManagementPlane(cfg)
 	if err != nil {
 		if !errors.Is(err, onaclient.ErrMissingToken) {
-			resp.Diagnostics.AddError("Unable to Configure Ona API Client", err.Error())
+			providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Configure Ona API Client", "configuring the Ona API client", err)
 			return
 		}
 	}
 
-	resp.DataSourceData = api
-	resp.EphemeralResourceData = api
-	resp.ResourceData = api
+	providerData := &providerdata.Data{
+		Client:     api,
+		APIBaseURL: apiBaseURL,
+		UserAgent:  cfg.UserAgent,
+	}
+
+	resp.DataSourceData = providerData
+	resp.EphemeralResourceData = providerData
+	resp.ResourceData = providerData
 }
 
 func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource {
@@ -119,12 +129,17 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		project.NewResource,
 		security.NewPolicyResource,
 		organization.NewPoliciesResource,
+		serviceaccount.NewResource,
+		accesscontrol.NewGroupResource,
+		accesscontrol.NewGroupMembershipResource,
+		accesscontrol.NewOrganizationRoleAssignmentResource,
 	}
 }
 
 func (p *OnaProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {
 	return []func() ephemeral.EphemeralResource{
 		runner.NewTokenEphemeralResource,
+		serviceaccount.NewTokenEphemeralResource,
 	}
 }
 

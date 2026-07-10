@@ -9,6 +9,7 @@ package v1
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/logfields"
+	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/stainless"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -978,7 +979,7 @@ func (x ListEnterpriseUserCreditUsageRequest_SortField) Number() protoreflect.En
 
 // Deprecated: Use ListEnterpriseUserCreditUsageRequest_SortField.Descriptor instead.
 func (ListEnterpriseUserCreditUsageRequest_SortField) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{126, 0}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{124, 0}
 }
 
 type BillingRecord struct {
@@ -1969,9 +1970,6 @@ type GetBillingInfoResponse struct {
 	// 0 means the organization is on a free Core plan. Only set for Core tier organizations
 	// with an active contract.
 	MonthlyCommitmentCents int64 `protobuf:"varint,14,opt,name=monthly_commitment_cents,json=monthlyCommitmentCents,proto3" json:"monthly_commitment_cents,omitempty"`
-	// recovery_credit_granted_at is set when the one-time recovery credit grant has been used.
-	// Nil means the organization is still eligible for a recovery credit grant.
-	RecoveryCreditGrantedAt *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=recovery_credit_granted_at,json=recoveryCreditGrantedAt,proto3" json:"recovery_credit_granted_at,omitempty"`
 	// credit_grant is the contracted credit grant for the organization, in whole credits.
 	// Only set for enterprise UBB organizations. 0 means no grant has been configured.
 	CreditGrant   int64 `protobuf:"varint,16,opt,name=credit_grant,json=creditGrant,proto3" json:"credit_grant,omitempty"`
@@ -2077,13 +2075,6 @@ func (x *GetBillingInfoResponse) GetMonthlyCommitmentCents() int64 {
 		return x.MonthlyCommitmentCents
 	}
 	return 0
-}
-
-func (x *GetBillingInfoResponse) GetRecoveryCreditGrantedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.RecoveryCreditGrantedAt
-	}
-	return nil
 }
 
 func (x *GetBillingInfoResponse) GetCreditGrant() int64 {
@@ -5377,7 +5368,8 @@ func (x *AgentExecutionCreditUsage) GetUsage() []*CreditsByType {
 type GetCreditUsageExportRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	// Month to export. Same semantics as GetCreditUsageReport.date_range.
+	// Date range to export. Both start and end dates are inclusive; time-of-day
+	// is ignored. Unlike GetCreditUsageReport, the range may cover up to a year.
 	DateRange *DateRange `protobuf:"bytes,2,opt,name=date_range,json=dateRange,proto3" json:"date_range,omitempty"`
 	// How to group the export data. Defaults to DAILY_SUMMARY.
 	GroupBy       CreditUsageExportGroupBy `protobuf:"varint,3,opt,name=group_by,json=groupBy,proto3,enum=gitpod.v1.CreditUsageExportGroupBy" json:"group_by,omitempty"`
@@ -5438,7 +5430,8 @@ func (x *GetCreditUsageExportRequest) GetGroupBy() CreditUsageExportGroupBy {
 
 type GetCreditUsageExportResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Signed download URL for the CSV export. Short-lived (5 minutes).
+	// Signed download URL for the CSV export. Valid for five minutes, and only
+	// for the principal that requested it.
 	DownloadUrl   string `protobuf:"bytes,1,opt,name=download_url,json=downloadUrl,proto3" json:"download_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -5969,9 +5962,11 @@ func (x *UserEnterpriseAIUsage) GetUsage() *EnterpriseAIUsage {
 }
 
 type UserCostBudgetUsage struct {
-	state                      protoimpl.MessageState             `protogen:"open.v1"`
-	UserId                     string                             `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	DisplayName                string                             `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	UserId      string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	DisplayName string                 `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	// Usage within the requested date range. Reflects true month-to-date
+	// usage when the range starts on the first day of the month.
 	MonthToDateUsage           *EnterpriseAIUsage                 `protobuf:"bytes,3,opt,name=month_to_date_usage,json=monthToDateUsage,proto3" json:"month_to_date_usage,omitempty"`
 	MonthlyCostLimitMicrounits *int64                             `protobuf:"varint,4,opt,name=monthly_cost_limit_microunits,json=monthlyCostLimitMicrounits,proto3,oneof" json:"monthly_cost_limit_microunits,omitempty"`
 	Currency                   BillingCurrency                    `protobuf:"varint,5,opt,name=currency,proto3,enum=gitpod.v1.BillingCurrency" json:"currency,omitempty"`
@@ -8325,87 +8320,6 @@ func (*DeleteEnterpriseAIUserBudgetPolicyResponse) Descriptor() ([]byte, []int) 
 	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{118}
 }
 
-type RequestRecoveryCreditRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization requesting recovery credits
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *RequestRecoveryCreditRequest) Reset() {
-	*x = RequestRecoveryCreditRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[119]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RequestRecoveryCreditRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RequestRecoveryCreditRequest) ProtoMessage() {}
-
-func (x *RequestRecoveryCreditRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[119]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RequestRecoveryCreditRequest.ProtoReflect.Descriptor instead.
-func (*RequestRecoveryCreditRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{119}
-}
-
-func (x *RequestRecoveryCreditRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-type RequestRecoveryCreditResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RequestRecoveryCreditResponse) Reset() {
-	*x = RequestRecoveryCreditResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[120]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RequestRecoveryCreditResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RequestRecoveryCreditResponse) ProtoMessage() {}
-
-func (x *RequestRecoveryCreditResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[120]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RequestRecoveryCreditResponse.ProtoReflect.Descriptor instead.
-func (*RequestRecoveryCreditResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{120}
-}
-
 type GetCumulativeCreditUsageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// organization_id is the ID of the organization to get cumulative usage for.
@@ -8419,7 +8333,7 @@ type GetCumulativeCreditUsageRequest struct {
 
 func (x *GetCumulativeCreditUsageRequest) Reset() {
 	*x = GetCumulativeCreditUsageRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[121]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[119]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8431,7 +8345,7 @@ func (x *GetCumulativeCreditUsageRequest) String() string {
 func (*GetCumulativeCreditUsageRequest) ProtoMessage() {}
 
 func (x *GetCumulativeCreditUsageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[121]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[119]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8444,7 +8358,7 @@ func (x *GetCumulativeCreditUsageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCumulativeCreditUsageRequest.ProtoReflect.Descriptor instead.
 func (*GetCumulativeCreditUsageRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{121}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{119}
 }
 
 func (x *GetCumulativeCreditUsageRequest) GetOrganizationId() string {
@@ -8473,8 +8387,10 @@ type GetCumulativeCreditUsageResponse struct {
 	// Start of the cumulative calculation period.
 	// Cumulative totals are computed from this date forward.
 	PeriodStart *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=period_start,json=periodStart,proto3" json:"period_start,omitempty"`
-	// Per-user month-to-date usage with effective monthly budget comparison.
-	// Populated only when enterprise AI user budgets are enabled.
+	// Per-user month-to-date usage for every user with usage in the period.
+	// The budget fields on each entry are populated only when a monthly budget
+	// applies to that user. This list is not paginated or capped; for large
+	// organizations prefer ListEnterpriseUserCreditUsage.
 	UserUsage     []*UserCreditBudgetUsage `protobuf:"bytes,5,rep,name=user_usage,json=userUsage,proto3" json:"user_usage,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -8482,7 +8398,7 @@ type GetCumulativeCreditUsageResponse struct {
 
 func (x *GetCumulativeCreditUsageResponse) Reset() {
 	*x = GetCumulativeCreditUsageResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[122]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[120]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8494,7 +8410,7 @@ func (x *GetCumulativeCreditUsageResponse) String() string {
 func (*GetCumulativeCreditUsageResponse) ProtoMessage() {}
 
 func (x *GetCumulativeCreditUsageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[122]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[120]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8507,7 +8423,7 @@ func (x *GetCumulativeCreditUsageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCumulativeCreditUsageResponse.ProtoReflect.Descriptor instead.
 func (*GetCumulativeCreditUsageResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{122}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{120}
 }
 
 func (x *GetCumulativeCreditUsageResponse) GetOrgUsage() *CumulativeCreditUsage {
@@ -8558,7 +8474,7 @@ type CumulativeCreditUsage struct {
 
 func (x *CumulativeCreditUsage) Reset() {
 	*x = CumulativeCreditUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[123]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[121]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8570,7 +8486,7 @@ func (x *CumulativeCreditUsage) String() string {
 func (*CumulativeCreditUsage) ProtoMessage() {}
 
 func (x *CumulativeCreditUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[123]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[121]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8583,7 +8499,7 @@ func (x *CumulativeCreditUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CumulativeCreditUsage.ProtoReflect.Descriptor instead.
 func (*CumulativeCreditUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{123}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{121}
 }
 
 func (x *CumulativeCreditUsage) GetTotalCredits() float64 {
@@ -8616,7 +8532,7 @@ type TeamCumulativeCreditUsage struct {
 
 func (x *TeamCumulativeCreditUsage) Reset() {
 	*x = TeamCumulativeCreditUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[124]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[122]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8628,7 +8544,7 @@ func (x *TeamCumulativeCreditUsage) String() string {
 func (*TeamCumulativeCreditUsage) ProtoMessage() {}
 
 func (x *TeamCumulativeCreditUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[124]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[122]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8641,7 +8557,7 @@ func (x *TeamCumulativeCreditUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TeamCumulativeCreditUsage.ProtoReflect.Descriptor instead.
 func (*TeamCumulativeCreditUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{124}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{122}
 }
 
 func (x *TeamCumulativeCreditUsage) GetTeamId() string {
@@ -8693,7 +8609,7 @@ type UserCreditBudgetUsage struct {
 
 func (x *UserCreditBudgetUsage) Reset() {
 	*x = UserCreditBudgetUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[125]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[123]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8705,7 +8621,7 @@ func (x *UserCreditBudgetUsage) String() string {
 func (*UserCreditBudgetUsage) ProtoMessage() {}
 
 func (x *UserCreditBudgetUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[125]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[123]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8718,7 +8634,7 @@ func (x *UserCreditBudgetUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserCreditBudgetUsage.ProtoReflect.Descriptor instead.
 func (*UserCreditBudgetUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{125}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{123}
 }
 
 func (x *UserCreditBudgetUsage) GetUserId() string {
@@ -8807,7 +8723,7 @@ type ListEnterpriseUserCreditUsageRequest struct {
 
 func (x *ListEnterpriseUserCreditUsageRequest) Reset() {
 	*x = ListEnterpriseUserCreditUsageRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[126]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[124]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8819,7 +8735,7 @@ func (x *ListEnterpriseUserCreditUsageRequest) String() string {
 func (*ListEnterpriseUserCreditUsageRequest) ProtoMessage() {}
 
 func (x *ListEnterpriseUserCreditUsageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[126]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[124]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8832,7 +8748,7 @@ func (x *ListEnterpriseUserCreditUsageRequest) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use ListEnterpriseUserCreditUsageRequest.ProtoReflect.Descriptor instead.
 func (*ListEnterpriseUserCreditUsageRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{126}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{124}
 }
 
 func (x *ListEnterpriseUserCreditUsageRequest) GetPagination() *PaginationRequest {
@@ -8877,7 +8793,7 @@ type ListEnterpriseUserCreditUsageResponse struct {
 
 func (x *ListEnterpriseUserCreditUsageResponse) Reset() {
 	*x = ListEnterpriseUserCreditUsageResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[127]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[125]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8889,7 +8805,7 @@ func (x *ListEnterpriseUserCreditUsageResponse) String() string {
 func (*ListEnterpriseUserCreditUsageResponse) ProtoMessage() {}
 
 func (x *ListEnterpriseUserCreditUsageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[127]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[125]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8902,7 +8818,7 @@ func (x *ListEnterpriseUserCreditUsageResponse) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use ListEnterpriseUserCreditUsageResponse.ProtoReflect.Descriptor instead.
 func (*ListEnterpriseUserCreditUsageResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{127}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{125}
 }
 
 func (x *ListEnterpriseUserCreditUsageResponse) GetUserUsage() []*UserCreditBudgetUsage {
@@ -8945,7 +8861,7 @@ type TeamCreditAllocationInfo struct {
 
 func (x *TeamCreditAllocationInfo) Reset() {
 	*x = TeamCreditAllocationInfo{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[128]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[126]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8957,7 +8873,7 @@ func (x *TeamCreditAllocationInfo) String() string {
 func (*TeamCreditAllocationInfo) ProtoMessage() {}
 
 func (x *TeamCreditAllocationInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[128]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[126]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8970,7 +8886,7 @@ func (x *TeamCreditAllocationInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TeamCreditAllocationInfo.ProtoReflect.Descriptor instead.
 func (*TeamCreditAllocationInfo) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{128}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{126}
 }
 
 func (x *TeamCreditAllocationInfo) GetId() string {
@@ -9044,7 +8960,7 @@ type CreateTeamCreditAllocationRequest struct {
 
 func (x *CreateTeamCreditAllocationRequest) Reset() {
 	*x = CreateTeamCreditAllocationRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[129]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[127]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9056,7 +8972,7 @@ func (x *CreateTeamCreditAllocationRequest) String() string {
 func (*CreateTeamCreditAllocationRequest) ProtoMessage() {}
 
 func (x *CreateTeamCreditAllocationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[129]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[127]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9069,7 +8985,7 @@ func (x *CreateTeamCreditAllocationRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use CreateTeamCreditAllocationRequest.ProtoReflect.Descriptor instead.
 func (*CreateTeamCreditAllocationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{129}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{127}
 }
 
 func (x *CreateTeamCreditAllocationRequest) GetOrganizationId() string {
@@ -9116,7 +9032,7 @@ type CreateTeamCreditAllocationResponse struct {
 
 func (x *CreateTeamCreditAllocationResponse) Reset() {
 	*x = CreateTeamCreditAllocationResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[130]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[128]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9128,7 +9044,7 @@ func (x *CreateTeamCreditAllocationResponse) String() string {
 func (*CreateTeamCreditAllocationResponse) ProtoMessage() {}
 
 func (x *CreateTeamCreditAllocationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[130]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[128]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9141,7 +9057,7 @@ func (x *CreateTeamCreditAllocationResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use CreateTeamCreditAllocationResponse.ProtoReflect.Descriptor instead.
 func (*CreateTeamCreditAllocationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{130}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{128}
 }
 
 func (x *CreateTeamCreditAllocationResponse) GetAllocation() *TeamCreditAllocationInfo {
@@ -9161,7 +9077,7 @@ type GetTeamCreditAllocationRequest struct {
 
 func (x *GetTeamCreditAllocationRequest) Reset() {
 	*x = GetTeamCreditAllocationRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[131]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[129]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9173,7 +9089,7 @@ func (x *GetTeamCreditAllocationRequest) String() string {
 func (*GetTeamCreditAllocationRequest) ProtoMessage() {}
 
 func (x *GetTeamCreditAllocationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[131]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[129]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9186,7 +9102,7 @@ func (x *GetTeamCreditAllocationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTeamCreditAllocationRequest.ProtoReflect.Descriptor instead.
 func (*GetTeamCreditAllocationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{131}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{129}
 }
 
 func (x *GetTeamCreditAllocationRequest) GetOrganizationId() string {
@@ -9212,7 +9128,7 @@ type GetTeamCreditAllocationResponse struct {
 
 func (x *GetTeamCreditAllocationResponse) Reset() {
 	*x = GetTeamCreditAllocationResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[132]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[130]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9224,7 +9140,7 @@ func (x *GetTeamCreditAllocationResponse) String() string {
 func (*GetTeamCreditAllocationResponse) ProtoMessage() {}
 
 func (x *GetTeamCreditAllocationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[132]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[130]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9237,7 +9153,7 @@ func (x *GetTeamCreditAllocationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTeamCreditAllocationResponse.ProtoReflect.Descriptor instead.
 func (*GetTeamCreditAllocationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{132}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{130}
 }
 
 func (x *GetTeamCreditAllocationResponse) GetAllocation() *TeamCreditAllocationInfo {
@@ -9266,7 +9182,7 @@ type UpdateTeamCreditAllocationRequest struct {
 
 func (x *UpdateTeamCreditAllocationRequest) Reset() {
 	*x = UpdateTeamCreditAllocationRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[133]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[131]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9278,7 +9194,7 @@ func (x *UpdateTeamCreditAllocationRequest) String() string {
 func (*UpdateTeamCreditAllocationRequest) ProtoMessage() {}
 
 func (x *UpdateTeamCreditAllocationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[133]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[131]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9291,7 +9207,7 @@ func (x *UpdateTeamCreditAllocationRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use UpdateTeamCreditAllocationRequest.ProtoReflect.Descriptor instead.
 func (*UpdateTeamCreditAllocationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{133}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{131}
 }
 
 func (x *UpdateTeamCreditAllocationRequest) GetOrganizationId() string {
@@ -9352,7 +9268,7 @@ type UpdateTeamCreditAllocationResponse struct {
 
 func (x *UpdateTeamCreditAllocationResponse) Reset() {
 	*x = UpdateTeamCreditAllocationResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[134]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[132]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9364,7 +9280,7 @@ func (x *UpdateTeamCreditAllocationResponse) String() string {
 func (*UpdateTeamCreditAllocationResponse) ProtoMessage() {}
 
 func (x *UpdateTeamCreditAllocationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[134]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[132]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9377,7 +9293,7 @@ func (x *UpdateTeamCreditAllocationResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use UpdateTeamCreditAllocationResponse.ProtoReflect.Descriptor instead.
 func (*UpdateTeamCreditAllocationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{134}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{132}
 }
 
 func (x *UpdateTeamCreditAllocationResponse) GetAllocation() *TeamCreditAllocationInfo {
@@ -9397,7 +9313,7 @@ type DeleteTeamCreditAllocationRequest struct {
 
 func (x *DeleteTeamCreditAllocationRequest) Reset() {
 	*x = DeleteTeamCreditAllocationRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[135]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[133]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9409,7 +9325,7 @@ func (x *DeleteTeamCreditAllocationRequest) String() string {
 func (*DeleteTeamCreditAllocationRequest) ProtoMessage() {}
 
 func (x *DeleteTeamCreditAllocationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[135]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[133]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9422,7 +9338,7 @@ func (x *DeleteTeamCreditAllocationRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use DeleteTeamCreditAllocationRequest.ProtoReflect.Descriptor instead.
 func (*DeleteTeamCreditAllocationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{135}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{133}
 }
 
 func (x *DeleteTeamCreditAllocationRequest) GetOrganizationId() string {
@@ -9447,7 +9363,7 @@ type DeleteTeamCreditAllocationResponse struct {
 
 func (x *DeleteTeamCreditAllocationResponse) Reset() {
 	*x = DeleteTeamCreditAllocationResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[136]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[134]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9459,7 +9375,7 @@ func (x *DeleteTeamCreditAllocationResponse) String() string {
 func (*DeleteTeamCreditAllocationResponse) ProtoMessage() {}
 
 func (x *DeleteTeamCreditAllocationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[136]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[134]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9472,7 +9388,7 @@ func (x *DeleteTeamCreditAllocationResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use DeleteTeamCreditAllocationResponse.ProtoReflect.Descriptor instead.
 func (*DeleteTeamCreditAllocationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{136}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{134}
 }
 
 type SetOrganizationCreditGrantRequest struct {
@@ -9486,7 +9402,7 @@ type SetOrganizationCreditGrantRequest struct {
 
 func (x *SetOrganizationCreditGrantRequest) Reset() {
 	*x = SetOrganizationCreditGrantRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[137]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[135]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9498,7 +9414,7 @@ func (x *SetOrganizationCreditGrantRequest) String() string {
 func (*SetOrganizationCreditGrantRequest) ProtoMessage() {}
 
 func (x *SetOrganizationCreditGrantRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[137]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[135]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9511,7 +9427,7 @@ func (x *SetOrganizationCreditGrantRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use SetOrganizationCreditGrantRequest.ProtoReflect.Descriptor instead.
 func (*SetOrganizationCreditGrantRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{137}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{135}
 }
 
 func (x *SetOrganizationCreditGrantRequest) GetOrganizationId() string {
@@ -9536,7 +9452,7 @@ type SetOrganizationCreditGrantResponse struct {
 
 func (x *SetOrganizationCreditGrantResponse) Reset() {
 	*x = SetOrganizationCreditGrantResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[138]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[136]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9548,7 +9464,7 @@ func (x *SetOrganizationCreditGrantResponse) String() string {
 func (*SetOrganizationCreditGrantResponse) ProtoMessage() {}
 
 func (x *SetOrganizationCreditGrantResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[138]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[136]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9561,7 +9477,7 @@ func (x *SetOrganizationCreditGrantResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use SetOrganizationCreditGrantResponse.ProtoReflect.Descriptor instead.
 func (*SetOrganizationCreditGrantResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{138}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{136}
 }
 
 // Specifies a single environment and the time range of events to correct.
@@ -9584,7 +9500,7 @@ type EnvironmentCorrectionSpec struct {
 
 func (x *EnvironmentCorrectionSpec) Reset() {
 	*x = EnvironmentCorrectionSpec{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[139]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[137]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9596,7 +9512,7 @@ func (x *EnvironmentCorrectionSpec) String() string {
 func (*EnvironmentCorrectionSpec) ProtoMessage() {}
 
 func (x *EnvironmentCorrectionSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[139]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[137]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9609,7 +9525,7 @@ func (x *EnvironmentCorrectionSpec) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnvironmentCorrectionSpec.ProtoReflect.Descriptor instead.
 func (*EnvironmentCorrectionSpec) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{139}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{137}
 }
 
 func (x *EnvironmentCorrectionSpec) GetEnvironmentId() string {
@@ -9655,7 +9571,7 @@ type CorrectEnvironmentUsageEventsRequest struct {
 
 func (x *CorrectEnvironmentUsageEventsRequest) Reset() {
 	*x = CorrectEnvironmentUsageEventsRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[140]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[138]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9667,7 +9583,7 @@ func (x *CorrectEnvironmentUsageEventsRequest) String() string {
 func (*CorrectEnvironmentUsageEventsRequest) ProtoMessage() {}
 
 func (x *CorrectEnvironmentUsageEventsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[140]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[138]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9680,7 +9596,7 @@ func (x *CorrectEnvironmentUsageEventsRequest) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use CorrectEnvironmentUsageEventsRequest.ProtoReflect.Descriptor instead.
 func (*CorrectEnvironmentUsageEventsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{140}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{138}
 }
 
 func (x *CorrectEnvironmentUsageEventsRequest) GetCorrections() []*EnvironmentCorrectionSpec {
@@ -9724,7 +9640,7 @@ type CorrectEnvironmentUsageEventsResponse struct {
 
 func (x *CorrectEnvironmentUsageEventsResponse) Reset() {
 	*x = CorrectEnvironmentUsageEventsResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[141]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[139]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9736,7 +9652,7 @@ func (x *CorrectEnvironmentUsageEventsResponse) String() string {
 func (*CorrectEnvironmentUsageEventsResponse) ProtoMessage() {}
 
 func (x *CorrectEnvironmentUsageEventsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[141]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[139]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9749,7 +9665,7 @@ func (x *CorrectEnvironmentUsageEventsResponse) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use CorrectEnvironmentUsageEventsResponse.ProtoReflect.Descriptor instead.
 func (*CorrectEnvironmentUsageEventsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{141}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{139}
 }
 
 func (x *CorrectEnvironmentUsageEventsResponse) GetResults() []*UsageEventCorrectionResult {
@@ -9805,7 +9721,7 @@ type EnvironmentUsageSummary struct {
 
 func (x *EnvironmentUsageSummary) Reset() {
 	*x = EnvironmentUsageSummary{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[142]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[140]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9817,7 +9733,7 @@ func (x *EnvironmentUsageSummary) String() string {
 func (*EnvironmentUsageSummary) ProtoMessage() {}
 
 func (x *EnvironmentUsageSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[142]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[140]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9830,7 +9746,7 @@ func (x *EnvironmentUsageSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnvironmentUsageSummary.ProtoReflect.Descriptor instead.
 func (*EnvironmentUsageSummary) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{142}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{140}
 }
 
 func (x *EnvironmentUsageSummary) GetEnvironmentId() string {
@@ -9867,7 +9783,7 @@ type CompleteBillingSetupRequest_Subscribe struct {
 
 func (x *CompleteBillingSetupRequest_Subscribe) Reset() {
 	*x = CompleteBillingSetupRequest_Subscribe{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[143]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[141]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9879,7 +9795,7 @@ func (x *CompleteBillingSetupRequest_Subscribe) String() string {
 func (*CompleteBillingSetupRequest_Subscribe) ProtoMessage() {}
 
 func (x *CompleteBillingSetupRequest_Subscribe) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[143]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[141]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9925,7 +9841,7 @@ type ListCouponsRequest_Filter struct {
 
 func (x *ListCouponsRequest_Filter) Reset() {
 	*x = ListCouponsRequest_Filter{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[144]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[142]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9937,7 +9853,7 @@ func (x *ListCouponsRequest_Filter) String() string {
 func (*ListCouponsRequest_Filter) ProtoMessage() {}
 
 func (x *ListCouponsRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[144]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[142]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9990,7 +9906,7 @@ type ListEnterpriseAITeamUsageRequest_Filter struct {
 
 func (x *ListEnterpriseAITeamUsageRequest_Filter) Reset() {
 	*x = ListEnterpriseAITeamUsageRequest_Filter{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[145]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[143]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10002,7 +9918,7 @@ func (x *ListEnterpriseAITeamUsageRequest_Filter) String() string {
 func (*ListEnterpriseAITeamUsageRequest_Filter) ProtoMessage() {}
 
 func (x *ListEnterpriseAITeamUsageRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[145]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[143]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10035,7 +9951,7 @@ type ListEnterpriseAIUserUsageRequest_Sort struct {
 
 func (x *ListEnterpriseAIUserUsageRequest_Sort) Reset() {
 	*x = ListEnterpriseAIUserUsageRequest_Sort{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[146]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[144]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10047,7 +9963,7 @@ func (x *ListEnterpriseAIUserUsageRequest_Sort) String() string {
 func (*ListEnterpriseAIUserUsageRequest_Sort) ProtoMessage() {}
 
 func (x *ListEnterpriseAIUserUsageRequest_Sort) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[146]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[144]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10089,7 +10005,7 @@ type ListEnterpriseAIUserUsageRequest_Filter struct {
 
 func (x *ListEnterpriseAIUserUsageRequest_Filter) Reset() {
 	*x = ListEnterpriseAIUserUsageRequest_Filter{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[147]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[145]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10101,7 +10017,7 @@ func (x *ListEnterpriseAIUserUsageRequest_Filter) String() string {
 func (*ListEnterpriseAIUserUsageRequest_Filter) ProtoMessage() {}
 
 func (x *ListEnterpriseAIUserUsageRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[147]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[145]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10134,7 +10050,7 @@ type ListEnterpriseUserCreditUsageRequest_Sort struct {
 
 func (x *ListEnterpriseUserCreditUsageRequest_Sort) Reset() {
 	*x = ListEnterpriseUserCreditUsageRequest_Sort{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[148]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[146]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10146,7 +10062,7 @@ func (x *ListEnterpriseUserCreditUsageRequest_Sort) String() string {
 func (*ListEnterpriseUserCreditUsageRequest_Sort) ProtoMessage() {}
 
 func (x *ListEnterpriseUserCreditUsageRequest_Sort) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[148]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[146]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10159,7 +10075,7 @@ func (x *ListEnterpriseUserCreditUsageRequest_Sort) ProtoReflect() protoreflect.
 
 // Deprecated: Use ListEnterpriseUserCreditUsageRequest_Sort.ProtoReflect.Descriptor instead.
 func (*ListEnterpriseUserCreditUsageRequest_Sort) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{126, 0}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{124, 0}
 }
 
 func (x *ListEnterpriseUserCreditUsageRequest_Sort) GetField() ListEnterpriseUserCreditUsageRequest_SortField {
@@ -10180,7 +10096,7 @@ var File_gitpod_v1_billing_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\n" +
-	"\x17gitpod/v1/billing.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x15gitpod/v1/usage.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe8\x01\n" +
+	"\x17gitpod/v1/billing.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x15gitpod/v1/usage.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe8\x01\n" +
 	"\rBillingRecord\x12/\n" +
 	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
 	"\x11billing_record.idR\x02id\x12<\n" +
@@ -10266,7 +10182,7 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\fsubscription\x18\x05 \x01(\v2\x17.gitpod.v1.SubscriptionR\fsubscription\"b\n" +
 	"\x15GetBillingInfoRequest\x12I\n" +
 	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\xa7\x06\n" +
+	"\x0forganization.idR\x0eorganizationId\"\xf0\x05\n" +
 	"\x16GetBillingInfoResponse\x12#\n" +
 	"\rtotal_credits\x18\x01 \x01(\x01R\ftotalCredits\x12+\n" +
 	"\x11available_credits\x18\x02 \x01(\x01R\x10availableCredits\x12!\n" +
@@ -10278,9 +10194,8 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x15topup_payment_failure\x18\v \x01(\v2\".gitpod.v1.TopupPaymentFailureInfoR\x13topupPaymentFailure\x12L\n" +
 	"\x13auto_topup_settings\x18\f \x01(\v2\x1c.gitpod.v1.AutoTopupSettingsR\x11autoTopupSettings\x12G\n" +
 	"\x12last_auto_topup_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\x0flastAutoTopupAt\x128\n" +
-	"\x18monthly_commitment_cents\x18\x0e \x01(\x03R\x16monthlyCommitmentCents\x12W\n" +
-	"\x1arecovery_credit_granted_at\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\x17recoveryCreditGrantedAt\x12!\n" +
-	"\fcredit_grant\x18\x10 \x01(\x03R\vcreditGrantJ\x04\b\x04\x10\x05R\x13customer_portal_url\"d\n" +
+	"\x18monthly_commitment_cents\x18\x0e \x01(\x03R\x16monthlyCommitmentCents\x12!\n" +
+	"\fcredit_grant\x18\x10 \x01(\x03R\vcreditGrantJ\x04\b\x04\x10\x05J\x04\b\x0f\x10\x10R\x13customer_portal_urlR\x1arecovery_credit_granted_at\"d\n" +
 	"\x17ReconcileBillingRequest\x12I\n" +
 	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
 	"\x0forganization.idR\x0eorganizationId\"\x1a\n" +
@@ -10859,11 +10774,7 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\auser.idH\x00R\x06userId\x88\x01\x01B\n" +
 	"\n" +
 	"\b_user_id\",\n" +
-	"*DeleteEnterpriseAIUserBudgetPolicyResponse\"i\n" +
-	"\x1cRequestRecoveryCreditRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\x1f\n" +
-	"\x1dRequestRecoveryCreditResponse\"\xac\x01\n" +
+	"*DeleteEnterpriseAIUserBudgetPolicyResponse\"\xac\x01\n" +
 	"\x1fGetCumulativeCreditUsageRequest\x12I\n" +
 	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
 	"\x0forganization.idR\x0eorganizationId\x124\n" +
@@ -11088,7 +10999,7 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"3ENTERPRISE_AI_USER_BUDGET_POLICY_SOURCE_UNSPECIFIED\x10\x00\x120\n" +
 	",ENTERPRISE_AI_USER_BUDGET_POLICY_SOURCE_NONE\x10\x01\x128\n" +
 	"4ENTERPRISE_AI_USER_BUDGET_POLICY_SOURCE_ORGANIZATION\x10\x02\x120\n" +
-	",ENTERPRISE_AI_USER_BUDGET_POLICY_SOURCE_USER\x10\x032\xef*\n" +
+	",ENTERPRISE_AI_USER_BUDGET_POLICY_SOURCE_USER\x10\x032\xab,\n" +
 	"\x0eBillingService\x12Q\n" +
 	"\fSetupBilling\x12\x1e.gitpod.v1.SetupBillingRequest\x1a\x1f.gitpod.v1.SetupBillingResponse\"\x00\x12i\n" +
 	"\x14CompleteBillingSetup\x12&.gitpod.v1.CompleteBillingSetupRequest\x1a'.gitpod.v1.CompleteBillingSetupResponse\"\x00\x12W\n" +
@@ -11114,13 +11025,13 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x1eGetCreditConsumptionTimeSeries\x120.gitpod.v1.GetCreditConsumptionTimeSeriesRequest\x1a1.gitpod.v1.GetCreditConsumptionTimeSeriesResponse\"\x03\x90\x02\x01\x12r\n" +
 	"\x16SetupEnterpriseBilling\x12(.gitpod.v1.SetupEnterpriseBillingRequest\x1a).gitpod.v1.SetupEnterpriseBillingResponse\"\x03\x90\x02\x02\x12r\n" +
 	"\x17UpdateAutoTopupSettings\x12).gitpod.v1.UpdateAutoTopupSettingsRequest\x1a*.gitpod.v1.UpdateAutoTopupSettingsResponse\"\x00\x12l\n" +
-	"\x14GetAutoTopupSettings\x12&.gitpod.v1.GetAutoTopupSettingsRequest\x1a'.gitpod.v1.GetAutoTopupSettingsResponse\"\x03\x90\x02\x01\x12l\n" +
-	"\x14GetCreditUsageReport\x12&.gitpod.v1.GetCreditUsageReportRequest\x1a'.gitpod.v1.GetCreditUsageReportResponse\"\x03\x90\x02\x01\x12l\n" +
-	"\x14GetCreditUsageExport\x12&.gitpod.v1.GetCreditUsageExportRequest\x1a'.gitpod.v1.GetCreditUsageExportResponse\"\x03\x90\x02\x01\x12\x81\x01\n" +
-	"\x1bGetEnterpriseAIUsageSummary\x12-.gitpod.v1.GetEnterpriseAIUsageSummaryRequest\x1a..gitpod.v1.GetEnterpriseAIUsageSummaryResponse\"\x03\x90\x02\x01\x12{\n" +
-	"\x19ListEnterpriseAITeamUsage\x12+.gitpod.v1.ListEnterpriseAITeamUsageRequest\x1a,.gitpod.v1.ListEnterpriseAITeamUsageResponse\"\x03\x90\x02\x01\x12{\n" +
-	"\x19ListEnterpriseAIUserUsage\x12+.gitpod.v1.ListEnterpriseAIUserUsageRequest\x1a,.gitpod.v1.ListEnterpriseAIUserUsageResponse\"\x03\x90\x02\x01\x12\x8a\x01\n" +
-	"\x1eGetEnterpriseAIUsageTimeSeries\x120.gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest\x1a1.gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse\"\x03\x90\x02\x01\x12c\n" +
+	"\x14GetAutoTopupSettings\x12&.gitpod.v1.GetAutoTopupSettingsRequest\x1a'.gitpod.v1.GetAutoTopupSettingsResponse\"\x03\x90\x02\x01\x12\x89\x01\n" +
+	"\x14GetCreditUsageReport\x12&.gitpod.v1.GetCreditUsageReportRequest\x1a'.gitpod.v1.GetCreditUsageReportResponse\" \xb2\xab\x1e\x19\x12\x17get_credit_usage_report\x90\x02\x01\x12\x89\x01\n" +
+	"\x14GetCreditUsageExport\x12&.gitpod.v1.GetCreditUsageExportRequest\x1a'.gitpod.v1.GetCreditUsageExportResponse\" \xb2\xab\x1e\x19\x12\x17get_credit_usage_export\x90\x02\x01\x12\xa6\x01\n" +
+	"\x1bGetEnterpriseAIUsageSummary\x12-.gitpod.v1.GetEnterpriseAIUsageSummaryRequest\x1a..gitpod.v1.GetEnterpriseAIUsageSummaryResponse\"(\xb2\xab\x1e!\x12\x1fget_enterprise_ai_usage_summary\x90\x02\x01\x12\x9e\x01\n" +
+	"\x19ListEnterpriseAITeamUsage\x12+.gitpod.v1.ListEnterpriseAITeamUsageRequest\x1a,.gitpod.v1.ListEnterpriseAITeamUsageResponse\"&\xb2\xab\x1e\x1f\x12\x1dlist_enterprise_ai_team_usage\x90\x02\x01\x12\x9e\x01\n" +
+	"\x19ListEnterpriseAIUserUsage\x12+.gitpod.v1.ListEnterpriseAIUserUsageRequest\x1a,.gitpod.v1.ListEnterpriseAIUserUsageResponse\"&\xb2\xab\x1e\x1f\x12\x1dlist_enterprise_ai_user_usage\x90\x02\x01\x12\xb3\x01\n" +
+	"\x1eGetEnterpriseAIUsageTimeSeries\x120.gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest\x1a1.gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse\",\xb2\xab\x1e%\x12#get_enterprise_ai_usage_time_series\x90\x02\x01\x12c\n" +
 	"\x12CorrectUsageEvents\x12$.gitpod.v1.CorrectUsageEventsRequest\x1a%.gitpod.v1.CorrectUsageEventsResponse\"\x00\x12`\n" +
 	"\x11InsertUsageEvents\x12#.gitpod.v1.InsertUsageEventsRequest\x1a$.gitpod.v1.InsertUsageEventsResponse\"\x00\x12\x84\x01\n" +
 	"\x1dCorrectEnvironmentUsageEvents\x12/.gitpod.v1.CorrectEnvironmentUsageEventsRequest\x1a0.gitpod.v1.CorrectEnvironmentUsageEventsResponse\"\x00\x12x\n" +
@@ -11130,15 +11041,15 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\"ListEnterpriseAIUserBudgetPolicies\x124.gitpod.v1.ListEnterpriseAIUserBudgetPoliciesRequest\x1a5.gitpod.v1.ListEnterpriseAIUserBudgetPoliciesResponse\"\x03\x90\x02\x01\x12\x8d\x01\n" +
 	"\x1fGetEnterpriseAIUserBudgetPolicy\x121.gitpod.v1.GetEnterpriseAIUserBudgetPolicyRequest\x1a2.gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse\"\x03\x90\x02\x01\x12\x8a\x01\n" +
 	"\x1fSetEnterpriseAIUserBudgetPolicy\x121.gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest\x1a2.gitpod.v1.SetEnterpriseAIUserBudgetPolicyResponse\"\x00\x12\x93\x01\n" +
-	"\"DeleteEnterpriseAIUserBudgetPolicy\x124.gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest\x1a5.gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyResponse\"\x00\x12l\n" +
-	"\x15RequestRecoveryCredit\x12'.gitpod.v1.RequestRecoveryCreditRequest\x1a(.gitpod.v1.RequestRecoveryCreditResponse\"\x00\x12x\n" +
-	"\x18GetCumulativeCreditUsage\x12*.gitpod.v1.GetCumulativeCreditUsageRequest\x1a+.gitpod.v1.GetCumulativeCreditUsageResponse\"\x03\x90\x02\x01\x12\x87\x01\n" +
-	"\x1dListEnterpriseUserCreditUsage\x12/.gitpod.v1.ListEnterpriseUserCreditUsageRequest\x1a0.gitpod.v1.ListEnterpriseUserCreditUsageResponse\"\x03\x90\x02\x01\x12{\n" +
+	"\"DeleteEnterpriseAIUserBudgetPolicy\x124.gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest\x1a5.gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyResponse\"\x00\x12\x99\x01\n" +
+	"\x18GetCumulativeCreditUsage\x12*.gitpod.v1.GetCumulativeCreditUsageRequest\x1a+.gitpod.v1.GetCumulativeCreditUsageResponse\"$\xb2\xab\x1e\x1d\x12\x1bget_cumulative_credit_usage\x90\x02\x01\x12\xae\x01\n" +
+	"\x1dListEnterpriseUserCreditUsage\x12/.gitpod.v1.ListEnterpriseUserCreditUsageRequest\x1a0.gitpod.v1.ListEnterpriseUserCreditUsageResponse\"*\xb2\xab\x1e#\x12!list_enterprise_user_credit_usage\x90\x02\x01\x12{\n" +
 	"\x1aCreateTeamCreditAllocation\x12,.gitpod.v1.CreateTeamCreditAllocationRequest\x1a-.gitpod.v1.CreateTeamCreditAllocationResponse\"\x00\x12u\n" +
 	"\x17GetTeamCreditAllocation\x12).gitpod.v1.GetTeamCreditAllocationRequest\x1a*.gitpod.v1.GetTeamCreditAllocationResponse\"\x03\x90\x02\x01\x12{\n" +
 	"\x1aUpdateTeamCreditAllocation\x12,.gitpod.v1.UpdateTeamCreditAllocationRequest\x1a-.gitpod.v1.UpdateTeamCreditAllocationResponse\"\x00\x12{\n" +
 	"\x1aDeleteTeamCreditAllocation\x12,.gitpod.v1.DeleteTeamCreditAllocationRequest\x1a-.gitpod.v1.DeleteTeamCreditAllocationResponse\"\x00\x12{\n" +
-	"\x1aSetOrganizationCreditGrant\x12,.gitpod.v1.SetOrganizationCreditGrantRequest\x1a-.gitpod.v1.SetOrganizationCreditGrantResponse\"\x00B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x1aSetOrganizationCreditGrant\x12,.gitpod.v1.SetOrganizationCreditGrantRequest\x1a-.gitpod.v1.SetOrganizationCreditGrantResponse\"\x00\x1a\r\xaa\xab\x1e\t\n" +
+	"\abillingB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_billing_proto_rawDescOnce sync.Once
@@ -11153,7 +11064,7 @@ func file_gitpod_v1_billing_proto_rawDescGZIP() []byte {
 }
 
 var file_gitpod_v1_billing_proto_enumTypes = make([]protoimpl.EnumInfo, 18)
-var file_gitpod_v1_billing_proto_msgTypes = make([]protoimpl.MessageInfo, 149)
+var file_gitpod_v1_billing_proto_msgTypes = make([]protoimpl.MessageInfo, 147)
 var file_gitpod_v1_billing_proto_goTypes = []any{
 	(BillingPlanKind)(0),                                // 0: gitpod.v1.BillingPlanKind
 	(CreditCardVerificationStatus)(0),                   // 1: gitpod.v1.CreditCardVerificationStatus
@@ -11292,345 +11203,340 @@ var file_gitpod_v1_billing_proto_goTypes = []any{
 	(*SetEnterpriseAIUserBudgetPolicyResponse)(nil),     // 134: gitpod.v1.SetEnterpriseAIUserBudgetPolicyResponse
 	(*DeleteEnterpriseAIUserBudgetPolicyRequest)(nil),   // 135: gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest
 	(*DeleteEnterpriseAIUserBudgetPolicyResponse)(nil),  // 136: gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyResponse
-	(*RequestRecoveryCreditRequest)(nil),                // 137: gitpod.v1.RequestRecoveryCreditRequest
-	(*RequestRecoveryCreditResponse)(nil),               // 138: gitpod.v1.RequestRecoveryCreditResponse
-	(*GetCumulativeCreditUsageRequest)(nil),             // 139: gitpod.v1.GetCumulativeCreditUsageRequest
-	(*GetCumulativeCreditUsageResponse)(nil),            // 140: gitpod.v1.GetCumulativeCreditUsageResponse
-	(*CumulativeCreditUsage)(nil),                       // 141: gitpod.v1.CumulativeCreditUsage
-	(*TeamCumulativeCreditUsage)(nil),                   // 142: gitpod.v1.TeamCumulativeCreditUsage
-	(*UserCreditBudgetUsage)(nil),                       // 143: gitpod.v1.UserCreditBudgetUsage
-	(*ListEnterpriseUserCreditUsageRequest)(nil),        // 144: gitpod.v1.ListEnterpriseUserCreditUsageRequest
-	(*ListEnterpriseUserCreditUsageResponse)(nil),       // 145: gitpod.v1.ListEnterpriseUserCreditUsageResponse
-	(*TeamCreditAllocationInfo)(nil),                    // 146: gitpod.v1.TeamCreditAllocationInfo
-	(*CreateTeamCreditAllocationRequest)(nil),           // 147: gitpod.v1.CreateTeamCreditAllocationRequest
-	(*CreateTeamCreditAllocationResponse)(nil),          // 148: gitpod.v1.CreateTeamCreditAllocationResponse
-	(*GetTeamCreditAllocationRequest)(nil),              // 149: gitpod.v1.GetTeamCreditAllocationRequest
-	(*GetTeamCreditAllocationResponse)(nil),             // 150: gitpod.v1.GetTeamCreditAllocationResponse
-	(*UpdateTeamCreditAllocationRequest)(nil),           // 151: gitpod.v1.UpdateTeamCreditAllocationRequest
-	(*UpdateTeamCreditAllocationResponse)(nil),          // 152: gitpod.v1.UpdateTeamCreditAllocationResponse
-	(*DeleteTeamCreditAllocationRequest)(nil),           // 153: gitpod.v1.DeleteTeamCreditAllocationRequest
-	(*DeleteTeamCreditAllocationResponse)(nil),          // 154: gitpod.v1.DeleteTeamCreditAllocationResponse
-	(*SetOrganizationCreditGrantRequest)(nil),           // 155: gitpod.v1.SetOrganizationCreditGrantRequest
-	(*SetOrganizationCreditGrantResponse)(nil),          // 156: gitpod.v1.SetOrganizationCreditGrantResponse
-	(*EnvironmentCorrectionSpec)(nil),                   // 157: gitpod.v1.EnvironmentCorrectionSpec
-	(*CorrectEnvironmentUsageEventsRequest)(nil),        // 158: gitpod.v1.CorrectEnvironmentUsageEventsRequest
-	(*CorrectEnvironmentUsageEventsResponse)(nil),       // 159: gitpod.v1.CorrectEnvironmentUsageEventsResponse
-	(*EnvironmentUsageSummary)(nil),                     // 160: gitpod.v1.EnvironmentUsageSummary
-	(*CompleteBillingSetupRequest_Subscribe)(nil),       // 161: gitpod.v1.CompleteBillingSetupRequest.Subscribe
-	(*ListCouponsRequest_Filter)(nil),                   // 162: gitpod.v1.ListCouponsRequest.Filter
-	(*ListEnterpriseAITeamUsageRequest_Filter)(nil),     // 163: gitpod.v1.ListEnterpriseAITeamUsageRequest.Filter
-	(*ListEnterpriseAIUserUsageRequest_Sort)(nil),       // 164: gitpod.v1.ListEnterpriseAIUserUsageRequest.Sort
-	(*ListEnterpriseAIUserUsageRequest_Filter)(nil),     // 165: gitpod.v1.ListEnterpriseAIUserUsageRequest.Filter
-	(*ListEnterpriseUserCreditUsageRequest_Sort)(nil),   // 166: gitpod.v1.ListEnterpriseUserCreditUsageRequest.Sort
-	(*timestamppb.Timestamp)(nil),                       // 167: google.protobuf.Timestamp
-	(*PaginationRequest)(nil),                           // 168: gitpod.v1.PaginationRequest
-	(*PaginationResponse)(nil),                          // 169: gitpod.v1.PaginationResponse
-	(*DateRange)(nil),                                   // 170: gitpod.v1.DateRange
-	(*Subject)(nil),                                     // 171: gitpod.v1.Subject
-	(SortOrder)(0),                                      // 172: gitpod.v1.SortOrder
+	(*GetCumulativeCreditUsageRequest)(nil),             // 137: gitpod.v1.GetCumulativeCreditUsageRequest
+	(*GetCumulativeCreditUsageResponse)(nil),            // 138: gitpod.v1.GetCumulativeCreditUsageResponse
+	(*CumulativeCreditUsage)(nil),                       // 139: gitpod.v1.CumulativeCreditUsage
+	(*TeamCumulativeCreditUsage)(nil),                   // 140: gitpod.v1.TeamCumulativeCreditUsage
+	(*UserCreditBudgetUsage)(nil),                       // 141: gitpod.v1.UserCreditBudgetUsage
+	(*ListEnterpriseUserCreditUsageRequest)(nil),        // 142: gitpod.v1.ListEnterpriseUserCreditUsageRequest
+	(*ListEnterpriseUserCreditUsageResponse)(nil),       // 143: gitpod.v1.ListEnterpriseUserCreditUsageResponse
+	(*TeamCreditAllocationInfo)(nil),                    // 144: gitpod.v1.TeamCreditAllocationInfo
+	(*CreateTeamCreditAllocationRequest)(nil),           // 145: gitpod.v1.CreateTeamCreditAllocationRequest
+	(*CreateTeamCreditAllocationResponse)(nil),          // 146: gitpod.v1.CreateTeamCreditAllocationResponse
+	(*GetTeamCreditAllocationRequest)(nil),              // 147: gitpod.v1.GetTeamCreditAllocationRequest
+	(*GetTeamCreditAllocationResponse)(nil),             // 148: gitpod.v1.GetTeamCreditAllocationResponse
+	(*UpdateTeamCreditAllocationRequest)(nil),           // 149: gitpod.v1.UpdateTeamCreditAllocationRequest
+	(*UpdateTeamCreditAllocationResponse)(nil),          // 150: gitpod.v1.UpdateTeamCreditAllocationResponse
+	(*DeleteTeamCreditAllocationRequest)(nil),           // 151: gitpod.v1.DeleteTeamCreditAllocationRequest
+	(*DeleteTeamCreditAllocationResponse)(nil),          // 152: gitpod.v1.DeleteTeamCreditAllocationResponse
+	(*SetOrganizationCreditGrantRequest)(nil),           // 153: gitpod.v1.SetOrganizationCreditGrantRequest
+	(*SetOrganizationCreditGrantResponse)(nil),          // 154: gitpod.v1.SetOrganizationCreditGrantResponse
+	(*EnvironmentCorrectionSpec)(nil),                   // 155: gitpod.v1.EnvironmentCorrectionSpec
+	(*CorrectEnvironmentUsageEventsRequest)(nil),        // 156: gitpod.v1.CorrectEnvironmentUsageEventsRequest
+	(*CorrectEnvironmentUsageEventsResponse)(nil),       // 157: gitpod.v1.CorrectEnvironmentUsageEventsResponse
+	(*EnvironmentUsageSummary)(nil),                     // 158: gitpod.v1.EnvironmentUsageSummary
+	(*CompleteBillingSetupRequest_Subscribe)(nil),       // 159: gitpod.v1.CompleteBillingSetupRequest.Subscribe
+	(*ListCouponsRequest_Filter)(nil),                   // 160: gitpod.v1.ListCouponsRequest.Filter
+	(*ListEnterpriseAITeamUsageRequest_Filter)(nil),     // 161: gitpod.v1.ListEnterpriseAITeamUsageRequest.Filter
+	(*ListEnterpriseAIUserUsageRequest_Sort)(nil),       // 162: gitpod.v1.ListEnterpriseAIUserUsageRequest.Sort
+	(*ListEnterpriseAIUserUsageRequest_Filter)(nil),     // 163: gitpod.v1.ListEnterpriseAIUserUsageRequest.Filter
+	(*ListEnterpriseUserCreditUsageRequest_Sort)(nil),   // 164: gitpod.v1.ListEnterpriseUserCreditUsageRequest.Sort
+	(*timestamppb.Timestamp)(nil),                       // 165: google.protobuf.Timestamp
+	(*PaginationRequest)(nil),                           // 166: gitpod.v1.PaginationRequest
+	(*PaginationResponse)(nil),                          // 167: gitpod.v1.PaginationResponse
+	(*DateRange)(nil),                                   // 168: gitpod.v1.DateRange
+	(*Subject)(nil),                                     // 169: gitpod.v1.Subject
+	(SortOrder)(0),                                      // 170: gitpod.v1.SortOrder
 }
 var file_gitpod_v1_billing_proto_depIdxs = []int32{
 	19,  // 0: gitpod.v1.BillingRecord.metadata:type_name -> gitpod.v1.BillingRecordMetadata
 	20,  // 1: gitpod.v1.BillingRecord.spec:type_name -> gitpod.v1.BillingRecordSpec
 	22,  // 2: gitpod.v1.BillingRecord.status:type_name -> gitpod.v1.BillingRecordStatus
 	5,   // 3: gitpod.v1.BillingRecordMetadata.realm:type_name -> gitpod.v1.BillingRealm
-	167, // 4: gitpod.v1.BillingRecordMetadata.created_at:type_name -> google.protobuf.Timestamp
-	167, // 5: gitpod.v1.BillingRecordMetadata.updated_at:type_name -> google.protobuf.Timestamp
+	165, // 4: gitpod.v1.BillingRecordMetadata.created_at:type_name -> google.protobuf.Timestamp
+	165, // 5: gitpod.v1.BillingRecordMetadata.updated_at:type_name -> google.protobuf.Timestamp
 	21,  // 6: gitpod.v1.BillingRecordSpec.plan:type_name -> gitpod.v1.BillingPlanSpec
 	0,   // 7: gitpod.v1.BillingPlanSpec.kind:type_name -> gitpod.v1.BillingPlanKind
 	23,  // 8: gitpod.v1.BillingRecordStatus.plan:type_name -> gitpod.v1.BillingPlanStatus
 	24,  // 9: gitpod.v1.BillingRecordStatus.payment_method_verification:type_name -> gitpod.v1.PaymentMethodVerificationStatus
 	3,   // 10: gitpod.v1.BillingRecordStatus.credit:type_name -> gitpod.v1.CreditStatus
 	0,   // 11: gitpod.v1.BillingPlanStatus.kind:type_name -> gitpod.v1.BillingPlanKind
-	167, // 12: gitpod.v1.BillingPlanStatus.ending_at:type_name -> google.protobuf.Timestamp
+	165, // 12: gitpod.v1.BillingPlanStatus.ending_at:type_name -> google.protobuf.Timestamp
 	1,   // 13: gitpod.v1.PaymentMethodVerificationStatus.card_verification_status:type_name -> gitpod.v1.CreditCardVerificationStatus
 	18,  // 14: gitpod.v1.GetBillingRecordResponse.billing_record:type_name -> gitpod.v1.BillingRecord
 	0,   // 15: gitpod.v1.UpdateBillingRecordRequest.kind:type_name -> gitpod.v1.BillingPlanKind
-	161, // 16: gitpod.v1.CompleteBillingSetupRequest.subscribe:type_name -> gitpod.v1.CompleteBillingSetupRequest.Subscribe
-	167, // 17: gitpod.v1.CompleteBillingSetupResponse.trial_expires_at:type_name -> google.protobuf.Timestamp
+	159, // 16: gitpod.v1.CompleteBillingSetupRequest.subscribe:type_name -> gitpod.v1.CompleteBillingSetupRequest.Subscribe
+	165, // 17: gitpod.v1.CompleteBillingSetupResponse.trial_expires_at:type_name -> google.protobuf.Timestamp
 	46,  // 18: gitpod.v1.CompleteBillingSetupResponse.subscription:type_name -> gitpod.v1.Subscription
 	4,   // 19: gitpod.v1.GetBillingInfoResponse.payment_method_status:type_name -> gitpod.v1.PaymentMethodStatus
 	3,   // 20: gitpod.v1.GetBillingInfoResponse.credit_status:type_name -> gitpod.v1.CreditStatus
 	38,  // 21: gitpod.v1.GetBillingInfoResponse.payment_failure:type_name -> gitpod.v1.PaymentFailureInfo
 	37,  // 22: gitpod.v1.GetBillingInfoResponse.topup_payment_failure:type_name -> gitpod.v1.TopupPaymentFailureInfo
 	79,  // 23: gitpod.v1.GetBillingInfoResponse.auto_topup_settings:type_name -> gitpod.v1.AutoTopupSettings
-	167, // 24: gitpod.v1.GetBillingInfoResponse.last_auto_topup_at:type_name -> google.protobuf.Timestamp
-	167, // 25: gitpod.v1.GetBillingInfoResponse.recovery_credit_granted_at:type_name -> google.protobuf.Timestamp
-	167, // 26: gitpod.v1.TopupPaymentFailureInfo.failed_at:type_name -> google.protobuf.Timestamp
-	2,   // 27: gitpod.v1.PaymentFailureInfo.state:type_name -> gitpod.v1.PaymentFailureState
-	167, // 28: gitpod.v1.PaymentFailureInfo.grace_period_ends_at:type_name -> google.protobuf.Timestamp
-	167, // 29: gitpod.v1.PaymentFailureInfo.failed_at:type_name -> google.protobuf.Timestamp
-	6,   // 30: gitpod.v1.CreateSubscriptionRequest.subscription_type:type_name -> gitpod.v1.SubscriptionType
-	46,  // 31: gitpod.v1.CreateSubscriptionResponse.subscription:type_name -> gitpod.v1.Subscription
-	6,   // 32: gitpod.v1.CancelSubscriptionRequest.subscription_type:type_name -> gitpod.v1.SubscriptionType
-	46,  // 33: gitpod.v1.UpdateSubscriptionResponse.subscription:type_name -> gitpod.v1.Subscription
-	6,   // 34: gitpod.v1.Subscription.subscription_type:type_name -> gitpod.v1.SubscriptionType
-	7,   // 35: gitpod.v1.Subscription.status:type_name -> gitpod.v1.SubscriptionStatus
-	167, // 36: gitpod.v1.Subscription.starts_at:type_name -> google.protobuf.Timestamp
-	167, // 37: gitpod.v1.Subscription.cancelled_at:type_name -> google.protobuf.Timestamp
-	167, // 38: gitpod.v1.Subscription.ends_at:type_name -> google.protobuf.Timestamp
-	46,  // 39: gitpod.v1.ListSubscriptionsResponse.subscriptions:type_name -> gitpod.v1.Subscription
-	5,   // 40: gitpod.v1.SetBillingRealmRequest.realm:type_name -> gitpod.v1.BillingRealm
-	60,  // 41: gitpod.v1.Coupon.config:type_name -> gitpod.v1.CouponConfig
-	167, // 42: gitpod.v1.Coupon.expires_at:type_name -> google.protobuf.Timestamp
-	167, // 43: gitpod.v1.Coupon.created_at:type_name -> google.protobuf.Timestamp
-	167, // 44: gitpod.v1.Coupon.updated_at:type_name -> google.protobuf.Timestamp
-	60,  // 45: gitpod.v1.CreateCouponRequest.config:type_name -> gitpod.v1.CouponConfig
-	167, // 46: gitpod.v1.CreateCouponRequest.expires_at:type_name -> google.protobuf.Timestamp
-	58,  // 47: gitpod.v1.CreateCouponResponse.coupon:type_name -> gitpod.v1.Coupon
-	168, // 48: gitpod.v1.ListCouponsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	162, // 49: gitpod.v1.ListCouponsRequest.filter:type_name -> gitpod.v1.ListCouponsRequest.Filter
-	169, // 50: gitpod.v1.ListCouponsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	58,  // 51: gitpod.v1.ListCouponsResponse.coupons:type_name -> gitpod.v1.Coupon
-	58,  // 52: gitpod.v1.GetCouponResponse.coupon:type_name -> gitpod.v1.Coupon
-	66,  // 53: gitpod.v1.SetBillingAddressRequest.address:type_name -> gitpod.v1.BillingAddress
-	170, // 54: gitpod.v1.GetCreditConsumptionTimeSeriesRequest.date_range:type_name -> gitpod.v1.DateRange
-	75,  // 55: gitpod.v1.GetCreditConsumptionTimeSeriesResponse.metrics:type_name -> gitpod.v1.MetricConsumptionTimeSeries
-	15,  // 56: gitpod.v1.MetricConsumptionTimeSeries.kind:type_name -> gitpod.v1.MetricConsumptionTimeSeries.Kind
-	76,  // 57: gitpod.v1.MetricConsumptionTimeSeries.series:type_name -> gitpod.v1.CreditUsageDataPoint
-	167, // 58: gitpod.v1.CreditUsageDataPoint.time:type_name -> google.protobuf.Timestamp
-	167, // 59: gitpod.v1.SetupEnterpriseBillingRequest.contract_start_date:type_name -> google.protobuf.Timestamp
-	79,  // 60: gitpod.v1.UpdateAutoTopupSettingsRequest.settings:type_name -> gitpod.v1.AutoTopupSettings
-	79,  // 61: gitpod.v1.UpdateAutoTopupSettingsResponse.settings:type_name -> gitpod.v1.AutoTopupSettings
-	79,  // 62: gitpod.v1.GetAutoTopupSettingsResponse.settings:type_name -> gitpod.v1.AutoTopupSettings
-	171, // 63: gitpod.v1.CreditUsageReportFilter.subject:type_name -> gitpod.v1.Subject
-	170, // 64: gitpod.v1.GetCreditUsageReportRequest.date_range:type_name -> gitpod.v1.DateRange
-	84,  // 65: gitpod.v1.GetCreditUsageReportRequest.filter:type_name -> gitpod.v1.CreditUsageReportFilter
-	167, // 66: gitpod.v1.GetCreditUsageReportResponse.updated_at:type_name -> google.protobuf.Timestamp
-	87,  // 67: gitpod.v1.GetCreditUsageReportResponse.daily_usage:type_name -> gitpod.v1.DailyCreditUsage
-	167, // 68: gitpod.v1.GetCreditUsageReportResponse.period_start:type_name -> google.protobuf.Timestamp
-	167, // 69: gitpod.v1.DailyCreditUsage.date:type_name -> google.protobuf.Timestamp
-	88,  // 70: gitpod.v1.DailyCreditUsage.org_usage:type_name -> gitpod.v1.CreditsByType
-	89,  // 71: gitpod.v1.DailyCreditUsage.user_usage:type_name -> gitpod.v1.UserCreditUsage
-	90,  // 72: gitpod.v1.DailyCreditUsage.team_usage:type_name -> gitpod.v1.TeamCreditUsage
-	91,  // 73: gitpod.v1.DailyCreditUsage.environment_usage:type_name -> gitpod.v1.EnvironmentCreditUsage
-	92,  // 74: gitpod.v1.DailyCreditUsage.conversation_usage:type_name -> gitpod.v1.AgentExecutionCreditUsage
-	99,  // 75: gitpod.v1.DailyCreditUsage.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
-	8,   // 76: gitpod.v1.CreditsByType.usage_type:type_name -> gitpod.v1.UsageType
-	88,  // 77: gitpod.v1.UserCreditUsage.usage:type_name -> gitpod.v1.CreditsByType
-	99,  // 78: gitpod.v1.UserCreditUsage.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
-	88,  // 79: gitpod.v1.TeamCreditUsage.usage:type_name -> gitpod.v1.CreditsByType
-	88,  // 80: gitpod.v1.EnvironmentCreditUsage.usage:type_name -> gitpod.v1.CreditsByType
-	88,  // 81: gitpod.v1.AgentExecutionCreditUsage.usage:type_name -> gitpod.v1.CreditsByType
-	170, // 82: gitpod.v1.GetCreditUsageExportRequest.date_range:type_name -> gitpod.v1.DateRange
-	9,   // 83: gitpod.v1.GetCreditUsageExportRequest.group_by:type_name -> gitpod.v1.CreditUsageExportGroupBy
-	12,  // 84: gitpod.v1.EnterpriseAIUsage.currency:type_name -> gitpod.v1.BillingCurrency
-	95,  // 85: gitpod.v1.EnterpriseAIUsage.tokens:type_name -> gitpod.v1.EnterpriseAITokenUsage
-	10,  // 86: gitpod.v1.EnterpriseAIUsageBudget.source:type_name -> gitpod.v1.EnterpriseAIUsageBudgetSource
-	12,  // 87: gitpod.v1.EnterpriseAIUsageBudget.currency:type_name -> gitpod.v1.BillingCurrency
-	96,  // 88: gitpod.v1.EnterpriseAIUsageBudget.month_to_date_usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	11,  // 89: gitpod.v1.EnterpriseAIUsageByTokenType.token_type:type_name -> gitpod.v1.BYOKRateCardTokenType
-	96,  // 90: gitpod.v1.EnterpriseAIUsageByTokenType.usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	96,  // 91: gitpod.v1.EnterpriseAIUsageByModel.usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	98,  // 92: gitpod.v1.EnterpriseAIUsageByModel.usage_by_token_type:type_name -> gitpod.v1.EnterpriseAIUsageByTokenType
-	96,  // 93: gitpod.v1.EnterpriseAIUsageByModel.unpriced_usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	98,  // 94: gitpod.v1.EnterpriseAIUsageByModel.unpriced_usage_by_token_type:type_name -> gitpod.v1.EnterpriseAIUsageByTokenType
-	96,  // 95: gitpod.v1.TeamEnterpriseAIUsage.usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	97,  // 96: gitpod.v1.TeamEnterpriseAIUsage.budget:type_name -> gitpod.v1.EnterpriseAIUsageBudget
-	98,  // 97: gitpod.v1.TeamEnterpriseAIUsage.usage_by_token_type:type_name -> gitpod.v1.EnterpriseAIUsageByTokenType
-	96,  // 98: gitpod.v1.UserEnterpriseAIUsage.usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	96,  // 99: gitpod.v1.UserCostBudgetUsage.month_to_date_usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	12,  // 100: gitpod.v1.UserCostBudgetUsage.currency:type_name -> gitpod.v1.BillingCurrency
-	14,  // 101: gitpod.v1.UserCostBudgetUsage.budget_source:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicySource
-	167, // 102: gitpod.v1.DailyEnterpriseAIUsage.date:type_name -> google.protobuf.Timestamp
-	96,  // 103: gitpod.v1.DailyEnterpriseAIUsage.usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	97,  // 104: gitpod.v1.DailyEnterpriseAIUsage.budget:type_name -> gitpod.v1.EnterpriseAIUsageBudget
-	101, // 105: gitpod.v1.DailyEnterpriseAIUsage.user_usage:type_name -> gitpod.v1.UserEnterpriseAIUsage
-	100, // 106: gitpod.v1.DailyEnterpriseAIUsage.team_usage:type_name -> gitpod.v1.TeamEnterpriseAIUsage
-	99,  // 107: gitpod.v1.DailyEnterpriseAIUsage.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
-	170, // 108: gitpod.v1.GetEnterpriseAIUsageSummaryRequest.date_range:type_name -> gitpod.v1.DateRange
-	167, // 109: gitpod.v1.GetEnterpriseAIUsageSummaryResponse.calculated_at:type_name -> google.protobuf.Timestamp
-	96,  // 110: gitpod.v1.GetEnterpriseAIUsageSummaryResponse.usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	97,  // 111: gitpod.v1.GetEnterpriseAIUsageSummaryResponse.budget:type_name -> gitpod.v1.EnterpriseAIUsageBudget
-	99,  // 112: gitpod.v1.GetEnterpriseAIUsageSummaryResponse.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
-	168, // 113: gitpod.v1.ListEnterpriseAITeamUsageRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	170, // 114: gitpod.v1.ListEnterpriseAITeamUsageRequest.date_range:type_name -> gitpod.v1.DateRange
-	163, // 115: gitpod.v1.ListEnterpriseAITeamUsageRequest.filter:type_name -> gitpod.v1.ListEnterpriseAITeamUsageRequest.Filter
-	169, // 116: gitpod.v1.ListEnterpriseAITeamUsageResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	100, // 117: gitpod.v1.ListEnterpriseAITeamUsageResponse.team_usage:type_name -> gitpod.v1.TeamEnterpriseAIUsage
-	167, // 118: gitpod.v1.ListEnterpriseAITeamUsageResponse.calculated_at:type_name -> google.protobuf.Timestamp
-	168, // 119: gitpod.v1.ListEnterpriseAIUserUsageRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	170, // 120: gitpod.v1.ListEnterpriseAIUserUsageRequest.date_range:type_name -> gitpod.v1.DateRange
-	164, // 121: gitpod.v1.ListEnterpriseAIUserUsageRequest.sort:type_name -> gitpod.v1.ListEnterpriseAIUserUsageRequest.Sort
-	165, // 122: gitpod.v1.ListEnterpriseAIUserUsageRequest.filter:type_name -> gitpod.v1.ListEnterpriseAIUserUsageRequest.Filter
-	169, // 123: gitpod.v1.ListEnterpriseAIUserUsageResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	102, // 124: gitpod.v1.ListEnterpriseAIUserUsageResponse.user_usage:type_name -> gitpod.v1.UserCostBudgetUsage
-	167, // 125: gitpod.v1.ListEnterpriseAIUserUsageResponse.calculated_at:type_name -> google.protobuf.Timestamp
-	170, // 126: gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest.date_range:type_name -> gitpod.v1.DateRange
-	111, // 127: gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest.filter:type_name -> gitpod.v1.EnterpriseAIUsageTimeSeriesFilter
-	171, // 128: gitpod.v1.EnterpriseAIUsageTimeSeriesFilter.subject:type_name -> gitpod.v1.Subject
-	167, // 129: gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse.calculated_at:type_name -> google.protobuf.Timestamp
-	103, // 130: gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse.daily_usage:type_name -> gitpod.v1.DailyEnterpriseAIUsage
-	115, // 131: gitpod.v1.CorrectUsageEventsResponse.results:type_name -> gitpod.v1.UsageEventCorrectionResult
-	117, // 132: gitpod.v1.InsertUsageEventsRequest.events:type_name -> gitpod.v1.UsageEventInput
-	119, // 133: gitpod.v1.InsertUsageEventsResponse.results:type_name -> gitpod.v1.UsageEventInsertResult
-	11,  // 134: gitpod.v1.BYOKRateCardRate.token_type:type_name -> gitpod.v1.BYOKRateCardTokenType
-	12,  // 135: gitpod.v1.BYOKRateCardRate.currency:type_name -> gitpod.v1.BillingCurrency
-	167, // 136: gitpod.v1.BYOKRateCardRate.effective_at:type_name -> google.protobuf.Timestamp
-	167, // 137: gitpod.v1.BYOKRateCardRate.created_at:type_name -> google.protobuf.Timestamp
-	167, // 138: gitpod.v1.ListBYOKRateCardRatesRequest.as_of:type_name -> google.protobuf.Timestamp
-	122, // 139: gitpod.v1.ListBYOKRateCardRatesResponse.rates:type_name -> gitpod.v1.BYOKRateCardRate
-	11,  // 140: gitpod.v1.SetBYOKRateCardRateRequest.token_type:type_name -> gitpod.v1.BYOKRateCardTokenType
-	12,  // 141: gitpod.v1.SetBYOKRateCardRateRequest.currency:type_name -> gitpod.v1.BillingCurrency
-	167, // 142: gitpod.v1.SetBYOKRateCardRateRequest.effective_at:type_name -> google.protobuf.Timestamp
-	122, // 143: gitpod.v1.SetBYOKRateCardRateResponse.rate:type_name -> gitpod.v1.BYOKRateCardRate
-	13,  // 144: gitpod.v1.EnterpriseAIUserBudgetPolicy.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
-	12,  // 145: gitpod.v1.EnterpriseAIUserBudgetPolicy.currency:type_name -> gitpod.v1.BillingCurrency
-	167, // 146: gitpod.v1.EnterpriseAIUserBudgetPolicy.created_at:type_name -> google.protobuf.Timestamp
-	167, // 147: gitpod.v1.EnterpriseAIUserBudgetPolicy.updated_at:type_name -> google.protobuf.Timestamp
-	14,  // 148: gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicy.source:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicySource
-	127, // 149: gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicy.policy:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
-	168, // 150: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	13,  // 151: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesRequest.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
-	127, // 152: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesResponse.organization_policy:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
-	127, // 153: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesResponse.user_policies:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
-	169, // 154: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	13,  // 155: gitpod.v1.GetEnterpriseAIUserBudgetPolicyRequest.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
-	127, // 156: gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse.policy:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
-	128, // 157: gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse.effective_policy:type_name -> gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicy
-	13,  // 158: gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
-	12,  // 159: gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest.currency:type_name -> gitpod.v1.BillingCurrency
-	127, // 160: gitpod.v1.SetEnterpriseAIUserBudgetPolicyResponse.policy:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
-	13,  // 161: gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
-	167, // 162: gitpod.v1.GetCumulativeCreditUsageRequest.as_of:type_name -> google.protobuf.Timestamp
-	141, // 163: gitpod.v1.GetCumulativeCreditUsageResponse.org_usage:type_name -> gitpod.v1.CumulativeCreditUsage
-	142, // 164: gitpod.v1.GetCumulativeCreditUsageResponse.team_usage:type_name -> gitpod.v1.TeamCumulativeCreditUsage
-	141, // 165: gitpod.v1.GetCumulativeCreditUsageResponse.unteamed_usage:type_name -> gitpod.v1.CumulativeCreditUsage
-	167, // 166: gitpod.v1.GetCumulativeCreditUsageResponse.period_start:type_name -> google.protobuf.Timestamp
-	143, // 167: gitpod.v1.GetCumulativeCreditUsageResponse.user_usage:type_name -> gitpod.v1.UserCreditBudgetUsage
-	88,  // 168: gitpod.v1.CumulativeCreditUsage.usage_by_type:type_name -> gitpod.v1.CreditsByType
-	141, // 169: gitpod.v1.TeamCumulativeCreditUsage.usage:type_name -> gitpod.v1.CumulativeCreditUsage
-	141, // 170: gitpod.v1.UserCreditBudgetUsage.month_to_date_usage:type_name -> gitpod.v1.CumulativeCreditUsage
-	14,  // 171: gitpod.v1.UserCreditBudgetUsage.budget_source:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicySource
-	99,  // 172: gitpod.v1.UserCreditBudgetUsage.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
-	168, // 173: gitpod.v1.ListEnterpriseUserCreditUsageRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	167, // 174: gitpod.v1.ListEnterpriseUserCreditUsageRequest.as_of:type_name -> google.protobuf.Timestamp
-	166, // 175: gitpod.v1.ListEnterpriseUserCreditUsageRequest.sort:type_name -> gitpod.v1.ListEnterpriseUserCreditUsageRequest.Sort
-	143, // 176: gitpod.v1.ListEnterpriseUserCreditUsageResponse.user_usage:type_name -> gitpod.v1.UserCreditBudgetUsage
-	169, // 177: gitpod.v1.ListEnterpriseUserCreditUsageResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	167, // 178: gitpod.v1.TeamCreditAllocationInfo.created_at:type_name -> google.protobuf.Timestamp
-	167, // 179: gitpod.v1.TeamCreditAllocationInfo.updated_at:type_name -> google.protobuf.Timestamp
-	12,  // 180: gitpod.v1.TeamCreditAllocationInfo.cost_budget_currency:type_name -> gitpod.v1.BillingCurrency
-	12,  // 181: gitpod.v1.CreateTeamCreditAllocationRequest.cost_budget_currency:type_name -> gitpod.v1.BillingCurrency
-	146, // 182: gitpod.v1.CreateTeamCreditAllocationResponse.allocation:type_name -> gitpod.v1.TeamCreditAllocationInfo
-	146, // 183: gitpod.v1.GetTeamCreditAllocationResponse.allocation:type_name -> gitpod.v1.TeamCreditAllocationInfo
-	12,  // 184: gitpod.v1.UpdateTeamCreditAllocationRequest.cost_budget_currency:type_name -> gitpod.v1.BillingCurrency
-	146, // 185: gitpod.v1.UpdateTeamCreditAllocationResponse.allocation:type_name -> gitpod.v1.TeamCreditAllocationInfo
-	167, // 186: gitpod.v1.EnvironmentCorrectionSpec.start_time:type_name -> google.protobuf.Timestamp
-	167, // 187: gitpod.v1.EnvironmentCorrectionSpec.end_time:type_name -> google.protobuf.Timestamp
-	157, // 188: gitpod.v1.CorrectEnvironmentUsageEventsRequest.corrections:type_name -> gitpod.v1.EnvironmentCorrectionSpec
-	115, // 189: gitpod.v1.CorrectEnvironmentUsageEventsResponse.results:type_name -> gitpod.v1.UsageEventCorrectionResult
-	160, // 190: gitpod.v1.CorrectEnvironmentUsageEventsResponse.environment_summaries:type_name -> gitpod.v1.EnvironmentUsageSummary
-	167, // 191: gitpod.v1.ListCouponsRequest.Filter.expires_before:type_name -> google.protobuf.Timestamp
-	167, // 192: gitpod.v1.ListCouponsRequest.Filter.expires_after:type_name -> google.protobuf.Timestamp
-	16,  // 193: gitpod.v1.ListEnterpriseAIUserUsageRequest.Sort.field:type_name -> gitpod.v1.ListEnterpriseAIUserUsageRequest.SortField
-	172, // 194: gitpod.v1.ListEnterpriseAIUserUsageRequest.Sort.order:type_name -> gitpod.v1.SortOrder
-	171, // 195: gitpod.v1.ListEnterpriseAIUserUsageRequest.Filter.subject:type_name -> gitpod.v1.Subject
-	17,  // 196: gitpod.v1.ListEnterpriseUserCreditUsageRequest.Sort.field:type_name -> gitpod.v1.ListEnterpriseUserCreditUsageRequest.SortField
-	172, // 197: gitpod.v1.ListEnterpriseUserCreditUsageRequest.Sort.order:type_name -> gitpod.v1.SortOrder
-	29,  // 198: gitpod.v1.BillingService.SetupBilling:input_type -> gitpod.v1.SetupBillingRequest
-	31,  // 199: gitpod.v1.BillingService.CompleteBillingSetup:input_type -> gitpod.v1.CompleteBillingSetupRequest
-	33,  // 200: gitpod.v1.BillingService.GetBillingInfo:input_type -> gitpod.v1.GetBillingInfoRequest
-	35,  // 201: gitpod.v1.BillingService.ReconcileBilling:input_type -> gitpod.v1.ReconcileBillingRequest
-	39,  // 202: gitpod.v1.BillingService.CreateSubscription:input_type -> gitpod.v1.CreateSubscriptionRequest
-	41,  // 203: gitpod.v1.BillingService.CancelSubscription:input_type -> gitpod.v1.CancelSubscriptionRequest
-	43,  // 204: gitpod.v1.BillingService.UpdateSubscription:input_type -> gitpod.v1.UpdateSubscriptionRequest
-	45,  // 205: gitpod.v1.BillingService.ListSubscriptions:input_type -> gitpod.v1.ListSubscriptionsRequest
-	48,  // 206: gitpod.v1.BillingService.GrantCredits:input_type -> gitpod.v1.GrantCreditsRequest
-	50,  // 207: gitpod.v1.BillingService.GetStripePublishableKey:input_type -> gitpod.v1.GetStripePublishableKeyRequest
-	52,  // 208: gitpod.v1.BillingService.SetBillingRealm:input_type -> gitpod.v1.SetBillingRealmRequest
-	54,  // 209: gitpod.v1.BillingService.CreateCardVerification:input_type -> gitpod.v1.CreateCardVerificationRequest
-	56,  // 210: gitpod.v1.BillingService.SetTaxID:input_type -> gitpod.v1.SetTaxIDRequest
-	25,  // 211: gitpod.v1.BillingService.GetBillingRecord:input_type -> gitpod.v1.GetBillingRecordRequest
-	27,  // 212: gitpod.v1.BillingService.UpdateBillingRecord:input_type -> gitpod.v1.UpdateBillingRecordRequest
-	59,  // 213: gitpod.v1.BillingService.CreateCoupon:input_type -> gitpod.v1.CreateCouponRequest
-	62,  // 214: gitpod.v1.BillingService.ListCoupons:input_type -> gitpod.v1.ListCouponsRequest
-	64,  // 215: gitpod.v1.BillingService.GetCoupon:input_type -> gitpod.v1.GetCouponRequest
-	67,  // 216: gitpod.v1.BillingService.SetBillingAddress:input_type -> gitpod.v1.SetBillingAddressRequest
-	69,  // 217: gitpod.v1.BillingService.GetStripePortalUrl:input_type -> gitpod.v1.GetStripePortalUrlRequest
-	71,  // 218: gitpod.v1.BillingService.ClearTopupFailure:input_type -> gitpod.v1.ClearTopupFailureRequest
-	73,  // 219: gitpod.v1.BillingService.GetCreditConsumptionTimeSeries:input_type -> gitpod.v1.GetCreditConsumptionTimeSeriesRequest
-	77,  // 220: gitpod.v1.BillingService.SetupEnterpriseBilling:input_type -> gitpod.v1.SetupEnterpriseBillingRequest
-	80,  // 221: gitpod.v1.BillingService.UpdateAutoTopupSettings:input_type -> gitpod.v1.UpdateAutoTopupSettingsRequest
-	82,  // 222: gitpod.v1.BillingService.GetAutoTopupSettings:input_type -> gitpod.v1.GetAutoTopupSettingsRequest
-	85,  // 223: gitpod.v1.BillingService.GetCreditUsageReport:input_type -> gitpod.v1.GetCreditUsageReportRequest
-	93,  // 224: gitpod.v1.BillingService.GetCreditUsageExport:input_type -> gitpod.v1.GetCreditUsageExportRequest
-	104, // 225: gitpod.v1.BillingService.GetEnterpriseAIUsageSummary:input_type -> gitpod.v1.GetEnterpriseAIUsageSummaryRequest
-	106, // 226: gitpod.v1.BillingService.ListEnterpriseAITeamUsage:input_type -> gitpod.v1.ListEnterpriseAITeamUsageRequest
-	108, // 227: gitpod.v1.BillingService.ListEnterpriseAIUserUsage:input_type -> gitpod.v1.ListEnterpriseAIUserUsageRequest
-	110, // 228: gitpod.v1.BillingService.GetEnterpriseAIUsageTimeSeries:input_type -> gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest
-	113, // 229: gitpod.v1.BillingService.CorrectUsageEvents:input_type -> gitpod.v1.CorrectUsageEventsRequest
-	116, // 230: gitpod.v1.BillingService.InsertUsageEvents:input_type -> gitpod.v1.InsertUsageEventsRequest
-	158, // 231: gitpod.v1.BillingService.CorrectEnvironmentUsageEvents:input_type -> gitpod.v1.CorrectEnvironmentUsageEventsRequest
-	120, // 232: gitpod.v1.BillingService.GetEnterpriseBillingInfo:input_type -> gitpod.v1.GetEnterpriseBillingInfoRequest
-	123, // 233: gitpod.v1.BillingService.ListBYOKRateCardRates:input_type -> gitpod.v1.ListBYOKRateCardRatesRequest
-	125, // 234: gitpod.v1.BillingService.SetBYOKRateCardRate:input_type -> gitpod.v1.SetBYOKRateCardRateRequest
-	129, // 235: gitpod.v1.BillingService.ListEnterpriseAIUserBudgetPolicies:input_type -> gitpod.v1.ListEnterpriseAIUserBudgetPoliciesRequest
-	131, // 236: gitpod.v1.BillingService.GetEnterpriseAIUserBudgetPolicy:input_type -> gitpod.v1.GetEnterpriseAIUserBudgetPolicyRequest
-	133, // 237: gitpod.v1.BillingService.SetEnterpriseAIUserBudgetPolicy:input_type -> gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest
-	135, // 238: gitpod.v1.BillingService.DeleteEnterpriseAIUserBudgetPolicy:input_type -> gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest
-	137, // 239: gitpod.v1.BillingService.RequestRecoveryCredit:input_type -> gitpod.v1.RequestRecoveryCreditRequest
-	139, // 240: gitpod.v1.BillingService.GetCumulativeCreditUsage:input_type -> gitpod.v1.GetCumulativeCreditUsageRequest
-	144, // 241: gitpod.v1.BillingService.ListEnterpriseUserCreditUsage:input_type -> gitpod.v1.ListEnterpriseUserCreditUsageRequest
-	147, // 242: gitpod.v1.BillingService.CreateTeamCreditAllocation:input_type -> gitpod.v1.CreateTeamCreditAllocationRequest
-	149, // 243: gitpod.v1.BillingService.GetTeamCreditAllocation:input_type -> gitpod.v1.GetTeamCreditAllocationRequest
-	151, // 244: gitpod.v1.BillingService.UpdateTeamCreditAllocation:input_type -> gitpod.v1.UpdateTeamCreditAllocationRequest
-	153, // 245: gitpod.v1.BillingService.DeleteTeamCreditAllocation:input_type -> gitpod.v1.DeleteTeamCreditAllocationRequest
-	155, // 246: gitpod.v1.BillingService.SetOrganizationCreditGrant:input_type -> gitpod.v1.SetOrganizationCreditGrantRequest
-	30,  // 247: gitpod.v1.BillingService.SetupBilling:output_type -> gitpod.v1.SetupBillingResponse
-	32,  // 248: gitpod.v1.BillingService.CompleteBillingSetup:output_type -> gitpod.v1.CompleteBillingSetupResponse
-	34,  // 249: gitpod.v1.BillingService.GetBillingInfo:output_type -> gitpod.v1.GetBillingInfoResponse
-	36,  // 250: gitpod.v1.BillingService.ReconcileBilling:output_type -> gitpod.v1.ReconcileBillingResponse
-	40,  // 251: gitpod.v1.BillingService.CreateSubscription:output_type -> gitpod.v1.CreateSubscriptionResponse
-	42,  // 252: gitpod.v1.BillingService.CancelSubscription:output_type -> gitpod.v1.CancelSubscriptionResponse
-	44,  // 253: gitpod.v1.BillingService.UpdateSubscription:output_type -> gitpod.v1.UpdateSubscriptionResponse
-	47,  // 254: gitpod.v1.BillingService.ListSubscriptions:output_type -> gitpod.v1.ListSubscriptionsResponse
-	49,  // 255: gitpod.v1.BillingService.GrantCredits:output_type -> gitpod.v1.GrantCreditsResponse
-	51,  // 256: gitpod.v1.BillingService.GetStripePublishableKey:output_type -> gitpod.v1.GetStripePublishableKeyResponse
-	53,  // 257: gitpod.v1.BillingService.SetBillingRealm:output_type -> gitpod.v1.SetBillingRealmResponse
-	55,  // 258: gitpod.v1.BillingService.CreateCardVerification:output_type -> gitpod.v1.CreateCardVerificationResponse
-	57,  // 259: gitpod.v1.BillingService.SetTaxID:output_type -> gitpod.v1.SetTaxIDResponse
-	26,  // 260: gitpod.v1.BillingService.GetBillingRecord:output_type -> gitpod.v1.GetBillingRecordResponse
-	28,  // 261: gitpod.v1.BillingService.UpdateBillingRecord:output_type -> gitpod.v1.UpdateBillingRecordResponse
-	61,  // 262: gitpod.v1.BillingService.CreateCoupon:output_type -> gitpod.v1.CreateCouponResponse
-	63,  // 263: gitpod.v1.BillingService.ListCoupons:output_type -> gitpod.v1.ListCouponsResponse
-	65,  // 264: gitpod.v1.BillingService.GetCoupon:output_type -> gitpod.v1.GetCouponResponse
-	68,  // 265: gitpod.v1.BillingService.SetBillingAddress:output_type -> gitpod.v1.SetBillingAddressResponse
-	70,  // 266: gitpod.v1.BillingService.GetStripePortalUrl:output_type -> gitpod.v1.GetStripePortalUrlResponse
-	72,  // 267: gitpod.v1.BillingService.ClearTopupFailure:output_type -> gitpod.v1.ClearTopupFailureResponse
-	74,  // 268: gitpod.v1.BillingService.GetCreditConsumptionTimeSeries:output_type -> gitpod.v1.GetCreditConsumptionTimeSeriesResponse
-	78,  // 269: gitpod.v1.BillingService.SetupEnterpriseBilling:output_type -> gitpod.v1.SetupEnterpriseBillingResponse
-	81,  // 270: gitpod.v1.BillingService.UpdateAutoTopupSettings:output_type -> gitpod.v1.UpdateAutoTopupSettingsResponse
-	83,  // 271: gitpod.v1.BillingService.GetAutoTopupSettings:output_type -> gitpod.v1.GetAutoTopupSettingsResponse
-	86,  // 272: gitpod.v1.BillingService.GetCreditUsageReport:output_type -> gitpod.v1.GetCreditUsageReportResponse
-	94,  // 273: gitpod.v1.BillingService.GetCreditUsageExport:output_type -> gitpod.v1.GetCreditUsageExportResponse
-	105, // 274: gitpod.v1.BillingService.GetEnterpriseAIUsageSummary:output_type -> gitpod.v1.GetEnterpriseAIUsageSummaryResponse
-	107, // 275: gitpod.v1.BillingService.ListEnterpriseAITeamUsage:output_type -> gitpod.v1.ListEnterpriseAITeamUsageResponse
-	109, // 276: gitpod.v1.BillingService.ListEnterpriseAIUserUsage:output_type -> gitpod.v1.ListEnterpriseAIUserUsageResponse
-	112, // 277: gitpod.v1.BillingService.GetEnterpriseAIUsageTimeSeries:output_type -> gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse
-	114, // 278: gitpod.v1.BillingService.CorrectUsageEvents:output_type -> gitpod.v1.CorrectUsageEventsResponse
-	118, // 279: gitpod.v1.BillingService.InsertUsageEvents:output_type -> gitpod.v1.InsertUsageEventsResponse
-	159, // 280: gitpod.v1.BillingService.CorrectEnvironmentUsageEvents:output_type -> gitpod.v1.CorrectEnvironmentUsageEventsResponse
-	121, // 281: gitpod.v1.BillingService.GetEnterpriseBillingInfo:output_type -> gitpod.v1.GetEnterpriseBillingInfoResponse
-	124, // 282: gitpod.v1.BillingService.ListBYOKRateCardRates:output_type -> gitpod.v1.ListBYOKRateCardRatesResponse
-	126, // 283: gitpod.v1.BillingService.SetBYOKRateCardRate:output_type -> gitpod.v1.SetBYOKRateCardRateResponse
-	130, // 284: gitpod.v1.BillingService.ListEnterpriseAIUserBudgetPolicies:output_type -> gitpod.v1.ListEnterpriseAIUserBudgetPoliciesResponse
-	132, // 285: gitpod.v1.BillingService.GetEnterpriseAIUserBudgetPolicy:output_type -> gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse
-	134, // 286: gitpod.v1.BillingService.SetEnterpriseAIUserBudgetPolicy:output_type -> gitpod.v1.SetEnterpriseAIUserBudgetPolicyResponse
-	136, // 287: gitpod.v1.BillingService.DeleteEnterpriseAIUserBudgetPolicy:output_type -> gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyResponse
-	138, // 288: gitpod.v1.BillingService.RequestRecoveryCredit:output_type -> gitpod.v1.RequestRecoveryCreditResponse
-	140, // 289: gitpod.v1.BillingService.GetCumulativeCreditUsage:output_type -> gitpod.v1.GetCumulativeCreditUsageResponse
-	145, // 290: gitpod.v1.BillingService.ListEnterpriseUserCreditUsage:output_type -> gitpod.v1.ListEnterpriseUserCreditUsageResponse
-	148, // 291: gitpod.v1.BillingService.CreateTeamCreditAllocation:output_type -> gitpod.v1.CreateTeamCreditAllocationResponse
-	150, // 292: gitpod.v1.BillingService.GetTeamCreditAllocation:output_type -> gitpod.v1.GetTeamCreditAllocationResponse
-	152, // 293: gitpod.v1.BillingService.UpdateTeamCreditAllocation:output_type -> gitpod.v1.UpdateTeamCreditAllocationResponse
-	154, // 294: gitpod.v1.BillingService.DeleteTeamCreditAllocation:output_type -> gitpod.v1.DeleteTeamCreditAllocationResponse
-	156, // 295: gitpod.v1.BillingService.SetOrganizationCreditGrant:output_type -> gitpod.v1.SetOrganizationCreditGrantResponse
-	247, // [247:296] is the sub-list for method output_type
-	198, // [198:247] is the sub-list for method input_type
-	198, // [198:198] is the sub-list for extension type_name
-	198, // [198:198] is the sub-list for extension extendee
-	0,   // [0:198] is the sub-list for field type_name
+	165, // 24: gitpod.v1.GetBillingInfoResponse.last_auto_topup_at:type_name -> google.protobuf.Timestamp
+	165, // 25: gitpod.v1.TopupPaymentFailureInfo.failed_at:type_name -> google.protobuf.Timestamp
+	2,   // 26: gitpod.v1.PaymentFailureInfo.state:type_name -> gitpod.v1.PaymentFailureState
+	165, // 27: gitpod.v1.PaymentFailureInfo.grace_period_ends_at:type_name -> google.protobuf.Timestamp
+	165, // 28: gitpod.v1.PaymentFailureInfo.failed_at:type_name -> google.protobuf.Timestamp
+	6,   // 29: gitpod.v1.CreateSubscriptionRequest.subscription_type:type_name -> gitpod.v1.SubscriptionType
+	46,  // 30: gitpod.v1.CreateSubscriptionResponse.subscription:type_name -> gitpod.v1.Subscription
+	6,   // 31: gitpod.v1.CancelSubscriptionRequest.subscription_type:type_name -> gitpod.v1.SubscriptionType
+	46,  // 32: gitpod.v1.UpdateSubscriptionResponse.subscription:type_name -> gitpod.v1.Subscription
+	6,   // 33: gitpod.v1.Subscription.subscription_type:type_name -> gitpod.v1.SubscriptionType
+	7,   // 34: gitpod.v1.Subscription.status:type_name -> gitpod.v1.SubscriptionStatus
+	165, // 35: gitpod.v1.Subscription.starts_at:type_name -> google.protobuf.Timestamp
+	165, // 36: gitpod.v1.Subscription.cancelled_at:type_name -> google.protobuf.Timestamp
+	165, // 37: gitpod.v1.Subscription.ends_at:type_name -> google.protobuf.Timestamp
+	46,  // 38: gitpod.v1.ListSubscriptionsResponse.subscriptions:type_name -> gitpod.v1.Subscription
+	5,   // 39: gitpod.v1.SetBillingRealmRequest.realm:type_name -> gitpod.v1.BillingRealm
+	60,  // 40: gitpod.v1.Coupon.config:type_name -> gitpod.v1.CouponConfig
+	165, // 41: gitpod.v1.Coupon.expires_at:type_name -> google.protobuf.Timestamp
+	165, // 42: gitpod.v1.Coupon.created_at:type_name -> google.protobuf.Timestamp
+	165, // 43: gitpod.v1.Coupon.updated_at:type_name -> google.protobuf.Timestamp
+	60,  // 44: gitpod.v1.CreateCouponRequest.config:type_name -> gitpod.v1.CouponConfig
+	165, // 45: gitpod.v1.CreateCouponRequest.expires_at:type_name -> google.protobuf.Timestamp
+	58,  // 46: gitpod.v1.CreateCouponResponse.coupon:type_name -> gitpod.v1.Coupon
+	166, // 47: gitpod.v1.ListCouponsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	160, // 48: gitpod.v1.ListCouponsRequest.filter:type_name -> gitpod.v1.ListCouponsRequest.Filter
+	167, // 49: gitpod.v1.ListCouponsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	58,  // 50: gitpod.v1.ListCouponsResponse.coupons:type_name -> gitpod.v1.Coupon
+	58,  // 51: gitpod.v1.GetCouponResponse.coupon:type_name -> gitpod.v1.Coupon
+	66,  // 52: gitpod.v1.SetBillingAddressRequest.address:type_name -> gitpod.v1.BillingAddress
+	168, // 53: gitpod.v1.GetCreditConsumptionTimeSeriesRequest.date_range:type_name -> gitpod.v1.DateRange
+	75,  // 54: gitpod.v1.GetCreditConsumptionTimeSeriesResponse.metrics:type_name -> gitpod.v1.MetricConsumptionTimeSeries
+	15,  // 55: gitpod.v1.MetricConsumptionTimeSeries.kind:type_name -> gitpod.v1.MetricConsumptionTimeSeries.Kind
+	76,  // 56: gitpod.v1.MetricConsumptionTimeSeries.series:type_name -> gitpod.v1.CreditUsageDataPoint
+	165, // 57: gitpod.v1.CreditUsageDataPoint.time:type_name -> google.protobuf.Timestamp
+	165, // 58: gitpod.v1.SetupEnterpriseBillingRequest.contract_start_date:type_name -> google.protobuf.Timestamp
+	79,  // 59: gitpod.v1.UpdateAutoTopupSettingsRequest.settings:type_name -> gitpod.v1.AutoTopupSettings
+	79,  // 60: gitpod.v1.UpdateAutoTopupSettingsResponse.settings:type_name -> gitpod.v1.AutoTopupSettings
+	79,  // 61: gitpod.v1.GetAutoTopupSettingsResponse.settings:type_name -> gitpod.v1.AutoTopupSettings
+	169, // 62: gitpod.v1.CreditUsageReportFilter.subject:type_name -> gitpod.v1.Subject
+	168, // 63: gitpod.v1.GetCreditUsageReportRequest.date_range:type_name -> gitpod.v1.DateRange
+	84,  // 64: gitpod.v1.GetCreditUsageReportRequest.filter:type_name -> gitpod.v1.CreditUsageReportFilter
+	165, // 65: gitpod.v1.GetCreditUsageReportResponse.updated_at:type_name -> google.protobuf.Timestamp
+	87,  // 66: gitpod.v1.GetCreditUsageReportResponse.daily_usage:type_name -> gitpod.v1.DailyCreditUsage
+	165, // 67: gitpod.v1.GetCreditUsageReportResponse.period_start:type_name -> google.protobuf.Timestamp
+	165, // 68: gitpod.v1.DailyCreditUsage.date:type_name -> google.protobuf.Timestamp
+	88,  // 69: gitpod.v1.DailyCreditUsage.org_usage:type_name -> gitpod.v1.CreditsByType
+	89,  // 70: gitpod.v1.DailyCreditUsage.user_usage:type_name -> gitpod.v1.UserCreditUsage
+	90,  // 71: gitpod.v1.DailyCreditUsage.team_usage:type_name -> gitpod.v1.TeamCreditUsage
+	91,  // 72: gitpod.v1.DailyCreditUsage.environment_usage:type_name -> gitpod.v1.EnvironmentCreditUsage
+	92,  // 73: gitpod.v1.DailyCreditUsage.conversation_usage:type_name -> gitpod.v1.AgentExecutionCreditUsage
+	99,  // 74: gitpod.v1.DailyCreditUsage.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
+	8,   // 75: gitpod.v1.CreditsByType.usage_type:type_name -> gitpod.v1.UsageType
+	88,  // 76: gitpod.v1.UserCreditUsage.usage:type_name -> gitpod.v1.CreditsByType
+	99,  // 77: gitpod.v1.UserCreditUsage.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
+	88,  // 78: gitpod.v1.TeamCreditUsage.usage:type_name -> gitpod.v1.CreditsByType
+	88,  // 79: gitpod.v1.EnvironmentCreditUsage.usage:type_name -> gitpod.v1.CreditsByType
+	88,  // 80: gitpod.v1.AgentExecutionCreditUsage.usage:type_name -> gitpod.v1.CreditsByType
+	168, // 81: gitpod.v1.GetCreditUsageExportRequest.date_range:type_name -> gitpod.v1.DateRange
+	9,   // 82: gitpod.v1.GetCreditUsageExportRequest.group_by:type_name -> gitpod.v1.CreditUsageExportGroupBy
+	12,  // 83: gitpod.v1.EnterpriseAIUsage.currency:type_name -> gitpod.v1.BillingCurrency
+	95,  // 84: gitpod.v1.EnterpriseAIUsage.tokens:type_name -> gitpod.v1.EnterpriseAITokenUsage
+	10,  // 85: gitpod.v1.EnterpriseAIUsageBudget.source:type_name -> gitpod.v1.EnterpriseAIUsageBudgetSource
+	12,  // 86: gitpod.v1.EnterpriseAIUsageBudget.currency:type_name -> gitpod.v1.BillingCurrency
+	96,  // 87: gitpod.v1.EnterpriseAIUsageBudget.month_to_date_usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	11,  // 88: gitpod.v1.EnterpriseAIUsageByTokenType.token_type:type_name -> gitpod.v1.BYOKRateCardTokenType
+	96,  // 89: gitpod.v1.EnterpriseAIUsageByTokenType.usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	96,  // 90: gitpod.v1.EnterpriseAIUsageByModel.usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	98,  // 91: gitpod.v1.EnterpriseAIUsageByModel.usage_by_token_type:type_name -> gitpod.v1.EnterpriseAIUsageByTokenType
+	96,  // 92: gitpod.v1.EnterpriseAIUsageByModel.unpriced_usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	98,  // 93: gitpod.v1.EnterpriseAIUsageByModel.unpriced_usage_by_token_type:type_name -> gitpod.v1.EnterpriseAIUsageByTokenType
+	96,  // 94: gitpod.v1.TeamEnterpriseAIUsage.usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	97,  // 95: gitpod.v1.TeamEnterpriseAIUsage.budget:type_name -> gitpod.v1.EnterpriseAIUsageBudget
+	98,  // 96: gitpod.v1.TeamEnterpriseAIUsage.usage_by_token_type:type_name -> gitpod.v1.EnterpriseAIUsageByTokenType
+	96,  // 97: gitpod.v1.UserEnterpriseAIUsage.usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	96,  // 98: gitpod.v1.UserCostBudgetUsage.month_to_date_usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	12,  // 99: gitpod.v1.UserCostBudgetUsage.currency:type_name -> gitpod.v1.BillingCurrency
+	14,  // 100: gitpod.v1.UserCostBudgetUsage.budget_source:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicySource
+	165, // 101: gitpod.v1.DailyEnterpriseAIUsage.date:type_name -> google.protobuf.Timestamp
+	96,  // 102: gitpod.v1.DailyEnterpriseAIUsage.usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	97,  // 103: gitpod.v1.DailyEnterpriseAIUsage.budget:type_name -> gitpod.v1.EnterpriseAIUsageBudget
+	101, // 104: gitpod.v1.DailyEnterpriseAIUsage.user_usage:type_name -> gitpod.v1.UserEnterpriseAIUsage
+	100, // 105: gitpod.v1.DailyEnterpriseAIUsage.team_usage:type_name -> gitpod.v1.TeamEnterpriseAIUsage
+	99,  // 106: gitpod.v1.DailyEnterpriseAIUsage.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
+	168, // 107: gitpod.v1.GetEnterpriseAIUsageSummaryRequest.date_range:type_name -> gitpod.v1.DateRange
+	165, // 108: gitpod.v1.GetEnterpriseAIUsageSummaryResponse.calculated_at:type_name -> google.protobuf.Timestamp
+	96,  // 109: gitpod.v1.GetEnterpriseAIUsageSummaryResponse.usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	97,  // 110: gitpod.v1.GetEnterpriseAIUsageSummaryResponse.budget:type_name -> gitpod.v1.EnterpriseAIUsageBudget
+	99,  // 111: gitpod.v1.GetEnterpriseAIUsageSummaryResponse.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
+	166, // 112: gitpod.v1.ListEnterpriseAITeamUsageRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	168, // 113: gitpod.v1.ListEnterpriseAITeamUsageRequest.date_range:type_name -> gitpod.v1.DateRange
+	161, // 114: gitpod.v1.ListEnterpriseAITeamUsageRequest.filter:type_name -> gitpod.v1.ListEnterpriseAITeamUsageRequest.Filter
+	167, // 115: gitpod.v1.ListEnterpriseAITeamUsageResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	100, // 116: gitpod.v1.ListEnterpriseAITeamUsageResponse.team_usage:type_name -> gitpod.v1.TeamEnterpriseAIUsage
+	165, // 117: gitpod.v1.ListEnterpriseAITeamUsageResponse.calculated_at:type_name -> google.protobuf.Timestamp
+	166, // 118: gitpod.v1.ListEnterpriseAIUserUsageRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	168, // 119: gitpod.v1.ListEnterpriseAIUserUsageRequest.date_range:type_name -> gitpod.v1.DateRange
+	162, // 120: gitpod.v1.ListEnterpriseAIUserUsageRequest.sort:type_name -> gitpod.v1.ListEnterpriseAIUserUsageRequest.Sort
+	163, // 121: gitpod.v1.ListEnterpriseAIUserUsageRequest.filter:type_name -> gitpod.v1.ListEnterpriseAIUserUsageRequest.Filter
+	167, // 122: gitpod.v1.ListEnterpriseAIUserUsageResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	102, // 123: gitpod.v1.ListEnterpriseAIUserUsageResponse.user_usage:type_name -> gitpod.v1.UserCostBudgetUsage
+	165, // 124: gitpod.v1.ListEnterpriseAIUserUsageResponse.calculated_at:type_name -> google.protobuf.Timestamp
+	168, // 125: gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest.date_range:type_name -> gitpod.v1.DateRange
+	111, // 126: gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest.filter:type_name -> gitpod.v1.EnterpriseAIUsageTimeSeriesFilter
+	169, // 127: gitpod.v1.EnterpriseAIUsageTimeSeriesFilter.subject:type_name -> gitpod.v1.Subject
+	165, // 128: gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse.calculated_at:type_name -> google.protobuf.Timestamp
+	103, // 129: gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse.daily_usage:type_name -> gitpod.v1.DailyEnterpriseAIUsage
+	115, // 130: gitpod.v1.CorrectUsageEventsResponse.results:type_name -> gitpod.v1.UsageEventCorrectionResult
+	117, // 131: gitpod.v1.InsertUsageEventsRequest.events:type_name -> gitpod.v1.UsageEventInput
+	119, // 132: gitpod.v1.InsertUsageEventsResponse.results:type_name -> gitpod.v1.UsageEventInsertResult
+	11,  // 133: gitpod.v1.BYOKRateCardRate.token_type:type_name -> gitpod.v1.BYOKRateCardTokenType
+	12,  // 134: gitpod.v1.BYOKRateCardRate.currency:type_name -> gitpod.v1.BillingCurrency
+	165, // 135: gitpod.v1.BYOKRateCardRate.effective_at:type_name -> google.protobuf.Timestamp
+	165, // 136: gitpod.v1.BYOKRateCardRate.created_at:type_name -> google.protobuf.Timestamp
+	165, // 137: gitpod.v1.ListBYOKRateCardRatesRequest.as_of:type_name -> google.protobuf.Timestamp
+	122, // 138: gitpod.v1.ListBYOKRateCardRatesResponse.rates:type_name -> gitpod.v1.BYOKRateCardRate
+	11,  // 139: gitpod.v1.SetBYOKRateCardRateRequest.token_type:type_name -> gitpod.v1.BYOKRateCardTokenType
+	12,  // 140: gitpod.v1.SetBYOKRateCardRateRequest.currency:type_name -> gitpod.v1.BillingCurrency
+	165, // 141: gitpod.v1.SetBYOKRateCardRateRequest.effective_at:type_name -> google.protobuf.Timestamp
+	122, // 142: gitpod.v1.SetBYOKRateCardRateResponse.rate:type_name -> gitpod.v1.BYOKRateCardRate
+	13,  // 143: gitpod.v1.EnterpriseAIUserBudgetPolicy.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
+	12,  // 144: gitpod.v1.EnterpriseAIUserBudgetPolicy.currency:type_name -> gitpod.v1.BillingCurrency
+	165, // 145: gitpod.v1.EnterpriseAIUserBudgetPolicy.created_at:type_name -> google.protobuf.Timestamp
+	165, // 146: gitpod.v1.EnterpriseAIUserBudgetPolicy.updated_at:type_name -> google.protobuf.Timestamp
+	14,  // 147: gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicy.source:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicySource
+	127, // 148: gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicy.policy:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
+	166, // 149: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	13,  // 150: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesRequest.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
+	127, // 151: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesResponse.organization_policy:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
+	127, // 152: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesResponse.user_policies:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
+	167, // 153: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	13,  // 154: gitpod.v1.GetEnterpriseAIUserBudgetPolicyRequest.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
+	127, // 155: gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse.policy:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
+	128, // 156: gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse.effective_policy:type_name -> gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicy
+	13,  // 157: gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
+	12,  // 158: gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest.currency:type_name -> gitpod.v1.BillingCurrency
+	127, // 159: gitpod.v1.SetEnterpriseAIUserBudgetPolicyResponse.policy:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
+	13,  // 160: gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
+	165, // 161: gitpod.v1.GetCumulativeCreditUsageRequest.as_of:type_name -> google.protobuf.Timestamp
+	139, // 162: gitpod.v1.GetCumulativeCreditUsageResponse.org_usage:type_name -> gitpod.v1.CumulativeCreditUsage
+	140, // 163: gitpod.v1.GetCumulativeCreditUsageResponse.team_usage:type_name -> gitpod.v1.TeamCumulativeCreditUsage
+	139, // 164: gitpod.v1.GetCumulativeCreditUsageResponse.unteamed_usage:type_name -> gitpod.v1.CumulativeCreditUsage
+	165, // 165: gitpod.v1.GetCumulativeCreditUsageResponse.period_start:type_name -> google.protobuf.Timestamp
+	141, // 166: gitpod.v1.GetCumulativeCreditUsageResponse.user_usage:type_name -> gitpod.v1.UserCreditBudgetUsage
+	88,  // 167: gitpod.v1.CumulativeCreditUsage.usage_by_type:type_name -> gitpod.v1.CreditsByType
+	139, // 168: gitpod.v1.TeamCumulativeCreditUsage.usage:type_name -> gitpod.v1.CumulativeCreditUsage
+	139, // 169: gitpod.v1.UserCreditBudgetUsage.month_to_date_usage:type_name -> gitpod.v1.CumulativeCreditUsage
+	14,  // 170: gitpod.v1.UserCreditBudgetUsage.budget_source:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicySource
+	99,  // 171: gitpod.v1.UserCreditBudgetUsage.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
+	166, // 172: gitpod.v1.ListEnterpriseUserCreditUsageRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	165, // 173: gitpod.v1.ListEnterpriseUserCreditUsageRequest.as_of:type_name -> google.protobuf.Timestamp
+	164, // 174: gitpod.v1.ListEnterpriseUserCreditUsageRequest.sort:type_name -> gitpod.v1.ListEnterpriseUserCreditUsageRequest.Sort
+	141, // 175: gitpod.v1.ListEnterpriseUserCreditUsageResponse.user_usage:type_name -> gitpod.v1.UserCreditBudgetUsage
+	167, // 176: gitpod.v1.ListEnterpriseUserCreditUsageResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	165, // 177: gitpod.v1.TeamCreditAllocationInfo.created_at:type_name -> google.protobuf.Timestamp
+	165, // 178: gitpod.v1.TeamCreditAllocationInfo.updated_at:type_name -> google.protobuf.Timestamp
+	12,  // 179: gitpod.v1.TeamCreditAllocationInfo.cost_budget_currency:type_name -> gitpod.v1.BillingCurrency
+	12,  // 180: gitpod.v1.CreateTeamCreditAllocationRequest.cost_budget_currency:type_name -> gitpod.v1.BillingCurrency
+	144, // 181: gitpod.v1.CreateTeamCreditAllocationResponse.allocation:type_name -> gitpod.v1.TeamCreditAllocationInfo
+	144, // 182: gitpod.v1.GetTeamCreditAllocationResponse.allocation:type_name -> gitpod.v1.TeamCreditAllocationInfo
+	12,  // 183: gitpod.v1.UpdateTeamCreditAllocationRequest.cost_budget_currency:type_name -> gitpod.v1.BillingCurrency
+	144, // 184: gitpod.v1.UpdateTeamCreditAllocationResponse.allocation:type_name -> gitpod.v1.TeamCreditAllocationInfo
+	165, // 185: gitpod.v1.EnvironmentCorrectionSpec.start_time:type_name -> google.protobuf.Timestamp
+	165, // 186: gitpod.v1.EnvironmentCorrectionSpec.end_time:type_name -> google.protobuf.Timestamp
+	155, // 187: gitpod.v1.CorrectEnvironmentUsageEventsRequest.corrections:type_name -> gitpod.v1.EnvironmentCorrectionSpec
+	115, // 188: gitpod.v1.CorrectEnvironmentUsageEventsResponse.results:type_name -> gitpod.v1.UsageEventCorrectionResult
+	158, // 189: gitpod.v1.CorrectEnvironmentUsageEventsResponse.environment_summaries:type_name -> gitpod.v1.EnvironmentUsageSummary
+	165, // 190: gitpod.v1.ListCouponsRequest.Filter.expires_before:type_name -> google.protobuf.Timestamp
+	165, // 191: gitpod.v1.ListCouponsRequest.Filter.expires_after:type_name -> google.protobuf.Timestamp
+	16,  // 192: gitpod.v1.ListEnterpriseAIUserUsageRequest.Sort.field:type_name -> gitpod.v1.ListEnterpriseAIUserUsageRequest.SortField
+	170, // 193: gitpod.v1.ListEnterpriseAIUserUsageRequest.Sort.order:type_name -> gitpod.v1.SortOrder
+	169, // 194: gitpod.v1.ListEnterpriseAIUserUsageRequest.Filter.subject:type_name -> gitpod.v1.Subject
+	17,  // 195: gitpod.v1.ListEnterpriseUserCreditUsageRequest.Sort.field:type_name -> gitpod.v1.ListEnterpriseUserCreditUsageRequest.SortField
+	170, // 196: gitpod.v1.ListEnterpriseUserCreditUsageRequest.Sort.order:type_name -> gitpod.v1.SortOrder
+	29,  // 197: gitpod.v1.BillingService.SetupBilling:input_type -> gitpod.v1.SetupBillingRequest
+	31,  // 198: gitpod.v1.BillingService.CompleteBillingSetup:input_type -> gitpod.v1.CompleteBillingSetupRequest
+	33,  // 199: gitpod.v1.BillingService.GetBillingInfo:input_type -> gitpod.v1.GetBillingInfoRequest
+	35,  // 200: gitpod.v1.BillingService.ReconcileBilling:input_type -> gitpod.v1.ReconcileBillingRequest
+	39,  // 201: gitpod.v1.BillingService.CreateSubscription:input_type -> gitpod.v1.CreateSubscriptionRequest
+	41,  // 202: gitpod.v1.BillingService.CancelSubscription:input_type -> gitpod.v1.CancelSubscriptionRequest
+	43,  // 203: gitpod.v1.BillingService.UpdateSubscription:input_type -> gitpod.v1.UpdateSubscriptionRequest
+	45,  // 204: gitpod.v1.BillingService.ListSubscriptions:input_type -> gitpod.v1.ListSubscriptionsRequest
+	48,  // 205: gitpod.v1.BillingService.GrantCredits:input_type -> gitpod.v1.GrantCreditsRequest
+	50,  // 206: gitpod.v1.BillingService.GetStripePublishableKey:input_type -> gitpod.v1.GetStripePublishableKeyRequest
+	52,  // 207: gitpod.v1.BillingService.SetBillingRealm:input_type -> gitpod.v1.SetBillingRealmRequest
+	54,  // 208: gitpod.v1.BillingService.CreateCardVerification:input_type -> gitpod.v1.CreateCardVerificationRequest
+	56,  // 209: gitpod.v1.BillingService.SetTaxID:input_type -> gitpod.v1.SetTaxIDRequest
+	25,  // 210: gitpod.v1.BillingService.GetBillingRecord:input_type -> gitpod.v1.GetBillingRecordRequest
+	27,  // 211: gitpod.v1.BillingService.UpdateBillingRecord:input_type -> gitpod.v1.UpdateBillingRecordRequest
+	59,  // 212: gitpod.v1.BillingService.CreateCoupon:input_type -> gitpod.v1.CreateCouponRequest
+	62,  // 213: gitpod.v1.BillingService.ListCoupons:input_type -> gitpod.v1.ListCouponsRequest
+	64,  // 214: gitpod.v1.BillingService.GetCoupon:input_type -> gitpod.v1.GetCouponRequest
+	67,  // 215: gitpod.v1.BillingService.SetBillingAddress:input_type -> gitpod.v1.SetBillingAddressRequest
+	69,  // 216: gitpod.v1.BillingService.GetStripePortalUrl:input_type -> gitpod.v1.GetStripePortalUrlRequest
+	71,  // 217: gitpod.v1.BillingService.ClearTopupFailure:input_type -> gitpod.v1.ClearTopupFailureRequest
+	73,  // 218: gitpod.v1.BillingService.GetCreditConsumptionTimeSeries:input_type -> gitpod.v1.GetCreditConsumptionTimeSeriesRequest
+	77,  // 219: gitpod.v1.BillingService.SetupEnterpriseBilling:input_type -> gitpod.v1.SetupEnterpriseBillingRequest
+	80,  // 220: gitpod.v1.BillingService.UpdateAutoTopupSettings:input_type -> gitpod.v1.UpdateAutoTopupSettingsRequest
+	82,  // 221: gitpod.v1.BillingService.GetAutoTopupSettings:input_type -> gitpod.v1.GetAutoTopupSettingsRequest
+	85,  // 222: gitpod.v1.BillingService.GetCreditUsageReport:input_type -> gitpod.v1.GetCreditUsageReportRequest
+	93,  // 223: gitpod.v1.BillingService.GetCreditUsageExport:input_type -> gitpod.v1.GetCreditUsageExportRequest
+	104, // 224: gitpod.v1.BillingService.GetEnterpriseAIUsageSummary:input_type -> gitpod.v1.GetEnterpriseAIUsageSummaryRequest
+	106, // 225: gitpod.v1.BillingService.ListEnterpriseAITeamUsage:input_type -> gitpod.v1.ListEnterpriseAITeamUsageRequest
+	108, // 226: gitpod.v1.BillingService.ListEnterpriseAIUserUsage:input_type -> gitpod.v1.ListEnterpriseAIUserUsageRequest
+	110, // 227: gitpod.v1.BillingService.GetEnterpriseAIUsageTimeSeries:input_type -> gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest
+	113, // 228: gitpod.v1.BillingService.CorrectUsageEvents:input_type -> gitpod.v1.CorrectUsageEventsRequest
+	116, // 229: gitpod.v1.BillingService.InsertUsageEvents:input_type -> gitpod.v1.InsertUsageEventsRequest
+	156, // 230: gitpod.v1.BillingService.CorrectEnvironmentUsageEvents:input_type -> gitpod.v1.CorrectEnvironmentUsageEventsRequest
+	120, // 231: gitpod.v1.BillingService.GetEnterpriseBillingInfo:input_type -> gitpod.v1.GetEnterpriseBillingInfoRequest
+	123, // 232: gitpod.v1.BillingService.ListBYOKRateCardRates:input_type -> gitpod.v1.ListBYOKRateCardRatesRequest
+	125, // 233: gitpod.v1.BillingService.SetBYOKRateCardRate:input_type -> gitpod.v1.SetBYOKRateCardRateRequest
+	129, // 234: gitpod.v1.BillingService.ListEnterpriseAIUserBudgetPolicies:input_type -> gitpod.v1.ListEnterpriseAIUserBudgetPoliciesRequest
+	131, // 235: gitpod.v1.BillingService.GetEnterpriseAIUserBudgetPolicy:input_type -> gitpod.v1.GetEnterpriseAIUserBudgetPolicyRequest
+	133, // 236: gitpod.v1.BillingService.SetEnterpriseAIUserBudgetPolicy:input_type -> gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest
+	135, // 237: gitpod.v1.BillingService.DeleteEnterpriseAIUserBudgetPolicy:input_type -> gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest
+	137, // 238: gitpod.v1.BillingService.GetCumulativeCreditUsage:input_type -> gitpod.v1.GetCumulativeCreditUsageRequest
+	142, // 239: gitpod.v1.BillingService.ListEnterpriseUserCreditUsage:input_type -> gitpod.v1.ListEnterpriseUserCreditUsageRequest
+	145, // 240: gitpod.v1.BillingService.CreateTeamCreditAllocation:input_type -> gitpod.v1.CreateTeamCreditAllocationRequest
+	147, // 241: gitpod.v1.BillingService.GetTeamCreditAllocation:input_type -> gitpod.v1.GetTeamCreditAllocationRequest
+	149, // 242: gitpod.v1.BillingService.UpdateTeamCreditAllocation:input_type -> gitpod.v1.UpdateTeamCreditAllocationRequest
+	151, // 243: gitpod.v1.BillingService.DeleteTeamCreditAllocation:input_type -> gitpod.v1.DeleteTeamCreditAllocationRequest
+	153, // 244: gitpod.v1.BillingService.SetOrganizationCreditGrant:input_type -> gitpod.v1.SetOrganizationCreditGrantRequest
+	30,  // 245: gitpod.v1.BillingService.SetupBilling:output_type -> gitpod.v1.SetupBillingResponse
+	32,  // 246: gitpod.v1.BillingService.CompleteBillingSetup:output_type -> gitpod.v1.CompleteBillingSetupResponse
+	34,  // 247: gitpod.v1.BillingService.GetBillingInfo:output_type -> gitpod.v1.GetBillingInfoResponse
+	36,  // 248: gitpod.v1.BillingService.ReconcileBilling:output_type -> gitpod.v1.ReconcileBillingResponse
+	40,  // 249: gitpod.v1.BillingService.CreateSubscription:output_type -> gitpod.v1.CreateSubscriptionResponse
+	42,  // 250: gitpod.v1.BillingService.CancelSubscription:output_type -> gitpod.v1.CancelSubscriptionResponse
+	44,  // 251: gitpod.v1.BillingService.UpdateSubscription:output_type -> gitpod.v1.UpdateSubscriptionResponse
+	47,  // 252: gitpod.v1.BillingService.ListSubscriptions:output_type -> gitpod.v1.ListSubscriptionsResponse
+	49,  // 253: gitpod.v1.BillingService.GrantCredits:output_type -> gitpod.v1.GrantCreditsResponse
+	51,  // 254: gitpod.v1.BillingService.GetStripePublishableKey:output_type -> gitpod.v1.GetStripePublishableKeyResponse
+	53,  // 255: gitpod.v1.BillingService.SetBillingRealm:output_type -> gitpod.v1.SetBillingRealmResponse
+	55,  // 256: gitpod.v1.BillingService.CreateCardVerification:output_type -> gitpod.v1.CreateCardVerificationResponse
+	57,  // 257: gitpod.v1.BillingService.SetTaxID:output_type -> gitpod.v1.SetTaxIDResponse
+	26,  // 258: gitpod.v1.BillingService.GetBillingRecord:output_type -> gitpod.v1.GetBillingRecordResponse
+	28,  // 259: gitpod.v1.BillingService.UpdateBillingRecord:output_type -> gitpod.v1.UpdateBillingRecordResponse
+	61,  // 260: gitpod.v1.BillingService.CreateCoupon:output_type -> gitpod.v1.CreateCouponResponse
+	63,  // 261: gitpod.v1.BillingService.ListCoupons:output_type -> gitpod.v1.ListCouponsResponse
+	65,  // 262: gitpod.v1.BillingService.GetCoupon:output_type -> gitpod.v1.GetCouponResponse
+	68,  // 263: gitpod.v1.BillingService.SetBillingAddress:output_type -> gitpod.v1.SetBillingAddressResponse
+	70,  // 264: gitpod.v1.BillingService.GetStripePortalUrl:output_type -> gitpod.v1.GetStripePortalUrlResponse
+	72,  // 265: gitpod.v1.BillingService.ClearTopupFailure:output_type -> gitpod.v1.ClearTopupFailureResponse
+	74,  // 266: gitpod.v1.BillingService.GetCreditConsumptionTimeSeries:output_type -> gitpod.v1.GetCreditConsumptionTimeSeriesResponse
+	78,  // 267: gitpod.v1.BillingService.SetupEnterpriseBilling:output_type -> gitpod.v1.SetupEnterpriseBillingResponse
+	81,  // 268: gitpod.v1.BillingService.UpdateAutoTopupSettings:output_type -> gitpod.v1.UpdateAutoTopupSettingsResponse
+	83,  // 269: gitpod.v1.BillingService.GetAutoTopupSettings:output_type -> gitpod.v1.GetAutoTopupSettingsResponse
+	86,  // 270: gitpod.v1.BillingService.GetCreditUsageReport:output_type -> gitpod.v1.GetCreditUsageReportResponse
+	94,  // 271: gitpod.v1.BillingService.GetCreditUsageExport:output_type -> gitpod.v1.GetCreditUsageExportResponse
+	105, // 272: gitpod.v1.BillingService.GetEnterpriseAIUsageSummary:output_type -> gitpod.v1.GetEnterpriseAIUsageSummaryResponse
+	107, // 273: gitpod.v1.BillingService.ListEnterpriseAITeamUsage:output_type -> gitpod.v1.ListEnterpriseAITeamUsageResponse
+	109, // 274: gitpod.v1.BillingService.ListEnterpriseAIUserUsage:output_type -> gitpod.v1.ListEnterpriseAIUserUsageResponse
+	112, // 275: gitpod.v1.BillingService.GetEnterpriseAIUsageTimeSeries:output_type -> gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse
+	114, // 276: gitpod.v1.BillingService.CorrectUsageEvents:output_type -> gitpod.v1.CorrectUsageEventsResponse
+	118, // 277: gitpod.v1.BillingService.InsertUsageEvents:output_type -> gitpod.v1.InsertUsageEventsResponse
+	157, // 278: gitpod.v1.BillingService.CorrectEnvironmentUsageEvents:output_type -> gitpod.v1.CorrectEnvironmentUsageEventsResponse
+	121, // 279: gitpod.v1.BillingService.GetEnterpriseBillingInfo:output_type -> gitpod.v1.GetEnterpriseBillingInfoResponse
+	124, // 280: gitpod.v1.BillingService.ListBYOKRateCardRates:output_type -> gitpod.v1.ListBYOKRateCardRatesResponse
+	126, // 281: gitpod.v1.BillingService.SetBYOKRateCardRate:output_type -> gitpod.v1.SetBYOKRateCardRateResponse
+	130, // 282: gitpod.v1.BillingService.ListEnterpriseAIUserBudgetPolicies:output_type -> gitpod.v1.ListEnterpriseAIUserBudgetPoliciesResponse
+	132, // 283: gitpod.v1.BillingService.GetEnterpriseAIUserBudgetPolicy:output_type -> gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse
+	134, // 284: gitpod.v1.BillingService.SetEnterpriseAIUserBudgetPolicy:output_type -> gitpod.v1.SetEnterpriseAIUserBudgetPolicyResponse
+	136, // 285: gitpod.v1.BillingService.DeleteEnterpriseAIUserBudgetPolicy:output_type -> gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyResponse
+	138, // 286: gitpod.v1.BillingService.GetCumulativeCreditUsage:output_type -> gitpod.v1.GetCumulativeCreditUsageResponse
+	143, // 287: gitpod.v1.BillingService.ListEnterpriseUserCreditUsage:output_type -> gitpod.v1.ListEnterpriseUserCreditUsageResponse
+	146, // 288: gitpod.v1.BillingService.CreateTeamCreditAllocation:output_type -> gitpod.v1.CreateTeamCreditAllocationResponse
+	148, // 289: gitpod.v1.BillingService.GetTeamCreditAllocation:output_type -> gitpod.v1.GetTeamCreditAllocationResponse
+	150, // 290: gitpod.v1.BillingService.UpdateTeamCreditAllocation:output_type -> gitpod.v1.UpdateTeamCreditAllocationResponse
+	152, // 291: gitpod.v1.BillingService.DeleteTeamCreditAllocation:output_type -> gitpod.v1.DeleteTeamCreditAllocationResponse
+	154, // 292: gitpod.v1.BillingService.SetOrganizationCreditGrant:output_type -> gitpod.v1.SetOrganizationCreditGrantResponse
+	245, // [245:293] is the sub-list for method output_type
+	197, // [197:245] is the sub-list for method input_type
+	197, // [197:197] is the sub-list for extension type_name
+	197, // [197:197] is the sub-list for extension extendee
+	0,   // [0:197] is the sub-list for field type_name
 }
 
 func init() { file_gitpod_v1_billing_proto_init() }
@@ -11659,22 +11565,22 @@ func file_gitpod_v1_billing_proto_init() {
 	file_gitpod_v1_billing_proto_msgTypes[113].OneofWrappers = []any{}
 	file_gitpod_v1_billing_proto_msgTypes[115].OneofWrappers = []any{}
 	file_gitpod_v1_billing_proto_msgTypes[117].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[121].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[119].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[122].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[123].OneofWrappers = []any{}
 	file_gitpod_v1_billing_proto_msgTypes[124].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[125].OneofWrappers = []any{}
 	file_gitpod_v1_billing_proto_msgTypes[126].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[128].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[129].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[133].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[144].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[147].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[127].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[131].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[142].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[145].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gitpod_v1_billing_proto_rawDesc), len(file_gitpod_v1_billing_proto_rawDesc)),
 			NumEnums:      18,
-			NumMessages:   149,
+			NumMessages:   147,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

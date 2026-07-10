@@ -10,6 +10,8 @@ import (
 	"connectrpc.com/connect"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -42,16 +44,16 @@ func (r *Resource) Configure(ctx context.Context, req resource.ConfigureRequest,
 		return
 	}
 
-	api, ok := req.ProviderData.(*managementclient.ManagementPlane)
+	data, ok := req.ProviderData.(*providerdata.Data)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *client.ManagementPlane, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return
 	}
 
-	r.client = api
+	r.client = data.Client
 }
 
 func (r *Resource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -88,7 +90,7 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 
 	result, err := r.client.ProjectService().CreateProject(ctx, connect.NewRequest(createReq))
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Create Ona Project", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Create Ona Project", "creating the Ona project", err)
 		return
 	}
 
@@ -99,13 +101,13 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 	}
 
 	if err := r.updateEnvironmentClasses(ctx, data.ID.ValueString(), environmentClasses); err != nil {
-		resp.Diagnostics.AddError("Unable to Update Ona Project Environment Classes", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Project Environment Classes", "assigning environment classes to the created Ona project", err)
 		return
 	}
 
 	project, err := r.getProject(ctx, data.ID.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Read Created Ona Project", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Created Ona Project", "reading the created Ona project", err)
 		return
 	}
 	if project == nil {
@@ -145,7 +147,7 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 
 	project, err := r.getProject(ctx, id)
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Read Ona Project", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona Project", "reading the Ona project", err)
 		return
 	}
 	if project == nil {
@@ -192,17 +194,17 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 	}
 
 	if _, err := r.client.ProjectService().UpdateProject(ctx, connect.NewRequest(updateReq)); err != nil {
-		resp.Diagnostics.AddError("Unable to Update Ona Project", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Project", "updating the Ona project", err)
 		return
 	}
 	if err := r.updateEnvironmentClasses(ctx, data.ID.ValueString(), environmentClasses); err != nil {
-		resp.Diagnostics.AddError("Unable to Update Ona Project Environment Classes", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Project Environment Classes", "updating Ona project environment classes", err)
 		return
 	}
 
 	project, err := r.getProject(ctx, data.ID.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Read Updated Ona Project", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Updated Ona Project", "reading the updated Ona project", err)
 		return
 	}
 	if project == nil {
@@ -242,7 +244,7 @@ func (r *Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp 
 
 	_, err := r.client.ProjectService().DeleteProject(ctx, connect.NewRequest(&v1.DeleteProjectRequest{ProjectId: id}))
 	if err != nil && connect.CodeOf(err) != connect.CodeNotFound {
-		resp.Diagnostics.AddError("Unable to Delete Ona Project", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Delete Ona Project", "deleting the Ona project", err)
 		return
 	}
 

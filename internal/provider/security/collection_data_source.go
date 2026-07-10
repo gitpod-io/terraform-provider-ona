@@ -10,6 +10,8 @@ import (
 	"connectrpc.com/connect"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	datasourceschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -101,16 +103,16 @@ func (d *PolicyCollectionDataSource) Configure(ctx context.Context, req datasour
 		return
 	}
 
-	api, ok := req.ProviderData.(*managementclient.ManagementPlane)
+	data, ok := req.ProviderData.(*providerdata.Data)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected *client.ManagementPlane, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return
 	}
 
-	d.client = api
+	d.client = data.Client
 }
 
 func (d *PolicyCollectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -144,7 +146,7 @@ func (d *PolicyCollectionDataSource) Read(ctx context.Context, req datasource.Re
 
 	policies, err := d.listPolicies(ctx, data.OrganizationID.ValueString(), data.Search.ValueString(), ids)
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to List Ona Security Policies", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to List Ona Security Policies", "listing Ona security policies", err)
 		return
 	}
 

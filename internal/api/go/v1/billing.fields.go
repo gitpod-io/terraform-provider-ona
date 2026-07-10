@@ -161,7 +161,6 @@ func (x *GetBillingInfoResponse) LogFields() logfields.Collection {
 	fields.Add(logfields.Extract(x.GetTopupPaymentFailure())...)
 	fields.Add(logfields.Extract(x.GetAutoTopupSettings())...)
 	fields.Add(logfields.Extract(x.GetLastAutoTopupAt())...)
-	fields.Add(logfields.Extract(x.GetRecoveryCreditGrantedAt())...)
 	return fields
 }
 
@@ -1030,20 +1029,6 @@ func (x *DeleteEnterpriseAIUserBudgetPolicyRequest) LogFields() logfields.Collec
 }
 
 func (x *DeleteEnterpriseAIUserBudgetPolicyResponse) LogFields() logfields.Collection {
-	return nil
-}
-
-func (x *RequestRecoveryCreditRequest) LogFields() logfields.Collection {
-	if x == nil {
-		return nil
-	}
-
-	var fields logfields.Collection
-	fields.Add(&logfields.Entry{Name: "organization.id", Value: x.GetOrganizationId()})
-	return fields
-}
-
-func (x *RequestRecoveryCreditResponse) LogFields() logfields.Collection {
 	return nil
 }
 

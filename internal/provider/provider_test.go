@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	frameworkresource "github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-testing/echoprovider"
 )
@@ -23,4 +24,16 @@ func testAccPreCheck(t *testing.T) {
 	// You can add code here to run prior to any test case execution, for example assertions
 	// about the appropriate environment variables being set are common to see in a pre-check
 	// function.
+}
+
+func TestManagedResourcesImplementImportState(t *testing.T) {
+	t.Parallel()
+
+	provider := &OnaProvider{}
+	for _, newResource := range provider.Resources(t.Context()) {
+		resource := newResource()
+		if _, ok := resource.(frameworkresource.ResourceWithImportState); !ok {
+			t.Errorf("%T must implement ResourceWithImportState", resource)
+		}
+	}
 }

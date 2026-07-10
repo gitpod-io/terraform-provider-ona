@@ -13,6 +13,8 @@ import (
 	"connectrpc.com/connect"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -101,16 +103,16 @@ func (r *Resource) Configure(ctx context.Context, req resource.ConfigureRequest,
 		return
 	}
 
-	api, ok := req.ProviderData.(*managementclient.ManagementPlane)
+	data, ok := req.ProviderData.(*providerdata.Data)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *client.ManagementPlane, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return
 	}
 
-	r.client = api
+	r.client = data.Client
 }
 
 func (r *Resource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -158,7 +160,7 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 
 	result, err := r.client.RunnerService().CreateRunner(ctx, connect.NewRequest(createReq))
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Create Ona Runner", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Create Ona Runner", "creating the Ona runner registration", err)
 		return
 	}
 	if result.Msg.GetRunner() == nil {
@@ -196,7 +198,7 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 
 	runner, err := r.getRunner(ctx, id)
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Read Ona Runner", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona Runner", "reading the Ona runner registration", err)
 		return
 	}
 	if runner == nil {
@@ -244,13 +246,13 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 	}
 
 	if _, err := r.client.RunnerService().UpdateRunner(ctx, connect.NewRequest(updateReq)); err != nil {
-		resp.Diagnostics.AddError("Unable to Update Ona Runner", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Runner", "updating the Ona runner registration", err)
 		return
 	}
 
 	runner, err := r.getRunner(ctx, id)
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Read Updated Ona Runner", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Updated Ona Runner", "reading the updated Ona runner registration", err)
 		return
 	}
 	if runner == nil {
@@ -290,7 +292,7 @@ func (r *Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp 
 		RunnerId: id,
 	}))
 	if err != nil && connect.CodeOf(err) != connect.CodeNotFound {
-		resp.Diagnostics.AddError("Unable to Delete Ona Runner", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Delete Ona Runner", "deleting the Ona runner registration", err)
 		return
 	}
 
@@ -299,6 +301,9 @@ func (r *Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp 
 
 func (r *Resource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resource.ImportStatePassthroughID(ctx, path.Root("runner_id"), req, resp)
 }
 

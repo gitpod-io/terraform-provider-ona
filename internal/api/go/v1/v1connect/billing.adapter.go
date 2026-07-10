@@ -52,7 +52,6 @@ type BillingServiceInternal interface {
 	GetEnterpriseAIUserBudgetPolicyInternal(context.Context, *connect.Request[v1.GetEnterpriseAIUserBudgetPolicyRequest], any) (*connect.Response[v1.GetEnterpriseAIUserBudgetPolicyResponse], error)
 	SetEnterpriseAIUserBudgetPolicyInternal(context.Context, *connect.Request[v1.SetEnterpriseAIUserBudgetPolicyRequest], any) (*connect.Response[v1.SetEnterpriseAIUserBudgetPolicyResponse], error)
 	DeleteEnterpriseAIUserBudgetPolicyInternal(context.Context, *connect.Request[v1.DeleteEnterpriseAIUserBudgetPolicyRequest], any) (*connect.Response[v1.DeleteEnterpriseAIUserBudgetPolicyResponse], error)
-	RequestRecoveryCreditInternal(context.Context, *connect.Request[v1.RequestRecoveryCreditRequest], any) (*connect.Response[v1.RequestRecoveryCreditResponse], error)
 	GetCumulativeCreditUsageInternal(context.Context, *connect.Request[v1.GetCumulativeCreditUsageRequest], any) (*connect.Response[v1.GetCumulativeCreditUsageResponse], error)
 	ListEnterpriseUserCreditUsageInternal(context.Context, *connect.Request[v1.ListEnterpriseUserCreditUsageRequest], any) (*connect.Response[v1.ListEnterpriseUserCreditUsageResponse], error)
 	CreateTeamCreditAllocationInternal(context.Context, *connect.Request[v1.CreateTeamCreditAllocationRequest], any) (*connect.Response[v1.CreateTeamCreditAllocationResponse], error)
@@ -277,11 +276,6 @@ func (a *BillingServiceAdapter) SetEnterpriseAIUserBudgetPolicy(ctx context.Cont
 // DeleteEnterpriseAIUserBudgetPolicy implements BillingServiceClient.DeleteEnterpriseAIUserBudgetPolicy by delegating to DeleteEnterpriseAIUserBudgetPolicyInternal.
 func (a *BillingServiceAdapter) DeleteEnterpriseAIUserBudgetPolicy(ctx context.Context, req *connect.Request[v1.DeleteEnterpriseAIUserBudgetPolicyRequest]) (*connect.Response[v1.DeleteEnterpriseAIUserBudgetPolicyResponse], error) {
 	return a.DeleteEnterpriseAIUserBudgetPolicyInternal(ctx, req, nil)
-}
-
-// RequestRecoveryCredit implements BillingServiceClient.RequestRecoveryCredit by delegating to RequestRecoveryCreditInternal.
-func (a *BillingServiceAdapter) RequestRecoveryCredit(ctx context.Context, req *connect.Request[v1.RequestRecoveryCreditRequest]) (*connect.Response[v1.RequestRecoveryCreditResponse], error) {
-	return a.RequestRecoveryCreditInternal(ctx, req, nil)
 }
 
 // GetCumulativeCreditUsage implements BillingServiceClient.GetCumulativeCreditUsage by delegating to GetCumulativeCreditUsageInternal.

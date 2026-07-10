@@ -19,6 +19,12 @@ The provider currently includes:
 - `ona_security_policy` and `ona_security_policies` for managing and listing
   runtime security policies.
 - `ona_organization_policies` for managing organization-level policy settings.
+- `ona_service_account` for managing service accounts.
+- `ona_group` for managing custom organization groups.
+- `ona_group_membership` for managing service-account group membership.
+- `ona_organization_role_assignment` for assigning organization-level roles to
+  groups.
+- `ona_service_account_token` for issuing service-account tokens.
 - `ona_runner_token` for issuing runner registration tokens.
 
 ## Requirements
@@ -57,6 +63,24 @@ Generate documentation:
 ```shell
 make generate
 ```
+
+## Service Account Credentials
+
+Use a human or admin personal access token for the first Terraform apply that
+creates service accounts and issues the initial service-account token. Store the
+service-account token in an external secret manager, then use that token as
+`ONA_TOKEN` for subsequent Terraform runs.
+
+The backend rejects service-account-token-to-service-account-token management:
+service-account tokens cannot create or rotate other service-account tokens. Run
+token bootstrap or rotation with a human/admin token.
+
+For organization-level settings, a service account needs organization-admin
+authorization through group membership. Terraform resources for group
+membership and organization role assignment are tracked separately from the
+service-account resource. Create a custom group, add the service account with
+`ona_group_membership`, and grant the group a supported organization role with
+`ona_organization_role_assignment`.
 
 ## Releasing
 
@@ -108,11 +132,14 @@ The Terraform-native brownfield workflow is:
 4. apply the imports, and
 5. verify that the resulting plan is a no-op.
 
-The provider supports project, runner registration, runner environment class,
-and runner SCM integration resources. Resource families without native
-Terraform resources still need provider implementations before Terraform can
-import them directly, so this repository includes helper code that prepares
-Terraform-native import blocks and generated configuration only for
-registered/importable provider resource types.
+The provider supports importing project, runner registration, runner
+environment class, runner SCM integration, security policy, organization policy,
+group, group membership, and organization role assignment resources. Resource
+families without native Terraform resources still need provider implementations
+before Terraform can import them directly, so this repository includes helper
+code that prepares Terraform-native import blocks and generated configuration
+only for registered/importable provider resource types. The brownfield import
+helper does not yet select groups, group memberships, or organization role
+assignments.
 
 See [examples/import.md](examples/import.md) for the full workflow and flags.

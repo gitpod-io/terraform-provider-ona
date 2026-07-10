@@ -11,6 +11,8 @@ import (
 	"connectrpc.com/connect"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -101,16 +103,16 @@ func (r *EnvironmentClassResource) Configure(ctx context.Context, req resource.C
 		return
 	}
 
-	api, ok := req.ProviderData.(*managementclient.ManagementPlane)
+	data, ok := req.ProviderData.(*providerdata.Data)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *client.ManagementPlane, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return
 	}
 
-	r.client = api
+	r.client = data.Client
 }
 
 func (r *EnvironmentClassResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -136,7 +138,7 @@ func (r *EnvironmentClassResource) Create(ctx context.Context, req resource.Crea
 
 	result, err := r.client.RunnerConfigurationService().CreateEnvironmentClass(ctx, connect.NewRequest(createReq))
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Create Ona Environment Class", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Create Ona Environment Class", "creating the Ona runner environment class", err)
 		return
 	}
 
@@ -152,7 +154,7 @@ func (r *EnvironmentClassResource) Create(ctx context.Context, req resource.Crea
 			Enabled:            ptr(false),
 		}))
 		if err != nil {
-			resp.Diagnostics.AddError("Unable to Disable Created Ona Environment Class", err.Error())
+			providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Disable Created Ona Environment Class", "disabling the created Ona runner environment class", err)
 			return
 		}
 	}
@@ -164,7 +166,7 @@ func (r *EnvironmentClassResource) Create(ctx context.Context, req resource.Crea
 
 	class, err := r.getEnvironmentClass(ctx, result.Msg.GetId())
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Read Created Ona Environment Class", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Created Ona Environment Class", "reading the created Ona runner environment class", err)
 		return
 	}
 	if class == nil {
@@ -204,7 +206,7 @@ func (r *EnvironmentClassResource) Read(ctx context.Context, req resource.ReadRe
 
 	class, err := r.getEnvironmentClass(ctx, id)
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Read Ona Environment Class", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona Environment Class", "reading the Ona runner environment class", err)
 		return
 	}
 	if class == nil {
@@ -237,13 +239,13 @@ func (r *EnvironmentClassResource) Update(ctx context.Context, req resource.Upda
 
 	updateReq := updateEnvironmentClassRequest(data)
 	if _, err := r.client.RunnerConfigurationService().UpdateEnvironmentClass(ctx, connect.NewRequest(updateReq)); err != nil {
-		resp.Diagnostics.AddError("Unable to Update Ona Environment Class", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Environment Class", "updating the Ona runner environment class", err)
 		return
 	}
 
 	class, err := r.getEnvironmentClass(ctx, data.ID.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to Read Updated Ona Environment Class", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Updated Ona Environment Class", "reading the updated Ona runner environment class", err)
 		return
 	}
 	if class == nil {
@@ -287,7 +289,7 @@ func (r *EnvironmentClassResource) Delete(ctx context.Context, req resource.Dele
 		Enabled:            &enabled,
 	}))
 	if err != nil && connect.CodeOf(err) != connect.CodeNotFound {
-		resp.Diagnostics.AddError("Unable to Disable Ona Environment Class", err.Error())
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Disable Ona Environment Class", "disabling the Ona runner environment class during destroy", err)
 		return
 	}
 
