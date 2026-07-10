@@ -10,8 +10,7 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-  build-terraform-provider:
-    name: Terraform provider CI
+  terraform-provider-ci:
     uses: ./.github/workflows/build-terraform-provider.yml
     permissions:
       contents: read
