@@ -3,9 +3,8 @@
 This repository contains the Terraform provider for Ona. It is built with the
 [Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework).
 
-The provider is intended to manage Ona projects, runners, runner environment
-classes, security policies, organization policies, product Automations, teams,
-groups, and AI budget policies.
+The provider manages the Ona resources listed below. It does not yet include
+native resources for product Automations, teams, or AI budget policies.
 
 The module includes the copied API client subset under `internal/api/go` so it
 can build without importing private monorepo Go modules.
