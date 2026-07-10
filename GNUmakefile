@@ -5,6 +5,10 @@ default: fmt lint install generate
 build:
 	go build -v ./...
 
+install-dependencies:
+	go mod download
+	cd tools; GOWORK=off go mod download
+
 install: build
 	go install -v ./...
 
@@ -12,8 +16,8 @@ lint:
 	golangci-lint run
 
 generate:
-	go generate .
-	cd tools; GOWORK=off go generate ./...
+	go generate generate.go
+	cd tools; GOWORK=off go generate tools.go
 
 fmt:
 	gofmt -s -w -e .
@@ -27,4 +31,4 @@ testacc:
 release-snapshot:
 	VERSION=$(RELEASE_SNAPSHOT_VERSION) ./scripts/build-release-artifacts.sh
 
-.PHONY: fmt lint test testacc build install generate release-snapshot
+.PHONY: fmt lint test testacc build install-dependencies install generate release-snapshot

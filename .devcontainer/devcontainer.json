@@ -1,0 +1,16 @@
+{
+  "name": "Terraform Provider for Ona",
+  "build": {
+    "context": ".",
+    "dockerfile": "Dockerfile"
+  },
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.Go@0.55.0",
+        "HashiCorp.terraform@2.39.2026071014"
+      ]
+    }
+  }
+}

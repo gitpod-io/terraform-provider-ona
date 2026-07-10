@@ -1,0 +1,44 @@
+tasks:
+  install-dependencies:
+    name: Install dependencies
+    command: make install-dependencies
+    triggeredBy:
+      - manual
+      - prebuild
+
+  build:
+    name: Build provider
+    command: make build
+    dependsOn:
+      - install-dependencies
+      - lint
+    triggeredBy:
+      - manual
+      - prebuild
+
+  lint:
+    name: Lint provider
+    command: make lint
+    dependsOn:
+      - install-dependencies
+    triggeredBy:
+      - manual
+      - prebuild
+
+  test:
+    name: Run tests
+    command: make test
+    dependsOn:
+      - build
+    triggeredBy:
+      - manual
+      - prebuild
+
+  generate:
+    name: Generate provider docs
+    command: make generate
+    dependsOn:
+      - install-dependencies
+    triggeredBy:
+      - manual
+      - prebuild
