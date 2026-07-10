@@ -27,7 +27,7 @@ tasks:
 
   test:
     name: Test
-    command: make test
+    command: make test testacc
     dependsOn:
       - build
     triggeredBy:
