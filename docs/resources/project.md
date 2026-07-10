@@ -26,21 +26,9 @@ resource "ona_project" "api" {
     order                = 0
   }
 
-  prebuild_configuration {
-    enabled               = true
-    environment_class_ids = [ona_environment_class.large.id]
-    timeout               = "1h"
-
-    daily_schedule {
-      hour_utc = 5
-    }
-
-    executor {
-      id        = ona_service_account.prebuilds.id
-      principal = "service_account"
-    }
-
-    enable_jetbrains_warmup = true
+  environment_class {
+    local_runner = true
+    order        = 1
   }
 }
 ```

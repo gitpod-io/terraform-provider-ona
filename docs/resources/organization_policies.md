@@ -24,7 +24,7 @@ resource "ona_security_policy" "baseline" {
   }
 }
 
-resource "ona_organization_policies" "example" {
+resource "ona_organization_policies" "current" {
   organization_id                    = "00000000-0000-0000-0000-000000000000"
   members_require_projects           = true
   members_create_projects            = false
@@ -36,7 +36,8 @@ resource "ona_organization_policies" "example" {
   agent_policy = {
     mcp_disabled                  = false
     scm_tools_disabled            = false
-    command_deny_list             = ["rm -rf /"]
+    command_deny_list             = ["git push --force"]
+    conversation_sharing_policy   = "organization"
     max_subagents_per_environment = 5
     allowed_agent_ids             = []
   }
@@ -111,5 +112,5 @@ The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/c
 ```shell
 #!/usr/bin/env bash
 
-terraform import ona_organization_policies.example 00000000-0000-0000-0000-000000000000
+terraform import ona_organization_policies.current 00000000-0000-0000-0000-000000000000
 ```

@@ -1,6 +1,6 @@
-resource "ona_security_policy" "baseline" {
+resource "ona_security_policy" "port_controls" {
   organization_id = "00000000-0000-0000-0000-000000000000"
-  name            = "baseline"
+  name            = "port-controls"
 
   spec {
     ports {
@@ -12,7 +12,14 @@ resource "ona_security_policy" "baseline" {
         effect     = "block"
       }
     }
+  }
+}
 
+resource "ona_security_policy" "file_controls" {
+  organization_id = "00000000-0000-0000-0000-000000000000"
+  name            = "file-controls"
+
+  spec {
     executables {
       default_effect = "allow"
 
@@ -32,7 +39,14 @@ resource "ona_security_policy" "baseline" {
         effect  = "block"
       }
     }
+  }
+}
 
+resource "ona_security_policy" "data_controls" {
+  organization_id = "00000000-0000-0000-0000-000000000000"
+  name            = "data-controls"
+
+  spec {
     block_devices {
       default_effect = "block"
     }

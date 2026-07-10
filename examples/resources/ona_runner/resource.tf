@@ -1,4 +1,4 @@
-resource "ona_runner" "example" {
+resource "ona_runner" "aws_primary" {
   name            = "aws-us-east-primary"
   runner_provider = "aws_ec2"
 
@@ -16,6 +16,20 @@ resource "ona_runner" "example" {
   }
 }
 
-output "cloudformation_template_url" {
-  value = ona_runner.example.cloudformation_template_url
+# AWS runners return a CloudFormation template URL for runner deployment.
+output "aws_cloudformation_template_url" {
+  value = ona_runner.aws_primary.cloudformation_template_url
+}
+
+# GCP runners do not use CloudFormation, so cloudformation_template_url is null.
+resource "ona_runner" "gcp_primary" {
+  name            = "gcp-us-central-primary"
+  runner_provider = "gcp"
+
+  configuration {
+    release_channel                  = "stable"
+    auto_update                      = true
+    devcontainer_image_cache_enabled = true
+    log_level                        = "info"
+  }
 }
