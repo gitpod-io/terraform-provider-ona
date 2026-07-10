@@ -3,9 +3,6 @@ resource "ona_project" "api" {
   repository_clone_url = "https://github.com/acme/api.git"
   branch               = "main"
 
-  devcontainer_file_path = ".devcontainer/devcontainer.json"
-  automations_file_path  = ".ona/automations.yaml"
-
   environment_class {
     environment_class_id = ona_environment_class.large.id
     order                = 0
@@ -19,12 +16,12 @@ resource "ona_project" "api" {
     daily_schedule {
       hour_utc = 5
     }
-
-    executor {
-      id        = ona_service_account.prebuilds.id
-      principal = "service_account"
-    }
-
-    enable_jetbrains_warmup = true
   }
+}
+
+resource "ona_warm_pool" "api_large" {
+  project_id           = ona_project.api.id
+  environment_class_id = ona_environment_class.large.id
+  min_size             = 0
+  max_size             = 5
 }

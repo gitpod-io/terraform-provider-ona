@@ -15,6 +15,9 @@ The provider currently includes:
 - `ona_project` for managing projects.
 - `ona_runner` for managing runner registrations.
 - `ona_environment_class` for managing runner environment classes.
+- `ona_warm_pool` for managing runner warm pools.
+- `ona_warm_pool` and `ona_warm_pools` data sources for reading runner warm
+  pools.
 - `ona_scm_integration` for managing runner SCM integrations.
 - `ona_security_policy` and `ona_security_policies` for managing and listing
   runtime security policies.
@@ -133,13 +136,13 @@ The Terraform-native brownfield workflow is:
 5. verify that the resulting plan is a no-op.
 
 The provider supports importing project, runner registration, runner
-environment class, runner SCM integration, security policy, organization policy,
-group, group membership, and organization role assignment resources. Resource
-families without native Terraform resources still need provider implementations
-before Terraform can import them directly, so this repository includes helper
-code that prepares Terraform-native import blocks and generated configuration
-only for registered/importable provider resource types. The brownfield import
-helper does not yet select groups, group memberships, or organization role
-assignments.
+environment class, runner warm pool, runner SCM integration, security policy,
+organization policy, group, group membership, and organization role assignment
+resources. Resource families without native Terraform resources still need
+provider implementations before Terraform can import them directly, so this
+repository includes helper code that prepares Terraform-native import blocks and
+generated configuration only for registered/importable provider resource types.
+The brownfield import helper does not yet select groups, group memberships, or
+organization role assignments.
 
 See [examples/import.md](examples/import.md) for the full workflow and flags.

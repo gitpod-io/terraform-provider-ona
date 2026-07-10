@@ -25,6 +25,23 @@ resource "ona_project" "api" {
     environment_class_id = ona_environment_class.large.id
     order                = 0
   }
+
+  prebuild_configuration {
+    enabled               = true
+    environment_class_ids = [ona_environment_class.large.id]
+    timeout               = "1h"
+
+    daily_schedule {
+      hour_utc = 5
+    }
+
+    executor {
+      id        = ona_service_account.prebuilds.id
+      principal = "service_account"
+    }
+
+    enable_jetbrains_warmup = true
+  }
 }
 ```
 
@@ -42,7 +59,7 @@ resource "ona_project" "api" {
 - `automations_file_path` (String) Path to the automations file, relative to the repository root.
 - `devcontainer_file_path` (String) Path to the devcontainer file, relative to the repository root.
 - `environment_class` (Block List) Environment classes available to this project, in priority order. (see [below for nested schema](#nestedblock--environment_class))
-- `prebuild_configuration` (Block List) Prebuild configuration for the project. Set no more than one block. (see [below for nested schema](#nestedblock--prebuild_configuration))
+- `prebuild_configuration` (Block List) Prebuild configuration for the project. Set no more than one block. Warm pools for prebuilt environment classes are managed separately with `ona_warm_pool` resources. (see [below for nested schema](#nestedblock--prebuild_configuration))
 
 ### Read-Only
 
