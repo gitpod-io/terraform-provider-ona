@@ -1,5 +1,5 @@
-name: Terraform Provider Ona
-run-name: "${{ inputs.publish_release && '[Publish]' || '[Verify]' }} Terraform Provider Ona"
+name: Terraform provider CI
+run-name: "${{ inputs.publish_release && 'Publish' || 'Verify' }} Terraform provider"
 
 on:
   workflow_dispatch:
@@ -43,7 +43,7 @@ defaults:
 
 jobs:
   verify:
-    name: Verify provider
+    name: Test and build provider
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -100,7 +100,7 @@ jobs:
         run: make build
 
   release-snapshot:
-    name: Verify release packaging
+    name: Build release snapshot
     needs: [verify]
     if: ${{ !inputs.publish_release }}
     runs-on: ubuntu-latest
@@ -122,7 +122,7 @@ jobs:
         run: make release-snapshot RELEASE_SNAPSHOT_VERSION=0.0.0-SNAPSHOT
 
   resolve-prerelease-version:
-    name: Resolve prerelease version
+    name: Select release version
     if: ${{ inputs.publish_release }}
     runs-on: ubuntu-latest
     outputs:
@@ -154,7 +154,7 @@ jobs:
           echo "Resolved prerelease version: ${version}"
 
   publish-preflight:
-    name: Validate publish prerequisites
+    name: Check release prerequisites
     needs: [resolve-prerelease-version]
     if: ${{ inputs.publish_release }}
     runs-on: ubuntu-latest
@@ -211,87 +211,30 @@ jobs:
           VERSION: ${{ needs.resolve-prerelease-version.outputs.version }}
         run: scripts/publish-release.sh
 
-  wait-for-registry:
-    name: Wait for Terraform Registry
+  trigger-registry-verification:
+    name: Start Registry verification
     needs: [create-release, resolve-prerelease-version]
     if: ${{ inputs.publish_release }}
     runs-on: ubuntu-latest
     permissions:
+      actions: write
       contents: read
-    outputs:
-      source: ${{ steps.registry.outputs.source }}
-      version: ${{ steps.registry.outputs.version }}
-      timeout_minutes: ${{ steps.registry.outputs.timeout_minutes }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      - name: Wait for provider version
-        id: registry
+      - name: Start Registry verification workflow
         env:
+          GH_TOKEN: ${{ github.token }}
+          REF_NAME: ${{ github.ref_name }}
+          REGISTRY_WORKFLOW: registry-init-check.yml
           SOURCE: ${{ env.REGISTRY_PROVIDER_SOURCE }}
           VERSION: ${{ needs.resolve-prerelease-version.outputs.version_no_v }}
           TIMEOUT_MINUTES: ${{ env.REGISTRY_TIMEOUT_MINUTES }}
-        run: scripts/wait-for-registry-provider.sh
-
-  verify-registry-install:
-    name: Verify Registry install (${{ matrix.runner }})
-    needs: [wait-for-registry]
-    if: ${{ inputs.publish_release }}
-    runs-on: ${{ matrix.runner }}
-    permissions:
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        runner:
-          - ubuntu-latest
-          - ubuntu-24.04-arm
-    steps:
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
-        with:
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-          terraform_wrapper: false
-
-      - name: Write Terraform config
-        env:
-          SOURCE: ${{ needs.wait-for-registry.outputs.source }}
-          VERSION: ${{ needs.wait-for-registry.outputs.version }}
         run: |
-          cat > main.tf <<EOF
-          terraform {
-            required_providers {
-              ona = {
-                source  = "${SOURCE}"
-                version = "= ${VERSION}"
-              }
-            }
-          }
+          set -euo pipefail
 
-          provider "ona" {}
-          EOF
+          gh workflow run "$REGISTRY_WORKFLOW" \
+            --ref "$REF_NAME" \
+            --field source="$SOURCE" \
+            --field version="$VERSION" \
+            --field timeout_minutes="$TIMEOUT_MINUTES"
 
-      - name: Initialize provider
-        env:
-          TIMEOUT_MINUTES: ${{ needs.wait-for-registry.outputs.timeout_minutes }}
-        run: |
-          set +e
-          deadline=$((SECONDS + TIMEOUT_MINUTES * 60))
-
-          while true; do
-            terraform init -upgrade -no-color
-            status=$?
-
-            if [[ $status -eq 0 ]]; then
-              exit 0
-            fi
-
-            if ((SECONDS >= deadline)); then
-              echo "Timed out waiting for terraform init to succeed."
-              exit "$status"
-            fi
-
-            rm -rf .terraform .terraform.lock.hcl
-            sleep 60
-          done
+          echo "Started Terraform Registry verification for ${SOURCE} ${VERSION}."

@@ -11,6 +11,7 @@ on:
 
 jobs:
   build-terraform-provider:
+    name: Terraform provider CI
     uses: ./.github/workflows/build-terraform-provider.yml
     permissions:
       contents: read
