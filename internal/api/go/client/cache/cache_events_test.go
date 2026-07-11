@@ -12,7 +12,7 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-//go:generate go run go.uber.org/mock/mockgen@v0.6.0 -package cache_test -destination cache_mock_test.go github.com/gitpod-io/terraform-provider-ona/internal/api/go/client/cache Invalidator,EventStream
+//go:generate go run go.uber.org/mock/mockgen@v0.6.0 -package cache_test -destination cache_mock_test.go github.com/gitpod-io/gitpod-next/api/go/client/cache Invalidator,EventStream
 
 func TestInvalidateFromEventService(t *testing.T) {
 	t.Parallel()
