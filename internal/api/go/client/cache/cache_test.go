@@ -991,7 +991,7 @@ func checkPerformanceBudget(b *testing.B, budget performanceBudget) {
 	}
 }
 
-// Run benchmarks with:
+// Run benchmarks running:
 // go test -benchmem -run='^$' -bench '^(BenchmarkResourceCache_Get|BenchmarkResourceCache_List|BenchmarkResourceCache_FullSync|BenchmarkResourceCache_Concurrent|BenchmarkWithBudgets)$' github.com/gitpod-io/terraform-provider-ona/internal/api/go/client/cache
 func BenchmarkResourceCache_Get(b *testing.B) {
 	gli := &testGLI{
