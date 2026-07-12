@@ -12,6 +12,7 @@ api/go/tools/terraform
 # subpackage (api/go/client/mock), whose per-service mocks pull in the
 # agentops connect client. That package is not reachable
 # from api/go/client/... alone, so it must be listed explicitly for the
-# synced module to compile in isolation. It only depends on already-synced
-# paths (api/go/v1 and api/go/tools/logfields), so the graph stays closed.
+# synced module to compile in isolation. Keep the transitive tool imports listed
+# explicitly so the graph stays closed.
 api/go/agentops/v1
+api/go/tools/notyetpublic
