@@ -25,6 +25,7 @@ import (
 
 var _ resource.Resource = &PolicyResource{}
 var _ resource.ResourceWithConfigure = &PolicyResource{}
+var _ resource.ResourceWithIdentity = &PolicyResource{}
 var _ resource.ResourceWithImportState = &PolicyResource{}
 var _ resource.ResourceWithValidateConfig = &PolicyResource{}
 
@@ -389,6 +390,10 @@ func (r *PolicyResource) Create(ctx context.Context, req resource.CreateRequest,
 	}
 
 	data.ID = types.StringValue(policy.GetId())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, PolicyIdentityModel{ID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -441,6 +446,10 @@ func (r *PolicyResource) Read(ctx context.Context, req resource.ReadRequest, res
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, PolicyIdentityModel{ID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -482,6 +491,10 @@ func (r *PolicyResource) Update(ctx context.Context, req resource.UpdateRequest,
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, PolicyIdentityModel{ID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -518,7 +531,7 @@ func (r *PolicyResource) Delete(ctx context.Context, req resource.DeleteRequest,
 }
 
 func (r *PolicyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("id"), req, resp)
 }
 
 func (r *PolicyResource) getPolicy(ctx context.Context, id string) (*v1.SecurityPolicy, error) {
