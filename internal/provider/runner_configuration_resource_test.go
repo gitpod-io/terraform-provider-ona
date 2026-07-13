@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"regexp"
+	"sort"
 	"sync"
 	"testing"
 
@@ -1114,6 +1115,28 @@ func (s *fakeRunnerConfigurationService) GetEnvironmentClass(ctx context.Context
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("environment class not found"))
 	}
 	return connect.NewResponse(&v1.GetEnvironmentClassResponse{EnvironmentClass: cloneEnvironmentClass(class)}), nil
+}
+
+func (s *fakeRunnerConfigurationService) ListEnvironmentClasses(ctx context.Context, req *connect.Request[v1.ListEnvironmentClassesRequest]) (*connect.Response[v1.ListEnvironmentClassesResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	runnerIDs := map[string]struct{}{}
+	for _, id := range req.Msg.GetFilter().GetRunnerIds() {
+		runnerIDs[id] = struct{}{}
+	}
+
+	var classes []*v1.EnvironmentClass
+	for _, class := range s.environmentClasses {
+		if len(runnerIDs) > 0 {
+			if _, ok := runnerIDs[class.GetRunnerId()]; !ok {
+				continue
+			}
+		}
+		classes = append(classes, cloneEnvironmentClass(class))
+	}
+	sort.Slice(classes, func(i, j int) bool { return classes[i].GetId() < classes[j].GetId() })
+	return connect.NewResponse(&v1.ListEnvironmentClassesResponse{EnvironmentClasses: classes}), nil
 }
 
 func (s *fakeRunnerConfigurationService) UpdateEnvironmentClass(ctx context.Context, req *connect.Request[v1.UpdateEnvironmentClassRequest]) (*connect.Response[v1.UpdateEnvironmentClassResponse], error) {
