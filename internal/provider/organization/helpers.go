@@ -50,6 +50,26 @@ func (h *clientHolder) requireClient(diags *diag.Diagnostics, action string, res
 	return false
 }
 
+type authenticatedOrganization struct {
+	ID        string
+	Principal v1.Principal
+}
+
+func (h *clientHolder) authenticatedOrganization(ctx context.Context) (authenticatedOrganization, error) {
+	result, err := h.client.IdentityService().GetAuthenticatedIdentity(ctx, connect.NewRequest(&v1.GetAuthenticatedIdentityRequest{}))
+	if err != nil {
+		return authenticatedOrganization{}, fmt.Errorf("get authenticated identity: %w", err)
+	}
+	organizationID := result.Msg.GetOrganizationId()
+	if organizationID == "" {
+		return authenticatedOrganization{}, fmt.Errorf("authenticated identity did not include an organization ID")
+	}
+	return authenticatedOrganization{
+		ID:        organizationID,
+		Principal: result.Msg.GetSubject().GetPrincipal(),
+	}, nil
+}
+
 func (h *clientHolder) authenticatedOrganizationID(ctx context.Context) (string, error) {
 	result, err := h.client.IdentityService().GetAuthenticatedIdentity(ctx, connect.NewRequest(&v1.GetAuthenticatedIdentityRequest{}))
 	if err != nil {
@@ -62,11 +82,31 @@ func (h *clientHolder) authenticatedOrganizationID(ctx context.Context) (string,
 	return organizationID, nil
 }
 
-func timestampString(value *timestamppb.Timestamp) types.String {
+func guardStateOrganizationID(diags *diag.Diagnostics, stateID types.String, authenticatedID string, resourceType string) bool {
+	if stateID.IsNull() || stateID.IsUnknown() || stateID.ValueString() == "" || stateID.ValueString() == authenticatedID {
+		return true
+	}
+	diags.AddError(
+		"Authenticated Organization Changed",
+		fmt.Sprintf(
+			"%s state belongs to organization %q, but the configured Ona token is authenticated for organization %q. Use a token for the original organization or import a separate resource for the current organization.",
+			resourceType,
+			stateID.ValueString(),
+			authenticatedID,
+		),
+	)
+	return false
+}
+
+func timestampRFC3339(value *timestamppb.Timestamp) types.String {
 	if value == nil {
 		return types.StringNull()
 	}
 	return types.StringValue(value.AsTime().UTC().Format(time.RFC3339))
+}
+
+func timestampString(value *timestamppb.Timestamp) types.String {
+	return timestampRFC3339(value)
 }
 
 func preserveString(current types.String, planned types.String) types.String {

@@ -23,6 +23,8 @@ The provider currently includes:
 - `ona_secret` for managing durable organization, project, user, and
   service-account secrets.
 - `ona_organization_policies` for managing organization-level policy settings.
+- `ona_announcement_banner` for managing the organization announcement banner.
+- `ona_terms_of_service` for managing organization terms of service.
 - `ona_custom_domain` for managing organization custom domains.
 - `ona_service_account` for managing service accounts.
 - `ona_group` for managing custom organization groups.

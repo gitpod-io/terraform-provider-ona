@@ -134,6 +134,8 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		security.NewPolicyResource,
 		secret.NewResource,
 		organization.NewPoliciesResource,
+		organization.NewAnnouncementBannerResource,
+		organization.NewTermsOfServiceResource,
 		organization.NewCustomDomainResource,
 		organization.NewSSOConfigurationResource,
 		organization.NewSCIMConfigurationResource,
