@@ -76,16 +76,10 @@ func (r *InsightsResource) Schema(ctx context.Context, req resource.SchemaReques
 			"last_ran_at": resourceschema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "RFC3339 timestamp when the Insights workflow last completed successfully.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
 			},
 			"data_collected_through": resourceschema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "RFC3339 upper bound of the most recent successfully collected Insights data.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
 			},
 		},
 	}
