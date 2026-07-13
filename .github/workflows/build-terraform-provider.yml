@@ -39,6 +39,7 @@ permissions:
 
 env:
   DEFAULT_PRERELEASE_PREFIX: v0.1.0-beta
+  GOLANGCI_LINT_VERSION: v2.11.4
   RELEASE_REPOSITORY: gitpod-io/terraform-provider-ona
   REGISTRY_PROVIDER_SOURCE: gitpod-io/ona
   REGISTRY_TIMEOUT_MINUTES: "60"
@@ -72,21 +73,24 @@ jobs:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
           terraform_wrapper: false
 
-      - name: Download dependencies
+      - name: Install golangci-lint
+        env:
+          GOBIN: ${{ runner.temp }}/bin
         run: |
           set -euo pipefail
-          go mod download
-          (cd tools && GOWORK=off go mod download)
+
+          mkdir -p "$GOBIN"
+          go install "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION}"
+          echo "$GOBIN" >> "$GITHUB_PATH"
+
+      - name: Download dependencies
+        run: make install-dependencies
 
       - name: Check formatting
-        run: |
-          set -euo pipefail
-          unformatted="$(gofmt -l .)"
-          if [[ -n "$unformatted" ]]; then
-            echo "::error::Go files need gofmt:"
-            echo "$unformatted"
-            exit 1
-          fi
+        run: make fmt
+
+      - name: Verify formatting
+        run: git diff --exit-code
 
       - name: Generate provider docs
         run: make generate
@@ -95,10 +99,7 @@ jobs:
         run: git diff --exit-code
 
       - name: Run lint
-        uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
-        with:
-          version: v2.11.4
-          args: --timeout=5m
+        run: make lint
 
       - name: Run tests
         run: make test
