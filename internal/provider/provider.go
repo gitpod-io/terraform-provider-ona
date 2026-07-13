@@ -130,6 +130,8 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		project.NewResource,
 		security.NewPolicyResource,
 		organization.NewPoliciesResource,
+		organization.NewAnnouncementBannerResource,
+		organization.NewTermsOfServiceResource,
 		warmpool.NewWarmPoolResource,
 		serviceaccount.NewResource,
 		accesscontrol.NewGroupResource,

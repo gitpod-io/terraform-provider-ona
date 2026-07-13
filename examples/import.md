@@ -14,9 +14,10 @@ The target workflow is:
 
 The provider includes native resources for projects, runner registrations,
 runner environment classes, runner SCM integrations, security policies, and
-organization policies, groups, group memberships, and organization role
-assignments. Terraform can create, read, update, delete where the Ona API
-supports deletion, and import those resource types directly.
+organization policies, announcement banners, Terms of Service, groups, group
+memberships, and organization role assignments. Terraform can create, read,
+update, delete where the Ona API supports deletion, and import those resource
+types directly.
 
 Terraform cannot discover or import a resource type natively until each resource has:
 
@@ -44,6 +45,8 @@ Direct `terraform import` uses these resource IDs:
 | `ona_project` | Project ID |
 | `ona_security_policy` | Security policy ID |
 | `ona_organization_policies` | Organization ID |
+| `ona_announcement_banner` | `current` |
+| `ona_terms_of_service` | `current` |
 | `ona_group` | Group ID |
 | `ona_group_membership` | `group_id/service_account_id` |
 | `ona_organization_role_assignment` | `group_id/organization_id/role` |
@@ -193,8 +196,9 @@ The helper automatically adds selected dependencies used by generated references
 
 The helper does not currently select other discovered resources for generated
 import blocks, including groups, group memberships, organization role
-assignments, teams, security policies, organization policies, automations, or AI
-budget policies. Security policies, organization policies, groups, group
+assignments, announcement banners, Terms of Service, teams, security policies,
+organization policies, automations, or AI budget policies. Security policies,
+organization policies, announcement banners, Terms of Service, groups, group
 memberships, and organization role assignments can still be imported directly
 with Terraform import blocks because the provider now implements those
 resources.
