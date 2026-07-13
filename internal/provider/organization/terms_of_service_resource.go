@@ -28,6 +28,7 @@ const termsOfServiceResourceType = "ona_terms_of_service"
 
 var _ resource.Resource = &TermsOfServiceResource{}
 var _ resource.ResourceWithConfigure = &TermsOfServiceResource{}
+var _ resource.ResourceWithIdentity = &TermsOfServiceResource{}
 var _ resource.ResourceWithImportState = &TermsOfServiceResource{}
 var _ resource.ResourceWithValidateConfig = &TermsOfServiceResource{}
 
@@ -149,6 +150,10 @@ func (r *TermsOfServiceResource) Create(ctx context.Context, req resource.Create
 	}
 
 	data.ID = types.StringValue(authenticated.ID)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, TermsOfServiceIdentityModel{OrganizationID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), data.ID)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -195,6 +200,10 @@ func (r *TermsOfServiceResource) Read(ctx context.Context, req resource.ReadRequ
 	prior := data
 	data = TermsOfServiceModel{}
 	resp.Diagnostics.Append(populateTermsOfServiceModel(&data, terms, authenticated.ID, prior)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, TermsOfServiceIdentityModel{OrganizationID: data.ID})...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -253,6 +262,10 @@ func (r *TermsOfServiceResource) Update(ctx context.Context, req resource.Update
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, TermsOfServiceIdentityModel{OrganizationID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -284,6 +297,10 @@ func (r *TermsOfServiceResource) Delete(ctx context.Context, req resource.Delete
 }
 
 func (r *TermsOfServiceResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	if req.ID == "" {
+		resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("organization_id"), req, resp)
+		return
+	}
 	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "importing", termsOfServiceResourceType) {
 		return
 	}
@@ -298,6 +315,7 @@ func (r *TermsOfServiceResource) ImportState(ctx context.Context, req resource.I
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), types.StringValue(authenticated.ID))...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, TermsOfServiceIdentityModel{OrganizationID: types.StringValue(authenticated.ID)})...)
 }
 
 func (r *TermsOfServiceResource) getTermsOfService(ctx context.Context, organizationID string) (*v1.TermsOfService, error) {
