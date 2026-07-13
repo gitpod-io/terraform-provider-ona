@@ -336,10 +336,12 @@ func newRunnerAPIServer(t *testing.T, runners map[string]*v1.Runner) *runnerAPIS
 type fakeRunnerService struct {
 	v1connect.UnimplementedRunnerServiceHandler
 
-	mu      sync.Mutex
-	runners map[string]*v1.Runner
-	deletes []string
-	tokens  []string
+	mu            sync.Mutex
+	runners       map[string]*v1.Runner
+	policies      map[string]*v1.RunnerPolicy
+	deletes       []string
+	policyDeletes []string
+	tokens        []string
 }
 
 func (s *fakeRunnerService) CreateRunner(ctx context.Context, req *connect.Request[v1.CreateRunnerRequest]) (*connect.Response[v1.CreateRunnerResponse], error) {
