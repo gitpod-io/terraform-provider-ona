@@ -41,12 +41,18 @@ func TestManagedResourcesImplementImportState(t *testing.T) {
 	}
 }
 
-func TestListResourcesInitiallyEmpty(t *testing.T) {
+func TestListResourceRegistrationsAreValid(t *testing.T) {
 	t.Parallel()
 
 	provider := &OnaProvider{}
-	if got := provider.ListResources(t.Context()); len(got) != 0 {
-		t.Fatalf("ListResources() returned %d registrations, want 0", len(got))
+	for i, newListResource := range provider.ListResources(t.Context()) {
+		if newListResource == nil {
+			t.Errorf("ListResources()[%d] is nil", i)
+			continue
+		}
+		if got := newListResource(); got == nil {
+			t.Errorf("ListResources()[%d]() returned nil", i)
+		}
 	}
 }
 
