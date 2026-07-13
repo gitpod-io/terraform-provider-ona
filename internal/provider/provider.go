@@ -21,6 +21,7 @@ import (
 	warmpool "github.com/gitpod-io/terraform-provider-ona/internal/provider/warm_pool"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
+	"github.com/hashicorp/terraform-plugin-framework/list"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
@@ -31,6 +32,7 @@ import (
 // Ensure OnaProvider satisfies various provider interfaces.
 var _ provider.Provider = &OnaProvider{}
 var _ provider.ProviderWithEphemeralResources = &OnaProvider{}
+var _ provider.ProviderWithListResources = &OnaProvider{}
 
 // OnaProvider defines the provider implementation.
 type OnaProvider struct {
@@ -120,6 +122,7 @@ func (p *OnaProvider) Configure(ctx context.Context, req provider.ConfigureReque
 
 	resp.DataSourceData = providerData
 	resp.EphemeralResourceData = providerData
+	resp.ListResourceData = providerData
 	resp.ResourceData = providerData
 }
 
@@ -153,6 +156,12 @@ func (p *OnaProvider) EphemeralResources(ctx context.Context) []func() ephemeral
 		runner.NewTokenEphemeralResource,
 		serviceaccount.NewTokenEphemeralResource,
 	}
+}
+
+// ListResources returns the managed-resource discovery implementations
+// registered by the provider. Resource-specific PRs add constructors here.
+func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResource {
+	return nil
 }
 
 func pathRoot(name string) path.Path {
