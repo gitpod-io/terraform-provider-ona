@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"regexp"
+	"sort"
 	"sync"
 	"testing"
 
@@ -948,6 +949,30 @@ func (s *fakeRunnerConfigurationService) GetSCMIntegration(ctx context.Context, 
 	return connect.NewResponse(&v1.GetSCMIntegrationResponse{Integration: cloneSCMIntegration(integration)}), nil
 }
 
+func (s *fakeRunnerConfigurationService) ListSCMIntegrations(ctx context.Context, req *connect.Request[v1.ListSCMIntegrationsRequest]) (*connect.Response[v1.ListSCMIntegrationsResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	runnerIDs := map[string]struct{}{}
+	for _, id := range req.Msg.GetFilter().GetRunnerIds() {
+		runnerIDs[id] = struct{}{}
+	}
+
+	var integrations []*v1.SCMIntegration
+	for _, integration := range s.scmIntegrations {
+		if len(runnerIDs) > 0 {
+			if _, ok := runnerIDs[integration.GetRunnerId()]; !ok {
+				continue
+			}
+		}
+		integrations = append(integrations, cloneSCMIntegration(integration))
+	}
+	sort.Slice(integrations, func(i, j int) bool {
+		return integrations[i].GetId() < integrations[j].GetId()
+	})
+	return connect.NewResponse(&v1.ListSCMIntegrationsResponse{Integrations: integrations}), nil
+}
+
 func (s *fakeRunnerConfigurationService) UpdateSCMIntegration(ctx context.Context, req *connect.Request[v1.UpdateSCMIntegrationRequest]) (*connect.Response[v1.UpdateSCMIntegrationResponse], error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -1184,6 +1209,17 @@ func (s *fakeRunnerConfigurationService) llmAPIKeyUpdated(id string, apiKey stri
 		}
 	}
 	return false
+}
+
+func (s *fakeRunnerConfigurationService) scmSecretUpdateCount() int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	var count int
+	for _, updates := range s.scmSecretUpdates {
+		count += len(updates)
+	}
+	return count
 }
 
 func (s *fakeRunnerConfigurationService) scmCreateIssuerURLSent(id string) bool {

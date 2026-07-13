@@ -25,6 +25,7 @@ import (
 
 var _ resource.Resource = &SCMIntegrationResource{}
 var _ resource.ResourceWithConfigure = &SCMIntegrationResource{}
+var _ resource.ResourceWithIdentity = &SCMIntegrationResource{}
 var _ resource.ResourceWithImportState = &SCMIntegrationResource{}
 var _ resource.ResourceWithValidateConfig = &SCMIntegrationResource{}
 
@@ -188,6 +189,10 @@ func (r *SCMIntegrationResource) Create(ctx context.Context, req resource.Create
 	}
 
 	data.ID = types.StringValue(result.Msg.GetId())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, SCMIntegrationIdentityModel{ID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -248,6 +253,10 @@ func (r *SCMIntegrationResource) Read(ctx context.Context, req resource.ReadRequ
 		// issuer_url is a Terraform-only compatibility input for Azure DevOps Entra PAT.
 		data.IssuerURL = prior.IssuerURL
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, SCMIntegrationIdentityModel{ID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -301,6 +310,10 @@ func (r *SCMIntegrationResource) Update(ctx context.Context, req resource.Update
 	planned := data
 	populateSCMIntegrationModel(&data, integration)
 	preserveSCMIntegrationPlannedInputs(&data, planned)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, SCMIntegrationIdentityModel{ID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -335,7 +348,7 @@ func (r *SCMIntegrationResource) Delete(ctx context.Context, req resource.Delete
 }
 
 func (r *SCMIntegrationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("id"), req, resp)
 }
 
 func (r *SCMIntegrationResource) getSCMIntegration(ctx context.Context, id string) (*v1.SCMIntegration, error) {
