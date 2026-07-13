@@ -10,6 +10,7 @@ import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/logfields"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/stainless"
+	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -8346,7 +8347,7 @@ var File_gitpod_v1_organization_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\n" +
-	"\x1cgitpod/v1/organization.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x15gitpod/v1/agent.proto\x1a\x15gitpod/v1/count.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x14gitpod/v1/user.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe1\x01\n" +
+	"\x1cgitpod/v1/organization.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x15gitpod/v1/agent.proto\x1a\x15gitpod/v1/count.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x14gitpod/v1/user.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe1\x01\n" +
 	"\x19UpdateOrganizationRequest\x12I\n" +
 	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
 	"\x0forganization.idR\x0eorganizationId\x12\x17\n" +
@@ -8665,41 +8666,55 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	" DeleteDomainVerificationResponse\"\x87\x01\n" +
 	")OrganizationTierFailedPreconditionDetails\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\x12@\n" +
-	"\rrequired_tier\x18\x02 \x01(\x0e2\x1b.gitpod.v1.OrganizationTierR\frequiredTier\"\xb8\x13\n" +
-	"\x14OrganizationPolicies\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\xf2\x01\n" +
-	"\x1bmaximum_environment_timeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x96\x01\xbaH\x92\x01\xba\x01\x8e\x01\n" +
-	"\x1bmaximum_environment_timeout\x12:value must be 0s (no limit) or at least 1800s (30 minutes)\x1a3this == duration('0s') || this >= duration('1800s')R\x19maximumEnvironmentTimeout\x12@\n" +
-	"\x18members_require_projects\x18\x03 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x16membersRequireProjects\x12>\n" +
-	"\x17members_create_projects\x18\x04 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x15membersCreateProjects\x124\n" +
-	"\x12allowed_editor_ids\x18\x05 \x03(\tB\x06\xbaH\x03\xc8\x01\x01R\x10allowedEditorIds\x122\n" +
-	"\x11default_editor_id\x18\x06 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x0fdefaultEditorId\x126\n" +
-	"\x13allow_local_runners\x18\a \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x11allowLocalRunners\x12X\n" +
-	"%maximum_running_environments_per_user\x18\b \x01(\x03B\x06\xbaH\x03\xc8\x01\x01R!maximumRunningEnvironmentsPerUser\x12I\n" +
-	"\x1dmaximum_environments_per_user\x18\t \x01(\x03B\x06\xbaH\x03\xc8\x01\x01R\x1amaximumEnvironmentsPerUser\x12B\n" +
+	"\rrequired_tier\x18\x02 \x01(\x0e2\x1b.gitpod.v1.OrganizationTierR\frequiredTier\"\x95\x14\n" +
+	"\x14OrganizationPolicies\x12M\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB$\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
+	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12\xf6\x01\n" +
+	"\x1bmaximum_environment_timeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x9a\x01\xbaH\x92\x01\xba\x01\x8e\x01\n" +
+	"\x1bmaximum_environment_timeout\x12:value must be 0s (no limit) or at least 1800s (30 minutes)\x1a3this == duration('0s') || this >= duration('1800s')ګ\x1e\x00R\x19maximumEnvironmentTimeout\x12D\n" +
+	"\x18members_require_projects\x18\x03 \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x16membersRequireProjects\x12B\n" +
+	"\x17members_create_projects\x18\x04 \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x15membersCreateProjects\x128\n" +
+	"\x12allowed_editor_ids\x18\x05 \x03(\tB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x10allowedEditorIds\x126\n" +
+	"\x11default_editor_id\x18\x06 \x01(\tB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x0fdefaultEditorId\x12:\n" +
+	"\x13allow_local_runners\x18\a \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x11allowLocalRunners\x12\\\n" +
+	"%maximum_running_environments_per_user\x18\b \x01(\x03B\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R!maximumRunningEnvironmentsPerUser\x12M\n" +
+	"\x1dmaximum_environments_per_user\x18\t \x01(\x03B\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x1amaximumEnvironmentsPerUser\x12F\n" +
 	"\x19default_environment_image\x18\n" +
-	" \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x17defaultEnvironmentImage\x12:\n" +
-	"\x15port_sharing_disabled\x18\v \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x13portSharingDisabled\x12w\n" +
-	"\"delete_archived_environments_after\x18\f \x01(\v2\x19.google.protobuf.DurationB\x0f\xbaH\f\xaa\x01\t\"\x05\b\x80ԓ\x012\x00R\x1fdeleteArchivedEnvironmentsAfter\x12A\n" +
-	"\fagent_policy\x18\r \x01(\v2\x16.gitpod.v1.AgentPolicyB\x06\xbaH\x03\xc8\x01\x01R\vagentPolicy\x12l\n" +
-	"\x1cmaximum_environment_lifetime\x18\x0e \x01(\v2\x19.google.protobuf.DurationB\x0f\xbaH\f\xaa\x01\t\"\x05\b\x80\x9c\xb5\a2\x00R\x1amaximumEnvironmentLifetime\x12G\n" +
-	"\x1crequire_custom_domain_access\x18\x0f \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x19requireCustomDomainAccess\x12~\n" +
-	"\x1beditor_version_restrictions\x18\x10 \x03(\v2>.gitpod.v1.OrganizationPolicies.EditorVersionRestrictionsEntryR\x19editorVersionRestrictions\x12R\n" +
-	"\x15security_agent_policy\x18\x11 \x01(\v2\x1e.gitpod.v1.SecurityAgentPolicyR\x13securityAgentPolicy\x12P\n" +
-	"!restrict_account_creation_to_scim\x18\x12 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x1drestrictAccountCreationToScim\x12C\n" +
+	" \x01(\tB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x17defaultEnvironmentImage\x12>\n" +
+	"\x15port_sharing_disabled\x18\v \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x13portSharingDisabled\x12{\n" +
+	"\"delete_archived_environments_after\x18\f \x01(\v2\x19.google.protobuf.DurationB\x13\xbaH\f\xaa\x01\t\"\x05\b\x80ԓ\x012\x00ګ\x1e\x00R\x1fdeleteArchivedEnvironmentsAfter\x12E\n" +
+	"\fagent_policy\x18\r \x01(\v2\x16.gitpod.v1.AgentPolicyB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\vagentPolicy\x12p\n" +
+	"\x1cmaximum_environment_lifetime\x18\x0e \x01(\v2\x19.google.protobuf.DurationB\x13\xbaH\f\xaa\x01\t\"\x05\b\x80\x9c\xb5\a2\x00ګ\x1e\x00R\x1amaximumEnvironmentLifetime\x12K\n" +
+	"\x1crequire_custom_domain_access\x18\x0f \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x19requireCustomDomainAccess\x12\x84\x01\n" +
+	"\x1beditor_version_restrictions\x18\x10 \x03(\v2>.gitpod.v1.OrganizationPolicies.EditorVersionRestrictionsEntryB\x04ګ\x1e\x00R\x19editorVersionRestrictions\x12R\n" +
+	"\x15security_agent_policy\x18\x11 \x01(\v2\x1e.gitpod.v1.SecurityAgentPolicyR\x13securityAgentPolicy\x12T\n" +
+	"!restrict_account_creation_to_scim\x18\x12 \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x1drestrictAccountCreationToScim\x12C\n" +
 	"\x10veto_exec_policy\x18\x14 \x01(\v2\x19.gitpod.v1.VetoExecPolicyR\x0evetoExecPolicy\x12U\n" +
 	"#maximum_environment_lifetime_strict\x18\x15 \x01(\bB\x06ʫ\x1e\x02\b\x01R maximumEnvironmentLifetimeStrict\x12Z\n" +
-	"\x18max_port_admission_level\x18\x16 \x01(\x0e2\x19.gitpod.v1.AdmissionLevelB\x06ʫ\x1e\x02\b\x01R\x15maxPortAdmissionLevel\x128\n" +
-	"\x14web_browser_disabled\x18\x18 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x12webBrowserDisabled\x128\n" +
-	"\x14disable_from_scratch\x18\x19 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x12disableFromScratch\x12K\n" +
-	"\x10veto_file_policy\x18\x1a \x01(\v2\x19.gitpod.v1.VetoFilePolicyB\x06ʫ\x1e\x02\b\x01R\x0evetoFilePolicy\x12?\n" +
-	"\x12security_policy_id\x18\x1b \x01(\tB\x11\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01ʫ\x1e\x02\b\x01R\x10securityPolicyId\x12\xee\x01\n" +
-	"\x1aarchive_environments_after\x18\x1c \x01(\v2\x19.google.protobuf.DurationB\x94\x01\xbaH\x8a\x01\xba\x01w\n" +
-	"%archive_environments_after_whole_days\x12$value must be a whole number of days\x1a(int(this) % int(duration('86400s')) == 0\xaa\x01\r\"\x05\b\x80\x9a\x9e\x012\x04\b\x80\xa3\x05ʫ\x1e\x02\b\x01R\x18archiveEnvironmentsAfter\x1al\n" +
+	"\x18max_port_admission_level\x18\x16 \x01(\x0e2\x19.gitpod.v1.AdmissionLevelB\x06ʫ\x1e\x02\b\x01R\x15maxPortAdmissionLevel\x12<\n" +
+	"\x14web_browser_disabled\x18\x18 \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x12webBrowserDisabled\x12<\n" +
+	"\x14disable_from_scratch\x18\x19 \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x12disableFromScratch\x12K\n" +
+	"\x10veto_file_policy\x18\x1a \x01(\v2\x19.gitpod.v1.VetoFilePolicyB\x06ʫ\x1e\x02\b\x01R\x0evetoFilePolicy\x12C\n" +
+	"\x12security_policy_id\x18\x1b \x01(\tB\x15\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01ʫ\x1e\x02\b\x01ګ\x1e\x00R\x10securityPolicyId\x12\xf2\x01\n" +
+	"\x1aarchive_environments_after\x18\x1c \x01(\v2\x19.google.protobuf.DurationB\x98\x01\xbaH\x8a\x01\xba\x01w\n" +
+	"%archive_environments_after_whole_days\x12$value must be a whole number of days\x1a(int(this) % int(duration('86400s')) == 0\xaa\x01\r\"\x05\b\x80\x9a\x9e\x012\x04\b\x80\xa3\x05ʫ\x1e\x02\b\x01ګ\x1e\x00R\x18archiveEnvironmentsAfter\x1al\n" +
 	"\x1eEditorVersionRestrictionsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x124\n" +
-	"\x05value\x18\x02 \x01(\v2\x1e.gitpod.v1.EditorVersionPolicyR\x05value:\x028\x01J\x04\b\x13\x10\x14J\x04\b\x17\x10\x18R\x19project_creation_defaults\"\xa9\x01\n" +
+	"\x05value\x18\x02 \x01(\v2\x1e.gitpod.v1.EditorVersionPolicyR\x05value:\x028\x01:\x04ҫ\x1e\x00J\x04\b\x13\x10\x14J\x04\b\x17\x10\x18R\x19project_creation_defaults\"\xa9\x01\n" +
 	"\x0eVetoExecPolicy\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12 \n" +
 	"\vexecutables\x18\x02 \x03(\tR\vexecutables\x127\n" +
@@ -8709,18 +8724,21 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x123\n" +
 	"\x05paths\x18\x02 \x01(\v2\x1d.gitpod.v1.VetoFilePathPolicyR\x05paths\x12J\n" +
 	"\rblock_devices\x18\x03 \x01(\v2%.gitpod.v1.VetoFileBlockDevicesPolicyR\fblockDevices:\x1e\xba\xab\x1e\x1a\n" +
-	"\x16organizations.policies\x18\x01\"@\n" +
-	"\x13EditorVersionPolicy\x12)\n" +
-	"\x10allowed_versions\x18\x01 \x03(\tR\x0fallowedVersions\"\x87\x06\n" +
-	"\vAgentPolicy\x12)\n" +
-	"\fmcp_disabled\x18\x01 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\vmcpDisabled\x122\n" +
-	"\x11command_deny_list\x18\x02 \x03(\tB\x06\xbaH\x03\xc8\x01\x01R\x0fcommandDenyList\x124\n" +
-	"\x12scm_tools_disabled\x18\x03 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x10scmToolsDisabled\x12:\n" +
-	"\x1ascm_tools_allowed_group_id\x18\x04 \x01(\tR\x16scmToolsAllowedGroupId\x12d\n" +
-	"\x1bconversation_sharing_policy\x18\x05 \x01(\x0e2$.gitpod.v1.ConversationSharingPolicyR\x19conversationSharingPolicy\x12L\n" +
-	"\x1dmax_subagents_per_environment\x18\x06 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
-	"(\x00R\x1amaxSubagentsPerEnvironment\x12*\n" +
-	"\x11allowed_agent_ids\x18\a \x03(\tR\x0fallowedAgentIds\x12M\n" +
+	"\x16organizations.policies\x18\x01\"F\n" +
+	"\x13EditorVersionPolicy\x12/\n" +
+	"\x10allowed_versions\x18\x01 \x03(\tB\x04ګ\x1e\x00R\x0fallowedVersions\"\xa9\x06\n" +
+	"\vAgentPolicy\x12-\n" +
+	"\fmcp_disabled\x18\x01 \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\vmcpDisabled\x126\n" +
+	"\x11command_deny_list\x18\x02 \x03(\tB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x0fcommandDenyList\x128\n" +
+	"\x12scm_tools_disabled\x18\x03 \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x10scmToolsDisabled\x12@\n" +
+	"\x1ascm_tools_allowed_group_id\x18\x04 \x01(\tB\x04ګ\x1e\x00R\x16scmToolsAllowedGroupId\x12j\n" +
+	"\x1bconversation_sharing_policy\x18\x05 \x01(\x0e2$.gitpod.v1.ConversationSharingPolicyB\x04ګ\x1e\x00R\x19conversationSharingPolicy\x12P\n" +
+	"\x1dmax_subagents_per_environment\x18\x06 \x01(\x05B\r\xbaH\x06\x1a\x04\x18\n" +
+	"(\x00ګ\x1e\x00R\x1amaxSubagentsPerEnvironment\x120\n" +
+	"\x11allowed_agent_ids\x18\a \x03(\tB\x04ګ\x1e\x00R\x0fallowedAgentIds\x12M\n" +
 	"\x14allowed_codex_models\x18\b \x03(\x0e2\x1b.gitpod.v1.CodexOpenAIModelR\x12allowedCodexModels\x12f\n" +
 	"\x1fallowed_codex_reasoning_efforts\x18\t \x03(\x0e2\x1f.gitpod.v1.CodexReasoningEffortR\x1callowedCodexReasoningEfforts\x12Z\n" +
 	"\x1ballowed_codex_service_tiers\x18\n" +

@@ -9,6 +9,7 @@ package v1
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/logfields"
+	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -1245,7 +1246,7 @@ var File_gitpod_v1_service_account_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_service_account_proto_rawDesc = "" +
 	"\n" +
-	"\x1fgitpod/v1/service_account.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xad\x01\n" +
+	"\x1fgitpod/v1/service_account.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xad\x01\n" +
 	"\x1bCreateServiceAccountRequest\x12\x1d\n" +
 	"\x04name\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18@R\x04name\x12*\n" +
 	"\vdescription\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03R\vdescription\x12C\n" +
@@ -1285,44 +1286,45 @@ const file_gitpod_v1_service_account_proto_rawDesc = "" +
 	"\x1bDeleteServiceAccountRequest\x12N\n" +
 	"\x12service_account_id\x18\x01 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
 	"\x12service_account.idR\x10serviceAccountId\"\x1e\n" +
-	"\x1cDeleteServiceAccountResponse\"x\n" +
-	"&CreateServiceAccountAccessTokenRequest\x12N\n" +
-	"\x12service_account_id\x18\x01 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12service_account.idR\x10serviceAccountId\"?\n" +
+	"\x1cDeleteServiceAccountResponse\"|\n" +
+	"&CreateServiceAccountAccessTokenRequest\x12R\n" +
+	"\x12service_account_id\x18\x01 \x01(\tB$\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
+	"\x12service_account.idګ\x1e\x00R\x10serviceAccountId\"?\n" +
 	"'CreateServiceAccountAccessTokenResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\"\xab\x03\n" +
-	"\x0eServiceAccount\x120\n" +
-	"\x02id\x18\x01 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12service_account.idR\x02id\x12F\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x04 \x01(\tR\vdescription\x12,\n" +
-	"\acreator\x18\x05 \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x129\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\"\xdd\x03\n" +
+	"\x0eServiceAccount\x124\n" +
+	"\x02id\x18\x01 \x01(\tB$\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
+	"\x12service_account.idګ\x1e\x00R\x02id\x12J\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB!\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
+	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12\x18\n" +
+	"\x04name\x18\x03 \x01(\tB\x04ګ\x1e\x00R\x04name\x12&\n" +
+	"\vdescription\x18\x04 \x01(\tB\x04ګ\x1e\x00R\vdescription\x122\n" +
+	"\acreator\x18\x05 \x01(\v2\x12.gitpod.v1.SubjectB\x04ګ\x1e\x00R\acreator\x12?\n" +
 	"\n" +
-	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12;\n" +
-	"\vvalid_until\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tcreatedAt\x12A\n" +
+	"\vvalid_until\x18\a \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\n" +
 	"validUntil\x12\x1c\n" +
-	"\tsuspended\x18\b \x01(\bR\tsuspended\x12%\n" +
-	"\x0esystem_managed\x18\t \x01(\bR\rsystemManaged\"\x9c\x03\n" +
-	"\x13ServiceAccountToken\x126\n" +
-	"\x02id\x18\x01 \x01(\tB&\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1a\n" +
-	"\x18service_account_token.idR\x02id\x12N\n" +
+	"\tsuspended\x18\b \x01(\bR\tsuspended\x12+\n" +
+	"\x0esystem_managed\x18\t \x01(\bB\x04ګ\x1e\x00R\rsystemManaged:\x04ҫ\x1e\x00\"\xac\x03\n" +
+	"\x13ServiceAccountToken\x12:\n" +
+	"\x02id\x18\x01 \x01(\tB*\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1a\n" +
+	"\x18service_account_token.idګ\x1e\x00R\x02id\x12N\n" +
 	"\x12service_account_id\x18\x02 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
 	"\x12service_account.idR\x10serviceAccountId\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12,\n" +
-	"\acreator\x18\x04 \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x129\n" +
+	"\acreator\x18\x04 \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x12?\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tcreatedAt\x12?\n" +
 	"\n" +
-	"expires_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x127\n" +
-	"\tlast_used\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\blastUsed\"\x8e\x01\n" +
-	" CreateServiceAccountTokenRequest\x12 \n" +
-	"\vdescription\x18\x01 \x01(\tR\vdescription\x12H\n" +
-	"\tvalid_for\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x10\xbaH\r\xaa\x01\n" +
-	"\"\x06\b\x80\xec\xe9\xb3\t2\x00R\bvalidFor\"\x95\x01\n" +
-	"!CreateServiceAccountTokenResponse\x12\x1c\n" +
-	"\x05token\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x05token\x12R\n" +
+	"expires_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\texpiresAt\x127\n" +
+	"\tlast_used\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\blastUsed\"\x98\x01\n" +
+	" CreateServiceAccountTokenRequest\x12&\n" +
+	"\vdescription\x18\x01 \x01(\tB\x04ګ\x1e\x00R\vdescription\x12L\n" +
+	"\tvalid_for\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x14\xbaH\r\xaa\x01\n" +
+	"\"\x06\b\x80\xec\xe9\xb3\t2\x00ګ\x1e\x00R\bvalidFor\"\x99\x01\n" +
+	"!CreateServiceAccountTokenResponse\x12 \n" +
+	"\x05token\x18\x01 \x01(\tB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x05token\x12R\n" +
 	"\x15service_account_token\x18\x02 \x01(\v2\x1e.gitpod.v1.ServiceAccountTokenR\x13serviceAccountToken\"_\n" +
 	"\x1fListServiceAccountTokensRequest\x12<\n" +
 	"\n" +

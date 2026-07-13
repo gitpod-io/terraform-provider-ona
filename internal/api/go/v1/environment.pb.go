@@ -9,7 +9,9 @@ package v1
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/logfields"
+	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/notyetpublic"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/stainless"
+	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/terraform"
 	_ "github.com/google/gnostic/openapiv3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -2132,9 +2134,11 @@ type EnvironmentMetadata struct {
 	// lifetime policy applies.
 	LockdownAt *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=lockdown_at,json=lockdownAt,proto3" json:"lockdown_at,omitempty"`
 	// session_id is the ID of the session this environment belongs to.
-	SessionId     string `protobuf:"bytes,15,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	SessionId string `protobuf:"bytes,15,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	// pinned_by_creator indicates whether the environment is pinned in navigation surfaces.
+	PinnedByCreator bool `protobuf:"varint,16,opt,name=pinned_by_creator,json=pinnedByCreator,proto3" json:"pinned_by_creator,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *EnvironmentMetadata) Reset() {
@@ -2263,6 +2267,13 @@ func (x *EnvironmentMetadata) GetSessionId() string {
 		return x.SessionId
 	}
 	return ""
+}
+
+func (x *EnvironmentMetadata) GetPinnedByCreator() bool {
+	if x != nil {
+		return x.PinnedByCreator
+	}
+	return false
 }
 
 // VetoFilePathEntry defines one path-based file policy entry.
@@ -6381,9 +6392,11 @@ type UpdateEnvironmentRequest_Metadata struct {
 	// Only org admins can set this field. When set to a future time, the
 	// environment will become blocked at that time. When cleared (set to
 	// epoch zero), the lockdown is removed. Setting to a past time is rejected.
-	LockdownAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=lockdown_at,json=lockdownAt,proto3,oneof" json:"lockdown_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	LockdownAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=lockdown_at,json=lockdownAt,proto3,oneof" json:"lockdown_at,omitempty"`
+	// pinned_by_creator sets whether the environment is pinned in navigation surfaces.
+	PinnedByCreator *bool `protobuf:"varint,3,opt,name=pinned_by_creator,json=pinnedByCreator,proto3,oneof" json:"pinned_by_creator,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *UpdateEnvironmentRequest_Metadata) Reset() {
@@ -6428,6 +6441,13 @@ func (x *UpdateEnvironmentRequest_Metadata) GetLockdownAt() *timestamppb.Timesta
 		return x.LockdownAt
 	}
 	return nil
+}
+
+func (x *UpdateEnvironmentRequest_Metadata) GetPinnedByCreator() bool {
+	if x != nil && x.PinnedByCreator != nil {
+		return *x.PinnedByCreator
+	}
+	return false
 }
 
 type UpdateEnvironmentRequest_Spec struct {
@@ -6532,7 +6552,7 @@ var File_gitpod_v1_environment_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\n" +
-	"\x1bgitpod/v1/environment.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x15gitpod/v1/count.proto\x1a&gitpod/v1/environment_automation.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gitpod/v1/runner_configuration.proto\x1a\x16gitpod/v1/secret.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb2\x01\n" +
+	"\x1bgitpod/v1/environment.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a$gitpod/tools/v1/not_yet_public.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x15gitpod/v1/count.proto\x1a&gitpod/v1/environment_automation.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gitpod/v1/runner_configuration.proto\x1a\x16gitpod/v1/secret.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb2\x01\n" +
 	"\x1cMarkEnvironmentActiveRequest\x12C\n" +
 	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
 	"\x0eenvironment.idR\renvironmentId\x12M\n" +
@@ -6647,7 +6667,7 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\x0eenvironment.idR\x02id\x12:\n" +
 	"\bmetadata\x18\x02 \x01(\v2\x1e.gitpod.v1.EnvironmentMetadataR\bmetadata\x12.\n" +
 	"\x04spec\x18\x03 \x01(\v2\x1a.gitpod.v1.EnvironmentSpecR\x04spec\x124\n" +
-	"\x06status\x18\x04 \x01(\v2\x1c.gitpod.v1.EnvironmentStatusR\x06status:\b\xbaG\x05\xba\x01\x02id\"\xdb\x06\n" +
+	"\x06status\x18\x04 \x01(\v2\x1c.gitpod.v1.EnvironmentStatusR\x06status:\b\xbaG\x05\xba\x01\x02id\"\x93\a\n" +
 	"\x13EnvironmentMetadata\x12F\n" +
 	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
 	"\x0forganization.idR\x0eorganizationId\x12Q\n" +
@@ -6672,7 +6692,9 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\vlockdown_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"lockdownAt\x12%\n" +
 	"\n" +
-	"session_id\x18\x0f \x01(\tB\x06ʫ\x1e\x02\b\x01R\tsessionId\x1a>\n" +
+	"session_id\x18\x0f \x01(\tB\x06ʫ\x1e\x02\b\x01R\tsessionId\x126\n" +
+	"\x11pinned_by_creator\x18\x10 \x01(\bB\n" +
+	"ʫ\x1e\x02\b\x01\xe2\xab\x1e\x00R\x0fpinnedByCreator\x1a>\n" +
 	"\x10AnnotationsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x0e\n" +
@@ -6964,14 +6986,14 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"contextUrlB\r\n" +
 	"\x04spec\x12\x05\xbaH\x02\b\x01\"3\n" +
 	"\x15ContextURLInitializer\x12\x1a\n" +
-	"\x03url\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01R\x03url\"\xe5\x03\n" +
-	"\x0eGitInitializer\x12\x1d\n" +
+	"\x03url\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01R\x03url\"\xf1\x03\n" +
+	"\x0eGitInitializer\x12#\n" +
 	"\n" +
-	"remote_uri\x18\x01 \x01(\tR\tremoteUri\x12.\n" +
+	"remote_uri\x18\x01 \x01(\tB\x04ګ\x1e\x00R\tremoteUri\x12.\n" +
 	"\x13upstream_remote_uri\x18\x02 \x01(\tR\x11upstreamRemoteUri\x12J\n" +
 	"\vtarget_mode\x18\x03 \x01(\x0e2).gitpod.v1.GitInitializer.CloneTargetModeR\n" +
-	"targetMode\x12!\n" +
-	"\fclone_target\x18\x04 \x01(\tR\vcloneTarget\x12+\n" +
+	"targetMode\x12'\n" +
+	"\fclone_target\x18\x04 \x01(\tB\x04ګ\x1e\x00R\vcloneTarget\x12+\n" +
 	"\x11checkout_location\x18\x05 \x01(\tR\x10checkoutLocation\"\xe7\x01\n" +
 	"\x0fCloneTargetMode\x12!\n" +
 	"\x1dCLONE_TARGET_MODE_UNSPECIFIED\x10\x00\x12!\n" +
@@ -6987,7 +7009,7 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\x16StopEnvironmentRequest\x12C\n" +
 	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
 	"\x0eenvironment.idR\renvironmentId\"\x19\n" +
-	"\x17StopEnvironmentResponse\"\xe3\x10\n" +
+	"\x17StopEnvironmentResponse\"\xb6\x11\n" +
 	"\x18UpdateEnvironmentRequest\x12C\n" +
 	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
 	"\x0eenvironment.idR\renvironmentId\x12M\n" +
@@ -7025,13 +7047,16 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\rrelative_path\x12*path must not be absolute (start with a /)\x1a\x1athis.matches('^$|^[^/].*')H\x01R\x13automationsFilePath\x88\x01\x01B\n" +
 	"\n" +
 	"\b_sessionB\x18\n" +
-	"\x16_automations_file_path\x1a\x90\x01\n" +
+	"\x16_automations_file_path\x1a\xe3\x01\n" +
 	"\bMetadata\x12!\n" +
 	"\x04name\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\x00R\x04name\x88\x01\x01\x12H\n" +
 	"\vlockdown_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\x06ʫ\x1e\x02\b\x01H\x01R\n" +
-	"lockdownAt\x88\x01\x01B\a\n" +
+	"lockdownAt\x88\x01\x01\x12;\n" +
+	"\x11pinned_by_creator\x18\x03 \x01(\bB\n" +
+	"ʫ\x1e\x02\b\x01\xe2\xab\x1e\x00H\x02R\x0fpinnedByCreator\x88\x01\x01B\a\n" +
 	"\x05_nameB\x0e\n" +
-	"\f_lockdown_at\x1a\xaf\x05\n" +
+	"\f_lockdown_atB\x14\n" +
+	"\x12_pinned_by_creator\x1a\xaf\x05\n" +
 	"\x04Spec\x12J\n" +
 	"\acontent\x18\x02 \x01(\v2+.gitpod.v1.UpdateEnvironmentRequest.ContentH\x00R\acontent\x88\x01\x01\x12X\n" +
 	"\x0fssh_public_keys\x18\x03 \x03(\v20.gitpod.v1.UpdateEnvironmentRequest.SSHPublicKeyR\rsshPublicKeys\x12Y\n" +
