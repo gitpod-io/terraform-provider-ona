@@ -70,6 +70,18 @@ func (h *clientHolder) authenticatedOrganization(ctx context.Context) (authentic
 	}, nil
 }
 
+func (h *clientHolder) authenticatedOrganizationID(ctx context.Context) (string, error) {
+	result, err := h.client.IdentityService().GetAuthenticatedIdentity(ctx, connect.NewRequest(&v1.GetAuthenticatedIdentityRequest{}))
+	if err != nil {
+		return "", fmt.Errorf("get authenticated identity: %w", err)
+	}
+	organizationID := result.Msg.GetOrganizationId()
+	if organizationID == "" {
+		return "", fmt.Errorf("authenticated identity did not include an organization ID")
+	}
+	return organizationID, nil
+}
+
 func guardStateOrganizationID(diags *diag.Diagnostics, stateID types.String, authenticatedID string, resourceType string) bool {
 	if stateID.IsNull() || stateID.IsUnknown() || stateID.ValueString() == "" || stateID.ValueString() == authenticatedID {
 		return true
@@ -91,4 +103,51 @@ func timestampRFC3339(value *timestamppb.Timestamp) types.String {
 		return types.StringNull()
 	}
 	return types.StringValue(value.AsTime().UTC().Format(time.RFC3339))
+}
+
+func timestampString(value *timestamppb.Timestamp) types.String {
+	return timestampRFC3339(value)
+}
+
+func preserveString(current types.String, planned types.String) types.String {
+	if planned.IsNull() || planned.IsUnknown() {
+		return current
+	}
+	return planned
+}
+
+func preserveBool(current types.Bool, planned types.Bool) types.Bool {
+	if planned.IsNull() || planned.IsUnknown() {
+		return current
+	}
+	return planned
+}
+
+func isKnownString(value types.String) bool {
+	return !value.IsNull() && !value.IsUnknown() && value.ValueString() != ""
+}
+
+func isKnownBool(value types.Bool) bool {
+	return !value.IsNull() && !value.IsUnknown()
+}
+
+func stringValueChanged(current types.String, prior types.String) bool {
+	if current.IsUnknown() || prior.IsUnknown() {
+		return false
+	}
+	if current.IsNull() && prior.IsNull() {
+		return false
+	}
+	if current.IsNull() != prior.IsNull() {
+		return true
+	}
+	return current.ValueString() != prior.ValueString()
+}
+
+func secretVersionChanged(current types.String, prior types.String) bool {
+	return stringValueChanged(current, prior)
+}
+
+func ptr[T any](value T) *T {
+	return &value
 }

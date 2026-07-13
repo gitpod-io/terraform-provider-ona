@@ -28,7 +28,8 @@ import (
 )
 
 func TestAccPolicyResourcesLifecycle(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newPolicyAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -106,7 +107,8 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 }
 
 func TestAccPolicyResourcesRejectInvalidAgentPolicyAtPlan(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newPolicyAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -129,7 +131,8 @@ func TestAccPolicyResourcesRejectInvalidAgentPolicyAtPlan(t *testing.T) {
 }
 
 func TestAccPolicyResourcesOmittedSettingsRemainUnmanaged(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newPolicyAPIServer(t)
 	t.Cleanup(server.Close)
 

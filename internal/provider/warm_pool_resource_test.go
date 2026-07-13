@@ -25,7 +25,8 @@ import (
 )
 
 func TestAccWarmPoolResourceLifecycle(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newWarmPoolAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -111,7 +112,8 @@ func TestAccWarmPoolResourceLifecycle(t *testing.T) {
 }
 
 func TestAccWarmPoolCollectionDataSourcePaginationSorting(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newWarmPoolAPIServer(t)
 	t.Cleanup(server.Close)
 
