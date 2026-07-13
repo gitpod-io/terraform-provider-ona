@@ -158,7 +158,9 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 		return
 	}
 	if secret == nil {
-		resp.State.RemoveResource(ctx)
+		// ListSecrets is the only metadata read endpoint here; a missing list row
+		// is not a definitive NotFound for this secret ID.
+		resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 		return
 	}
 
@@ -291,21 +293,20 @@ func (r *Resource) resolveScope(ctx context.Context, data *Model, diags *diag.Di
 		return resolvedScope{}
 	}
 
-	switch data.Scope.ValueString() {
-	case scopeOrganization:
-		if !isKnownString(data.OrganizationID) {
-			identity, err := r.authenticatedIdentity(ctx)
-			if err != nil {
-				providerdiag.AddAPIError(diags, "Unable to Resolve Ona Organization", "reading the authenticated Ona identity", err)
-				return resolvedScope{}
-			}
-			if identity.GetOrganizationId() == "" {
-				diags.AddError("Unable to Resolve Ona Organization", "The authenticated Ona identity did not include an organization ID.")
-				return resolvedScope{}
-			}
-			data.OrganizationID = types.StringValue(identity.GetOrganizationId())
+	if !isKnownString(data.OrganizationID) {
+		identity, err := r.authenticatedIdentity(ctx)
+		if err != nil {
+			providerdiag.AddAPIError(diags, "Unable to Resolve Ona Organization", "reading the authenticated Ona identity", err)
+			return resolvedScope{}
 		}
-	case scopeUser:
+		if identity.GetOrganizationId() == "" {
+			diags.AddError("Unable to Resolve Ona Organization", "The authenticated Ona identity did not include an organization ID.")
+			return resolvedScope{}
+		}
+		data.OrganizationID = types.StringValue(identity.GetOrganizationId())
+	}
+
+	if data.Scope.ValueString() == scopeUser {
 		if !isKnownString(data.UserID) {
 			identity, err := r.authenticatedIdentity(ctx)
 			if err != nil {

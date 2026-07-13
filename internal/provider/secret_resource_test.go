@@ -236,7 +236,8 @@ func TestAccSecretResourceRemoteMetadataDriftPlansReplacement(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccOrganizationSecretConfig(server.URL, "THIRD_PARTY_API_KEY", secretTestValueV1, "v1"),
+				Config:             testAccOrganizationSecretConfig(server.URL, "THIRD_PARTY_API_KEY", secretTestValueV1, "v1"),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_secret.test", "name", "THIRD_PARTY_API_KEY"),
 					func(state *terraform.State) error {

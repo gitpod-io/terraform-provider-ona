@@ -209,6 +209,7 @@ func preservePlannedInputs(data *Model, planned Model) {
 }
 
 func preserveTerraformOnlyState(data *Model, prior Model) {
+	data.OrganizationID = preserveString(data.OrganizationID, prior.OrganizationID)
 	data.Value = types.StringNull()
 	data.ValueVersion = prior.ValueVersion
 }
