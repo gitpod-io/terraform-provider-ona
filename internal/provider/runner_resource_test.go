@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"regexp"
+	"slices"
 	"sync"
 	"testing"
 
@@ -398,6 +399,16 @@ func (s *fakeRunnerService) ListRunners(ctx context.Context, req *connect.Reques
 
 	runners := make([]*v1.Runner, 0, len(s.runners))
 	for _, runner := range s.runners {
+		filter := req.Msg.GetFilter()
+		if len(filter.GetCreatorIds()) > 0 && !slices.Contains(filter.GetCreatorIds(), runner.GetCreator().GetId()) {
+			continue
+		}
+		if len(filter.GetKinds()) > 0 && !slices.Contains(filter.GetKinds(), runner.GetKind()) {
+			continue
+		}
+		if len(filter.GetProviders()) > 0 && !slices.Contains(filter.GetProviders(), runner.GetProvider()) {
+			continue
+		}
 		runners = append(runners, cloneRunner(runner))
 	}
 	return connect.NewResponse(&v1.ListRunnersResponse{Runners: runners}), nil
@@ -468,6 +479,13 @@ func (s *fakeRunnerService) tokenCreated(token string) bool {
 		}
 	}
 	return false
+}
+
+func (s *fakeRunnerService) tokenCount() int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	return len(s.tokens)
 }
 
 func newTestRunner(id string, name string) *v1.Runner {
