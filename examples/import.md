@@ -13,10 +13,10 @@ The target workflow is:
 ## Current Status
 
 The provider includes native resources for projects, runner registrations,
-runner environment classes, runner SCM integrations, security policies, and
-organization policies, groups, group memberships, and organization role
-assignments. Terraform can create, read, update, delete where the Ona API
-supports deletion, and import those resource types directly.
+runner environment classes, runner SCM integrations, security policies,
+organization policies, custom domains, groups, group memberships, and
+organization role assignments. Terraform can create, read, update, delete where
+the Ona API supports deletion, and import those resource types directly.
 
 Terraform cannot discover or import a resource type natively until each resource has:
 
@@ -31,8 +31,9 @@ registered/importable provider resources. It still discovers the broader
 resource graph for inventory and future reference rewriting, but it writes
 import blocks only for resource types enabled in the helper's selection path,
 which currently includes project, runner, and environment class resources.
-Security policies and organization policies are provider-native resources, but
-the helper does not yet select them for generated import blocks.
+Security policies, organization policies, custom domains, groups, group
+memberships, and organization role assignments are provider-native resources,
+but the helper does not yet select them for generated import blocks.
 
 Direct `terraform import` uses these resource IDs:
 
@@ -44,6 +45,7 @@ Direct `terraform import` uses these resource IDs:
 | `ona_project` | Project ID |
 | `ona_security_policy` | Security policy ID |
 | `ona_organization_policies` | Organization ID |
+| `ona_custom_domain` | `current` |
 | `ona_group` | Group ID |
 | `ona_group_membership` | `group_id/service_account_id` |
 | `ona_organization_role_assignment` | `group_id/organization_id/role` |
@@ -192,12 +194,12 @@ Use `-resource-id` to narrow the selection by UUID or import ID. The selector ap
 The helper automatically adds selected dependencies used by generated references.
 
 The helper does not currently select other discovered resources for generated
-import blocks, including groups, group memberships, organization role
-assignments, teams, security policies, organization policies, automations, or AI
-budget policies. Security policies, organization policies, groups, group
-memberships, and organization role assignments can still be imported directly
-with Terraform import blocks because the provider now implements those
-resources.
+import blocks, including custom domains, groups, group memberships,
+organization role assignments, teams, security policies, organization policies,
+automations, or AI budget policies. Security policies, organization policies,
+custom domains, groups, group memberships, and organization role assignments can
+still be imported directly with Terraform import blocks because the provider now
+implements those resources.
 
 ## Output Files
 
