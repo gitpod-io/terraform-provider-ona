@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+terraform import ona_runner_policy.org_members 11111111-1111-4111-8111-111111111111/22222222-2222-4222-8222-222222222222
