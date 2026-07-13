@@ -177,7 +177,9 @@ func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResou
 // ListResources returns the managed-resource discovery implementations
 // registered by the provider. Resource-specific PRs add constructors here.
 func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResource {
-	return nil
+	return []func() list.ListResource{
+		organization.NewPoliciesListResource,
+	}
 }
 
 func pathRoot(name string) path.Path {
