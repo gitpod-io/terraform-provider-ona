@@ -15,6 +15,7 @@ import (
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/runner"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/secret"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/security"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/serviceaccount"
 	warmpool "github.com/gitpod-io/terraform-provider-ona/internal/provider/warm_pool"
@@ -131,6 +132,7 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		project.NewResource,
 		project.NewInsightsResource,
 		security.NewPolicyResource,
+		secret.NewResource,
 		organization.NewPoliciesResource,
 		organization.NewSSOConfigurationResource,
 		organization.NewSCIMConfigurationResource,
