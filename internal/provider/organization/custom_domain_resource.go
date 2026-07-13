@@ -28,6 +28,7 @@ import (
 
 var _ resource.Resource = &CustomDomainResource{}
 var _ resource.ResourceWithConfigure = &CustomDomainResource{}
+var _ resource.ResourceWithIdentity = &CustomDomainResource{}
 var _ resource.ResourceWithImportState = &CustomDomainResource{}
 var _ resource.ResourceWithValidateConfig = &CustomDomainResource{}
 
@@ -158,6 +159,7 @@ func (r *CustomDomainResource) Create(ctx context.Context, req resource.CreateRe
 	}
 
 	data.ID = types.StringValue(customDomain.GetId())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, CustomDomainIdentityModel{OrganizationID: types.StringValue(organizationID)})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	resp.Diagnostics.Append(setPrivateOrganizationID(ctx, resp.Private, organizationID)...)
 	if resp.Diagnostics.HasError() {
@@ -205,6 +207,7 @@ func (r *CustomDomainResource) Read(ctx context.Context, req resource.ReadReques
 	data = CustomDomainModel{}
 	resp.Diagnostics.Append(populateCustomDomainModel(&data, customDomain, organizationID)...)
 	resp.Diagnostics.Append(setPrivateOrganizationID(ctx, resp.Private, organizationID)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, CustomDomainIdentityModel{OrganizationID: types.StringValue(organizationID)})...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -252,6 +255,7 @@ func (r *CustomDomainResource) Update(ctx context.Context, req resource.UpdateRe
 
 	resp.Diagnostics.Append(populateCustomDomainModel(&data, result.Msg.GetCustomDomain(), organizationID)...)
 	resp.Diagnostics.Append(setPrivateOrganizationID(ctx, resp.Private, organizationID)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, CustomDomainIdentityModel{OrganizationID: types.StringValue(organizationID)})...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -295,6 +299,27 @@ func (r *CustomDomainResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *CustomDomainResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	if req.ID == "" {
+		var identity CustomDomainIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		organizationID := identity.OrganizationID.ValueString()
+		customDomain, err := r.getCustomDomain(ctx, organizationID)
+		if err != nil {
+			providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Import Ona Custom Domain", "reading the Ona custom domain for identity import", err)
+			return
+		}
+		var data CustomDomainModel
+		resp.Diagnostics.Append(populateCustomDomainModel(&data, customDomain, organizationID)...)
+		resp.Diagnostics.Append(setPrivateOrganizationID(ctx, resp.Private, organizationID)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+		return
+	}
 	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "importing", "ona_custom_domain") {
 		return
 	}
@@ -322,6 +347,7 @@ func (r *CustomDomainResource) ImportState(ctx context.Context, req resource.Imp
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, CustomDomainIdentityModel{OrganizationID: types.StringValue(organizationID)})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
