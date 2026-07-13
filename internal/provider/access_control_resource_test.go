@@ -35,7 +35,8 @@ const (
 )
 
 func TestAccGroupResourceLifecycle(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newAccessControlAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -94,7 +95,8 @@ func TestAccGroupResourceLifecycle(t *testing.T) {
 }
 
 func TestAccGroupResourceReadRemovesNotFound(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newAccessControlAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -127,7 +129,8 @@ func TestAccGroupResourceReadRemovesNotFound(t *testing.T) {
 }
 
 func TestAccGroupMembershipResourceLifecycle(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newAccessControlAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.seedGroup()
@@ -179,7 +182,8 @@ func TestAccGroupMembershipResourceLifecycle(t *testing.T) {
 }
 
 func TestAccGroupMembershipResourceReadRemovesMissingMember(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newAccessControlAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.seedGroup()
@@ -213,7 +217,8 @@ func TestAccGroupMembershipResourceReadRemovesMissingMember(t *testing.T) {
 }
 
 func TestAccOrganizationRoleAssignmentResourceLifecycle(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newAccessControlAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.seedGroup()
@@ -266,7 +271,8 @@ func TestAccOrganizationRoleAssignmentResourceLifecycle(t *testing.T) {
 }
 
 func TestAccOrganizationRoleAssignmentResourceReadRemovesMissingAssignment(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newAccessControlAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.seedGroup()

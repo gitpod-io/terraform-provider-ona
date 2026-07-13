@@ -10,7 +10,6 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
-	"time"
 
 	"connectrpc.com/connect"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
@@ -25,7 +24,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var _ resource.Resource = &CustomDomainResource{}
@@ -429,13 +427,6 @@ func customDomainProviderToTerraform(provider v1.CustomDomainProvider, attrPath 
 		diags.AddAttributeError(attrPath, "Unsupported Cloud Provider", fmt.Sprintf("The Ona API returned unsupported custom-domain provider %q.", provider.String()))
 		return types.StringNull(), diags
 	}
-}
-
-func timestampString(value *timestamppb.Timestamp) types.String {
-	if value == nil {
-		return types.StringNull()
-	}
-	return types.StringValue(value.AsTime().UTC().Format(time.RFC3339))
 }
 
 func validateCustomDomainConfig(ctx context.Context, cfg tfsdk.Config) diag.Diagnostics {

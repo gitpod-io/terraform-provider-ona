@@ -20,6 +20,8 @@ The provider currently includes:
 - `ona_scm_integration` for managing runner SCM integrations.
 - `ona_security_policy` and `ona_security_policies` for managing and listing
   runtime security policies.
+- `ona_secret` for managing durable organization, project, user, and
+  service-account secrets.
 - `ona_organization_policies` for managing organization-level policy settings.
 - `ona_custom_domain` for managing organization custom domains.
 - `ona_service_account` for managing service accounts.
