@@ -177,6 +177,7 @@ func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResou
 	return []func() list.ListResource{
 		runner.NewRunnerListResource,
 		runner.NewSCMIntegrationListResource,
+		runner.NewEnvironmentClassListResource,
 	}
 }
 
