@@ -23,7 +23,8 @@ import (
 )
 
 func TestAccSCMIntegrationResourceLifecycle(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newRunnerConfigurationAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -87,7 +88,8 @@ func TestAccSCMIntegrationResourceLifecycle(t *testing.T) {
 }
 
 func TestAccSCMIntegrationResourcePAT(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newRunnerConfigurationAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -116,7 +118,8 @@ func TestAccSCMIntegrationResourcePAT(t *testing.T) {
 }
 
 func TestAccSCMIntegrationResourceOAuthRunnerPublicKeyMissing(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newRunnerConfigurationAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.setSCMCreateErr(connect.NewError(connect.CodeFailedPrecondition, errors.New("runner does not have a public key")))
@@ -134,7 +137,8 @@ func TestAccSCMIntegrationResourceOAuthRunnerPublicKeyMissing(t *testing.T) {
 }
 
 func TestAccSCMIntegrationResourceOAuthUpdateRunnerPublicKeyMissing(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newRunnerConfigurationAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -158,7 +162,8 @@ func TestAccSCMIntegrationResourceOAuthUpdateRunnerPublicKeyMissing(t *testing.T
 }
 
 func TestAccSCMIntegrationResourceAzureDevOpsEntra(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newRunnerConfigurationAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -188,7 +193,8 @@ func TestAccSCMIntegrationResourceAzureDevOpsEntra(t *testing.T) {
 }
 
 func TestAccSCMIntegrationResourceAzureDevOpsEntraPAT(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newRunnerConfigurationAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -249,7 +255,8 @@ func TestAccSCMIntegrationResourceAzureDevOpsEntraPAT(t *testing.T) {
 }
 
 func TestAccSCMIntegrationResourceAzureDevOpsServer(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newRunnerConfigurationAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -271,7 +278,8 @@ func TestAccSCMIntegrationResourceAzureDevOpsServer(t *testing.T) {
 }
 
 func TestAccSCMIntegrationResourceAzureValidation(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newRunnerConfigurationAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -296,7 +304,8 @@ func TestAccSCMIntegrationResourceAzureValidation(t *testing.T) {
 }
 
 func TestAccEnvironmentClassResourceLifecycle(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newRunnerConfigurationAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -364,7 +373,8 @@ func TestAccEnvironmentClassResourceLifecycle(t *testing.T) {
 }
 
 func TestAccEnvironmentClassResourceDefaultDescription(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newRunnerConfigurationAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -398,7 +408,8 @@ func TestAccEnvironmentClassResourceDefaultDescription(t *testing.T) {
 }
 
 func TestAccRunnerTokenEphemeralResource(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newRunnerAPIServer(t, map[string]*v1.Runner{
 		"runner-1": newTestRunner("runner-1", "Token Runner"),
 	})

@@ -23,6 +23,8 @@ import (
 )
 
 func TestAccRunnerResourceLifecycle(t *testing.T) {
+	t.Parallel()
+
 	server := newRunnerAPIServer(t, nil)
 	t.Cleanup(server.Close)
 
@@ -81,6 +83,8 @@ func TestAccRunnerResourceLifecycle(t *testing.T) {
 }
 
 func TestAccRunnerResourceConfigurationDefaults(t *testing.T) {
+	t.Parallel()
+
 	server := newRunnerAPIServer(t, nil)
 	t.Cleanup(server.Close)
 
@@ -103,6 +107,8 @@ func TestAccRunnerResourceConfigurationDefaults(t *testing.T) {
 }
 
 func TestAccRunnerResourceLatestCloudFormationTemplateURL(t *testing.T) {
+	t.Parallel()
+
 	server := newRunnerAPIServer(t, nil)
 	t.Cleanup(server.Close)
 
@@ -129,6 +135,8 @@ func TestAccRunnerResourceLatestCloudFormationTemplateURL(t *testing.T) {
 }
 
 func TestAccRunnerResourceRequiresRegionForAWSEC2(t *testing.T) {
+	t.Parallel()
+
 	server := newRunnerAPIServer(t, nil)
 	t.Cleanup(server.Close)
 
@@ -145,6 +153,8 @@ func TestAccRunnerResourceRequiresRegionForAWSEC2(t *testing.T) {
 }
 
 func TestAccRunnerResourceUnauthenticatedDiagnostic(t *testing.T) {
+	t.Parallel()
+
 	server := newRunnerAPIServer(t, nil)
 	t.Cleanup(server.Close)
 
@@ -161,6 +171,8 @@ func TestAccRunnerResourceUnauthenticatedDiagnostic(t *testing.T) {
 }
 
 func TestAccRunnerResourceAllowsGCPWithoutRegion(t *testing.T) {
+	t.Parallel()
+
 	server := newRunnerAPIServer(t, nil)
 	t.Cleanup(server.Close)
 

@@ -24,7 +24,8 @@ import (
 )
 
 func TestAccProjectResourceLifecycle(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newProjectAPIServer(t)
 	t.Cleanup(server.Close)
 
