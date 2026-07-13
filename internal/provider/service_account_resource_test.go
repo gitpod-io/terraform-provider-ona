@@ -24,7 +24,8 @@ import (
 )
 
 func TestAccServiceAccountResourceLifecycle(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newServiceAccountAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -86,7 +87,8 @@ func TestAccServiceAccountResourceLifecycle(t *testing.T) {
 }
 
 func TestAccServiceAccountTokenEphemeralResource(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newServiceAccountAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.seed(newTestServiceAccount(serviceAccountID1, "Token Account", ""))
@@ -115,7 +117,8 @@ func TestAccServiceAccountTokenEphemeralResource(t *testing.T) {
 }
 
 func TestAccServiceAccountResourceReadRemovesNotFound(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newServiceAccountAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -148,7 +151,8 @@ func TestAccServiceAccountResourceReadRemovesNotFound(t *testing.T) {
 }
 
 func TestAccServiceAccountResourceReadRemovesSuspended(t *testing.T) {
-	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	t.Parallel()
+
 	server := newServiceAccountAPIServer(t)
 	t.Cleanup(server.Close)
 
