@@ -181,6 +181,7 @@ func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResou
 		project.NewListResource,
 		warmpool.NewWarmPoolListResource,
 		secret.NewListResource,
+		serviceaccount.NewListResource,
 	}
 }
 

@@ -31,3 +31,8 @@ list "ona_secret" "all" {
     scope = "organization"
   }
 }
+
+list "ona_service_account" "all" {
+  provider         = ona
+  include_resource = true
+}
