@@ -39,6 +39,25 @@ func TestAccProjectQuery(t *testing.T) {
 		}}},
 		EnvironmentClasses: []*v1.ProjectEnvironmentClass{{EnvironmentClass: &v1.ProjectEnvironmentClass_EnvironmentClassId{EnvironmentClassId: "class-1"}, Order: 0}},
 	}
+	server.service.projects["project-context-url"] = &v1.Project{
+		Id:          "project-context-url",
+		Metadata:    &v1.ProjectMetadata{Name: "Context URL"},
+		Initializer: &v1.EnvironmentInitializer{Specs: []*v1.EnvironmentInitializer_Spec{{Spec: &v1.EnvironmentInitializer_Spec_ContextUrl{ContextUrl: &v1.ContextURLInitializer{Url: "https://github.com/ona/context"}}}}},
+	}
+	server.service.projects["project-missing-clone-url"] = &v1.Project{
+		Id:       "project-missing-clone-url",
+		Metadata: &v1.ProjectMetadata{Name: "Missing clone URL"},
+		Initializer: &v1.EnvironmentInitializer{Specs: []*v1.EnvironmentInitializer_Spec{{
+			Spec: &v1.EnvironmentInitializer_Spec_Git{Git: &v1.GitInitializer{CloneTarget: "main"}},
+		}}},
+	}
+	server.service.projects["project-missing-branch"] = &v1.Project{
+		Id:       "project-missing-branch",
+		Metadata: &v1.ProjectMetadata{Name: "Missing branch"},
+		Initializer: &v1.EnvironmentInitializer{Specs: []*v1.EnvironmentInitializer_Spec{{
+			Spec: &v1.EnvironmentInitializer_Spec_Git{Git: &v1.GitInitializer{RemoteUri: "https://github.com/ona/no-branch.git"}},
+		}}},
+	}
 	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{Query: true, Config: projectQueryConfig(), QueryResultChecks: []querycheck.QueryResultCheck{
 		querycheck.ExpectLength("ona_project.all", 1), querycheck.ExpectIdentity("ona_project.all", map[string]knownvalue.Check{"id": knownvalue.StringExact("project-1")}),
 		querycheck.ExpectResourceKnownValues("ona_project.all", queryfilter.ByDisplayName(knownvalue.StringExact("Example")), []querycheck.KnownValueCheck{{Path: tfjsonpath.New("id"), KnownValue: knownvalue.StringExact("project-1")}, {Path: tfjsonpath.New("name"), KnownValue: knownvalue.StringExact("Example")}, {Path: tfjsonpath.New("repository_clone_url"), KnownValue: knownvalue.StringExact("https://github.com/ona/example.git")}, {Path: tfjsonpath.New("branch"), KnownValue: knownvalue.StringExact("main")}}),
