@@ -67,6 +67,21 @@ func TestAccSCMIntegrationResourceLifecycle(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"oauth_client_secret", "oauth_client_secret_version"},
 			},
 			{
+				Config:          testAccSCMIntegrationImportedConfig(server.URL),
+				ResourceName:    "ona_scm_integration.test",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportStateCheck: func(states []*terraform.InstanceState) error {
+					if len(states) != 1 {
+						return fmt.Errorf("expected one imported SCM integration state, got %d", len(states))
+					}
+					if states[0].ID != "scm-1" || states[0].Attributes["runner_id"] != "runner-1" {
+						return fmt.Errorf("structured identity imported unexpected SCM integration state: %#v", states[0].Attributes)
+					}
+					return nil
+				},
+			},
+			{
 				Config: testAccSCMIntegrationOAuthConfig(server.URL, "client-2", "secret-2", "v2"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
@@ -578,6 +593,23 @@ resource "ona_scm_integration" "test" {
   oauth_client_secret_version = %[4]q
 }
 `, host, clientID, secret, secretVersion)
+}
+
+func testAccSCMIntegrationImportedConfig(host string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_scm_integration" "test" {
+  runner_id       = "runner-1"
+  scm_id          = "github"
+  host            = "github.com"
+  auth_mode       = "oauth"
+  oauth_client_id = "client-1"
+}
+`, host)
 }
 
 func testAccSCMIntegrationPATConfig(host string) string {
