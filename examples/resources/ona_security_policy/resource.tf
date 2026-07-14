@@ -63,6 +63,17 @@ resource "ona_security_policy" "data_controls" {
         }
         effect = "block"
       }
+
+      rule {
+        source {
+          integration = "github"
+          selector    = "example-organization/private-repository"
+        }
+        destination {
+          host = "api.example.com"
+        }
+        effect = "audit"
+      }
     }
   }
 }

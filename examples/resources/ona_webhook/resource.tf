@@ -13,3 +13,16 @@ resource "ona_webhook" "deployments" {
     }
   ]
 }
+
+resource "ona_webhook" "organization" {
+  name           = "Organization events"
+  description    = "Receives events for all repositories in the organization."
+  type           = "organization"
+  scm_provider   = "github"
+  secret_version = "v1"
+
+  organization_scope = {
+    host = "github.com"
+    name = "example-organization"
+  }
+}
