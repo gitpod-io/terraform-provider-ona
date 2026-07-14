@@ -23,6 +23,17 @@ Build provider behavior that is correct under Terraform's plan/apply model, not 
 
 ## Workflow
 
+Load the relevant reference before editing provider behavior. Use:
+
+- `references/concepts-and-lifecycle.md` before changing lifecycle code or reasoning about Config, Plan, State, known, null, or unknown values.
+- `references/core-implementation.md` when implementing provider, resource, data source, import, diagnostics, validators, or plan-modifier behavior.
+- `references/advanced-primitives.md` when considering ephemeral resources, provider-defined functions, write-only arguments, resource identity, actions, or list resources.
+- `references/secrets-and-sensitive-data.md` before adding or changing token, key, credential, or secret handling.
+- `references/naming-conventions.md` when adding or renaming provider types, data sources, resource files, or model structs.
+- `references/testing.md` before changing tests or acceptance-test coverage.
+- `references/logging.md` before adding provider logs or diagnostics.
+- `references/pitfalls.md` and `references/state-safety.md` before opening or reviewing a provider PR.
+
 1. Model the API boundary first. Decide whether the behavior is a managed resource, data source, or ephemeral resource.
 2. Add or update client wrapper behavior in `internal/client/**` when provider code needs a stable API abstraction.
 3. Implement provider code in the existing package structure under `internal/provider/**`.
@@ -87,3 +98,15 @@ A provider change is done when it has correct lifecycle behavior, tests for chan
 - If state is wrong after apply, inspect Create/Update return values and whether Read refreshes all tracked attributes.
 - If a secret appears in output or state, revisit whether it should be an ephemeral resource rather than a sensitive attribute.
 - If generated docs are stale, change the schema/example source and rerun `make generate`.
+
+## Reference Index
+
+- `references/concepts-and-lifecycle.md` — the execution model and lifecycle rules.
+- `references/core-implementation.md` — provider, resource, data source, schema, diagnostics, import, validators, and plan modifiers.
+- `references/advanced-primitives.md` — newer framework/protocol features and when to use them.
+- `references/secrets-and-sensitive-data.md` — decision tree for sensitive inputs and secret outputs.
+- `references/naming-conventions.md` — Terraform type names, Go type names, and file naming.
+- `references/testing.md` — unit tests, acceptance tests, plan checks, import checks, and sweepers.
+- `references/logging.md` — provider logging and diagnostics guidance.
+- `references/pitfalls.md` — common state-model failure modes.
+- `references/state-safety.md` — review findings from this provider translated into reusable checks.
