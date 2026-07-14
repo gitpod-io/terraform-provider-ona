@@ -17,8 +17,12 @@ import (
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+	"github.com/hashicorp/terraform-plugin-testing/tfversion"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -263,6 +267,58 @@ func TestAccOrganizationRoleAssignmentResourceLifecycle(t *testing.T) {
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("ona_organization_role_assignment.test", plancheck.ResourceActionReplace),
+					},
+				},
+			},
+		},
+	})
+}
+
+func TestOrganizationRoleAssignmentResourceImports(t *testing.T) {
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seedGroup()
+
+	resource.UnitTest(t, resource.TestCase{
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBelow(tfversion.Version1_12_0),
+		},
+		PreCheck:                 func() {},
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccOrganizationRoleAssignmentResourceConfig(server.URL, "runners_admin"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "id", accessControlAssignmentID),
+					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "resource_type", "organization"),
+					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "resource_id", accessControlOrgID),
+				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectIdentity("ona_organization_role_assignment.test", map[string]knownvalue.Check{
+						"group_id":        knownvalue.StringExact(accessControlGroupID),
+						"organization_id": knownvalue.StringExact(accessControlOrgID),
+						"role":            knownvalue.StringExact("runners_admin"),
+					}),
+				},
+			},
+			{
+				ResourceName:      "ona_organization_role_assignment.test",
+				ImportState:       true,
+				ImportStateId:     accessControlGroupID + "/" + accessControlOrgID + "/runners_admin",
+				ImportStateVerify: true,
+			},
+			{
+				ResourceName:    "ona_organization_role_assignment.test",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportPlanChecks: resource.ImportPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectKnownValue("ona_organization_role_assignment.test", tfjsonpath.New("id"), knownvalue.StringExact(accessControlAssignmentID)),
+						plancheck.ExpectKnownValue("ona_organization_role_assignment.test", tfjsonpath.New("group_id"), knownvalue.StringExact(accessControlGroupID)),
+						plancheck.ExpectKnownValue("ona_organization_role_assignment.test", tfjsonpath.New("organization_id"), knownvalue.StringExact(accessControlOrgID)),
+						plancheck.ExpectKnownValue("ona_organization_role_assignment.test", tfjsonpath.New("role"), knownvalue.StringExact("runners_admin")),
+						plancheck.ExpectKnownValue("ona_organization_role_assignment.test", tfjsonpath.New("resource_type"), knownvalue.StringExact("organization")),
+						plancheck.ExpectKnownValue("ona_organization_role_assignment.test", tfjsonpath.New("resource_id"), knownvalue.StringExact(accessControlOrgID)),
 					},
 				},
 			},
