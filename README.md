@@ -129,6 +129,13 @@ TF_CLI_CONFIG_FILE="${PWD}/terraformrc" \
 terraform -chdir=dev/local-devloop apply -auto-approve -input=false
 ```
 
+## Query Existing Resources
+
+Terraform Query can discover existing Ona resources through provider list
+resources and generate starter Terraform configuration.
+
+See [examples/query.md](examples/query.md) for the runner query workflow.
+
 ## Import Existing Resources
 
 The Terraform-native brownfield workflow is:
