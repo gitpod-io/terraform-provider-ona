@@ -42,7 +42,8 @@ func PushDiagnostics(push func(list.ListResult) bool, diags diag.Diagnostics) bo
 	if !diags.HasError() {
 		return true
 	}
-	return push(list.ListResult{Diagnostics: diags})
+	push(list.ListResult{Diagnostics: diags})
+	return false
 }
 
 // HasCapacity reports whether another result may be emitted for a Terraform

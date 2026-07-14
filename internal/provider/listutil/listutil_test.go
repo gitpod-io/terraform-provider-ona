@@ -7,6 +7,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/list"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -83,5 +84,26 @@ func TestError(t *testing.T) {
 	result := Error("Unable to List", errors.New("API failed"))
 	if !result.Diagnostics.HasError() {
 		t.Fatal("Error() did not return an error diagnostic")
+	}
+}
+
+func TestPushDiagnosticsStopsAfterError(t *testing.T) {
+	t.Parallel()
+
+	diags := Error("Unable to List", errors.New("API failed")).Diagnostics
+	pushed := false
+	continued := PushDiagnostics(func(result list.ListResult) bool {
+		pushed = true
+		if !result.Diagnostics.HasError() {
+			t.Error("PushDiagnostics() pushed a result without an error diagnostic")
+		}
+		return true
+	}, diags)
+
+	if !pushed {
+		t.Fatal("PushDiagnostics() did not push the error diagnostic")
+	}
+	if continued {
+		t.Fatal("PushDiagnostics() allowed listing to continue after an error diagnostic")
 	}
 }
