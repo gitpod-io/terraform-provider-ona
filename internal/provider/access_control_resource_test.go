@@ -17,8 +17,11 @@ import (
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+	"github.com/hashicorp/terraform-plugin-testing/tfversion"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -179,6 +182,64 @@ func TestAccGroupMembershipResourceLifecycle(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestGroupMembershipImportStateEquivalence(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seedGroup()
+
+	resource.UnitTest(t, resource.TestCase{
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBelow(tfversion.Version1_12_0),
+		},
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccGroupMembershipResourceConfig(server.URL, accessControlServiceAccountID),
+			},
+			{
+				ResourceName:      "ona_group_membership.test",
+				ImportState:       true,
+				ImportStateId:     accessControlGroupID + "/" + accessControlServiceAccountID,
+				ImportStateVerify: true,
+				ImportStateCheck:  checkGroupMembershipImportState,
+			},
+			{
+				ResourceName:    "ona_group_membership.test",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportPlanChecks: resource.ImportPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_group_membership.test", plancheck.ResourceActionNoop),
+						plancheck.ExpectKnownValue("ona_group_membership.test", tfjsonpath.New("group_id"), knownvalue.StringExact(accessControlGroupID)),
+						plancheck.ExpectKnownValue("ona_group_membership.test", tfjsonpath.New("service_account_id"), knownvalue.StringExact(accessControlServiceAccountID)),
+						plancheck.ExpectKnownValue("ona_group_membership.test", tfjsonpath.New("principal"), knownvalue.StringExact("service_account")),
+					},
+				},
+			},
+		},
+	})
+}
+
+func checkGroupMembershipImportState(states []*terraform.InstanceState) error {
+	if len(states) != 1 {
+		return fmt.Errorf("expected 1 imported state, got %d", len(states))
+	}
+
+	for attribute, expected := range map[string]string{
+		"group_id":           accessControlGroupID,
+		"service_account_id": accessControlServiceAccountID,
+		"principal":          "service_account",
+	} {
+		if actual := states[0].Attributes[attribute]; actual != expected {
+			return fmt.Errorf("expected imported %s %q, got %q", attribute, expected, actual)
+		}
+	}
+
+	return nil
 }
 
 func TestAccGroupMembershipResourceReadRemovesMissingMember(t *testing.T) {
