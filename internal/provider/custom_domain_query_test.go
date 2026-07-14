@@ -6,7 +6,7 @@ package provider
 import (
 	"testing"
 
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	testresource "github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/querycheck"
@@ -29,6 +29,18 @@ func TestAccCustomDomainQuery(t *testing.T) {
 				{Path: tfjsonpath.New("cloud_provider"), KnownValue: knownvalue.StringExact("aws")},
 				{Path: tfjsonpath.New("cloud_account_id"), KnownValue: knownvalue.StringExact("123456789012")},
 			}),
+		},
+	}))
+}
+
+func TestAccCustomDomainQueryNotFound(t *testing.T) {
+	server := newCustomDomainAPIServer(t)
+	t.Cleanup(server.Close)
+
+	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+		Query: true, Config: customDomainQueryConfig(),
+		QueryResultChecks: []querycheck.QueryResultCheck{
+			querycheck.ExpectLength("ona_custom_domain.all", 0),
 		},
 	}))
 }

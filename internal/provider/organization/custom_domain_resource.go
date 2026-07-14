@@ -312,56 +312,60 @@ func (r *CustomDomainResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *CustomDomainResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resp.Diagnostics.Append(r.importState(ctx, req, &resp.State, resp.Identity, resp.Private)...)
+}
+
+func (r *CustomDomainResource) importState(ctx context.Context, req resource.ImportStateRequest, state *tfsdk.State, identityState *tfsdk.ResourceIdentity, private privateState) diag.Diagnostics {
+	var diags diag.Diagnostics
+	var organizationID string
+	var customDomain *v1.CustomDomain
+
 	if req.ID == "" {
 		var identity CustomDomainIdentityModel
-		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
-		if resp.Diagnostics.HasError() {
-			return
+		diags.Append(req.Identity.Get(ctx, &identity)...)
+		if diags.HasError() {
+			return diags
 		}
-		organizationID := identity.OrganizationID.ValueString()
-		customDomain, err := r.getCustomDomain(ctx, organizationID)
+		organizationID = identity.OrganizationID.ValueString()
+		var err error
+		customDomain, err = r.getCustomDomain(ctx, organizationID)
 		if err != nil {
-			providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Import Ona Custom Domain", "reading the Ona custom domain for identity import", err)
-			return
+			providerdiag.AddAPIError(&diags, "Unable to Import Ona Custom Domain", "reading the Ona custom domain for identity import", err)
+			return diags
 		}
-		var data CustomDomainModel
-		resp.Diagnostics.Append(populateCustomDomainModel(&data, customDomain, organizationID)...)
-		resp.Diagnostics.Append(setPrivateOrganizationID(ctx, resp.Private, organizationID)...)
-		if resp.Diagnostics.HasError() {
-			return
+	} else {
+		if !r.requireClient(&diags, "importing") {
+			return diags
 		}
-		resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-		return
-	}
-	if !r.requireClient(&resp.Diagnostics, "importing") {
-		return
-	}
 
-	organizationID, err := r.authenticatedOrganizationID(ctx)
-	if err != nil {
-		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "getting the authenticated organization for ona_custom_domain", err)
-		return
-	}
+		var err error
+		organizationID, err = r.authenticatedOrganizationID(ctx)
+		if err != nil {
+			providerdiag.AddAPIError(&diags, "Unable to Resolve Ona Organization", "getting the authenticated organization for ona_custom_domain", err)
+			return diags
+		}
 
-	resp.Diagnostics.Append(validateCustomDomainImportID(req.ID, organizationID)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
+		diags.Append(validateCustomDomainImportID(req.ID, organizationID)...)
+		if diags.HasError() {
+			return diags
+		}
 
-	customDomain, err := r.getCustomDomain(ctx, organizationID)
-	if err != nil {
-		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Import Ona Custom Domain", "reading the Ona custom domain for import", err)
-		return
+		customDomain, err = r.getCustomDomain(ctx, organizationID)
+		if err != nil {
+			providerdiag.AddAPIError(&diags, "Unable to Import Ona Custom Domain", "reading the Ona custom domain for import", err)
+			return diags
+		}
 	}
 
 	var data CustomDomainModel
-	resp.Diagnostics.Append(populateCustomDomainModel(&data, customDomain, organizationID)...)
-	resp.Diagnostics.Append(setPrivateOrganizationID(ctx, resp.Private, organizationID)...)
-	if resp.Diagnostics.HasError() {
-		return
+	diags.Append(populateCustomDomainModel(&data, customDomain, organizationID)...)
+	diags.Append(setPrivateOrganizationID(ctx, private, organizationID)...)
+	diags.Append(identityState.Set(ctx, CustomDomainIdentityModel{OrganizationID: types.StringValue(organizationID)})...)
+	if diags.HasError() {
+		return diags
 	}
-	resp.Diagnostics.Append(resp.Identity.Set(ctx, CustomDomainIdentityModel{OrganizationID: types.StringValue(organizationID)})...)
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	diags.Append(state.Set(ctx, &data)...)
+	return diags
 }
 
 func (r *CustomDomainResource) requireClient(diags *diag.Diagnostics, action string) bool {
