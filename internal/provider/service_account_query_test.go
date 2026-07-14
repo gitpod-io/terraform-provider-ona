@@ -21,9 +21,7 @@ func (s *fakeServiceAccountService) ListServiceAccounts(ctx context.Context, req
 	defer s.mu.Unlock()
 	var accounts []*v1.ServiceAccount
 	for _, account := range s.accounts {
-		if !account.GetSuspended() {
-			accounts = append(accounts, cloneServiceAccount(account))
-		}
+		accounts = append(accounts, cloneServiceAccount(account))
 	}
 	return connect.NewResponse(&v1.ListServiceAccountsResponse{ServiceAccounts: accounts}), nil
 }
@@ -32,9 +30,17 @@ func TestAccServiceAccountQuery(t *testing.T) {
 	server := newServiceAccountAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.seed(newTestServiceAccount(serviceAccountID1, "Terraform Automation", "Managed by Terraform"))
+	suspendedAccount := newTestServiceAccount(serviceAccountID2, "Suspended Automation", "")
+	suspendedAccount.Suspended = true
+	server.service.seed(suspendedAccount)
+	systemManagedAccount := newTestServiceAccount(serviceAccountID3, "System Automation", "")
+	systemManagedAccount.SystemManaged = true
+	server.service.seed(systemManagedAccount)
 	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{Query: true, Config: serviceAccountQueryConfig(), QueryResultChecks: []querycheck.QueryResultCheck{
 		querycheck.ExpectLength("ona_service_account.all", 1),
 		querycheck.ExpectIdentity("ona_service_account.all", map[string]knownvalue.Check{"service_account_id": knownvalue.StringExact(serviceAccountID1)}),
+		querycheck.ExpectNoIdentity("ona_service_account.all", map[string]knownvalue.Check{"service_account_id": knownvalue.StringExact(serviceAccountID2)}),
+		querycheck.ExpectNoIdentity("ona_service_account.all", map[string]knownvalue.Check{"service_account_id": knownvalue.StringExact(serviceAccountID3)}),
 		querycheck.ExpectResourceKnownValues("ona_service_account.all", queryfilter.ByDisplayName(knownvalue.StringExact("Terraform Automation")), []querycheck.KnownValueCheck{
 			{Path: tfjsonpath.New("id"), KnownValue: knownvalue.StringExact(serviceAccountID1)},
 			{Path: tfjsonpath.New("service_account_id"), KnownValue: knownvalue.StringExact(serviceAccountID1)},
