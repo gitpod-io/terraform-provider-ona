@@ -6,6 +6,7 @@ package provider
 import (
 	"testing"
 
+	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
 	testresource "github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/querycheck"
@@ -17,6 +18,9 @@ func TestAccWarmPoolQuery(t *testing.T) {
 	server := newWarmPoolAPIServer(t)
 	t.Cleanup(server.Close)
 
+	deleted := server.service.newWarmPool("warm-pool-0", "project-1", "class-1", 0, 1)
+	deleted.Spec.DesiredPhase = v1.WarmPoolPhase_WARM_POOL_PHASE_DELETED
+	server.service.put(deleted)
 	server.service.put(server.service.newWarmPool("warm-pool-2", "project-2", "class-2", 0, 1))
 	server.service.put(server.service.newWarmPool("warm-pool-1", "project-1", "class-1", 1, 2))
 
