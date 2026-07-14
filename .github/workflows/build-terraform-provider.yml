@@ -3,6 +3,7 @@ run-name: "${{ inputs.publish_release && 'Create Terraform provider release' || 
 
 on:
   workflow_dispatch:
+  workflow_call:
     inputs:
       publish_release:
         description: "Publish a prerelease to GitHub releases"
@@ -14,15 +15,8 @@ on:
         required: false
         type: string
         default: ""
-  workflow_call:
-    inputs:
-      publish_release:
-        description: "Publish a prerelease to GitHub releases"
-        required: false
-        type: boolean
-        default: false
-      version:
-        description: "Optional prerelease version, for example v0.1.0-beta.1. Defaults to v0.1.0-beta.<run number> when publishing."
+      release_environment:
+        description: "GitHub environment that contains release credentials"
         required: false
         type: string
         default: ""
@@ -166,6 +160,8 @@ jobs:
     needs: [resolve-prerelease-version]
     if: ${{ inputs.publish_release }}
     runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.release_environment }}
     permissions:
       contents: read
     env:
@@ -186,6 +182,8 @@ jobs:
     needs: [verify, resolve-prerelease-version, publish-preflight]
     if: ${{ inputs.publish_release }}
     runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.release_environment }}
     permissions:
       contents: read
     steps:
