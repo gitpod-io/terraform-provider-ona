@@ -23,6 +23,7 @@ jobs:
     uses: ./.github/workflows/build-terraform-provider.yml
     permissions:
       contents: read
+    secrets: inherit
     with:
       release_environment: main
       publish_release: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish_release) }}
