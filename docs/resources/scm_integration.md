@@ -20,7 +20,7 @@ resource "ona_scm_integration" "github_oauth" {
   host   = "github.com"
 
   auth_mode                   = "oauth"
-  oauth_client_id             = "github-oauth-client-id"
+  oauth_client_id             = var.github_oauth_client_id
   oauth_client_secret         = var.github_oauth_client_secret
   oauth_client_secret_version = "2026-06-24"
 }
@@ -40,7 +40,7 @@ resource "ona_scm_integration" "azure_devops_entra" {
   host   = "dev.azure.com/acme"
 
   auth_mode                   = "oauth"
-  oauth_client_id             = "azure-devops-oauth-client-id"
+  oauth_client_id             = var.azure_devops_oauth_client_id
   oauth_client_secret         = var.azure_devops_oauth_client_secret
   oauth_client_secret_version = "2026-06-24"
   issuer_url                  = "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0"
