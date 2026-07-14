@@ -180,6 +180,7 @@ func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResou
 		runner.NewEnvironmentClassListResource,
 		project.NewListResource,
 		warmpool.NewWarmPoolListResource,
+		secret.NewListResource,
 	}
 }
 

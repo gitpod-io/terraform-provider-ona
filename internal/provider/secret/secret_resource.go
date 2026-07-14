@@ -22,6 +22,7 @@ import (
 
 var _ resource.Resource = &Resource{}
 var _ resource.ResourceWithConfigure = &Resource{}
+var _ resource.ResourceWithIdentity = &Resource{}
 var _ resource.ResourceWithImportState = &Resource{}
 var _ resource.ResourceWithValidateConfig = &Resource{}
 
@@ -105,6 +106,7 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 	data.UserID = scope.UserID
 	data.ServiceAccountID = scope.ServiceAccountID
 	data.Value = types.StringNull()
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, identityFromModel(data))...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -147,6 +149,7 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 	if secret == nil {
 		// ListSecrets is the only metadata read endpoint here; a missing list row
 		// is not a definitive NotFound for this secret ID.
+		resp.Diagnostics.Append(resp.Identity.Set(ctx, identityFromModel(data))...)
 		resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 		return
 	}
@@ -158,6 +161,7 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, identityFromModel(data))...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -216,6 +220,7 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, identityFromModel(data))...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -244,6 +249,44 @@ func (r *Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp 
 }
 
 func (r *Resource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	if req.ID == "" {
+		var identity IdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), identity.ID)...)
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("scope"), identity.Scope)...)
+		switch identity.Scope.ValueString() {
+		case scopeOrganization:
+			if !isKnownString(identity.OrganizationID) {
+				resp.Diagnostics.AddError("Invalid Secret Identity", "organization_id is required for organization scope.")
+				return
+			}
+			resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("organization_id"), identity.OrganizationID)...)
+		case scopeProject:
+			if !isKnownString(identity.ProjectID) {
+				resp.Diagnostics.AddError("Invalid Secret Identity", "project_id is required for project scope.")
+				return
+			}
+			resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("project_id"), identity.ProjectID)...)
+		case scopeUser:
+			if !isKnownString(identity.UserID) {
+				resp.Diagnostics.AddError("Invalid Secret Identity", "user_id is required for user scope.")
+				return
+			}
+			resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("user_id"), identity.UserID)...)
+		case scopeServiceAccount:
+			if !isKnownString(identity.ServiceAccountID) {
+				resp.Diagnostics.AddError("Invalid Secret Identity", "service_account_id is required for service_account scope.")
+				return
+			}
+			resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("service_account_id"), identity.ServiceAccountID)...)
+		default:
+			resp.Diagnostics.AddError("Invalid Secret Identity", "scope must be organization, project, user, or service_account.")
+		}
+		return
+	}
 	importState, diags := parseImportID(req.ID)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -261,6 +304,30 @@ func (r *Resource) ImportState(ctx context.Context, req resource.ImportStateRequ
 	if importState.ServiceAccountID != "" {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("service_account_id"), types.StringValue(importState.ServiceAccountID))...)
 	}
+	identity := IdentityModel{
+		ID:               types.StringValue(importState.ID),
+		Scope:            types.StringValue(importState.Scope),
+		ProjectID:        types.StringNull(),
+		UserID:           types.StringNull(),
+		ServiceAccountID: types.StringNull(),
+		OrganizationID:   types.StringNull(),
+	}
+	switch importState.Scope {
+	case scopeOrganization:
+		authenticated, err := r.authenticatedIdentity(ctx)
+		if err != nil {
+			providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "reading the authenticated Ona identity during import", err)
+			return
+		}
+		identity.OrganizationID = types.StringValue(authenticated.GetOrganizationId())
+	case scopeProject:
+		identity.ProjectID = types.StringValue(importState.ProjectID)
+	case scopeUser:
+		identity.UserID = types.StringValue(importState.UserID)
+	case scopeServiceAccount:
+		identity.ServiceAccountID = types.StringValue(importState.ServiceAccountID)
+	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, identity)...)
 }
 
 func (r *Resource) resolveScope(ctx context.Context, data *Model, diags *diag.Diagnostics) resolvedScope {
