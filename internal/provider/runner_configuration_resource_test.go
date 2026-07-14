@@ -303,6 +303,132 @@ func TestAccSCMIntegrationResourceAzureValidation(t *testing.T) {
 	})
 }
 
+func TestAccRunnerLLMIntegrationResourceLifecycle(t *testing.T) {
+	t.Parallel()
+
+	server := newRunnerConfigurationAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.llmDeleted("llm-1") {
+				return errors.New("llm-1 was not deleted")
+			}
+			if server.service.llmDeleteForced("llm-1") {
+				return errors.New("llm-1 was force deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccRunnerLLMIntegrationConfig(server.URL, []string{"sonnet_3_7"}, "https://api.anthropic.com/v1", "api-key-1", "v1", 4000, true),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "id", "llm-1"),
+					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "runner_id", "runner-1"),
+					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "models.#", "1"),
+					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "endpoint", "https://api.anthropic.com/v1"),
+					resource.TestCheckNoResourceAttr("ona_runner_llm_integration.test", "api_key"),
+					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "api_key_version", "v1"),
+					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "max_tokens", "4000"),
+					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "enabled", "true"),
+					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "phase", "available"),
+					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "llm_provider", "anthropic"),
+					func(state *terraform.State) error {
+						if !server.service.llmAPIKeyUpdated("llm-1", "api-key-1") {
+							return errors.New("llm-1 API key was not set")
+						}
+						return nil
+					},
+				),
+			},
+			{
+				Config: testAccRunnerLLMIntegrationConfig(server.URL, []string{"sonnet_3_7"}, "https://api.anthropic.com/v1", "api-key-1", "v1", 4000, true),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				ResourceName:            "ona_runner_llm_integration.test",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"api_key", "api_key_version"},
+			},
+			{
+				Config: testAccRunnerLLMIntegrationConfig(server.URL, []string{"sonnet_4", "sonnet_4_extended"}, "https://api.anthropic.com/v2", "api-key-2", "v2", 8000, false),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_runner_llm_integration.test", plancheck.ResourceActionUpdate),
+					},
+				},
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "models.#", "2"),
+					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "endpoint", "https://api.anthropic.com/v2"),
+					resource.TestCheckNoResourceAttr("ona_runner_llm_integration.test", "api_key"),
+					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "api_key_version", "v2"),
+					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "max_tokens", "8000"),
+					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "enabled", "false"),
+					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "phase", "disabled"),
+					func(state *terraform.State) error {
+						if !server.service.llmAPIKeyUpdated("llm-1", "api-key-2") {
+							return errors.New("llm-1 API key was not rotated")
+						}
+						return nil
+					},
+				),
+			},
+		},
+	})
+}
+
+func TestAccRunnerLLMIntegrationResourceValidation(t *testing.T) {
+	t.Parallel()
+
+	server := newRunnerConfigurationAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccRunnerLLMIntegrationWithoutAPIKeyConfig(server.URL),
+				ExpectError: regexp.MustCompile("Missing LLM API Key"),
+			},
+			{
+				Config:      testAccRunnerLLMIntegrationInvalidModelConfig(server.URL),
+				ExpectError: regexp.MustCompile("Invalid LLM Model"),
+			},
+			{
+				Config:      testAccRunnerLLMIntegrationWhitespaceEndpointConfig(server.URL),
+				ExpectError: regexp.MustCompile("Invalid LLM Endpoint"),
+			},
+		},
+	})
+}
+
+func TestAccRunnerLLMIntegrationResourcePublicKeyMissing(t *testing.T) {
+	t.Parallel()
+
+	server := newRunnerConfigurationAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.setLLMCreateErr(connect.NewError(connect.CodeFailedPrecondition, errors.New("runner does not have a public key")))
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccRunnerLLMIntegrationConfig(server.URL, []string{"sonnet_3_7"}, "https://api.anthropic.com/v1", "api-key-1", "v1", 0, true),
+				ExpectError: regexp.MustCompile(`Runner Public Key Is Not Available[\s\S]*Deploy the runner first[\s\S]*rerun this Terraform configuration`),
+			},
+		},
+	})
+}
+
 func TestAccEnvironmentClassResourceLifecycle(t *testing.T) {
 	t.Parallel()
 
@@ -596,6 +722,83 @@ resource "ona_scm_integration" "test" {
 `, host)
 }
 
+func testAccRunnerLLMIntegrationConfig(host string, models []string, endpoint string, apiKey string, apiKeyVersion string, maxTokens int, enabled bool) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_runner_llm_integration" "test" {
+  runner_id       = "runner-1"
+  models          = %[2]s
+  endpoint        = %[3]q
+  api_key         = %[4]q
+  api_key_version = %[5]q
+  max_tokens      = %[6]d
+  enabled         = %[7]t
+}
+`, host, hclStringList(models), endpoint, apiKey, apiKeyVersion, maxTokens, enabled)
+}
+
+func testAccRunnerLLMIntegrationWithoutAPIKeyConfig(host string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_runner_llm_integration" "test" {
+  runner_id = "runner-1"
+  models    = ["sonnet_3_7"]
+  endpoint  = "https://api.anthropic.com/v1"
+}
+`, host)
+}
+
+func testAccRunnerLLMIntegrationInvalidModelConfig(host string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_runner_llm_integration" "test" {
+  runner_id = "runner-1"
+  models    = ["not_a_model"]
+  endpoint  = "https://api.anthropic.com/v1"
+  api_key   = "api-key"
+}
+`, host)
+}
+
+func testAccRunnerLLMIntegrationWhitespaceEndpointConfig(host string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_runner_llm_integration" "test" {
+  runner_id = "runner-1"
+  models    = ["sonnet_3_7"]
+  endpoint  = " https://api.anthropic.com/v1 "
+  api_key   = "api-key"
+}
+`, host)
+}
+
+func hclStringList(values []string) string {
+	result := "["
+	for i, value := range values {
+		if i > 0 {
+			result += ", "
+		}
+		result += fmt.Sprintf("%q", value)
+	}
+	return result + "]"
+}
+
 func testAccEnvironmentClassConfig(host string, displayName string, diskSize string, enabled bool) string {
 	return fmt.Sprintf(`
 provider "ona" {
@@ -667,6 +870,9 @@ func newRunnerConfigurationAPIServer(t *testing.T) *runnerConfigurationAPIServer
 		scmIntegrations:    map[string]*v1.SCMIntegration{},
 		scmCreateRequests:  map[string]*v1.CreateSCMIntegrationRequest{},
 		scmUpdateRequests:  map[string][]*v1.UpdateSCMIntegrationRequest{},
+		llmIntegrations:    map[string]*v1.LLMIntegration{},
+		llmCreateRequests:  map[string]*v1.CreateLLMIntegrationRequest{},
+		llmUpdateRequests:  map[string][]*v1.UpdateLLMIntegrationRequest{},
 		environmentClasses: map[string]*v1.EnvironmentClass{},
 	}
 	_, handler := v1connect.NewRunnerConfigurationServiceHandler(service)
@@ -688,6 +894,13 @@ type fakeRunnerConfigurationService struct {
 	scmSecretUpdates   map[string][]string
 	scmCreateErr       error
 	scmUpdateErr       error
+	llmIntegrations    map[string]*v1.LLMIntegration
+	llmCreateRequests  map[string]*v1.CreateLLMIntegrationRequest
+	llmUpdateRequests  map[string][]*v1.UpdateLLMIntegrationRequest
+	llmDeletes         map[string]bool
+	llmDeleteForce     map[string]bool
+	llmAPIKeyUpdates   map[string][]string
+	llmCreateErr       error
 	environmentClasses map[string]*v1.EnvironmentClass
 }
 
@@ -786,6 +999,90 @@ func (s *fakeRunnerConfigurationService) DeleteSCMIntegration(ctx context.Contex
 	return connect.NewResponse(&v1.DeleteSCMIntegrationResponse{}), nil
 }
 
+func (s *fakeRunnerConfigurationService) CreateLLMIntegration(ctx context.Context, req *connect.Request[v1.CreateLLMIntegrationRequest]) (*connect.Response[v1.CreateLLMIntegrationResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.llmCreateErr != nil {
+		return nil, s.llmCreateErr
+	}
+
+	id := fmt.Sprintf("llm-%d", len(s.llmIntegrations)+1)
+	integration := &v1.LLMIntegration{
+		Id:        id,
+		RunnerId:  req.Msg.GetRunnerId(),
+		Models:    append([]v1.SupportedModel{}, req.Msg.GetModels()...),
+		Endpoint:  req.Msg.GetEndpoint(),
+		MaxTokens: req.Msg.GetMaxTokens(),
+		Phase:     v1.LLMIntegrationPhase_LLM_INTEGRATION_PHASE_AVAILABLE,
+		Provider:  llmProviderForTestModels(req.Msg.GetModels()),
+	}
+	if req.Msg.GetApiKey() != "" {
+		s.recordLLMAPIKeyUpdate(id, req.Msg.GetApiKey())
+	}
+	s.llmCreateRequests[id] = cloneCreateLLMIntegrationRequest(req.Msg)
+	s.llmIntegrations[id] = integration
+	return connect.NewResponse(&v1.CreateLLMIntegrationResponse{Id: id}), nil
+}
+
+func (s *fakeRunnerConfigurationService) GetLLMIntegration(ctx context.Context, req *connect.Request[v1.GetLLMIntegrationRequest]) (*connect.Response[v1.GetLLMIntegrationResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	integration := s.llmIntegrations[req.Msg.GetId()]
+	if integration == nil {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("LLM integration not found"))
+	}
+	return connect.NewResponse(&v1.GetLLMIntegrationResponse{Integration: cloneLLMIntegration(integration)}), nil
+}
+
+func (s *fakeRunnerConfigurationService) UpdateLLMIntegration(ctx context.Context, req *connect.Request[v1.UpdateLLMIntegrationRequest]) (*connect.Response[v1.UpdateLLMIntegrationResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	integration := s.llmIntegrations[req.Msg.GetId()]
+	if integration == nil {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("LLM integration not found"))
+	}
+	s.llmUpdateRequests[req.Msg.GetId()] = append(s.llmUpdateRequests[req.Msg.GetId()], cloneUpdateLLMIntegrationRequest(req.Msg))
+	if req.Msg.Endpoint != nil {
+		integration.Endpoint = req.Msg.GetEndpoint()
+	}
+	if len(req.Msg.GetModels()) > 0 {
+		integration.Models = append([]v1.SupportedModel{}, req.Msg.GetModels()...)
+		integration.Provider = llmProviderForTestModels(req.Msg.GetModels())
+	}
+	if req.Msg.ApiKey != nil {
+		s.recordLLMAPIKeyUpdate(req.Msg.GetId(), req.Msg.GetApiKey())
+	}
+	if req.Msg.MaxTokens != nil {
+		integration.MaxTokens = req.Msg.GetMaxTokens()
+	}
+	if req.Msg.Phase != nil {
+		integration.Phase = req.Msg.GetPhase()
+	}
+	return connect.NewResponse(&v1.UpdateLLMIntegrationResponse{}), nil
+}
+
+func (s *fakeRunnerConfigurationService) DeleteLLMIntegration(ctx context.Context, req *connect.Request[v1.DeleteLLMIntegrationRequest]) (*connect.Response[v1.DeleteLLMIntegrationResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.llmIntegrations[req.Msg.GetId()] == nil {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("LLM integration not found"))
+	}
+	delete(s.llmIntegrations, req.Msg.GetId())
+	if s.llmDeletes == nil {
+		s.llmDeletes = map[string]bool{}
+	}
+	if s.llmDeleteForce == nil {
+		s.llmDeleteForce = map[string]bool{}
+	}
+	s.llmDeletes[req.Msg.GetId()] = true
+	s.llmDeleteForce[req.Msg.GetId()] = req.Msg.GetForce()
+	return connect.NewResponse(&v1.DeleteLLMIntegrationResponse{}), nil
+}
+
 func (s *fakeRunnerConfigurationService) CreateEnvironmentClass(ctx context.Context, req *connect.Request[v1.CreateEnvironmentClassRequest]) (*connect.Response[v1.CreateEnvironmentClassResponse], error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -861,6 +1158,32 @@ func (s *fakeRunnerConfigurationService) scmSecretUpdated(id string, secret stri
 	return false
 }
 
+func (s *fakeRunnerConfigurationService) llmDeleted(id string) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	return s.llmDeletes[id]
+}
+
+func (s *fakeRunnerConfigurationService) llmDeleteForced(id string) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	return s.llmDeleteForce[id]
+}
+
+func (s *fakeRunnerConfigurationService) llmAPIKeyUpdated(id string, apiKey string) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	for _, updated := range s.llmAPIKeyUpdates[id] {
+		if updated == apiKey {
+			return true
+		}
+	}
+	return false
+}
+
 func (s *fakeRunnerConfigurationService) scmCreateIssuerURLSent(id string) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -895,6 +1218,13 @@ func (s *fakeRunnerConfigurationService) setSCMUpdateErr(err error) {
 	s.scmUpdateErr = err
 }
 
+func (s *fakeRunnerConfigurationService) setLLMCreateErr(err error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	s.llmCreateErr = err
+}
+
 func (s *fakeRunnerConfigurationService) allEnvironmentClassesDisabled() bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -917,8 +1247,23 @@ func (s *fakeRunnerConfigurationService) recordSCMSecretUpdate(id string, secret
 	s.scmSecretUpdates[id] = append(s.scmSecretUpdates[id], secret)
 }
 
+func (s *fakeRunnerConfigurationService) recordLLMAPIKeyUpdate(id string, apiKey string) {
+	if s.llmAPIKeyUpdates == nil {
+		s.llmAPIKeyUpdates = map[string][]string{}
+	}
+	s.llmAPIKeyUpdates[id] = append(s.llmAPIKeyUpdates[id], apiKey)
+}
+
 func cloneSCMIntegration(integration *v1.SCMIntegration) *v1.SCMIntegration {
 	cloned, ok := proto.Clone(integration).(*v1.SCMIntegration)
+	if !ok {
+		return nil
+	}
+	return cloned
+}
+
+func cloneLLMIntegration(integration *v1.LLMIntegration) *v1.LLMIntegration {
+	cloned, ok := proto.Clone(integration).(*v1.LLMIntegration)
 	if !ok {
 		return nil
 	}
@@ -933,8 +1278,24 @@ func cloneCreateSCMIntegrationRequest(request *v1.CreateSCMIntegrationRequest) *
 	return cloned
 }
 
+func cloneCreateLLMIntegrationRequest(request *v1.CreateLLMIntegrationRequest) *v1.CreateLLMIntegrationRequest {
+	cloned, ok := proto.Clone(request).(*v1.CreateLLMIntegrationRequest)
+	if !ok {
+		return nil
+	}
+	return cloned
+}
+
 func cloneUpdateSCMIntegrationRequest(request *v1.UpdateSCMIntegrationRequest) *v1.UpdateSCMIntegrationRequest {
 	cloned, ok := proto.Clone(request).(*v1.UpdateSCMIntegrationRequest)
+	if !ok {
+		return nil
+	}
+	return cloned
+}
+
+func cloneUpdateLLMIntegrationRequest(request *v1.UpdateLLMIntegrationRequest) *v1.UpdateLLMIntegrationRequest {
+	cloned, ok := proto.Clone(request).(*v1.UpdateLLMIntegrationRequest)
 	if !ok {
 		return nil
 	}
@@ -969,4 +1330,21 @@ func optionalString(value *string) *string {
 
 func testStringPtr(value string) *string {
 	return &value
+}
+
+func llmProviderForTestModels(models []v1.SupportedModel) v1.LLMProvider {
+	for _, model := range models {
+		switch model {
+		case v1.SupportedModel_SUPPORTED_MODEL_OPENAI_4O,
+			v1.SupportedModel_SUPPORTED_MODEL_OPENAI_4O_MINI,
+			v1.SupportedModel_SUPPORTED_MODEL_OPENAI_O1,
+			v1.SupportedModel_SUPPORTED_MODEL_OPENAI_O1_MINI,
+			v1.SupportedModel_SUPPORTED_MODEL_OPENAI_AUTO:
+			return v1.LLMProvider_LLM_PROVIDER_OPENAI
+		}
+	}
+	if len(models) > 0 {
+		return v1.LLMProvider_LLM_PROVIDER_ANTHROPIC
+	}
+	return v1.LLMProvider_LLM_PROVIDER_UNSPECIFIED
 }

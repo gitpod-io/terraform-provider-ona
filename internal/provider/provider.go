@@ -128,6 +128,7 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 	return []func() resource.Resource{
 		runner.NewResource,
 		runner.NewSCMIntegrationResource,
+		runner.NewLLMIntegrationResource,
 		runner.NewEnvironmentClassResource,
 		runner.NewPolicyResource,
 		project.NewResource,
