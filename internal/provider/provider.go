@@ -185,6 +185,7 @@ func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResou
 		organization.NewSCIMConfigurationListResource,
 		organization.NewSSOConfigurationListResource,
 		organization.NewTermsOfServiceListResource,
+		project.NewInsightsListResource,
 		project.NewListResource,
 		runner.NewEnvironmentClassListResource,
 		runner.NewRunnerListResource,
