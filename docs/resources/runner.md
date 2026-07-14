@@ -61,7 +61,7 @@ resource "ona_runner" "gcp_primary" {
 ### Optional
 
 - `configuration` (Block, Optional) Runner configuration applied to the remote runner. Some fields are provider defaults and are preserved in Terraform state after creation. (see [below for nested schema](#nestedblock--configuration))
-- `runner_manager_id` (String) Runner manager ID for managed runners. Most customer-managed runner configurations should omit this value. Changing it replaces the runner.
+- `runner_manager_id` (String, Deprecated) Runner manager ID for managed runners. Terraform-managed runner resources support remote AWS EC2 and GCP runners; omit this value.
 
 ### Read-Only
 
