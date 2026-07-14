@@ -1,10 +1,10 @@
 # Provider State Safety (repo review findings)
 
-Rules distilled from real review findings on Ona Terraform provider PRs (#26527, #26532, #26586). Each is a repo-verified instance of a failure mode from `pitfalls.md`, with the fixed code cited so you can copy the pattern. Check every resource against this list before opening a provider PR.
+Canonical state-safety rules distilled from real review findings on Ona Terraform provider PRs (#26527, #26532, #26586). Each is a repo-verified instance of a failure mode from `pitfalls.md`, with the fixed code cited so you can copy the pattern. Check every resource against this list before opening a provider PR.
 
 ## 1. Persist the remote ID into state immediately after create
 
-The instant the create RPC succeeds, set the ID on the model and write state — before any subsequent fallible step (post-create update call, readback, model population, planned-input preservation, final `State.Set`). Two separate reviews flagged the same bug:
+This is the canonical detailed rule for immediate ID persistence. The instant the create RPC succeeds, set the ID on the model and write state — before any subsequent fallible step (post-create update call, readback, model population, planned-input preservation, final `State.Set`). Two separate reviews flagged the same bug:
 
 > "Create can return an error from the post-create disable call before any Terraform state containing the new environment class ID has been written. That can orphan an enabled remote environment class and a retry can create a duplicate." (#26532)
 

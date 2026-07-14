@@ -1,6 +1,6 @@
 # Secrets and Sensitive Data
 
-How to handle secrets in a provider. The right tool depends on whether the secret flows *in* (an input) or *out* (a value the API generates and returns). Get this wrong and secrets land in plaintext state.
+Canonical guidance for secret state exposure in a provider. The right tool depends on whether the secret flows *in* (an input) or *out* (a value the API generates and returns). Get this wrong and secrets land in plaintext state. Use `logging.md` as the canonical reference for `tflog` redaction and masking.
 
 ## The constraint that drives every decision
 
@@ -31,7 +31,7 @@ A value can only pass between managed resources through state. If a downstream *
 
 ## Implementation details for the durable-attribute case
 
-- **Never log the secret.** The framework does not redact your `tflog` output; one stray debug line defeats `Sensitive`.
+- **Never log the secret.** The framework does not redact your `tflog` output; one stray debug line defeats `Sensitive`. Detailed masking rules live in `logging.md`.
 - **Be careful in `Read` with write-once tokens.** If the API returns the token only at creation, do not overwrite the stored value with an empty/absent API response, or `Read` wipes it from state on the next refresh. Refresh the other attributes, leave the token as the prior state value.
 - **Detect rotation without re-persisting the secret** by storing a hash in private state and pairing with a version-style trigger attribute.
 

@@ -1,6 +1,6 @@
 # Logging
 
-Use the framework's logging package, `tflog`, not `slog`, `log`, or `fmt.Println`. This is a genuine "something special" case, and the reason is structural: a provider is a subprocess, not the program the user runs.
+Canonical provider logging and log-masking guidance. Use the framework's logging package, `tflog`, not `slog`, `log`, or `fmt.Println`. This is a genuine "something special" case, and the reason is structural: a provider is a subprocess, not the program the user runs. Use `secrets-and-sensitive-data.md` as the canonical reference for secret state exposure.
 
 ## Why not slog
 

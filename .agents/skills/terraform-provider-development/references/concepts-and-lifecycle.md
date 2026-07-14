@@ -39,7 +39,7 @@ config ─┤  Core   ├─────────►│ provider ├───
 ```
 
 - **Create**: read Plan, call the create API, write State.
-- **Read**: read prior State, refresh from the API, write State. This is drift detection. Refresh every attribute. On a 404, call `resp.State.RemoveResource(ctx)` so Core plans a recreate.
+- **Read**: read prior State, refresh from the API, write State. This is drift detection. Refresh every attribute. Remove state only after a definitive not-found for the exact remote object, such as an authoritative 404 from a get-by-ID endpoint, so Core plans a recreate.
 - **Update**: read Plan (and prior State if the diff matters), call the update API, write State.
 - **Delete**: read prior State, call the destroy API.
 
@@ -65,8 +65,8 @@ So Create runs for an address only when that address is absent from state. A sec
 
 Your responsibility is narrow but strict, because Core can only gate correctly if state reflects reality:
 
-1. **Write the ID into state the instant the create API returns success**, before any later step that could fail. The dangerous shape is: create succeeds, a later step errors, you return without `resp.State.Set`, and now a remote object exists that no address points to. The next apply creates a duplicate.
-2. **Read must detect existence honestly** (refresh all attributes; remove from state on 404).
+1. **Write the ID into state the instant the create API returns success**, before any later step that could fail. See `state-safety.md` for the detailed failure mode and repo-backed examples.
+2. **Read must detect existence honestly**: refresh all attributes, and remove state only when the API result is definitive not-found for that exact object. If existence is inferred from list or search metadata, absence is not enough unless the API contract makes it authoritative for the object.
 
 The one gap Core cannot close: if the create API succeeds but the process dies before state is durably written, the next run creates again. What closes that is below Terraform: the remote API's uniqueness constraints (a duplicate create fails with "already exists"), or idempotency tokens (AWS `ClientToken`, Stripe idempotency keys) that dedupe server-side. Rely on these for true safety; most providers quietly depend on API-side uniqueness as the real net.
 

@@ -22,25 +22,23 @@ During plan, referenced values can be unknown. Do not treat unknown as null or a
 
 ## Duplicate creates
 
-The create API succeeds, a later step in `Create` fails, and you return without writing state. The remote object now exists but no address points to it, so the next apply creates a second one. Fix: write the ID into state the instant the create API returns success, before any step that could fail. Beyond the in-process case, rely on the remote API's uniqueness constraints or idempotency tokens for crash-window safety.
+The create API succeeds, a later step in `Create` fails, and you return without writing state. The remote object now exists but no address points to it, so the next apply creates a second one. Fix: write the ID into state the instant the create API returns success, before any step that could fail. `state-safety.md` is the canonical detailed explanation and example catalog for this rule. Beyond the in-process case, rely on the remote API's uniqueness constraints or idempotency tokens for crash-window safety.
 
 ## Lazy Read breaking drift detection
 
-`Read` must refresh every tracked attribute and call `resp.State.RemoveResource(ctx)` on a 404. If Read does not remove a deleted resource, Core never plans a recreate. If it does not refresh an attribute, drift goes undetected and you also risk a perpetual diff.
+`Read` must refresh every tracked attribute and call `resp.State.RemoveResource(ctx)` only on a definitive not-found for the exact remote object, such as an authoritative 404 from a get-by-ID endpoint. If Read does not remove a definitively deleted resource, Core never plans a recreate. If it removes state based on weak list/search inference, Terraform can recreate an object that still exists. If it does not refresh an attribute, drift goes undetected and you also risk a perpetual diff.
 
 ## Forgetting RequiresReplace
 
 If an attribute cannot be changed in place by the API but is not marked `RequiresReplace`, updates silently no-op: the plan looks fine, the apply does nothing, and reality never matches config. Mark every immutable attribute.
 
-## Set vs List
+## Terraform list collection attributes vs sets
 
-Using `List` when order is not meaningful makes harmless API reorderings show up as diffs. Use `Set` for unordered collections.
+Using Terraform list collection attributes (`types.List`, `schema.ListAttribute`, or list nested attributes) when order is not meaningful makes harmless API reorderings show up as diffs. Use set collection attributes for unordered remote collections.
 
 ## Secret leakage
 
-- `Sensitive: true` is redaction only; it does not keep a value out of state. See `secrets-and-sensitive-data.md`.
-- The framework does not redact your `tflog` output. A stray debug log of a secret defeats `Sensitive` entirely. Never log secret values; mask secret fields on the context (see `logging.md`).
-- Returning a generated secret as a managed attribute persists it to state in plaintext. Use the secrets decision tree instead.
+Use `secrets-and-sensitive-data.md` as the canonical state decision tree and `logging.md` as the canonical logging/masking reference. In short: `Sensitive: true` is redaction only, `tflog` does not redact automatically, and returning a generated secret as a managed attribute persists it to state in plaintext.
 
 ## Write-once token wiped on refresh
 
@@ -48,7 +46,7 @@ If the API returns a token only at creation, a Read that overwrites the stored v
 
 ## Partial-failure orphans
 
-A multi-step create that fails halfway and returns without persisting what was created leaves orphaned remote objects. Write whatever state was actually created before returning the error, so the next apply reconciles instead of duplicating.
+A multi-step create that fails halfway and returns without persisting what was created leaves orphaned remote objects. Write whatever state was actually created before returning the error, so the next apply reconciles instead of duplicating. See `state-safety.md` for concrete review findings.
 
 ## Skipping the guard after Get/Set
 
