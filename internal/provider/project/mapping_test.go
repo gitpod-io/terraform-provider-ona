@@ -464,6 +464,22 @@ func TestPrebuildConfigurationFromModel(t *testing.T) {
 			},
 		},
 		{
+			Name: "allows_unknown_environment_class_ids",
+			Input: []PrebuildConfigurationModel{{
+				Enabled: types.BoolValue(true),
+				EnvironmentClassIDs: types.SetValueMust(types.StringType, []attr.Value{
+					types.StringUnknown(),
+				}),
+				Timeout: types.StringValue("1h"),
+			}},
+			Expected: Expectation{
+				Result: &v1.ProjectPrebuildConfiguration{
+					Enabled: true,
+					Timeout: durationpb.New(time.Hour),
+				},
+			},
+		},
+		{
 			Name: "rejects_daily_schedule_hour_out_of_range",
 			Input: []PrebuildConfigurationModel{{
 				Enabled:               types.BoolValue(true),
@@ -492,6 +508,25 @@ func TestPrebuildConfigurationFromModel(t *testing.T) {
 			}},
 			Expected: Expectation{
 				Err: "Missing Prebuild Executor ID",
+			},
+		},
+		{
+			Name: "allows_unknown_executor_id",
+			Input: []PrebuildConfigurationModel{{
+				Enabled:               types.BoolValue(true),
+				EnvironmentClassIDs:   types.SetNull(types.StringType),
+				Timeout:               types.StringValue("1h"),
+				EnableJetbrainsWarmup: types.BoolValue(false),
+				Executor: []SubjectModel{{
+					ID:        types.StringUnknown(),
+					Principal: types.StringValue(principalServiceAccount),
+				}},
+			}},
+			Expected: Expectation{
+				Result: &v1.ProjectPrebuildConfiguration{
+					Enabled: true,
+					Timeout: durationpb.New(time.Hour),
+				},
 			},
 		},
 		{

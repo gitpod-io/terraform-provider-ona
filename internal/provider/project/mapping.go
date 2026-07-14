@@ -247,9 +247,16 @@ func prebuildConfigurationFromModel(ctx context.Context, values []PrebuildConfig
 
 	var environmentClassIDs []string
 	if !value.EnvironmentClassIDs.IsNull() && !value.EnvironmentClassIDs.IsUnknown() {
-		diags.Append(value.EnvironmentClassIDs.ElementsAs(ctx, &environmentClassIDs, false)...)
-		if diags.HasError() {
-			return nil, diags
+		for _, element := range value.EnvironmentClassIDs.Elements() {
+			environmentClassID, ok := element.(types.String)
+			if !ok {
+				diags.AddAttributeError(root.AtName("environment_class_ids"), "Invalid Environment Class ID", "environment_class_ids must contain string values.")
+				return nil, diags
+			}
+			if environmentClassID.IsUnknown() || environmentClassID.IsNull() {
+				continue
+			}
+			environmentClassIDs = append(environmentClassIDs, environmentClassID.ValueString())
 		}
 		sort.Strings(environmentClassIDs)
 	}
@@ -285,11 +292,14 @@ func prebuildConfigurationFromModel(ctx context.Context, values []PrebuildConfig
 		return nil, diags
 	}
 	if len(value.Executor) == 1 {
-		if value.Executor[0].ID.IsNull() || value.Executor[0].ID.IsUnknown() || value.Executor[0].ID.ValueString() == "" {
+		if value.Executor[0].ID.IsUnknown() || value.Executor[0].Principal.IsUnknown() {
+			return cfg, diags
+		}
+		if value.Executor[0].ID.IsNull() || value.Executor[0].ID.ValueString() == "" {
 			diags.AddAttributeError(root.AtName("executor").AtListIndex(0).AtName("id"), "Missing Prebuild Executor ID", "Executor id must not be empty.")
 			return nil, diags
 		}
-		if value.Executor[0].Principal.IsNull() || value.Executor[0].Principal.IsUnknown() {
+		if value.Executor[0].Principal.IsNull() {
 			diags.AddAttributeError(root.AtName("executor").AtListIndex(0).AtName("principal"), "Missing Prebuild Executor Principal", "Supported values are user and service_account.")
 			return nil, diags
 		}
