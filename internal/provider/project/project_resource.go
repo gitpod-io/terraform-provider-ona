@@ -302,7 +302,7 @@ func validateProjectModel(ctx context.Context, data ProjectModel, diags *diag.Di
 	_, classDiags := projectEnvironmentClassesFromModel(data.EnvironmentClasses, path.Root("environment_class"), true)
 	diags.Append(classDiags...)
 	if len(data.Prebuild) > 0 {
-		_, prebuildDiags := prebuildConfigurationFromModel(ctx, data.Prebuild, path.Root("prebuild_configuration"))
+		_, prebuildDiags := prebuildConfigurationFromModel(ctx, data.Prebuild, path.Root("prebuild_configuration"), true)
 		diags.Append(prebuildDiags...)
 	}
 }

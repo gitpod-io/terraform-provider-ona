@@ -18,8 +18,24 @@ resource "ona_security_policy" "baseline" {
   name            = "baseline"
 
   spec {
+    ports {
+      default_effect = "allow"
+    }
+
+    executables {
+      default_effect = "allow"
+    }
+
+    files {
+      default_effect = "allow"
+    }
+
     block_devices {
       default_effect = "block"
+    }
+
+    data {
+      default_effect = "allow"
     }
   }
 }
