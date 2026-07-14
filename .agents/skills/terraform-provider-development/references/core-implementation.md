@@ -75,21 +75,26 @@ func (p *fooProvider) Configure(ctx context.Context, req provider.ConfigureReque
         return
     }
     // Resolve with env-var fallbacks, validate, build the client once.
-    client := api.NewClient(cfg.Endpoint.ValueString(), cfg.Token.ValueString())
-    resp.ResourceData = client            // retrieved in each resource's Configure
-    resp.DataSourceData = client          // retrieved in each data source's Configure
-    resp.EphemeralResourceData = client   // retrieved in each ephemeral resource's Configure
+    client, apiBaseURL := api.NewClient(cfg.Endpoint.ValueString(), cfg.Token.ValueString())
+    providerData := &providerdata.Data{
+        Client:     client,
+        APIBaseURL: apiBaseURL,
+        UserAgent:  "terraform-provider-foo/dev",
+    }
+    resp.ResourceData = providerData            // retrieved in each resource's Configure
+    resp.DataSourceData = providerData          // retrieved in each data source's Configure
+    resp.EphemeralResourceData = providerData   // retrieved in each ephemeral resource's Configure
 }
 ```
 
-The `Schema` method is pure declaration: it describes the `provider "foo" {}` block, reads no values, does no I/O, and must be deterministic (Core caches it and validates HCL against it before `Configure` runs). Provider config attributes are typically `Optional` rather than `Required` so users can supply values via environment variables instead; you then resolve and validate the effective value in `Configure`, raising a diagnostic if it is still missing. `Configure` is the only place to build provider-level clients, so anything later logic needs must be persisted onto `resp.ResourceData`, `resp.DataSourceData`, and, when `ProviderWithEphemeralResources` is registered, `resp.EphemeralResourceData`.
+The `Schema` method is pure declaration: it describes the `provider "foo" {}` block, reads no values, does no I/O, and must be deterministic (Core caches it and validates HCL against it before `Configure` runs). Provider config attributes are typically `Optional` rather than `Required` so users can supply values via environment variables instead; you then resolve and validate the effective value in `Configure`, raising a diagnostic if it is still missing. `Configure` is the only place to build provider-level clients, so anything later logic needs must be persisted through the repository's `providerdata.Data` payload onto `resp.ResourceData`, `resp.DataSourceData`, and, when `ProviderWithEphemeralResources` is registered, `resp.EphemeralResourceData`.
 
 ## Resource (full CRUD plus import)
 
 Implement `resource.Resource` (`Metadata`, `Schema`, `Create`, `Read`, `Update`, `Delete`), plus `resource.ResourceWithConfigure` to grab the client and `resource.ResourceWithImportState` for import.
 
 ```go
-type widgetResource struct{ client *api.Client }
+type widgetResource struct{ providerData *providerdata.Data }
 
 type widgetModel struct {
     ID      types.String `tfsdk:"id"`
@@ -102,12 +107,12 @@ func (r *widgetResource) Configure(_ context.Context, req resource.ConfigureRequ
     if req.ProviderData == nil {
         return // early validation phase; not an error
     }
-    client, ok := req.ProviderData.(*api.Client)
+    data, ok := req.ProviderData.(*providerdata.Data)
     if !ok {
-        resp.Diagnostics.AddError("unexpected provider data", "expected *api.Client")
+        resp.Diagnostics.AddError("unexpected provider data", fmt.Sprintf("expected *providerdata.Data, got %T", req.ProviderData))
         return
     }
-    r.client = client
+    r.providerData = data
 }
 
 func (r *widgetResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -116,7 +121,7 @@ func (r *widgetResource) Create(ctx context.Context, req resource.CreateRequest,
     if resp.Diagnostics.HasError() {
         return
     }
-    created, err := r.client.CreateWidget(ctx, api.Widget{Name: plan.Name.ValueString(), Size: plan.Size.ValueInt64()})
+    created, err := r.providerData.Client.CreateWidget(ctx, api.Widget{Name: plan.Name.ValueString(), Size: plan.Size.ValueInt64()})
     if err != nil {
         resp.Diagnostics.AddError("create widget failed", err.Error())
         return
@@ -133,7 +138,7 @@ func (r *widgetResource) Read(ctx context.Context, req resource.ReadRequest, res
     if resp.Diagnostics.HasError() {
         return
     }
-    w, err := r.client.GetWidget(ctx, state.ID.ValueString())
+    w, err := r.providerData.Client.GetWidget(ctx, state.ID.ValueString())
     if errors.Is(err, api.ErrNotFound) {
         resp.State.RemoveResource(ctx) // definitive not-found for this object: Core plans a recreate
         return
@@ -200,7 +205,9 @@ They exist at the attribute level and resource level (`ModifyPlan`).
 
 ## Data sources
 
-Implement `datasource.DataSource` (`Metadata`, `Schema`, `Read`), optionally `Configure`. Data sources have no lifecycle and own no state; both "get" and "list" are pure reads that run every plan. The difference between a singular get and a plural list is only the schema and what `Read` does:
+Implement `datasource.DataSource` (`Metadata`, `Schema`, `Read`), optionally `Configure`. Data sources do not manage a remote lifecycle: they do not create, update, delete, import, or take ownership of remote objects. They still write Terraform state through `resp.State` so their computed values can be referenced by the rest of the graph.
+
+Terraform usually tries to read data sources during planning, but a read can be deferred until apply when its configuration depends on unknown values or on managed-resource changes in the same plan. Treat both singular "get" and plural "list" data sources as read-only lookups whose timing is chosen by Core. The difference between a singular get and a plural list is only the schema and what `Read` does:
 
 - **Get (singular)**: require a unique key (id/name), fetch one object, populate a flat model.
 - **List (plural)**: accept filter inputs, fetch a collection, populate a `ListAttribute`/`SetNestedAttribute`.

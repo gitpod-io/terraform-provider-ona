@@ -16,7 +16,9 @@ The plural is a real English plural (`foo_policies`, not `foo_policy_list` or `f
 
 ## Go identifiers: the Collection convention
 
-The framework imposes nothing on Go names, so pick one scheme and hold to it. The bare-plural scheme (`widgetDataSource` vs `widgetsDataSource`) is idiomatic but relies on a single trailing `s`, which is easy to misread. When disambiguation matters, use the **Collection** convention: the singular stays the bare noun, the plural gets an explicit `Collection` qualifier, and the user-facing type name stays the clean plural underneath.
+The framework imposes nothing on Go names. For new singular/plural data-source pairs, prefer the **Collection** convention: the singular stays the bare noun, the plural gets an explicit `Collection` qualifier, and the user-facing type name stays the clean plural underneath. The bare-plural scheme (`widgetDataSource` vs `widgetsDataSource`) is idiomatic, but relies on a single trailing `s`, which is easy to misread.
+
+Some existing packages predate this guidance or use shorter local names such as `SingularDataSource` and `CollectionDataSource` inside a service package. Do not rename existing files, constructors, or types solely to satisfy this convention. If a migration is worth doing, make it a separate mechanical cleanup that preserves every Terraform type name and updates every registration/test reference in the same PR.
 
 | User-facing type | Go type | Constructor |
 |---|---|---|
@@ -56,7 +58,7 @@ func (d *OrganizationCollectionDataSource) Metadata(_ context.Context, req datas
 - Plural is always `<Noun>CollectionDataSource`. Keep the noun **singular** inside the identifier; `Collection` already conveys plurality, so `OrganizationCollectionDataSource` (not `OrganizationsCollectionDataSource`). The only places the real plural appears are the user-facing `_organizations` type name and the `Organizations []OrganizationModel` field, which genuinely holds many.
 - Files mirror the type: `organization_data_source.go`, `organization_collection_data_source.go`.
 - Models mirror it: `OrganizationModel` for the shared per-item shape, plus `OrganizationDataSourceModel` and `OrganizationCollectionDataSourceModel` for the two read targets.
-- Apply the convention uniformly across every type; never mix bare-plural and Collection in the same provider.
+- Within a new data-source pair, do not mix bare-plural and Collection names. Existing packages can keep their current names until there is a real maintenance reason to migrate them.
 
 Registration reads cleanly and is impossible to confuse at the call site:
 

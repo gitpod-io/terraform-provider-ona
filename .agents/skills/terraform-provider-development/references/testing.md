@@ -40,37 +40,9 @@ With a dev override, skip `terraform init` and iterate with `go install && terra
 
 Division of labor: push as much correctness as possible down into unit tests, where you can exhaustively cover the fiddly edge cases (null vs unknown handling, malformed API responses, import id/identity parsing) fast and cheap. Reserve acceptance tests for what genuinely needs Terraform Core in the loop: planning behavior, import, and drift. Wire the in-process provider into acceptance tests with `ProtoV6ProviderFactories` so no separate build is needed.
 
-## Shape of an acceptance test
+## Canonical acceptance-test example
 
-```go
-func TestAccWidgetResource(t *testing.T) {
-    resource.Test(t, resource.TestCase{
-        ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
-        Steps: []resource.TestStep{
-            { // create + read
-                Config: testAccWidgetConfig("alpha", 3),
-                ConfigStateChecks: []statecheck.StateCheck{
-                    statecheck.ExpectKnownValue("foo_widget.test",
-                        tfjsonpath.New("name"), knownvalue.StringExact("alpha")),
-                },
-            },
-            { // import round-trips cleanly
-                ResourceName:      "foo_widget.test",
-                ImportState:       true,
-                ImportStateVerify: true,
-            },
-            { // update in place, and assert the planned action
-                Config: testAccWidgetConfig("beta", 5),
-                ConfigPlanChecks: resource.ConfigPlanChecks{
-                    PreApply: []plancheck.PlanCheck{
-                        plancheck.ExpectResourceAction("foo_widget.test", plancheck.ResourceActionUpdate),
-                    },
-                },
-            },
-        },
-    })
-}
-```
+Do not maintain a second lifecycle-test code sample here. The canonical example lives in the Go test skill at [Terraform Provider Lifecycle Tests](../../go-tests/examples.md#terraform-provider-lifecycle-tests), and includes the immediate empty-plan assertion with `plancheck.ExpectEmptyPlan()`, import verification with `ImportStateVerify: true`, update coverage, and destroy verification. Use that example when adding or reviewing provider lifecycle tests, then adapt names and checks to the resource under test.
 
 ## Techniques that matter
 
