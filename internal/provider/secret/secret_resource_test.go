@@ -523,7 +523,7 @@ func newTestState(t *testing.T, ctx context.Context, schema resourceschema.Schem
 
 	return tfsdk.State{
 		Schema: schema,
-		Raw:    nullObjectValue(t, ctx, schema.Type().TerraformType(ctx)),
+		Raw:    nullObjectValue(t, schema.Type().TerraformType(ctx)),
 	}
 }
 
@@ -532,11 +532,11 @@ func newTestIdentityData(t *testing.T, ctx context.Context, schema identityschem
 
 	return &tfsdk.ResourceIdentity{
 		Schema: schema,
-		Raw:    nullObjectValue(t, ctx, schema.Type().TerraformType(ctx)),
+		Raw:    nullObjectValue(t, schema.Type().TerraformType(ctx)),
 	}
 }
 
-func nullObjectValue(t *testing.T, ctx context.Context, typ tftypes.Type) tftypes.Value {
+func nullObjectValue(t *testing.T, typ tftypes.Type) tftypes.Value {
 	t.Helper()
 
 	objectType, ok := typ.(tftypes.Object)
