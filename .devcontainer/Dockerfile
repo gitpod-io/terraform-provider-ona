@@ -1,10 +1,16 @@
-FROM mcr.microsoft.com/devcontainers/go:2.1-1.25-bookworm
+# The official Go image tracks the latest Go 1.25 patch, so it is our toolchain source.
+FROM golang:1.25-bookworm
+
+COPY dev/go/go.version /tmp/go.version
+RUN test "$(go env GOVERSION | sed 's/^go//')" = "$(awk '!/^[[:space:]]*#/ && NF { print; exit }' /tmp/go.version)" \
+    && rm /tmp/go.version
 
 USER root
 
 ENV HOME=/root
 ENV GOPATH=$HOME/go-packages
-ENV PATH=$GOPATH/bin:$PATH
+ENV GOROOT=/usr/local/go
+ENV PATH=/usr/local/go/bin:$GOPATH/bin:$PATH
 
 ARG TERRAFORM_VERSION=1.15.8-1
 ARG GOLANGCI_LINT_VERSION=v2.12.2
