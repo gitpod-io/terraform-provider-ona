@@ -61,6 +61,21 @@ func TestAccRunnerPolicyResourceLifecycle(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
+				ResourceName:    "ona_runner_policy.test",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportStateCheck: func(states []*terraform.InstanceState) error {
+					if len(states) != 1 {
+						return fmt.Errorf("expected one imported runner policy state, got %d", len(states))
+					}
+					attributes := states[0].Attributes
+					if states[0].ID != "runner-1/group-1" || attributes["runner_id"] != "runner-1" || attributes["group_id"] != "group-1" || attributes["role"] != "user" {
+						return fmt.Errorf("structured identity imported unexpected runner policy state: %#v", attributes)
+					}
+					return nil
+				},
+			},
+			{
 				Config: testAccRunnerPolicyResourceConfig(server.URL, "group-2", "user"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
