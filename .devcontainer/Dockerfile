@@ -1,5 +1,6 @@
 # The official Go image tracks the latest Go 1.25 patch, so it is our toolchain source.
 FROM golang:1.25-bookworm
+ENV DEVCONTAINER_RETRIGGER=0
 
 COPY dev/go/go.version /tmp/go.version
 RUN test "$(go env GOVERSION | sed 's/^go//')" = "$(awk '!/^[[:space:]]*#/ && NF { print; exit }' /tmp/go.version)" \
@@ -20,8 +21,10 @@ RUN apt-get update \
         ca-certificates \
         curl \
         gnupg \
+        jq \
         make \
         shellcheck \
+        unzip \
     && install -d -m 0755 /etc/apt/keyrings \
     && curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /etc/apt/keyrings/hashicorp-archive-keyring.gpg \
     && chmod a+r /etc/apt/keyrings/hashicorp-archive-keyring.gpg \
