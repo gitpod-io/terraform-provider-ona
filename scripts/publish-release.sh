@@ -50,6 +50,20 @@ normalize_version() {
 	printf '%s' "$version"
 }
 
+validate_release_metadata() {
+	local version="$1"
+	local file_version
+
+	VERSION_FILE="${PROVIDER_DIR}/VERSION" \
+	CHANGELOG_FILE="${PROVIDER_DIR}/CHANGELOG.md" \
+		"${PROVIDER_DIR}/scripts/validate-release-version.sh" --no-tag-precedence >/dev/null
+
+	file_version="$(tr -d '[:space:]' <"${PROVIDER_DIR}/VERSION")"
+	if [[ "$version" != "v${file_version}" ]]; then
+		die "VERSION input ${version} must match ${PROVIDER_DIR}/VERSION (${file_version})"
+	fi
+}
+
 import_gpg_key() {
 	[[ -n "${GPG_PRIVATE_KEY:-}" ]] || die "GPG_PRIVATE_KEY is required"
 	[[ -n "${GPG_FINGERPRINT:-}" ]] || die "GPG_FINGERPRINT is required"
@@ -191,6 +205,7 @@ main() {
 	stage "Validate publish inputs"
 	version="$(normalize_version "$VERSION")"
 	repo="$(normalize_repo "$RELEASE_REPOSITORY")"
+	validate_release_metadata "$version"
 
 	stage "Check required commands"
 	need_command git

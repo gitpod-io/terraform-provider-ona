@@ -6,15 +6,10 @@ on:
   workflow_call:
     inputs:
       publish_release:
-        description: "Publish a prerelease to GitHub releases"
+        description: "Publish the provider version declared in VERSION to GitHub releases"
         required: false
         type: boolean
         default: false
-      version:
-        description: "Optional prerelease version, for example v0.1.0-beta.1. Defaults to v0.1.0-beta.<run number> when publishing."
-        required: false
-        type: string
-        default: ""
       release_environment:
         description: "GitHub environment that contains release credentials"
         required: false
@@ -23,16 +18,15 @@ on:
     outputs:
       version:
         description: Published release version, including the leading v.
-        value: ${{ jobs.resolve-prerelease-version.outputs.version }}
+        value: ${{ jobs.resolve-release-version.outputs.version }}
       version_no_v:
         description: Published release version without the leading v.
-        value: ${{ jobs.resolve-prerelease-version.outputs.version_no_v }}
+        value: ${{ jobs.resolve-release-version.outputs.version_no_v }}
 
 permissions:
   contents: read
 
 env:
-  DEFAULT_PRERELEASE_PREFIX: v0.1.0-beta
   GOLANGCI_LINT_VERSION: v2.11.4
   RELEASE_REPOSITORY: gitpod-io/terraform-provider-ona
   REGISTRY_PROVIDER_SOURCE: gitpod-io/ona
@@ -52,6 +46,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Validate release metadata
+        run: scripts/validate-release-version.sh --no-tag-precedence
 
       - name: Read Go version
         id: go_version
@@ -131,7 +128,7 @@ jobs:
       - name: Build snapshot release artifacts
         run: make release-snapshot RELEASE_SNAPSHOT_VERSION=0.0.0-SNAPSHOT
 
-  resolve-prerelease-version:
+  resolve-release-version:
     name: Select release version
     if: ${{ inputs.publish_release }}
     runs-on: ubuntu-latest
@@ -139,33 +136,18 @@ jobs:
       version: ${{ steps.version.outputs.version }}
       version_no_v: ${{ steps.version.outputs.version_no_v }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
       - name: Resolve version
         id: version
-        env:
-          DEFAULT_PRERELEASE_PREFIX: ${{ env.DEFAULT_PRERELEASE_PREFIX }}
-          INPUT_VERSION: ${{ inputs.version || '' }}
-          RUN_NUMBER: ${{ github.run_number }}
-        run: |
-          set -euo pipefail
-
-          version="${INPUT_VERSION//[[:space:]]/}"
-          if [[ -z "$version" ]]; then
-            version="${DEFAULT_PRERELEASE_PREFIX}.${RUN_NUMBER}"
-          fi
-          [[ "$version" == v* ]] || version="v${version}"
-
-          if ! [[ "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-[0-9A-Za-z][0-9A-Za-z.-]*$ ]]; then
-            echo "::error::Version must be a prerelease semver such as v0.1.0-beta.1, got: ${version}"
-            exit 1
-          fi
-
-          echo "version=${version}" >>"$GITHUB_OUTPUT"
-          echo "version_no_v=${version#v}" >>"$GITHUB_OUTPUT"
-          echo "Resolved prerelease version: ${version}"
+        run: scripts/validate-release-version.sh --github-output
 
   publish-preflight:
     name: Check release prerequisites
-    needs: [resolve-prerelease-version]
+    needs: [resolve-release-version]
     if: ${{ inputs.publish_release }}
     runs-on: ubuntu-latest
     environment:
@@ -177,7 +159,7 @@ jobs:
       GPG_FINGERPRINT: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_FINGERPRINT }}
       GPG_PRIVATE_KEY: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_PRIVATE_KEY }}
       RELEASE_REPOSITORY: gitpod-io/terraform-provider-ona
-      VERSION: ${{ needs.resolve-prerelease-version.outputs.version }}
+      VERSION: ${{ needs.resolve-release-version.outputs.version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -187,7 +169,7 @@ jobs:
 
   create-release:
     name: Create GitHub release
-    needs: [verify, resolve-prerelease-version, publish-preflight]
+    needs: [verify, resolve-release-version, publish-preflight]
     if: ${{ inputs.publish_release }}
     runs-on: ubuntu-latest
     environment:
@@ -226,5 +208,5 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_PASSPHRASE }}
           GPG_PRIVATE_KEY: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_PRIVATE_KEY }}
           RELEASE_REPOSITORY: gitpod-io/terraform-provider-ona
-          VERSION: ${{ needs.resolve-prerelease-version.outputs.version }}
+          VERSION: ${{ needs.resolve-release-version.outputs.version }}
         run: scripts/publish-release.sh

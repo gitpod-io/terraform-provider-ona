@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+PROVIDER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RELEASE_REPOSITORY="${RELEASE_REPOSITORY:-gitpod-io/terraform-provider-ona}"
 VERSION="${VERSION:-}"
 
@@ -25,6 +26,20 @@ normalize_version() {
 	printf '%s' "$version"
 }
 
+validate_release_metadata() {
+	local version="$1"
+	local file_version
+
+	VERSION_FILE="${PROVIDER_DIR}/VERSION" \
+	CHANGELOG_FILE="${PROVIDER_DIR}/CHANGELOG.md" \
+		"${PROVIDER_DIR}/scripts/validate-release-version.sh" --no-tag-precedence >/dev/null
+
+	file_version="$(tr -d '[:space:]' <"${PROVIDER_DIR}/VERSION")"
+	if [[ "$version" != "v${file_version}" ]]; then
+		die "VERSION input ${version} must match ${PROVIDER_DIR}/VERSION (${file_version})"
+	fi
+}
+
 require_publish_inputs() {
 	local -a missing=()
 
@@ -43,6 +58,7 @@ main() {
 
 	require_publish_inputs
 	version="$(normalize_version "$VERSION")"
+	validate_release_metadata "$version"
 
 	gh repo view "$RELEASE_REPOSITORY" --json nameWithOwner --jq .nameWithOwner >/dev/null
 
