@@ -70,6 +70,9 @@ func (r *AnnouncementBannerResource) List(ctx context.Context, req list.ListRequ
 			push(listutil.Error("Unable to Read Ona Announcement Banner", err))
 			return
 		}
+		if !announcementBannerConfigured(banner) {
+			return
+		}
 
 		item := req.NewListResult(ctx)
 		item.DisplayName = organizationID

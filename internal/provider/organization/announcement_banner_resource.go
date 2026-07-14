@@ -306,6 +306,10 @@ func populateAnnouncementBannerModel(data *AnnouncementBannerModel, banner *v1.A
 	return diags
 }
 
+func announcementBannerConfigured(banner *v1.AnnouncementBanner) bool {
+	return banner != nil && (banner.GetEnabled() || banner.GetMessage() != "")
+}
+
 func validateAnnouncementBannerConfig(ctx context.Context, cfg tfsdk.Config) diag.Diagnostics {
 	var diags diag.Diagnostics
 	var enabled types.Bool

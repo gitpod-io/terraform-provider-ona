@@ -4,6 +4,7 @@
 package provider
 
 import (
+	"fmt"
 	"testing"
 
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
@@ -44,15 +45,48 @@ func TestAccAnnouncementBannerQuery(t *testing.T) {
 	}))
 }
 
+func TestAccAnnouncementBannerQueryExcludesAbsentBanner(t *testing.T) {
+	for _, tc := range []struct {
+		name           string
+		organizationID string
+	}{
+		{
+			name:           "unconfigured",
+			organizationID: organizationCommunicationsOrgID,
+		},
+		{
+			name:           "not_found",
+			organizationID: "missing-org",
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			server := newOrganizationCommunicationsAPIServer(t)
+			t.Cleanup(server.Close)
+
+			testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+				Query:  true,
+				Config: announcementBannerQueryConfigForOrganization(tc.organizationID),
+				QueryResultChecks: []querycheck.QueryResultCheck{
+					querycheck.ExpectLength("ona_announcement_banner.all", 0),
+				},
+			}))
+		})
+	}
+}
+
 func announcementBannerQueryConfig() string {
-	return `
+	return announcementBannerQueryConfigForOrganization(organizationCommunicationsOrgID)
+}
+
+func announcementBannerQueryConfigForOrganization(organizationID string) string {
+	return fmt.Sprintf(`
 list "ona_announcement_banner" "all" {
   provider         = ona
   include_resource = true
 
   config {
-    organization_id = "org-1"
+    organization_id = %[1]q
   }
 }
-`
+`, organizationID)
 }
