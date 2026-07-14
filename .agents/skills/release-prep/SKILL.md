@@ -13,6 +13,7 @@ Use this skill when asked to prepare, review, or reason about an Ona Terraform p
 - GitHub release tags add the leading `v`, for example `v0.2.0-beta.1`.
 - `terraform-registry-manifest.json` version is the Registry manifest schema version, not the provider version.
 - Pushes to `main` run CI but do not publish. Publishing is a manual `Build main` workflow run with `publish_release=true` after the release-prep PR merges.
+- Local publishing is not supported; the publish scripts are invoked by GitHub Actions on `main`.
 
 ## Workflow
 
@@ -30,6 +31,7 @@ Use this skill when asked to prepare, review, or reason about an Ona Terraform p
 ## Guardrails
 
 - Do not publish on every merge to `main`.
+- Do not publish from release-prep branches or local workstations.
 - Do not release a version lower than an existing SemVer tag, even if that lower version has a larger run number.
 - Do not put the leading `v` in `VERSION`.
 - Do not treat prereleases as automatically selected by Terraform version ranges; users should pin beta versions explicitly.

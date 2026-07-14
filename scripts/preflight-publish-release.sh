@@ -26,18 +26,21 @@ normalize_version() {
 	printf '%s' "$version"
 }
 
+require_github_actions_main() {
+	if [[ "${GITHUB_ACTIONS:-}" != "true" ]]; then
+		die "publishing is only supported from the manual GitHub Actions release workflow"
+	fi
+	if [[ "${GITHUB_REF:-}" != "refs/heads/main" ]]; then
+		die "publishing must run from main after the release-prep PR merges, got ${GITHUB_REF:-<unset>}"
+	fi
+}
+
 validate_release_metadata() {
 	local version="$1"
-	local file_version
 
 	VERSION_FILE="${PROVIDER_DIR}/VERSION" \
 	CHANGELOG_FILE="${PROVIDER_DIR}/CHANGELOG.md" \
-		"${PROVIDER_DIR}/scripts/validate-release-version.sh" --no-tag-precedence >/dev/null
-
-	file_version="$(tr -d '[:space:]' <"${PROVIDER_DIR}/VERSION")"
-	if [[ "$version" != "v${file_version}" ]]; then
-		die "VERSION input ${version} must match ${PROVIDER_DIR}/VERSION (${file_version})"
-	fi
+		"${PROVIDER_DIR}/scripts/validate-release-version.sh" --expect-tag "$version" >/dev/null
 }
 
 require_publish_inputs() {
@@ -54,8 +57,8 @@ require_publish_inputs() {
 main() {
 	local version
 
+	require_github_actions_main
 	need_command gh
-
 	require_publish_inputs
 	version="$(normalize_version "$VERSION")"
 	validate_release_metadata "$version"

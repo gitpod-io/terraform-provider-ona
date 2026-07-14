@@ -6,6 +6,7 @@ VERSION_FILE="${VERSION_FILE:-VERSION}"
 CHANGELOG_FILE="${CHANGELOG_FILE:-CHANGELOG.md}"
 GITHUB_OUTPUT_MODE=0
 CHECK_TAG_PRECEDENCE=1
+EXPECTED_VERSION=""
 
 die() {
 	echo "::error::$*" >&2
@@ -14,7 +15,7 @@ die() {
 
 usage() {
 	cat >&2 <<'EOF'
-usage: scripts/validate-release-version.sh [--github-output] [--no-tag-precedence]
+usage: scripts/validate-release-version.sh [--github-output] [--no-tag-precedence] [--expect-version <version>] [--expect-tag <tag>]
 
 Validates that VERSION contains bare SemVer, CHANGELOG.md starts with the same
 version, and the version is greater than existing local v* Git tags.
@@ -28,6 +29,16 @@ while [[ $# -gt 0 ]]; do
 			;;
 		--no-tag-precedence)
 			CHECK_TAG_PRECEDENCE=0
+			;;
+		--expect-version)
+			[[ $# -ge 2 ]] || die "--expect-version requires a value"
+			EXPECTED_VERSION="$2"
+			shift
+			;;
+		--expect-tag)
+			[[ $# -ge 2 ]] || die "--expect-tag requires a value"
+			EXPECTED_VERSION="$2"
+			shift
 			;;
 		-h|--help)
 			usage
@@ -175,8 +186,24 @@ validate_changelog() {
 	[[ -f "$CHANGELOG_FILE" ]] || die "missing ${CHANGELOG_FILE}"
 	heading="$(grep -m1 '^## ' "$CHANGELOG_FILE" || true)"
 	[[ -n "$heading" ]] || die "${CHANGELOG_FILE} must start with a version heading"
-	[[ "$heading" =~ ^##[[:space:]]+${version}[[:space:]]+\(.+\)[[:space:]]*$ ]] || \
+	[[ "$heading" == "## ${version} ("* ]] || \
 		die "${CHANGELOG_FILE} first version heading must match ${VERSION_FILE}: expected '${version}', got '${heading}'"
+}
+
+validate_expected_version() {
+	local version="$1"
+	local expected="$EXPECTED_VERSION"
+
+	[[ -n "$expected" ]] || return 0
+
+	expected="${expected//[[:space:]]/}"
+	[[ -n "$expected" ]] || die "expected version must not be empty"
+	expected="${expected#v}"
+	validate_semver "$expected"
+
+	if [[ "$version" != "$expected" ]]; then
+		die "${VERSION_FILE} version ${version} must match expected version ${expected}"
+	fi
 }
 
 validate_tag_precedence() {
@@ -210,6 +237,7 @@ validate_tag_precedence() {
 
 version="$(read_release_version)"
 validate_changelog "$version"
+validate_expected_version "$version"
 if [[ "$CHECK_TAG_PRECEDENCE" == "1" ]]; then
 	validate_tag_precedence "$version"
 fi

@@ -23,9 +23,9 @@ environments.
   `ona` type.
 - A dedicated GPG signing key whose public key is registered in the Terraform
   Registry provider settings.
-- GitHub credentials with `contents: write` permission for
+- GitHub Actions release credentials with `contents: write` permission for
   `gitpod-io/terraform-provider-ona`.
-- Local tools: Go, Terraform, `gh`, `gpg`, `jq`, `sha256sum`, `zip`, and
+- Local verification tools: Go, Terraform, `jq`, `sha256sum`, `zip`, and
   `zipinfo`.
 
 Do not upload the private key to Terraform Registry, and do not commit exported
@@ -74,7 +74,7 @@ the existing SemVer tags.
 
 ## Local Verification
 
-Before publishing locally, run:
+Before merging a release-prep PR, run:
 
 ```shell
 make build
@@ -94,32 +94,14 @@ verifies the artifact inventory, zip contents, registry manifest, and checksums.
 
 ## Manual Publish
 
-Prefer the manual `Build main` workflow with `publish_release=true`. Use the
-local scripts only when publishing from a trusted operator workstation.
-
-Run the preflight first:
-
-```shell
-VERSION="v$(cat VERSION)" \
-RELEASE_REPOSITORY=gitpod-io/terraform-provider-ona \
-GPG_PRIVATE_KEY="$(cat terraform-provider-ona-private.asc)" \
-GPG_FINGERPRINT="<fingerprint>" \
-scripts/preflight-publish-release.sh
-```
-
-Publish the GitHub release:
-
-```shell
-VERSION="v$(cat VERSION)" \
-RELEASE_REPOSITORY=gitpod-io/terraform-provider-ona \
-GPG_PRIVATE_KEY="$(cat terraform-provider-ona-private.asc)" \
-GPG_FINGERPRINT="<fingerprint>" \
-scripts/publish-release.sh
-```
-
-`scripts/publish-release.sh` cross-compiles the Linux provider binaries, writes
+Publish only through the manual `Build main` workflow after the release-prep PR
+merges to `main`. Start the workflow from `main` with `publish_release=true`.
+The workflow reads `VERSION`, cross-compiles the Linux provider binaries, writes
 Terraform Registry artifacts, signs `SHA256SUMS`, creates the GitHub release,
 downloads the published assets, and verifies them again.
+
+Local publishing is not supported. The publish scripts are CI entrypoints and
+fail unless GitHub Actions runs them from `refs/heads/main`.
 
 Before expecting Terraform Registry ingestion, confirm the Registry provider is
 registered and reachable:

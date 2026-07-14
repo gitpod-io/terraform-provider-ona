@@ -136,6 +136,17 @@ jobs:
       version: ${{ steps.version.outputs.version }}
       version_no_v: ${{ steps.version.outputs.version_no_v }}
     steps:
+      - name: Require main branch for publishing
+        env:
+          REF_NAME: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+
+          if [[ "$REF_NAME" != "refs/heads/main" ]]; then
+            echo "::error::Release publishing must run from main after the release-prep PR merges, got ${REF_NAME}."
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -163,6 +174,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
 
       - name: Validate publish inputs and external prerequisites
         run: scripts/preflight-publish-release.sh
@@ -179,6 +192,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
 
       - name: Read Go version
         id: go_version
