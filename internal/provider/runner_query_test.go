@@ -22,7 +22,6 @@ func TestAccRunnerQuery(t *testing.T) {
 	gcpRunner := newTestRunner("runner-3", "GCP Runner")
 	gcpRunner.Provider = v1.RunnerProvider_RUNNER_PROVIDER_GCP
 	gcpRunner.Creator.Id = "creator-2"
-	gcpRunner.RunnerManagerId = "runner-manager-1"
 	managedRunner := newTestRunner("runner-4", "Managed Runner")
 	managedRunner.Provider = v1.RunnerProvider_RUNNER_PROVIDER_MANAGED
 	devAgentRunner := newTestRunner("runner-5", "Dev Agent Runner")
