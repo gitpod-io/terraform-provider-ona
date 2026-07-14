@@ -474,6 +474,20 @@ func TestAccEnvironmentClassResourceLifecycle(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
+				ResourceName:    "ona_environment_class.test",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportStateCheck: func(states []*terraform.InstanceState) error {
+					if len(states) != 1 {
+						return fmt.Errorf("expected one imported environment class state, got %d", len(states))
+					}
+					if states[0].ID != "class-1" || states[0].Attributes["runner_id"] != "runner-1" {
+						return fmt.Errorf("structured identity imported unexpected environment class state: %#v", states[0].Attributes)
+					}
+					return nil
+				},
+			},
+			{
 				Config: testAccEnvironmentClassConfig(server.URL, "Large Updated", "100", false),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
