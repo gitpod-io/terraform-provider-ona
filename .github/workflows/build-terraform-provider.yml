@@ -55,7 +55,7 @@ jobs:
 
       - name: Read Go version
         id: go_version
-        run: echo "version=$(awk '!/^[[:space:]]*#/ && NF { print; exit }' dev/go/go.version)" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/read-go-version
 
       - name: Setup Go
         uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
@@ -118,7 +118,7 @@ jobs:
 
       - name: Read Go version
         id: go_version
-        run: echo "version=$(awk '!/^[[:space:]]*#/ && NF { print; exit }' dev/go/go.version)" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/read-go-version
 
       - name: Setup Go
         uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
@@ -200,7 +200,7 @@ jobs:
 
       - name: Read Go version
         id: go_version
-        run: echo "version=$(awk '!/^[[:space:]]*#/ && NF { print; exit }' dev/go/go.version)" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/read-go-version
 
       - name: Generate GitHub App token
         id: generate-token
