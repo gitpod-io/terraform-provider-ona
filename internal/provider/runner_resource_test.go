@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"regexp"
+	"slices"
 	"sync"
 	"testing"
 
@@ -58,6 +59,20 @@ func TestAccRunnerResourceLifecycle(t *testing.T) {
 				ResourceName:      "ona_runner.test",
 				ImportState:       true,
 				ImportStateVerify: true,
+			},
+			{
+				ResourceName:    "ona_runner.test",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportStateCheck: func(states []*terraform.InstanceState) error {
+					if len(states) != 1 {
+						return fmt.Errorf("expected one imported runner state, got %d", len(states))
+					}
+					if states[0].ID != "runner-1" || states[0].Attributes["runner_id"] != "runner-1" {
+						return fmt.Errorf("structured identity imported unexpected runner state: %#v", states[0].Attributes)
+					}
+					return nil
+				},
 			},
 			{
 				Config: testAccRunnerResourceConfig(server.URL, "Frankfurt Runner Updated", "debug"),
@@ -398,6 +413,16 @@ func (s *fakeRunnerService) ListRunners(ctx context.Context, req *connect.Reques
 
 	runners := make([]*v1.Runner, 0, len(s.runners))
 	for _, runner := range s.runners {
+		filter := req.Msg.GetFilter()
+		if len(filter.GetCreatorIds()) > 0 && !slices.Contains(filter.GetCreatorIds(), runner.GetCreator().GetId()) {
+			continue
+		}
+		if len(filter.GetKinds()) > 0 && !slices.Contains(filter.GetKinds(), runner.GetKind()) {
+			continue
+		}
+		if len(filter.GetProviders()) > 0 && !slices.Contains(filter.GetProviders(), runner.GetProvider()) {
+			continue
+		}
 		runners = append(runners, cloneRunner(runner))
 	}
 	return connect.NewResponse(&v1.ListRunnersResponse{Runners: runners}), nil
@@ -468,6 +493,13 @@ func (s *fakeRunnerService) tokenCreated(token string) bool {
 		}
 	}
 	return false
+}
+
+func (s *fakeRunnerService) tokenCount() int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	return len(s.tokens)
 }
 
 func newTestRunner(id string, name string) *v1.Runner {

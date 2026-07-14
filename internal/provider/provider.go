@@ -165,7 +165,9 @@ func (p *OnaProvider) EphemeralResources(ctx context.Context) []func() ephemeral
 // ListResources returns the managed-resource discovery implementations
 // registered by the provider. Resource-specific PRs add constructors here.
 func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResource {
-	return nil
+	return []func() list.ListResource{
+		runner.NewRunnerListResource,
+	}
 }
 
 func pathRoot(name string) path.Path {
