@@ -76,7 +76,14 @@ func TestAccWarmPoolResourceLifecycle(t *testing.T) {
 			{
 				ResourceName:      "ona_warm_pool.api",
 				ImportState:       true,
+				ImportStateCheck:  checkWarmPoolImportedState,
 				ImportStateVerify: true,
+			},
+			{
+				ResourceName:     "ona_warm_pool.api",
+				ImportState:      true,
+				ImportStateKind:  resource.ImportBlockWithResourceIdentity,
+				ImportStateCheck: checkWarmPoolImportedState,
 			},
 			{
 				Config: testAccWarmPoolResourceConfig(server.URL, 1, 3),
@@ -118,6 +125,33 @@ func TestAccWarmPoolResourceLifecycle(t *testing.T) {
 			},
 		},
 	})
+}
+
+func checkWarmPoolImportedState(states []*terraform.InstanceState) error {
+	if len(states) != 1 {
+		return fmt.Errorf("expected one imported warm pool state, got %d", len(states))
+	}
+
+	expected := []struct {
+		name  string
+		value string
+	}{
+		{name: "id", value: "warm-pool-1"},
+		{name: "project_id", value: "project-1"},
+		{name: "environment_class_id", value: "class-1"},
+		{name: "min_size", value: "0"},
+		{name: "max_size", value: "5"},
+		{name: "organization_id", value: "org-1"},
+		{name: "runner_id", value: "runner-1"},
+		{name: "snapshot_id", value: "snapshot-1"},
+	}
+	for _, attribute := range expected {
+		if actual := states[0].Attributes[attribute.name]; actual != attribute.value {
+			return fmt.Errorf("expected imported %s to be %q, got %q", attribute.name, attribute.value, actual)
+		}
+	}
+
+	return nil
 }
 
 func TestAccWarmPoolCollectionDataSourcePaginationSorting(t *testing.T) {
