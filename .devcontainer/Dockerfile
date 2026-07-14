@@ -7,6 +7,7 @@ ENV GOPATH=$HOME/go-packages
 ENV PATH=$GOPATH/bin:$PATH
 
 ARG TERRAFORM_VERSION=1.15.8-1
+ARG GO_VERSION=1.25.12
 ARG GOLANGCI_LINT_VERSION=v2.12.2
 
 RUN apt-get update \
@@ -15,6 +16,7 @@ RUN apt-get update \
         curl \
         gnupg \
         make \
+        shellcheck \
     && install -d -m 0755 /etc/apt/keyrings \
     && curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /etc/apt/keyrings/hashicorp-archive-keyring.gpg \
     && chmod a+r /etc/apt/keyrings/hashicorp-archive-keyring.gpg \
@@ -23,6 +25,12 @@ RUN apt-get update \
     && apt-get update \
     && apt-get install -y --no-install-recommends terraform=${TERRAFORM_VERSION} \
     && rm -rf /var/lib/apt/lists/*
+
+RUN arch="$(dpkg --print-architecture)" \
+    && curl -fsSL -o /tmp/go.tar.gz "https://go.dev/dl/go${GO_VERSION}.linux-${arch}.tar.gz" \
+    && rm -rf /usr/local/go \
+    && tar -C /usr/local -xzf /tmp/go.tar.gz \
+    && rm /tmp/go.tar.gz
 
 RUN GOBIN=/usr/local/bin \
     go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} \

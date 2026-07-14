@@ -20,8 +20,13 @@ fmt-go:
 fmt-terraform:
 	terraform fmt -recursive examples/ dev/local-devloop/
 
-lint:
+lint: lint-go lint-sh
+
+lint-go:
 	golangci-lint run
+
+lint-sh:
+	find . -path './.git' -prune -o -type f -name '*.sh' -exec shellcheck {} +
 
 generate:
 	cd tools; GOWORK=off go generate tools.go
@@ -37,4 +42,4 @@ test-acc:
 release-snapshot:
 	VERSION=$(RELEASE_SNAPSHOT_VERSION) ./scripts/build-release-artifacts.sh
 
-.PHONY: fmt fmt-go fmt-terraform lint test test-unit test-acc build install-dependencies install generate release-snapshot
+.PHONY: fmt fmt-go fmt-terraform lint lint-go lint-sh test test-unit test-acc build install-dependencies install generate release-snapshot
