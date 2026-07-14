@@ -40,6 +40,16 @@ output "managed_project_id" {
   value       = ona_project.devloop.id
 }
 
+output "managed_webhook_id" {
+  description = "ID of the webhook managed by this module."
+  value       = ona_webhook.devloop.id
+}
+
+output "managed_webhook_url" {
+  description = "Generated URL of the webhook managed by this module."
+  value       = ona_webhook.devloop.url
+}
+
 output "managed_warm_pool_id" {
   description = "ID of the warm pool managed by this module."
   value       = ona_warm_pool.devloop.id

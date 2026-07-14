@@ -113,6 +113,33 @@ resource "ona_project" "devloop" {
   }
 }
 
+resource "ona_webhook" "devloop" {
+  name           = "Terraform Provider Dev Loop"
+  description    = "Webhook created by the Terraform provider local dev loop."
+  type           = "repository"
+  scm_provider   = "github"
+  secret_version = var.webhook_secret_version
+
+  repository_scopes = [
+    {
+      host  = "github.com"
+      owner = "gitpod-io"
+      name  = "terraform-provider-ona"
+    }
+  ]
+}
+
+ephemeral "ona_webhook_secret" "devloop" {
+  webhook_id = ona_webhook.devloop.id
+}
+
+module "webhook_secret_writer" {
+  source = "./modules/webhook-secret-writer"
+
+  webhook_secret         = ephemeral.ona_webhook_secret.devloop.secret
+  webhook_secret_version = var.webhook_secret_version
+}
+
 resource "ona_warm_pool" "devloop" {
   project_id           = ona_project.devloop.id
   environment_class_id = ona_environment_class.devloop.id

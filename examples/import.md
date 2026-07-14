@@ -54,6 +54,7 @@ Direct `terraform import` uses these resource IDs:
 | `ona_group` | Group ID |
 | `ona_group_membership` | `group_id/service_account_id` |
 | `ona_organization_role_assignment` | `group_id/organization_id/role` |
+| `ona_webhook` | Webhook ID |
 
 ## Native Runner Import
 
