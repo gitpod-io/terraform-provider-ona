@@ -19,6 +19,7 @@ import (
 
 var _ resource.Resource = &WarmPoolResource{}
 var _ resource.ResourceWithConfigure = &WarmPoolResource{}
+var _ resource.ResourceWithIdentity = &WarmPoolResource{}
 var _ resource.ResourceWithImportState = &WarmPoolResource{}
 var _ resource.ResourceWithValidateConfig = &WarmPoolResource{}
 
@@ -96,6 +97,7 @@ func (r *WarmPoolResource) Create(ctx context.Context, req resource.CreateReques
 	}
 
 	data.ID = types.StringValue(result.Msg.GetWarmPool().GetId())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, IdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -150,6 +152,7 @@ func (r *WarmPoolResource) Read(ctx context.Context, req resource.ReadRequest, r
 
 	data = WarmPoolModel{}
 	populateWarmPoolModel(&data, warmPool)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, IdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -192,6 +195,7 @@ func (r *WarmPoolResource) Update(ctx context.Context, req resource.UpdateReques
 	planned := data
 	populateWarmPoolModel(&data, warmPool)
 	preserveWarmPoolPlannedInputs(&data, planned)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, IdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -226,7 +230,7 @@ func (r *WarmPoolResource) Delete(ctx context.Context, req resource.DeleteReques
 }
 
 func (r *WarmPoolResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("id"), req, resp)
 }
 
 func (r *WarmPoolResource) getWarmPool(ctx context.Context, id string) (*v1.WarmPool, error) {
