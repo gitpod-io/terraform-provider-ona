@@ -10,8 +10,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfversion"
 )
 
-// QueryTestCase creates a hermetic Terraform 1.14+ Query test case for the
-// provider package's fake API servers.
+// QueryTestCase creates the shared hermetic Terraform 1.14+ test case used by
+// resource-specific Query tests. Callers supply their fake API server and
+// Query step while this helper provides the common provider configuration.
 func QueryTestCase(host string, step testresource.TestStep) testresource.TestCase {
 	return testresource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
