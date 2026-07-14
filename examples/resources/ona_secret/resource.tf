@@ -34,10 +34,13 @@ resource "ona_secret" "registry" {
 }
 
 resource "ona_secret" "ssh_config" {
-  scope     = "user"
-  user_id   = "00000000-0000-0000-0000-000000000000"
-  name      = "SSH_CONFIG"
-  value     = var.secret_value
+  scope   = "user"
+  user_id = "00000000-0000-0000-0000-000000000000"
+  name    = "SSH_CONFIG"
+
+  value         = var.secret_value
+  value_version = "2026-07-10"
+
   file_path = "/home/ona/.ssh/config"
 }
 
