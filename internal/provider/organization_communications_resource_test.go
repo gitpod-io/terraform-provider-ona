@@ -152,6 +152,43 @@ func TestAccAnnouncementBannerResourceIdentityImportMatchesLegacy(t *testing.T) 
 	})
 }
 
+func TestAccTermsOfServiceImportStateIdentity(t *testing.T) {
+	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	server := newOrganizationCommunicationsAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() { testAccPreCheck(t) },
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBelow(tfversion.Version1_12_0),
+		},
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccTermsOfServiceConfig(server.URL, true, "Importable terms"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_terms_of_service.org", "id", organizationCommunicationsOrgID),
+					resource.TestCheckResourceAttr("ona_terms_of_service.org", "enabled", "true"),
+					resource.TestCheckResourceAttr("ona_terms_of_service.org", "markdown", "Importable terms"),
+					resource.TestCheckResourceAttr("ona_terms_of_service.org", "current_version_id", "terms-version-1"),
+					resource.TestCheckResourceAttr("ona_terms_of_service.org", "current_version", "1"),
+				),
+			},
+			{
+				ResourceName:    "ona_terms_of_service.org",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithID,
+				ImportStateId:   "current",
+			},
+			{
+				ResourceName:    "ona_terms_of_service.org",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
 func testAccOrganizationCommunicationsConfig(host string, bannerEnabled bool, bannerMessage string, termsEnabled bool, termsMarkdown string) string {
 	return fmt.Sprintf(`
 provider "ona" {
@@ -183,6 +220,20 @@ resource "ona_announcement_banner" "home" {
   message = %[3]q
 }
 `, host, enabled, message)
+}
+
+func testAccTermsOfServiceConfig(host string, enabled bool, markdown string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_terms_of_service" "org" {
+  enabled  = %[2]t
+  markdown = %[3]q
+}
+`, host, enabled, markdown)
 }
 
 func testCheckTermsVersionCount(server *organizationCommunicationsAPIServer, expected int) resource.TestCheckFunc {
