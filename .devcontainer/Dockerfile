@@ -1,10 +1,17 @@
-FROM mcr.microsoft.com/devcontainers/go:2.1-1.25-bookworm
+# The official Go image tracks the latest Go 1.25 patch, so it is our toolchain source.
+FROM golang:1.25-bookworm
+ENV DEVCONTAINER_RETRIGGER=0
+
+COPY dev/go/go.version /tmp/go.version
+RUN test "$(go env GOVERSION | sed 's/^go//')" = "$(awk '!/^[[:space:]]*#/ && NF { print; exit }' /tmp/go.version)" \
+    && rm /tmp/go.version
 
 USER root
 
 ENV HOME=/root
 ENV GOPATH=$HOME/go-packages
-ENV PATH=$GOPATH/bin:$PATH
+ENV GOROOT=/usr/local/go
+ENV PATH=/usr/local/go/bin:$GOPATH/bin:$PATH
 
 ARG TERRAFORM_VERSION=1.15.8-1
 ARG GOLANGCI_LINT_VERSION=v2.12.2
@@ -14,7 +21,10 @@ RUN apt-get update \
         ca-certificates \
         curl \
         gnupg \
+        jq \
         make \
+        shellcheck \
+        unzip \
     && install -d -m 0755 /etc/apt/keyrings \
     && curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /etc/apt/keyrings/hashicorp-archive-keyring.gpg \
     && chmod a+r /etc/apt/keyrings/hashicorp-archive-keyring.gpg \

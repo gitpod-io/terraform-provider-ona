@@ -1,7 +1,7 @@
 {
   "name": "Terraform Provider for Ona",
   "build": {
-    "context": ".",
+    "context": "..",
     "dockerfile": "Dockerfile"
   },
   "mounts": [
