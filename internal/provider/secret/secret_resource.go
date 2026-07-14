@@ -297,6 +297,7 @@ func (r *Resource) ImportState(ctx context.Context, req resource.ImportStateRequ
 		default:
 			resp.Diagnostics.AddError("Invalid Secret Identity", "scope must be organization, project, user, or service_account.")
 		}
+		resp.Diagnostics.Append(resp.Identity.Set(ctx, identity)...)
 		return
 	}
 	importState, diags := parseImportID(req.ID)
@@ -332,6 +333,7 @@ func (r *Resource) ImportState(ctx context.Context, req resource.ImportStateRequ
 			return
 		}
 		identity.OrganizationID = types.StringValue(authenticated.GetOrganizationId())
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("organization_id"), identity.OrganizationID)...)
 	case scopeProject:
 		identity.ProjectID = types.StringValue(importState.ProjectID)
 	case scopeUser:
