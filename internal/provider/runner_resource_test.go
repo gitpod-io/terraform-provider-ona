@@ -61,6 +61,20 @@ func TestAccRunnerResourceLifecycle(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
+				ResourceName:    "ona_runner.test",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportStateCheck: func(states []*terraform.InstanceState) error {
+					if len(states) != 1 {
+						return fmt.Errorf("expected one imported runner state, got %d", len(states))
+					}
+					if states[0].ID != "runner-1" || states[0].Attributes["runner_id"] != "runner-1" {
+						return fmt.Errorf("structured identity imported unexpected runner state: %#v", states[0].Attributes)
+					}
+					return nil
+				},
+			},
+			{
 				Config: testAccRunnerResourceConfig(server.URL, "Frankfurt Runner Updated", "debug"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_runner.test", "id", "runner-1"),
