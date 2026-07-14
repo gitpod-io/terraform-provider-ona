@@ -177,6 +177,7 @@ func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResou
 	return []func() list.ListResource{
 		accesscontrol.NewGroupListResource,
 		accesscontrol.NewGroupMembershipListResource,
+		accesscontrol.NewOrganizationRoleAssignmentListResource,
 		organization.NewAnnouncementBannerListResource,
 		organization.NewCustomDomainListResource,
 		organization.NewOIDCConfigListResource,

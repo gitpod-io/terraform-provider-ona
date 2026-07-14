@@ -7,7 +7,6 @@ import (
 	"context"
 	"fmt"
 	"sort"
-	"strings"
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
@@ -25,6 +24,7 @@ import (
 
 var _ resource.Resource = &OrganizationRoleAssignmentResource{}
 var _ resource.ResourceWithConfigure = &OrganizationRoleAssignmentResource{}
+var _ resource.ResourceWithIdentity = &OrganizationRoleAssignmentResource{}
 var _ resource.ResourceWithImportState = &OrganizationRoleAssignmentResource{}
 var _ resource.ResourceWithValidateConfig = &OrganizationRoleAssignmentResource{}
 
@@ -146,6 +146,7 @@ func (r *OrganizationRoleAssignmentResource) Create(ctx context.Context, req res
 	}
 
 	populateOrganizationRoleAssignmentModel(&data, result.Msg.GetAssignment())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, OrganizationRoleAssignmentIdentityModel{GroupID: data.GroupID, OrganizationID: types.StringValue(organizationID), Role: data.Role})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -177,6 +178,7 @@ func (r *OrganizationRoleAssignmentResource) Read(ctx context.Context, req resou
 
 	data = OrganizationRoleAssignmentModel{}
 	populateOrganizationRoleAssignmentModel(&data, assignment)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, OrganizationRoleAssignmentIdentityModel{GroupID: data.GroupID, OrganizationID: types.StringValue(organizationID), Role: data.Role})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -209,9 +211,24 @@ func (r *OrganizationRoleAssignmentResource) Delete(ctx context.Context, req res
 }
 
 func (r *OrganizationRoleAssignmentResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	parts := strings.Split(req.ID, "/")
-	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
-		resp.Diagnostics.AddError("Invalid Import ID", "Use group_id/role to import an Ona organization role assignment.")
+	if req.ID == "" {
+		var identity OrganizationRoleAssignmentIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		if _, ok := roleToAPI[identity.Role.ValueString()]; !ok {
+			addInvalidRoleDiagnostic(path.Root("role"), identity.Role.ValueString(), &resp.Diagnostics)
+			return
+		}
+		setImportString(ctx, resp, "group_id", identity.GroupID.ValueString())
+		setImportString(ctx, resp, "role", identity.Role.ValueString())
+		resp.Diagnostics.Append(resp.Identity.Set(ctx, identity)...)
+		return
+	}
+	parts, diags := splitImportID(req.ID, 2, "group_id/role")
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 	if _, ok := roleToAPI[parts[1]]; !ok {

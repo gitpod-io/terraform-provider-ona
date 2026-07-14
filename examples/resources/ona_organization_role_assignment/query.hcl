@@ -1,0 +1,6 @@
+variable "organization_id" { type = string }
+list "ona_organization_role_assignment" "organization" {
+  provider = ona
+  include_resource = true
+  config { organization_id = var.organization_id }
+}
