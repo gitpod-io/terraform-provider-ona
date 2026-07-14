@@ -464,7 +464,7 @@ func TestPrebuildConfigurationFromModel(t *testing.T) {
 			},
 		},
 		{
-			Name: "allows_unknown_environment_class_ids",
+			Name: "terraform_validate_allows_unknown_environment_class_ids",
 			Input: []PrebuildConfigurationModel{{
 				Enabled: types.BoolValue(true),
 				EnvironmentClassIDs: types.SetValueMust(types.StringType, []attr.Value{
@@ -511,7 +511,7 @@ func TestPrebuildConfigurationFromModel(t *testing.T) {
 			},
 		},
 		{
-			Name: "allows_unknown_executor_id",
+			Name: "terraform_validate_allows_unknown_executor_id",
 			Input: []PrebuildConfigurationModel{{
 				Enabled:               types.BoolValue(true),
 				EnvironmentClassIDs:   types.SetNull(types.StringType),
