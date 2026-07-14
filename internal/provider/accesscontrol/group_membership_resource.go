@@ -18,6 +18,7 @@ import (
 
 var _ resource.Resource = &GroupMembershipResource{}
 var _ resource.ResourceWithConfigure = &GroupMembershipResource{}
+var _ resource.ResourceWithIdentity = &GroupMembershipResource{}
 var _ resource.ResourceWithImportState = &GroupMembershipResource{}
 
 func NewGroupMembershipResource() resource.Resource {
@@ -98,6 +99,7 @@ func (r *GroupMembershipResource) Create(ctx context.Context, req resource.Creat
 	}
 
 	populateGroupMembershipModel(&data, result.Msg.GetMember())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, GroupMembershipIdentityModel{GroupID: data.GroupID, ServiceAccountID: data.ServiceAccountID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -123,6 +125,7 @@ func (r *GroupMembershipResource) Read(ctx context.Context, req resource.ReadReq
 
 	data = GroupMembershipModel{}
 	populateGroupMembershipModel(&data, member)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, GroupMembershipIdentityModel{GroupID: data.GroupID, ServiceAccountID: data.ServiceAccountID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -155,6 +158,17 @@ func (r *GroupMembershipResource) Delete(ctx context.Context, req resource.Delet
 }
 
 func (r *GroupMembershipResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	if req.ID == "" {
+		var identity GroupMembershipIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		setImportString(ctx, resp, "group_id", identity.GroupID.ValueString())
+		setImportString(ctx, resp, "service_account_id", identity.ServiceAccountID.ValueString())
+		setImportString(ctx, resp, "principal", principalServiceAccount)
+		return
+	}
 	parts, diags := splitImportID(req.ID, 2, "group_id/service_account_id")
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
