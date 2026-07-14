@@ -157,6 +157,25 @@ func TestRepositoryFromInitializer(t *testing.T) {
 	}
 }
 
+func TestUnsupportedProjectRepositoryDiagnosticClassification(t *testing.T) {
+	t.Parallel()
+
+	unsupported := diag.Diagnostics{unsupportedProjectRepositoryDiagnostic{}}
+	if !isUnsupportedProjectRepository(unsupported) {
+		t.Fatal("expected unsupported repository diagnostic to be classified as an intentional exclusion")
+	}
+
+	other := diag.Diagnostics{diag.NewErrorDiagnostic("Invalid Project Mapping", "creator conversion failed")}
+	if isUnsupportedProjectRepository(other) {
+		t.Fatal("expected unrelated mapping diagnostic not to be classified as an intentional exclusion")
+	}
+
+	mixed := append(unsupported, other...)
+	if isUnsupportedProjectRepository(mixed) {
+		t.Fatal("expected mixed mapping diagnostics not to be classified as an intentional exclusion")
+	}
+}
+
 func TestProjectEnvironmentClassesFromModel(t *testing.T) {
 	t.Parallel()
 

@@ -9,6 +9,7 @@ import (
 	"fmt"
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/list"
 	listschema "github.com/hashicorp/terraform-plugin-framework/list/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -65,8 +66,12 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 					return
 				}
 				model, mappingDiags := projectModelFromProto(ctx, remote)
-				if mappingDiags.HasError() {
+				if isUnsupportedProjectRepository(mappingDiags) {
 					continue
+				}
+				if mappingDiags.HasError() {
+					push(list.ListResult{Diagnostics: mappingDiags})
+					return
 				}
 				item := req.NewListResult(ctx)
 				item.DisplayName = remote.GetMetadata().GetName()
@@ -88,4 +93,12 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 			}
 		}
 	}
+}
+
+func isUnsupportedProjectRepository(diags diag.Diagnostics) bool {
+	if len(diags) != 1 {
+		return false
+	}
+	_, ok := diags[0].(unsupportedProjectRepositoryDiagnostic)
+	return ok
 }
