@@ -1,12 +1,4 @@
-variable "runner_id" {
-  type = string
-}
-
-list "ona_scm_integration" "runner" {
+list "ona_scm_integration" "all" {
   provider         = ona
   include_resource = true
-
-  config {
-    runner_ids = [var.runner_id]
-  }
 }
