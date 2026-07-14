@@ -32,6 +32,40 @@ Build provider behavior that is correct under Terraform's plan/apply model, not 
 7. Update examples and docs sources when users need new Terraform configuration.
 8. Run generation and verification commands that match the change.
 
+## Terraform Query
+
+Terraform Query discovers existing managed objects through provider-defined
+list resources. A query-enabled managed resource needs all of these pieces:
+
+1. Implement `resource.ResourceWithIdentity` with the smallest immutable key
+   that uniquely identifies the remote object. Set that identity after
+   successful Create, Read, and Update operations.
+2. Keep `resource.ResourceWithImportState`. Continue accepting the existing
+   string import ID and also accept structured identity imports so
+   Query-generated import blocks seed the ordinary state fields used by Read.
+3. Implement and register a matching `list.ListResource`, and add its
+   constructor to `OnaProvider.ListResources`. Provider configuration must set
+   `ConfigureResponse.ListResourceData` so list resources receive the same
+   authenticated client as managed resources.
+4. Treat `list.ListRequest.IncludeResource` as a Terraform protocol request,
+   not an Ona API field. Always return identity and display name. Populate
+   `ListResult.Resource` from the same API-to-model mapping used by Read only
+   when `IncludeResource` is true.
+5. Respect `ListRequest.Limit`, paginate collection and parent lookups, emit
+   deterministic results, and return API or mapping failures as diagnostics
+   rather than incomplete success.
+6. Never call token-issuing or secret-value endpoints during discovery. Keep
+   write-only and unrecoverable values null in listed resource models, even if
+   an API response includes them.
+7. Add a `.tfquery.hcl` source example, generated list-resource docs, focused
+   mapping/import unit tests, and a hermetic Terraform 1.14+ Query acceptance
+   test that checks identity, display name, filters, limits, resource values,
+   and secret omission where applicable.
+
+Shared list helpers belong in `internal/provider/listutil`; API-specific
+discovery stays in the resource package or an `internal/client` wrapper. Run
+`make generate` after adding list schemas or examples.
+
 ## Golden Rules
 
 - Persist ID fields immediately after a create API succeeds, before follow-up calls that can fail.
