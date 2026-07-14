@@ -4,6 +4,7 @@
 package provider
 
 import (
+	"fmt"
 	"testing"
 
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
@@ -22,7 +23,7 @@ func TestAccTermsOfServiceQuery(t *testing.T) {
 	server.service.versions = []*v1.TermsOfServiceVersion{version}
 
 	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
-		Query: true, Config: termsOfServiceQueryConfig(),
+		Query: true, Config: termsOfServiceQueryConfig(organizationCommunicationsOrgID),
 		QueryResultChecks: []querycheck.QueryResultCheck{
 			querycheck.ExpectLength("ona_terms_of_service.all", 1),
 			querycheck.ExpectIdentity("ona_terms_of_service.all", map[string]knownvalue.Check{
@@ -37,12 +38,52 @@ func TestAccTermsOfServiceQuery(t *testing.T) {
 	}))
 }
 
-func termsOfServiceQueryConfig() string {
-	return `
+func TestAccTermsOfServiceQueryExcludesUnconfigured(t *testing.T) {
+	tests := []struct {
+		name           string
+		organizationID string
+		configure      func(*organizationCommunicationsAPIServer)
+	}{
+		{
+			name:           "disabled without current version",
+			organizationID: organizationCommunicationsOrgID,
+			configure: func(server *organizationCommunicationsAPIServer) {
+				server.service.terms = &v1.TermsOfService{
+					OrganizationId: organizationCommunicationsOrgID,
+					Enabled:        false,
+				}
+			},
+		},
+		{
+			name:           "not found",
+			organizationID: "missing-org",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			server := newOrganizationCommunicationsAPIServer(t)
+			t.Cleanup(server.Close)
+			if test.configure != nil {
+				test.configure(server)
+			}
+
+			testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+				Query: true, Config: termsOfServiceQueryConfig(test.organizationID),
+				QueryResultChecks: []querycheck.QueryResultCheck{
+					querycheck.ExpectLength("ona_terms_of_service.all", 0),
+				},
+			}))
+		})
+	}
+}
+
+func termsOfServiceQueryConfig(organizationID string) string {
+	return fmt.Sprintf(`
 list "ona_terms_of_service" "all" {
   provider         = ona
   include_resource = true
-  config { organization_id = "org-1" }
+  config { organization_id = %[1]q }
 }
-`
+`, organizationID)
 }
