@@ -70,7 +70,7 @@ var subjectObjectAttributeTypes = map[string]attr.Type{
 
 func projectCreateRequest(ctx context.Context, data ProjectModel) (*v1.CreateProjectRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
-	prebuild, prebuildDiags := prebuildConfigurationFromModel(ctx, data.Prebuild, path.Root("prebuild_configuration"))
+	prebuild, prebuildDiags := prebuildConfigurationFromModel(ctx, data.Prebuild, path.Root("prebuild_configuration"), false)
 	diags.Append(prebuildDiags...)
 	if diags.HasError() {
 		return nil, diags
@@ -105,7 +105,7 @@ func projectUpdateRequest(ctx context.Context, plan ProjectModel, prior ProjectM
 		req.AutomationsFilePath = ptr("")
 	}
 
-	prebuild, prebuildDiags := prebuildConfigurationFromModel(ctx, plan.Prebuild, path.Root("prebuild_configuration"))
+	prebuild, prebuildDiags := prebuildConfigurationFromModel(ctx, plan.Prebuild, path.Root("prebuild_configuration"), false)
 	diags.Append(prebuildDiags...)
 	if len(plan.Prebuild) > 0 {
 		req.PrebuildConfiguration = prebuild
@@ -220,7 +220,7 @@ func projectEnvironmentClassesFromModel(values []EnvironmentClassModel, root pat
 	return classes, diags
 }
 
-func prebuildConfigurationFromModel(ctx context.Context, values []PrebuildConfigurationModel, root path.Path) (*v1.ProjectPrebuildConfiguration, diag.Diagnostics) {
+func prebuildConfigurationFromModel(ctx context.Context, values []PrebuildConfigurationModel, root path.Path, allowUnknown bool) (*v1.ProjectPrebuildConfiguration, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	if len(values) == 0 {
 		return nil, diags
@@ -247,16 +247,23 @@ func prebuildConfigurationFromModel(ctx context.Context, values []PrebuildConfig
 
 	var environmentClassIDs []string
 	if !value.EnvironmentClassIDs.IsNull() && !value.EnvironmentClassIDs.IsUnknown() {
-		for _, element := range value.EnvironmentClassIDs.Elements() {
-			environmentClassID, ok := element.(types.String)
-			if !ok {
-				diags.AddAttributeError(root.AtName("environment_class_ids"), "Invalid Environment Class ID", "environment_class_ids must contain string values.")
+		if allowUnknown {
+			for _, element := range value.EnvironmentClassIDs.Elements() {
+				environmentClassID, ok := element.(types.String)
+				if !ok {
+					diags.AddAttributeError(root.AtName("environment_class_ids"), "Invalid Environment Class ID", "environment_class_ids must contain string values.")
+					return nil, diags
+				}
+				if environmentClassID.IsUnknown() || environmentClassID.IsNull() {
+					continue
+				}
+				environmentClassIDs = append(environmentClassIDs, environmentClassID.ValueString())
+			}
+		} else {
+			diags.Append(value.EnvironmentClassIDs.ElementsAs(ctx, &environmentClassIDs, false)...)
+			if diags.HasError() {
 				return nil, diags
 			}
-			if environmentClassID.IsUnknown() || environmentClassID.IsNull() {
-				continue
-			}
-			environmentClassIDs = append(environmentClassIDs, environmentClassID.ValueString())
 		}
 		sort.Strings(environmentClassIDs)
 	}
@@ -292,14 +299,14 @@ func prebuildConfigurationFromModel(ctx context.Context, values []PrebuildConfig
 		return nil, diags
 	}
 	if len(value.Executor) == 1 {
-		if value.Executor[0].ID.IsUnknown() || value.Executor[0].Principal.IsUnknown() {
+		if allowUnknown && (value.Executor[0].ID.IsUnknown() || value.Executor[0].Principal.IsUnknown()) {
 			return cfg, diags
 		}
-		if value.Executor[0].ID.IsNull() || value.Executor[0].ID.ValueString() == "" {
+		if value.Executor[0].ID.IsNull() || value.Executor[0].ID.IsUnknown() || value.Executor[0].ID.ValueString() == "" {
 			diags.AddAttributeError(root.AtName("executor").AtListIndex(0).AtName("id"), "Missing Prebuild Executor ID", "Executor id must not be empty.")
 			return nil, diags
 		}
-		if value.Executor[0].Principal.IsNull() {
+		if value.Executor[0].Principal.IsNull() || value.Executor[0].Principal.IsUnknown() {
 			diags.AddAttributeError(root.AtName("executor").AtListIndex(0).AtName("principal"), "Missing Prebuild Executor Principal", "Supported values are user and service_account.")
 			return nil, diags
 		}
