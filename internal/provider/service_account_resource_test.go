@@ -17,8 +17,12 @@ import (
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+	"github.com/hashicorp/terraform-plugin-testing/tfversion"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -84,6 +88,68 @@ func TestAccServiceAccountResourceLifecycle(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccServiceAccountResourceImportState(t *testing.T) {
+	t.Parallel()
+
+	t.Run("legacy string", func(t *testing.T) {
+		server := newServiceAccountAPIServer(t)
+		t.Cleanup(server.Close)
+		server.service.seed(newTestServiceAccount(serviceAccountID1, "Imported Account", "Managed by Terraform"))
+
+		resource.UnitTest(t, resource.TestCase{
+			PreCheck:                 func() {},
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config:           testAccServiceAccountResourceConfig(server.URL, "Imported Account", "Managed by Terraform"),
+					ResourceName:     "ona_service_account.test",
+					ImportState:      true,
+					ImportStateId:    serviceAccountID1,
+					ImportStateKind:  resource.ImportCommandWithID,
+					ImportStateCheck: expectImportedServiceAccountIDs,
+				},
+			},
+		})
+	})
+
+	t.Run("structured identity", func(t *testing.T) {
+		server := newServiceAccountAPIServer(t)
+		t.Cleanup(server.Close)
+		server.service.seed(newTestServiceAccount(serviceAccountID1, "Imported Account", "Managed by Terraform"))
+
+		resource.UnitTest(t, resource.TestCase{
+			TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+				tfversion.SkipBelow(tfversion.Version1_12_0),
+			},
+			PreCheck:                 func() {},
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: testAccServiceAccountResourceConfigWithIdentityImport(server.URL, "Imported Account", "Managed by Terraform"),
+					ConfigStateChecks: []statecheck.StateCheck{
+						statecheck.ExpectKnownValue("ona_service_account.test", tfjsonpath.New("id"), knownvalue.StringExact(serviceAccountID1)),
+						statecheck.ExpectKnownValue("ona_service_account.test", tfjsonpath.New("service_account_id"), knownvalue.StringExact(serviceAccountID1)),
+						statecheck.ExpectIdentityValueMatchesStateAtPath("ona_service_account.test", tfjsonpath.New("service_account_id"), tfjsonpath.New("id")),
+						statecheck.ExpectIdentityValueMatchesStateAtPath("ona_service_account.test", tfjsonpath.New("service_account_id"), tfjsonpath.New("service_account_id")),
+					},
+				},
+			},
+		})
+	})
+}
+
+func expectImportedServiceAccountIDs(states []*terraform.InstanceState) error {
+	if len(states) != 1 {
+		return fmt.Errorf("imported state count = %d, want 1", len(states))
+	}
+	for _, attribute := range []string{"id", "service_account_id"} {
+		if got := states[0].Attributes[attribute]; got != serviceAccountID1 {
+			return fmt.Errorf("imported %s = %q, want %q", attribute, got, serviceAccountID1)
+		}
+	}
+	return nil
 }
 
 func TestAccServiceAccountTokenEphemeralResource(t *testing.T) {
@@ -188,6 +254,17 @@ func testAccServiceAccountResourceConfig(host string, name string, description s
 	return testAccServiceAccountResourceConfigWithValidUntil(host, name, description, serviceAccountValidUntil)
 }
 
+func testAccServiceAccountResourceConfigWithIdentityImport(host string, name string, description string) string {
+	return testAccServiceAccountResourceConfig(host, name, description) + fmt.Sprintf(`
+import {
+  to = ona_service_account.test
+  identity = {
+    service_account_id = %q
+  }
+}
+`, serviceAccountID1)
+}
+
 func testAccServiceAccountResourceConfigWithValidUntil(host string, name string, description string, validUntil string) string {
 	return fmt.Sprintf(`
 provider "ona" {
@@ -265,6 +342,8 @@ type serviceAccountTokenCall struct {
 
 const (
 	serviceAccountID1        = "00000000-0000-0000-0000-000000000001"
+	serviceAccountID2        = "00000000-0000-0000-0000-000000000002"
+	serviceAccountID3        = "00000000-0000-0000-0000-000000000003"
 	serviceAccountTokenID1   = "00000000-0000-0000-0000-000000000101"
 	organizationID1          = "10000000-0000-0000-0000-000000000001"
 	serviceAccountCreatedAt  = "2026-01-02T03:04:05Z"
