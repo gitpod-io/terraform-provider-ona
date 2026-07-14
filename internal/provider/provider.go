@@ -179,6 +179,7 @@ func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResou
 		runner.NewSCMIntegrationListResource,
 		runner.NewEnvironmentClassListResource,
 		project.NewListResource,
+		warmpool.NewWarmPoolListResource,
 	}
 }
 
