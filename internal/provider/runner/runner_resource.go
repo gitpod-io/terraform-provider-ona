@@ -320,6 +320,9 @@ func (r *Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp 
 
 func (r *Resource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("runner_id"), req, resp)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resource.ImportStatePassthroughWithIdentity(ctx, path.Root("runner_id"), path.Root("runner_id"), req, resp)
 }
 
