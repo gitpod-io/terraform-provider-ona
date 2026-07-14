@@ -35,6 +35,12 @@ variable "group_name" {
   default     = "Terraform Provider Dev Loop"
 }
 
+variable "webhook_secret_version" {
+  type        = string
+  description = "User-managed webhook secret rotation marker. Change this value to rotate the secret and refresh the local test file."
+  default     = "v1"
+}
+
 variable "runner_provider" {
   type        = string
   description = "Runner provider to use for the managed runner."

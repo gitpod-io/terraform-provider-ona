@@ -19,6 +19,7 @@ import (
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/security"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/serviceaccount"
 	warmpool "github.com/gitpod-io/terraform-provider-ona/internal/provider/warm_pool"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/webhook"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -145,6 +146,7 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		accesscontrol.NewGroupResource,
 		accesscontrol.NewGroupMembershipResource,
 		accesscontrol.NewOrganizationRoleAssignmentResource,
+		webhook.NewResource,
 	}
 }
 
@@ -152,6 +154,7 @@ func (p *OnaProvider) EphemeralResources(ctx context.Context) []func() ephemeral
 	return []func() ephemeral.EphemeralResource{
 		runner.NewTokenEphemeralResource,
 		serviceaccount.NewTokenEphemeralResource,
+		webhook.NewSecretEphemeralResource,
 	}
 }
 
