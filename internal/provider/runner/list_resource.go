@@ -95,6 +95,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 				if req.IncludeResource && !item.Diagnostics.HasError() {
 					var model RunnerModel
 					populateModelFromRunner(&model, remoteRunner)
+					model.RunnerManagerID = types.StringNull()
 					item.Diagnostics.Append(item.Resource.Set(ctx, &model)...)
 				}
 				if !push(item) || item.Diagnostics.HasError() {

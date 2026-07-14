@@ -20,6 +20,7 @@ func TestAccRunnerQuery(t *testing.T) {
 	gcpRunner := newTestRunner("runner-3", "GCP Runner")
 	gcpRunner.Provider = v1.RunnerProvider_RUNNER_PROVIDER_GCP
 	gcpRunner.Creator.Id = "creator-2"
+	gcpRunner.RunnerManagerId = "runner-manager-1"
 	devAgentRunner := newTestRunner("runner-4", "Dev Agent Runner")
 	devAgentRunner.Provider = v1.RunnerProvider_RUNNER_PROVIDER_DEV_AGENT
 
@@ -52,6 +53,7 @@ func TestAccRunnerQuery(t *testing.T) {
 					{Path: tfjsonpath.New("runner_id"), KnownValue: knownvalue.StringExact("runner-3")},
 					{Path: tfjsonpath.New("name"), KnownValue: knownvalue.StringExact("GCP Runner")},
 					{Path: tfjsonpath.New("runner_provider"), KnownValue: knownvalue.StringExact("gcp")},
+					{Path: tfjsonpath.New("runner_manager_id"), KnownValue: knownvalue.Null()},
 				},
 			),
 		},
