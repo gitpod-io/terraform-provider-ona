@@ -100,6 +100,9 @@ The workflow reads `VERSION`, cross-compiles the Linux provider binaries, writes
 Terraform Registry artifacts, signs `SHA256SUMS`, creates the GitHub release,
 downloads the published assets, and verifies them again.
 
+Release binaries embed the bare `VERSION` value in provider metadata and the
+default Ona API `User-Agent`, for example `terraform-provider-ona/0.2.0-beta.1`.
+
 Local publishing is not supported. The publish scripts are CI entrypoints and
 fail unless GitHub Actions runs them from `refs/heads/main`.
 

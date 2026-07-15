@@ -378,7 +378,7 @@ func listServiceAccounts(ctx context.Context, cfg config) ([]*onaclient.ServiceA
 	client, err := onaclient.New(onaclient.Config{
 		Host:      cfg.host,
 		Token:     cfg.token,
-		UserAgent: onaclient.UserAgent + " terraform-import",
+		UserAgent: onaclient.DefaultUserAgent() + " terraform-import",
 	})
 	if err != nil {
 		return nil, err

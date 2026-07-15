@@ -12,11 +12,11 @@ import (
 	gitpod "github.com/gitpod-io/gitpod-sdk-go"
 	"github.com/gitpod-io/gitpod-sdk-go/option"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
+	providerversion "github.com/gitpod-io/terraform-provider-ona/version"
 )
 
 const (
 	DefaultHost = "https://app.gitpod.io"
-	UserAgent   = "terraform-provider-ona/dev"
 )
 
 var ErrMissingToken = errors.New("missing Ona token: set provider token or ONA_TOKEN")
@@ -34,6 +34,10 @@ type Client struct {
 
 	mu             sync.Mutex
 	organizationID string
+}
+
+func DefaultUserAgent() string {
+	return providerversion.UserAgent()
 }
 
 func New(cfg Config) (*Client, error) {
@@ -61,7 +65,7 @@ func NewSDK(cfg Config) (*gitpod.Client, string, error) {
 
 	userAgent := strings.TrimSpace(cfg.UserAgent)
 	if userAgent == "" {
-		userAgent = UserAgent
+		userAgent = DefaultUserAgent()
 	}
 	return gitpod.NewClient(
 		option.WithBaseURL(apiBaseURL),
@@ -84,7 +88,7 @@ func NewManagementPlane(cfg Config) (*managementclient.ManagementPlane, string, 
 
 	userAgent := strings.TrimSpace(cfg.UserAgent)
 	if userAgent == "" {
-		userAgent = UserAgent
+		userAgent = DefaultUserAgent()
 	}
 
 	api, err := managementclient.New(apiBaseURL,
