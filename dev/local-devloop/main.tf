@@ -192,3 +192,17 @@ resource "ona_scm_integration" "azuredevops_server" {
   auth_mode         = "pat"
   virtual_directory = "/tfs"
 }
+
+data "ona_integration_definitions" "available" {}
+
+locals {
+  linear_integration_definition = one([
+    for definition in data.ona_integration_definitions.available.definitions : definition
+    if definition.host == "linear.app"
+  ])
+}
+
+resource "ona_integration" "linear" {
+  integration_definition_id = local.linear_integration_definition.id
+  enabled                   = true
+}

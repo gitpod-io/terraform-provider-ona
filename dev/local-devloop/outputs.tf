@@ -64,3 +64,13 @@ output "runner_count_from_collection_data_source" {
   description = "Number of runners returned by the collection data source."
   value       = length(data.ona_runners.all.runners)
 }
+
+output "managed_integration_id" {
+  description = "ID of the Linear integration managed by this module."
+  value       = ona_integration.linear.id
+}
+
+output "integration_definition_count" {
+  description = "Number of visible integration definitions returned by the data source."
+  value       = length(data.ona_integration_definitions.available.definitions)
+}

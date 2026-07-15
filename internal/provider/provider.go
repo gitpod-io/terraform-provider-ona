@@ -9,6 +9,7 @@ import (
 
 	onaclient "github.com/gitpod-io/terraform-provider-ona/internal/client"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/accesscontrol"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/integration"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/organization"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/project"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
@@ -152,6 +153,7 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		accesscontrol.NewGroupMembershipResource,
 		accesscontrol.NewOrganizationRoleAssignmentResource,
 		webhook.NewResource,
+		integration.NewResource,
 		workflow.NewResource,
 	}
 }
@@ -183,6 +185,7 @@ func (p *OnaProvider) DataSources(ctx context.Context) []func() datasource.DataS
 		warmpool.NewWarmPoolDataSource,
 		warmpool.NewWarmPoolCollectionDataSource,
 		security.NewPolicyCollectionDataSource,
+		integration.NewDefinitionsDataSource,
 		workflow.NewCollectionDataSource,
 	}
 }
