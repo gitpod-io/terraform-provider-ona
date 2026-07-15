@@ -65,7 +65,7 @@ func (p *OnaProvider) Schema(ctx context.Context, req provider.SchemaRequest, re
 				Optional:            true,
 			},
 			"token": schema.StringAttribute{
-				MarkdownDescription: "Ona API token used by the provider. Defaults to `ONA_TOKEN` when set. Use a service-account token for automation and avoid committing this value to configuration.",
+				MarkdownDescription: "Ona API token used by the provider. Defaults to `ONA_TOKEN` when set. Use a personal access token for Terraform write workflows unless Ona has confirmed service-account-token permissions for your organization and use case. Avoid committing this value to configuration.",
 				Optional:            true,
 				Sensitive:           true,
 			},

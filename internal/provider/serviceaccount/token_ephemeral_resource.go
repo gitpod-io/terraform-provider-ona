@@ -48,7 +48,7 @@ func (r *TokenEphemeralResource) Metadata(ctx context.Context, req ephemeral.Met
 
 func (r *TokenEphemeralResource) Schema(ctx context.Context, req ephemeral.SchemaRequest, resp *ephemeral.SchemaResponse) {
 	resp.Schema = ephemeralschema.Schema{
-		MarkdownDescription: "Creates an Ona service-account token without storing the token value in Terraform plan or state. Use this in bootstrap or rotation workflows with a human or admin token, store the returned token in an external secret target, then use it as `ONA_TOKEN` on later Terraform runs. Reference the token only from Terraform ephemeral contexts such as provider configurations, write-only arguments, or child module ephemeral outputs.",
+		MarkdownDescription: "Creates an Ona service-account token without storing the token value in Terraform plan or state. Use this in bootstrap or rotation workflows with a human or admin token, then store the returned token in an external secret target. Use the token as `ONA_TOKEN` only for supported service-account-token workflows or when Ona has confirmed write permissions for your organization and use case. Reference the token only from Terraform ephemeral contexts such as provider configurations, write-only arguments, or child module ephemeral outputs.",
 		Attributes: map[string]ephemeralschema.Attribute{
 			"service_account_id": ephemeralschema.StringAttribute{
 				Required:            true,
