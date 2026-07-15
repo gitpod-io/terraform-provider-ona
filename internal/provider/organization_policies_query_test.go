@@ -4,6 +4,7 @@
 package provider
 
 import (
+	"regexp"
 	"testing"
 
 	testresource "github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -19,7 +20,7 @@ func TestAccOrganizationPoliciesQuery(t *testing.T) {
 
 	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
 		Query:  true,
-		Config: organizationPoliciesQueryConfig(),
+		Config: organizationPoliciesQueryConfig(""),
 		QueryResultChecks: []querycheck.QueryResultCheck{
 			querycheck.ExpectLength("ona_organization_policies.all", 1),
 			querycheck.ExpectIdentity("ona_organization_policies.all", map[string]knownvalue.Check{
@@ -37,15 +38,47 @@ func TestAccOrganizationPoliciesQuery(t *testing.T) {
 	}))
 }
 
-func organizationPoliciesQueryConfig() string {
+func TestAccOrganizationPoliciesQueryWithOrganizationID(t *testing.T) {
+	server := newPolicyAPIServer(t)
+	t.Cleanup(server.Close)
+
+	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+		Query: true,
+		Config: organizationPoliciesQueryConfig(`
+  config {
+    organization_id = "org-1"
+  }
+`),
+		QueryResultChecks: []querycheck.QueryResultCheck{
+			querycheck.ExpectLength("ona_organization_policies.all", 1),
+			querycheck.ExpectIdentity("ona_organization_policies.all", map[string]knownvalue.Check{
+				"organization_id": knownvalue.StringExact("org-1"),
+			}),
+		},
+	}))
+}
+
+func TestAccOrganizationPoliciesQueryUnknownOrganization(t *testing.T) {
+	server := newPolicyAPIServer(t)
+	t.Cleanup(server.Close)
+
+	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+		Query: true,
+		Config: organizationPoliciesQueryConfig(`
+  config {
+    organization_id = "org-missing"
+  }
+`),
+		ExpectError: regexp.MustCompile(`Unable to Read Ona Organization Policies`),
+	}))
+}
+
+func organizationPoliciesQueryConfig(config string) string {
 	return `
 list "ona_organization_policies" "all" {
   provider         = ona
   include_resource = true
-
-  config {
-    organization_id = "org-1"
-  }
+` + config + `
 }
 `
 }

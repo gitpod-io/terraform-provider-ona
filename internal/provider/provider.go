@@ -177,6 +177,7 @@ func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResou
 	return []func() list.ListResource{
 		organization.NewCustomDomainListResource,
 		organization.NewOIDCConfigListResource,
+		organization.NewPoliciesListResource,
 		organization.NewSCIMConfigurationListResource,
 		organization.NewSSOConfigurationListResource,
 		project.NewListResource,
@@ -186,14 +187,6 @@ func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResou
 		secret.NewListResource,
 		serviceaccount.NewListResource,
 		warmpool.NewWarmPoolListResource,
-	}
-}
-
-// ListResources returns the managed-resource discovery implementations
-// registered by the provider. Resource-specific PRs add constructors here.
-func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResource {
-	return []func() list.ListResource{
-		organization.NewPoliciesListResource,
 	}
 }
 
