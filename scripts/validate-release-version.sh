@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-VERSION_FILE="${VERSION_FILE:-VERSION}"
+VERSION_FILE="${VERSION_FILE:-version/VERSION}"
 CHANGELOG_FILE="${CHANGELOG_FILE:-CHANGELOG.md}"
 GITHUB_OUTPUT_MODE=0
 CHECK_TAG_PRECEDENCE=1
@@ -17,8 +17,8 @@ usage() {
 	cat >&2 <<'EOF'
 usage: scripts/validate-release-version.sh [--github-output] [--no-tag-precedence] [--expect-version <version>] [--expect-tag <tag>]
 
-Validates that VERSION contains bare SemVer, CHANGELOG.md starts with the same
-version, and the version is greater than existing local v* Git tags.
+Validates that version/VERSION contains bare SemVer, CHANGELOG.md starts with
+the same version, and the version is greater than existing local v* Git tags.
 EOF
 }
 

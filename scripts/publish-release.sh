@@ -62,7 +62,7 @@ require_github_actions_main() {
 validate_release_metadata() {
 	local version="$1"
 
-	VERSION_FILE="${PROVIDER_DIR}/VERSION" \
+	VERSION_FILE="${PROVIDER_DIR}/version/VERSION" \
 	CHANGELOG_FILE="${PROVIDER_DIR}/CHANGELOG.md" \
 		"${PROVIDER_DIR}/scripts/validate-release-version.sh" --expect-tag "$version" >/dev/null
 }

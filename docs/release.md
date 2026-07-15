@@ -33,8 +33,8 @@ key files.
 
 ## Release Version
 
-The provider version is reviewed in `VERSION`. Keep it as bare SemVer without a
-leading `v`, for example:
+The provider version is reviewed in `version/VERSION`. Keep it as bare SemVer
+without a leading `v`, for example:
 
 ```text
 0.2.0-beta.1
@@ -42,10 +42,11 @@ leading `v`, for example:
 
 Use prerelease suffixes such as `-beta.1` for explicit beta releases. Use plain
 SemVer such as `0.2.0` for stable releases. GitHub release tags add the leading
-`v`, so `VERSION=0.2.0-beta.1` publishes tag `v0.2.0-beta.1`.
+`v`, so a `version/VERSION` value of `0.2.0-beta.1` publishes tag
+`v0.2.0-beta.1`.
 
-Release-prep PRs update both `VERSION` and the top `CHANGELOG.md` heading. Run
-the release metadata check before merging:
+Release-prep PRs update both `version/VERSION` and the top `CHANGELOG.md`
+heading. Run the release metadata check before merging:
 
 ```shell
 scripts/validate-release-version.sh
@@ -58,9 +59,9 @@ tests, normal build output, and unsigned release artifact packaging.
 
 Pushes to `main` run the main build without publishing. To publish a beta or
 stable release, merge a release-prep PR and then run the manual `Build main`
-workflow with `publish_release=true`. The workflow reads `VERSION`, validates
-the release metadata, publishes the matching GitHub release, and starts Registry
-verification.
+workflow with `publish_release=true`. The workflow reads `version/VERSION`,
+validates the release metadata, publishes the matching GitHub release, and
+starts Registry verification.
 
 Published releases are GitHub releases in
 `gitpod-io/terraform-provider-ona`. After creating the GitHub release, CI starts
@@ -86,7 +87,7 @@ git diff --exit-code
 Build unsigned local release artifacts:
 
 ```shell
-make release-snapshot RELEASE_SNAPSHOT_VERSION="$(cat VERSION)"
+make release-snapshot RELEASE_SNAPSHOT_VERSION="$(cat version/VERSION)"
 ```
 
 The snapshot command writes Linux artifacts to `dist/release-snapshot/` and
@@ -96,12 +97,13 @@ verifies the artifact inventory, zip contents, registry manifest, and checksums.
 
 Publish only through the manual `Build main` workflow after the release-prep PR
 merges to `main`. Start the workflow from `main` with `publish_release=true`.
-The workflow reads `VERSION`, cross-compiles the Linux provider binaries, writes
-Terraform Registry artifacts, signs `SHA256SUMS`, creates the GitHub release,
-downloads the published assets, and verifies them again.
+The workflow reads `version/VERSION`, cross-compiles the Linux provider
+binaries, writes Terraform Registry artifacts, signs `SHA256SUMS`, creates the
+GitHub release, downloads the published assets, and verifies them again.
 
-Release binaries embed the bare `VERSION` value in provider metadata and the
-default Ona API `User-Agent`, for example `terraform-provider-ona/0.2.0-beta.1`.
+Release binaries embed the bare `version/VERSION` value in provider metadata and
+the default Ona API `User-Agent`, for example
+`terraform-provider-ona/0.2.0-beta.1`.
 
 Local publishing is not supported. The publish scripts are CI entrypoints and
 fail unless GitHub Actions runs them from `refs/heads/main`.

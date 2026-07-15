@@ -6,7 +6,7 @@ on:
   workflow_call:
     inputs:
       publish_release:
-        description: "Publish the provider version declared in VERSION to GitHub releases"
+        description: "Publish the provider version declared in version/VERSION to GitHub releases"
         required: false
         type: boolean
         default: false

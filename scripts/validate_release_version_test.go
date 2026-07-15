@@ -118,8 +118,12 @@ func validateReleaseVersionScriptPath(t *testing.T) string {
 func writeReleaseVersionFixture(t *testing.T, dir string, version string, heading string) {
 	t.Helper()
 
-	if err := os.WriteFile(filepath.Join(dir, "VERSION"), []byte(version+"\n"), 0644); err != nil {
-		t.Fatalf("write VERSION fixture: %v", err)
+	versionDir := filepath.Join(dir, "version")
+	if err := os.MkdirAll(versionDir, 0755); err != nil {
+		t.Fatalf("create version fixture directory: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(versionDir, "VERSION"), []byte(version+"\n"), 0644); err != nil {
+		t.Fatalf("write version/VERSION fixture: %v", err)
 	}
 	if err := os.WriteFile(filepath.Join(dir, "CHANGELOG.md"), []byte(heading+"\n"), 0644); err != nil {
 		t.Fatalf("write CHANGELOG fixture: %v", err)
@@ -132,7 +136,7 @@ func createGitTags(t *testing.T, dir string, tags []string) {
 	runGit(t, dir, "init", "-q")
 	runGit(t, dir, "config", "user.email", "test@example.com")
 	runGit(t, dir, "config", "user.name", "Release Test")
-	runGit(t, dir, "add", "VERSION", "CHANGELOG.md")
+	runGit(t, dir, "add", "version/VERSION", "CHANGELOG.md")
 	runGit(t, dir, "commit", "-q", "-m", "fixture")
 	for _, tag := range tags {
 		runGit(t, dir, "tag", tag)
