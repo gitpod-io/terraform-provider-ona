@@ -16,50 +16,20 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/querycheck"
 )
 
-func TestAccRunnerQuery(t *testing.T) {
-	localRunner := newTestRunner("runner-2", "Local Runner")
-	localRunner.Kind = v1.RunnerKind_RUNNER_KIND_LOCAL_CONFIGURATION
-	gcpRunner := newTestRunner("runner-3", "GCP Runner")
-	gcpRunner.Provider = v1.RunnerProvider_RUNNER_PROVIDER_GCP
-	gcpRunner.Creator.Id = "creator-2"
-	managedRunner := newTestRunner("runner-4", "Managed Runner")
-	managedRunner.Provider = v1.RunnerProvider_RUNNER_PROVIDER_MANAGED
-	devAgentRunner := newTestRunner("runner-5", "Dev Agent Runner")
-	devAgentRunner.Provider = v1.RunnerProvider_RUNNER_PROVIDER_DEV_AGENT
+const runnerQueryGCPCreatorID = "creator-2"
 
-	server := newRunnerAPIServer(t, map[string]*v1.Runner{
-		"runner-1": newTestRunner("runner-1", "AWS Runner"),
-		"runner-2": localRunner,
-		"runner-3": gcpRunner,
-		"runner-4": managedRunner,
-		"runner-5": devAgentRunner,
-	})
+func TestAccRunnerQuery(t *testing.T) {
+	server := newRunnerQueryAPIServer(t)
 	t.Cleanup(server.Close)
 
 	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
 		Query:  true,
-		Config: runnerQueryConfig(),
+		Config: runnerQueryConfig(""),
 		QueryResultChecks: []querycheck.QueryResultCheck{
 			expectRunnerQueryResults{
 				Expected: []runnerQueryResult{
-					{
-						Address:                           "list.ona_runner.all",
-						DisplayName:                       "AWS Runner",
-						RunnerID:                          "runner-1",
-						Name:                              "AWS Runner",
-						RunnerProvider:                    "aws_ec2",
-						RunnerManagerID:                   nil,
-						GeneratedConfigHasRunnerManagerID: false,
-					},
-					{
-						Address:                           "list.ona_runner.all",
-						DisplayName:                       "GCP Runner",
-						RunnerID:                          "runner-3",
-						Name:                              "GCP Runner",
-						RunnerProvider:                    "gcp",
-						RunnerManagerID:                   nil,
-						GeneratedConfigHasRunnerManagerID: false,
-					},
+					expectedAWSRunnerQueryResult(),
+					expectedGCPRunnerQueryResult(),
 				},
 			},
 		},
@@ -70,13 +40,133 @@ func TestAccRunnerQuery(t *testing.T) {
 	}
 }
 
-func runnerQueryConfig() string {
-	return `
+func TestAccRunnerQueryFilters(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		Name     string
+		Config   string
+		Expected []runnerQueryResult
+	}{
+		{
+			Name: "runner_provider_gcp",
+			Config: runnerQueryConfig(`
+runner_providers = ["gcp"]
+`),
+			Expected: []runnerQueryResult{
+				expectedGCPRunnerQueryResult(),
+			},
+		},
+		{
+			Name: "creator_id",
+			Config: runnerQueryConfig(fmt.Sprintf(`
+creator_ids = [%q]
+`, runnerQueryGCPCreatorID)),
+			Expected: []runnerQueryResult{
+				expectedGCPRunnerQueryResult(),
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			server := newRunnerQueryAPIServer(t)
+			t.Cleanup(server.Close)
+
+			testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+				Query:  true,
+				Config: tc.Config,
+				QueryResultChecks: []querycheck.QueryResultCheck{
+					expectRunnerQueryResults{
+						Expected: tc.Expected,
+					},
+				},
+			}))
+
+			if got := server.service.tokenCount(); got != 0 {
+				t.Fatalf("runner query created %d token values", got)
+			}
+		})
+	}
+}
+
+func newRunnerQueryAPIServer(t *testing.T) *runnerAPIServer {
+	t.Helper()
+
+	localRunner := newTestRunner("runner-2", "Local Runner")
+	localRunner.Kind = v1.RunnerKind_RUNNER_KIND_LOCAL_CONFIGURATION
+	gcpRunner := newTestRunner("runner-3", "GCP Runner")
+	gcpRunner.Provider = v1.RunnerProvider_RUNNER_PROVIDER_GCP
+	gcpRunner.Creator.Id = runnerQueryGCPCreatorID
+	managedRunner := newTestRunner("runner-4", "Managed Runner")
+	managedRunner.Provider = v1.RunnerProvider_RUNNER_PROVIDER_MANAGED
+	devAgentRunner := newTestRunner("runner-5", "Dev Agent Runner")
+	devAgentRunner.Provider = v1.RunnerProvider_RUNNER_PROVIDER_DEV_AGENT
+
+	return newRunnerAPIServer(t, map[string]*v1.Runner{
+		"runner-1": newTestRunner("runner-1", "AWS Runner"),
+		"runner-2": localRunner,
+		"runner-3": gcpRunner,
+		"runner-4": managedRunner,
+		"runner-5": devAgentRunner,
+	})
+}
+
+func runnerQueryConfig(config string) string {
+	config = strings.TrimSpace(config)
+	if config == "" {
+		return `
 list "ona_runner" "all" {
   provider         = ona
   include_resource = true
 }
 `
+	}
+
+	return fmt.Sprintf(`
+list "ona_runner" "all" {
+  provider         = ona
+  include_resource = true
+
+  config {
+%s
+  }
+}
+`, indentRunnerQueryConfig(config))
+}
+
+func indentRunnerQueryConfig(config string) string {
+	lines := strings.Split(config, "\n")
+	for i := range lines {
+		lines[i] = "    " + strings.TrimSpace(lines[i])
+	}
+	return strings.Join(lines, "\n")
+}
+
+func expectedAWSRunnerQueryResult() runnerQueryResult {
+	return runnerQueryResult{
+		Address:                           "list.ona_runner.all",
+		DisplayName:                       "AWS Runner",
+		RunnerID:                          "runner-1",
+		Name:                              "AWS Runner",
+		RunnerProvider:                    "aws_ec2",
+		RunnerManagerID:                   nil,
+		GeneratedConfigHasRunnerManagerID: false,
+	}
+}
+
+func expectedGCPRunnerQueryResult() runnerQueryResult {
+	return runnerQueryResult{
+		Address:                           "list.ona_runner.all",
+		DisplayName:                       "GCP Runner",
+		RunnerID:                          "runner-3",
+		Name:                              "GCP Runner",
+		RunnerProvider:                    "gcp",
+		RunnerManagerID:                   nil,
+		GeneratedConfigHasRunnerManagerID: false,
+	}
 }
 
 type expectRunnerQueryResults struct {
