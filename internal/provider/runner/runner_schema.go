@@ -11,6 +11,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
+const runnerManagerIDDeprecationMessage = "Remove this attribute from configuration. Terraform-managed Ona runners support remote AWS EC2 and GCP runners, and runner manager IDs are not used for those resources."
+
 func resourceSchema() resourceschema.Schema {
 	return resourceschema.Schema{
 		MarkdownDescription: "Ona runner registration. Use this resource to create a remote runner record, then deploy the runner with the generated setup output for the selected provider.",
@@ -42,7 +44,8 @@ func resourceSchema() resourceschema.Schema {
 			},
 			"runner_manager_id": resourceschema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: "Runner manager ID for managed runners. Most customer-managed runner configurations should omit this value. Changing it replaces the runner.",
+				MarkdownDescription: "Runner manager ID for managed runners. Terraform-managed runner resources support remote AWS EC2 and GCP runners; omit this value.",
+				DeprecationMessage:  runnerManagerIDDeprecationMessage,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
