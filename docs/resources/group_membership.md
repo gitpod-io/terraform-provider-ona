@@ -41,10 +41,7 @@ resource "ona_group_membership" "terraform_service_account" {
 
 ### Read-Only
 
-- `avatar_url` (String) Avatar URL of the member when available.
 - `id` (String) Group membership ID.
-- `name` (String) Display name of the member.
-- `principal` (String) Principal type for this membership. This resource supports only `service_account`.
 
 ## Import
 

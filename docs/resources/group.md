@@ -34,12 +34,7 @@ resource "ona_group" "terraform_admins" {
 ### Read-Only
 
 - `created_at` (String) Time when the group was created.
-- `direct_share` (Boolean) Whether this group is used by Ona for direct resource sharing.
 - `id` (String) Group ID.
-- `member_count` (Number) Number of members in the group.
-- `organization_id` (String) Organization ID that owns the group. This is resolved from the authenticated provider token.
-- `system_managed` (Boolean) Whether this group is system-managed by Ona rather than customer-managed.
-- `updated_at` (String) Time when the group was last updated.
 
 ## Import
 

@@ -1,39 +1,9 @@
-resource "ona_security_policy" "baseline" {
-  organization_id = "00000000-0000-0000-0000-000000000000"
-  name            = "baseline"
-
-  spec {
-    ports {
-      default_effect = "allow"
-    }
-
-    executables {
-      default_effect = "allow"
-    }
-
-    files {
-      default_effect = "allow"
-    }
-
-    block_devices {
-      default_effect = "block"
-    }
-
-    data {
-      default_effect = "allow"
-    }
-  }
-}
-
 resource "ona_organization_policies" "current" {
-  organization_id                    = "00000000-0000-0000-0000-000000000000"
   members_require_projects           = true
   members_create_projects            = false
   port_sharing_disabled              = true
   maximum_environment_timeout        = "30m"
   delete_archived_environments_after = "168h"
-  security_policy_id                 = ona_security_policy.baseline.id
-
   agent_policy = {
     mcp_disabled                  = false
     scm_tools_disabled            = false

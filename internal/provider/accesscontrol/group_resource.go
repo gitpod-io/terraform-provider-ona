@@ -32,15 +32,10 @@ type GroupResource struct {
 }
 
 type GroupModel struct {
-	ID             types.String `tfsdk:"id"`
-	OrganizationID types.String `tfsdk:"organization_id"`
-	Name           types.String `tfsdk:"name"`
-	Description    types.String `tfsdk:"description"`
-	SystemManaged  types.Bool   `tfsdk:"system_managed"`
-	DirectShare    types.Bool   `tfsdk:"direct_share"`
-	CreatedAt      types.String `tfsdk:"created_at"`
-	UpdatedAt      types.String `tfsdk:"updated_at"`
-	MemberCount    types.Int64  `tfsdk:"member_count"`
+	ID          types.String `tfsdk:"id"`
+	Name        types.String `tfsdk:"name"`
+	Description types.String `tfsdk:"description"`
+	CreatedAt   types.String `tfsdk:"created_at"`
 }
 
 func (r *GroupResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -58,13 +53,6 @@ func (r *GroupResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"organization_id": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Organization ID that owns the group. This is resolved from the authenticated provider token.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
-			},
 			"name": resourceschema.StringAttribute{
 				Required:            true,
 				MarkdownDescription: "Group name shown in Ona. Must be between 3 and 80 characters.",
@@ -74,35 +62,12 @@ func (r *GroupResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 				Computed:            true,
 				MarkdownDescription: "Group description. Must be at most 255 characters. Omit to leave the description empty.",
 			},
-			"system_managed": resourceschema.BoolAttribute{
-				Computed:            true,
-				MarkdownDescription: "Whether this group is system-managed by Ona rather than customer-managed.",
-				PlanModifiers: []planmodifier.Bool{
-					// Existing imports should not show unknown for stable API metadata during planning.
-					boolUseStateForUnknown(),
-				},
-			},
-			"direct_share": resourceschema.BoolAttribute{
-				Computed:            true,
-				MarkdownDescription: "Whether this group is used by Ona for direct resource sharing.",
-				PlanModifiers: []planmodifier.Bool{
-					boolUseStateForUnknown(),
-				},
-			},
 			"created_at": resourceschema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "Time when the group was created.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
-			},
-			"updated_at": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Time when the group was last updated.",
-			},
-			"member_count": resourceschema.Int64Attribute{
-				Computed:            true,
-				MarkdownDescription: "Number of members in the group.",
 			},
 		},
 	}
@@ -156,7 +121,6 @@ func (r *GroupResource) Create(ctx context.Context, req resource.CreateRequest, 
 	}
 
 	data.ID = types.StringValue(result.Msg.GetGroup().GetId())
-	data.OrganizationID = types.StringValue(organizationID)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -283,14 +247,9 @@ func (r *GroupResource) getGroup(ctx context.Context, id string) (*v1.Group, err
 
 func populateGroupModel(data *GroupModel, group *v1.Group) {
 	data.ID = types.StringValue(group.GetId())
-	data.OrganizationID = types.StringValue(group.GetOrganizationId())
 	data.Name = types.StringValue(group.GetName())
 	data.Description = types.StringValue(group.GetDescription())
-	data.SystemManaged = types.BoolValue(group.GetSystemManaged())
-	data.DirectShare = types.BoolValue(group.GetDirectShare())
 	data.CreatedAt = timestampString(group.GetCreatedAt())
-	data.UpdatedAt = timestampString(group.GetUpdatedAt())
-	data.MemberCount = types.Int64Value(int64(group.GetMemberCount()))
 }
 
 func preserveGroupPlannedInputs(data *GroupModel, planned GroupModel) {

@@ -2,12 +2,12 @@
 page_title: "ona_oidc_config Resource - ona"
 subcategory: "Organization"
 description: |-
-  Singleton Ona OIDC token format configuration for the organization associated with the configured provider token. Destroying this resource removes Terraform state only; it does not reset the remote organization setting.
+  Singleton Ona OIDC V3 token configuration for the organization associated with the configured provider token. Destroying this resource removes Terraform state only; it does not reset the remote organization setting.
 ---
 
 # ona_oidc_config (Resource)
 
-Singleton Ona OIDC token format configuration for the organization associated with the configured provider token. Destroying this resource removes Terraform state only; it does not reset the remote organization setting.
+Singleton Ona OIDC V3 token configuration for the organization associated with the configured provider token. Destroying this resource removes Terraform state only; it does not reset the remote organization setting.
 
 For product context, see [OpenID Connect (OIDC)](https://ona.com/docs/ona/configuration/oidc).
 
@@ -15,9 +15,7 @@ For product context, see [OpenID Connect (OIDC)](https://ona.com/docs/ona/config
 
 ```terraform
 resource "ona_oidc_config" "org" {
-  version = "v3"
-
-  extra_sub_fields = [
+  custom_claim_fields = [
     "project_id",
     "creator_email",
   ]
@@ -29,8 +27,7 @@ resource "ona_oidc_config" "org" {
 
 ### Optional
 
-- `extra_sub_fields` (Set of String) Additional property keys included in the V3 `sub` claim. Must be empty when version is `v2`.
-- `version` (String) OIDC token version. Supported values are `v2` and `v3`.
+- `custom_claim_fields` (Set of String) Additional fields included in the OIDC V3 `sub` claim. Supported values are `creator_id`, `creator_principal`, `creator_email`, `creator_name`, `creator_idp`, `account_id`, `user_id`, `organization_id`, `project_id`, `runner_id`, `environment_id`, `email`, `name`, `idp`, `runner_name`, `service_account_id`, `environment_initializers.git.remote_uri`, `environment_initializers.git.upstream_remote_uri`, and `environment_initializers.context_url`. A field is included only for principal types that provide it.
 
 ### Read-Only
 

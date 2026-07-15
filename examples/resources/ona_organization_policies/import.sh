@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-terraform import ona_organization_policies.current 00000000-0000-0000-0000-000000000000
+terraform import ona_organization_policies.current current

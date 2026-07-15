@@ -56,7 +56,7 @@ Some resources have special destroy behavior:
 - `ona_project_insights` disables Insights for the project.
 - `ona_announcement_banner` disables and clears the remote banner.
 - `ona_terms_of_service` disables the requirement but does not delete immutable version history.
-- `ona_organization_policies` removes Terraform state only and does not reset remote organization settings.
+- `ona_organization_policies` restores the server-defined policy configuration captured before Terraform first managed it, then removes the resource from state.
 - `ona_oidc_config` removes Terraform state only and does not reset remote organization settings.
 - `ona_webhook` deletes the webhook and converts triggers on bound workflows to manual triggers.
 

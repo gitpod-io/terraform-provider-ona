@@ -11,6 +11,10 @@ description: |-
 
 For product context, see [Organization policies](https://ona.com/docs/ona/organizations/policies/overview).
 
+The provider resolves the organization from its authenticated token. Configure at most one `ona_organization_policies` resource for that organization, and combine the policy arguments you need in that resource.
+
+Deleting the Terraform resource reapplies the server-defined policy configuration captured before Terraform first managed the organization. Terraform removes the resource from state only after Ona accepts that reset.
+
 {{ if .HasExamples -}}
 ## Example Usage
 
@@ -25,7 +29,7 @@ For product context, see [Organization policies](https://ona.com/docs/ona/organi
 
 ## Import
 
-Import is supported using the following syntax:
+Import is supported using the following syntax. Use `current` or the authenticated organization ID as the import ID.
 {{- end }}
 {{- if .HasImportIDConfig }}
 
