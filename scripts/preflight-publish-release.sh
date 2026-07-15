@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+PROVIDER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RELEASE_REPOSITORY="${RELEASE_REPOSITORY:-gitpod-io/terraform-provider-ona}"
 VERSION="${VERSION:-}"
 
@@ -25,6 +26,23 @@ normalize_version() {
 	printf '%s' "$version"
 }
 
+require_github_actions_main() {
+	if [[ "${GITHUB_ACTIONS:-}" != "true" ]]; then
+		die "publishing is only supported from the manual GitHub Actions release workflow"
+	fi
+	if [[ "${GITHUB_REF:-}" != "refs/heads/main" ]]; then
+		die "publishing must run from main after the release-prep PR merges, got ${GITHUB_REF:-<unset>}"
+	fi
+}
+
+validate_release_metadata() {
+	local version="$1"
+
+	VERSION_FILE="${PROVIDER_DIR}/version/VERSION" \
+	CHANGELOG_FILE="${PROVIDER_DIR}/CHANGELOG.md" \
+		"${PROVIDER_DIR}/scripts/validate-release-version.sh" --expect-tag "$version" >/dev/null
+}
+
 require_publish_inputs() {
 	local -a missing=()
 
@@ -39,10 +57,11 @@ require_publish_inputs() {
 main() {
 	local version
 
+	require_github_actions_main
 	need_command gh
-
 	require_publish_inputs
 	version="$(normalize_version "$VERSION")"
+	validate_release_metadata "$version"
 
 	gh repo view "$RELEASE_REPOSITORY" --json nameWithOwner --jq .nameWithOwner >/dev/null
 

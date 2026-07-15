@@ -4,15 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       publish_release:
-        description: "Publish a prerelease to GitHub releases. Pushes to main always publish."
+        description: "Publish the provider version declared in version/VERSION to GitHub releases."
         required: false
         type: boolean
         default: false
-      version:
-        description: "Optional prerelease version, for example v0.1.0-beta.1. Defaults to v0.1.0-beta.<run number> when publishing."
-        required: false
-        type: string
-        default: ""
   push:
     branches:
       - main
@@ -26,13 +21,12 @@ jobs:
     secrets: inherit
     with:
       release_environment: main
-      publish_release: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish_release) }}
-      version: ${{ github.event_name == 'workflow_dispatch' && inputs.version || '' }}
+      publish_release: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_release }}
 
   trigger-registry-verification:
     name: Start Registry verification
     needs: [build-terraform-provider]
-    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish_release) }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_release }}
     runs-on: ubuntu-latest
     permissions:
       actions: write

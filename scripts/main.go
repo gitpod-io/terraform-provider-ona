@@ -44,7 +44,7 @@ func run(ctx context.Context, cfg config) error {
 	api, err := onaclient.New(onaclient.Config{
 		Host:      cfg.host,
 		Token:     cfg.token,
-		UserAgent: onaclient.UserAgent + " terraform-import",
+		UserAgent: onaclient.DefaultUserAgent() + " terraform-import",
 	})
 	if err != nil {
 		return fmt.Errorf("create Ona API client: %w", err)

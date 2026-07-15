@@ -6,7 +6,6 @@ package provider
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	onaclient "github.com/gitpod-io/terraform-provider-ona/internal/client"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/accesscontrol"
@@ -20,6 +19,7 @@ import (
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/serviceaccount"
 	warmpool "github.com/gitpod-io/terraform-provider-ona/internal/provider/warm_pool"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/webhook"
+	providerversion "github.com/gitpod-io/terraform-provider-ona/version"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
 	"github.com/hashicorp/terraform-plugin-framework/list"
@@ -105,7 +105,7 @@ func (p *OnaProvider) Configure(ctx context.Context, req provider.ConfigureReque
 	if !data.Token.IsNull() {
 		cfg.Token = data.Token.ValueString()
 	}
-	cfg.UserAgent = fmt.Sprintf("terraform-provider-ona/%s", p.version)
+	cfg.UserAgent = providerversion.UserAgentFor(p.version)
 
 	api, apiBaseURL, err := onaclient.NewManagementPlane(cfg)
 	if err != nil {

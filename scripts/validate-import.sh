@@ -23,7 +23,7 @@ trap 'rm -rf "$tmp"' EXIT
 mkdir -p "$tmp/bin" "$tmp/work"
 
 echo "building local Terraform provider"
-go build -trimpath -ldflags "-s -w -X main.version=dev" -o "$tmp/bin/terraform-provider-ona" .
+go build -trimpath -ldflags "-s -w -X github.com/gitpod-io/terraform-provider-ona/version.ProviderVersion=dev" -o "$tmp/bin/terraform-provider-ona" .
 
 cat > "$tmp/terraformrc" <<EOF
 provider_installation {

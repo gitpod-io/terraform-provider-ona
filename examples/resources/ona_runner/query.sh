@@ -23,7 +23,7 @@ fi
 trap '[[ -z "$cleanup_dir" ]] || rm -rf "$cleanup_dir"' EXIT
 bin_dir="$workdir/bin"
 mkdir -p "$bin_dir"
-go -C "$repo_root" build -trimpath -ldflags "-s -w -X main.version=dev" -o "$bin_dir/terraform-provider-ona" .
+go -C "$repo_root" build -trimpath -ldflags "-s -w -X github.com/gitpod-io/terraform-provider-ona/version.ProviderVersion=dev" -o "$bin_dir/terraform-provider-ona" .
 cat >"$workdir/terraformrc" <<EOF
 provider_installation {
   dev_overrides { "registry.terraform.io/gitpod-io/ona" = "$bin_dir" }

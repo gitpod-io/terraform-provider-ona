@@ -50,6 +50,23 @@ normalize_version() {
 	printf '%s' "$version"
 }
 
+require_github_actions_main() {
+	if [[ "${GITHUB_ACTIONS:-}" != "true" ]]; then
+		die "publishing is only supported from the manual GitHub Actions release workflow"
+	fi
+	if [[ "${GITHUB_REF:-}" != "refs/heads/main" ]]; then
+		die "publishing must run from main after the release-prep PR merges, got ${GITHUB_REF:-<unset>}"
+	fi
+}
+
+validate_release_metadata() {
+	local version="$1"
+
+	VERSION_FILE="${PROVIDER_DIR}/version/VERSION" \
+	CHANGELOG_FILE="${PROVIDER_DIR}/CHANGELOG.md" \
+		"${PROVIDER_DIR}/scripts/validate-release-version.sh" --expect-tag "$version" >/dev/null
+}
+
 import_gpg_key() {
 	[[ -n "${GPG_PRIVATE_KEY:-}" ]] || die "GPG_PRIVATE_KEY is required"
 	[[ -n "${GPG_FINGERPRINT:-}" ]] || die "GPG_FINGERPRINT is required"
@@ -189,8 +206,10 @@ main() {
 	trap cleanup EXIT
 
 	stage "Validate publish inputs"
+	require_github_actions_main
 	version="$(normalize_version "$VERSION")"
 	repo="$(normalize_repo "$RELEASE_REPOSITORY")"
+	validate_release_metadata "$version"
 
 	stage "Check required commands"
 	need_command git

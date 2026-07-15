@@ -23,32 +23,59 @@ environments.
   `ona` type.
 - A dedicated GPG signing key whose public key is registered in the Terraform
   Registry provider settings.
-- GitHub credentials with `contents: write` permission for
+- GitHub Actions release credentials with `contents: write` permission for
   `gitpod-io/terraform-provider-ona`.
-- Local tools: Go, Terraform, `gh`, `gpg`, `jq`, `sha256sum`, `zip`, and
+- Local verification tools: Go, Terraform, `jq`, `sha256sum`, `zip`, and
   `zipinfo`.
 
 Do not upload the private key to Terraform Registry, and do not commit exported
 key files.
+
+## Release Version
+
+The provider version is reviewed in `version/VERSION`. Keep it as bare SemVer
+without a leading `v`, for example:
+
+```text
+0.2.0-beta.1
+```
+
+Use prerelease suffixes such as `-beta.1` for explicit beta releases. Use plain
+SemVer such as `0.2.0` for stable releases. GitHub release tags add the leading
+`v`, so a `version/VERSION` value of `0.2.0-beta.1` publishes tag
+`v0.2.0-beta.1`.
+
+Release-prep PRs update both `version/VERSION` and the top `CHANGELOG.md`
+heading. Run the release metadata check before merging:
+
+```shell
+scripts/validate-release-version.sh
+```
 
 ## CI
 
 Pull requests run the branch build. It checks formatting, generated docs, lint,
 tests, normal build output, and unsigned release artifact packaging.
 
-Pushes to `main` run the main build and publish a prerelease GitHub release after
-the provider checks pass. The manual `Build main` workflow can also publish a
-specific prerelease version.
+Pushes to `main` run the main build without publishing. To publish a beta or
+stable release, merge a release-prep PR and then run the manual `Build main`
+workflow with `publish_release=true`. The workflow reads `version/VERSION`,
+validates the release metadata, publishes the matching GitHub release, and
+starts Registry verification.
 
-Published prereleases are GitHub releases in
+Published releases are GitHub releases in
 `gitpod-io/terraform-provider-ona`. After creating the GitHub release, CI starts
 the separate `Verify Terraform Registry` workflow. That workflow waits for
 Terraform Registry ingestion and runs `terraform init` on Linux amd64 and Linux
 arm64 without blocking the main build.
 
+After publishing a version, prepare the next release-prep PR before the next
+publish attempt. The release workflow rejects versions that are not greater than
+the existing SemVer tags.
+
 ## Local Verification
 
-Before publishing locally, run:
+Before merging a release-prep PR, run:
 
 ```shell
 make build
@@ -60,7 +87,7 @@ git diff --exit-code
 Build unsigned local release artifacts:
 
 ```shell
-make release-snapshot RELEASE_SNAPSHOT_VERSION=0.1.0-beta.1
+make release-snapshot RELEASE_SNAPSHOT_VERSION="$(cat version/VERSION)"
 ```
 
 The snapshot command writes Linux artifacts to `dist/release-snapshot/` and
@@ -68,29 +95,18 @@ verifies the artifact inventory, zip contents, registry manifest, and checksums.
 
 ## Manual Publish
 
-Run the preflight first:
+Publish only through the manual `Build main` workflow after the release-prep PR
+merges to `main`. Start the workflow from `main` with `publish_release=true`.
+The workflow reads `version/VERSION`, cross-compiles the Linux provider
+binaries, writes Terraform Registry artifacts, signs `SHA256SUMS`, creates the
+GitHub release, downloads the published assets, and verifies them again.
 
-```shell
-VERSION=v0.1.0-beta.1 \
-RELEASE_REPOSITORY=gitpod-io/terraform-provider-ona \
-GPG_PRIVATE_KEY="$(cat terraform-provider-ona-private.asc)" \
-GPG_FINGERPRINT="<fingerprint>" \
-scripts/preflight-publish-release.sh
-```
+Release binaries embed the bare `version/VERSION` value in provider metadata and
+the default Ona API `User-Agent`, for example
+`terraform-provider-ona/0.2.0-beta.1`.
 
-Publish the GitHub release:
-
-```shell
-VERSION=v0.1.0-beta.1 \
-RELEASE_REPOSITORY=gitpod-io/terraform-provider-ona \
-GPG_PRIVATE_KEY="$(cat terraform-provider-ona-private.asc)" \
-GPG_FINGERPRINT="<fingerprint>" \
-scripts/publish-release.sh
-```
-
-`scripts/publish-release.sh` cross-compiles the Linux provider binaries, writes
-Terraform Registry artifacts, signs `SHA256SUMS`, creates the GitHub release,
-downloads the published assets, and verifies them again.
+Local publishing is not supported. The publish scripts are CI entrypoints and
+fail unless GitHub Actions runs them from `refs/heads/main`.
 
 Before expecting Terraform Registry ingestion, confirm the Registry provider is
 registered and reachable:
@@ -108,7 +124,7 @@ terraform {
   required_providers {
     ona = {
       source  = "gitpod-io/ona"
-      version = "= 0.1.0-beta.1"
+      version = "= 0.2.0-beta.1"
     }
   }
 }
@@ -129,13 +145,10 @@ terraform {
   required_providers {
     ona = {
       source  = "gitpod-io/ona"
-      version = "= 0.1.0-beta.1"
+      version = "= 0.2.0-beta.1"
     }
   }
 }
 
 provider "ona" {}
 ```
-
-Stable release promotion remains a separate follow-up from the prerelease CI
-path.

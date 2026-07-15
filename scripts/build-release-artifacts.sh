@@ -30,13 +30,13 @@ build_binary() {
 	local goos="$1"
 	local goarch="$2"
 	local output="$3"
-	local version="$4"
+	local provider_version="$4"
 
 	mkdir -p "$(dirname "$output")"
 	(
 		cd "$PROVIDER_DIR"
 		GOOS="$goos" GOARCH="$goarch" CGO_ENABLED=0 \
-			go build -trimpath -ldflags "-s -w -X main.version=${version}" -o "$output" .
+			go build -trimpath -ldflags "-s -w -X github.com/gitpod-io/terraform-provider-ona/version.ProviderVersion=${provider_version}" -o "$output" .
 	)
 }
 
@@ -56,8 +56,8 @@ main() {
 	rm -rf "$DIST_DIR"
 	mkdir -p "$DIST_DIR"
 
-	build_binary linux amd64 "${DIST_DIR}/build/linux_amd64/terraform-provider-ona" "$version"
-	build_binary linux arm64 "${DIST_DIR}/build/linux_arm64/terraform-provider-ona" "$version"
+	build_binary linux amd64 "${DIST_DIR}/build/linux_amd64/terraform-provider-ona" "$version_no_v"
+	build_binary linux arm64 "${DIST_DIR}/build/linux_arm64/terraform-provider-ona" "$version_no_v"
 	cp "$PROVIDER_DIR/terraform-registry-manifest.json" "$DIST_DIR/terraform-registry-manifest.json"
 
 	(
