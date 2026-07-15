@@ -56,6 +56,7 @@ Direct `terraform import` uses these resource IDs:
 | `ona_organization_role_assignment` | `group_id/organization_id/role` |
 | `ona_webhook` | Webhook ID |
 | `ona_integration` | Integration ID |
+| `ona_workflow` | Workflow ID |
 
 Importing `ona_integration` restores API-observable configuration, but Ona
 censors stored credentials in read responses. Terraform therefore leaves the
@@ -63,6 +64,28 @@ write-only `credentials` object and its version markers unset after import. To
 rotate an imported credential, configure the credential value and its matching
 version marker, review whether Terraform proposes an update or replacement,
 then apply.
+
+## Workflow Import
+
+Add an import block with the workflow ID:
+
+```hcl
+import {
+  to = ona_workflow.nightly_checks
+  id = "00000000-0000-0000-0000-000000000000"
+}
+```
+
+Run `terraform plan -generate-config-out=generated.tf`, review the generated
+configuration, apply the import, and run `terraform plan` again. The final plan
+should be empty. Existing workflows that use reports, report steps,
+workflow-level agent/Codex settings, or legacy pull-request triggers without a
+webhook or integration must be updated in Ona before import because
+`ona_workflow` cannot reproduce those fields.
+
+Removing an imported `ona_workflow` from configuration deletes it remotely.
+Remove its address from Terraform state instead when you only want Terraform to
+stop managing it.
 
 ## Native Runner Import
 
