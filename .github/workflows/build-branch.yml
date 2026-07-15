@@ -17,4 +17,4 @@ jobs:
       contents: read
     secrets: inherit
     with:
-      publish_release: false
+      release_channel: none

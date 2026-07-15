@@ -5,6 +5,7 @@ set -euo pipefail
 PROVIDER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RELEASE_REPOSITORY="${RELEASE_REPOSITORY:-gitpod-io/terraform-provider-ona}"
 VERSION="${VERSION:-}"
+RELEASE_CHANNEL="${RELEASE_CHANNEL:-stable}"
 
 die() {
 	echo "::error::$*" >&2
@@ -38,9 +39,10 @@ require_github_actions_main() {
 validate_release_metadata() {
 	local version="$1"
 
-	VERSION_FILE="${PROVIDER_DIR}/version/VERSION" \
+	STABLE_VERSION_FILE="${PROVIDER_DIR}/version/STABLE_VERSION" \
+	BETA_VERSION_FILE="${PROVIDER_DIR}/version/BETA_VERSION" \
 	CHANGELOG_FILE="${PROVIDER_DIR}/CHANGELOG.md" \
-		"${PROVIDER_DIR}/scripts/validate-release-version.sh" --expect-tag "$version" >/dev/null
+		"${PROVIDER_DIR}/scripts/validate-release-version.sh" --channel "$RELEASE_CHANNEL" --expect-tag "$version" >/dev/null
 }
 
 require_publish_inputs() {
