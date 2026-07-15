@@ -55,6 +55,14 @@ Direct `terraform import` uses these resource IDs:
 | `ona_group_membership` | `group_id/service_account_id` |
 | `ona_organization_role_assignment` | `group_id/organization_id/role` |
 | `ona_webhook` | Webhook ID |
+| `ona_integration` | Integration ID |
+
+Importing `ona_integration` restores API-observable configuration, but Ona
+censors stored credentials in read responses. Terraform therefore leaves the
+write-only `credentials` object and its version markers unset after import. To
+rotate an imported credential, configure the credential value and its matching
+version marker, review whether Terraform proposes an update or replacement,
+then apply.
 
 ## Native Runner Import
 
