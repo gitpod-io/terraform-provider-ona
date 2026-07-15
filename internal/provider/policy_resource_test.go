@@ -465,6 +465,7 @@ func (s *fakeSecurityService) policyDeleted(id string) bool {
 
 type fakeOrganizationService struct {
 	v1connect.UnimplementedOrganizationServiceHandler
+	v1connect.UnimplementedIdentityServiceHandler
 
 	mu       sync.Mutex
 	policies *v1.OrganizationPolicies
@@ -487,6 +488,16 @@ func (s *fakeOrganizationService) GetIDToken(ctx context.Context, req *connect.R
 
 func (s *fakeOrganizationService) ExchangeToken(ctx context.Context, req *connect.Request[v1.ExchangeTokenRequest]) (*connect.Response[v1.ExchangeTokenResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ExchangeToken is not implemented"))
+}
+
+func (s *fakeOrganizationService) GetAuthenticatedIdentity(ctx context.Context, req *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error) {
+	return connect.NewResponse(&v1.GetAuthenticatedIdentityResponse{
+		Subject: &v1.Subject{
+			Id:        "user-1",
+			Principal: v1.Principal_PRINCIPAL_USER,
+		},
+		OrganizationId: s.policies.GetOrganizationId(),
+	}), nil
 }
 
 func (s *fakeOrganizationService) GetOrganizationPolicies(ctx context.Context, req *connect.Request[v1.GetOrganizationPoliciesRequest]) (*connect.Response[v1.GetOrganizationPoliciesResponse], error) {
