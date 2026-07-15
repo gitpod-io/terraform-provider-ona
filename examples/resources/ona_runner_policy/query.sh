@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Inputs: ONA_TOKEN, ONA_HOST, RUNNER_ID, TMPDIR, and TERRAFORM from the environment;
+# Inputs: ONA_TOKEN, ONA_HOST, TMPDIR, and TERRAFORM from the environment;
+# optional RUNNER_ID scopes discovery to one runner;
 # optional output argument names a destination file for generated Terraform.
 # Example: ./query.sh generated-runner-policies.tf
 # Output: runs Terraform Query for query.hcl and prints the generated file path.
@@ -9,7 +10,6 @@ script_parent=$(dirname "${BASH_SOURCE[0]}")
 script_dir=$(cd "$script_parent" >/dev/null && pwd)
 repo_root=$(git -C "$script_dir" rev-parse --show-toplevel)
 terraform_bin="${TERRAFORM:-terraform}"
-runner_id="${RUNNER_ID:?Set RUNNER_ID to the runner to query}"
 output="${1:-}"
 if [[ -n "$output" && -e "$output" ]]; then
   echo "$output already exists" >&2
@@ -39,6 +39,10 @@ terraform {
 }
 provider "ona" {}
 EOF
-TF_CLI_CONFIG_FILE="$workdir/terraformrc" "$terraform_bin" -chdir="$workdir" query -var="runner_id=$runner_id" -generate-config-out=generated.tf
+runner_args=()
+if [[ -n "${RUNNER_ID:-}" ]]; then
+  runner_args+=("-var=runner_id=$RUNNER_ID")
+fi
+TF_CLI_CONFIG_FILE="$workdir/terraformrc" "$terraform_bin" -chdir="$workdir" query "${runner_args[@]}" -generate-config-out=generated.tf
 [[ "$output" == "$workdir/generated.tf" ]] || cp "$workdir/generated.tf" "$output"
 echo "Generated config: $output"

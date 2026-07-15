@@ -16,37 +16,75 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
-func TestAccRunnerPolicyQuery(t *testing.T) {
-	server := newRunnerAPIServer(t, map[string]*v1.Runner{
-		"runner-1": newTestRunner("runner-1", "Shared Runner"),
-	})
-	t.Cleanup(server.Close)
-	server.service.policies = map[string]*v1.RunnerPolicy{
-		"runner-1/group-1": {GroupId: "group-1", Role: v1.RunnerRole_RUNNER_ROLE_USER},
-		"runner-1/group-2": {GroupId: "group-2", Role: v1.RunnerRole_RUNNER_ROLE_ADMIN},
-	}
+func TestAccRunnerPolicyQueryWithRunnerIDs(t *testing.T) {
+	server := newRunnerPolicyQueryAPIServer(t)
 
 	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
 		Query:  true,
 		Config: runnerPolicyQueryConfig("runner-1"),
-		QueryResultChecks: []querycheck.QueryResultCheck{
-			querycheck.ExpectLength("ona_runner_policy.all", 1),
+		QueryResultChecks: runnerPolicyQueryResultChecks(
+			runnerPolicyQueryExpectation{RunnerID: "runner-1", GroupID: "group-1"},
+		),
+	}))
+}
+
+func TestAccRunnerPolicyQueryWithoutRunnerIDs(t *testing.T) {
+	server := newRunnerPolicyQueryAPIServer(t)
+
+	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+		Query:  true,
+		Config: runnerPolicyQueryConfig(),
+		QueryResultChecks: runnerPolicyQueryResultChecks(
+			runnerPolicyQueryExpectation{RunnerID: "runner-1", GroupID: "group-1"},
+			runnerPolicyQueryExpectation{RunnerID: "runner-2", GroupID: "group-2"},
+		),
+	}))
+}
+
+func newRunnerPolicyQueryAPIServer(t *testing.T) *runnerAPIServer {
+	t.Helper()
+
+	server := newRunnerAPIServer(t, map[string]*v1.Runner{
+		"runner-1": newTestRunner("runner-1", "Shared Runner"),
+		"runner-2": newTestRunner("runner-2", "Secondary Runner"),
+	})
+	t.Cleanup(server.Close)
+	server.service.policies = map[string]*v1.RunnerPolicy{
+		"runner-1/group-1":     {GroupId: "group-1", Role: v1.RunnerRole_RUNNER_ROLE_USER},
+		"runner-1/group-admin": {GroupId: "group-admin", Role: v1.RunnerRole_RUNNER_ROLE_ADMIN},
+		"runner-2/group-2":     {GroupId: "group-2", Role: v1.RunnerRole_RUNNER_ROLE_USER},
+	}
+	return server
+}
+
+type runnerPolicyQueryExpectation struct {
+	RunnerID string
+	GroupID  string
+}
+
+func runnerPolicyQueryResultChecks(expected ...runnerPolicyQueryExpectation) []querycheck.QueryResultCheck {
+	checks := []querycheck.QueryResultCheck{
+		querycheck.ExpectLength("ona_runner_policy.all", len(expected)),
+	}
+	for _, policy := range expected {
+		checks = append(checks,
 			querycheck.ExpectIdentity("ona_runner_policy.all", map[string]knownvalue.Check{
-				"runner_id": knownvalue.StringExact("runner-1"),
-				"group_id":  knownvalue.StringExact("group-1"),
+				"runner_id": knownvalue.StringExact(policy.RunnerID),
+				"group_id":  knownvalue.StringExact(policy.GroupID),
 			}),
 			querycheck.ExpectResourceKnownValues(
 				"ona_runner_policy.all",
-				queryfilter.ByDisplayName(knownvalue.StringExact("runner-1 / group-1")),
+				queryfilter.ByDisplayName(knownvalue.StringExact(fmt.Sprintf("%s / %s", policy.RunnerID, policy.GroupID))),
 				[]querycheck.KnownValueCheck{
-					{Path: tfjsonpath.New("id"), KnownValue: knownvalue.StringExact("runner-1/group-1")},
-					{Path: tfjsonpath.New("runner_id"), KnownValue: knownvalue.StringExact("runner-1")},
-					{Path: tfjsonpath.New("group_id"), KnownValue: knownvalue.StringExact("group-1")},
+					{Path: tfjsonpath.New("id"), KnownValue: knownvalue.StringExact(fmt.Sprintf("%s/%s", policy.RunnerID, policy.GroupID))},
+					{Path: tfjsonpath.New("runner_id"), KnownValue: knownvalue.StringExact(policy.RunnerID)},
+					{Path: tfjsonpath.New("group_id"), KnownValue: knownvalue.StringExact(policy.GroupID)},
 					{Path: tfjsonpath.New("role"), KnownValue: knownvalue.StringExact("user")},
 				},
 			),
-		},
-	}))
+		)
+	}
+	return checks
 }
 
 func TestAccRunnerPolicyQueryRejectsUnknownRunner(t *testing.T) {
@@ -62,7 +100,16 @@ func TestAccRunnerPolicyQueryRejectsUnknownRunner(t *testing.T) {
 	}))
 }
 
-func runnerPolicyQueryConfig(runnerID string) string {
+func runnerPolicyQueryConfig(runnerIDs ...string) string {
+	if len(runnerIDs) == 0 {
+		return `
+list "ona_runner_policy" "all" {
+  provider         = ona
+  include_resource = true
+}
+`
+	}
+
 	return fmt.Sprintf(`
 list "ona_runner_policy" "all" {
   provider         = ona
@@ -72,5 +119,5 @@ list "ona_runner_policy" "all" {
     runner_ids = [%q]
   }
 }
-`, runnerID)
+`, runnerIDs[0])
 }

@@ -1,5 +1,7 @@
 variable "runner_id" {
-  type = string
+  type        = string
+  default     = null
+  description = "Optional runner ID used to scope policy discovery."
 }
 
 list "ona_runner_policy" "runner" {
@@ -7,6 +9,6 @@ list "ona_runner_policy" "runner" {
   include_resource = true
 
   config {
-    runner_ids = [var.runner_id]
+    runner_ids = var.runner_id == null ? [] : [var.runner_id]
   }
 }
