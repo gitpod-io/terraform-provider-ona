@@ -330,10 +330,12 @@ func newPolicyAPIServer(t *testing.T) *policyAPIServer {
 	}
 
 	securityPath, securityHandler := v1connect.NewSecurityServiceHandler(securityService)
+	identityPath, identityHandler := v1connect.NewIdentityServiceHandler(securityService)
 	organizationPath, organizationHandler := v1connect.NewOrganizationServiceHandler(organizationService)
 	identityPath, identityHandler := v1connect.NewIdentityServiceHandler(organizationService)
 	mux := http.NewServeMux()
 	mux.Handle(securityPath, securityHandler)
+	mux.Handle(identityPath, identityHandler)
 	mux.Handle(organizationPath, organizationHandler)
 	mux.Handle(identityPath, identityHandler)
 	server := httptest.NewServer(http.StripPrefix("/api", mux))
@@ -347,11 +349,22 @@ func newPolicyAPIServer(t *testing.T) *policyAPIServer {
 
 type fakeSecurityService struct {
 	v1connect.UnimplementedSecurityServiceHandler
+	v1connect.UnimplementedIdentityServiceHandler
 
 	mu       sync.Mutex
 	policies map[string]*v1.SecurityPolicy
 	deleted  []string
 	now      time.Time
+}
+
+func (s *fakeSecurityService) GetAuthenticatedIdentity(ctx context.Context, req *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error) {
+	return connect.NewResponse(&v1.GetAuthenticatedIdentityResponse{
+		OrganizationId: "org-1",
+		Subject: &v1.Subject{
+			Id:        "user-1",
+			Principal: v1.Principal_PRINCIPAL_USER,
+		},
+	}), nil
 }
 
 func (s *fakeSecurityService) CreateSecurityPolicy(ctx context.Context, req *connect.Request[v1.CreateSecurityPolicyRequest]) (*connect.Response[v1.CreateSecurityPolicyResponse], error) {
