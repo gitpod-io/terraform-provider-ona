@@ -1,12 +1,4 @@
-variable "runner_id" {
-  type = string
-}
-
-list "ona_environment_class" "runner" {
+list "ona_environment_class" "all" {
   provider         = ona
   include_resource = true
-
-  config {
-    runner_ids = [var.runner_id]
-  }
 }
