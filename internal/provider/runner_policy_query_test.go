@@ -4,6 +4,8 @@
 package provider
 
 import (
+	"fmt"
+	"regexp"
 	"testing"
 
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
@@ -26,7 +28,7 @@ func TestAccRunnerPolicyQuery(t *testing.T) {
 
 	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
 		Query:  true,
-		Config: runnerPolicyQueryConfig(),
+		Config: runnerPolicyQueryConfig("runner-1"),
 		QueryResultChecks: []querycheck.QueryResultCheck{
 			querycheck.ExpectLength("ona_runner_policy.all", 1),
 			querycheck.ExpectIdentity("ona_runner_policy.all", map[string]knownvalue.Check{
@@ -47,15 +49,28 @@ func TestAccRunnerPolicyQuery(t *testing.T) {
 	}))
 }
 
-func runnerPolicyQueryConfig() string {
-	return `
+func TestAccRunnerPolicyQueryRejectsUnknownRunner(t *testing.T) {
+	server := newRunnerAPIServer(t, map[string]*v1.Runner{
+		"runner-1": newTestRunner("runner-1", "Shared Runner"),
+	})
+	t.Cleanup(server.Close)
+
+	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+		Query:       true,
+		Config:      runnerPolicyQueryConfig("missing-runner"),
+		ExpectError: regexp.MustCompile("Unable to List Ona Runner Policies"),
+	}))
+}
+
+func runnerPolicyQueryConfig(runnerID string) string {
+	return fmt.Sprintf(`
 list "ona_runner_policy" "all" {
   provider         = ona
   include_resource = true
 
   config {
-    runner_ids = ["runner-1"]
+    runner_ids = [%q]
   }
 }
-`
+`, runnerID)
 }
