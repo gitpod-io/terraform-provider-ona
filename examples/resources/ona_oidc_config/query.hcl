@@ -1,7 +1,4 @@
-variable "organization_id" { type = string }
-
-list "ona_oidc_config" "organization" {
+list "ona_oidc_config" "all" {
   provider         = ona
   include_resource = true
-  config { organization_id = var.organization_id }
 }
