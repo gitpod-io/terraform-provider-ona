@@ -9,9 +9,7 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -21,6 +19,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
@@ -34,12 +33,11 @@ func NewPoliciesResource() resource.Resource {
 }
 
 type PoliciesResource struct {
-	client *managementclient.ManagementPlane
+	clientHolder
 }
 
 type PoliciesModel struct {
 	ID                                types.String                    `tfsdk:"id"`
-	OrganizationID                    types.String                    `tfsdk:"organization_id"`
 	MaximumEnvironmentTimeout         types.String                    `tfsdk:"maximum_environment_timeout"`
 	MembersRequireProjects            types.Bool                      `tfsdk:"members_require_projects"`
 	MembersCreateProjects             types.Bool                      `tfsdk:"members_create_projects"`
@@ -80,6 +78,7 @@ type AgentPolicyModel struct {
 const (
 	conversationSharingDisabled     = "disabled"
 	conversationSharingOrganization = "organization"
+	policiesBaselinePrivateKey      = "server_defined_policy_baseline"
 )
 
 func (r *PoliciesResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -88,20 +87,13 @@ func (r *PoliciesResource) Metadata(ctx context.Context, req resource.MetadataRe
 
 func (r *PoliciesResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = resourceschema.Schema{
-		MarkdownDescription: "Singleton Ona organization policy settings. This resource updates the remote organization policy object in place. Destroying it removes Terraform state only; it does not reset remote organization settings.",
+		MarkdownDescription: "Singleton Ona organization policy settings for the organization associated with the authenticated provider token. This resource updates the remote policy object in place. Destroying it restores the server-defined policy configuration that existed before Terraform began managing it.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "Terraform resource ID. This is the same value as `organization_id`.",
+				MarkdownDescription: "Terraform resource ID. This is the authenticated organization ID.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
-				},
-			},
-			"organization_id": resourceschema.StringAttribute{
-				Required:            true,
-				MarkdownDescription: "Organization ID whose singleton policy object is managed. Changing this value replaces the Terraform resource address but still manages the target organization's singleton policies.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"maximum_environment_timeout": durationAttribute("Maximum timeout allowed for environments. `0s` means no limit; non-zero values must be at least `30m`."),
@@ -240,20 +232,7 @@ func durationAttribute(description string) resourceschema.StringAttribute {
 }
 
 func (r *PoliciesResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = data.Client
+	r.configure(req, resp)
 }
 
 func (r *PoliciesResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -267,20 +246,25 @@ func (r *PoliciesResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before creating ona_organization_policies resources.",
-		)
+	if !r.requireClient(&resp.Diagnostics, "creating", "ona_organization_policies") {
+		return
+	}
+	organizationID, err := r.authenticatedOrganizationID(ctx)
+	if err != nil {
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
 		return
 	}
 
-	current, err := r.getPolicies(ctx, data.OrganizationID.ValueString())
+	current, err := r.getPolicies(ctx, organizationID)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona Organization Policies", "reading current Ona organization policies before update", err)
 		return
 	}
-	updateReq, diags := updatePoliciesRequestFromConfig(ctx, data, req.Config, current)
+	resp.Diagnostics.Append(setPoliciesBaseline(ctx, resp.Private, current)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	updateReq, diags := updatePoliciesRequestFromConfig(ctx, organizationID, data, req.Config, current)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -290,8 +274,13 @@ func (r *PoliciesResource) Create(ctx context.Context, req resource.CreateReques
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Organization Policies", "updating Ona organization policies", err)
 		return
 	}
+	data.ID = types.StringValue(organizationID)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
-	policies, err := r.getPolicies(ctx, data.OrganizationID.ValueString())
+	policies, err := r.getPolicies(ctx, organizationID)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Updated Ona Organization Policies", "reading updated Ona organization policies", err)
 		return
@@ -311,20 +300,15 @@ func (r *PoliciesResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before reading ona_organization_policies resources.",
-		)
+	if !r.requireClient(&resp.Diagnostics, "reading", "ona_organization_policies") {
 		return
 	}
-
-	organizationID := data.OrganizationID.ValueString()
-	if organizationID == "" {
-		organizationID = data.ID.ValueString()
+	organizationID, err := r.authenticatedOrganizationID(ctx)
+	if err != nil {
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
+		return
 	}
-	if organizationID == "" {
-		resp.Diagnostics.AddError("Unable to Read Ona Organization Policies", "Organization ID is empty.")
+	if !guardStateOrganizationID(&resp.Diagnostics, data.ID, organizationID, "ona_organization_policies") {
 		return
 	}
 
@@ -335,6 +319,10 @@ func (r *PoliciesResource) Read(ctx context.Context, req resource.ReadRequest, r
 			return
 		}
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona Organization Policies", "reading Ona organization policies", err)
+		return
+	}
+	resp.Diagnostics.Append(ensurePoliciesBaseline(ctx, req.Private, resp.Private, policies)...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 	prior := data
@@ -353,20 +341,28 @@ func (r *PoliciesResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before updating ona_organization_policies resources.",
-		)
+	if !r.requireClient(&resp.Diagnostics, "updating", "ona_organization_policies") {
+		return
+	}
+	organizationID, err := r.authenticatedOrganizationID(ctx)
+	if err != nil {
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
+		return
+	}
+	if !guardStateOrganizationID(&resp.Diagnostics, data.ID, organizationID, "ona_organization_policies") {
 		return
 	}
 
-	current, err := r.getPolicies(ctx, data.OrganizationID.ValueString())
+	current, err := r.getPolicies(ctx, organizationID)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona Organization Policies", "reading current Ona organization policies before update", err)
 		return
 	}
-	updateReq, diags := updatePoliciesRequestFromConfig(ctx, data, req.Config, current)
+	resp.Diagnostics.Append(ensurePoliciesBaseline(ctx, req.Private, resp.Private, current)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	updateReq, diags := updatePoliciesRequestFromConfig(ctx, organizationID, data, req.Config, current)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -377,7 +373,7 @@ func (r *PoliciesResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	policies, err := r.getPolicies(ctx, data.OrganizationID.ValueString())
+	policies, err := r.getPolicies(ctx, organizationID)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Updated Ona Organization Policies", "reading updated Ona organization policies", err)
 		return
@@ -392,22 +388,68 @@ func (r *PoliciesResource) Update(ctx context.Context, req resource.UpdateReques
 
 func shouldPopulateUnmanagedPolicyFields(prior PoliciesModel) bool {
 	return !prior.ID.IsNull() &&
-		!prior.OrganizationID.IsNull() &&
 		prior.MaximumEnvironmentTimeout.IsNull() &&
 		prior.MembersRequireProjects.IsNull() &&
 		prior.DefaultEditorID.IsNull()
 }
 
 func (r *PoliciesResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data PoliciesModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	if !r.requireClient(&resp.Diagnostics, "deleting", "ona_organization_policies") {
+		return
+	}
+	organizationID, err := r.authenticatedOrganizationID(ctx)
+	if err != nil {
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
+		return
+	}
+	if !guardStateOrganizationID(&resp.Diagnostics, data.ID, organizationID, "ona_organization_policies") {
+		return
+	}
+	baseline, diags := policiesBaseline(ctx, req.Private)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	current, err := r.getPolicies(ctx, organizationID)
+	if err != nil {
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona Organization Policies", "reading current Ona organization policies before restoring defaults", err)
+		return
+	}
+	if _, err := r.client.OrganizationService().UpdateOrganizationPolicies(ctx, connect.NewRequest(restorePoliciesRequest(organizationID, baseline, current))); err != nil {
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Restore Ona Organization Policies", "restoring the server-defined Ona organization policy configuration", err)
+		return
+	}
 	resp.State.RemoveResource(ctx)
 }
 
 func (r *PoliciesResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
+	if !r.requireClient(&resp.Diagnostics, "importing", "ona_organization_policies") {
+		return
+	}
+	organizationID, err := r.authenticatedOrganizationID(ctx)
+	if err != nil {
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
+		return
+	}
+	if req.ID != "current" && req.ID != organizationID {
+		resp.Diagnostics.AddError("Invalid Ona Organization Policies Import ID", fmt.Sprintf("Import ona_organization_policies with \"current\" or the authenticated organization ID %q.", organizationID))
+		return
+	}
+	baseline, err := r.getPolicies(ctx, organizationID)
+	if err != nil {
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona Organization Policies", "reading Ona organization policies during import", err)
+		return
+	}
+	resp.Diagnostics.Append(setPoliciesBaseline(ctx, resp.Private, baseline)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("organization_id"), req.ID)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), organizationID)...)
 }
 
 func (r *PoliciesResource) getPolicies(ctx context.Context, organizationID string) (*v1.OrganizationPolicies, error) {
@@ -418,6 +460,151 @@ func (r *PoliciesResource) getPolicies(ctx context.Context, organizationID strin
 		return nil, fmt.Errorf("get organization policies: %w", err)
 	}
 	return result.Msg.GetPolicies(), nil
+}
+
+func setPoliciesBaseline(ctx context.Context, state privateState, policies *v1.OrganizationPolicies) diag.Diagnostics {
+	var diags diag.Diagnostics
+	if state == nil {
+		diags.AddError("Unable to Store Organization Policy Baseline", "Terraform did not provide private state storage for ona_organization_policies.")
+		return diags
+	}
+	if policies == nil {
+		diags.AddError("Unable to Store Organization Policy Baseline", "The Ona API returned an empty organization policy object.")
+		return diags
+	}
+	data, err := protojson.Marshal(managedPoliciesSnapshot(policies))
+	if err != nil {
+		diags.AddError("Unable to Store Organization Policy Baseline", fmt.Sprintf("Could not encode the server-defined organization policy configuration: %s.", err))
+		return diags
+	}
+	diags.Append(state.SetKey(ctx, policiesBaselinePrivateKey, data)...)
+	return diags
+}
+
+func ensurePoliciesBaseline(ctx context.Context, prior privateState, next privateState, policies *v1.OrganizationPolicies) diag.Diagnostics {
+	var diags diag.Diagnostics
+	if prior != nil {
+		data, stateDiags := prior.GetKey(ctx, policiesBaselinePrivateKey)
+		diags.Append(stateDiags...)
+		if diags.HasError() {
+			return diags
+		}
+		if len(data) > 0 {
+			if next == nil {
+				diags.AddError("Unable to Store Organization Policy Baseline", "Terraform did not provide private state storage for ona_organization_policies.")
+				return diags
+			}
+			diags.Append(next.SetKey(ctx, policiesBaselinePrivateKey, data)...)
+			return diags
+		}
+	}
+	return setPoliciesBaseline(ctx, next, policies)
+}
+
+func policiesBaseline(ctx context.Context, state privateState) (*v1.OrganizationPolicies, diag.Diagnostics) {
+	var diags diag.Diagnostics
+	if state == nil {
+		diags.AddError("Unable to Restore Organization Policy Baseline", "Terraform did not provide private state storage for ona_organization_policies.")
+		return nil, diags
+	}
+	data, stateDiags := state.GetKey(ctx, policiesBaselinePrivateKey)
+	diags.Append(stateDiags...)
+	if diags.HasError() {
+		return nil, diags
+	}
+	if len(data) == 0 {
+		diags.AddError("Unable to Restore Organization Policy Baseline", "The server-defined organization policy configuration is missing from private state. Refresh or re-import the resource before deleting it.")
+		return nil, diags
+	}
+	var policies v1.OrganizationPolicies
+	if err := protojson.Unmarshal(data, &policies); err != nil {
+		diags.AddError("Unable to Restore Organization Policy Baseline", fmt.Sprintf("Could not decode the server-defined organization policy configuration: %s.", err))
+		return nil, diags
+	}
+	return &policies, diags
+}
+
+func managedPoliciesSnapshot(policies *v1.OrganizationPolicies) *v1.OrganizationPolicies {
+	var agentPolicy *v1.AgentPolicy
+	if policy := policies.GetAgentPolicy(); policy != nil {
+		agentPolicy = &v1.AgentPolicy{
+			McpDisabled:                policy.GetMcpDisabled(),
+			CommandDenyList:            append([]string(nil), policy.GetCommandDenyList()...),
+			ScmToolsDisabled:           policy.GetScmToolsDisabled(),
+			ScmToolsAllowedGroupId:     policy.GetScmToolsAllowedGroupId(),
+			ConversationSharingPolicy:  policy.GetConversationSharingPolicy(),
+			MaxSubagentsPerEnvironment: policy.GetMaxSubagentsPerEnvironment(),
+			AllowedAgentIds:            append([]string(nil), policy.GetAllowedAgentIds()...),
+		}
+	}
+	return &v1.OrganizationPolicies{
+		OrganizationId:                    policies.GetOrganizationId(),
+		MaximumEnvironmentTimeout:         policies.GetMaximumEnvironmentTimeout(),
+		MembersRequireProjects:            policies.GetMembersRequireProjects(),
+		MembersCreateProjects:             policies.GetMembersCreateProjects(),
+		AllowedEditorIds:                  append([]string(nil), policies.GetAllowedEditorIds()...),
+		DefaultEditorId:                   policies.GetDefaultEditorId(),
+		AllowLocalRunners:                 policies.GetAllowLocalRunners(),
+		MaximumRunningEnvironmentsPerUser: policies.GetMaximumRunningEnvironmentsPerUser(),
+		MaximumEnvironmentsPerUser:        policies.GetMaximumEnvironmentsPerUser(),
+		DefaultEnvironmentImage:           policies.GetDefaultEnvironmentImage(),
+		PortSharingDisabled:               policies.GetPortSharingDisabled(),
+		DeleteArchivedEnvironmentsAfter:   policies.GetDeleteArchivedEnvironmentsAfter(),
+		AgentPolicy:                       agentPolicy,
+		MaximumEnvironmentLifetime:        policies.GetMaximumEnvironmentLifetime(),
+		RequireCustomDomainAccess:         policies.GetRequireCustomDomainAccess(),
+		EditorVersionRestrictions:         policies.GetEditorVersionRestrictions(),
+		RestrictAccountCreationToScim:     policies.GetRestrictAccountCreationToScim(),
+		WebBrowserDisabled:                policies.GetWebBrowserDisabled(),
+		DisableFromScratch:                policies.GetDisableFromScratch(),
+		SecurityPolicyId:                  policies.GetSecurityPolicyId(),
+		ArchiveEnvironmentsAfter:          policies.GetArchiveEnvironmentsAfter(),
+	}
+}
+
+func restorePoliciesRequest(organizationID string, baseline *v1.OrganizationPolicies, current *v1.OrganizationPolicies) *v1.UpdateOrganizationPoliciesRequest {
+	baselineAgentPolicy := baseline.GetAgentPolicy()
+	if baselineAgentPolicy == nil {
+		baselineAgentPolicy = &v1.AgentPolicy{}
+	}
+	currentAgentPolicy := current.GetAgentPolicy()
+	if currentAgentPolicy == nil {
+		currentAgentPolicy = &v1.AgentPolicy{}
+	}
+	return &v1.UpdateOrganizationPoliciesRequest{
+		OrganizationId:                    organizationID,
+		MaximumEnvironmentTimeout:         baseline.GetMaximumEnvironmentTimeout(),
+		MembersRequireProjects:            ptr(baseline.GetMembersRequireProjects()),
+		MembersCreateProjects:             ptr(baseline.GetMembersCreateProjects()),
+		AllowedEditorIds:                  append([]string(nil), baseline.GetAllowedEditorIds()...),
+		DefaultEditorId:                   ptr(baseline.GetDefaultEditorId()),
+		AllowLocalRunners:                 ptr(baseline.GetAllowLocalRunners()),
+		MaximumRunningEnvironmentsPerUser: ptr(baseline.GetMaximumRunningEnvironmentsPerUser()),
+		MaximumEnvironmentsPerUser:        ptr(baseline.GetMaximumEnvironmentsPerUser()),
+		DefaultEnvironmentImage:           ptr(baseline.GetDefaultEnvironmentImage()),
+		PortSharingDisabled:               ptr(baseline.GetPortSharingDisabled()),
+		DeleteArchivedEnvironmentsAfter:   baseline.GetDeleteArchivedEnvironmentsAfter(),
+		MaximumEnvironmentLifetime:        baseline.GetMaximumEnvironmentLifetime(),
+		RequireCustomDomainAccess:         ptr(baseline.GetRequireCustomDomainAccess()),
+		EditorVersionRestrictions:         baseline.GetEditorVersionRestrictions(),
+		RestrictAccountCreationToScim:     ptr(baseline.GetRestrictAccountCreationToScim()),
+		WebBrowserDisabled:                ptr(baseline.GetWebBrowserDisabled()),
+		DisableFromScratch:                ptr(baseline.GetDisableFromScratch()),
+		SecurityPolicyId:                  ptr(baseline.GetSecurityPolicyId()),
+		ArchiveEnvironmentsAfter:          baseline.GetArchiveEnvironmentsAfter(),
+		AgentPolicy: &v1.UpdateOrganizationPoliciesRequest_UpdateAgentPolicy{
+			McpDisabled:                  ptr(baselineAgentPolicy.GetMcpDisabled()),
+			CommandDenyList:              append([]string(nil), baselineAgentPolicy.GetCommandDenyList()...),
+			ScmToolsDisabled:             ptr(baselineAgentPolicy.GetScmToolsDisabled()),
+			ScmToolsAllowedGroupId:       ptr(baselineAgentPolicy.GetScmToolsAllowedGroupId()),
+			ConversationSharingPolicy:    ptr(baselineAgentPolicy.GetConversationSharingPolicy()),
+			MaxSubagentsPerEnvironment:   ptr(baselineAgentPolicy.GetMaxSubagentsPerEnvironment()),
+			AllowedAgentIds:              append([]string(nil), baselineAgentPolicy.GetAllowedAgentIds()...),
+			AllowedCodexModels:           append([]v1.CodexOpenAIModel(nil), currentAgentPolicy.GetAllowedCodexModels()...),
+			AllowedCodexReasoningEfforts: append([]v1.CodexReasoningEffort(nil), currentAgentPolicy.GetAllowedCodexReasoningEfforts()...),
+			AllowedCodexServiceTiers:     append([]v1.CodexServiceTier(nil), currentAgentPolicy.GetAllowedCodexServiceTiers()...),
+		},
+	}
 }
 
 func validatePoliciesConfig(ctx context.Context, cfg tfsdk.Config) diag.Diagnostics {

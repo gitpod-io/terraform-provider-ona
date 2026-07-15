@@ -47,7 +47,7 @@ Direct `terraform import` uses these resource IDs:
 | `ona_environment_class` | Environment class ID |
 | `ona_project` | Project ID |
 | `ona_security_policy` | Security policy ID |
-| `ona_organization_policies` | Organization ID |
+| `ona_organization_policies` | `current` or the authenticated organization ID |
 | `ona_announcement_banner` | `current` |
 | `ona_terms_of_service` | `current` |
 | `ona_custom_domain` | `current` |
