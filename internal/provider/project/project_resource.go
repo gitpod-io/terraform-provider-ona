@@ -107,6 +107,10 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Project Environment Classes", "assigning environment classes to the created Ona project", err)
 		return
 	}
+	if err := r.setInsightsEnabled(ctx, data.ID.ValueString(), data.InsightsEnabled.ValueBool()); err != nil {
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Project Insights", "setting Insights enablement for the created Ona project", err)
+		return
+	}
 
 	project, err := r.getProject(ctx, data.ID.ValueString())
 	if err != nil {
@@ -120,6 +124,14 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 
 	planned := data
 	resp.Diagnostics.Append(populateProjectModel(ctx, &data, project)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	data.InsightsEnabled, err = r.insightsEnabled(ctx, data.ID.ValueString())
+	if err != nil {
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona Project Insights", "reading Insights enablement for the created Ona project", err)
+		return
+	}
 	preserveProjectPlannedInputs(&data, planned)
 	if resp.Diagnostics.HasError() {
 		return
@@ -161,6 +173,14 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 	prior := data
 	data = ProjectModel{}
 	resp.Diagnostics.Append(populateProjectModel(ctx, &data, project)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	data.InsightsEnabled, err = r.insightsEnabled(ctx, data.ID.ValueString())
+	if err != nil {
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona Project Insights", "reading project Insights enablement", err)
+		return
+	}
 	preserveProjectPlannedInputs(&data, prior)
 	if resp.Diagnostics.HasError() {
 		return
@@ -204,6 +224,12 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Project Environment Classes", "updating Ona project environment classes", err)
 		return
 	}
+	if !data.InsightsEnabled.Equal(prior.InsightsEnabled) {
+		if err := r.setInsightsEnabled(ctx, data.ID.ValueString(), data.InsightsEnabled.ValueBool()); err != nil {
+			providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Project Insights", "setting project Insights enablement", err)
+			return
+		}
+	}
 
 	project, err := r.getProject(ctx, data.ID.ValueString())
 	if err != nil {
@@ -217,6 +243,14 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 
 	planned := data
 	resp.Diagnostics.Append(populateProjectModel(ctx, &data, project)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	data.InsightsEnabled, err = r.insightsEnabled(ctx, data.ID.ValueString())
+	if err != nil {
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Ona Project Insights", "reading Insights enablement for the updated Ona project", err)
+		return
+	}
 	preserveProjectPlannedInputs(&data, planned)
 	if resp.Diagnostics.HasError() {
 		return
@@ -281,6 +315,35 @@ func (r *Resource) updateEnvironmentClasses(ctx context.Context, projectID strin
 		return fmt.Errorf("update project environment classes: %w", err)
 	}
 	return nil
+}
+
+func (r *Resource) setInsightsEnabled(ctx context.Context, projectID string, enabled bool) error {
+	if enabled {
+		_, err := r.client.InsightsService().EnableProjectInsights(ctx, connect.NewRequest(&v1.EnableProjectInsightsRequest{ProjectId: projectID}))
+		if err != nil {
+			return fmt.Errorf("enable project insights: %w", err)
+		}
+		return nil
+	}
+	_, err := r.client.InsightsService().DisableProjectInsights(ctx, connect.NewRequest(&v1.DisableProjectInsightsRequest{ProjectId: projectID}))
+	if connect.CodeOf(err) == connect.CodeNotFound {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("disable project insights: %w", err)
+	}
+	return nil
+}
+
+func (r *Resource) insightsEnabled(ctx context.Context, projectID string) (types.Bool, error) {
+	result, err := r.client.InsightsService().GetProjectInsightsStatus(ctx, connect.NewRequest(&v1.GetProjectInsightsStatusRequest{ProjectId: projectID}))
+	if err != nil {
+		if connect.CodeOf(err) == connect.CodeNotFound {
+			return types.BoolValue(false), nil
+		}
+		return types.BoolNull(), fmt.Errorf("get project insights status: %w", err)
+	}
+	return types.BoolValue(result.Msg.GetEnabled()), nil
 }
 
 func populateProjectModel(ctx context.Context, data *ProjectModel, project *v1.Project) diag.Diagnostics {

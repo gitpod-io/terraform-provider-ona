@@ -36,8 +36,6 @@ data "ona_runner" "example" {
 - `kind` (String) Runner kind deduced by the API from the provider.
 - `name` (String) Runner display name.
 - `runner_provider` (String) Runner cloud provider, such as `aws_ec2` or `gcp`.
-- `status` (Attributes) Runner status reported by the runner. (see [below for nested schema](#nestedatt--status))
-- `updated_at` (String) Time when the runner was last updated.
 
 <a id="nestedatt--configuration"></a>
 ### Nested Schema for `configuration`
@@ -68,18 +66,3 @@ Read-Only:
 
 - `id` (String) Creator subject ID.
 - `principal` (String) Creator principal type.
-
-
-<a id="nestedatt--status"></a>
-### Nested Schema for `status`
-
-Read-Only:
-
-- `log_url` (String) Runner log URL.
-- `message` (String) Runner status message.
-- `phase` (String) Runner phase.
-- `region` (String) Actual region reported by the runner.
-- `support_bundle_url` (String) Runner support bundle URL.
-- `system_details` (String) Runner system details.
-- `updated_at` (String) Time when the runner status was last updated.
-- `version` (String) Runner version.

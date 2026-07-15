@@ -36,9 +36,6 @@ resource "ona_organization_role_assignment" "terraform_admin" {
 ### Read-Only
 
 - `id` (String) Role assignment ID.
-- `organization_id` (String) Organization ID whose role is assigned. This is resolved from the authenticated provider token.
-- `resource_id` (String) Resource ID for the assignment. This is the same as `organization_id`.
-- `resource_type` (String) Resource type for the assignment. Always `organization`.
 
 ## Import
 
@@ -49,5 +46,5 @@ The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/c
 ```shell
 #!/usr/bin/env sh
 
-terraform import ona_organization_role_assignment.terraform_admin 11111111-1111-4111-8111-111111111111/00000000-0000-0000-0000-000000000000/organization_admin
+terraform import ona_organization_role_assignment.terraform_admin 11111111-1111-4111-8111-111111111111/organization_admin
 ```

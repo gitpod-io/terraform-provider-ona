@@ -74,16 +74,7 @@ func resourceSchema() resourceschema.Schema {
 				Optional:            true,
 				MarkdownDescription: "User-managed rotation marker. Changing this value rotates the webhook signing secret during apply. The secret itself is never stored in this resource's state.",
 			},
-			"organization_id": computedStableString("Organization ID that owns the webhook."),
-			"url":             computedStableString("Generated webhook endpoint URL."),
-			"bound_workflow_count": resourceschema.Int32Attribute{
-				Computed:            true,
-				MarkdownDescription: "Number of workflows currently bound to the webhook.",
-			},
-			"last_triggered_at": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Time when the webhook was last triggered.",
-			},
+			"url": computedStableString("Generated webhook endpoint URL."),
 			"creator": resourceschema.SingleNestedAttribute{
 				Computed:            true,
 				MarkdownDescription: "Identity that created the webhook.",
@@ -93,10 +84,6 @@ func resourceSchema() resourceschema.Schema {
 				},
 			},
 			"created_at": computedStableString("Time when the webhook was created."),
-			"updated_at": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Time when the webhook was last updated.",
-			},
 		},
 	}
 }

@@ -43,7 +43,7 @@ func TestAccSCMIntegrationResourceLifecycle(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_scm_integration.test", "id", "scm-1"),
 					resource.TestCheckResourceAttr("ona_scm_integration.test", "runner_id", "runner-1"),
-					resource.TestCheckResourceAttr("ona_scm_integration.test", "scm_id", "github"),
+					resource.TestCheckResourceAttr("ona_scm_integration.test", "kind", "github"),
 					resource.TestCheckResourceAttr("ona_scm_integration.test", "host", "github.com"),
 					resource.TestCheckResourceAttr("ona_scm_integration.test", "auth_mode", "oauth"),
 					resource.TestCheckResourceAttr("ona_scm_integration.test", "oauth_client_id", "client-1"),
@@ -101,7 +101,7 @@ func TestAccSCMIntegrationResourcePAT(t *testing.T) {
 				Config: testAccSCMIntegrationPATConfig(server.URL),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_scm_integration.test", "id", "scm-1"),
-					resource.TestCheckResourceAttr("ona_scm_integration.test", "scm_id", "gitlab"),
+					resource.TestCheckResourceAttr("ona_scm_integration.test", "kind", "gitlab"),
 					resource.TestCheckResourceAttr("ona_scm_integration.test", "auth_mode", "pat"),
 				),
 			},
@@ -175,7 +175,7 @@ func TestAccSCMIntegrationResourceAzureDevOpsEntra(t *testing.T) {
 				Config: testAccSCMIntegrationAzureDevOpsEntraConfig(server.URL),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_scm_integration.test", "id", "scm-1"),
-					resource.TestCheckResourceAttr("ona_scm_integration.test", "scm_id", "azuredevops_entra"),
+					resource.TestCheckResourceAttr("ona_scm_integration.test", "kind", "azuredevops_entra"),
 					resource.TestCheckResourceAttr("ona_scm_integration.test", "auth_mode", "oauth"),
 					resource.TestCheckResourceAttr("ona_scm_integration.test", "issuer_url", "https://login.microsoftonline.com/tenant-id/v2.0"),
 				),
@@ -206,7 +206,7 @@ func TestAccSCMIntegrationResourceAzureDevOpsEntraPAT(t *testing.T) {
 				Config: testAccSCMIntegrationAzureDevOpsEntraPATWithIssuerConfig(server.URL),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_scm_integration.test", "id", "scm-1"),
-					resource.TestCheckResourceAttr("ona_scm_integration.test", "scm_id", "azuredevops_entra"),
+					resource.TestCheckResourceAttr("ona_scm_integration.test", "kind", "azuredevops_entra"),
 					resource.TestCheckResourceAttr("ona_scm_integration.test", "auth_mode", "pat"),
 					resource.TestCheckResourceAttr("ona_scm_integration.test", "issuer_url", "https://login.microsoftonline.com/tenant-id/v2.0"),
 					func(state *terraform.State) error {
@@ -268,7 +268,7 @@ func TestAccSCMIntegrationResourceAzureDevOpsServer(t *testing.T) {
 				Config: testAccSCMIntegrationAzureDevOpsServerConfig(server.URL),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_scm_integration.test", "id", "scm-1"),
-					resource.TestCheckResourceAttr("ona_scm_integration.test", "scm_id", "azuredevops_server"),
+					resource.TestCheckResourceAttr("ona_scm_integration.test", "kind", "azuredevops_server"),
 					resource.TestCheckResourceAttr("ona_scm_integration.test", "auth_mode", "pat"),
 					resource.TestCheckResourceAttr("ona_scm_integration.test", "virtual_directory", "/tfs"),
 				),
@@ -333,7 +333,8 @@ func TestAccRunnerLLMIntegrationResourceLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "api_key_version", "v1"),
 					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "max_tokens", "4000"),
 					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "enabled", "true"),
-					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "phase", "available"),
+					resource.TestCheckNoResourceAttr("ona_runner_llm_integration.test", "phase"),
+					resource.TestCheckNoResourceAttr("ona_runner_llm_integration.test", "phase_reason"),
 					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "llm_provider", "anthropic"),
 					func(state *terraform.State) error {
 						if !server.service.llmAPIKeyUpdated("llm-1", "api-key-1") {
@@ -371,7 +372,8 @@ func TestAccRunnerLLMIntegrationResourceLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "api_key_version", "v2"),
 					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "max_tokens", "8000"),
 					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "enabled", "false"),
-					resource.TestCheckResourceAttr("ona_runner_llm_integration.test", "phase", "disabled"),
+					resource.TestCheckNoResourceAttr("ona_runner_llm_integration.test", "phase"),
+					resource.TestCheckNoResourceAttr("ona_runner_llm_integration.test", "phase_reason"),
 					func(state *terraform.State) error {
 						if !server.service.llmAPIKeyUpdated("llm-1", "api-key-2") {
 							return errors.New("llm-1 API key was not rotated")
@@ -567,7 +569,7 @@ provider "ona" {
 
 resource "ona_scm_integration" "test" {
   runner_id                   = "runner-1"
-  scm_id                      = "github"
+  kind                        = "github"
   host                        = "github.com"
   auth_mode                   = "oauth"
   oauth_client_id             = %[2]q
@@ -586,7 +588,7 @@ provider "ona" {
 
 resource "ona_scm_integration" "test" {
   runner_id = "runner-1"
-  scm_id    = "gitlab"
+  kind      = "gitlab"
   host      = "gitlab.com"
   auth_mode = "pat"
 }
@@ -602,7 +604,7 @@ provider "ona" {
 
 resource "ona_scm_integration" "test" {
   runner_id                   = "runner-1"
-  scm_id                      = "azuredevops_entra"
+  kind                        = "azuredevops_entra"
   host                        = "dev.azure.com"
   auth_mode                   = "oauth"
   oauth_client_id             = "client-1"
@@ -622,7 +624,7 @@ provider "ona" {
 
 resource "ona_scm_integration" "test" {
   runner_id = "runner-1"
-  scm_id    = "azuredevops_entra"
+  kind      = "azuredevops_entra"
   host      = "dev.azure.com"
   auth_mode = "pat"
 }
@@ -638,7 +640,7 @@ provider "ona" {
 
 resource "ona_scm_integration" "test" {
   runner_id  = "runner-1"
-  scm_id     = "azuredevops_entra"
+  kind       = "azuredevops_entra"
   host       = "dev.azure.com"
   auth_mode  = "pat"
   issuer_url = "https://login.microsoftonline.com/tenant-id/v2.0"
@@ -655,7 +657,7 @@ provider "ona" {
 
 resource "ona_scm_integration" "test" {
   runner_id         = "runner-1"
-  scm_id            = "azuredevops_server"
+  kind              = "azuredevops_server"
   host              = "dev.azure.internal"
   auth_mode         = "pat"
   virtual_directory = "/tfs"
@@ -672,7 +674,7 @@ provider "ona" {
 
 resource "ona_scm_integration" "test" {
   runner_id                   = "runner-1"
-  scm_id                      = "azuredevops_entra"
+  kind                        = "azuredevops_entra"
   host                        = "dev.azure.com"
   auth_mode                   = "oauth"
   oauth_client_id             = "client-1"
@@ -691,7 +693,7 @@ provider "ona" {
 
 resource "ona_scm_integration" "test" {
   runner_id                   = "runner-1"
-  scm_id                      = "azuredevops_server"
+  kind                        = "azuredevops_server"
   host                        = "dev.azure.internal"
   auth_mode                   = "oauth"
   oauth_client_id             = "client-1"
@@ -711,7 +713,7 @@ provider "ona" {
 
 resource "ona_scm_integration" "test" {
   runner_id                   = "runner-1"
-  scm_id                      = "github"
+  kind                        = "github"
   host                        = "github.com"
   auth_mode                   = "oauth"
   oauth_client_id             = "client-1"

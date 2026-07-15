@@ -20,11 +20,6 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-const (
-	principalServiceAccount  = "service_account"
-	resourceTypeOrganization = "organization"
-)
-
 type clientHolder struct {
 	client *managementclient.ManagementPlane
 }

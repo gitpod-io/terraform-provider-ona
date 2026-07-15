@@ -26,16 +26,15 @@ const (
 
 type ProjectModel struct {
 	ID                   types.String                 `tfsdk:"id"`
-	OrganizationID       types.String                 `tfsdk:"organization_id"`
 	Name                 types.String                 `tfsdk:"name"`
 	RepositoryCloneURL   types.String                 `tfsdk:"repository_clone_url"`
 	Branch               types.String                 `tfsdk:"branch"`
+	InsightsEnabled      types.Bool                   `tfsdk:"insights_enabled"`
 	DevcontainerFilePath types.String                 `tfsdk:"devcontainer_file_path"`
 	AutomationsFilePath  types.String                 `tfsdk:"automations_file_path"`
 	EnvironmentClasses   []EnvironmentClassModel      `tfsdk:"environment_class"`
 	Prebuild             []PrebuildConfigurationModel `tfsdk:"prebuild_configuration"`
 	CreatedAt            types.String                 `tfsdk:"created_at"`
-	UpdatedAt            types.String                 `tfsdk:"updated_at"`
 	Creator              types.Object                 `tfsdk:"creator"`
 }
 
@@ -330,16 +329,15 @@ func projectModelFromProto(ctx context.Context, project *v1.Project) (ProjectMod
 	diags.Append(repoDiags...)
 	data := ProjectModel{
 		ID:                   types.StringValue(project.GetId()),
-		OrganizationID:       stringOptionalValue(metadata.GetOrganizationId()),
 		Name:                 types.StringValue(metadata.GetName()),
 		RepositoryCloneURL:   repository.CloneURL,
 		Branch:               repository.Branch,
+		InsightsEnabled:      types.BoolValue(false),
 		DevcontainerFilePath: stringOptionalValue(project.GetDevcontainerFilePath()),
 		AutomationsFilePath:  stringOptionalValue(project.GetAutomationsFilePath()),
 		EnvironmentClasses:   environmentClassesFromProto(project.GetEnvironmentClasses()),
 		Prebuild:             prebuildConfigurationFromProto(ctx, project.GetPrebuildConfiguration(), &diags),
 		CreatedAt:            timestampValue(metadata.GetCreatedAt()),
-		UpdatedAt:            timestampValue(metadata.GetUpdatedAt()),
 		Creator:              subjectObjectFromProto(metadata.GetCreator(), &diags),
 	}
 	return data, diags

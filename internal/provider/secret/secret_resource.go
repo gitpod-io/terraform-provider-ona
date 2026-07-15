@@ -113,7 +113,6 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 	}
 
 	data.ID = types.StringValue(result.Msg.GetSecret().GetId())
-	data.OrganizationID = scope.OrganizationID
 	data.ProjectID = scope.ProjectID
 	data.UserID = scope.UserID
 	data.ServiceAccountID = scope.ServiceAccountID
@@ -293,26 +292,19 @@ func (r *Resource) resolveScope(ctx context.Context, data *Model, diags *diag.Di
 		return resolvedScope{}
 	}
 
-	if !isKnownString(data.OrganizationID) {
-		identity, err := r.authenticatedIdentity(ctx)
-		if err != nil {
-			providerdiag.AddAPIError(diags, "Unable to Resolve Ona Organization", "reading the authenticated Ona identity", err)
-			return resolvedScope{}
-		}
-		if identity.GetOrganizationId() == "" {
-			diags.AddError("Unable to Resolve Ona Organization", "The authenticated Ona identity did not include an organization ID.")
-			return resolvedScope{}
-		}
-		data.OrganizationID = types.StringValue(identity.GetOrganizationId())
+	identity, err := r.authenticatedIdentity(ctx)
+	if err != nil {
+		providerdiag.AddAPIError(diags, "Unable to Resolve Ona Organization", "reading the authenticated Ona identity", err)
+		return resolvedScope{}
 	}
+	if identity.GetOrganizationId() == "" {
+		diags.AddError("Unable to Resolve Ona Organization", "The authenticated Ona identity did not include an organization ID.")
+		return resolvedScope{}
+	}
+	organizationID := types.StringValue(identity.GetOrganizationId())
 
 	if data.Scope.ValueString() == scopeUser {
 		if !isKnownString(data.UserID) {
-			identity, err := r.authenticatedIdentity(ctx)
-			if err != nil {
-				providerdiag.AddAPIError(diags, "Unable to Resolve Ona User", "reading the authenticated Ona identity", err)
-				return resolvedScope{}
-			}
 			if identity.GetSubject().GetPrincipal() != v1.Principal_PRINCIPAL_USER || identity.GetSubject().GetId() == "" {
 				diags.AddAttributeError(path.Root("user_id"), "Missing User ID", "Set user_id when scope is \"user\" unless the provider is authenticated as a user.")
 				return resolvedScope{}
@@ -321,14 +313,13 @@ func (r *Resource) resolveScope(ctx context.Context, data *Model, diags *diag.Di
 		}
 	}
 
-	scope, scopeDiags := secretScopeFromModel(*data)
+	scope, scopeDiags := secretScopeFromModel(*data, organizationID)
 	diags.Append(scopeDiags...)
 	if diags.HasError() {
 		return resolvedScope{}
 	}
 	return resolvedScope{
 		Scope:            scope,
-		OrganizationID:   data.OrganizationID,
 		ProjectID:        data.ProjectID,
 		UserID:           data.UserID,
 		ServiceAccountID: data.ServiceAccountID,

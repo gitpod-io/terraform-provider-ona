@@ -50,7 +50,5 @@ module "terraform_token_secret" {
 
 ### Read-Only
 
-- `created_at` (String) Time when the service-account token was created.
 - `expires_at` (String) Time when the service-account token expires.
-- `service_account_token_id` (String) Service-account token metadata ID.
 - `token` (String, Sensitive) Service-account token value. This value is returned once and is not stored in Terraform plan or state.

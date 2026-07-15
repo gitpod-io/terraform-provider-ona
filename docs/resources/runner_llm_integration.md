@@ -46,7 +46,7 @@ resource "ona_runner_llm_integration" "openai_compatible" {
 
 ### Required
 
-- `models` (Set of String) Supported LLM models for this integration. Supported values include `sonnet_3_7`, `sonnet_4`, `sonnet_4_extended`, `opus_4`, `openai_4o`, and `openai_auto`.
+- `models` (Set of String) Supported LLM models for this integration. Supported values are `haiku_4_5`, `openai_4o`, `openai_4o_mini`, `openai_auto`, `openai_o1`, `openai_o1_mini`, `opus_4`, `opus_4_extended`, `opus_4_5`, `opus_4_5_extended`, `opus_4_6`, `opus_4_6_extended`, `opus_4_7`, `opus_4_8`, `sonnet_3_5`, `sonnet_3_7`, `sonnet_3_7_extended`, `sonnet_4`, `sonnet_4_extended`, `sonnet_4_5`, `sonnet_4_5_extended`, `sonnet_4_6`, `sonnet_4_6_extended`, and `sonnet_5`.
 - `runner_id` (String) Runner ID this LLM integration belongs to. Changing this value replaces the integration.
 
 ### Optional
@@ -63,8 +63,6 @@ resource "ona_runner_llm_integration" "openai_compatible" {
 
 - `id` (String) LLM integration ID.
 - `llm_provider` (String) LLM provider family inferred by Ona from the configured models. Supported values are `anthropic` and `openai`.
-- `phase` (String) LLM integration phase reported by Ona.
-- `phase_reason` (String) Reason for the current LLM integration phase, when reported by Ona.
 
 ## Import
 

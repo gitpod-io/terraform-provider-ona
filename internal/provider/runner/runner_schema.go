@@ -11,8 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
-const runnerManagerIDDeprecationMessage = "Remove this attribute from configuration. Terraform-managed Ona runners support remote AWS EC2 and GCP runners, and runner manager IDs are not used for those resources."
-
 func resourceSchema() resourceschema.Schema {
 	return resourceschema.Schema{
 		MarkdownDescription: "Ona runner registration. Use this resource to create a remote runner record, then deploy the runner with the generated setup output for the selected provider.",
@@ -42,14 +40,6 @@ func resourceSchema() resourceschema.Schema {
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"runner_manager_id": resourceschema.StringAttribute{
-				Optional:            true,
-				MarkdownDescription: "Runner manager ID for managed runners. Terraform-managed runner resources support remote AWS EC2 and GCP runners; omit this value.",
-				DeprecationMessage:  runnerManagerIDDeprecationMessage,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
-			},
 			"kind": resourceschema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "Runner kind assigned by the Ona API from the selected provider.",
@@ -68,11 +58,6 @@ func resourceSchema() resourceschema.Schema {
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"updated_at": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Time when the runner was last updated.",
-			},
-			"status":  resourceStatusSchema(),
 			"creator": resourceCreatorSchema(),
 		},
 		Blocks: map[string]resourceschema.Block{
@@ -130,50 +115,6 @@ func resourceConfigurationSchema() resourceschema.SingleNestedBlock {
 						MarkdownDescription: "End time in `HH:00` UTC format. If omitted, the API defaults to two hours after `start`.",
 					},
 				},
-			},
-		},
-	}
-}
-
-func resourceStatusSchema() resourceschema.SingleNestedAttribute {
-	return resourceschema.SingleNestedAttribute{
-		Computed:            true,
-		MarkdownDescription: "Runner status reported by the runner.",
-		Attributes: map[string]resourceschema.Attribute{
-			"phase": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner phase.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
-			},
-			"region": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Actual region reported by the runner.",
-			},
-			"message": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner status message.",
-			},
-			"version": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner version.",
-			},
-			"log_url": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner log URL.",
-			},
-			"updated_at": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Time when the runner status was last updated.",
-			},
-			"system_details": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner system details.",
-			},
-			"support_bundle_url": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner support bundle URL.",
 			},
 		},
 	}

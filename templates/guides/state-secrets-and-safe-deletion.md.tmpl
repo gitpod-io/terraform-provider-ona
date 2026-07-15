@@ -53,12 +53,13 @@ Most provider resources delete the remote object on destroy. Review the generate
 Some resources have special destroy behavior:
 
 - `ona_environment_class` disables the remote environment class and removes it from state because the Ona API does not expose deletion.
-- `ona_project_insights` disables Insights for the project.
 - `ona_announcement_banner` disables and clears the remote banner.
 - `ona_terms_of_service` disables the requirement but does not delete immutable version history.
 - `ona_organization_policies` restores the server-defined policy configuration captured before Terraform first managed it, then removes the resource from state.
 - `ona_oidc_config` removes Terraform state only and does not reset remote organization settings.
 - `ona_webhook` deletes the webhook and converts triggers on bound workflows to manual triggers.
+
+To disable Insights without deleting its project, set `ona_project.insights_enabled` to `false`.
 
 Review every destroy plan for these behaviors before applying it.
 

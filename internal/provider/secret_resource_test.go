@@ -56,7 +56,8 @@ func TestAccSecretResourceLifecycle(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_secret.test", "id", secretTestSecretID(1)),
 					resource.TestCheckResourceAttr("ona_secret.test", "scope", "organization"),
-					resource.TestCheckResourceAttr("ona_secret.test", "organization_id", secretTestOrgID),
+					resource.TestCheckNoResourceAttr("ona_secret.test", "organization_id"),
+					resource.TestCheckNoResourceAttr("ona_secret.test", "updated_at"),
 					resource.TestCheckResourceAttr("ona_secret.test", "name", "THIRD_PARTY_API_KEY"),
 					resource.TestCheckResourceAttr("ona_secret.test", "environment_variable", "true"),
 					resource.TestCheckResourceAttr("ona_secret.test", "value_version", "v1"),

@@ -43,8 +43,6 @@ type LLMIntegrationModel struct {
 	APIKeyVersion types.String `tfsdk:"api_key_version"`
 	MaxTokens     types.Int64  `tfsdk:"max_tokens"`
 	Enabled       types.Bool   `tfsdk:"enabled"`
-	Phase         types.String `tfsdk:"phase"`
-	PhaseReason   types.String `tfsdk:"phase_reason"`
 	LLMProvider   types.String `tfsdk:"llm_provider"`
 }
 
@@ -366,8 +364,6 @@ func populateLLMIntegrationModel(ctx context.Context, data *LLMIntegrationModel,
 	data.APIKey = types.StringNull()
 	data.APIKeyVersion = types.StringNull()
 	data.MaxTokens = types.Int64Value(int64(integration.GetMaxTokens()))
-	data.Phase = stringValue(llmIntegrationPhaseToString(integration.GetPhase()))
-	data.PhaseReason = stringOptionalValue(integration.GetPhaseReason())
 	data.LLMProvider = stringValue(llmProviderToString(integration.GetProvider()))
 	data.Enabled = types.BoolValue(integration.GetPhase() != v1.LLMIntegrationPhase_LLM_INTEGRATION_PHASE_DISABLED)
 	return diags
@@ -634,19 +630,6 @@ func supportedModelNames() []string {
 	}
 	sort.Strings(names)
 	return names
-}
-
-func llmIntegrationPhaseToString(phase v1.LLMIntegrationPhase) string {
-	switch phase {
-	case v1.LLMIntegrationPhase_LLM_INTEGRATION_PHASE_AVAILABLE:
-		return "available"
-	case v1.LLMIntegrationPhase_LLM_INTEGRATION_PHASE_UNAVAILABLE:
-		return "unavailable"
-	case v1.LLMIntegrationPhase_LLM_INTEGRATION_PHASE_DISABLED:
-		return "disabled"
-	default:
-		return ""
-	}
 }
 
 func llmProviderToString(provider v1.LLMProvider) string {

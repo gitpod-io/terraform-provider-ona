@@ -38,15 +38,12 @@ type Resource struct {
 }
 
 type Model struct {
-	ID               types.String `tfsdk:"id"`
-	ServiceAccountID types.String `tfsdk:"service_account_id"`
-	OrganizationID   types.String `tfsdk:"organization_id"`
-	Name             types.String `tfsdk:"name"`
-	Description      types.String `tfsdk:"description"`
-	ValidUntil       types.String `tfsdk:"valid_until"`
-	CreatedAt        types.String `tfsdk:"created_at"`
-	Creator          types.Object `tfsdk:"creator"`
-	SystemManaged    types.Bool   `tfsdk:"system_managed"`
+	ID          types.String `tfsdk:"id"`
+	Name        types.String `tfsdk:"name"`
+	Description types.String `tfsdk:"description"`
+	ValidUntil  types.String `tfsdk:"valid_until"`
+	CreatedAt   types.String `tfsdk:"created_at"`
+	Creator     types.Object `tfsdk:"creator"`
 }
 
 func (r *Resource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -59,21 +56,7 @@ func (r *Resource) Schema(ctx context.Context, req resource.SchemaRequest, resp 
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "Terraform resource ID. This is the same value as `service_account_id`.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
-			},
-			"service_account_id": resourceschema.StringAttribute{
-				Computed:            true,
 				MarkdownDescription: "Service account ID.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
-			},
-			"organization_id": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Organization ID that owns the service account.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
@@ -120,10 +103,6 @@ func (r *Resource) Schema(ctx context.Context, req resource.SchemaRequest, resp 
 						},
 					},
 				},
-			},
-			"system_managed": resourceschema.BoolAttribute{
-				Computed:            true,
-				MarkdownDescription: "Whether this service account is system-managed by Ona rather than customer-managed.",
 			},
 		},
 	}
@@ -311,7 +290,6 @@ func (r *Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp 
 
 func (r *Resource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
-	resource.ImportStatePassthroughID(ctx, path.Root("service_account_id"), req, resp)
 }
 
 func (r *Resource) getServiceAccount(ctx context.Context, id string) (*v1.ServiceAccount, error) {
@@ -349,14 +327,11 @@ func createServiceAccountRequest(data Model) (*v1.CreateServiceAccountRequest, d
 func populateModelFromServiceAccount(data *Model, account *v1.ServiceAccount) {
 	id := account.GetId()
 	data.ID = types.StringValue(id)
-	data.ServiceAccountID = types.StringValue(id)
-	data.OrganizationID = stringOptionalValue(account.GetOrganizationId())
 	data.Name = types.StringValue(account.GetName())
 	data.Description = types.StringValue(account.GetDescription())
 	data.ValidUntil = timestampValue(account.GetValidUntil())
 	data.CreatedAt = timestampValue(account.GetCreatedAt())
 	data.Creator = creatorModel(account.GetCreator())
-	data.SystemManaged = types.BoolValue(account.GetSystemManaged())
 }
 
 func preservePlannedInputs(data *Model, planned Model) {
@@ -373,9 +348,6 @@ func preserveString(current types.String, planned types.String) types.String {
 }
 
 func serviceAccountID(data Model) string {
-	if !data.ServiceAccountID.IsNull() && !data.ServiceAccountID.IsUnknown() && data.ServiceAccountID.ValueString() != "" {
-		return data.ServiceAccountID.ValueString()
-	}
 	if !data.ID.IsNull() && !data.ID.IsUnknown() {
 		return data.ID.ValueString()
 	}

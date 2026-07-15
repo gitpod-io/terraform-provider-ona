@@ -27,11 +27,7 @@ type WarmPoolModel struct {
 	EnvironmentClassID types.String `tfsdk:"environment_class_id"`
 	MinSize            types.Int32  `tfsdk:"min_size"`
 	MaxSize            types.Int32  `tfsdk:"max_size"`
-	OrganizationID     types.String `tfsdk:"organization_id"`
-	RunnerID           types.String `tfsdk:"runner_id"`
 	CreatedAt          types.String `tfsdk:"created_at"`
-	UpdatedAt          types.String `tfsdk:"updated_at"`
-	SnapshotID         types.String `tfsdk:"snapshot_id"`
 }
 
 type WarmPoolDataSourceModel struct {
@@ -41,11 +37,7 @@ type WarmPoolDataSourceModel struct {
 	EnvironmentClassID types.String `tfsdk:"environment_class_id"`
 	MinSize            types.Int32  `tfsdk:"min_size"`
 	MaxSize            types.Int32  `tfsdk:"max_size"`
-	OrganizationID     types.String `tfsdk:"organization_id"`
-	RunnerID           types.String `tfsdk:"runner_id"`
 	CreatedAt          types.String `tfsdk:"created_at"`
-	UpdatedAt          types.String `tfsdk:"updated_at"`
-	SnapshotID         types.String `tfsdk:"snapshot_id"`
 }
 
 type WarmPoolCollectionModel struct {
@@ -130,11 +122,7 @@ func populateWarmPoolModel(data *WarmPoolModel, warmPool *v1.WarmPool) {
 	data.EnvironmentClassID = stringOptionalValue(metadata.GetEnvironmentClassId())
 	data.MinSize = types.Int32Value(spec.GetMinSize())
 	data.MaxSize = types.Int32Value(spec.GetMaxSize())
-	data.OrganizationID = stringOptionalValue(metadata.GetOrganizationId())
-	data.RunnerID = stringOptionalValue(metadata.GetRunnerId())
 	data.CreatedAt = timestampValue(metadata.GetCreatedAt())
-	data.UpdatedAt = timestampValue(metadata.GetUpdatedAt())
-	data.SnapshotID = stringOptionalValue(spec.GetSnapshotId())
 }
 
 func populateWarmPoolDataSourceModel(data *WarmPoolDataSourceModel, warmPool *v1.WarmPool) {
@@ -147,11 +135,7 @@ func populateWarmPoolDataSourceModel(data *WarmPoolDataSourceModel, warmPool *v1
 	data.EnvironmentClassID = model.EnvironmentClassID
 	data.MinSize = model.MinSize
 	data.MaxSize = model.MaxSize
-	data.OrganizationID = model.OrganizationID
-	data.RunnerID = model.RunnerID
 	data.CreatedAt = model.CreatedAt
-	data.UpdatedAt = model.UpdatedAt
-	data.SnapshotID = model.SnapshotID
 }
 
 func preserveWarmPoolPlannedInputs(data *WarmPoolModel, planned WarmPoolModel) {

@@ -18,21 +18,17 @@ const (
 )
 
 type Model struct {
-	ID                 types.String `tfsdk:"id"`
-	Name               types.String `tfsdk:"name"`
-	Description        types.String `tfsdk:"description"`
-	Type               types.String `tfsdk:"type"`
-	Provider           types.String `tfsdk:"scm_provider"`
-	RepositoryScopes   types.Set    `tfsdk:"repository_scopes"`
-	OrganizationScope  types.Object `tfsdk:"organization_scope"`
-	SecretVersion      types.String `tfsdk:"secret_version"`
-	OrganizationID     types.String `tfsdk:"organization_id"`
-	URL                types.String `tfsdk:"url"`
-	BoundWorkflowCount types.Int32  `tfsdk:"bound_workflow_count"`
-	LastTriggeredAt    types.String `tfsdk:"last_triggered_at"`
-	Creator            types.Object `tfsdk:"creator"`
-	CreatedAt          types.String `tfsdk:"created_at"`
-	UpdatedAt          types.String `tfsdk:"updated_at"`
+	ID                types.String `tfsdk:"id"`
+	Name              types.String `tfsdk:"name"`
+	Description       types.String `tfsdk:"description"`
+	Type              types.String `tfsdk:"type"`
+	Provider          types.String `tfsdk:"scm_provider"`
+	RepositoryScopes  types.Set    `tfsdk:"repository_scopes"`
+	OrganizationScope types.Object `tfsdk:"organization_scope"`
+	SecretVersion     types.String `tfsdk:"secret_version"`
+	URL               types.String `tfsdk:"url"`
+	Creator           types.Object `tfsdk:"creator"`
+	CreatedAt         types.String `tfsdk:"created_at"`
 }
 
 type RepositoryScopeModel struct {

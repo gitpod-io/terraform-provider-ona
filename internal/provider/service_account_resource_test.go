@@ -43,14 +43,14 @@ func TestAccServiceAccountResourceLifecycle(t *testing.T) {
 				Config: testAccServiceAccountResourceConfig(server.URL, "CI Pipeline", "CI/CD Pipeline"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_service_account.test", "id", serviceAccountID1),
-					resource.TestCheckResourceAttr("ona_service_account.test", "service_account_id", serviceAccountID1),
-					resource.TestCheckResourceAttr("ona_service_account.test", "organization_id", organizationID1),
+					resource.TestCheckNoResourceAttr("ona_service_account.test", "service_account_id"),
+					resource.TestCheckNoResourceAttr("ona_service_account.test", "organization_id"),
 					resource.TestCheckResourceAttr("ona_service_account.test", "name", "CI Pipeline"),
 					resource.TestCheckResourceAttr("ona_service_account.test", "description", "CI/CD Pipeline"),
 					resource.TestCheckResourceAttr("ona_service_account.test", "valid_until", serviceAccountValidUntil),
 					resource.TestCheckResourceAttr("ona_service_account.test", "created_at", serviceAccountCreatedAt),
 					resource.TestCheckResourceAttr("ona_service_account.test", "creator.principal", "user"),
-					resource.TestCheckResourceAttr("ona_service_account.test", "system_managed", "false"),
+					resource.TestCheckNoResourceAttr("ona_service_account.test", "system_managed"),
 				),
 			},
 			{

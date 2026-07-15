@@ -33,7 +33,7 @@ func llmIntegrationResourceSchema() resourceschema.Schema {
 			"models": resourceschema.SetAttribute{
 				Required:            true,
 				ElementType:         types.StringType,
-				MarkdownDescription: "Supported LLM models for this integration. Supported values include `sonnet_3_7`, `sonnet_4`, `sonnet_4_extended`, `opus_4`, `openai_4o`, and `openai_auto`.",
+				MarkdownDescription: "Supported LLM models for this integration. Supported values are `haiku_4_5`, `openai_4o`, `openai_4o_mini`, `openai_auto`, `openai_o1`, `openai_o1_mini`, `opus_4`, `opus_4_extended`, `opus_4_5`, `opus_4_5_extended`, `opus_4_6`, `opus_4_6_extended`, `opus_4_7`, `opus_4_8`, `sonnet_3_5`, `sonnet_3_7`, `sonnet_3_7_extended`, `sonnet_4`, `sonnet_4_extended`, `sonnet_4_5`, `sonnet_4_5_extended`, `sonnet_4_6`, `sonnet_4_6_extended`, and `sonnet_5`.",
 			},
 			"endpoint": resourceschema.StringAttribute{
 				Optional:            true,
@@ -60,14 +60,6 @@ func llmIntegrationResourceSchema() resourceschema.Schema {
 				Computed:            true,
 				Default:             booldefault.StaticBool(true),
 				MarkdownDescription: "Whether the LLM integration is enabled. Defaults to `true`.",
-			},
-			"phase": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "LLM integration phase reported by Ona.",
-			},
-			"phase_reason": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Reason for the current LLM integration phase, when reported by Ona.",
 			},
 			"llm_provider": resourceschema.StringAttribute{
 				Computed:            true,

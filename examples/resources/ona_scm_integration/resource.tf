@@ -1,8 +1,8 @@
 resource "ona_scm_integration" "github_oauth" {
   runner_id = ona_runner.aws_primary.runner_id
 
-  scm_id = "github"
-  host   = "github.com"
+  kind = "github"
+  host = "github.com"
 
   auth_mode                   = "oauth"
   oauth_client_id             = var.github_oauth_client_id
@@ -13,7 +13,7 @@ resource "ona_scm_integration" "github_oauth" {
 resource "ona_scm_integration" "github_pat" {
   runner_id = ona_runner.aws_primary.runner_id
 
-  scm_id    = "github"
+  kind      = "github"
   host      = "github.com"
   auth_mode = "pat"
 }
@@ -21,8 +21,8 @@ resource "ona_scm_integration" "github_pat" {
 resource "ona_scm_integration" "azure_devops_entra" {
   runner_id = ona_runner.aws_primary.runner_id
 
-  scm_id = "azuredevops_entra"
-  host   = "dev.azure.com/acme"
+  kind = "azuredevops_entra"
+  host = "dev.azure.com/acme"
 
   auth_mode                   = "oauth"
   oauth_client_id             = var.azure_devops_oauth_client_id
@@ -34,7 +34,7 @@ resource "ona_scm_integration" "azure_devops_entra" {
 resource "ona_scm_integration" "azure_devops_server" {
   runner_id = ona_runner.aws_primary.runner_id
 
-  scm_id            = "azuredevops_server"
+  kind              = "azuredevops_server"
   host              = "ado.example.com"
   auth_mode         = "pat"
   virtual_directory = "/tfs"

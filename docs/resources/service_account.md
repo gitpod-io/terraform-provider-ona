@@ -37,10 +37,7 @@ resource "ona_service_account" "ci" {
 
 - `created_at` (String) Time when the service account was created.
 - `creator` (Attributes) Identity that created the service account. (see [below for nested schema](#nestedatt--creator))
-- `id` (String) Terraform resource ID. This is the same value as `service_account_id`.
-- `organization_id` (String) Organization ID that owns the service account.
-- `service_account_id` (String) Service account ID.
-- `system_managed` (Boolean) Whether this service account is system-managed by Ona rather than customer-managed.
+- `id` (String) Service account ID.
 
 <a id="nestedatt--creator"></a>
 ### Nested Schema for `creator`

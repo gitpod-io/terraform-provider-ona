@@ -8,7 +8,6 @@ import (
 
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
 	"github.com/google/go-cmp/cmp"
-	resourceschema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -62,48 +61,6 @@ func TestEnumMappings(t *testing.T) {
 
 			if diff := cmp.Diff(tc.Expected, got); diff != "" {
 				t.Errorf("providerFromString() mismatch (-want +got):\n%s", diff)
-			}
-		})
-	}
-}
-
-func TestRunnerManagerIDSchema(t *testing.T) {
-	t.Parallel()
-
-	type Expectation struct {
-		Found              bool
-		Optional           bool
-		DeprecationMessage string
-	}
-
-	tests := []struct {
-		Name     string
-		Expected Expectation
-	}{
-		{
-			Name: "deprecated_optional_attribute",
-			Expected: Expectation{
-				Found:              true,
-				Optional:           true,
-				DeprecationMessage: runnerManagerIDDeprecationMessage,
-			},
-		},
-	}
-
-	for _, tc := range tests {
-		t.Run(tc.Name, func(t *testing.T) {
-			t.Parallel()
-
-			var got Expectation
-			attr, ok := resourceSchema().Attributes["runner_manager_id"].(resourceschema.StringAttribute)
-			got.Found = ok
-			if ok {
-				got.Optional = attr.IsOptional()
-				got.DeprecationMessage = attr.GetDeprecationMessage()
-			}
-
-			if diff := cmp.Diff(tc.Expected, got); diff != "" {
-				t.Errorf("runner_manager_id schema mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}

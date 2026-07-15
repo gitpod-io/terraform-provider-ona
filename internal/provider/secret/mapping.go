@@ -19,7 +19,6 @@ import (
 
 type resolvedScope struct {
 	Scope            *v1.SecretScope
-	OrganizationID   types.String
 	ProjectID        types.String
 	UserID           types.String
 	ServiceAccountID types.String
@@ -61,7 +60,7 @@ func setSecretCreateMount(req *v1.CreateSecretRequest, data Model) {
 	}
 }
 
-func secretScopeFromModel(data Model) (*v1.SecretScope, diag.Diagnostics) {
+func secretScopeFromModel(data Model, organizationID types.String) (*v1.SecretScope, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	if data.Scope.IsUnknown() || data.Scope.IsNull() {
 		diags.AddAttributeError(pathRoot("scope"), "Unknown Secret Scope", "scope must be known before apply.")
@@ -70,11 +69,11 @@ func secretScopeFromModel(data Model) (*v1.SecretScope, diag.Diagnostics) {
 
 	switch data.Scope.ValueString() {
 	case scopeOrganization:
-		if !isKnownString(data.OrganizationID) {
-			diags.AddAttributeError(pathRoot("organization_id"), "Missing Organization ID", "The provider could not infer an organization ID from the authenticated identity.")
+		if !isKnownString(organizationID) {
+			diags.AddError("Missing Organization ID", "The provider could not infer an organization ID from the authenticated identity.")
 			return nil, diags
 		}
-		return &v1.SecretScope{Scope: &v1.SecretScope_OrganizationId{OrganizationId: data.OrganizationID.ValueString()}}, diags
+		return &v1.SecretScope{Scope: &v1.SecretScope_OrganizationId{OrganizationId: organizationID.ValueString()}}, diags
 	case scopeProject:
 		return &v1.SecretScope{Scope: &v1.SecretScope_ProjectId{ProjectId: data.ProjectID.ValueString()}}, diags
 	case scopeUser:
@@ -127,7 +126,6 @@ func populateModelFromSecret(ctx context.Context, data *Model, secret *v1.Secret
 	data.ID = types.StringValue(secret.GetId())
 	data.Name = types.StringValue(secret.GetName())
 	data.CreatedAt = timestampValue(secret.GetCreatedAt())
-	data.UpdatedAt = timestampValue(secret.GetUpdatedAt())
 	data.Creator = subjectObjectFromProto(secret.GetCreator(), diags)
 	data.Value = types.StringNull()
 	populateScopeFromProto(data, secret.GetScope())
@@ -143,7 +141,6 @@ func populateScopeFromProto(data *Model, scope *v1.SecretScope) {
 	switch scope.GetScope().(type) {
 	case *v1.SecretScope_OrganizationId:
 		data.Scope = types.StringValue(scopeOrganization)
-		data.OrganizationID = stringOptionalValue(scope.GetOrganizationId())
 	case *v1.SecretScope_ProjectId:
 		data.Scope = types.StringValue(scopeProject)
 		data.ProjectID = stringOptionalValue(scope.GetProjectId())
@@ -192,7 +189,6 @@ func populateCredentialProxyFromProto(ctx context.Context, data *Model, proxy *v
 
 func preservePlannedInputs(data *Model, planned Model) {
 	data.Scope = preserveString(data.Scope, planned.Scope)
-	data.OrganizationID = preserveString(data.OrganizationID, planned.OrganizationID)
 	data.ProjectID = preserveString(data.ProjectID, planned.ProjectID)
 	data.UserID = preserveString(data.UserID, planned.UserID)
 	data.ServiceAccountID = preserveString(data.ServiceAccountID, planned.ServiceAccountID)
@@ -209,7 +205,6 @@ func preservePlannedInputs(data *Model, planned Model) {
 }
 
 func preserveTerraformOnlyState(data *Model, prior Model) {
-	data.OrganizationID = preserveString(data.OrganizationID, prior.OrganizationID)
 	data.Value = types.StringNull()
 	data.ValueVersion = prior.ValueVersion
 }
