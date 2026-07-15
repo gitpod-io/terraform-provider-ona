@@ -198,9 +198,11 @@ func docPages(docsDir string) ([]page, error) {
 		paths []string
 	}{
 		{name: "Provider", paths: []string{"index.md"}},
+		{name: "Guides", paths: globDocs(docsDir, "guides", "*.md")},
 		{name: "Resources", paths: globDocs(docsDir, "resources", "*.md")},
 		{name: "Data Sources", paths: globDocs(docsDir, "data-sources", "*.md")},
 		{name: "Ephemeral Resources", paths: globDocs(docsDir, "ephemeral-resources", "*.md")},
+		{name: "List Resources", paths: globDocs(docsDir, "list-resources", "*.md")},
 	}
 
 	var pages []page

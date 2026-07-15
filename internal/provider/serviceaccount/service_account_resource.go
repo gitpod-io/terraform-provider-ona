@@ -55,7 +55,7 @@ func (r *Resource) Metadata(ctx context.Context, req resource.MetadataRequest, r
 
 func (r *Resource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = resourceschema.Schema{
-		MarkdownDescription: "Ona service account for non-human API access. Use service accounts for Terraform automation and issue tokens with the `ona_service_account_token` ephemeral resource.",
+		MarkdownDescription: "Ona service account for non-human API access. Issue tokens with the `ona_service_account_token` ephemeral resource and use them only for supported service-account-token workflows.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
 				Computed:            true,
