@@ -16,10 +16,10 @@ import (
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
-func updatePoliciesRequestFromConfig(ctx context.Context, plan PoliciesModel, cfg tfsdk.Config, current *v1.OrganizationPolicies) (*v1.UpdateOrganizationPoliciesRequest, diag.Diagnostics) {
+func updatePoliciesRequestFromConfig(ctx context.Context, organizationID string, plan PoliciesModel, cfg tfsdk.Config, current *v1.OrganizationPolicies) (*v1.UpdateOrganizationPoliciesRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	req := &v1.UpdateOrganizationPoliciesRequest{
-		OrganizationId: plan.OrganizationID.ValueString(),
+		OrganizationId: organizationID,
 	}
 
 	if value, ok := durationFromConfig(ctx, cfg, path.Root("maximum_environment_timeout"), &diags); ok {
@@ -97,7 +97,6 @@ func populatePoliciesModel(ctx context.Context, data *PoliciesModel, policies *v
 	}
 
 	data.ID = types.StringValue(policies.GetOrganizationId())
-	data.OrganizationID = types.StringValue(policies.GetOrganizationId())
 	data.MaximumEnvironmentTimeout = durationValue(policies.GetMaximumEnvironmentTimeout(), prior.MaximumEnvironmentTimeout)
 	data.MembersRequireProjects = types.BoolValue(policies.GetMembersRequireProjects())
 	data.MembersCreateProjects = types.BoolValue(policies.GetMembersCreateProjects())

@@ -32,9 +32,6 @@ type GroupMembershipModel struct {
 	ID               types.String `tfsdk:"id"`
 	GroupID          types.String `tfsdk:"group_id"`
 	ServiceAccountID types.String `tfsdk:"service_account_id"`
-	Principal        types.String `tfsdk:"principal"`
-	Name             types.String `tfsdk:"name"`
-	AvatarURL        types.String `tfsdk:"avatar_url"`
 }
 
 func (r *GroupMembershipResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -65,21 +62,6 @@ func (r *GroupMembershipResource) Schema(ctx context.Context, req resource.Schem
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
-			},
-			"principal": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Principal type for this membership. This resource supports only `service_account`.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
-			},
-			"name": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Display name of the member.",
-			},
-			"avatar_url": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Avatar URL of the member when available.",
 			},
 		},
 	}
@@ -180,7 +162,6 @@ func (r *GroupMembershipResource) ImportState(ctx context.Context, req resource.
 	}
 	setImportString(ctx, resp, "group_id", parts[0])
 	setImportString(ctx, resp, "service_account_id", parts[1])
-	setImportString(ctx, resp, "principal", principalServiceAccount)
 }
 
 func (r *GroupMembershipResource) getMembership(ctx context.Context, groupID string, serviceAccountID string) (*v1.GroupMembership, error) {
@@ -208,7 +189,4 @@ func populateGroupMembershipModel(data *GroupMembershipModel, member *v1.GroupMe
 	data.ID = types.StringValue(member.GetId())
 	data.GroupID = types.StringValue(member.GetGroupId())
 	data.ServiceAccountID = types.StringValue(subject.GetId())
-	data.Principal = types.StringValue(principalServiceAccount)
-	data.Name = types.StringValue(member.GetName())
-	data.AvatarURL = types.StringValue(member.GetAvatarUrl())
 }

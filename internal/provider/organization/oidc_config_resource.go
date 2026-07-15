@@ -16,7 +16,6 @@ import (
 	resourceschema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setdefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -35,9 +34,8 @@ type OIDCConfigResource struct {
 }
 
 type OIDCConfigModel struct {
-	ID             types.String `tfsdk:"id"`
-	Version        types.String `tfsdk:"version"`
-	ExtraSubFields types.Set    `tfsdk:"extra_sub_fields"`
+	ID                types.String `tfsdk:"id"`
+	CustomClaimFields types.Set    `tfsdk:"custom_claim_fields"`
 }
 
 func (r *OIDCConfigResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -48,7 +46,7 @@ func (r *OIDCConfigResource) Schema(ctx context.Context, req resource.SchemaRequ
 	emptyStringSet, diags := types.SetValue(types.StringType, nil)
 	resp.Diagnostics.Append(diags...)
 	resp.Schema = resourceschema.Schema{
-		MarkdownDescription: "Singleton Ona OIDC token format configuration for the organization associated with the configured provider token. Destroying this resource removes Terraform state only; it does not reset the remote organization setting.",
+		MarkdownDescription: "Singleton Ona OIDC V3 token configuration for the organization associated with the configured provider token. Destroying this resource removes Terraform state only; it does not reset the remote organization setting.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
 				Computed:            true,
@@ -57,18 +55,12 @@ func (r *OIDCConfigResource) Schema(ctx context.Context, req resource.SchemaRequ
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"version": resourceschema.StringAttribute{
-				Optional:            true,
-				Computed:            true,
-				Default:             stringdefault.StaticString(oidcVersionV3),
-				MarkdownDescription: "OIDC token version. Supported values are `v2` and `v3`.",
-			},
-			"extra_sub_fields": resourceschema.SetAttribute{
+			"custom_claim_fields": resourceschema.SetAttribute{
 				Optional:            true,
 				Computed:            true,
 				ElementType:         types.StringType,
 				Default:             setdefault.StaticValue(emptyStringSet),
-				MarkdownDescription: "Additional property keys included in the V3 `sub` claim. Must be empty when version is `v2`.",
+				MarkdownDescription: "Additional fields included in the OIDC V3 `sub` claim. Supported values are `creator_id`, `creator_principal`, `creator_email`, `creator_name`, `creator_idp`, `account_id`, `user_id`, `organization_id`, `project_id`, `runner_id`, `environment_id`, `email`, `name`, `idp`, `runner_name`, `service_account_id`, `environment_initializers.git.remote_uri`, `environment_initializers.git.upstream_remote_uri`, and `environment_initializers.context_url`. A field is included only for principal types that provide it.",
 			},
 		},
 	}
