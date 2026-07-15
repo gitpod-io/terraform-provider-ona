@@ -9,7 +9,7 @@ description: |-
 
 Ona project backed by a Git repository. Use this resource to define the repository, branch, environment classes, and optional prebuild settings that Ona should use for environments created from the project.
 
-For product context, see [Project configuration](https://ona.com/docs/ona/projects/overview) and [Create your first project](https://ona.com/docs/ona/create-first-project).
+For product context, see [Project configuration](https://ona.com/docs/ona/projects/overview), [Create your first project](https://ona.com/docs/ona/create-first-project), and [Insights](https://ona.com/docs/ona/organizations/insights).
 
 ## Example Usage
 

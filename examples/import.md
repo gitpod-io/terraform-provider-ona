@@ -53,7 +53,7 @@ Direct `terraform import` uses these resource IDs:
 | `ona_custom_domain` | `current` |
 | `ona_group` | Group ID |
 | `ona_group_membership` | `group_id/service_account_id` |
-| `ona_organization_role_assignment` | `group_id/organization_id/role` |
+| `ona_organization_role_assignment` | `group_id/role` |
 | `ona_webhook` | Webhook ID |
 | `ona_integration` | Integration ID |
 | `ona_workflow` | Workflow ID |
