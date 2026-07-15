@@ -2,8 +2,10 @@
 
 set -euo pipefail
 
-VERSION_FILE="${VERSION_FILE:-version/VERSION}"
+STABLE_VERSION_FILE="${STABLE_VERSION_FILE:-${VERSION_FILE:-version/STABLE_VERSION}}"
+BETA_VERSION_FILE="${BETA_VERSION_FILE:-version/BETA_VERSION}"
 CHANGELOG_FILE="${CHANGELOG_FILE:-CHANGELOG.md}"
+RELEASE_CHANNEL="${RELEASE_CHANNEL:-stable}"
 GITHUB_OUTPUT_MODE=0
 CHECK_TAG_PRECEDENCE=1
 EXPECTED_VERSION=""
@@ -15,15 +17,24 @@ die() {
 
 usage() {
 	cat >&2 <<'EOF'
-usage: scripts/validate-release-version.sh [--github-output] [--no-tag-precedence] [--expect-version <version>] [--expect-tag <tag>]
+usage: scripts/validate-release-version.sh [--channel stable|beta] [--github-output] [--no-tag-precedence] [--expect-version <version>] [--expect-tag <tag>]
 
-Validates that version/VERSION contains bare SemVer, CHANGELOG.md starts with
-the same version, and the version is greater than existing local v* Git tags.
+Stable releases read version/STABLE_VERSION, require plain SemVer, validate the
+top CHANGELOG.md heading, and publish that exact version.
+
+Beta releases read version/BETA_VERSION as a beta line such as 0.3.0-beta,
+resolve the next matching v0.3.0-beta.N tag from existing local Git tags, and
+skip CHANGELOG.md validation.
 EOF
 }
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
+		--channel)
+			[[ $# -ge 2 ]] || die "--channel requires stable or beta"
+			RELEASE_CHANNEL="$2"
+			shift
+			;;
 		--github-output)
 			GITHUB_OUTPUT_MODE=1
 			;;
@@ -51,6 +62,14 @@ while [[ $# -gt 0 ]]; do
 	shift
 done
 
+case "$RELEASE_CHANNEL" in
+	stable|beta)
+		;;
+	*)
+		die "--channel must be stable or beta, got: ${RELEASE_CHANNEL}"
+		;;
+esac
+
 is_integer() {
 	[[ "$1" =~ ^(0|[1-9][0-9]*)$ ]]
 }
@@ -61,11 +80,13 @@ is_numeric_identifier() {
 
 validate_semver() {
 	local version="$1"
+	local label="${2:-version}"
 	local core prerelease major minor patch identifier
+	local -a identifiers=()
 
-	[[ "$version" != v* ]] || die "${VERSION_FILE} must contain bare SemVer without a leading v: ${version}"
+	[[ "$version" != v* ]] || die "${label} must contain bare SemVer without a leading v: ${version}"
 	[[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z][0-9A-Za-z.-]*)?$ ]] || \
-		die "${VERSION_FILE} must contain SemVer such as 0.2.0 or 0.2.0-beta.1: ${version}"
+		die "${label} must contain SemVer such as 0.2.0 or 0.2.0-beta.1: ${version}"
 
 	core="${version%%-*}"
 	IFS=. read -r major minor patch <<<"$core"
@@ -92,6 +113,8 @@ semver_gt() {
 	local a_core b_core a_pre b_pre
 	local a_major a_minor a_patch b_major b_minor b_patch
 	local i max_len a_id b_id
+	local -a a_ids=()
+	local -a b_ids=()
 
 	a_core="${a%%-*}"
 	b_core="${b%%-*}"
@@ -164,19 +187,34 @@ semver_gt() {
 	return 1
 }
 
-read_release_version() {
-	[[ -f "$VERSION_FILE" ]] || die "missing ${VERSION_FILE}"
-
+read_version_file() {
+	local file="$1"
 	local version
 	local -a lines=()
-	mapfile -t lines <"$VERSION_FILE"
 
-	[[ "${#lines[@]}" == "1" ]] || die "${VERSION_FILE} must contain exactly one line"
+	[[ -f "$file" ]] || die "missing ${file}"
+	mapfile -t lines <"$file"
+
+	[[ "${#lines[@]}" == "1" ]] || die "${file} must contain exactly one line"
 	version="${lines[0]//[[:space:]]/}"
-	[[ -n "$version" ]] || die "${VERSION_FILE} must not be empty"
-	[[ "$version" == "${lines[0]}" ]] || die "${VERSION_FILE} must not contain whitespace"
-	validate_semver "$version"
+	[[ -n "$version" ]] || die "${file} must not be empty"
+	[[ "$version" == "${lines[0]}" ]] || die "${file} must not contain whitespace"
 	printf '%s' "$version"
+}
+
+validate_stable_version() {
+	local version="$1"
+
+	validate_semver "$version" "$STABLE_VERSION_FILE"
+	[[ "$version" != *-* ]] || die "${STABLE_VERSION_FILE} must contain a stable SemVer without prerelease metadata: ${version}"
+}
+
+validate_beta_line() {
+	local line="$1"
+
+	validate_semver "$line" "$BETA_VERSION_FILE"
+	[[ "$line" =~ ^[0-9]+\.[0-9]+\.[0-9]+-beta$ ]] || \
+		die "${BETA_VERSION_FILE} must contain a beta line such as 0.3.0-beta, got: ${line}"
 }
 
 validate_changelog() {
@@ -187,11 +225,12 @@ validate_changelog() {
 	heading="$(grep -m1 '^## ' "$CHANGELOG_FILE" || true)"
 	[[ -n "$heading" ]] || die "${CHANGELOG_FILE} must start with a version heading"
 	[[ "$heading" == "## ${version} ("* ]] || \
-		die "${CHANGELOG_FILE} first version heading must match ${VERSION_FILE}: expected '${version}', got '${heading}'"
+		die "${CHANGELOG_FILE} first version heading must match ${STABLE_VERSION_FILE}: expected '${version}', got '${heading}'"
 }
 
 validate_expected_version() {
 	local version="$1"
+	local label="$2"
 	local expected="$EXPECTED_VERSION"
 
 	[[ -n "$expected" ]] || return 0
@@ -199,15 +238,16 @@ validate_expected_version() {
 	expected="${expected//[[:space:]]/}"
 	[[ -n "$expected" ]] || die "expected version must not be empty"
 	expected="${expected#v}"
-	validate_semver "$expected"
+	validate_semver "$expected" "expected version"
 
 	if [[ "$version" != "$expected" ]]; then
-		die "${VERSION_FILE} version ${version} must match expected version ${expected}"
+		die "${label} resolved version ${version} must match expected version ${expected}"
 	fi
 }
 
 validate_tag_precedence() {
 	local version="$1"
+	local label="$2"
 	local tag stripped highest candidate
 	local -a versions=()
 
@@ -215,7 +255,7 @@ validate_tag_precedence() {
 
 	while IFS= read -r tag; do
 		stripped="${tag#v}"
-		validate_semver "$stripped"
+		validate_semver "$stripped" "Git tag ${tag}"
 		versions+=("$stripped")
 	done < <(git tag --list 'v[0-9]*.[0-9]*.[0-9]*')
 
@@ -231,16 +271,71 @@ validate_tag_precedence() {
 	done
 
 	if ! semver_gt "$version" "$highest"; then
-		die "${VERSION_FILE} version ${version} must be greater than highest existing tag v${highest}"
+		die "${label} resolved version ${version} must be greater than highest existing tag v${highest}"
 	fi
 }
 
-version="$(read_release_version)"
-validate_changelog "$version"
-validate_expected_version "$version"
-if [[ "$CHECK_TAG_PRECEDENCE" == "1" ]]; then
-	validate_tag_precedence "$version"
-fi
+next_beta_version() {
+	local line="$1"
+	local tag stripped suffix
+	local max=0
+
+	if ! git rev-parse --git-dir >/dev/null 2>&1; then
+		printf '%s.1' "$line"
+		return
+	fi
+
+	while IFS= read -r tag; do
+		stripped="${tag#v}"
+		validate_semver "$stripped" "Git tag ${tag}"
+		suffix="${stripped#"${line}."}"
+		[[ "$suffix" =~ ^[0-9]+$ ]] || continue
+		if [[ "$suffix" =~ ^0[0-9]+$ ]]; then
+			die "numeric beta tag suffix cannot contain leading zeros: ${tag}"
+		fi
+		if ((suffix > max)); then
+			max="$suffix"
+		fi
+	done < <(git tag --list "v${line}.[0-9]*")
+
+	printf '%s.%d' "$line" "$((max + 1))"
+}
+
+resolve_stable_version() {
+	local version
+
+	version="$(read_version_file "$STABLE_VERSION_FILE")"
+	validate_stable_version "$version"
+	validate_changelog "$version"
+	validate_expected_version "$version" "$STABLE_VERSION_FILE"
+	if [[ "$CHECK_TAG_PRECEDENCE" == "1" ]]; then
+		validate_tag_precedence "$version" "$STABLE_VERSION_FILE"
+	fi
+	printf '%s' "$version"
+}
+
+resolve_beta_version() {
+	local line version
+
+	line="$(read_version_file "$BETA_VERSION_FILE")"
+	validate_beta_line "$line"
+	version="$(next_beta_version "$line")"
+	validate_expected_version "$version" "$BETA_VERSION_FILE"
+	if [[ "$CHECK_TAG_PRECEDENCE" == "1" ]]; then
+		validate_tag_precedence "$version" "$BETA_VERSION_FILE"
+	fi
+	printf '%s' "$version"
+}
+
+version=""
+case "$RELEASE_CHANNEL" in
+	stable)
+		version="$(resolve_stable_version)"
+		;;
+	beta)
+		version="$(resolve_beta_version)"
+		;;
+esac
 
 if [[ "$GITHUB_OUTPUT_MODE" == "1" ]]; then
 	[[ -n "${GITHUB_OUTPUT:-}" ]] || die "GITHUB_OUTPUT is required with --github-output"
@@ -250,4 +345,4 @@ if [[ "$GITHUB_OUTPUT_MODE" == "1" ]]; then
 	} >>"$GITHUB_OUTPUT"
 fi
 
-echo "Validated release version v${version}."
+echo "Validated ${RELEASE_CHANNEL} release version v${version}."

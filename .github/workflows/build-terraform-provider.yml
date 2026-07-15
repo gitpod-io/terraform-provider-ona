@@ -1,15 +1,30 @@
 name: Terraform provider CI
-run-name: "${{ inputs.publish_release && 'Create Terraform provider release' || 'Build Terraform provider' }}"
+run-name: "${{ inputs.release_channel != 'none' && format('Create Terraform provider {0} release', inputs.release_channel) || 'Build Terraform provider' }}"
 
 on:
   workflow_dispatch:
+    inputs:
+      release_channel:
+        description: "Release channel to publish"
+        required: false
+        type: choice
+        options:
+          - none
+          - stable
+          - beta
+        default: none
+      release_environment:
+        description: "GitHub environment that contains release credentials"
+        required: false
+        type: string
+        default: main
   workflow_call:
     inputs:
-      publish_release:
-        description: "Publish the provider version declared in version/VERSION to GitHub releases"
+      release_channel:
+        description: "Release channel to publish: none, stable, or beta"
         required: false
-        type: boolean
-        default: false
+        type: string
+        default: none
       release_environment:
         description: "GitHub environment that contains release credentials"
         required: false
@@ -47,8 +62,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      - name: Validate release metadata
-        run: scripts/validate-release-version.sh --no-tag-precedence
+      - name: Validate stable release metadata
+        run: scripts/validate-release-version.sh --channel stable --no-tag-precedence
+
+      - name: Validate beta release metadata
+        run: scripts/validate-release-version.sh --channel beta --no-tag-precedence
 
       - name: Read Go version
         id: go_version
@@ -105,7 +123,7 @@ jobs:
   release-snapshot:
     name: Build release snapshot
     needs: [verify]
-    if: ${{ !inputs.publish_release }}
+    if: ${{ inputs.release_channel == 'none' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -130,7 +148,7 @@ jobs:
 
   resolve-release-version:
     name: Select release version
-    if: ${{ inputs.publish_release }}
+    if: ${{ inputs.release_channel != 'none' }}
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -154,12 +172,14 @@ jobs:
 
       - name: Resolve version
         id: version
-        run: scripts/validate-release-version.sh --github-output
+        env:
+          RELEASE_CHANNEL: ${{ inputs.release_channel }}
+        run: scripts/validate-release-version.sh --channel "$RELEASE_CHANNEL" --github-output
 
   publish-preflight:
     name: Check release prerequisites
     needs: [resolve-release-version]
-    if: ${{ inputs.publish_release }}
+    if: ${{ inputs.release_channel != 'none' }}
     runs-on: ubuntu-latest
     environment:
       name: ${{ inputs.release_environment }}
@@ -170,6 +190,7 @@ jobs:
       GPG_FINGERPRINT: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_FINGERPRINT }}
       GPG_PRIVATE_KEY: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_PRIVATE_KEY }}
       RELEASE_REPOSITORY: gitpod-io/terraform-provider-ona
+      RELEASE_CHANNEL: ${{ inputs.release_channel }}
       VERSION: ${{ needs.resolve-release-version.outputs.version }}
     steps:
       - name: Checkout repository
@@ -183,7 +204,7 @@ jobs:
   create-release:
     name: Create GitHub release
     needs: [verify, resolve-release-version, publish-preflight]
-    if: ${{ inputs.publish_release }}
+    if: ${{ inputs.release_channel != 'none' }}
     runs-on: ubuntu-latest
     environment:
       name: ${{ inputs.release_environment }}
@@ -223,5 +244,6 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_PASSPHRASE }}
           GPG_PRIVATE_KEY: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_PRIVATE_KEY }}
           RELEASE_REPOSITORY: gitpod-io/terraform-provider-ona
+          RELEASE_CHANNEL: ${{ inputs.release_channel }}
           VERSION: ${{ needs.resolve-release-version.outputs.version }}
         run: scripts/publish-release.sh
