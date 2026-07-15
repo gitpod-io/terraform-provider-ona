@@ -23,13 +23,38 @@ func NewSCMIntegrationListResource() list.ListResource {
 }
 
 type scmIntegrationListModel struct {
+	AuthModes types.List `tfsdk:"auth_modes"`
+	Hosts     types.List `tfsdk:"hosts"`
+	Providers types.List `tfsdk:"providers"`
 	RunnerIDs types.List `tfsdk:"runner_ids"`
+}
+
+type scmIntegrationListFilter struct {
+	AuthModes []string
+	Hosts     []string
+	Providers []string
+	RunnerIDs []string
 }
 
 func (r *SCMIntegrationResource) ListResourceConfigSchema(ctx context.Context, req list.ListResourceSchemaRequest, resp *list.ListResourceSchemaResponse) {
 	resp.Schema = listschema.Schema{
 		MarkdownDescription: "Lists Ona runner SCM integrations without retrieving OAuth or PAT secret values.",
 		Attributes: map[string]listschema.Attribute{
+			"auth_modes": listschema.ListAttribute{
+				Optional:            true,
+				ElementType:         types.StringType,
+				MarkdownDescription: "Authentication modes to include. Supported values are `oauth` and `pat`.",
+			},
+			"hosts": listschema.ListAttribute{
+				Optional:            true,
+				ElementType:         types.StringType,
+				MarkdownDescription: "SCM host names to include.",
+			},
+			"providers": listschema.ListAttribute{
+				Optional:            true,
+				ElementType:         types.StringType,
+				MarkdownDescription: "SCM provider IDs to include, such as `github` or `gitlab`.",
+			},
 			"runner_ids": listschema.ListAttribute{
 				Optional:            true,
 				ElementType:         types.StringType,
@@ -46,13 +71,8 @@ func (r *SCMIntegrationResource) List(ctx context.Context, req list.ListRequest,
 			return
 		}
 
-		var config scmIntegrationListModel
-		diags := req.Config.Get(ctx, &config)
-		if !listutil.PushDiagnostics(push, diags) {
-			return
-		}
-		runnerIDs, diags := listutil.StringList(ctx, config.RunnerIDs)
-		if !listutil.PushDiagnostics(push, diags) {
+		filter, ok := newSCMIntegrationListFilter(ctx, req, push)
+		if !ok {
 			return
 		}
 
@@ -61,7 +81,7 @@ func (r *SCMIntegrationResource) List(ctx context.Context, req list.ListRequest,
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.RunnerConfigurationService().ListSCMIntegrations(ctx, connect.NewRequest(&v1.ListSCMIntegrationsRequest{
 				Pagination: &v1.PaginationRequest{PageSize: listutil.PageSize(req.Limit, emitted), Token: token},
-				Filter:     &v1.ListSCMIntegrationsRequest_Filter{RunnerIds: runnerIDs},
+				Filter:     &v1.ListSCMIntegrationsRequest_Filter{RunnerIds: filter.RunnerIDs},
 			}))
 			if err != nil {
 				push(listutil.Error("Unable to List Ona SCM Integrations", fmt.Errorf("list SCM integrations: %w", err)))
@@ -73,6 +93,9 @@ func (r *SCMIntegrationResource) List(ctx context.Context, req list.ListRequest,
 				return integrations[i].GetId() < integrations[j].GetId()
 			})
 			for _, integration := range integrations {
+				if !filter.matches(integration) {
+					continue
+				}
 				if !listutil.HasCapacity(req.Limit, emitted) {
 					return
 				}
@@ -96,6 +119,82 @@ func (r *SCMIntegrationResource) List(ctx context.Context, req list.ListRequest,
 			}
 		}
 	}
+}
+
+func newSCMIntegrationListFilter(ctx context.Context, req list.ListRequest, push func(list.ListResult) bool) (scmIntegrationListFilter, bool) {
+	var config scmIntegrationListModel
+	diags := req.Config.Get(ctx, &config)
+	if !listutil.PushDiagnostics(push, diags) {
+		return scmIntegrationListFilter{}, false
+	}
+
+	authModes, diags := listutil.StringList(ctx, config.AuthModes)
+	if !listutil.PushDiagnostics(push, diags) {
+		return scmIntegrationListFilter{}, false
+	}
+	if err := validateSCMIntegrationAuthModes(authModes); err != nil {
+		push(listutil.Error("Invalid SCM Authentication Mode", err))
+		return scmIntegrationListFilter{}, false
+	}
+	hosts, diags := listutil.StringList(ctx, config.Hosts)
+	if !listutil.PushDiagnostics(push, diags) {
+		return scmIntegrationListFilter{}, false
+	}
+	providers, diags := listutil.StringList(ctx, config.Providers)
+	if !listutil.PushDiagnostics(push, diags) {
+		return scmIntegrationListFilter{}, false
+	}
+	runnerIDs, diags := listutil.StringList(ctx, config.RunnerIDs)
+	if !listutil.PushDiagnostics(push, diags) {
+		return scmIntegrationListFilter{}, false
+	}
+
+	return scmIntegrationListFilter{
+		AuthModes: authModes,
+		Hosts:     hosts,
+		Providers: providers,
+		RunnerIDs: runnerIDs,
+	}, true
+}
+
+func validateSCMIntegrationAuthModes(authModes []string) error {
+	for _, authMode := range authModes {
+		switch authMode {
+		case scmAuthModeOAuth, scmAuthModePAT:
+		default:
+			return fmt.Errorf("unsupported SCM authentication mode %q; supported values are oauth and pat", authMode)
+		}
+	}
+	return nil
+}
+
+func (f scmIntegrationListFilter) matches(integration *v1.SCMIntegration) bool {
+	return matchesSCMIntegrationFilter(f.AuthModes, scmIntegrationAuthMode(integration)) &&
+		matchesSCMIntegrationFilter(f.Hosts, integration.GetHost()) &&
+		matchesSCMIntegrationFilter(f.Providers, integration.GetScmId()) &&
+		matchesSCMIntegrationFilter(f.RunnerIDs, integration.GetRunnerId())
+}
+
+func matchesSCMIntegrationFilter(filter []string, value string) bool {
+	if len(filter) == 0 {
+		return true
+	}
+	for _, candidate := range filter {
+		if candidate == value {
+			return true
+		}
+	}
+	return false
+}
+
+func scmIntegrationAuthMode(integration *v1.SCMIntegration) string {
+	if integration.GetPat() {
+		return scmAuthModePAT
+	}
+	if integration.GetOauth() != nil {
+		return scmAuthModeOAuth
+	}
+	return ""
 }
 
 func scmIntegrationDisplayName(integration *v1.SCMIntegration) string {

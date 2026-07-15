@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"sort"
 	"strings"
 	"testing"
@@ -47,6 +48,33 @@ func TestAccSCMIntegrationQueryFilters(t *testing.T) {
 		Expected []scmIntegrationQueryResult
 	}{
 		{
+			Name: "host",
+			Config: scmIntegrationQueryConfig(`
+hosts = ["github.com"]
+`),
+			Expected: []scmIntegrationQueryResult{
+				expectedOAuthSCMIntegrationQueryResult(),
+			},
+		},
+		{
+			Name: "auth_mode",
+			Config: scmIntegrationQueryConfig(`
+auth_modes = ["pat"]
+`),
+			Expected: []scmIntegrationQueryResult{
+				expectedPATSCMIntegrationQueryResult(),
+			},
+		},
+		{
+			Name: "provider",
+			Config: scmIntegrationQueryConfig(`
+providers = ["gitlab"]
+`),
+			Expected: []scmIntegrationQueryResult{
+				expectedPATSCMIntegrationQueryResult(),
+			},
+		},
+		{
 			Name: "runner_id",
 			Config: scmIntegrationQueryConfig(`
 runner_ids = ["runner-1"]
@@ -56,9 +84,22 @@ runner_ids = ["runner-1"]
 			},
 		},
 		{
-			Name: "unknown_runner_id",
+			Name: "combined_filters",
 			Config: scmIntegrationQueryConfig(`
-runner_ids = ["runner-unknown"]
+hosts      = ["github.com"]
+auth_modes = ["oauth"]
+providers  = ["github"]
+runner_ids = ["runner-1"]
+`),
+			Expected: []scmIntegrationQueryResult{
+				expectedOAuthSCMIntegrationQueryResult(),
+			},
+		},
+		{
+			Name: "non_matching_filters",
+			Config: scmIntegrationQueryConfig(`
+hosts      = ["github.com"]
+auth_modes = ["pat"]
 `),
 			Expected: []scmIntegrationQueryResult{},
 		},
@@ -84,6 +125,19 @@ runner_ids = ["runner-unknown"]
 			}
 		})
 	}
+}
+
+func TestAccSCMIntegrationQueryRejectsInvalidAuthMode(t *testing.T) {
+	server := newSCMIntegrationQueryAPIServer(t)
+	t.Cleanup(server.Close)
+
+	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+		Query: true,
+		Config: scmIntegrationQueryConfig(`
+auth_modes = ["basic"]
+`),
+		ExpectError: regexp.MustCompile("Invalid SCM Authentication Mode"),
+	}))
 }
 
 func newSCMIntegrationQueryAPIServer(t *testing.T) *runnerConfigurationAPIServer {

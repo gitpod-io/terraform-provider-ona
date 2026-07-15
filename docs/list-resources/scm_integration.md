@@ -24,4 +24,7 @@ list "ona_scm_integration" "all" {
 
 ### Optional
 
+- `auth_modes` (List of String) Authentication modes to include. Supported values are `oauth` and `pat`.
+- `hosts` (List of String) SCM host names to include.
+- `providers` (List of String) SCM provider IDs to include, such as `github` or `gitlab`.
 - `runner_ids` (List of String) Runner IDs to include.
