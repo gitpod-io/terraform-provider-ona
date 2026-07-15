@@ -42,23 +42,19 @@ type RunnerModel struct {
 	RunnerID                  types.String        `tfsdk:"runner_id"`
 	Name                      types.String        `tfsdk:"name"`
 	RunnerProvider            types.String        `tfsdk:"runner_provider"`
-	RunnerManagerID           types.String        `tfsdk:"runner_manager_id"`
 	Kind                      types.String        `tfsdk:"kind"`
 	CloudFormationTemplateURL types.String        `tfsdk:"cloudformation_template_url"`
 	CreatedAt                 types.String        `tfsdk:"created_at"`
-	UpdatedAt                 types.String        `tfsdk:"updated_at"`
 	Configuration             *ConfigurationModel `tfsdk:"configuration"`
-	Status                    *StatusModel        `tfsdk:"status"`
 	Creator                   *CreatorModel       `tfsdk:"creator"`
 }
 
 type RunnerInputModel struct {
-	ID              types.String        `tfsdk:"id"`
-	RunnerID        types.String        `tfsdk:"runner_id"`
-	Name            types.String        `tfsdk:"name"`
-	RunnerProvider  types.String        `tfsdk:"runner_provider"`
-	RunnerManagerID types.String        `tfsdk:"runner_manager_id"`
-	Configuration   *ConfigurationModel `tfsdk:"configuration"`
+	ID             types.String        `tfsdk:"id"`
+	RunnerID       types.String        `tfsdk:"runner_id"`
+	Name           types.String        `tfsdk:"name"`
+	RunnerProvider types.String        `tfsdk:"runner_provider"`
+	Configuration  *ConfigurationModel `tfsdk:"configuration"`
 }
 
 type ConfigurationModel struct {
@@ -73,17 +69,6 @@ type ConfigurationModel struct {
 type UpdateWindowModel struct {
 	Start types.String `tfsdk:"start"`
 	End   types.String `tfsdk:"end"`
-}
-
-type StatusModel struct {
-	Phase            types.String `tfsdk:"phase"`
-	Region           types.String `tfsdk:"region"`
-	Message          types.String `tfsdk:"message"`
-	Version          types.String `tfsdk:"version"`
-	LogURL           types.String `tfsdk:"log_url"`
-	UpdatedAt        types.String `tfsdk:"updated_at"`
-	SystemDetails    types.String `tfsdk:"system_details"`
-	SupportBundleURL types.String `tfsdk:"support_bundle_url"`
 }
 
 type CreatorModel struct {
@@ -347,19 +332,17 @@ func runnerInputFromPlan(ctx context.Context, plan tfsdk.Plan) (RunnerInputModel
 	diags.Append(plan.GetAttribute(ctx, path.Root("runner_id"), &data.RunnerID)...)
 	diags.Append(plan.GetAttribute(ctx, path.Root("name"), &data.Name)...)
 	diags.Append(plan.GetAttribute(ctx, path.Root("runner_provider"), &data.RunnerProvider)...)
-	diags.Append(plan.GetAttribute(ctx, path.Root("runner_manager_id"), &data.RunnerManagerID)...)
 	diags.Append(plan.GetAttribute(ctx, path.Root("configuration"), &data.Configuration)...)
 	return data, diags
 }
 
 func (data RunnerInputModel) runnerModel() RunnerModel {
 	return RunnerModel{
-		ID:              data.ID,
-		RunnerID:        data.RunnerID,
-		Name:            data.Name,
-		RunnerProvider:  data.RunnerProvider,
-		RunnerManagerID: data.RunnerManagerID,
-		Configuration:   data.Configuration,
+		ID:             data.ID,
+		RunnerID:       data.RunnerID,
+		Name:           data.Name,
+		RunnerProvider: data.RunnerProvider,
+		Configuration:  data.Configuration,
 	}
 }
 
@@ -382,9 +365,6 @@ func createRunnerRequest(data RunnerModel) (*v1.CreateRunnerRequest, diag.Diagno
 		Name:     data.Name.ValueString(),
 		Provider: provider,
 		Spec:     spec,
-	}
-	if !data.RunnerManagerID.IsNull() && !data.RunnerManagerID.IsUnknown() {
-		req.RunnerManagerId = data.RunnerManagerID.ValueString()
 	}
 	return req, diags
 }
@@ -503,12 +483,9 @@ func populateModelFromRunner(data *RunnerModel, runner *v1.Runner) {
 	data.RunnerID = types.StringValue(id)
 	data.Name = types.StringValue(runner.GetName())
 	data.RunnerProvider = stringValue(providerToString(runner.GetProvider()))
-	data.RunnerManagerID = stringOptionalValue(runner.GetRunnerManagerId())
 	data.Kind = stringValue(kindToString(runner.GetKind()))
 	data.CreatedAt = timestampValue(runner.GetCreatedAt())
-	data.UpdatedAt = timestampValue(runner.GetUpdatedAt())
 	data.Configuration = configurationModel(runner.GetSpec().GetConfiguration())
-	data.Status = statusModel(runner.GetStatus())
 	data.Creator = creatorModel(runner.GetCreator())
 	populateCloudFormationTemplateURL(data)
 }
@@ -532,7 +509,6 @@ func populateCloudFormationTemplateURL(data *RunnerModel) {
 func preservePlannedInputs(data *RunnerModel, planned RunnerModel) {
 	data.Name = preserveString(data.Name, planned.Name)
 	data.RunnerProvider = preserveString(data.RunnerProvider, planned.RunnerProvider)
-	data.RunnerManagerID = preserveString(data.RunnerManagerID, planned.RunnerManagerID)
 	data.Configuration = preserveConfiguration(data.Configuration, planned.Configuration)
 }
 
@@ -605,22 +581,6 @@ func updateWindowModel(updateWindow *v1.UpdateWindow) *UpdateWindowModel {
 		result.End = types.StringValue(formatHour(updateWindow.GetEndHour()))
 	}
 	return result
-}
-
-func statusModel(status *v1.RunnerStatus) *StatusModel {
-	if status == nil {
-		return nil
-	}
-	return &StatusModel{
-		Phase:            stringValue(phaseToString(status.GetPhase())),
-		Region:           stringOptionalValue(status.GetRegion()),
-		Message:          stringOptionalValue(status.GetMessage()),
-		Version:          stringOptionalValue(status.GetVersion()),
-		LogURL:           stringOptionalValue(status.GetLogUrl()),
-		UpdatedAt:        timestampValue(status.GetUpdatedAt()),
-		SystemDetails:    stringOptionalValue(status.GetSystemDetails()),
-		SupportBundleURL: stringOptionalValue(status.GetSupportBundleUrl()),
-	}
 }
 
 func creatorModel(creator *v1.Subject) *CreatorModel {
@@ -873,25 +833,6 @@ func kindToString(kind v1.RunnerKind) string {
 		return "remote"
 	case v1.RunnerKind_RUNNER_KIND_LOCAL_CONFIGURATION:
 		return "local_configuration"
-	default:
-		return ""
-	}
-}
-
-func phaseToString(phase v1.RunnerPhase) string {
-	switch phase {
-	case v1.RunnerPhase_RUNNER_PHASE_CREATED:
-		return "created"
-	case v1.RunnerPhase_RUNNER_PHASE_INACTIVE:
-		return "inactive"
-	case v1.RunnerPhase_RUNNER_PHASE_ACTIVE:
-		return "active"
-	case v1.RunnerPhase_RUNNER_PHASE_DELETING:
-		return "deleting"
-	case v1.RunnerPhase_RUNNER_PHASE_DELETED:
-		return "deleted"
-	case v1.RunnerPhase_RUNNER_PHASE_DEGRADED:
-		return "degraded"
 	default:
 		return ""
 	}

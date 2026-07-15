@@ -32,13 +32,6 @@ func resourceSchema() resourceschema.Schema {
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"organization_id": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Organization ID inferred from the authenticated provider identity for organization-scoped secrets.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
-			},
 			"project_id": resourceschema.StringAttribute{
 				Optional:            true,
 				MarkdownDescription: "Project ID. Required when `scope` is `project`.",
@@ -85,10 +78,6 @@ func resourceSchema() resourceschema.Schema {
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
-			},
-			"updated_at": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Time when the secret was last updated.",
 			},
 			"creator": resourceschema.SingleNestedAttribute{
 				Computed:            true,

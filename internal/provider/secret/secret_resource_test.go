@@ -44,8 +44,7 @@ func TestCreateSecretRequest(t *testing.T) {
 				EnvironmentVariable: types.BoolValue(true),
 			},
 			Scope: resolvedScope{
-				Scope:          &v1.SecretScope{Scope: &v1.SecretScope_OrganizationId{OrganizationId: testOrgID}},
-				OrganizationID: types.StringValue(testOrgID),
+				Scope: &v1.SecretScope{Scope: &v1.SecretScope_OrganizationId{OrganizationId: testOrgID}},
 			},
 			Expected: Expectation{
 				Result: &v1.CreateSecretRequest{

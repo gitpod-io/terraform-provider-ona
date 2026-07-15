@@ -88,8 +88,6 @@ resource "ona_secret" "automation_token" {
 - `created_at` (String) Time when the secret was created.
 - `creator` (Attributes) Identity that created the secret. (see [below for nested schema](#nestedatt--creator))
 - `id` (String) Secret ID.
-- `organization_id` (String) Organization ID inferred from the authenticated provider identity for organization-scoped secrets.
-- `updated_at` (String) Time when the secret was last updated.
 
 <a id="nestedblock--credential_proxy"></a>
 ### Nested Schema for `credential_proxy`

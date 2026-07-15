@@ -61,13 +61,9 @@ resource "ona_webhook" "organization" {
 
 ### Read-Only
 
-- `bound_workflow_count` (Number) Number of workflows currently bound to the webhook.
 - `created_at` (String) Time when the webhook was created.
 - `creator` (Attributes) Identity that created the webhook. (see [below for nested schema](#nestedatt--creator))
 - `id` (String) Webhook ID. Use this value as the Terraform import ID.
-- `last_triggered_at` (String) Time when the webhook was last triggered.
-- `organization_id` (String) Organization ID that owns the webhook.
-- `updated_at` (String) Time when the webhook was last updated.
 - `url` (String) Generated webhook endpoint URL.
 
 <a id="nestedatt--organization_scope"></a>

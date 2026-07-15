@@ -49,14 +49,7 @@ func warmPoolResourceSchema() resourceschema.Schema {
 				Default:             int32default.StaticInt32(defaultWarmPoolMaxSize),
 				MarkdownDescription: "Maximum number of warm instances to maintain. Must be between 1 and 20 and no smaller than `min_size`.",
 			},
-			"organization_id": computedResourceString("Organization ID that owns the warm pool."),
-			"runner_id":       computedResourceString("Runner ID that manages this warm pool."),
-			"created_at":      computedResourceString("Time when the warm pool was created."),
-			"updated_at": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Time when the warm pool was last updated.",
-			},
-			"snapshot_id": computedResourceString("Prebuild snapshot ID currently assigned to this warm pool."),
+			"created_at": computedResourceString("Time when the warm pool was created."),
 		},
 	}
 }
@@ -117,11 +110,7 @@ func warmPoolDataSourceAttributes(warmPoolID datasourceschema.StringAttribute) m
 		"environment_class_id": computedDataSourceString("Environment class ID whose instances are warmed."),
 		"min_size":             computedDataSourceInt32("Minimum number of warm instances to maintain."),
 		"max_size":             computedDataSourceInt32("Maximum number of warm instances to maintain."),
-		"organization_id":      computedDataSourceString("Organization ID that owns the warm pool."),
-		"runner_id":            computedDataSourceString("Runner ID that manages this warm pool."),
 		"created_at":           computedDataSourceString("Time when the warm pool was created."),
-		"updated_at":           computedDataSourceString("Time when the warm pool was last updated."),
-		"snapshot_id":          computedDataSourceString("Prebuild snapshot ID currently assigned to this warm pool."),
 	}
 }
 

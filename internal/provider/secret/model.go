@@ -21,7 +21,6 @@ const (
 type Model struct {
 	ID                             types.String           `tfsdk:"id"`
 	Scope                          types.String           `tfsdk:"scope"`
-	OrganizationID                 types.String           `tfsdk:"organization_id"`
 	ProjectID                      types.String           `tfsdk:"project_id"`
 	UserID                         types.String           `tfsdk:"user_id"`
 	ServiceAccountID               types.String           `tfsdk:"service_account_id"`
@@ -29,7 +28,6 @@ type Model struct {
 	Value                          types.String           `tfsdk:"value"`
 	ValueVersion                   types.String           `tfsdk:"value_version"`
 	CreatedAt                      types.String           `tfsdk:"created_at"`
-	UpdatedAt                      types.String           `tfsdk:"updated_at"`
 	Creator                        types.Object           `tfsdk:"creator"`
 	EnvironmentVariable            types.Bool             `tfsdk:"environment_variable"`
 	FilePath                       types.String           `tfsdk:"file_path"`

@@ -238,10 +238,10 @@ func TestAccOrganizationRoleAssignmentResourceLifecycle(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "id", accessControlAssignmentID),
 					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "group_id", accessControlGroupID),
-					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "organization_id", accessControlOrgID),
+					resource.TestCheckNoResourceAttr("ona_organization_role_assignment.test", "organization_id"),
 					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "role", "runners_admin"),
-					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "resource_type", "organization"),
-					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "resource_id", accessControlOrgID),
+					resource.TestCheckNoResourceAttr("ona_organization_role_assignment.test", "resource_type"),
+					resource.TestCheckNoResourceAttr("ona_organization_role_assignment.test", "resource_id"),
 				),
 			},
 			{
@@ -255,7 +255,7 @@ func TestAccOrganizationRoleAssignmentResourceLifecycle(t *testing.T) {
 			{
 				ResourceName:      "ona_organization_role_assignment.test",
 				ImportState:       true,
-				ImportStateId:     accessControlGroupID + "/" + accessControlOrgID + "/runners_admin",
+				ImportStateId:     accessControlGroupID + "/runners_admin",
 				ImportStateVerify: true,
 			},
 			{

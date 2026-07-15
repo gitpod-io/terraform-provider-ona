@@ -121,13 +121,9 @@ func populateModel(ctx context.Context, data *Model, webhook *v1.Webhook, diags 
 	data.Description = optionalStringValue(metadata.GetDescription())
 	data.Type = types.StringValue(webhookType)
 	data.Provider = types.StringValue(provider)
-	data.OrganizationID = stringValue(metadata.GetOrganizationId())
 	data.URL = stringValue(webhook.GetUrl())
-	data.BoundWorkflowCount = types.Int32Value(webhook.GetBoundWorkflowCount())
-	data.LastTriggeredAt = timestampValue(webhook.GetLastTriggeredAt())
 	data.Creator = creatorObject(metadata.GetCreator(), diags)
 	data.CreatedAt = timestampValue(metadata.GetCreatedAt())
-	data.UpdatedAt = timestampValue(metadata.GetUpdatedAt())
 	data.SecretVersion = types.StringNull()
 
 	data.RepositoryScopes = types.SetNull(types.ObjectType{AttrTypes: repositoryScopeAttributeTypes})

@@ -43,7 +43,6 @@ type SCIMConfigurationModel struct {
 	TokenExpiresIn                     types.String `tfsdk:"token_expires_in"`
 	TokenExpiresAt                     types.String `tfsdk:"token_expires_at"`
 	CreatedAt                          types.String `tfsdk:"created_at"`
-	UpdatedAt                          types.String `tfsdk:"updated_at"`
 }
 
 func (r *SCIMConfigurationResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -85,7 +84,7 @@ func (r *SCIMConfigurationResource) Schema(ctx context.Context, req resource.Sch
 			},
 			"token_expires_in": resourceschema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: "Initial SCIM token lifetime as a Go duration string. Minimum is `24h`; maximum is `17520h`. Changing this value replaces the resource.",
+				MarkdownDescription: "Initial SCIM token lifetime using a number followed by a time unit, such as `24h` or `8760h`. Minimum is `24h`; maximum is `17520h`. Changing this value replaces the resource.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -103,10 +102,6 @@ func (r *SCIMConfigurationResource) Schema(ctx context.Context, req resource.Sch
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
-			},
-			"updated_at": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "RFC3339 timestamp when the SCIM configuration was last updated.",
 			},
 		},
 	}

@@ -43,10 +43,12 @@ func TestAccProjectResourceLifecycle(t *testing.T) {
 				Config: testAccProjectResourceConfig(server.URL, "acme-api", "class-1"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_project.api", "id", "project-1"),
-					resource.TestCheckResourceAttr("ona_project.api", "organization_id", "org-1"),
+					resource.TestCheckNoResourceAttr("ona_project.api", "organization_id"),
 					resource.TestCheckResourceAttr("ona_project.api", "name", "acme-api"),
 					resource.TestCheckResourceAttr("ona_project.api", "repository_clone_url", "https://github.com/acme/api.git"),
 					resource.TestCheckResourceAttr("ona_project.api", "branch", "main"),
+					resource.TestCheckResourceAttr("ona_project.api", "insights_enabled", "false"),
+					resource.TestCheckNoResourceAttr("ona_project.api", "updated_at"),
 					resource.TestCheckResourceAttr("ona_project.api", "devcontainer_file_path", ".devcontainer/devcontainer.json"),
 					resource.TestCheckResourceAttr("ona_project.api", "automations_file_path", ".ona/automations.yaml"),
 					resource.TestCheckResourceAttr("ona_project.api", "environment_class.0.environment_class_id", "class-1"),
@@ -68,7 +70,7 @@ func TestAccProjectResourceLifecycle(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccProjectResourceConfigWithPrebuild(server.URL),
+				Config: testAccProjectResourceConfigWithPrebuild(server.URL, true),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_project.api", "name", "acme-api-updated"),
 					resource.TestCheckResourceAttr("ona_project.api", "repository_clone_url", "https://github.com/acme/api.git"),
@@ -81,7 +83,12 @@ func TestAccProjectResourceLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr("ona_project.api", "prebuild_configuration.0.executor.0.id", "service-account-1"),
 					resource.TestCheckResourceAttr("ona_project.api", "prebuild_configuration.0.executor.0.principal", "service_account"),
 					resource.TestCheckResourceAttr("ona_project.api", "prebuild_configuration.0.enable_jetbrains_warmup", "true"),
+					resource.TestCheckResourceAttr("ona_project.api", "insights_enabled", "true"),
 				),
+			},
+			{
+				Config: testAccProjectResourceConfigWithPrebuild(server.URL, false),
+				Check:  resource.TestCheckResourceAttr("ona_project.api", "insights_enabled", "false"),
 			},
 		},
 	})
@@ -110,7 +117,7 @@ resource "ona_project" "api" {
 `, host, name, environmentClassID)
 }
 
-func testAccProjectResourceConfigWithPrebuild(host string) string {
+func testAccProjectResourceConfigWithPrebuild(host string, insightsEnabled bool) string {
 	return fmt.Sprintf(`
 provider "ona" {
   host  = %[1]q
@@ -121,6 +128,7 @@ resource "ona_project" "api" {
   name                 = "acme-api-updated"
   repository_clone_url = "https://github.com/acme/api.git"
   branch               = "stable"
+  insights_enabled     = %[2]t
 
   devcontainer_file_path = ".devcontainer/devcontainer.json"
   automations_file_path  = ".ona/automations.yaml"
@@ -147,12 +155,13 @@ resource "ona_project" "api" {
     enable_jetbrains_warmup = true
   }
 }
-`, host)
+`, host, insightsEnabled)
 }
 
 type projectAPIServer struct {
 	*httptest.Server
-	service *fakeProjectService
+	service  *fakeProjectService
+	insights *fakeInsightsService
 }
 
 func newProjectAPIServer(t *testing.T) *projectAPIServer {
@@ -162,17 +171,28 @@ func newProjectAPIServer(t *testing.T) *projectAPIServer {
 		projects: map[string]*v1.Project{},
 		now:      time.Date(2026, 7, 7, 12, 0, 0, 0, time.UTC),
 	}
-	path, handler := v1connect.NewProjectServiceHandler(service)
+	insights := &fakeInsightsService{
+		enabled:      make(map[string]bool),
+		enableCalls:  make(map[string]int),
+		disableCalls: make(map[string]int),
+	}
+	projectPath, projectHandler := v1connect.NewProjectServiceHandler(service)
+	insightsPath, insightsHandler := v1connect.NewInsightsServiceHandler(insights)
 	server := httptest.NewServer(http.StripPrefix("/api", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == path || len(r.URL.Path) > len(path) && r.URL.Path[:len(path)] == path {
-			handler.ServeHTTP(w, r)
+		if r.URL.Path == projectPath || len(r.URL.Path) > len(projectPath) && r.URL.Path[:len(projectPath)] == projectPath {
+			projectHandler.ServeHTTP(w, r)
+			return
+		}
+		if r.URL.Path == insightsPath || len(r.URL.Path) > len(insightsPath) && r.URL.Path[:len(insightsPath)] == insightsPath {
+			insightsHandler.ServeHTTP(w, r)
 			return
 		}
 		http.NotFound(w, r)
 	})))
 	return &projectAPIServer{
-		Server:  server,
-		service: service,
+		Server:   server,
+		service:  service,
+		insights: insights,
 	}
 }
 
@@ -334,4 +354,47 @@ func isDisabledPrebuildUpdate(cfg *v1.ProjectPrebuildConfiguration) bool {
 		cfg.GetTrigger() == nil &&
 		cfg.GetExecutor() == nil &&
 		!cfg.GetEnableJetbrainsWarmup()
+}
+
+type fakeInsightsService struct {
+	v1connect.UnimplementedInsightsServiceHandler
+
+	mu           sync.Mutex
+	enabled      map[string]bool
+	enableCalls  map[string]int
+	disableCalls map[string]int
+}
+
+func (s *fakeInsightsService) EnableProjectInsights(ctx context.Context, req *connect.Request[v1.EnableProjectInsightsRequest]) (*connect.Response[v1.EnableProjectInsightsResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	projectID := req.Msg.GetProjectId()
+	s.enabled[projectID] = true
+	s.enableCalls[projectID]++
+	return connect.NewResponse(&v1.EnableProjectInsightsResponse{}), nil
+}
+
+func (s *fakeInsightsService) DisableProjectInsights(ctx context.Context, req *connect.Request[v1.DisableProjectInsightsRequest]) (*connect.Response[v1.DisableProjectInsightsResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	projectID := req.Msg.GetProjectId()
+	if _, ok := s.enabled[projectID]; !ok {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("project not found"))
+	}
+	s.enabled[projectID] = false
+	s.disableCalls[projectID]++
+	return connect.NewResponse(&v1.DisableProjectInsightsResponse{}), nil
+}
+
+func (s *fakeInsightsService) GetProjectInsightsStatus(ctx context.Context, req *connect.Request[v1.GetProjectInsightsStatusRequest]) (*connect.Response[v1.GetProjectInsightsStatusResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	enabled, ok := s.enabled[req.Msg.GetProjectId()]
+	if !ok {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("project not found"))
+	}
+	return connect.NewResponse(&v1.GetProjectInsightsStatusResponse{Enabled: enabled}), nil
 }

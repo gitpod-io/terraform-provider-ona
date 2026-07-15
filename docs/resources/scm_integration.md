@@ -16,8 +16,8 @@ Ona runner SCM integration. Use this to configure how a runner authenticates to 
 resource "ona_scm_integration" "github_oauth" {
   runner_id = ona_runner.aws_primary.runner_id
 
-  scm_id = "github"
-  host   = "github.com"
+  kind = "github"
+  host = "github.com"
 
   auth_mode                   = "oauth"
   oauth_client_id             = var.github_oauth_client_id
@@ -28,7 +28,7 @@ resource "ona_scm_integration" "github_oauth" {
 resource "ona_scm_integration" "github_pat" {
   runner_id = ona_runner.aws_primary.runner_id
 
-  scm_id    = "github"
+  kind      = "github"
   host      = "github.com"
   auth_mode = "pat"
 }
@@ -36,8 +36,8 @@ resource "ona_scm_integration" "github_pat" {
 resource "ona_scm_integration" "azure_devops_entra" {
   runner_id = ona_runner.aws_primary.runner_id
 
-  scm_id = "azuredevops_entra"
-  host   = "dev.azure.com/acme"
+  kind = "azuredevops_entra"
+  host = "dev.azure.com/acme"
 
   auth_mode                   = "oauth"
   oauth_client_id             = var.azure_devops_oauth_client_id
@@ -49,7 +49,7 @@ resource "ona_scm_integration" "azure_devops_entra" {
 resource "ona_scm_integration" "azure_devops_server" {
   runner_id = ona_runner.aws_primary.runner_id
 
-  scm_id            = "azuredevops_server"
+  kind              = "azuredevops_server"
   host              = "ado.example.com"
   auth_mode         = "pat"
   virtual_directory = "/tfs"
@@ -63,18 +63,18 @@ resource "ona_scm_integration" "azure_devops_server" {
 
 - `auth_mode` (String) Authentication mode. Supported values are `oauth` and `pat`. Azure DevOps Server currently requires `pat`.
 - `host` (String) SCM host name, for example `github.com` or an Azure DevOps Server host. Changing this value replaces the integration.
+- `kind` (String) SCM integration kind. Use values such as `github`, `azuredevops_entra`, or `azuredevops_server`. Changing this value replaces the integration.
 - `runner_id` (String) Runner ID this SCM integration belongs to. Changing this value replaces the integration.
-- `scm_id` (String) SCM provider ID from the runner configuration schema. Use values such as `github`, `azuredevops_entra`, or `azuredevops_server`. Changing this value replaces the integration.
 
 ### Optional
 
 > **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
 
-- `issuer_url` (String) Issuer URL for Azure DevOps Entra ID OAuth integrations. Required when `scm_id` is `azuredevops_entra` and `auth_mode` is `oauth`.
+- `issuer_url` (String) Issuer URL for Azure DevOps Entra ID OAuth integrations. Required when `kind` is `azuredevops_entra` and `auth_mode` is `oauth`.
 - `oauth_client_id` (String) OAuth app client ID. Required when `auth_mode` is `oauth`; omit when `auth_mode` is `pat`.
 - `oauth_client_secret` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) OAuth app client secret. This write-only value is sent to Ona but is not stored in Terraform plan or state. Required when creating an OAuth integration or rotating the OAuth secret.
 - `oauth_client_secret_version` (String) User-managed version marker for resubmitting `oauth_client_secret` during rotation. Increment or otherwise change this value when supplying a new secret.
-- `virtual_directory` (String) Virtual directory path for Azure DevOps Server integrations, such as `/tfs`. Required only when `scm_id` is `azuredevops_server`.
+- `virtual_directory` (String) Virtual directory path for Azure DevOps Server integrations, such as `/tfs`. Required only when `kind` is `azuredevops_server`.
 
 ### Read-Only
 

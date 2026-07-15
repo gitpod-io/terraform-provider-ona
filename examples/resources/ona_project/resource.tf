@@ -2,6 +2,7 @@ resource "ona_project" "api" {
   name                 = "acme-api"
   repository_clone_url = "https://github.com/acme/api.git"
   branch               = "main"
+  insights_enabled     = true
 
   devcontainer_file_path = ".devcontainer/devcontainer.json"
   automations_file_path  = ".ona/automations.yaml"

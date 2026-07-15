@@ -59,10 +59,6 @@ resource "ona_warm_pool" "api_large" {
 
 - `created_at` (String) Time when the warm pool was created.
 - `id` (String) Warm pool ID. Use this value as the Terraform import ID.
-- `organization_id` (String) Organization ID that owns the warm pool.
-- `runner_id` (String) Runner ID that manages this warm pool.
-- `snapshot_id` (String) Prebuild snapshot ID currently assigned to this warm pool.
-- `updated_at` (String) Time when the warm pool was last updated.
 
 ## Import
 

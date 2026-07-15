@@ -35,13 +35,11 @@ type TokenEphemeralResource struct {
 }
 
 type TokenEphemeralModel struct {
-	ServiceAccountID      types.String `tfsdk:"service_account_id"`
-	Description           types.String `tfsdk:"description"`
-	ValidFor              types.String `tfsdk:"valid_for"`
-	Token                 types.String `tfsdk:"token"`
-	ServiceAccountTokenID types.String `tfsdk:"service_account_token_id"`
-	ExpiresAt             types.String `tfsdk:"expires_at"`
-	CreatedAt             types.String `tfsdk:"created_at"`
+	ServiceAccountID types.String `tfsdk:"service_account_id"`
+	Description      types.String `tfsdk:"description"`
+	ValidFor         types.String `tfsdk:"valid_for"`
+	Token            types.String `tfsdk:"token"`
+	ExpiresAt        types.String `tfsdk:"expires_at"`
 }
 
 func (r *TokenEphemeralResource) Metadata(ctx context.Context, req ephemeral.MetadataRequest, resp *ephemeral.MetadataResponse) {
@@ -69,17 +67,9 @@ func (r *TokenEphemeralResource) Schema(ctx context.Context, req ephemeral.Schem
 				Sensitive:           true,
 				MarkdownDescription: "Service-account token value. This value is returned once and is not stored in Terraform plan or state.",
 			},
-			"service_account_token_id": ephemeralschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Service-account token metadata ID.",
-			},
 			"expires_at": ephemeralschema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "Time when the service-account token expires.",
-			},
-			"created_at": ephemeralschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Time when the service-account token was created.",
 			},
 		},
 	}
@@ -164,9 +154,7 @@ func (r *TokenEphemeralResource) Open(ctx context.Context, req ephemeral.OpenReq
 
 	data.Token = types.StringValue(result.Msg.GetToken())
 	if token := result.Msg.GetServiceAccountToken(); token != nil {
-		data.ServiceAccountTokenID = types.StringValue(token.GetId())
 		data.ExpiresAt = timestampValue(token.GetExpiresAt())
-		data.CreatedAt = timestampValue(token.GetCreatedAt())
 	}
 	resp.Diagnostics.Append(resp.Result.Set(ctx, &data)...)
 }

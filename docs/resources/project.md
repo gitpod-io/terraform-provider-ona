@@ -17,6 +17,7 @@ resource "ona_project" "api" {
   name                 = "acme-api"
   repository_clone_url = "https://github.com/acme/api.git"
   branch               = "main"
+  insights_enabled     = true
 
   devcontainer_file_path = ".devcontainer/devcontainer.json"
   automations_file_path  = ".ona/automations.yaml"
@@ -63,6 +64,7 @@ resource "ona_project" "api" {
 - `automations_file_path` (String) Path to the automations file, relative to the repository root. Omit to let Ona use its default discovery behavior.
 - `devcontainer_file_path` (String) Path to the devcontainer file, relative to the repository root. Omit to let Ona use its default discovery behavior.
 - `environment_class` (Block List) Environment classes available to this project, in priority order. Configure at least one block. Each block must set exactly one of `environment_class_id` or `local_runner = true`. (see [below for nested schema](#nestedblock--environment_class))
+- `insights_enabled` (Boolean) Whether Ona Insights is enabled for the project. Defaults to `false`.
 - `prebuild_configuration` (Block List) Prebuild configuration for the project. Set no more than one block. Omitting the block disables Terraform management of prebuild settings. Warm pools for prebuilt environment classes are managed separately with `ona_warm_pool` resources. (see [below for nested schema](#nestedblock--prebuild_configuration))
 
 ### Read-Only
@@ -70,8 +72,6 @@ resource "ona_project" "api" {
 - `created_at` (String) Time when the project was created.
 - `creator` (Attributes) Identity that created the project. (see [below for nested schema](#nestedatt--creator))
 - `id` (String) Project ID.
-- `organization_id` (String) Organization ID that owns the project.
-- `updated_at` (String) Time when the project was last updated.
 
 <a id="nestedblock--environment_class"></a>
 ### Nested Schema for `environment_class`

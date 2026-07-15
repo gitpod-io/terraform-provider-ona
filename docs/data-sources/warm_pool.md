@@ -32,8 +32,4 @@ data "ona_warm_pool" "api_large" {
 - `id` (String) Terraform data source ID. This is the same value as `warm_pool_id`.
 - `max_size` (Number) Maximum number of warm instances to maintain.
 - `min_size` (Number) Minimum number of warm instances to maintain.
-- `organization_id` (String) Organization ID that owns the warm pool.
 - `project_id` (String) Project ID this warm pool belongs to.
-- `runner_id` (String) Runner ID that manages this warm pool.
-- `snapshot_id` (String) Prebuild snapshot ID currently assigned to this warm pool.
-- `updated_at` (String) Time when the warm pool was last updated.

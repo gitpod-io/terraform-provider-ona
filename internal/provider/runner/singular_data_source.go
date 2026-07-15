@@ -37,9 +37,7 @@ type DataSourceModel struct {
 	Kind                      types.String        `tfsdk:"kind"`
 	CloudFormationTemplateURL types.String        `tfsdk:"cloudformation_template_url"`
 	CreatedAt                 types.String        `tfsdk:"created_at"`
-	UpdatedAt                 types.String        `tfsdk:"updated_at"`
 	Configuration             *ConfigurationModel `tfsdk:"configuration"`
-	Status                    *StatusModel        `tfsdk:"status"`
 	Creator                   *CreatorModel       `tfsdk:"creator"`
 }
 
@@ -157,12 +155,7 @@ func dataSourceRunnerAttributes(runnerID datasourceschema.StringAttribute) map[s
 			Computed:            true,
 			MarkdownDescription: "Time when the runner was created.",
 		},
-		"updated_at": datasourceschema.StringAttribute{
-			Computed:            true,
-			MarkdownDescription: "Time when the runner was last updated.",
-		},
 		"configuration": dataSourceConfigurationSchema(),
-		"status":        dataSourceStatusSchema(),
 		"creator":       dataSourceCreatorSchema(),
 	}
 }
@@ -221,9 +214,7 @@ func populateDataSourceModelFromRunner(data *DataSourceModel, runner *v1.Runner)
 	data.Kind = model.Kind
 	data.CloudFormationTemplateURL = model.CloudFormationTemplateURL
 	data.CreatedAt = model.CreatedAt
-	data.UpdatedAt = model.UpdatedAt
 	data.Configuration = model.Configuration
-	data.Status = model.Status
 	data.Creator = model.Creator
 }
 
@@ -235,47 +226,6 @@ func dataSourceRunnerID(data DataSourceModel) string {
 		return data.ID.ValueString()
 	}
 	return ""
-}
-
-func dataSourceStatusSchema() datasourceschema.SingleNestedAttribute {
-	return datasourceschema.SingleNestedAttribute{
-		Computed:            true,
-		MarkdownDescription: "Runner status reported by the runner.",
-		Attributes: map[string]datasourceschema.Attribute{
-			"phase": datasourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner phase.",
-			},
-			"region": datasourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Actual region reported by the runner.",
-			},
-			"message": datasourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner status message.",
-			},
-			"version": datasourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner version.",
-			},
-			"log_url": datasourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner log URL.",
-			},
-			"updated_at": datasourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Time when the runner status was last updated.",
-			},
-			"system_details": datasourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner system details.",
-			},
-			"support_bundle_url": datasourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner support bundle URL.",
-			},
-		},
-	}
 }
 
 func dataSourceCreatorSchema() datasourceschema.SingleNestedAttribute {

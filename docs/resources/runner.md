@@ -61,7 +61,6 @@ resource "ona_runner" "gcp_primary" {
 ### Optional
 
 - `configuration` (Block, Optional) Runner configuration applied to the remote runner. Some fields are provider defaults and are preserved in Terraform state after creation. (see [below for nested schema](#nestedblock--configuration))
-- `runner_manager_id` (String, Deprecated) Runner manager ID for managed runners. Terraform-managed runner resources support remote AWS EC2 and GCP runners; omit this value.
 
 ### Read-Only
 
@@ -71,8 +70,6 @@ resource "ona_runner" "gcp_primary" {
 - `id` (String) Terraform resource ID. This is the same value as `runner_id`.
 - `kind` (String) Runner kind assigned by the Ona API from the selected provider.
 - `runner_id` (String) Ona runner ID. Use this value when configuring runner environment classes, SCM integrations, and runner token flows.
-- `status` (Attributes) Runner status reported by the runner. (see [below for nested schema](#nestedatt--status))
-- `updated_at` (String) Time when the runner was last updated.
 
 <a id="nestedblock--configuration"></a>
 ### Nested Schema for `configuration`
@@ -103,21 +100,6 @@ Read-Only:
 
 - `id` (String) Creator subject ID.
 - `principal` (String) Creator principal type.
-
-
-<a id="nestedatt--status"></a>
-### Nested Schema for `status`
-
-Read-Only:
-
-- `log_url` (String) Runner log URL.
-- `message` (String) Runner status message.
-- `phase` (String) Runner phase.
-- `region` (String) Actual region reported by the runner.
-- `support_bundle_url` (String) Runner support bundle URL.
-- `system_details` (String) Runner system details.
-- `updated_at` (String) Time when the runner status was last updated.
-- `version` (String) Runner version.
 
 ## Import
 

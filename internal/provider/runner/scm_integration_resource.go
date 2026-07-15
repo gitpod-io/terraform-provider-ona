@@ -47,7 +47,7 @@ const (
 type SCMIntegrationModel struct {
 	ID                       types.String `tfsdk:"id"`
 	RunnerID                 types.String `tfsdk:"runner_id"`
-	SCMID                    types.String `tfsdk:"scm_id"`
+	SCMID                    types.String `tfsdk:"kind"`
 	Host                     types.String `tfsdk:"host"`
 	AuthMode                 types.String `tfsdk:"auth_mode"`
 	OAuthClientID            types.String `tfsdk:"oauth_client_id"`
@@ -79,9 +79,9 @@ func (r *SCMIntegrationResource) Schema(ctx context.Context, req resource.Schema
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"scm_id": resourceschema.StringAttribute{
+			"kind": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "SCM provider ID from the runner configuration schema. Use values such as `github`, `azuredevops_entra`, or `azuredevops_server`. Changing this value replaces the integration.",
+				MarkdownDescription: "SCM integration kind. Use values such as `github`, `azuredevops_entra`, or `azuredevops_server`. Changing this value replaces the integration.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -113,11 +113,11 @@ func (r *SCMIntegrationResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"issuer_url": resourceschema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: "Issuer URL for Azure DevOps Entra ID OAuth integrations. Required when `scm_id` is `azuredevops_entra` and `auth_mode` is `oauth`.",
+				MarkdownDescription: "Issuer URL for Azure DevOps Entra ID OAuth integrations. Required when `kind` is `azuredevops_entra` and `auth_mode` is `oauth`.",
 			},
 			"virtual_directory": resourceschema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: "Virtual directory path for Azure DevOps Server integrations, such as `/tfs`. Required only when `scm_id` is `azuredevops_server`.",
+				MarkdownDescription: "Virtual directory path for Azure DevOps Server integrations, such as `/tfs`. Required only when `kind` is `azuredevops_server`.",
 			},
 		},
 	}
@@ -142,7 +142,7 @@ func (r *SCMIntegrationResource) Configure(ctx context.Context, req resource.Con
 
 func (r *SCMIntegrationResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
 	var data SCMIntegrationModel
-	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("scm_id"), &data.SCMID)...)
+	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("kind"), &data.SCMID)...)
 	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("auth_mode"), &data.AuthMode)...)
 	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("oauth_client_id"), &data.OAuthClientID)...)
 	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("oauth_client_secret_version"), &data.OAuthClientSecretVersion)...)
@@ -511,27 +511,27 @@ func validateSCMIntegrationModel(data SCMIntegrationModel, diags *diag.Diagnosti
 	switch data.SCMID.ValueString() {
 	case scmIDAzureDevOpsEntra:
 		if authMode == scmAuthModeOAuth && !isKnownString(data.IssuerURL) {
-			diags.AddAttributeError(path.Root("issuer_url"), "Missing Azure DevOps Entra Issuer URL", "Set issuer_url when scm_id is \"azuredevops_entra\".")
+			diags.AddAttributeError(path.Root("issuer_url"), "Missing Azure DevOps Entra Issuer URL", "Set issuer_url when kind is \"azuredevops_entra\".")
 		}
 		if isKnownString(data.VirtualDirectory) {
-			diags.AddAttributeError(path.Root("virtual_directory"), "Unexpected Virtual Directory", "virtual_directory is only supported when scm_id is \"azuredevops_server\".")
+			diags.AddAttributeError(path.Root("virtual_directory"), "Unexpected Virtual Directory", "virtual_directory is only supported when kind is \"azuredevops_server\".")
 		}
 	case scmIDAzureDevOpsServer:
 		if authMode != scmAuthModePAT {
 			diags.AddAttributeError(path.Root("auth_mode"), "Invalid Azure DevOps Server Authentication Mode", "Azure DevOps Server SCM integrations currently require auth_mode=\"pat\".")
 		}
 		if !isKnownString(data.VirtualDirectory) {
-			diags.AddAttributeError(path.Root("virtual_directory"), "Missing Azure DevOps Server Virtual Directory", "Set virtual_directory when scm_id is \"azuredevops_server\".")
+			diags.AddAttributeError(path.Root("virtual_directory"), "Missing Azure DevOps Server Virtual Directory", "Set virtual_directory when kind is \"azuredevops_server\".")
 		}
 		if isKnownString(data.IssuerURL) {
-			diags.AddAttributeError(path.Root("issuer_url"), "Unexpected Issuer URL", "issuer_url is only accepted when scm_id is \"azuredevops_entra\".")
+			diags.AddAttributeError(path.Root("issuer_url"), "Unexpected Issuer URL", "issuer_url is only accepted when kind is \"azuredevops_entra\".")
 		}
 	default:
 		if isKnownString(data.IssuerURL) {
-			diags.AddAttributeError(path.Root("issuer_url"), "Unexpected Issuer URL", "issuer_url is only accepted when scm_id is \"azuredevops_entra\".")
+			diags.AddAttributeError(path.Root("issuer_url"), "Unexpected Issuer URL", "issuer_url is only accepted when kind is \"azuredevops_entra\".")
 		}
 		if isKnownString(data.VirtualDirectory) {
-			diags.AddAttributeError(path.Root("virtual_directory"), "Unexpected Virtual Directory", "virtual_directory is only supported when scm_id is \"azuredevops_server\".")
+			diags.AddAttributeError(path.Root("virtual_directory"), "Unexpected Virtual Directory", "virtual_directory is only supported when kind is \"azuredevops_server\".")
 		}
 	}
 }

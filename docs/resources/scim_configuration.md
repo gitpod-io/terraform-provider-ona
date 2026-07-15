@@ -36,14 +36,13 @@ resource "ona_scim_configuration" "corp" {
 - `allow_unverified_email_account_linking` (Boolean) Whether SCIM may link provisioned users to existing accounts when the identity provider does not mark email addresses as verified.
 - `enabled` (Boolean) Whether SCIM provisioning is active.
 - `name` (String) Human-readable SCIM configuration name.
-- `token_expires_in` (String) Initial SCIM token lifetime as a Go duration string. Minimum is `24h`; maximum is `17520h`. Changing this value replaces the resource.
+- `token_expires_in` (String) Initial SCIM token lifetime using a number followed by a time unit, such as `24h` or `8760h`. Minimum is `24h`; maximum is `17520h`. Changing this value replaces the resource.
 
 ### Read-Only
 
 - `created_at` (String) RFC3339 timestamp when the SCIM configuration was created.
 - `id` (String) SCIM configuration ID.
 - `token_expires_at` (String) RFC3339 timestamp when the current SCIM token expires.
-- `updated_at` (String) RFC3339 timestamp when the SCIM configuration was last updated.
 
 ## Import
 
