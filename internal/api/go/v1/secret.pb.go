@@ -33,8 +33,10 @@ type CreateSecretRequest struct {
 	//
 	// Deprecated: Marked as deprecated in gitpod/v1/secret.proto.
 	ProjectId string `protobuf:"bytes,2,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
-	// value is the plaintext value of the secret
+	// value is the plaintext value of the secret. When set, source must be unset or verbatim.
 	Value string `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
+	// source is the source of the secret, possibly verbatim value
+	Source *Secret_Source `protobuf:"bytes,13,opt,name=source,proto3" json:"source,omitempty"`
 	// mount specifies how the secret should be mounted in Environments
 	//
 	// Types that are valid to be assigned to Mount:
@@ -108,6 +110,13 @@ func (x *CreateSecretRequest) GetValue() string {
 		return x.Value
 	}
 	return ""
+}
+
+func (x *CreateSecretRequest) GetSource() *Secret_Source {
+	if x != nil {
+		return x.Source
+	}
+	return nil
 }
 
 func (x *CreateSecretRequest) GetMount() isCreateSecretRequest_Mount {
@@ -756,8 +765,10 @@ type Secret struct {
 	// This field is orthogonal to mount — a secret can be both mounted and
 	// proxied at the same time.
 	CredentialProxy *Secret_CredentialProxy `protobuf:"bytes,12,opt,name=credential_proxy,json=credentialProxy,proto3" json:"credential_proxy,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Source of the secret
+	Source        *Secret_Source `protobuf:"bytes,13,opt,name=source,proto3" json:"source,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Secret) Reset() {
@@ -886,6 +897,13 @@ func (x *Secret) GetScope() *SecretScope {
 func (x *Secret) GetCredentialProxy() *Secret_CredentialProxy {
 	if x != nil {
 		return x.CredentialProxy
+	}
+	return nil
+}
+
+func (x *Secret) GetSource() *Secret_Source {
+	if x != nil {
+		return x.Source
 	}
 	return nil
 }
@@ -1038,11 +1056,146 @@ func (x *Secret_CredentialProxy) GetHeader() string {
 	return ""
 }
 
+// Source defines
+type Secret_Source struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to Value:
+	//
+	//	*Secret_Source_Verbatim
+	//	*Secret_Source_OidcJfrog
+	Value         isSecret_Source_Value `protobuf_oneof:"value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Secret_Source) Reset() {
+	*x = Secret_Source{}
+	mi := &file_gitpod_v1_secret_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Secret_Source) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Secret_Source) ProtoMessage() {}
+
+func (x *Secret_Source) ProtoReflect() protoreflect.Message {
+	mi := &file_gitpod_v1_secret_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Secret_Source.ProtoReflect.Descriptor instead.
+func (*Secret_Source) Descriptor() ([]byte, []int) {
+	return file_gitpod_v1_secret_proto_rawDescGZIP(), []int{11, 1}
+}
+
+func (x *Secret_Source) GetValue() isSecret_Source_Value {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+func (x *Secret_Source) GetVerbatim() bool {
+	if x != nil {
+		if x, ok := x.Value.(*Secret_Source_Verbatim); ok {
+			return x.Verbatim
+		}
+	}
+	return false
+}
+
+func (x *Secret_Source) GetOidcJfrog() *Secret_Source_OidcJFrog {
+	if x != nil {
+		if x, ok := x.Value.(*Secret_Source_OidcJfrog); ok {
+			return x.OidcJfrog
+		}
+	}
+	return nil
+}
+
+type isSecret_Source_Value interface {
+	isSecret_Source_Value()
+}
+
+type Secret_Source_Verbatim struct {
+	Verbatim bool `protobuf:"varint,1,opt,name=verbatim,proto3,oneof"`
+}
+
+type Secret_Source_OidcJfrog struct {
+	OidcJfrog *Secret_Source_OidcJFrog `protobuf:"bytes,2,opt,name=oidc_jfrog,json=oidcJfrog,proto3,oneof"`
+}
+
+func (*Secret_Source_Verbatim) isSecret_Source_Value() {}
+
+func (*Secret_Source_OidcJfrog) isSecret_Source_Value() {}
+
+type Secret_Source_OidcJFrog struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Host          string                 `protobuf:"bytes,1,opt,name=host,proto3" json:"host,omitempty"`
+	ProviderName  string                 `protobuf:"bytes,2,opt,name=provider_name,json=providerName,proto3" json:"provider_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Secret_Source_OidcJFrog) Reset() {
+	*x = Secret_Source_OidcJFrog{}
+	mi := &file_gitpod_v1_secret_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Secret_Source_OidcJFrog) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Secret_Source_OidcJFrog) ProtoMessage() {}
+
+func (x *Secret_Source_OidcJFrog) ProtoReflect() protoreflect.Message {
+	mi := &file_gitpod_v1_secret_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Secret_Source_OidcJFrog.ProtoReflect.Descriptor instead.
+func (*Secret_Source_OidcJFrog) Descriptor() ([]byte, []int) {
+	return file_gitpod_v1_secret_proto_rawDescGZIP(), []int{11, 1, 0}
+}
+
+func (x *Secret_Source_OidcJFrog) GetHost() string {
+	if x != nil {
+		return x.Host
+	}
+	return ""
+}
+
+func (x *Secret_Source_OidcJFrog) GetProviderName() string {
+	if x != nil {
+		return x.ProviderName
+	}
+	return ""
+}
+
 var File_gitpod_v1_secret_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_secret_proto_rawDesc = "" +
 	"\n" +
-	"\x16gitpod/v1/secret.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd0\x04\n" +
+	"\x16gitpod/v1/secret.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x82\x05\n" +
 	"\x13CreateSecretRequest\x121\n" +
 	"\x04name\x18\x01 \x01(\tB\x1d\xbaH\x1ar\x18\x10\x03\x18\x7f2\x12^[0-9a-zA-Z_]{3,}$R\x04name\x121\n" +
 	"\n" +
@@ -1050,7 +1203,8 @@ const file_gitpod_v1_secret_proto_rawDesc = "" +
 	"\n" +
 	"project.id\x18\x01R\tprojectId\x12 \n" +
 	"\x05value\x18\x03 \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x01\x18\x80PR\x05value\x12\x84\x01\n" +
+	"\xbaH\ar\x05\x10\x00\x18\x80PR\x05value\x120\n" +
+	"\x06source\x18\r \x01(\v2\x18.gitpod.v1.Secret.SourceR\x06source\x12\x84\x01\n" +
 	"\tfile_path\x18\a \x01(\tBe\xbaHb\xba\x01_\n" +
 	"\rabsolute_path\x123value must be an absolute path (e.g. /path/to/file)\x1a\x19this.matches('^/[^/].*$')H\x00R\bfilePath\x123\n" +
 	"\x14environment_variable\x18\b \x01(\bH\x00R\x13environmentVariable\x12L\n" +
@@ -1103,7 +1257,7 @@ const file_gitpod_v1_secret_proto_rawDesc = "" +
 	"\x0forganization.idH\x00R\x0eorganizationId\x12P\n" +
 	"\x12service_account_id\x18\x04 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
 	"\x12service_account.idH\x00R\x10serviceAccountIdB\a\n" +
-	"\x05scope\"\xc7\x05\n" +
+	"\x05scope\"\xe8\t\n" +
 	"\x06Secret\x12'\n" +
 	"\x02id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
 	"\tsecret.idR\x02id\x12\x12\n" +
@@ -1123,10 +1277,20 @@ const file_gitpod_v1_secret_proto_rawDesc = "" +
 	"\bapi_only\x18\v \x01(\bH\x00R\aapiOnly\x12,\n" +
 	"\x05scope\x18\n" +
 	" \x01(\v2\x16.gitpod.v1.SecretScopeR\x05scope\x12L\n" +
-	"\x10credential_proxy\x18\f \x01(\v2!.gitpod.v1.Secret.CredentialProxyR\x0fcredentialProxy\x1aL\n" +
+	"\x10credential_proxy\x18\f \x01(\v2!.gitpod.v1.Secret.CredentialProxyR\x0fcredentialProxy\x120\n" +
+	"\x06source\x18\r \x01(\v2\x18.gitpod.v1.Secret.SourceR\x06source\x1aL\n" +
 	"\x0fCredentialProxy\x12!\n" +
 	"\ftarget_hosts\x18\x01 \x03(\tR\vtargetHosts\x12\x16\n" +
-	"\x06header\x18\x02 \x01(\tR\x06headerB\x0e\n" +
+	"\x06header\x18\x02 \x01(\tR\x06header\x1a\xec\x03\n" +
+	"\x06Source\x12\x1c\n" +
+	"\bverbatim\x18\x01 \x01(\bH\x00R\bverbatim\x12C\n" +
+	"\n" +
+	"oidc_jfrog\x18\x02 \x01(\v2\".gitpod.v1.Secret.Source.OidcJFrogH\x00R\toidcJfrog\x1a\xf5\x02\n" +
+	"\tOidcJFrog\x12\xb9\x02\n" +
+	"\x04host\x18\x01 \x01(\tB\xa4\x02\xbaH\xa0\x02\xba\x01\x98\x02\n" +
+	"\x11host_or_host_port\x128host must be a hostname or IP address with optional port\x1a\xc8\x01this.matches(\"^([A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?[.])*[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(:([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?$\")r\x02\x10\x01R\x04host\x12,\n" +
+	"\rprovider_name\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\fproviderNameB\a\n" +
+	"\x05valueB\x0e\n" +
 	"\x05mount\x12\x05\xbaH\x02\b\x012\x98\x04\n" +
 	"\rSecretService\x12]\n" +
 	"\fCreateSecret\x12\x1e.gitpod.v1.CreateSecretRequest\x1a\x1f.gitpod.v1.CreateSecretResponse\"\f\xb2\xab\x1e\b\x12\x06create\x12r\n" +
@@ -1148,7 +1312,7 @@ func file_gitpod_v1_secret_proto_rawDescGZIP() []byte {
 	return file_gitpod_v1_secret_proto_rawDescData
 }
 
-var file_gitpod_v1_secret_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_gitpod_v1_secret_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_gitpod_v1_secret_proto_goTypes = []any{
 	(*CreateSecretRequest)(nil),       // 0: gitpod.v1.CreateSecretRequest
 	(*CreateSecretResponse)(nil),      // 1: gitpod.v1.CreateSecretResponse
@@ -1164,40 +1328,45 @@ var file_gitpod_v1_secret_proto_goTypes = []any{
 	(*Secret)(nil),                    // 11: gitpod.v1.Secret
 	(*ListSecretsRequest_Filter)(nil), // 12: gitpod.v1.ListSecretsRequest.Filter
 	(*Secret_CredentialProxy)(nil),    // 13: gitpod.v1.Secret.CredentialProxy
-	(*PaginationRequest)(nil),         // 14: gitpod.v1.PaginationRequest
-	(*PaginationResponse)(nil),        // 15: gitpod.v1.PaginationResponse
-	(*timestamppb.Timestamp)(nil),     // 16: google.protobuf.Timestamp
-	(*Subject)(nil),                   // 17: gitpod.v1.Subject
+	(*Secret_Source)(nil),             // 14: gitpod.v1.Secret.Source
+	(*Secret_Source_OidcJFrog)(nil),   // 15: gitpod.v1.Secret.Source.OidcJFrog
+	(*PaginationRequest)(nil),         // 16: gitpod.v1.PaginationRequest
+	(*PaginationResponse)(nil),        // 17: gitpod.v1.PaginationResponse
+	(*timestamppb.Timestamp)(nil),     // 18: google.protobuf.Timestamp
+	(*Subject)(nil),                   // 19: gitpod.v1.Subject
 }
 var file_gitpod_v1_secret_proto_depIdxs = []int32{
-	13, // 0: gitpod.v1.CreateSecretRequest.credential_proxy:type_name -> gitpod.v1.Secret.CredentialProxy
-	10, // 1: gitpod.v1.CreateSecretRequest.scope:type_name -> gitpod.v1.SecretScope
-	11, // 2: gitpod.v1.CreateSecretResponse.secret:type_name -> gitpod.v1.Secret
-	14, // 3: gitpod.v1.ListSecretsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	12, // 4: gitpod.v1.ListSecretsRequest.filter:type_name -> gitpod.v1.ListSecretsRequest.Filter
-	15, // 5: gitpod.v1.ListSecretsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	11, // 6: gitpod.v1.ListSecretsResponse.secrets:type_name -> gitpod.v1.Secret
-	16, // 7: gitpod.v1.Secret.created_at:type_name -> google.protobuf.Timestamp
-	16, // 8: gitpod.v1.Secret.updated_at:type_name -> google.protobuf.Timestamp
-	17, // 9: gitpod.v1.Secret.creator:type_name -> gitpod.v1.Subject
-	10, // 10: gitpod.v1.Secret.scope:type_name -> gitpod.v1.SecretScope
-	13, // 11: gitpod.v1.Secret.credential_proxy:type_name -> gitpod.v1.Secret.CredentialProxy
-	10, // 12: gitpod.v1.ListSecretsRequest.Filter.scope:type_name -> gitpod.v1.SecretScope
-	0,  // 13: gitpod.v1.SecretService.CreateSecret:input_type -> gitpod.v1.CreateSecretRequest
-	2,  // 14: gitpod.v1.SecretService.UpdateSecretValue:input_type -> gitpod.v1.UpdateSecretValueRequest
-	4,  // 15: gitpod.v1.SecretService.ListSecrets:input_type -> gitpod.v1.ListSecretsRequest
-	6,  // 16: gitpod.v1.SecretService.DeleteSecret:input_type -> gitpod.v1.DeleteSecretRequest
-	8,  // 17: gitpod.v1.SecretService.GetSecretValue:input_type -> gitpod.v1.GetSecretValueRequest
-	1,  // 18: gitpod.v1.SecretService.CreateSecret:output_type -> gitpod.v1.CreateSecretResponse
-	3,  // 19: gitpod.v1.SecretService.UpdateSecretValue:output_type -> gitpod.v1.UpdateSecretValueResponse
-	5,  // 20: gitpod.v1.SecretService.ListSecrets:output_type -> gitpod.v1.ListSecretsResponse
-	7,  // 21: gitpod.v1.SecretService.DeleteSecret:output_type -> gitpod.v1.DeleteSecretResponse
-	9,  // 22: gitpod.v1.SecretService.GetSecretValue:output_type -> gitpod.v1.GetSecretValueResponse
-	18, // [18:23] is the sub-list for method output_type
-	13, // [13:18] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	14, // 0: gitpod.v1.CreateSecretRequest.source:type_name -> gitpod.v1.Secret.Source
+	13, // 1: gitpod.v1.CreateSecretRequest.credential_proxy:type_name -> gitpod.v1.Secret.CredentialProxy
+	10, // 2: gitpod.v1.CreateSecretRequest.scope:type_name -> gitpod.v1.SecretScope
+	11, // 3: gitpod.v1.CreateSecretResponse.secret:type_name -> gitpod.v1.Secret
+	16, // 4: gitpod.v1.ListSecretsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	12, // 5: gitpod.v1.ListSecretsRequest.filter:type_name -> gitpod.v1.ListSecretsRequest.Filter
+	17, // 6: gitpod.v1.ListSecretsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	11, // 7: gitpod.v1.ListSecretsResponse.secrets:type_name -> gitpod.v1.Secret
+	18, // 8: gitpod.v1.Secret.created_at:type_name -> google.protobuf.Timestamp
+	18, // 9: gitpod.v1.Secret.updated_at:type_name -> google.protobuf.Timestamp
+	19, // 10: gitpod.v1.Secret.creator:type_name -> gitpod.v1.Subject
+	10, // 11: gitpod.v1.Secret.scope:type_name -> gitpod.v1.SecretScope
+	13, // 12: gitpod.v1.Secret.credential_proxy:type_name -> gitpod.v1.Secret.CredentialProxy
+	14, // 13: gitpod.v1.Secret.source:type_name -> gitpod.v1.Secret.Source
+	10, // 14: gitpod.v1.ListSecretsRequest.Filter.scope:type_name -> gitpod.v1.SecretScope
+	15, // 15: gitpod.v1.Secret.Source.oidc_jfrog:type_name -> gitpod.v1.Secret.Source.OidcJFrog
+	0,  // 16: gitpod.v1.SecretService.CreateSecret:input_type -> gitpod.v1.CreateSecretRequest
+	2,  // 17: gitpod.v1.SecretService.UpdateSecretValue:input_type -> gitpod.v1.UpdateSecretValueRequest
+	4,  // 18: gitpod.v1.SecretService.ListSecrets:input_type -> gitpod.v1.ListSecretsRequest
+	6,  // 19: gitpod.v1.SecretService.DeleteSecret:input_type -> gitpod.v1.DeleteSecretRequest
+	8,  // 20: gitpod.v1.SecretService.GetSecretValue:input_type -> gitpod.v1.GetSecretValueRequest
+	1,  // 21: gitpod.v1.SecretService.CreateSecret:output_type -> gitpod.v1.CreateSecretResponse
+	3,  // 22: gitpod.v1.SecretService.UpdateSecretValue:output_type -> gitpod.v1.UpdateSecretValueResponse
+	5,  // 23: gitpod.v1.SecretService.ListSecrets:output_type -> gitpod.v1.ListSecretsResponse
+	7,  // 24: gitpod.v1.SecretService.DeleteSecret:output_type -> gitpod.v1.DeleteSecretResponse
+	9,  // 25: gitpod.v1.SecretService.GetSecretValue:output_type -> gitpod.v1.GetSecretValueResponse
+	21, // [21:26] is the sub-list for method output_type
+	16, // [16:21] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_gitpod_v1_secret_proto_init() }
@@ -1225,13 +1394,17 @@ func file_gitpod_v1_secret_proto_init() {
 		(*Secret_ContainerRegistryBasicAuthHost)(nil),
 		(*Secret_ApiOnly)(nil),
 	}
+	file_gitpod_v1_secret_proto_msgTypes[14].OneofWrappers = []any{
+		(*Secret_Source_Verbatim)(nil),
+		(*Secret_Source_OidcJfrog)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gitpod_v1_secret_proto_rawDesc), len(file_gitpod_v1_secret_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

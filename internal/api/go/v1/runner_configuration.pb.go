@@ -10,6 +10,7 @@ import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/logfields"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/stainless"
+	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/terraform"
 	_ "github.com/google/gnostic/openapiv3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -4719,7 +4720,7 @@ var File_gitpod_v1_runner_configuration_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\n" +
-	"$gitpod/v1/runner_configuration.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x18gitpod/v1/identity.proto\x1a\x15gitpod/v1/model.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x99\x04\n" +
+	"$gitpod/v1/runner_configuration.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x18gitpod/v1/identity.proto\x1a\x15gitpod/v1/model.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x99\x04\n" +
 	"$CreateHostAuthenticationTokenRequest\x124\n" +
 	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
 	"\trunner.idR\brunnerId\x123\n" +
@@ -4806,15 +4807,15 @@ const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
 	"\trunner.idR\brunnerId\"d\n" +
 	"$GetRunnerConfigurationSchemaResponse\x12<\n" +
-	"\x06schema\x18\x01 \x01(\v2$.gitpod.v1.RunnerConfigurationSchemaR\x06schema\"\xc4\x03\n" +
+	"\x06schema\x18\x01 \x01(\v2$.gitpod.v1.RunnerConfigurationSchemaR\x06schema\"\xca\x03\n" +
 	"\x1bCreateSCMIntegrationRequest\x124\n" +
 	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
 	"\trunner.idR\brunnerId\x12#\n" +
 	"\x06scm_id\x18\x02 \x01(\tB\f\xa2\xab\x1e\b\n" +
 	"\x06scm.idR\x05scmId\x12\x12\n" +
 	"\x04host\x18\x03 \x01(\tR\x04host\x12+\n" +
-	"\x0foauth_client_id\x18\x04 \x01(\tH\x00R\roauthClientId\x88\x01\x01\x12F\n" +
-	"\x1doauth_plaintext_client_secret\x18\x05 \x01(\tH\x01R\x1aoauthPlaintextClientSecret\x88\x01\x01\x12\x10\n" +
+	"\x0foauth_client_id\x18\x04 \x01(\tH\x00R\roauthClientId\x88\x01\x01\x12L\n" +
+	"\x1doauth_plaintext_client_secret\x18\x05 \x01(\tB\x04ګ\x1e\x00H\x01R\x1aoauthPlaintextClientSecret\x88\x01\x01\x12\x10\n" +
 	"\x03pat\x18\x06 \x01(\bR\x03pat\x12\"\n" +
 	"\n" +
 	"issuer_url\x18\a \x01(\tH\x02R\tissuerUrl\x88\x01\x01\x120\n" +
@@ -4825,23 +4826,23 @@ const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\x12_virtual_directory\"O\n" +
 	"\x1cCreateSCMIntegrationResponse\x12/\n" +
 	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11scmintegration.idR\x02id\"\x8f\x01\n" +
-	"\x19SCMIntegrationOAuthConfig\x12\x1b\n" +
-	"\tclient_id\x18\x01 \x01(\tR\bclientId\x126\n" +
-	"\x17encrypted_client_secret\x18\x02 \x01(\fR\x15encryptedClientSecret\x12\x1d\n" +
+	"\x11scmintegration.idR\x02id\"\x9b\x01\n" +
+	"\x19SCMIntegrationOAuthConfig\x12!\n" +
+	"\tclient_id\x18\x01 \x01(\tB\x04ګ\x1e\x00R\bclientId\x126\n" +
+	"\x17encrypted_client_secret\x18\x02 \x01(\fR\x15encryptedClientSecret\x12#\n" +
 	"\n" +
-	"issuer_url\x18\x03 \x01(\tR\tissuerUrl\"\xc5\x02\n" +
-	"\x0eSCMIntegration\x12'\n" +
-	"\x02id\x18\x01 \x01(\tB\x17\xa2\xab\x1e\x13\n" +
-	"\x11scmintegration.idR\x02id\x12#\n" +
-	"\x06scm_id\x18\x02 \x01(\tB\f\xa2\xab\x1e\b\n" +
-	"\x06scm.idR\x05scmId\x12\x12\n" +
-	"\x04host\x18\x03 \x01(\tR\x04host\x12?\n" +
-	"\x05oauth\x18\x04 \x01(\v2$.gitpod.v1.SCMIntegrationOAuthConfigH\x00R\x05oauth\x88\x01\x01\x12\x10\n" +
-	"\x03pat\x18\x05 \x01(\bR\x03pat\x12,\n" +
-	"\trunner_id\x18\x06 \x01(\tB\x0f\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x120\n" +
-	"\x11virtual_directory\x18\a \x01(\tH\x01R\x10virtualDirectory\x88\x01\x01B\b\n" +
+	"issuer_url\x18\x03 \x01(\tB\x04ګ\x1e\x00R\tissuerUrl\"\xef\x02\n" +
+	"\x0eSCMIntegration\x12+\n" +
+	"\x02id\x18\x01 \x01(\tB\x1b\xa2\xab\x1e\x13\n" +
+	"\x11scmintegration.idګ\x1e\x00R\x02id\x12'\n" +
+	"\x06scm_id\x18\x02 \x01(\tB\x10\xa2\xab\x1e\b\n" +
+	"\x06scm.idګ\x1e\x00R\x05scmId\x12\x18\n" +
+	"\x04host\x18\x03 \x01(\tB\x04ګ\x1e\x00R\x04host\x12E\n" +
+	"\x05oauth\x18\x04 \x01(\v2$.gitpod.v1.SCMIntegrationOAuthConfigB\x04ګ\x1e\x00H\x00R\x05oauth\x88\x01\x01\x12\x16\n" +
+	"\x03pat\x18\x05 \x01(\bB\x04ګ\x1e\x00R\x03pat\x120\n" +
+	"\trunner_id\x18\x06 \x01(\tB\x13\xa2\xab\x1e\v\n" +
+	"\trunner.idګ\x1e\x00R\brunnerId\x126\n" +
+	"\x11virtual_directory\x18\a \x01(\tB\x04ګ\x1e\x00H\x01R\x10virtualDirectory\x88\x01\x01:\x04ҫ\x1e\x00B\b\n" +
 	"\x06_oauthB\x14\n" +
 	"\x12_virtual_directory\"K\n" +
 	"\x18GetSCMIntegrationRequest\x12/\n" +
@@ -4862,12 +4863,12 @@ const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12=\n" +
-	"\fintegrations\x18\x02 \x03(\v2\x19.gitpod.v1.SCMIntegrationR\fintegrations\"\x93\x03\n" +
+	"\fintegrations\x18\x02 \x03(\v2\x19.gitpod.v1.SCMIntegrationR\fintegrations\"\x99\x03\n" +
 	"\x1bUpdateSCMIntegrationRequest\x12/\n" +
 	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
 	"\x11scmintegration.idR\x02id\x12+\n" +
-	"\x0foauth_client_id\x18\x02 \x01(\tH\x00R\roauthClientId\x88\x01\x01\x12F\n" +
-	"\x1doauth_plaintext_client_secret\x18\x03 \x01(\tH\x01R\x1aoauthPlaintextClientSecret\x88\x01\x01\x12\x15\n" +
+	"\x0foauth_client_id\x18\x02 \x01(\tH\x00R\roauthClientId\x88\x01\x01\x12L\n" +
+	"\x1doauth_plaintext_client_secret\x18\x03 \x01(\tB\x04ګ\x1e\x00H\x01R\x1aoauthPlaintextClientSecret\x88\x01\x01\x12\x15\n" +
 	"\x03pat\x18\x04 \x01(\bH\x02R\x03pat\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"issuer_url\x18\x05 \x01(\tH\x03R\tissuerUrl\x88\x01\x01\x120\n" +
@@ -4881,17 +4882,16 @@ const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\x1bDeleteSCMIntegrationRequest\x12/\n" +
 	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
 	"\x11scmintegration.idR\x02id\"\x1e\n" +
-	"\x1cDeleteSCMIntegrationResponse\"\xab\x02\n" +
-	"\x10EnvironmentClass\x12!\n" +
-	"\x02id\x18\x01 \x01(\tB\x11\xa2\xab\x1e\r\n" +
-	"\venvclass.idR\x02id\x12,\n" +
-	"\fdisplay_name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18\x7fR\vdisplayName\x12,\n" +
-	"\vdescription\x18\x03 \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\xc8\x01R\vdescription\x12;\n" +
-	"\rconfiguration\x18\x04 \x03(\v2\x15.gitpod.v1.FieldValueR\rconfiguration\x12,\n" +
-	"\trunner_id\x18\x05 \x01(\tB\x0f\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12\x18\n" +
-	"\aenabled\x18\x06 \x01(\bR\aenabled:\x13\xbaG\x10\xba\x01\x02id\xba\x01\brunnerId\"\xee\x01\n" +
+	"\x1cDeleteSCMIntegrationResponse\"\xcb\x02\n" +
+	"\x10EnvironmentClass\x12%\n" +
+	"\x02id\x18\x01 \x01(\tB\x15\xa2\xab\x1e\r\n" +
+	"\venvclass.idګ\x1e\x00R\x02id\x120\n" +
+	"\fdisplay_name\x18\x02 \x01(\tB\r\xbaH\x06r\x04\x10\x03\x18\x7fګ\x1e\x00R\vdisplayName\x120\n" +
+	"\vdescription\x18\x03 \x01(\tB\x0e\xbaH\ar\x05\x10\x03\x18\xc8\x01ګ\x1e\x00R\vdescription\x12A\n" +
+	"\rconfiguration\x18\x04 \x03(\v2\x15.gitpod.v1.FieldValueB\x04ګ\x1e\x00R\rconfiguration\x120\n" +
+	"\trunner_id\x18\x05 \x01(\tB\x13\xa2\xab\x1e\v\n" +
+	"\trunner.idګ\x1e\x00R\brunnerId\x12\x1e\n" +
+	"\aenabled\x18\x06 \x01(\bB\x04ګ\x1e\x00R\aenabled:\x17\xbaG\x10\xba\x01\x02id\xba\x01\brunnerIdҫ\x1e\x00\"\xee\x01\n" +
 	"\x1dCreateEnvironmentClassRequest\x124\n" +
 	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
 	"\trunner.idR\brunnerId\x12,\n" +

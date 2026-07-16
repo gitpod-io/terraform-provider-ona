@@ -9,6 +9,7 @@ package v1
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/logfields"
+	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -794,12 +795,18 @@ func (x *SecurityPolicy_Metadata) GetName() string {
 }
 
 type SecurityPolicy_Spec struct {
-	state         protoimpl.MessageState                 `protogen:"open.v1"`
-	Ports         *SecurityPolicy_Spec_PortPolicy        `protobuf:"bytes,1,opt,name=ports,proto3" json:"ports,omitempty"`
-	Executables   *SecurityPolicy_Spec_ExecutablePolicy  `protobuf:"bytes,2,opt,name=executables,proto3" json:"executables,omitempty"`
-	Files         *SecurityPolicy_Spec_FilePolicy        `protobuf:"bytes,3,opt,name=files,proto3" json:"files,omitempty"`
-	BlockDevices  *SecurityPolicy_Spec_BlockDevicePolicy `protobuf:"bytes,4,opt,name=block_devices,json=blockDevices,proto3" json:"block_devices,omitempty"`
-	Data          *SecurityPolicy_Spec_DataPolicy        `protobuf:"bytes,5,opt,name=data,proto3" json:"data,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ports is not part of the public Veto Exec GA contract.
+	Ports *SecurityPolicy_Spec_PortPolicy `protobuf:"bytes,1,opt,name=ports,proto3" json:"ports,omitempty"`
+	// executables is the public Veto Exec GA policy surface.
+	Executables *SecurityPolicy_Spec_ExecutablePolicy `protobuf:"bytes,2,opt,name=executables,proto3" json:"executables,omitempty"`
+	// files is not part of the public Veto Exec GA contract. Veto File will
+	// define its public contract separately.
+	Files *SecurityPolicy_Spec_FilePolicy `protobuf:"bytes,3,opt,name=files,proto3" json:"files,omitempty"`
+	// block_devices is not part of the public Veto Exec GA contract.
+	BlockDevices *SecurityPolicy_Spec_BlockDevicePolicy `protobuf:"bytes,4,opt,name=block_devices,json=blockDevices,proto3" json:"block_devices,omitempty"`
+	// data is not part of the public Veto Exec GA contract.
+	Data          *SecurityPolicy_Spec_DataPolicy `protobuf:"bytes,5,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -922,8 +929,12 @@ func (x *SecurityPolicy_Spec_PortPolicy) GetRules() []*SecurityPolicy_Spec_PortP
 }
 
 type SecurityPolicy_Spec_ExecutablePolicy struct {
-	state         protoimpl.MessageState                       `protogen:"open.v1"`
-	DefaultEffect SecurityPolicy_Effect                        `protobuf:"varint,1,opt,name=default_effect,json=defaultEffect,proto3,enum=gitpod.v1.SecurityPolicy_Effect" json:"default_effect,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// default_effect controls executables that do not match a rule.
+	// For Veto Exec, omit this field or set it to EFFECT_ALLOW.
+	// EFFECT_UNSPECIFIED is normalized to EFFECT_ALLOW.
+	DefaultEffect SecurityPolicy_Effect `protobuf:"varint,1,opt,name=default_effect,json=defaultEffect,proto3,enum=gitpod.v1.SecurityPolicy_Effect" json:"default_effect,omitempty"`
+	// rules contains executable-specific audit or block decisions.
 	Rules         []*SecurityPolicy_Spec_ExecutablePolicy_Rule `protobuf:"bytes,2,rep,name=rules,proto3" json:"rules,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1236,9 +1247,18 @@ func (x *SecurityPolicy_Spec_PortPolicy_Range) GetTo() uint32 {
 }
 
 type SecurityPolicy_Spec_ExecutablePolicy_Rule struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Path          string                 `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
-	Effect        SecurityPolicy_Effect  `protobuf:"varint,4,opt,name=effect,proto3,enum=gitpod.v1.SecurityPolicy_Effect" json:"effect,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// path is either an absolute executable path, such as /usr/bin/curl,
+	// or a bare executable name, such as npx. Bare names are expanded by
+	// runtime discovery. Surrounding whitespace is ignored. Empty or
+	// whitespace-only selectors and relative paths with directory
+	// separators are invalid.
+	// Enforcement uses executable content hashes, so different paths with
+	// identical content share one runtime decision and block wins conflicts.
+	Path string `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
+	// effect must be EFFECT_AUDIT or EFFECT_BLOCK. EFFECT_ALLOW is not
+	// supported on an executable rule.
+	Effect        SecurityPolicy_Effect `protobuf:"varint,4,opt,name=effect,proto3,enum=gitpod.v1.SecurityPolicy_Effect" json:"effect,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1558,7 +1578,7 @@ var File_gitpod_v1_security_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_security_proto_rawDesc = "" +
 	"\n" +
-	"\x18gitpod/v1/security.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe9\x01\n" +
+	"\x18gitpod/v1/security.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe9\x01\n" +
 	"\x1bCreateSecurityPolicyRequest\x12F\n" +
 	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
 	"\x0forganization.idR\x0eorganizationId\x12F\n" +
@@ -1597,77 +1617,78 @@ const file_gitpod_v1_security_proto_rawDesc = "" +
 	"\x1bDeleteSecurityPolicyRequest\x12N\n" +
 	"\x12security_policy_id\x18\x01 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
 	"\x12security_policy.idR\x10securityPolicyId\"\x1e\n" +
-	"\x1cDeleteSecurityPolicyResponse\"\xa3\x14\n" +
-	"\x0eSecurityPolicy\x120\n" +
-	"\x02id\x18\x01 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12security_policy.idR\x02id\x12F\n" +
-	"\bmetadata\x18\x02 \x01(\v2\".gitpod.v1.SecurityPolicy.MetadataB\x06\xbaH\x03\xc8\x01\x01R\bmetadata\x12:\n" +
-	"\x04spec\x18\x03 \x01(\v2\x1e.gitpod.v1.SecurityPolicy.SpecB\x06\xbaH\x03\xc8\x01\x01R\x04spec\x12F\n" +
-	"\x0forganization_id\x18\x04 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x129\n" +
+	"\x1cDeleteSecurityPolicyResponse\"\xf9\x15\n" +
+	"\x0eSecurityPolicy\x124\n" +
+	"\x02id\x18\x01 \x01(\tB$\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
+	"\x12security_policy.idګ\x1e\x00R\x02id\x12F\n" +
+	"\bmetadata\x18\x02 \x01(\v2\".gitpod.v1.SecurityPolicy.MetadataB\x06\xbaH\x03\xc8\x01\x01R\bmetadata\x12>\n" +
+	"\x04spec\x18\x03 \x01(\v2\x1e.gitpod.v1.SecurityPolicy.SpecB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x04spec\x12J\n" +
+	"\x0forganization_id\x18\x04 \x01(\tB!\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
+	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12?\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tcreatedAt\x12?\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x1a)\n" +
-	"\bMetadata\x12\x1d\n" +
-	"\x04name\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18PR\x04name\x1a\x99\x10\n" +
-	"\x04Spec\x12?\n" +
-	"\x05ports\x18\x01 \x01(\v2).gitpod.v1.SecurityPolicy.Spec.PortPolicyR\x05ports\x12Q\n" +
-	"\vexecutables\x18\x02 \x01(\v2/.gitpod.v1.SecurityPolicy.Spec.ExecutablePolicyR\vexecutables\x12?\n" +
-	"\x05files\x18\x03 \x01(\v2).gitpod.v1.SecurityPolicy.Spec.FilePolicyR\x05files\x12U\n" +
-	"\rblock_devices\x18\x04 \x01(\v20.gitpod.v1.SecurityPolicy.Spec.BlockDevicePolicyR\fblockDevices\x12=\n" +
-	"\x04data\x18\x05 \x01(\v2).gitpod.v1.SecurityPolicy.Spec.DataPolicyR\x04data\x1a\xd2\x02\n" +
+	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tupdatedAt\x1a-\n" +
+	"\bMetadata\x12!\n" +
+	"\x04name\x18\x01 \x01(\tB\r\xbaH\x06r\x04\x10\x01\x18Pګ\x1e\x00R\x04name\x1a\xcd\x11\n" +
+	"\x04Spec\x12E\n" +
+	"\x05ports\x18\x01 \x01(\v2).gitpod.v1.SecurityPolicy.Spec.PortPolicyB\x04ګ\x1e\x00R\x05ports\x12W\n" +
+	"\vexecutables\x18\x02 \x01(\v2/.gitpod.v1.SecurityPolicy.Spec.ExecutablePolicyB\x04ګ\x1e\x00R\vexecutables\x12E\n" +
+	"\x05files\x18\x03 \x01(\v2).gitpod.v1.SecurityPolicy.Spec.FilePolicyB\x04ګ\x1e\x00R\x05files\x12[\n" +
+	"\rblock_devices\x18\x04 \x01(\v20.gitpod.v1.SecurityPolicy.Spec.BlockDevicePolicyB\x04ګ\x1e\x00R\fblockDevices\x12C\n" +
+	"\x04data\x18\x05 \x01(\v2).gitpod.v1.SecurityPolicy.Spec.DataPolicyB\x04ګ\x1e\x00R\x04data\x1a\xf0\x02\n" +
 	"\n" +
-	"PortPolicy\x12G\n" +
-	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectR\rdefaultEffect\x12D\n" +
-	"\x05rules\x18\x02 \x03(\v2..gitpod.v1.SecurityPolicy.Spec.PortPolicy.RuleR\x05rules\x1a\x87\x01\n" +
+	"PortPolicy\x12M\n" +
+	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\rdefaultEffect\x12J\n" +
+	"\x05rules\x18\x02 \x03(\v2..gitpod.v1.SecurityPolicy.Spec.PortPolicy.RuleB\x04ګ\x1e\x00R\x05rules\x1a\x8d\x01\n" +
 	"\x04Rule\x12E\n" +
-	"\x05range\x18\x01 \x01(\v2/.gitpod.v1.SecurityPolicy.Spec.PortPolicy.RangeR\x05range\x128\n" +
-	"\x06effect\x18\x04 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectR\x06effect\x1a+\n" +
-	"\x05Range\x12\x12\n" +
-	"\x04from\x18\x01 \x01(\rR\x04from\x12\x0e\n" +
-	"\x02to\x18\x02 \x01(\rR\x02to\x1a\xfd\x01\n" +
-	"\x10ExecutablePolicy\x12G\n" +
-	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectR\rdefaultEffect\x12J\n" +
-	"\x05rules\x18\x02 \x03(\v24.gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy.RuleR\x05rules\x1aT\n" +
-	"\x04Rule\x12\x12\n" +
-	"\x04path\x18\x01 \x01(\tR\x04path\x128\n" +
-	"\x06effect\x18\x04 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectR\x06effect\x1a\xde\x03\n" +
+	"\x05range\x18\x01 \x01(\v2/.gitpod.v1.SecurityPolicy.Spec.PortPolicy.RangeR\x05range\x12>\n" +
+	"\x06effect\x18\x04 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\x06effect\x1a7\n" +
+	"\x05Range\x12\x18\n" +
+	"\x04from\x18\x01 \x01(\rB\x04ګ\x1e\x00R\x04from\x12\x14\n" +
+	"\x02to\x18\x02 \x01(\rB\x04ګ\x1e\x00R\x02to\x1a\x95\x02\n" +
+	"\x10ExecutablePolicy\x12M\n" +
+	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\rdefaultEffect\x12P\n" +
+	"\x05rules\x18\x02 \x03(\v24.gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy.RuleB\x04ګ\x1e\x00R\x05rules\x1a`\n" +
+	"\x04Rule\x12\x18\n" +
+	"\x04path\x18\x01 \x01(\tB\x04ګ\x1e\x00R\x04path\x12>\n" +
+	"\x06effect\x18\x04 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\x06effect\x1a\x82\x04\n" +
 	"\n" +
-	"FilePolicy\x12G\n" +
-	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectR\rdefaultEffect\x12D\n" +
-	"\x05rules\x18\x02 \x03(\v2..gitpod.v1.SecurityPolicy.Spec.FilePolicy.RuleR\x05rules\x12Y\n" +
-	"\x0fdefault_actions\x18\x03 \x03(\x0e20.gitpod.v1.SecurityPolicy.Spec.FilePolicy.ActionR\x0edefaultActions\x1a\xa0\x01\n" +
-	"\x04Rule\x12\x12\n" +
-	"\x04path\x18\x01 \x01(\tR\x04path\x12J\n" +
-	"\aactions\x18\x03 \x03(\x0e20.gitpod.v1.SecurityPolicy.Spec.FilePolicy.ActionR\aactions\x128\n" +
-	"\x06effect\x18\x04 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectR\x06effect\"C\n" +
+	"FilePolicy\x12M\n" +
+	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\rdefaultEffect\x12J\n" +
+	"\x05rules\x18\x02 \x03(\v2..gitpod.v1.SecurityPolicy.Spec.FilePolicy.RuleB\x04ګ\x1e\x00R\x05rules\x12_\n" +
+	"\x0fdefault_actions\x18\x03 \x03(\x0e20.gitpod.v1.SecurityPolicy.Spec.FilePolicy.ActionB\x04ګ\x1e\x00R\x0edefaultActions\x1a\xb2\x01\n" +
+	"\x04Rule\x12\x18\n" +
+	"\x04path\x18\x01 \x01(\tB\x04ګ\x1e\x00R\x04path\x12P\n" +
+	"\aactions\x18\x03 \x03(\x0e20.gitpod.v1.SecurityPolicy.Spec.FilePolicy.ActionB\x04ګ\x1e\x00R\aactions\x12>\n" +
+	"\x06effect\x18\x04 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\x06effect\"C\n" +
 	"\x06Action\x12\x16\n" +
 	"\x12ACTION_UNSPECIFIED\x10\x00\x12\x0f\n" +
 	"\vACTION_READ\x10\x01\x12\x10\n" +
-	"\fACTION_WRITE\x10\x02\x1a\\\n" +
-	"\x11BlockDevicePolicy\x12G\n" +
-	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectR\rdefaultEffect\x1a\x91\x04\n" +
+	"\fACTION_WRITE\x10\x02\x1ab\n" +
+	"\x11BlockDevicePolicy\x12M\n" +
+	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\rdefaultEffect\x1a\xc7\x04\n" +
 	"\n" +
-	"DataPolicy\x12G\n" +
-	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectR\rdefaultEffect\x12D\n" +
-	"\x05rules\x18\x02 \x03(\v2..gitpod.v1.SecurityPolicy.Spec.DataPolicy.RuleR\x05rules\x1a\xe3\x01\n" +
-	"\x04Rule\x12H\n" +
-	"\x06source\x18\x01 \x01(\v20.gitpod.v1.SecurityPolicy.Spec.DataPolicy.SourceR\x06source\x12W\n" +
-	"\vdestination\x18\x03 \x01(\v25.gitpod.v1.SecurityPolicy.Spec.DataPolicy.DestinationR\vdestination\x128\n" +
-	"\x06effect\x18\x05 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectR\x06effect\x1ak\n" +
-	"\x06Source\x12\x14\n" +
-	"\x04file\x18\x01 \x01(\tH\x00R\x04file\x12\"\n" +
-	"\vintegration\x18\x02 \x01(\tH\x00R\vintegration\x12\x1a\n" +
-	"\bselector\x18\x03 \x01(\tR\bselectorB\v\n" +
-	"\treference\x1a!\n" +
-	"\vDestination\x12\x12\n" +
-	"\x04host\x18\x01 \x01(\tR\x04host\"V\n" +
+	"DataPolicy\x12M\n" +
+	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\rdefaultEffect\x12J\n" +
+	"\x05rules\x18\x02 \x03(\v2..gitpod.v1.SecurityPolicy.Spec.DataPolicy.RuleB\x04ګ\x1e\x00R\x05rules\x1a\xf5\x01\n" +
+	"\x04Rule\x12N\n" +
+	"\x06source\x18\x01 \x01(\v20.gitpod.v1.SecurityPolicy.Spec.DataPolicy.SourceB\x04ګ\x1e\x00R\x06source\x12]\n" +
+	"\vdestination\x18\x03 \x01(\v25.gitpod.v1.SecurityPolicy.Spec.DataPolicy.DestinationB\x04ګ\x1e\x00R\vdestination\x12>\n" +
+	"\x06effect\x18\x05 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\x06effect\x1a}\n" +
+	"\x06Source\x12\x1a\n" +
+	"\x04file\x18\x01 \x01(\tB\x04ګ\x1e\x00H\x00R\x04file\x12(\n" +
+	"\vintegration\x18\x02 \x01(\tB\x04ګ\x1e\x00H\x00R\vintegration\x12 \n" +
+	"\bselector\x18\x03 \x01(\tB\x04ګ\x1e\x00R\bselectorB\v\n" +
+	"\treference\x1a'\n" +
+	"\vDestination\x12\x18\n" +
+	"\x04host\x18\x01 \x01(\tB\x04ګ\x1e\x00R\x04host\"V\n" +
 	"\x06Effect\x12\x16\n" +
 	"\x12EFFECT_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fEFFECT_ALLOW\x10\x01\x12\x10\n" +
 	"\fEFFECT_BLOCK\x10\x02\x12\x10\n" +
-	"\fEFFECT_AUDIT\x10\x032\xa5\x04\n" +
+	"\fEFFECT_AUDIT\x10\x03:\x04ҫ\x1e\x002\xa5\x04\n" +
 	"\x0fSecurityService\x12i\n" +
 	"\x14CreateSecurityPolicy\x12&.gitpod.v1.CreateSecurityPolicyRequest\x1a'.gitpod.v1.CreateSecurityPolicyResponse\"\x00\x12c\n" +
 	"\x11GetSecurityPolicy\x12#.gitpod.v1.GetSecurityPolicyRequest\x1a$.gitpod.v1.GetSecurityPolicyResponse\"\x03\x90\x02\x01\x12l\n" +

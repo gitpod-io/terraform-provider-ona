@@ -63,18 +63,21 @@ type SecurityServiceClient interface {
 	//
 	// - Create security policy:
 	//
-	//	Creates a policy with an explicit blocked file-write rule.
+	//	Creates an audit-first Veto Exec policy with one audited bare name and
+	//	one blocked absolute path. Creation stores an inactive definition;
+	//	assigning it as the organization default validates materializability.
 	//
 	//	```yaml
 	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
 	//	metadata:
-	//	  name: "Restricted files"
+	//	  name: "Veto Exec audit-first"
 	//	spec:
-	//	  files:
+	//	  executables:
 	//	    defaultEffect: EFFECT_ALLOW
 	//	    rules:
-	//	      - path: "/etc/passwd"
-	//	        actions: [ACTION_WRITE]
+	//	      - path: "npx"
+	//	        effect: EFFECT_AUDIT
+	//	      - path: "/usr/bin/curl"
 	//	        effect: EFFECT_BLOCK
 	//	```
 	CreateSecurityPolicy(context.Context, *connect.Request[v1.CreateSecurityPolicyRequest]) (*connect.Response[v1.CreateSecurityPolicyResponse], error)
@@ -124,17 +127,20 @@ type SecurityServiceClient interface {
 	//
 	// - Update security policy:
 	//
-	//	Replaces the policy spec with an explicit audited file-read rule.
+	//	Promotes one executable rule from audit to block while leaving unmatched
+	//	executables allowed. Updating an assigned policy validates
+	//	materializability; updating an unassigned policy only stores its spec.
 	//
 	//	```yaml
 	//	securityPolicyId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 	//	spec:
-	//	  files:
+	//	  executables:
 	//	    defaultEffect: EFFECT_ALLOW
 	//	    rules:
-	//	      - path: "/etc/passwd"
-	//	        actions: [ACTION_READ]
-	//	        effect: EFFECT_AUDIT
+	//	      - path: "npx"
+	//	        effect: EFFECT_BLOCK
+	//	      - path: "/usr/bin/curl"
+	//	        effect: EFFECT_BLOCK
 	//	```
 	UpdateSecurityPolicy(context.Context, *connect.Request[v1.UpdateSecurityPolicyRequest]) (*connect.Response[v1.UpdateSecurityPolicyResponse], error)
 	// Deletes a security policy.
@@ -248,18 +254,21 @@ type SecurityServiceHandler interface {
 	//
 	// - Create security policy:
 	//
-	//	Creates a policy with an explicit blocked file-write rule.
+	//	Creates an audit-first Veto Exec policy with one audited bare name and
+	//	one blocked absolute path. Creation stores an inactive definition;
+	//	assigning it as the organization default validates materializability.
 	//
 	//	```yaml
 	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
 	//	metadata:
-	//	  name: "Restricted files"
+	//	  name: "Veto Exec audit-first"
 	//	spec:
-	//	  files:
+	//	  executables:
 	//	    defaultEffect: EFFECT_ALLOW
 	//	    rules:
-	//	      - path: "/etc/passwd"
-	//	        actions: [ACTION_WRITE]
+	//	      - path: "npx"
+	//	        effect: EFFECT_AUDIT
+	//	      - path: "/usr/bin/curl"
 	//	        effect: EFFECT_BLOCK
 	//	```
 	CreateSecurityPolicy(context.Context, *connect.Request[v1.CreateSecurityPolicyRequest]) (*connect.Response[v1.CreateSecurityPolicyResponse], error)
@@ -309,17 +318,20 @@ type SecurityServiceHandler interface {
 	//
 	// - Update security policy:
 	//
-	//	Replaces the policy spec with an explicit audited file-read rule.
+	//	Promotes one executable rule from audit to block while leaving unmatched
+	//	executables allowed. Updating an assigned policy validates
+	//	materializability; updating an unassigned policy only stores its spec.
 	//
 	//	```yaml
 	//	securityPolicyId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 	//	spec:
-	//	  files:
+	//	  executables:
 	//	    defaultEffect: EFFECT_ALLOW
 	//	    rules:
-	//	      - path: "/etc/passwd"
-	//	        actions: [ACTION_READ]
-	//	        effect: EFFECT_AUDIT
+	//	      - path: "npx"
+	//	        effect: EFFECT_BLOCK
+	//	      - path: "/usr/bin/curl"
+	//	        effect: EFFECT_BLOCK
 	//	```
 	UpdateSecurityPolicy(context.Context, *connect.Request[v1.UpdateSecurityPolicyRequest]) (*connect.Response[v1.UpdateSecurityPolicyResponse], error)
 	// Deletes a security policy.

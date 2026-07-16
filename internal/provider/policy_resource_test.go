@@ -603,7 +603,7 @@ func applyAgentPolicyUpdate(policy *v1.AgentPolicy, update *v1.UpdateOrganizatio
 		policy.MaxSubagentsPerEnvironment = update.GetMaxSubagentsPerEnvironment()
 	}
 	policy.AllowedAgentIds = append([]string(nil), update.AllowedAgentIds...)
-	policy.AllowedCodexModels = append([]v1.CodexOpenAIModel(nil), update.AllowedCodexModels...)
+	policy.AllowedCodexModels = append([]v1.CodexOpenAIModel(nil), update.AllowedCodexModels...) //nolint:staticcheck // Existing Terraform schema still maps the legacy allowlist.
 	policy.AllowedCodexReasoningEfforts = append([]v1.CodexReasoningEffort(nil), update.AllowedCodexReasoningEfforts...)
 	policy.AllowedCodexServiceTiers = append([]v1.CodexServiceTier(nil), update.AllowedCodexServiceTiers...)
 }

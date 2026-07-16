@@ -136,6 +136,8 @@ const (
 	ResourceType_RESOURCE_TYPE_WARM_POOL                    ResourceType = 48
 	ResourceType_RESOURCE_TYPE_NOTIFICATION                 ResourceType = 49
 	ResourceType_RESOURCE_TYPE_SECURITY_POLICY              ResourceType = 50
+	ResourceType_RESOURCE_TYPE_BASE_SNAPSHOT                ResourceType = 51
+	ResourceType_RESOURCE_TYPE_BASE_SNAPSHOT_CONFIG         ResourceType = 52
 )
 
 // Enum value maps for ResourceType.
@@ -192,6 +194,8 @@ var (
 		48: "RESOURCE_TYPE_WARM_POOL",
 		49: "RESOURCE_TYPE_NOTIFICATION",
 		50: "RESOURCE_TYPE_SECURITY_POLICY",
+		51: "RESOURCE_TYPE_BASE_SNAPSHOT",
+		52: "RESOURCE_TYPE_BASE_SNAPSHOT_CONFIG",
 	}
 	ResourceType_value = map[string]int32{
 		"RESOURCE_TYPE_UNSPECIFIED":                  0,
@@ -245,6 +249,8 @@ var (
 		"RESOURCE_TYPE_WARM_POOL":                    48,
 		"RESOURCE_TYPE_NOTIFICATION":                 49,
 		"RESOURCE_TYPE_SECURITY_POLICY":              50,
+		"RESOURCE_TYPE_BASE_SNAPSHOT":                51,
+		"RESOURCE_TYPE_BASE_SNAPSHOT_CONFIG":         52,
 	}
 )
 
@@ -860,7 +866,7 @@ const file_gitpod_v1_event_proto_rawDesc = "" +
 	"\x19RESOURCE_OPERATION_CREATE\x10\x01\x12\x1d\n" +
 	"\x19RESOURCE_OPERATION_UPDATE\x10\x02\x12\x1d\n" +
 	"\x19RESOURCE_OPERATION_DELETE\x10\x03\x12$\n" +
-	" RESOURCE_OPERATION_UPDATE_STATUS\x10\x04*\xd3\r\n" +
+	" RESOURCE_OPERATION_UPDATE_STATUS\x10\x04*\x9c\x0e\n" +
 	"\fResourceType\x12\x1d\n" +
 	"\x19RESOURCE_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19RESOURCE_TYPE_ENVIRONMENT\x10\x01\x12\x18\n" +
@@ -913,7 +919,9 @@ const file_gitpod_v1_event_proto_rawDesc = "" +
 	"\x1dRESOURCE_TYPE_ROLE_ASSIGNMENT\x10/\x12\x1b\n" +
 	"\x17RESOURCE_TYPE_WARM_POOL\x100\x12\x1e\n" +
 	"\x1aRESOURCE_TYPE_NOTIFICATION\x101\x12!\n" +
-	"\x1dRESOURCE_TYPE_SECURITY_POLICY\x1022\xdc\x01\n" +
+	"\x1dRESOURCE_TYPE_SECURITY_POLICY\x102\x12\x1f\n" +
+	"\x1bRESOURCE_TYPE_BASE_SNAPSHOT\x103\x12&\n" +
+	"\"RESOURCE_TYPE_BASE_SNAPSHOT_CONFIG\x1042\xdc\x01\n" +
 	"\fEventService\x12[\n" +
 	"\vWatchEvents\x12\x1d.gitpod.v1.WatchEventsRequest\x1a\x1e.gitpod.v1.WatchEventsResponse\"\v\xb2\xab\x1e\a\x12\x05watch0\x01\x12a\n" +
 	"\rListAuditLogs\x12\x1f.gitpod.v1.ListAuditLogsRequest\x1a .gitpod.v1.ListAuditLogsResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x1a\f\xaa\xab\x1e\b\n" +

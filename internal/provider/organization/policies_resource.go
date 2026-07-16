@@ -600,7 +600,7 @@ func restorePoliciesRequest(organizationID string, baseline *v1.OrganizationPoli
 			ConversationSharingPolicy:    ptr(baselineAgentPolicy.GetConversationSharingPolicy()),
 			MaxSubagentsPerEnvironment:   ptr(baselineAgentPolicy.GetMaxSubagentsPerEnvironment()),
 			AllowedAgentIds:              append([]string(nil), baselineAgentPolicy.GetAllowedAgentIds()...),
-			AllowedCodexModels:           append([]v1.CodexOpenAIModel(nil), currentAgentPolicy.GetAllowedCodexModels()...),
+			AllowedCodexModels:           append([]v1.CodexOpenAIModel(nil), currentAgentPolicy.GetAllowedCodexModels()...), //nolint:staticcheck // Existing Terraform schema still maps the legacy allowlist.
 			AllowedCodexReasoningEfforts: append([]v1.CodexReasoningEffort(nil), currentAgentPolicy.GetAllowedCodexReasoningEfforts()...),
 			AllowedCodexServiceTiers:     append([]v1.CodexServiceTier(nil), currentAgentPolicy.GetAllowedCodexServiceTiers()...),
 		},

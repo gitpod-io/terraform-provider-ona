@@ -5,9 +5,8 @@ The provider source lives in this repository as the standalone Go module
 source address remains `registry.terraform.io/gitpod-io/ona`, so user
 configuration should continue to use `source = "gitpod-io/ona"`.
 
-The copied API client subset lives under `internal/api/go`. Refresh it from the
-monorepo source intentionally and keep `sync/api-subset.manifest` in sync with
-the copied files.
+The copied API client lives under `internal/api/go`. Refresh it from the full
+generated public Go client at `api/public-clients/go` in the monorepo source.
 
 Beta releases intentionally publish Linux artifacts only:
 

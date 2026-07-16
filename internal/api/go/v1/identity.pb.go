@@ -10,6 +10,7 @@ import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/logfields"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/stainless"
+	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -477,18 +478,18 @@ var File_gitpod_v1_identity_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_identity_proto_rawDesc = "" +
 	"\n" +
-	"\x18gitpod/v1/identity.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\"n\n" +
+	"\x18gitpod/v1/identity.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\"n\n" +
 	"\x11GetIDTokenRequest\x12$\n" +
 	"\baudience\x18\x01 \x03(\tB\b\xbaH\x05\x92\x01\x02\b\x01R\baudience\x123\n" +
 	"\aversion\x18\x02 \x01(\x0e2\x19.gitpod.v1.IDTokenVersionR\aversion\"*\n" +
 	"\x12GetIDTokenResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\"\x8b\x01\n" +
-	"\aSubject\x12+\n" +
-	"\x02id\x18\x01 \x01(\tB\x1b\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\"\x93\x01\n" +
+	"\aSubject\x12/\n" +
+	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
 	"\n" +
-	"subject.idR\x02id\x12S\n" +
-	"\tprincipal\x18\x02 \x01(\x0e2\x14.gitpod.v1.PrincipalB\x1f\xbaH\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\x13\n" +
-	"\x11subject.principalR\tprincipal\"!\n" +
+	"subject.idګ\x1e\x00R\x02id\x12W\n" +
+	"\tprincipal\x18\x02 \x01(\x0e2\x14.gitpod.v1.PrincipalB#\xbaH\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\x13\n" +
+	"\x11subject.principalګ\x1e\x00R\tprincipal\"!\n" +
 	"\x1fGetAuthenticatedIdentityRequest\"\xa6\x01\n" +
 	" GetAuthenticatedIdentityResponse\x12,\n" +
 	"\asubject\x18\x01 \x01(\v2\x12.gitpod.v1.SubjectR\asubject\x12'\n" +

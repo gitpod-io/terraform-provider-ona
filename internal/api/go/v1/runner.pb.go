@@ -363,6 +363,8 @@ const (
 	// requests and events via durable Redis Streams (per-shard and broadcast)
 	// instead of the legacy Redis Pub/Sub channel.
 	RunnerCapability_RUNNER_CAPABILITY_REDIS_STREAM RunnerCapability = 16
+	// RUNNER_CAPABILITY_BASE_SNAPSHOT indicates the runner supports base snapshots.
+	RunnerCapability_RUNNER_CAPABILITY_BASE_SNAPSHOT RunnerCapability = 17
 )
 
 // Enum value maps for RunnerCapability.
@@ -385,6 +387,7 @@ var (
 		14: "RUNNER_CAPABILITY_HORIZONTAL_SCALING",
 		15: "RUNNER_CAPABILITY_AGENT_EXECUTION_CNF",
 		16: "RUNNER_CAPABILITY_REDIS_STREAM",
+		17: "RUNNER_CAPABILITY_BASE_SNAPSHOT",
 	}
 	RunnerCapability_value = map[string]int32{
 		"RUNNER_CAPABILITY_UNSPECIFIED":                       0,
@@ -404,6 +407,7 @@ var (
 		"RUNNER_CAPABILITY_HORIZONTAL_SCALING":                14,
 		"RUNNER_CAPABILITY_AGENT_EXECUTION_CNF":               15,
 		"RUNNER_CAPABILITY_REDIS_STREAM":                      16,
+		"RUNNER_CAPABILITY_BASE_SNAPSHOT":                     17,
 	}
 )
 
@@ -4018,13 +4022,13 @@ const file_gitpod_v1_runner_proto_rawDesc = "" +
 	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
 	"\trunner.idR\brunnerId\x12\x14\n" +
 	"\x05force\x18\x02 \x01(\bR\x05force\"\x16\n" +
-	"\x14DeleteRunnerResponse\"P\n" +
-	"\x18CreateRunnerTokenRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\"i\n" +
+	"\x14DeleteRunnerResponse\"T\n" +
+	"\x18CreateRunnerTokenRequest\x128\n" +
+	"\trunner_id\x18\x01 \x01(\tB\x1b\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
+	"\trunner.idګ\x1e\x00R\brunnerId\"o\n" +
 	"\x19CreateRunnerTokenResponse\x12%\n" +
-	"\faccess_token\x18\x01 \x01(\tB\x02\x18\x01R\vaccessToken\x12%\n" +
-	"\x0eexchange_token\x18\x02 \x01(\tR\rexchangeToken\"T\n" +
+	"\faccess_token\x18\x01 \x01(\tB\x02\x18\x01R\vaccessToken\x12+\n" +
+	"\x0eexchange_token\x18\x02 \x01(\tB\x04ګ\x1e\x00R\rexchangeToken\"T\n" +
 	"\x1cCreateRunnerLogsTokenRequest\x124\n" +
 	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
 	"\trunner.idR\brunnerId\"J\n" +
@@ -4171,42 +4175,42 @@ const file_gitpod_v1_runner_proto_rawDesc = "" +
 	"\bgroup_id\x18\x02 \x01(\tB\x16\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
 	"\n" +
 	"\bgroup.idR\agroupId\"\x1c\n" +
-	"\x1aDeleteRunnerPolicyResponse\"\xf5\x03\n" +
+	"\x1aDeleteRunnerPolicyResponse\"\x9d\x04\n" +
 	"\x06Runner\x120\n" +
 	"\trunner_id\x18\x01 \x01(\tB\x13\xa2\xab\x1e\v\n" +
-	"\trunner.idګ\x1e\x00R\brunnerId\x129\n" +
+	"\trunner.idګ\x1e\x00R\brunnerId\x12?\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"created_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tcreatedAt\x12?\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x18\n" +
+	"updated_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tupdatedAt\x12\x18\n" +
 	"\x04name\x18\x04 \x01(\tB\x04ګ\x1e\x00R\x04name\x12)\n" +
-	"\x04spec\x18\x05 \x01(\v2\x15.gitpod.v1.RunnerSpecR\x04spec\x12/\n" +
-	"\x06status\x18\x06 \x01(\v2\x17.gitpod.v1.RunnerStatusR\x06status\x12,\n" +
-	"\acreator\x18\a \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x12)\n" +
-	"\x04kind\x18\b \x01(\x0e2\x15.gitpod.v1.RunnerKindR\x04kind\x125\n" +
-	"\bprovider\x18\t \x01(\x0e2\x19.gitpod.v1.RunnerProviderR\bprovider\x127\n" +
+	"\x04spec\x18\x05 \x01(\v2\x15.gitpod.v1.RunnerSpecR\x04spec\x125\n" +
+	"\x06status\x18\x06 \x01(\v2\x17.gitpod.v1.RunnerStatusB\x04ګ\x1e\x00R\x06status\x122\n" +
+	"\acreator\x18\a \x01(\v2\x12.gitpod.v1.SubjectB\x04ګ\x1e\x00R\acreator\x12/\n" +
+	"\x04kind\x18\b \x01(\x0e2\x15.gitpod.v1.RunnerKindB\x04ګ\x1e\x00R\x04kind\x12;\n" +
+	"\bprovider\x18\t \x01(\x0e2\x19.gitpod.v1.RunnerProviderB\x04ګ\x1e\x00R\bprovider\x12;\n" +
 	"\x11runner_manager_id\x18\n" +
-	" \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\x0frunnerManagerId:\x04ҫ\x1e\x00\"\xc3\x01\n" +
+	" \x01(\tB\x0f\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01ګ\x1e\x00R\x0frunnerManagerId:\x04ҫ\x1e\x00\"\xc9\x01\n" +
 	"\n" +
 	"RunnerSpec\x12;\n" +
-	"\rdesired_phase\x18\x01 \x01(\x0e2\x16.gitpod.v1.RunnerPhaseR\fdesiredPhase\x12D\n" +
-	"\rconfiguration\x18\x02 \x01(\v2\x1e.gitpod.v1.RunnerConfigurationR\rconfiguration\x122\n" +
-	"\avariant\x18\x03 \x01(\x0e2\x18.gitpod.v1.RunnerVariantR\avariant\"\x8e\x04\n" +
-	"\x13RunnerConfiguration\x12\x16\n" +
-	"\x06region\x18\x01 \x01(\tR\x06region\x12H\n" +
-	"\x0frelease_channel\x18\x02 \x01(\x0e2\x1f.gitpod.v1.RunnerReleaseChannelR\x0ereleaseChannel\x12\x1f\n" +
-	"\vauto_update\x18\x03 \x01(\bR\n" +
+	"\rdesired_phase\x18\x01 \x01(\x0e2\x16.gitpod.v1.RunnerPhaseR\fdesiredPhase\x12J\n" +
+	"\rconfiguration\x18\x02 \x01(\v2\x1e.gitpod.v1.RunnerConfigurationB\x04ګ\x1e\x00R\rconfiguration\x122\n" +
+	"\avariant\x18\x03 \x01(\x0e2\x18.gitpod.v1.RunnerVariantR\avariant\"\xb2\x04\n" +
+	"\x13RunnerConfiguration\x12\x1c\n" +
+	"\x06region\x18\x01 \x01(\tB\x04ګ\x1e\x00R\x06region\x12N\n" +
+	"\x0frelease_channel\x18\x02 \x01(\x0e2\x1f.gitpod.v1.RunnerReleaseChannelB\x04ګ\x1e\x00R\x0ereleaseChannel\x12%\n" +
+	"\vauto_update\x18\x03 \x01(\bB\x04ګ\x1e\x00R\n" +
 	"autoUpdate\x129\n" +
-	"\ametrics\x18\x04 \x01(\v2\x1f.gitpod.v1.MetricsConfigurationR\ametrics\x120\n" +
-	"\tlog_level\x18\x05 \x01(\x0e2\x13.gitpod.v1.LogLevelR\blogLevel\x12G\n" +
-	" devcontainer_image_cache_enabled\x18\x06 \x01(\bR\x1ddevcontainerImageCacheEnabled\x12<\n" +
-	"\rupdate_window\x18\a \x01(\v2\x17.gitpod.v1.UpdateWindowR\fupdateWindow\x12E\n" +
+	"\ametrics\x18\x04 \x01(\v2\x1f.gitpod.v1.MetricsConfigurationR\ametrics\x126\n" +
+	"\tlog_level\x18\x05 \x01(\x0e2\x13.gitpod.v1.LogLevelB\x04ګ\x1e\x00R\blogLevel\x12M\n" +
+	" devcontainer_image_cache_enabled\x18\x06 \x01(\bB\x04ګ\x1e\x00R\x1ddevcontainerImageCacheEnabled\x12B\n" +
+	"\rupdate_window\x18\a \x01(\v2\x17.gitpod.v1.UpdateWindowB\x04ګ\x1e\x00R\fupdateWindow\x12E\n" +
 	"\x1bencrypted_honeycomb_api_key\x18\b \x01(\fB\x06ʫ\x1e\x02\b\x01R\x18encryptedHoneycombApiKey\x129\n" +
-	"\x14continuous_profiling\x18\t \x01(\bB\x06ʫ\x1e\x02\b\x01R\x13continuousProfiling\"n\n" +
-	"\fUpdateWindow\x12\"\n" +
+	"\x14continuous_profiling\x18\t \x01(\bB\x06ʫ\x1e\x02\b\x01R\x13continuousProfiling\"z\n" +
+	"\fUpdateWindow\x12(\n" +
 	"\n" +
-	"start_hour\x18\x01 \x01(\rH\x00R\tstartHour\x88\x01\x01\x12\x1e\n" +
-	"\bend_hour\x18\x02 \x01(\rH\x01R\aendHour\x88\x01\x01B\r\n" +
+	"start_hour\x18\x01 \x01(\rB\x04ګ\x1e\x00H\x00R\tstartHour\x88\x01\x01\x12$\n" +
+	"\bend_hour\x18\x02 \x01(\rB\x04ګ\x1e\x00H\x01R\aendHour\x88\x01\x01B\r\n" +
 	"\v_start_hourB\v\n" +
 	"\t_end_hour\"\xf2\x01\n" +
 	"\x14MetricsConfiguration\x12\x18\n" +
@@ -4215,24 +4219,24 @@ const file_gitpod_v1_runner_proto_rawDesc = "" +
 	"\busername\x18\x03 \x01(\tR\busername\x12\x1a\n" +
 	"\bpassword\x18\x04 \x01(\tR\bpassword\x126\n" +
 	"\x17managed_metrics_enabled\x18\x05 \x01(\bR\x15managedMetricsEnabled\x12>\n" +
-	"\x17include_verbose_metrics\x18\x06 \x01(\bB\x06ʫ\x1e\x02\b\x01R\x15includeVerboseMetrics\"\xae\x04\n" +
-	"\fRunnerStatus\x129\n" +
+	"\x17include_verbose_metrics\x18\x06 \x01(\bB\x06ʫ\x1e\x02\b\x01R\x15includeVerboseMetrics\"\xde\x04\n" +
+	"\fRunnerStatus\x12?\n" +
 	"\n" +
-	"updated_at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x18\n" +
-	"\aversion\x18\x02 \x01(\tR\aversion\x12%\n" +
-	"\x0esystem_details\x18\x03 \x01(\tR\rsystemDetails\x12,\n" +
-	"\x05phase\x18\x04 \x01(\x0e2\x16.gitpod.v1.RunnerPhaseR\x05phase\x12\x17\n" +
-	"\alog_url\x18\x05 \x01(\tR\x06logUrl\x12\x18\n" +
-	"\amessage\x18\x06 \x01(\tR\amessage\x12\x16\n" +
-	"\x06region\x18\a \x01(\tR\x06region\x12>\n" +
+	"updated_at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tupdatedAt\x12\x1e\n" +
+	"\aversion\x18\x02 \x01(\tB\x04ګ\x1e\x00R\aversion\x12+\n" +
+	"\x0esystem_details\x18\x03 \x01(\tB\x04ګ\x1e\x00R\rsystemDetails\x122\n" +
+	"\x05phase\x18\x04 \x01(\x0e2\x16.gitpod.v1.RunnerPhaseB\x04ګ\x1e\x00R\x05phase\x12\x1d\n" +
+	"\alog_url\x18\x05 \x01(\tB\x04ګ\x1e\x00R\x06logUrl\x12\x1e\n" +
+	"\amessage\x18\x06 \x01(\tB\x04ګ\x1e\x00R\amessage\x12\x1c\n" +
+	"\x06region\x18\a \x01(\tB\x04ګ\x1e\x00R\x06region\x12>\n" +
 	"\x0fadditional_info\x18\b \x03(\v2\x15.gitpod.v1.FieldValueR\x0eadditionalInfo\x12?\n" +
 	"\fcapabilities\x18\t \x03(\x0e2\x1b.gitpod.v1.RunnerCapabilityR\fcapabilities\x129\n" +
 	"\fgateway_info\x18\n" +
 	" \x01(\v2\x16.gitpod.v1.GatewayInfoR\vgatewayInfo\x12\x17\n" +
 	"\allm_url\x18\v \x01(\tR\x06llmUrl\x12&\n" +
 	"\n" +
-	"public_key\x18\f \x01(\fB\a\xbaH\x04z\x02h R\tpublicKey\x12,\n" +
-	"\x12support_bundle_url\x18\r \x01(\tR\x10supportBundleUrl\"p\n" +
+	"public_key\x18\f \x01(\fB\a\xbaH\x04z\x02h R\tpublicKey\x122\n" +
+	"\x12support_bundle_url\x18\r \x01(\tB\x04ګ\x1e\x00R\x10supportBundleUrl\"p\n" +
 	"\vGatewayInfo\x12,\n" +
 	"\agateway\x18\x01 \x01(\v2\x12.gitpod.v1.GatewayR\agateway\x123\n" +
 	"\alatency\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\alatency\"l\n" +
@@ -4267,7 +4271,7 @@ const file_gitpod_v1_runner_proto_rawDesc = "" +
 	"\x13RUNNER_PHASE_ACTIVE\x10\x03\x12\x19\n" +
 	"\x15RUNNER_PHASE_DELETING\x10\x04\x12\x18\n" +
 	"\x14RUNNER_PHASE_DELETED\x10\x05\x12\x19\n" +
-	"\x15RUNNER_PHASE_DEGRADED\x10\x06*\xfb\x05\n" +
+	"\x15RUNNER_PHASE_DEGRADED\x10\x06*\xa0\x06\n" +
 	"\x10RunnerCapability\x12!\n" +
 	"\x1dRUNNER_CAPABILITY_UNSPECIFIED\x10\x00\x122\n" +
 	".RUNNER_CAPABILITY_FETCH_LOCAL_SCM_INTEGRATIONS\x10\x01\x12/\n" +
@@ -4286,7 +4290,8 @@ const file_gitpod_v1_runner_proto_rawDesc = "" +
 	"%RUNNER_CAPABILITY_PORT_AUTHENTICATION\x10\r\x12(\n" +
 	"$RUNNER_CAPABILITY_HORIZONTAL_SCALING\x10\x0e\x12)\n" +
 	"%RUNNER_CAPABILITY_AGENT_EXECUTION_CNF\x10\x0f\x12\"\n" +
-	"\x1eRUNNER_CAPABILITY_REDIS_STREAM\x10\x10*V\n" +
+	"\x1eRUNNER_CAPABILITY_REDIS_STREAM\x10\x10\x12#\n" +
+	"\x1fRUNNER_CAPABILITY_BASE_SNAPSHOT\x10\x11*V\n" +
 	"\n" +
 	"RunnerRole\x12\x1b\n" +
 	"\x17RUNNER_ROLE_UNSPECIFIED\x10\x00\x12\x15\n" +

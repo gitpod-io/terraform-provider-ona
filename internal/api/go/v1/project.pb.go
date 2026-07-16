@@ -10,6 +10,7 @@ import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/logfields"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/stainless"
+	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -2751,7 +2752,7 @@ var File_gitpod_v1_project_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_project_proto_rawDesc = "" +
 	"\n" +
-	"\x17gitpod/v1/project.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x15gitpod/v1/count.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gitpod/v1/runner_configuration.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd1\x04\n" +
+	"\x17gitpod/v1/project.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x15gitpod/v1/count.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gitpod/v1/runner_configuration.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd1\x04\n" +
 	"\x14CreateProjectRequest\x12\x1d\n" +
 	"\x04name\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18PR\x04name\x12K\n" +
 	"\vinitializer\x18\x02 \x01(\v2!.gitpod.v1.EnvironmentInitializerB\x06\xbaH\x03\xc8\x01\x01R\vinitializer\x12\x93\x01\n" +
@@ -2931,65 +2932,65 @@ const file_gitpod_v1_project_proto_rawDesc = "" +
 	"project.idR\tprojectId\x12n\n" +
 	"\x1bproject_environment_classes\x18\x02 \x03(\v2\".gitpod.v1.ProjectEnvironmentClassB\n" +
 	"\xbaH\a\x92\x01\x04\b\x01\x10\x1eR\x19projectEnvironmentClasses\")\n" +
-	"'UpdateProjectEnvironmentClassesResponse\"\x82\a\n" +
-	"\aProject\x12(\n" +
-	"\x02id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
+	"'UpdateProjectEnvironmentClassesResponse\"\xa4\a\n" +
+	"\aProject\x12,\n" +
+	"\x02id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
 	"\n" +
-	"project.idR\x02id\x126\n" +
+	"project.idګ\x1e\x00R\x02id\x126\n" +
 	"\bmetadata\x18\x02 \x01(\v2\x1a.gitpod.v1.ProjectMetadataR\bmetadata\x12C\n" +
 	"\vinitializer\x18\x03 \x01(\v2!.gitpod.v1.EnvironmentInitializerR\vinitializer\x12Y\n" +
-	"\x11environment_class\x18\x04 \x01(\v2\".gitpod.v1.ProjectEnvironmentClassB\b\xbaH\x03\xc8\x01\x01\x18\x01R\x10environmentClass\x124\n" +
-	"\x16devcontainer_file_path\x18\x05 \x01(\tR\x14devcontainerFilePath\x12S\n" +
-	"\x13environment_classes\x18\v \x03(\v2\".gitpod.v1.ProjectEnvironmentClassR\x12environmentClasses\x122\n" +
-	"\aused_by\x18\x06 \x01(\v2\x19.gitpod.v1.Project.UsedByR\x06usedBy\x122\n" +
-	"\x15automations_file_path\x18\a \x01(\tR\x13automationsFilePath\x123\n" +
-	"\x15technical_description\x18\b \x01(\tR\x14technicalDescription\x12^\n" +
-	"\x16prebuild_configuration\x18\t \x01(\v2'.gitpod.v1.ProjectPrebuildConfigurationR\x15prebuildConfiguration\x12<\n" +
+	"\x11environment_class\x18\x04 \x01(\v2\".gitpod.v1.ProjectEnvironmentClassB\b\xbaH\x03\xc8\x01\x01\x18\x01R\x10environmentClass\x12:\n" +
+	"\x16devcontainer_file_path\x18\x05 \x01(\tB\x04ګ\x1e\x00R\x14devcontainerFilePath\x12Y\n" +
+	"\x13environment_classes\x18\v \x03(\v2\".gitpod.v1.ProjectEnvironmentClassB\x04ګ\x1e\x00R\x12environmentClasses\x122\n" +
+	"\aused_by\x18\x06 \x01(\v2\x19.gitpod.v1.Project.UsedByR\x06usedBy\x128\n" +
+	"\x15automations_file_path\x18\a \x01(\tB\x04ګ\x1e\x00R\x13automationsFilePath\x123\n" +
+	"\x15technical_description\x18\b \x01(\tR\x14technicalDescription\x12d\n" +
+	"\x16prebuild_configuration\x18\t \x01(\v2'.gitpod.v1.ProjectPrebuildConfigurationB\x04ګ\x1e\x00R\x15prebuildConfiguration\x12<\n" +
 	"\rdesired_phase\x18\n" +
 	" \x01(\x0e2\x17.gitpod.v1.ProjectPhaseR\fdesiredPhase\x12N\n" +
 	"\x13recommended_editors\x18\f \x01(\v2\x1d.gitpod.v1.RecommendedEditorsR\x12recommendedEditors\x1a_\n" +
 	"\x06UsedBy\x12.\n" +
 	"\bsubjects\x18\x04 \x03(\v2\x12.gitpod.v1.SubjectR\bsubjects\x12%\n" +
-	"\x0etotal_subjects\x18\x03 \x01(\x05R\rtotalSubjects\"\xb1\x01\n" +
+	"\x0etotal_subjects\x18\x03 \x01(\x05R\rtotalSubjects:\x04ҫ\x1e\x00\"\xb1\x01\n" +
 	"\x12RecommendedEditors\x12D\n" +
 	"\aeditors\x18\x01 \x03(\v2*.gitpod.v1.RecommendedEditors.EditorsEntryR\aeditors\x1aU\n" +
 	"\fEditorsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12/\n" +
 	"\x05value\x18\x02 \x01(\v2\x19.gitpod.v1.EditorVersionsR\x05value:\x028\x01\",\n" +
 	"\x0eEditorVersions\x12\x1a\n" +
-	"\bversions\x18\x01 \x03(\tR\bversions\"\xa7\x01\n" +
-	"\x17ProjectEnvironmentClass\x12#\n" +
-	"\flocal_runner\x18\x01 \x01(\bH\x00R\vlocalRunner\x12<\n" +
-	"\x14environment_class_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\x12environmentClassId\x12\x14\n" +
-	"\x05order\x18\x03 \x01(\x05R\x05orderB\x13\n" +
-	"\x11environment_class\"\x9c\x02\n" +
-	"\x0fProjectMetadata\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\x1d\n" +
-	"\x04name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18PR\x04name\x12,\n" +
-	"\acreator\x18\x03 \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x129\n" +
+	"\bversions\x18\x01 \x03(\tR\bversions\"\xb7\x01\n" +
+	"\x17ProjectEnvironmentClass\x12)\n" +
+	"\flocal_runner\x18\x01 \x01(\bB\x04ګ\x1e\x00H\x00R\vlocalRunner\x12@\n" +
+	"\x14environment_class_id\x18\x02 \x01(\tB\f\xbaH\x05r\x03\xb0\x01\x01ګ\x1e\x00H\x00R\x12environmentClassId\x12\x1a\n" +
+	"\x05order\x18\x03 \x01(\x05B\x04ګ\x1e\x00R\x05orderB\x13\n" +
+	"\x11environment_class\"\xb6\x02\n" +
+	"\x0fProjectMetadata\x12J\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB!\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
+	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12!\n" +
+	"\x04name\x18\x02 \x01(\tB\r\xbaH\x06r\x04\x10\x01\x18Pګ\x1e\x00R\x04name\x122\n" +
+	"\acreator\x18\x03 \x01(\v2\x12.gitpod.v1.SubjectB\x04ګ\x1e\x00R\acreator\x12?\n" +
 	"\n" +
-	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tcreatedAt\x12?\n" +
 	"\n" +
-	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"n\n" +
+	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tupdatedAt\"n\n" +
 	"\rProjectPolicy\x121\n" +
 	"\bgroup_id\x18\x01 \x01(\tB\x16\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
 	"\n" +
 	"\bgroup.idR\agroupId\x12*\n" +
-	"\x04role\x18\x02 \x01(\x0e2\x16.gitpod.v1.ProjectRoleR\x04role\"\xe0\x02\n" +
-	"\x1cProjectPrebuildConfiguration\x12\x18\n" +
-	"\aenabled\x18\x01 \x01(\bR\aenabled\x12A\n" +
-	"\x15environment_class_ids\x18\x02 \x03(\tB\r\xbaH\n" +
-	"\x92\x01\a\"\x05r\x03\xb0\x01\x01R\x13environmentClassIds\x12E\n" +
-	"\atimeout\x18\x03 \x01(\v2\x19.google.protobuf.DurationB\x10\xbaH\r\xaa\x01\n" +
-	"\"\x03\b\xa082\x03\b\xac\x02R\atimeout\x124\n" +
-	"\atrigger\x18\x04 \x01(\v2\x1a.gitpod.v1.PrebuildTriggerR\atrigger\x12.\n" +
-	"\bexecutor\x18\x05 \x01(\v2\x12.gitpod.v1.SubjectR\bexecutor\x126\n" +
-	"\x17enable_jetbrains_warmup\x18\x06 \x01(\bR\x15enableJetbrainsWarmup\"\xbf\x01\n" +
-	"\x0fPrebuildTrigger\x12Q\n" +
-	"\x0edaily_schedule\x18\x01 \x01(\v2(.gitpod.v1.PrebuildTrigger.DailyScheduleH\x00R\rdailySchedule\x1a5\n" +
-	"\rDailySchedule\x12$\n" +
-	"\bhour_utc\x18\x01 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x17(\x00R\ahourUtc:\x17\xba\xab\x1e\x13\x12\x11prebuild_scheduleB\t\n" +
+	"\x04role\x18\x02 \x01(\x0e2\x16.gitpod.v1.ProjectRoleR\x04role\"\xfa\x02\n" +
+	"\x1cProjectPrebuildConfiguration\x12\x1e\n" +
+	"\aenabled\x18\x01 \x01(\bB\x04ګ\x1e\x00R\aenabled\x12E\n" +
+	"\x15environment_class_ids\x18\x02 \x03(\tB\x11\xbaH\n" +
+	"\x92\x01\a\"\x05r\x03\xb0\x01\x01ګ\x1e\x00R\x13environmentClassIds\x12I\n" +
+	"\atimeout\x18\x03 \x01(\v2\x19.google.protobuf.DurationB\x14\xbaH\r\xaa\x01\n" +
+	"\"\x03\b\xa082\x03\b\xac\x02ګ\x1e\x00R\atimeout\x124\n" +
+	"\atrigger\x18\x04 \x01(\v2\x1a.gitpod.v1.PrebuildTriggerR\atrigger\x124\n" +
+	"\bexecutor\x18\x05 \x01(\v2\x12.gitpod.v1.SubjectB\x04ګ\x1e\x00R\bexecutor\x12<\n" +
+	"\x17enable_jetbrains_warmup\x18\x06 \x01(\bB\x04ګ\x1e\x00R\x15enableJetbrainsWarmup\"\xc9\x01\n" +
+	"\x0fPrebuildTrigger\x12W\n" +
+	"\x0edaily_schedule\x18\x01 \x01(\v2(.gitpod.v1.PrebuildTrigger.DailyScheduleB\x04ګ\x1e\x00H\x00R\rdailySchedule\x1a9\n" +
+	"\rDailySchedule\x12(\n" +
+	"\bhour_utc\x18\x01 \x01(\x05B\r\xbaH\x06\x1a\x04\x18\x17(\x00ګ\x1e\x00R\ahourUtc:\x17\xba\xab\x1e\x13\x12\x11prebuild_scheduleB\t\n" +
 	"\atrigger*b\n" +
 	"\fProjectPhase\x12\x1d\n" +
 	"\x19PROJECT_PHASE_UNSPECIFIED\x10\x00\x12\x18\n" +

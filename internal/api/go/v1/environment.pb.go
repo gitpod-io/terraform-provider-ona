@@ -10,6 +10,7 @@ import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/logfields"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/stainless"
+	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/terraform"
 	_ "github.com/google/gnostic/openapiv3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -357,6 +358,8 @@ const (
 	EnvironmentRole_ENVIRONMENT_ROLE_PREBUILD EnvironmentRole = 2
 	// Workflow role for environments that are part of a workflow
 	EnvironmentRole_ENVIRONMENT_ROLE_WORKFLOW EnvironmentRole = 3
+	// Base snapshot build role for internal scratch environments that produce base snapshots
+	EnvironmentRole_ENVIRONMENT_ROLE_BASE_SNAPSHOT_BUILD EnvironmentRole = 4
 )
 
 // Enum value maps for EnvironmentRole.
@@ -366,12 +369,14 @@ var (
 		1: "ENVIRONMENT_ROLE_DEFAULT",
 		2: "ENVIRONMENT_ROLE_PREBUILD",
 		3: "ENVIRONMENT_ROLE_WORKFLOW",
+		4: "ENVIRONMENT_ROLE_BASE_SNAPSHOT_BUILD",
 	}
 	EnvironmentRole_value = map[string]int32{
-		"ENVIRONMENT_ROLE_UNSPECIFIED": 0,
-		"ENVIRONMENT_ROLE_DEFAULT":     1,
-		"ENVIRONMENT_ROLE_PREBUILD":    2,
-		"ENVIRONMENT_ROLE_WORKFLOW":    3,
+		"ENVIRONMENT_ROLE_UNSPECIFIED":         0,
+		"ENVIRONMENT_ROLE_DEFAULT":             1,
+		"ENVIRONMENT_ROLE_PREBUILD":            2,
+		"ENVIRONMENT_ROLE_WORKFLOW":            3,
+		"ENVIRONMENT_ROLE_BASE_SNAPSHOT_BUILD": 4,
 	}
 )
 
@@ -4709,8 +4714,11 @@ type EnvironmentSpec_Secret struct {
 	// This field is orthogonal to mount — a secret can be both mounted (e.g.
 	// as a git credential) and proxied at the same time.
 	CredentialProxy *Secret_CredentialProxy `protobuf:"bytes,15,opt,name=credential_proxy,json=credentialProxy,proto3" json:"credential_proxy,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// source_details contains the typed source configuration for
+	// management-plane secrets.
+	SourceDetails *Secret_Source `protobuf:"bytes,16,opt,name=source_details,json=sourceDetails,proto3" json:"source_details,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *EnvironmentSpec_Secret) Reset() {
@@ -4840,6 +4848,13 @@ func (x *EnvironmentSpec_Secret) GetScope() EnvironmentSpec_Secret_Scope {
 func (x *EnvironmentSpec_Secret) GetCredentialProxy() *Secret_CredentialProxy {
 	if x != nil {
 		return x.CredentialProxy
+	}
+	return nil
+}
+
+func (x *EnvironmentSpec_Secret) GetSourceDetails() *Secret_Source {
+	if x != nil {
+		return x.SourceDetails
 	}
 	return nil
 }
@@ -6532,7 +6547,7 @@ var File_gitpod_v1_environment_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\n" +
-	"\x1bgitpod/v1/environment.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x15gitpod/v1/count.proto\x1a&gitpod/v1/environment_automation.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gitpod/v1/runner_configuration.proto\x1a\x16gitpod/v1/secret.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb2\x01\n" +
+	"\x1bgitpod/v1/environment.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x15gitpod/v1/count.proto\x1a&gitpod/v1/environment_automation.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gitpod/v1/runner_configuration.proto\x1a\x16gitpod/v1/secret.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb2\x01\n" +
 	"\x1cMarkEnvironmentActiveRequest\x12C\n" +
 	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
 	"\x0eenvironment.idR\renvironmentId\x12M\n" +
@@ -6715,7 +6730,7 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\b_enabled\"\x85\x01\n" +
 	"\x14KernelControlsConfig\x12#\n" +
 	"\x04veto\x18\x01 \x01(\v2\x0f.gitpod.v1.VetoR\x04veto\x12H\n" +
-	"\x0fbpf_debug_level\x18\x02 \x01(\x0e2\x18.gitpod.v1.BPFDebugLevelB\x06ʫ\x1e\x02\b\x01R\rbpfDebugLevel\"\xe0\x1a\n" +
+	"\x0fbpf_debug_level\x18\x02 \x01(\x0e2\x18.gitpod.v1.BPFDebugLevelB\x06ʫ\x1e\x02\b\x01R\rbpfDebugLevel\"\xa9\x1b\n" +
 	"\x0fEnvironmentSpec\x12!\n" +
 	"\fspec_version\x18\x01 \x01(\x04R\vspecVersion\x12@\n" +
 	"\rdesired_phase\x18\x02 \x01(\x0e2\x1b.gitpod.v1.EnvironmentPhaseR\fdesiredPhase\x12<\n" +
@@ -6758,7 +6773,7 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\x0eLifecycleStage\x12\x1f\n" +
 	"\x1bLIFECYCLE_STAGE_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14LIFECYCLE_STAGE_FULL\x10\x01\x12\x1c\n" +
-	"\x18LIFECYCLE_STAGE_PREBUILD\x10\x02\x1a\x94\x05\n" +
+	"\x18LIFECYCLE_STAGE_PREBUILD\x10\x02\x1a\xdd\x05\n" +
 	"\x06Secret\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x16\n" +
 	"\x06source\x18\x02 \x01(\tR\x06source\x12\x1d\n" +
@@ -6773,7 +6788,8 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\asession\x18\x04 \x01(\tR\asession\x12\x0e\n" +
 	"\x02id\x18\x05 \x01(\tR\x02id\x12=\n" +
 	"\x05scope\x18\x06 \x01(\x0e2'.gitpod.v1.EnvironmentSpec.Secret.ScopeR\x05scope\x12L\n" +
-	"\x10credential_proxy\x18\x0f \x01(\v2!.gitpod.v1.Secret.CredentialProxyR\x0fcredentialProxy\"\x86\x01\n" +
+	"\x10credential_proxy\x18\x0f \x01(\v2!.gitpod.v1.Secret.CredentialProxyR\x0fcredentialProxy\x12G\n" +
+	"\x0esource_details\x18\x10 \x01(\v2\x18.gitpod.v1.Secret.SourceB\x06ʫ\x1e\x02\b\x01R\rsourceDetails\"\x86\x01\n" +
 	"\x05Scope\x12\x15\n" +
 	"\x11SCOPE_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12SCOPE_ORGANIZATION\x10\x01\x12\x11\n" +
@@ -6964,14 +6980,14 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"contextUrlB\r\n" +
 	"\x04spec\x12\x05\xbaH\x02\b\x01\"3\n" +
 	"\x15ContextURLInitializer\x12\x1a\n" +
-	"\x03url\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01R\x03url\"\xe5\x03\n" +
-	"\x0eGitInitializer\x12\x1d\n" +
+	"\x03url\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01R\x03url\"\xf1\x03\n" +
+	"\x0eGitInitializer\x12#\n" +
 	"\n" +
-	"remote_uri\x18\x01 \x01(\tR\tremoteUri\x12.\n" +
+	"remote_uri\x18\x01 \x01(\tB\x04ګ\x1e\x00R\tremoteUri\x12.\n" +
 	"\x13upstream_remote_uri\x18\x02 \x01(\tR\x11upstreamRemoteUri\x12J\n" +
 	"\vtarget_mode\x18\x03 \x01(\x0e2).gitpod.v1.GitInitializer.CloneTargetModeR\n" +
-	"targetMode\x12!\n" +
-	"\fclone_target\x18\x04 \x01(\tR\vcloneTarget\x12+\n" +
+	"targetMode\x12'\n" +
+	"\fclone_target\x18\x04 \x01(\tB\x04ګ\x1e\x00R\vcloneTarget\x12+\n" +
 	"\x11checkout_location\x18\x05 \x01(\tR\x10checkoutLocation\"\xe7\x01\n" +
 	"\x0fCloneTargetMode\x12!\n" +
 	"\x1dCLONE_TARGET_MODE_UNSPECIFIED\x10\x00\x12!\n" +
@@ -7109,12 +7125,13 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\x19ENVIRONMENT_PHASE_STOPPED\x10<\x12\x1e\n" +
 	"\x1aENVIRONMENT_PHASE_DELETING\x10F\x12\x1d\n" +
 	"\x19ENVIRONMENT_PHASE_DELETED\x10P\x1a%«\x1e!\n" +
-	"\fenvironments\x12\x11environment_phase*\xb5\x01\n" +
+	"\fenvironments\x12\x11environment_phase*\xdf\x01\n" +
 	"\x0fEnvironmentRole\x12 \n" +
 	"\x1cENVIRONMENT_ROLE_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18ENVIRONMENT_ROLE_DEFAULT\x10\x01\x12\x1d\n" +
 	"\x19ENVIRONMENT_ROLE_PREBUILD\x10\x02\x12\x1d\n" +
-	"\x19ENVIRONMENT_ROLE_WORKFLOW\x10\x03\x1a$«\x1e \n" +
+	"\x19ENVIRONMENT_ROLE_WORKFLOW\x10\x03\x12(\n" +
+	"$ENVIRONMENT_ROLE_BASE_SNAPSHOT_BUILD\x10\x04\x1a$«\x1e \n" +
 	"\fenvironments\x12\x10environment_role2\xac\x0f\n" +
 	"\x12EnvironmentService\x12h\n" +
 	"\x0eGetEnvironment\x12 .gitpod.v1.GetEnvironmentRequest\x1a!.gitpod.v1.GetEnvironmentResponse\"\x11\xb2\xab\x1e\n" +
@@ -7265,9 +7282,10 @@ var file_gitpod_v1_environment_proto_goTypes = []any{
 	(RunnerKind)(0),                                                       // 109: gitpod.v1.RunnerKind
 	(*durationpb.Duration)(nil),                                           // 110: google.protobuf.Duration
 	(*Secret_CredentialProxy)(nil),                                        // 111: gitpod.v1.Secret.CredentialProxy
-	(*AutomationTrigger)(nil),                                             // 112: gitpod.v1.AutomationTrigger
-	(*ListEnvironmentClassesRequest)(nil),                                 // 113: gitpod.v1.ListEnvironmentClassesRequest
-	(*ListEnvironmentClassesResponse)(nil),                                // 114: gitpod.v1.ListEnvironmentClassesResponse
+	(*Secret_Source)(nil),                                                 // 112: gitpod.v1.Secret.Source
+	(*AutomationTrigger)(nil),                                             // 113: gitpod.v1.AutomationTrigger
+	(*ListEnvironmentClassesRequest)(nil),                                 // 114: gitpod.v1.ListEnvironmentClassesRequest
+	(*ListEnvironmentClassesResponse)(nil),                                // 115: gitpod.v1.ListEnvironmentClassesResponse
 }
 var file_gitpod_v1_environment_proto_depIdxs = []int32{
 	20,  // 0: gitpod.v1.MarkEnvironmentActiveRequest.activity_signal:type_name -> gitpod.v1.EnvironmentActivitySignal
@@ -7352,71 +7370,72 @@ var file_gitpod_v1_environment_proto_depIdxs = []int32{
 	8,   // 79: gitpod.v1.EnvironmentSpec.DevContainer.lifecycle_stage:type_name -> gitpod.v1.EnvironmentSpec.DevContainer.LifecycleStage
 	9,   // 80: gitpod.v1.EnvironmentSpec.Secret.scope:type_name -> gitpod.v1.EnvironmentSpec.Secret.Scope
 	111, // 81: gitpod.v1.EnvironmentSpec.Secret.credential_proxy:type_name -> gitpod.v1.Secret.CredentialProxy
-	3,   // 82: gitpod.v1.EnvironmentSpec.EnvironmentPort.admission:type_name -> gitpod.v1.AdmissionLevel
-	10,  // 83: gitpod.v1.EnvironmentSpec.EnvironmentPort.protocol:type_name -> gitpod.v1.EnvironmentSpec.EnvironmentPort.Protocol
-	112, // 84: gitpod.v1.EnvironmentSpec.AutomationsFile.trigger_filter:type_name -> gitpod.v1.AutomationTrigger
-	84,  // 85: gitpod.v1.EnvironmentStatus.EnvironmentURLs.ssh:type_name -> gitpod.v1.EnvironmentStatus.EnvironmentSSHURL
-	83,  // 86: gitpod.v1.EnvironmentStatus.EnvironmentURLs.ports:type_name -> gitpod.v1.EnvironmentStatus.EnvironmentPortURL
-	12,  // 87: gitpod.v1.EnvironmentStatus.Machine.phase:type_name -> gitpod.v1.EnvironmentStatus.Machine.Phase
-	93,  // 88: gitpod.v1.EnvironmentStatus.Machine.versions:type_name -> gitpod.v1.EnvironmentStatus.Machine.Versions
-	11,  // 89: gitpod.v1.EnvironmentStatus.Content.phase:type_name -> gitpod.v1.EnvironmentStatus.ContentPhase
-	45,  // 90: gitpod.v1.EnvironmentStatus.Content.git:type_name -> gitpod.v1.EnvironmentGitStatus
-	11,  // 91: gitpod.v1.EnvironmentStatus.Secret.phase:type_name -> gitpod.v1.EnvironmentStatus.ContentPhase
-	13,  // 92: gitpod.v1.EnvironmentStatus.DevContainer.phase:type_name -> gitpod.v1.EnvironmentStatus.DevContainer.Phase
-	14,  // 93: gitpod.v1.EnvironmentStatus.DevContainer.devcontainer_file_presence:type_name -> gitpod.v1.EnvironmentStatus.DevContainer.Presence
-	15,  // 94: gitpod.v1.EnvironmentStatus.RunnerACK.status_code:type_name -> gitpod.v1.EnvironmentStatus.RunnerACK.StatusCode
-	11,  // 95: gitpod.v1.EnvironmentStatus.SSHPublicKey.phase:type_name -> gitpod.v1.EnvironmentStatus.ContentPhase
-	11,  // 96: gitpod.v1.EnvironmentStatus.AutomationsFile.phase:type_name -> gitpod.v1.EnvironmentStatus.ContentPhase
-	16,  // 97: gitpod.v1.EnvironmentStatus.AutomationsFile.automations_file_presence:type_name -> gitpod.v1.EnvironmentStatus.AutomationsFile.Presence
-	49,  // 98: gitpod.v1.EnvironmentInitializer.Spec.git:type_name -> gitpod.v1.GitInitializer
-	48,  // 99: gitpod.v1.EnvironmentInitializer.Spec.context_url:type_name -> gitpod.v1.ContextURLInitializer
-	47,  // 100: gitpod.v1.UpdateEnvironmentRequest.Content.initializer:type_name -> gitpod.v1.EnvironmentInitializer
-	110, // 101: gitpod.v1.UpdateEnvironmentRequest.Timeout.disconnected:type_name -> google.protobuf.Duration
-	102, // 102: gitpod.v1.UpdateEnvironmentRequest.Metadata.lockdown_at:type_name -> google.protobuf.Timestamp
-	95,  // 103: gitpod.v1.UpdateEnvironmentRequest.Spec.content:type_name -> gitpod.v1.UpdateEnvironmentRequest.Content
-	96,  // 104: gitpod.v1.UpdateEnvironmentRequest.Spec.ssh_public_keys:type_name -> gitpod.v1.UpdateEnvironmentRequest.SSHPublicKey
-	97,  // 105: gitpod.v1.UpdateEnvironmentRequest.Spec.devcontainer:type_name -> gitpod.v1.UpdateEnvironmentRequest.DevContainer
-	79,  // 106: gitpod.v1.UpdateEnvironmentRequest.Spec.ports:type_name -> gitpod.v1.EnvironmentSpec.EnvironmentPort
-	98,  // 107: gitpod.v1.UpdateEnvironmentRequest.Spec.timeout:type_name -> gitpod.v1.UpdateEnvironmentRequest.Timeout
-	99,  // 108: gitpod.v1.UpdateEnvironmentRequest.Spec.automations_file:type_name -> gitpod.v1.UpdateEnvironmentRequest.AutomationsFile
-	42,  // 109: gitpod.v1.UpdateEnvironmentRequest.Spec.kernel_controls_config:type_name -> gitpod.v1.KernelControlsConfig
-	22,  // 110: gitpod.v1.EnvironmentService.GetEnvironment:input_type -> gitpod.v1.GetEnvironmentRequest
-	24,  // 111: gitpod.v1.EnvironmentService.ListEnvironments:input_type -> gitpod.v1.ListEnvironmentsRequest
-	113, // 112: gitpod.v1.EnvironmentService.ListEnvironmentClasses:input_type -> gitpod.v1.ListEnvironmentClassesRequest
-	26,  // 113: gitpod.v1.EnvironmentService.CreateEnvironment:input_type -> gitpod.v1.CreateEnvironmentRequest
-	28,  // 114: gitpod.v1.EnvironmentService.CreateEnvironmentFromProject:input_type -> gitpod.v1.CreateEnvironmentFromProjectRequest
-	50,  // 115: gitpod.v1.EnvironmentService.StartEnvironment:input_type -> gitpod.v1.StartEnvironmentRequest
-	52,  // 116: gitpod.v1.EnvironmentService.StopEnvironment:input_type -> gitpod.v1.StopEnvironmentRequest
-	54,  // 117: gitpod.v1.EnvironmentService.UpdateEnvironment:input_type -> gitpod.v1.UpdateEnvironmentRequest
-	56,  // 118: gitpod.v1.EnvironmentService.DeleteEnvironment:input_type -> gitpod.v1.DeleteEnvironmentRequest
-	58,  // 119: gitpod.v1.EnvironmentService.CreateEnvironmentLogsToken:input_type -> gitpod.v1.CreateEnvironmentLogsTokenRequest
-	60,  // 120: gitpod.v1.EnvironmentService.CreateEnvironmentAccessToken:input_type -> gitpod.v1.CreateEnvironmentAccessTokenRequest
-	62,  // 121: gitpod.v1.EnvironmentService.CreatePortAccessToken:input_type -> gitpod.v1.CreatePortAccessTokenRequest
-	64,  // 122: gitpod.v1.EnvironmentService.AllowPortAccess:input_type -> gitpod.v1.AllowPortAccessRequest
-	19,  // 123: gitpod.v1.EnvironmentService.MarkEnvironmentActive:input_type -> gitpod.v1.MarkEnvironmentActiveRequest
-	32,  // 124: gitpod.v1.EnvironmentService.UnarchiveEnvironment:input_type -> gitpod.v1.UnarchiveEnvironmentRequest
-	34,  // 125: gitpod.v1.EnvironmentService.ArchiveEnvironment:input_type -> gitpod.v1.ArchiveEnvironmentRequest
-	23,  // 126: gitpod.v1.EnvironmentService.GetEnvironment:output_type -> gitpod.v1.GetEnvironmentResponse
-	25,  // 127: gitpod.v1.EnvironmentService.ListEnvironments:output_type -> gitpod.v1.ListEnvironmentsResponse
-	114, // 128: gitpod.v1.EnvironmentService.ListEnvironmentClasses:output_type -> gitpod.v1.ListEnvironmentClassesResponse
-	27,  // 129: gitpod.v1.EnvironmentService.CreateEnvironment:output_type -> gitpod.v1.CreateEnvironmentResponse
-	29,  // 130: gitpod.v1.EnvironmentService.CreateEnvironmentFromProject:output_type -> gitpod.v1.CreateEnvironmentFromProjectResponse
-	51,  // 131: gitpod.v1.EnvironmentService.StartEnvironment:output_type -> gitpod.v1.StartEnvironmentResponse
-	53,  // 132: gitpod.v1.EnvironmentService.StopEnvironment:output_type -> gitpod.v1.StopEnvironmentResponse
-	55,  // 133: gitpod.v1.EnvironmentService.UpdateEnvironment:output_type -> gitpod.v1.UpdateEnvironmentResponse
-	57,  // 134: gitpod.v1.EnvironmentService.DeleteEnvironment:output_type -> gitpod.v1.DeleteEnvironmentResponse
-	59,  // 135: gitpod.v1.EnvironmentService.CreateEnvironmentLogsToken:output_type -> gitpod.v1.CreateEnvironmentLogsTokenResponse
-	61,  // 136: gitpod.v1.EnvironmentService.CreateEnvironmentAccessToken:output_type -> gitpod.v1.CreateEnvironmentAccessTokenResponse
-	63,  // 137: gitpod.v1.EnvironmentService.CreatePortAccessToken:output_type -> gitpod.v1.CreatePortAccessTokenResponse
-	65,  // 138: gitpod.v1.EnvironmentService.AllowPortAccess:output_type -> gitpod.v1.AllowPortAccessResponse
-	21,  // 139: gitpod.v1.EnvironmentService.MarkEnvironmentActive:output_type -> gitpod.v1.MarkEnvironmentActiveResponse
-	33,  // 140: gitpod.v1.EnvironmentService.UnarchiveEnvironment:output_type -> gitpod.v1.UnarchiveEnvironmentResponse
-	35,  // 141: gitpod.v1.EnvironmentService.ArchiveEnvironment:output_type -> gitpod.v1.ArchiveEnvironmentResponse
-	126, // [126:142] is the sub-list for method output_type
-	110, // [110:126] is the sub-list for method input_type
-	110, // [110:110] is the sub-list for extension type_name
-	110, // [110:110] is the sub-list for extension extendee
-	0,   // [0:110] is the sub-list for field type_name
+	112, // 82: gitpod.v1.EnvironmentSpec.Secret.source_details:type_name -> gitpod.v1.Secret.Source
+	3,   // 83: gitpod.v1.EnvironmentSpec.EnvironmentPort.admission:type_name -> gitpod.v1.AdmissionLevel
+	10,  // 84: gitpod.v1.EnvironmentSpec.EnvironmentPort.protocol:type_name -> gitpod.v1.EnvironmentSpec.EnvironmentPort.Protocol
+	113, // 85: gitpod.v1.EnvironmentSpec.AutomationsFile.trigger_filter:type_name -> gitpod.v1.AutomationTrigger
+	84,  // 86: gitpod.v1.EnvironmentStatus.EnvironmentURLs.ssh:type_name -> gitpod.v1.EnvironmentStatus.EnvironmentSSHURL
+	83,  // 87: gitpod.v1.EnvironmentStatus.EnvironmentURLs.ports:type_name -> gitpod.v1.EnvironmentStatus.EnvironmentPortURL
+	12,  // 88: gitpod.v1.EnvironmentStatus.Machine.phase:type_name -> gitpod.v1.EnvironmentStatus.Machine.Phase
+	93,  // 89: gitpod.v1.EnvironmentStatus.Machine.versions:type_name -> gitpod.v1.EnvironmentStatus.Machine.Versions
+	11,  // 90: gitpod.v1.EnvironmentStatus.Content.phase:type_name -> gitpod.v1.EnvironmentStatus.ContentPhase
+	45,  // 91: gitpod.v1.EnvironmentStatus.Content.git:type_name -> gitpod.v1.EnvironmentGitStatus
+	11,  // 92: gitpod.v1.EnvironmentStatus.Secret.phase:type_name -> gitpod.v1.EnvironmentStatus.ContentPhase
+	13,  // 93: gitpod.v1.EnvironmentStatus.DevContainer.phase:type_name -> gitpod.v1.EnvironmentStatus.DevContainer.Phase
+	14,  // 94: gitpod.v1.EnvironmentStatus.DevContainer.devcontainer_file_presence:type_name -> gitpod.v1.EnvironmentStatus.DevContainer.Presence
+	15,  // 95: gitpod.v1.EnvironmentStatus.RunnerACK.status_code:type_name -> gitpod.v1.EnvironmentStatus.RunnerACK.StatusCode
+	11,  // 96: gitpod.v1.EnvironmentStatus.SSHPublicKey.phase:type_name -> gitpod.v1.EnvironmentStatus.ContentPhase
+	11,  // 97: gitpod.v1.EnvironmentStatus.AutomationsFile.phase:type_name -> gitpod.v1.EnvironmentStatus.ContentPhase
+	16,  // 98: gitpod.v1.EnvironmentStatus.AutomationsFile.automations_file_presence:type_name -> gitpod.v1.EnvironmentStatus.AutomationsFile.Presence
+	49,  // 99: gitpod.v1.EnvironmentInitializer.Spec.git:type_name -> gitpod.v1.GitInitializer
+	48,  // 100: gitpod.v1.EnvironmentInitializer.Spec.context_url:type_name -> gitpod.v1.ContextURLInitializer
+	47,  // 101: gitpod.v1.UpdateEnvironmentRequest.Content.initializer:type_name -> gitpod.v1.EnvironmentInitializer
+	110, // 102: gitpod.v1.UpdateEnvironmentRequest.Timeout.disconnected:type_name -> google.protobuf.Duration
+	102, // 103: gitpod.v1.UpdateEnvironmentRequest.Metadata.lockdown_at:type_name -> google.protobuf.Timestamp
+	95,  // 104: gitpod.v1.UpdateEnvironmentRequest.Spec.content:type_name -> gitpod.v1.UpdateEnvironmentRequest.Content
+	96,  // 105: gitpod.v1.UpdateEnvironmentRequest.Spec.ssh_public_keys:type_name -> gitpod.v1.UpdateEnvironmentRequest.SSHPublicKey
+	97,  // 106: gitpod.v1.UpdateEnvironmentRequest.Spec.devcontainer:type_name -> gitpod.v1.UpdateEnvironmentRequest.DevContainer
+	79,  // 107: gitpod.v1.UpdateEnvironmentRequest.Spec.ports:type_name -> gitpod.v1.EnvironmentSpec.EnvironmentPort
+	98,  // 108: gitpod.v1.UpdateEnvironmentRequest.Spec.timeout:type_name -> gitpod.v1.UpdateEnvironmentRequest.Timeout
+	99,  // 109: gitpod.v1.UpdateEnvironmentRequest.Spec.automations_file:type_name -> gitpod.v1.UpdateEnvironmentRequest.AutomationsFile
+	42,  // 110: gitpod.v1.UpdateEnvironmentRequest.Spec.kernel_controls_config:type_name -> gitpod.v1.KernelControlsConfig
+	22,  // 111: gitpod.v1.EnvironmentService.GetEnvironment:input_type -> gitpod.v1.GetEnvironmentRequest
+	24,  // 112: gitpod.v1.EnvironmentService.ListEnvironments:input_type -> gitpod.v1.ListEnvironmentsRequest
+	114, // 113: gitpod.v1.EnvironmentService.ListEnvironmentClasses:input_type -> gitpod.v1.ListEnvironmentClassesRequest
+	26,  // 114: gitpod.v1.EnvironmentService.CreateEnvironment:input_type -> gitpod.v1.CreateEnvironmentRequest
+	28,  // 115: gitpod.v1.EnvironmentService.CreateEnvironmentFromProject:input_type -> gitpod.v1.CreateEnvironmentFromProjectRequest
+	50,  // 116: gitpod.v1.EnvironmentService.StartEnvironment:input_type -> gitpod.v1.StartEnvironmentRequest
+	52,  // 117: gitpod.v1.EnvironmentService.StopEnvironment:input_type -> gitpod.v1.StopEnvironmentRequest
+	54,  // 118: gitpod.v1.EnvironmentService.UpdateEnvironment:input_type -> gitpod.v1.UpdateEnvironmentRequest
+	56,  // 119: gitpod.v1.EnvironmentService.DeleteEnvironment:input_type -> gitpod.v1.DeleteEnvironmentRequest
+	58,  // 120: gitpod.v1.EnvironmentService.CreateEnvironmentLogsToken:input_type -> gitpod.v1.CreateEnvironmentLogsTokenRequest
+	60,  // 121: gitpod.v1.EnvironmentService.CreateEnvironmentAccessToken:input_type -> gitpod.v1.CreateEnvironmentAccessTokenRequest
+	62,  // 122: gitpod.v1.EnvironmentService.CreatePortAccessToken:input_type -> gitpod.v1.CreatePortAccessTokenRequest
+	64,  // 123: gitpod.v1.EnvironmentService.AllowPortAccess:input_type -> gitpod.v1.AllowPortAccessRequest
+	19,  // 124: gitpod.v1.EnvironmentService.MarkEnvironmentActive:input_type -> gitpod.v1.MarkEnvironmentActiveRequest
+	32,  // 125: gitpod.v1.EnvironmentService.UnarchiveEnvironment:input_type -> gitpod.v1.UnarchiveEnvironmentRequest
+	34,  // 126: gitpod.v1.EnvironmentService.ArchiveEnvironment:input_type -> gitpod.v1.ArchiveEnvironmentRequest
+	23,  // 127: gitpod.v1.EnvironmentService.GetEnvironment:output_type -> gitpod.v1.GetEnvironmentResponse
+	25,  // 128: gitpod.v1.EnvironmentService.ListEnvironments:output_type -> gitpod.v1.ListEnvironmentsResponse
+	115, // 129: gitpod.v1.EnvironmentService.ListEnvironmentClasses:output_type -> gitpod.v1.ListEnvironmentClassesResponse
+	27,  // 130: gitpod.v1.EnvironmentService.CreateEnvironment:output_type -> gitpod.v1.CreateEnvironmentResponse
+	29,  // 131: gitpod.v1.EnvironmentService.CreateEnvironmentFromProject:output_type -> gitpod.v1.CreateEnvironmentFromProjectResponse
+	51,  // 132: gitpod.v1.EnvironmentService.StartEnvironment:output_type -> gitpod.v1.StartEnvironmentResponse
+	53,  // 133: gitpod.v1.EnvironmentService.StopEnvironment:output_type -> gitpod.v1.StopEnvironmentResponse
+	55,  // 134: gitpod.v1.EnvironmentService.UpdateEnvironment:output_type -> gitpod.v1.UpdateEnvironmentResponse
+	57,  // 135: gitpod.v1.EnvironmentService.DeleteEnvironment:output_type -> gitpod.v1.DeleteEnvironmentResponse
+	59,  // 136: gitpod.v1.EnvironmentService.CreateEnvironmentLogsToken:output_type -> gitpod.v1.CreateEnvironmentLogsTokenResponse
+	61,  // 137: gitpod.v1.EnvironmentService.CreateEnvironmentAccessToken:output_type -> gitpod.v1.CreateEnvironmentAccessTokenResponse
+	63,  // 138: gitpod.v1.EnvironmentService.CreatePortAccessToken:output_type -> gitpod.v1.CreatePortAccessTokenResponse
+	65,  // 139: gitpod.v1.EnvironmentService.AllowPortAccess:output_type -> gitpod.v1.AllowPortAccessResponse
+	21,  // 140: gitpod.v1.EnvironmentService.MarkEnvironmentActive:output_type -> gitpod.v1.MarkEnvironmentActiveResponse
+	33,  // 141: gitpod.v1.EnvironmentService.UnarchiveEnvironment:output_type -> gitpod.v1.UnarchiveEnvironmentResponse
+	35,  // 142: gitpod.v1.EnvironmentService.ArchiveEnvironment:output_type -> gitpod.v1.ArchiveEnvironmentResponse
+	127, // [127:143] is the sub-list for method output_type
+	111, // [111:127] is the sub-list for method input_type
+	111, // [111:111] is the sub-list for extension type_name
+	111, // [111:111] is the sub-list for extension extendee
+	0,   // [0:111] is the sub-list for field type_name
 }
 
 func init() { file_gitpod_v1_environment_proto_init() }

@@ -15,6 +15,13 @@ The provider is currently beta software. The current published release is
 - [Source code](./)
 - [Changelog](CHANGELOG.md)
 
+This provider is built with the
+[Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework).
+
+The module includes the copied generated public API client under
+`api/public-clients/go` so it can build without importing private monorepo Go
+modules.
+
 ## Requirements
 
 Use Terraform CLI `1.14` or later. The published beta supports:

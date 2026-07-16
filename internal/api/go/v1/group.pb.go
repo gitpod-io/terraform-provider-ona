@@ -10,6 +10,7 @@ import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/logfields"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/stainless"
+	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -2330,7 +2331,7 @@ var File_gitpod_v1_group_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_group_proto_rawDesc = "" +
 	"\n" +
-	"\x15gitpod/v1/group.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x15gitpod/v1/event.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xfd\x04\n" +
+	"\x15gitpod/v1/group.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x15gitpod/v1/event.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xfd\x04\n" +
 	"\x11ListGroupsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
@@ -2353,45 +2354,45 @@ const file_gitpod_v1_group_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12(\n" +
-	"\x06groups\x18\x02 \x03(\v2\x10.gitpod.v1.GroupR\x06groups\"\xa5\x03\n" +
-	"\x05Group\x12&\n" +
-	"\x02id\x18\x01 \x01(\tB\x16\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
+	"\x06groups\x18\x02 \x03(\v2\x10.gitpod.v1.GroupR\x06groups\"\xd9\x03\n" +
+	"\x05Group\x12*\n" +
+	"\x02id\x18\x01 \x01(\tB\x1a\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
 	"\n" +
-	"\bgroup.idR\x02id\x12F\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\x1d\n" +
-	"\x04name\x18\x03 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18PR\x04name\x12%\n" +
-	"\x0esystem_managed\x18\x04 \x01(\bR\rsystemManaged\x129\n" +
+	"\bgroup.idګ\x1e\x00R\x02id\x12J\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB!\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
+	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12!\n" +
+	"\x04name\x18\x03 \x01(\tB\r\xbaH\x06r\x04\x10\x03\x18Pګ\x1e\x00R\x04name\x12+\n" +
+	"\x0esystem_managed\x18\x04 \x01(\bB\x04ګ\x1e\x00R\rsystemManaged\x12?\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tcreatedAt\x12?\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12*\n" +
-	"\vdescription\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\vdescription\x12!\n" +
-	"\fmember_count\x18\b \x01(\x05R\vmemberCount\x12!\n" +
-	"\fdirect_share\x18\t \x01(\bR\vdirectShare\"\xd2\x01\n" +
-	"\x0fGroupMembership\x12+\n" +
-	"\x02id\x18\x01 \x01(\tB\x1b\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x0f\n" +
-	"\rmembership.idR\x02id\x12,\n" +
-	"\asubject\x18\x02 \x01(\v2\x12.gitpod.v1.SubjectR\asubject\x121\n" +
-	"\bgroup_id\x18\x03 \x01(\tB\x16\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
+	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tupdatedAt\x12.\n" +
+	"\vdescription\x18\a \x01(\tB\f\xbaH\x05r\x03\x18\xff\x01ګ\x1e\x00R\vdescription\x12'\n" +
+	"\fmember_count\x18\b \x01(\x05B\x04ګ\x1e\x00R\vmemberCount\x12'\n" +
+	"\fdirect_share\x18\t \x01(\bB\x04ګ\x1e\x00R\vdirectShare:\x04ҫ\x1e\x00\"\xf2\x01\n" +
+	"\x0fGroupMembership\x12/\n" +
+	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x0f\n" +
+	"\rmembership.idګ\x1e\x00R\x02id\x122\n" +
+	"\asubject\x18\x02 \x01(\v2\x12.gitpod.v1.SubjectB\x04ګ\x1e\x00R\asubject\x125\n" +
+	"\bgroup_id\x18\x03 \x01(\tB\x1a\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
 	"\n" +
-	"\bgroup.idR\agroupId\x12\x12\n" +
-	"\x04name\x18\x04 \x01(\tR\x04name\x12\x1d\n" +
+	"\bgroup.idګ\x1e\x00R\agroupId\x12\x18\n" +
+	"\x04name\x18\x04 \x01(\tB\x04ګ\x1e\x00R\x04name\x12#\n" +
 	"\n" +
-	"avatar_url\x18\x05 \x01(\tR\tavatarUrl\"\xca\x03\n" +
-	"\x0eRoleAssignment\x12+\n" +
-	"\x02id\x18\x01 \x01(\tB\x1b\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x0f\n" +
-	"\rassignment.idR\x02id\x121\n" +
-	"\bgroup_id\x18\x02 \x01(\tB\x16\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
+	"avatar_url\x18\x05 \x01(\tB\x04ګ\x1e\x00R\tavatarUrl:\x04ҫ\x1e\x00\"\xec\x03\n" +
+	"\x0eRoleAssignment\x12/\n" +
+	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x0f\n" +
+	"\rassignment.idګ\x1e\x00R\x02id\x125\n" +
+	"\bgroup_id\x18\x02 \x01(\tB\x1a\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
 	"\n" +
-	"\bgroup.idR\agroupId\x12F\n" +
-	"\x0forganization_id\x18\x03 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12)\n" +
-	"\vresource_id\x18\x04 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
-	"resourceId\x12<\n" +
-	"\rresource_type\x18\x05 \x01(\x0e2\x17.gitpod.v1.ResourceTypeR\fresourceType\x12<\n" +
-	"\rresource_role\x18\x06 \x01(\x0e2\x17.gitpod.v1.ResourceRoleR\fresourceRole\x12O\n" +
-	"\x15derived_from_org_role\x18\a \x01(\x0e2\x17.gitpod.v1.ResourceRoleH\x00R\x12derivedFromOrgRole\x88\x01\x01B\x18\n" +
+	"\bgroup.idګ\x1e\x00R\agroupId\x12J\n" +
+	"\x0forganization_id\x18\x03 \x01(\tB!\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
+	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12-\n" +
+	"\vresource_id\x18\x04 \x01(\tB\f\xbaH\x05r\x03\xb0\x01\x01ګ\x1e\x00R\n" +
+	"resourceId\x12B\n" +
+	"\rresource_type\x18\x05 \x01(\x0e2\x17.gitpod.v1.ResourceTypeB\x04ګ\x1e\x00R\fresourceType\x12B\n" +
+	"\rresource_role\x18\x06 \x01(\x0e2\x17.gitpod.v1.ResourceRoleB\x04ګ\x1e\x00R\fresourceRole\x12O\n" +
+	"\x15derived_from_org_role\x18\a \x01(\x0e2\x17.gitpod.v1.ResourceRoleH\x00R\x12derivedFromOrgRole\x88\x01\x01:\x04ҫ\x1e\x00B\x18\n" +
 	"\x16_derived_from_org_role\"\xa7\x01\n" +
 	"\x12CreateGroupRequest\x12F\n" +
 	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +

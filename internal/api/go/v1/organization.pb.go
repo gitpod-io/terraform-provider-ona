@@ -10,6 +10,7 @@ import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/logfields"
 	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/stainless"
+	_ "github.com/gitpod-io/terraform-provider-ona/internal/api/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -278,6 +279,59 @@ func (ConversationSharingPolicy) EnumDescriptor() ([]byte, []int) {
 	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{4}
 }
 
+// CodexModelPolicyState describes an explicit per-model Codex availability override.
+type CodexModelPolicyState int32
+
+const (
+	// Unspecified is treated as allowed.
+	CodexModelPolicyState_CODEX_MODEL_POLICY_STATE_UNSPECIFIED CodexModelPolicyState = 0
+	// Explicitly allowed. Equivalent to omitting the model from the policy.
+	CodexModelPolicyState_CODEX_MODEL_POLICY_STATE_ALLOWED CodexModelPolicyState = 1
+	// Explicitly disabled.
+	CodexModelPolicyState_CODEX_MODEL_POLICY_STATE_DISABLED CodexModelPolicyState = 2
+)
+
+// Enum value maps for CodexModelPolicyState.
+var (
+	CodexModelPolicyState_name = map[int32]string{
+		0: "CODEX_MODEL_POLICY_STATE_UNSPECIFIED",
+		1: "CODEX_MODEL_POLICY_STATE_ALLOWED",
+		2: "CODEX_MODEL_POLICY_STATE_DISABLED",
+	}
+	CodexModelPolicyState_value = map[string]int32{
+		"CODEX_MODEL_POLICY_STATE_UNSPECIFIED": 0,
+		"CODEX_MODEL_POLICY_STATE_ALLOWED":     1,
+		"CODEX_MODEL_POLICY_STATE_DISABLED":    2,
+	}
+)
+
+func (x CodexModelPolicyState) Enum() *CodexModelPolicyState {
+	p := new(CodexModelPolicyState)
+	*p = x
+	return p
+}
+
+func (x CodexModelPolicyState) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CodexModelPolicyState) Descriptor() protoreflect.EnumDescriptor {
+	return file_gitpod_v1_organization_proto_enumTypes[5].Descriptor()
+}
+
+func (CodexModelPolicyState) Type() protoreflect.EnumType {
+	return &file_gitpod_v1_organization_proto_enumTypes[5]
+}
+
+func (x CodexModelPolicyState) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CodexModelPolicyState.Descriptor instead.
+func (CodexModelPolicyState) EnumDescriptor() ([]byte, []int) {
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{5}
+}
+
 type TermsOfServiceAcceptanceStatus int32
 
 const (
@@ -311,11 +365,11 @@ func (x TermsOfServiceAcceptanceStatus) String() string {
 }
 
 func (TermsOfServiceAcceptanceStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_gitpod_v1_organization_proto_enumTypes[5].Descriptor()
+	return file_gitpod_v1_organization_proto_enumTypes[6].Descriptor()
 }
 
 func (TermsOfServiceAcceptanceStatus) Type() protoreflect.EnumType {
-	return &file_gitpod_v1_organization_proto_enumTypes[5]
+	return &file_gitpod_v1_organization_proto_enumTypes[6]
 }
 
 func (x TermsOfServiceAcceptanceStatus) Number() protoreflect.EnumNumber {
@@ -324,7 +378,7 @@ func (x TermsOfServiceAcceptanceStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use TermsOfServiceAcceptanceStatus.Descriptor instead.
 func (TermsOfServiceAcceptanceStatus) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{5}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{6}
 }
 
 // CustomDomainProvider represents the cloud provider for custom domain configuration
@@ -361,11 +415,11 @@ func (x CustomDomainProvider) String() string {
 }
 
 func (CustomDomainProvider) Descriptor() protoreflect.EnumDescriptor {
-	return file_gitpod_v1_organization_proto_enumTypes[6].Descriptor()
+	return file_gitpod_v1_organization_proto_enumTypes[7].Descriptor()
 }
 
 func (CustomDomainProvider) Type() protoreflect.EnumType {
-	return &file_gitpod_v1_organization_proto_enumTypes[6]
+	return &file_gitpod_v1_organization_proto_enumTypes[7]
 }
 
 func (x CustomDomainProvider) Number() protoreflect.EnumNumber {
@@ -374,7 +428,7 @@ func (x CustomDomainProvider) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CustomDomainProvider.Descriptor instead.
 func (CustomDomainProvider) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{6}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{7}
 }
 
 type ListMembersRequest_SortField int32
@@ -412,11 +466,11 @@ func (x ListMembersRequest_SortField) String() string {
 }
 
 func (ListMembersRequest_SortField) Descriptor() protoreflect.EnumDescriptor {
-	return file_gitpod_v1_organization_proto_enumTypes[7].Descriptor()
+	return file_gitpod_v1_organization_proto_enumTypes[8].Descriptor()
 }
 
 func (ListMembersRequest_SortField) Type() protoreflect.EnumType {
-	return &file_gitpod_v1_organization_proto_enumTypes[7]
+	return &file_gitpod_v1_organization_proto_enumTypes[8]
 }
 
 func (x ListMembersRequest_SortField) Number() protoreflect.EnumNumber {
@@ -461,11 +515,11 @@ func (x SSOConfiguration_ProviderType) String() string {
 }
 
 func (SSOConfiguration_ProviderType) Descriptor() protoreflect.EnumDescriptor {
-	return file_gitpod_v1_organization_proto_enumTypes[8].Descriptor()
+	return file_gitpod_v1_organization_proto_enumTypes[9].Descriptor()
 }
 
 func (SSOConfiguration_ProviderType) Type() protoreflect.EnumType {
-	return &file_gitpod_v1_organization_proto_enumTypes[8]
+	return &file_gitpod_v1_organization_proto_enumTypes[9]
 }
 
 func (x SSOConfiguration_ProviderType) Number() protoreflect.EnumNumber {
@@ -4120,8 +4174,10 @@ type OrganizationPolicies struct {
 	DisableFromScratch bool `protobuf:"varint,25,opt,name=disable_from_scratch,json=disableFromScratch,proto3" json:"disable_from_scratch,omitempty"`
 	// veto_file_policy contains veto-file policy for environments.
 	VetoFilePolicy *VetoFilePolicy `protobuf:"bytes,26,opt,name=veto_file_policy,json=vetoFilePolicy,proto3" json:"veto_file_policy,omitempty"`
-	// security_policy_id references the security policy assigned to newly created environments.
-	// If empty, new environments have no security policy by default.
+	// security_policy_id references the Veto Exec SecurityPolicy assigned to newly created environments.
+	// The public GA contract accepts policies that use only SecurityPolicy.Spec.executables.
+	// Assignment validates materializability and rejects unsupported executable selectors or effects.
+	// If empty, new environments have no SecurityPolicy by default.
 	SecurityPolicyId string `protobuf:"bytes,27,opt,name=security_policy_id,json=securityPolicyId,proto3" json:"security_policy_id,omitempty"`
 	// archive_environments_after controls how long stopped environments remain inactive
 	// before archival. Enterprise only. Must be a whole number of days. Minimum
@@ -4531,6 +4587,53 @@ func (x *EditorVersionPolicy) GetAllowedVersions() []string {
 	return nil
 }
 
+// CodexModelPolicy controls per-model availability for Codex.
+type CodexModelPolicy struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// model_states maps CodexOpenAIModel enum names to explicit policy states.
+	// Missing entries are treated as allowed.
+	ModelStates   map[string]CodexModelPolicyState `protobuf:"bytes,1,rep,name=model_states,json=modelStates,proto3" json:"model_states,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value,enum=gitpod.v1.CodexModelPolicyState"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CodexModelPolicy) Reset() {
+	*x = CodexModelPolicy{}
+	mi := &file_gitpod_v1_organization_proto_msgTypes[67]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CodexModelPolicy) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CodexModelPolicy) ProtoMessage() {}
+
+func (x *CodexModelPolicy) ProtoReflect() protoreflect.Message {
+	mi := &file_gitpod_v1_organization_proto_msgTypes[67]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CodexModelPolicy.ProtoReflect.Descriptor instead.
+func (*CodexModelPolicy) Descriptor() ([]byte, []int) {
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{67}
+}
+
+func (x *CodexModelPolicy) GetModelStates() map[string]CodexModelPolicyState {
+	if x != nil {
+		return x.ModelStates
+	}
+	return nil
+}
+
 // AgentPolicy contains agent-specific policy settings for an organization
 type AgentPolicy struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -4552,8 +4655,11 @@ type AgentPolicy struct {
 	// allowed_agent_ids contains the agent IDs users may select when the
 	// codex_rollout feature flag is enabled. Empty means all agents are allowed.
 	AllowedAgentIds []string `protobuf:"bytes,7,rep,name=allowed_agent_ids,json=allowedAgentIds,proto3" json:"allowed_agent_ids,omitempty"`
-	// allowed_codex_models contains the Codex models users may select when the
-	// codex_rollout feature flag is enabled. Empty means all Codex models are allowed.
+	// Deprecated: use codex_model_policy. This legacy allowlist cannot distinguish
+	// omitted from intentionally empty on update requests. Empty means all Codex
+	// models are allowed.
+	//
+	// Deprecated: Marked as deprecated in gitpod/v1/organization.proto.
 	AllowedCodexModels []CodexOpenAIModel `protobuf:"varint,8,rep,packed,name=allowed_codex_models,json=allowedCodexModels,proto3,enum=gitpod.v1.CodexOpenAIModel" json:"allowed_codex_models,omitempty"`
 	// allowed_codex_reasoning_efforts contains the Codex reasoning efforts users
 	// may select when the codex_rollout feature flag is enabled. Empty means all
@@ -4565,13 +4671,16 @@ type AgentPolicy struct {
 	AllowedCodexServiceTiers []CodexServiceTier `protobuf:"varint,10,rep,packed,name=allowed_codex_service_tiers,json=allowedCodexServiceTiers,proto3,enum=gitpod.v1.CodexServiceTier" json:"allowed_codex_service_tiers,omitempty"`
 	// goal_mode_disabled controls whether Codex goal mode is disabled for the organization.
 	GoalModeDisabled bool `protobuf:"varint,11,opt,name=goal_mode_disabled,json=goalModeDisabled,proto3" json:"goal_mode_disabled,omitempty"`
+	// codex_model_policy contains explicit per-model Codex availability states.
+	// Missing policy or missing model entries mean allowed.
+	CodexModelPolicy *CodexModelPolicy `protobuf:"bytes,12,opt,name=codex_model_policy,json=codexModelPolicy,proto3" json:"codex_model_policy,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
 
 func (x *AgentPolicy) Reset() {
 	*x = AgentPolicy{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[67]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4583,7 +4692,7 @@ func (x *AgentPolicy) String() string {
 func (*AgentPolicy) ProtoMessage() {}
 
 func (x *AgentPolicy) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[67]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4596,7 +4705,7 @@ func (x *AgentPolicy) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentPolicy.ProtoReflect.Descriptor instead.
 func (*AgentPolicy) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{67}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *AgentPolicy) GetMcpDisabled() bool {
@@ -4648,6 +4757,7 @@ func (x *AgentPolicy) GetAllowedAgentIds() []string {
 	return nil
 }
 
+// Deprecated: Marked as deprecated in gitpod/v1/organization.proto.
 func (x *AgentPolicy) GetAllowedCodexModels() []CodexOpenAIModel {
 	if x != nil {
 		return x.AllowedCodexModels
@@ -4676,6 +4786,13 @@ func (x *AgentPolicy) GetGoalModeDisabled() bool {
 	return false
 }
 
+func (x *AgentPolicy) GetCodexModelPolicy() *CodexModelPolicy {
+	if x != nil {
+		return x.CodexModelPolicy
+	}
+	return nil
+}
+
 // SecurityAgentPolicy contains security agent configuration for an organization.
 // When enabled, security agents are automatically deployed to all environments.
 type SecurityAgentPolicy struct {
@@ -4690,7 +4807,7 @@ type SecurityAgentPolicy struct {
 
 func (x *SecurityAgentPolicy) Reset() {
 	*x = SecurityAgentPolicy{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[68]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4702,7 +4819,7 @@ func (x *SecurityAgentPolicy) String() string {
 func (*SecurityAgentPolicy) ProtoMessage() {}
 
 func (x *SecurityAgentPolicy) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[68]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4715,7 +4832,7 @@ func (x *SecurityAgentPolicy) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SecurityAgentPolicy.ProtoReflect.Descriptor instead.
 func (*SecurityAgentPolicy) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{68}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *SecurityAgentPolicy) GetCrowdstrike() *CrowdStrikeConfig {
@@ -4752,7 +4869,7 @@ type CrowdStrikeConfig struct {
 
 func (x *CrowdStrikeConfig) Reset() {
 	*x = CrowdStrikeConfig{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[69]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4764,7 +4881,7 @@ func (x *CrowdStrikeConfig) String() string {
 func (*CrowdStrikeConfig) ProtoMessage() {}
 
 func (x *CrowdStrikeConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[69]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4777,7 +4894,7 @@ func (x *CrowdStrikeConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CrowdStrikeConfig.ProtoReflect.Descriptor instead.
 func (*CrowdStrikeConfig) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{69}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *CrowdStrikeConfig) GetEnabled() bool {
@@ -4838,7 +4955,7 @@ type CustomSecurityAgent struct {
 
 func (x *CustomSecurityAgent) Reset() {
 	*x = CustomSecurityAgent{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[70]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4850,7 +4967,7 @@ func (x *CustomSecurityAgent) String() string {
 func (*CustomSecurityAgent) ProtoMessage() {}
 
 func (x *CustomSecurityAgent) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[70]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4863,7 +4980,7 @@ func (x *CustomSecurityAgent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CustomSecurityAgent.ProtoReflect.Descriptor instead.
 func (*CustomSecurityAgent) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{70}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *CustomSecurityAgent) GetId() string {
@@ -4922,7 +5039,7 @@ type CustomAgentEnvMapping struct {
 
 func (x *CustomAgentEnvMapping) Reset() {
 	*x = CustomAgentEnvMapping{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[71]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4934,7 +5051,7 @@ func (x *CustomAgentEnvMapping) String() string {
 func (*CustomAgentEnvMapping) ProtoMessage() {}
 
 func (x *CustomAgentEnvMapping) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[71]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4947,7 +5064,7 @@ func (x *CustomAgentEnvMapping) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CustomAgentEnvMapping.ProtoReflect.Descriptor instead.
 func (*CustomAgentEnvMapping) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{71}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{72}
 }
 
 func (x *CustomAgentEnvMapping) GetName() string {
@@ -4974,7 +5091,7 @@ type GetOrganizationPoliciesRequest struct {
 
 func (x *GetOrganizationPoliciesRequest) Reset() {
 	*x = GetOrganizationPoliciesRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[72]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4986,7 +5103,7 @@ func (x *GetOrganizationPoliciesRequest) String() string {
 func (*GetOrganizationPoliciesRequest) ProtoMessage() {}
 
 func (x *GetOrganizationPoliciesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[72]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4999,7 +5116,7 @@ func (x *GetOrganizationPoliciesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOrganizationPoliciesRequest.ProtoReflect.Descriptor instead.
 func (*GetOrganizationPoliciesRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{72}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{73}
 }
 
 func (x *GetOrganizationPoliciesRequest) GetOrganizationId() string {
@@ -5018,7 +5135,7 @@ type GetOrganizationPoliciesResponse struct {
 
 func (x *GetOrganizationPoliciesResponse) Reset() {
 	*x = GetOrganizationPoliciesResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[73]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5030,7 +5147,7 @@ func (x *GetOrganizationPoliciesResponse) String() string {
 func (*GetOrganizationPoliciesResponse) ProtoMessage() {}
 
 func (x *GetOrganizationPoliciesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[73]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5043,7 +5160,7 @@ func (x *GetOrganizationPoliciesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOrganizationPoliciesResponse.ProtoReflect.Descriptor instead.
 func (*GetOrganizationPoliciesResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{73}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{74}
 }
 
 func (x *GetOrganizationPoliciesResponse) GetPolicies() *OrganizationPolicies {
@@ -5063,7 +5180,7 @@ type GetOrganizationLLMCapabilitiesRequest struct {
 
 func (x *GetOrganizationLLMCapabilitiesRequest) Reset() {
 	*x = GetOrganizationLLMCapabilitiesRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[74]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5075,7 +5192,7 @@ func (x *GetOrganizationLLMCapabilitiesRequest) String() string {
 func (*GetOrganizationLLMCapabilitiesRequest) ProtoMessage() {}
 
 func (x *GetOrganizationLLMCapabilitiesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[74]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5088,7 +5205,7 @@ func (x *GetOrganizationLLMCapabilitiesRequest) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use GetOrganizationLLMCapabilitiesRequest.ProtoReflect.Descriptor instead.
 func (*GetOrganizationLLMCapabilitiesRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{74}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{75}
 }
 
 func (x *GetOrganizationLLMCapabilitiesRequest) GetOrganizationId() string {
@@ -5109,7 +5226,7 @@ type GetOrganizationLLMCapabilitiesResponse struct {
 
 func (x *GetOrganizationLLMCapabilitiesResponse) Reset() {
 	*x = GetOrganizationLLMCapabilitiesResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[75]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5121,7 +5238,7 @@ func (x *GetOrganizationLLMCapabilitiesResponse) String() string {
 func (*GetOrganizationLLMCapabilitiesResponse) ProtoMessage() {}
 
 func (x *GetOrganizationLLMCapabilitiesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[75]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5134,7 +5251,7 @@ func (x *GetOrganizationLLMCapabilitiesResponse) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use GetOrganizationLLMCapabilitiesResponse.ProtoReflect.Descriptor instead.
 func (*GetOrganizationLLMCapabilitiesResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{75}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{76}
 }
 
 func (x *GetOrganizationLLMCapabilitiesResponse) GetDisabledCapabilities() []LLMDisabledCapability {
@@ -5209,8 +5326,10 @@ type UpdateOrganizationPoliciesRequest struct {
 	DisableFromScratch *bool `protobuf:"varint,25,opt,name=disable_from_scratch,json=disableFromScratch,proto3,oneof" json:"disable_from_scratch,omitempty"`
 	// veto_file_policy contains veto-file policy updates.
 	VetoFilePolicy *VetoFilePolicy `protobuf:"bytes,26,opt,name=veto_file_policy,json=vetoFilePolicy,proto3,oneof" json:"veto_file_policy,omitempty"`
-	// security_policy_id references the security policy assigned to newly created environments.
-	// If set to an empty string, new environments have no security policy by default.
+	// security_policy_id assigns a Veto Exec SecurityPolicy to newly created environments.
+	// The public GA contract accepts policies that use only SecurityPolicy.Spec.executables.
+	// Assignment validates materializability and rejects unsupported executable selectors or effects.
+	// Set this field to an empty string to clear the default assignment.
 	SecurityPolicyId *string `protobuf:"bytes,27,opt,name=security_policy_id,json=securityPolicyId,proto3,oneof" json:"security_policy_id,omitempty"`
 	// archive_environments_after controls how long stopped environments remain inactive
 	// before archival. Enterprise only. Must be a whole number of days. Minimum
@@ -5222,7 +5341,7 @@ type UpdateOrganizationPoliciesRequest struct {
 
 func (x *UpdateOrganizationPoliciesRequest) Reset() {
 	*x = UpdateOrganizationPoliciesRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[76]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5234,7 +5353,7 @@ func (x *UpdateOrganizationPoliciesRequest) String() string {
 func (*UpdateOrganizationPoliciesRequest) ProtoMessage() {}
 
 func (x *UpdateOrganizationPoliciesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[76]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5247,7 +5366,7 @@ func (x *UpdateOrganizationPoliciesRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use UpdateOrganizationPoliciesRequest.ProtoReflect.Descriptor instead.
 func (*UpdateOrganizationPoliciesRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{76}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *UpdateOrganizationPoliciesRequest) GetOrganizationId() string {
@@ -5440,7 +5559,7 @@ type UpdateOrganizationPoliciesResponse struct {
 
 func (x *UpdateOrganizationPoliciesResponse) Reset() {
 	*x = UpdateOrganizationPoliciesResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[77]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5452,7 +5571,7 @@ func (x *UpdateOrganizationPoliciesResponse) String() string {
 func (*UpdateOrganizationPoliciesResponse) ProtoMessage() {}
 
 func (x *UpdateOrganizationPoliciesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[77]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5465,7 +5584,7 @@ func (x *UpdateOrganizationPoliciesResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use UpdateOrganizationPoliciesResponse.ProtoReflect.Descriptor instead.
 func (*UpdateOrganizationPoliciesResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{77}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{78}
 }
 
 // PolicyEnforcedFailedPreconditionDetails is a precondition failure details message used when a feature is limited by the organization's policy.
@@ -5487,7 +5606,7 @@ type PolicyEnforcedFailedPreconditionDetails struct {
 
 func (x *PolicyEnforcedFailedPreconditionDetails) Reset() {
 	*x = PolicyEnforcedFailedPreconditionDetails{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[78]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[79]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5499,7 +5618,7 @@ func (x *PolicyEnforcedFailedPreconditionDetails) String() string {
 func (*PolicyEnforcedFailedPreconditionDetails) ProtoMessage() {}
 
 func (x *PolicyEnforcedFailedPreconditionDetails) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[78]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[79]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5512,7 +5631,7 @@ func (x *PolicyEnforcedFailedPreconditionDetails) ProtoReflect() protoreflect.Me
 
 // Deprecated: Use PolicyEnforcedFailedPreconditionDetails.ProtoReflect.Descriptor instead.
 func (*PolicyEnforcedFailedPreconditionDetails) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{78}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{79}
 }
 
 func (x *PolicyEnforcedFailedPreconditionDetails) GetMessage() string {
@@ -5570,7 +5689,7 @@ type EnvironmentMaxLifetimeExceededDetails struct {
 
 func (x *EnvironmentMaxLifetimeExceededDetails) Reset() {
 	*x = EnvironmentMaxLifetimeExceededDetails{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[79]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[80]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5582,7 +5701,7 @@ func (x *EnvironmentMaxLifetimeExceededDetails) String() string {
 func (*EnvironmentMaxLifetimeExceededDetails) ProtoMessage() {}
 
 func (x *EnvironmentMaxLifetimeExceededDetails) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[79]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[80]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5595,7 +5714,7 @@ func (x *EnvironmentMaxLifetimeExceededDetails) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use EnvironmentMaxLifetimeExceededDetails.ProtoReflect.Descriptor instead.
 func (*EnvironmentMaxLifetimeExceededDetails) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{79}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{80}
 }
 
 func (x *EnvironmentMaxLifetimeExceededDetails) GetExpiredAt() *timestamppb.Timestamp {
@@ -5626,7 +5745,7 @@ type AnnouncementBanner struct {
 
 func (x *AnnouncementBanner) Reset() {
 	*x = AnnouncementBanner{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[80]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[81]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5638,7 +5757,7 @@ func (x *AnnouncementBanner) String() string {
 func (*AnnouncementBanner) ProtoMessage() {}
 
 func (x *AnnouncementBanner) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[80]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[81]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5651,7 +5770,7 @@ func (x *AnnouncementBanner) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AnnouncementBanner.ProtoReflect.Descriptor instead.
 func (*AnnouncementBanner) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{80}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{81}
 }
 
 func (x *AnnouncementBanner) GetOrganizationId() string {
@@ -5685,7 +5804,7 @@ type GetAnnouncementBannerRequest struct {
 
 func (x *GetAnnouncementBannerRequest) Reset() {
 	*x = GetAnnouncementBannerRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[81]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[82]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5697,7 +5816,7 @@ func (x *GetAnnouncementBannerRequest) String() string {
 func (*GetAnnouncementBannerRequest) ProtoMessage() {}
 
 func (x *GetAnnouncementBannerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[81]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[82]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5710,7 +5829,7 @@ func (x *GetAnnouncementBannerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAnnouncementBannerRequest.ProtoReflect.Descriptor instead.
 func (*GetAnnouncementBannerRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{81}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{82}
 }
 
 func (x *GetAnnouncementBannerRequest) GetOrganizationId() string {
@@ -5730,7 +5849,7 @@ type GetAnnouncementBannerResponse struct {
 
 func (x *GetAnnouncementBannerResponse) Reset() {
 	*x = GetAnnouncementBannerResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[82]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[83]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5742,7 +5861,7 @@ func (x *GetAnnouncementBannerResponse) String() string {
 func (*GetAnnouncementBannerResponse) ProtoMessage() {}
 
 func (x *GetAnnouncementBannerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[82]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[83]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5755,7 +5874,7 @@ func (x *GetAnnouncementBannerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAnnouncementBannerResponse.ProtoReflect.Descriptor instead.
 func (*GetAnnouncementBannerResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{82}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{83}
 }
 
 func (x *GetAnnouncementBannerResponse) GetBanner() *AnnouncementBanner {
@@ -5779,7 +5898,7 @@ type UpdateAnnouncementBannerRequest struct {
 
 func (x *UpdateAnnouncementBannerRequest) Reset() {
 	*x = UpdateAnnouncementBannerRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[83]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5791,7 +5910,7 @@ func (x *UpdateAnnouncementBannerRequest) String() string {
 func (*UpdateAnnouncementBannerRequest) ProtoMessage() {}
 
 func (x *UpdateAnnouncementBannerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[83]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5804,7 +5923,7 @@ func (x *UpdateAnnouncementBannerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateAnnouncementBannerRequest.ProtoReflect.Descriptor instead.
 func (*UpdateAnnouncementBannerRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{83}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{84}
 }
 
 func (x *UpdateAnnouncementBannerRequest) GetOrganizationId() string {
@@ -5838,7 +5957,7 @@ type UpdateAnnouncementBannerResponse struct {
 
 func (x *UpdateAnnouncementBannerResponse) Reset() {
 	*x = UpdateAnnouncementBannerResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[84]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5850,7 +5969,7 @@ func (x *UpdateAnnouncementBannerResponse) String() string {
 func (*UpdateAnnouncementBannerResponse) ProtoMessage() {}
 
 func (x *UpdateAnnouncementBannerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[84]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5863,7 +5982,7 @@ func (x *UpdateAnnouncementBannerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateAnnouncementBannerResponse.ProtoReflect.Descriptor instead.
 func (*UpdateAnnouncementBannerResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{84}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{85}
 }
 
 func (x *UpdateAnnouncementBannerResponse) GetBanner() *AnnouncementBanner {
@@ -5886,7 +6005,7 @@ type TermsOfServiceVersion struct {
 
 func (x *TermsOfServiceVersion) Reset() {
 	*x = TermsOfServiceVersion{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[85]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[86]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5898,7 +6017,7 @@ func (x *TermsOfServiceVersion) String() string {
 func (*TermsOfServiceVersion) ProtoMessage() {}
 
 func (x *TermsOfServiceVersion) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[85]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[86]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5911,7 +6030,7 @@ func (x *TermsOfServiceVersion) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TermsOfServiceVersion.ProtoReflect.Descriptor instead.
 func (*TermsOfServiceVersion) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{85}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{86}
 }
 
 func (x *TermsOfServiceVersion) GetId() string {
@@ -5960,7 +6079,7 @@ type TermsOfServiceAcceptance struct {
 
 func (x *TermsOfServiceAcceptance) Reset() {
 	*x = TermsOfServiceAcceptance{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[86]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[87]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5972,7 +6091,7 @@ func (x *TermsOfServiceAcceptance) String() string {
 func (*TermsOfServiceAcceptance) ProtoMessage() {}
 
 func (x *TermsOfServiceAcceptance) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[86]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[87]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5985,7 +6104,7 @@ func (x *TermsOfServiceAcceptance) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TermsOfServiceAcceptance.ProtoReflect.Descriptor instead.
 func (*TermsOfServiceAcceptance) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{86}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{87}
 }
 
 func (x *TermsOfServiceAcceptance) GetVersionId() string {
@@ -6023,7 +6142,7 @@ type TermsOfService struct {
 
 func (x *TermsOfService) Reset() {
 	*x = TermsOfService{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[87]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[88]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6035,7 +6154,7 @@ func (x *TermsOfService) String() string {
 func (*TermsOfService) ProtoMessage() {}
 
 func (x *TermsOfService) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[87]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[88]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6048,7 +6167,7 @@ func (x *TermsOfService) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TermsOfService.ProtoReflect.Descriptor instead.
 func (*TermsOfService) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{87}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{88}
 }
 
 func (x *TermsOfService) GetOrganizationId() string {
@@ -6088,7 +6207,7 @@ type GetTermsOfServiceRequest struct {
 
 func (x *GetTermsOfServiceRequest) Reset() {
 	*x = GetTermsOfServiceRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[88]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[89]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6100,7 +6219,7 @@ func (x *GetTermsOfServiceRequest) String() string {
 func (*GetTermsOfServiceRequest) ProtoMessage() {}
 
 func (x *GetTermsOfServiceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[88]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[89]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6113,7 +6232,7 @@ func (x *GetTermsOfServiceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTermsOfServiceRequest.ProtoReflect.Descriptor instead.
 func (*GetTermsOfServiceRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{88}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{89}
 }
 
 func (x *GetTermsOfServiceRequest) GetOrganizationId() string {
@@ -6132,7 +6251,7 @@ type GetTermsOfServiceResponse struct {
 
 func (x *GetTermsOfServiceResponse) Reset() {
 	*x = GetTermsOfServiceResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[89]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[90]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6144,7 +6263,7 @@ func (x *GetTermsOfServiceResponse) String() string {
 func (*GetTermsOfServiceResponse) ProtoMessage() {}
 
 func (x *GetTermsOfServiceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[89]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[90]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6157,7 +6276,7 @@ func (x *GetTermsOfServiceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTermsOfServiceResponse.ProtoReflect.Descriptor instead.
 func (*GetTermsOfServiceResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{89}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{90}
 }
 
 func (x *GetTermsOfServiceResponse) GetTermsOfService() *TermsOfService {
@@ -6179,7 +6298,7 @@ type UpdateTermsOfServiceRequest struct {
 
 func (x *UpdateTermsOfServiceRequest) Reset() {
 	*x = UpdateTermsOfServiceRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[90]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[91]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6191,7 +6310,7 @@ func (x *UpdateTermsOfServiceRequest) String() string {
 func (*UpdateTermsOfServiceRequest) ProtoMessage() {}
 
 func (x *UpdateTermsOfServiceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[90]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[91]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6204,7 +6323,7 @@ func (x *UpdateTermsOfServiceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTermsOfServiceRequest.ProtoReflect.Descriptor instead.
 func (*UpdateTermsOfServiceRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{90}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{91}
 }
 
 func (x *UpdateTermsOfServiceRequest) GetOrganizationId() string {
@@ -6237,7 +6356,7 @@ type UpdateTermsOfServiceResponse struct {
 
 func (x *UpdateTermsOfServiceResponse) Reset() {
 	*x = UpdateTermsOfServiceResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[91]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[92]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6249,7 +6368,7 @@ func (x *UpdateTermsOfServiceResponse) String() string {
 func (*UpdateTermsOfServiceResponse) ProtoMessage() {}
 
 func (x *UpdateTermsOfServiceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[91]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[92]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6262,7 +6381,7 @@ func (x *UpdateTermsOfServiceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTermsOfServiceResponse.ProtoReflect.Descriptor instead.
 func (*UpdateTermsOfServiceResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{91}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{92}
 }
 
 func (x *UpdateTermsOfServiceResponse) GetTermsOfService() *TermsOfService {
@@ -6283,7 +6402,7 @@ type AcceptTermsOfServiceRequest struct {
 
 func (x *AcceptTermsOfServiceRequest) Reset() {
 	*x = AcceptTermsOfServiceRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[92]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[93]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6295,7 +6414,7 @@ func (x *AcceptTermsOfServiceRequest) String() string {
 func (*AcceptTermsOfServiceRequest) ProtoMessage() {}
 
 func (x *AcceptTermsOfServiceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[92]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[93]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6308,7 +6427,7 @@ func (x *AcceptTermsOfServiceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AcceptTermsOfServiceRequest.ProtoReflect.Descriptor instead.
 func (*AcceptTermsOfServiceRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{92}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{93}
 }
 
 func (x *AcceptTermsOfServiceRequest) GetOrganizationId() string {
@@ -6334,7 +6453,7 @@ type AcceptTermsOfServiceResponse struct {
 
 func (x *AcceptTermsOfServiceResponse) Reset() {
 	*x = AcceptTermsOfServiceResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[93]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[94]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6346,7 +6465,7 @@ func (x *AcceptTermsOfServiceResponse) String() string {
 func (*AcceptTermsOfServiceResponse) ProtoMessage() {}
 
 func (x *AcceptTermsOfServiceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[93]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[94]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6359,7 +6478,7 @@ func (x *AcceptTermsOfServiceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AcceptTermsOfServiceResponse.ProtoReflect.Descriptor instead.
 func (*AcceptTermsOfServiceResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{93}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{94}
 }
 
 func (x *AcceptTermsOfServiceResponse) GetAcceptance() *TermsOfServiceAcceptance {
@@ -6383,7 +6502,7 @@ type MemberTermsOfServiceAcceptance struct {
 
 func (x *MemberTermsOfServiceAcceptance) Reset() {
 	*x = MemberTermsOfServiceAcceptance{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[94]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[95]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6395,7 +6514,7 @@ func (x *MemberTermsOfServiceAcceptance) String() string {
 func (*MemberTermsOfServiceAcceptance) ProtoMessage() {}
 
 func (x *MemberTermsOfServiceAcceptance) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[94]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[95]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6408,7 +6527,7 @@ func (x *MemberTermsOfServiceAcceptance) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MemberTermsOfServiceAcceptance.ProtoReflect.Descriptor instead.
 func (*MemberTermsOfServiceAcceptance) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{94}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{95}
 }
 
 func (x *MemberTermsOfServiceAcceptance) GetMember() *OrganizationMember {
@@ -6449,7 +6568,7 @@ type ListTermsOfServiceVersionsRequest struct {
 
 func (x *ListTermsOfServiceVersionsRequest) Reset() {
 	*x = ListTermsOfServiceVersionsRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[95]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[96]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6461,7 +6580,7 @@ func (x *ListTermsOfServiceVersionsRequest) String() string {
 func (*ListTermsOfServiceVersionsRequest) ProtoMessage() {}
 
 func (x *ListTermsOfServiceVersionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[95]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[96]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6474,7 +6593,7 @@ func (x *ListTermsOfServiceVersionsRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ListTermsOfServiceVersionsRequest.ProtoReflect.Descriptor instead.
 func (*ListTermsOfServiceVersionsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{95}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{96}
 }
 
 func (x *ListTermsOfServiceVersionsRequest) GetPagination() *PaginationRequest {
@@ -6501,7 +6620,7 @@ type ListTermsOfServiceVersionsResponse struct {
 
 func (x *ListTermsOfServiceVersionsResponse) Reset() {
 	*x = ListTermsOfServiceVersionsResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[96]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[97]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6513,7 +6632,7 @@ func (x *ListTermsOfServiceVersionsResponse) String() string {
 func (*ListTermsOfServiceVersionsResponse) ProtoMessage() {}
 
 func (x *ListTermsOfServiceVersionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[96]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[97]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6526,7 +6645,7 @@ func (x *ListTermsOfServiceVersionsResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use ListTermsOfServiceVersionsResponse.ProtoReflect.Descriptor instead.
 func (*ListTermsOfServiceVersionsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{96}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{97}
 }
 
 func (x *ListTermsOfServiceVersionsResponse) GetPagination() *PaginationResponse {
@@ -6554,7 +6673,7 @@ type TermsOfServiceAcceptanceFilter struct {
 
 func (x *TermsOfServiceAcceptanceFilter) Reset() {
 	*x = TermsOfServiceAcceptanceFilter{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[97]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[98]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6566,7 +6685,7 @@ func (x *TermsOfServiceAcceptanceFilter) String() string {
 func (*TermsOfServiceAcceptanceFilter) ProtoMessage() {}
 
 func (x *TermsOfServiceAcceptanceFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[97]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[98]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6579,7 +6698,7 @@ func (x *TermsOfServiceAcceptanceFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TermsOfServiceAcceptanceFilter.ProtoReflect.Descriptor instead.
 func (*TermsOfServiceAcceptanceFilter) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{97}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{98}
 }
 
 func (x *TermsOfServiceAcceptanceFilter) GetStatuses() []TermsOfServiceAcceptanceStatus {
@@ -6610,7 +6729,7 @@ type ListTermsOfServiceAcceptancesRequest struct {
 
 func (x *ListTermsOfServiceAcceptancesRequest) Reset() {
 	*x = ListTermsOfServiceAcceptancesRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[98]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[99]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6622,7 +6741,7 @@ func (x *ListTermsOfServiceAcceptancesRequest) String() string {
 func (*ListTermsOfServiceAcceptancesRequest) ProtoMessage() {}
 
 func (x *ListTermsOfServiceAcceptancesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[98]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[99]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6635,7 +6754,7 @@ func (x *ListTermsOfServiceAcceptancesRequest) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use ListTermsOfServiceAcceptancesRequest.ProtoReflect.Descriptor instead.
 func (*ListTermsOfServiceAcceptancesRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{98}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{99}
 }
 
 func (x *ListTermsOfServiceAcceptancesRequest) GetPagination() *PaginationRequest {
@@ -6676,7 +6795,7 @@ type ListTermsOfServiceAcceptancesResponse struct {
 
 func (x *ListTermsOfServiceAcceptancesResponse) Reset() {
 	*x = ListTermsOfServiceAcceptancesResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[99]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[100]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6688,7 +6807,7 @@ func (x *ListTermsOfServiceAcceptancesResponse) String() string {
 func (*ListTermsOfServiceAcceptancesResponse) ProtoMessage() {}
 
 func (x *ListTermsOfServiceAcceptancesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[99]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[100]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6701,7 +6820,7 @@ func (x *ListTermsOfServiceAcceptancesResponse) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use ListTermsOfServiceAcceptancesResponse.ProtoReflect.Descriptor instead.
 func (*ListTermsOfServiceAcceptancesResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{99}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{100}
 }
 
 func (x *ListTermsOfServiceAcceptancesResponse) GetPagination() *PaginationResponse {
@@ -6731,7 +6850,7 @@ type GetTermsOfServiceAcceptancesExportRequest struct {
 
 func (x *GetTermsOfServiceAcceptancesExportRequest) Reset() {
 	*x = GetTermsOfServiceAcceptancesExportRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[100]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[101]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6743,7 +6862,7 @@ func (x *GetTermsOfServiceAcceptancesExportRequest) String() string {
 func (*GetTermsOfServiceAcceptancesExportRequest) ProtoMessage() {}
 
 func (x *GetTermsOfServiceAcceptancesExportRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[100]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[101]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6756,7 +6875,7 @@ func (x *GetTermsOfServiceAcceptancesExportRequest) ProtoReflect() protoreflect.
 
 // Deprecated: Use GetTermsOfServiceAcceptancesExportRequest.ProtoReflect.Descriptor instead.
 func (*GetTermsOfServiceAcceptancesExportRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{100}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{101}
 }
 
 func (x *GetTermsOfServiceAcceptancesExportRequest) GetOrganizationId() string {
@@ -6790,7 +6909,7 @@ type GetTermsOfServiceAcceptancesExportResponse struct {
 
 func (x *GetTermsOfServiceAcceptancesExportResponse) Reset() {
 	*x = GetTermsOfServiceAcceptancesExportResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[101]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[102]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6802,7 +6921,7 @@ func (x *GetTermsOfServiceAcceptancesExportResponse) String() string {
 func (*GetTermsOfServiceAcceptancesExportResponse) ProtoMessage() {}
 
 func (x *GetTermsOfServiceAcceptancesExportResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[101]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[102]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6815,7 +6934,7 @@ func (x *GetTermsOfServiceAcceptancesExportResponse) ProtoReflect() protoreflect
 
 // Deprecated: Use GetTermsOfServiceAcceptancesExportResponse.ProtoReflect.Descriptor instead.
 func (*GetTermsOfServiceAcceptancesExportResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{101}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{102}
 }
 
 func (x *GetTermsOfServiceAcceptancesExportResponse) GetDownloadUrl() string {
@@ -6837,7 +6956,7 @@ type SetTierRequest struct {
 
 func (x *SetTierRequest) Reset() {
 	*x = SetTierRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[102]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[103]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6849,7 +6968,7 @@ func (x *SetTierRequest) String() string {
 func (*SetTierRequest) ProtoMessage() {}
 
 func (x *SetTierRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[102]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[103]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6862,7 +6981,7 @@ func (x *SetTierRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetTierRequest.ProtoReflect.Descriptor instead.
 func (*SetTierRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{102}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{103}
 }
 
 func (x *SetTierRequest) GetOrganizationId() string {
@@ -6887,7 +7006,7 @@ type SetTierResponse struct {
 
 func (x *SetTierResponse) Reset() {
 	*x = SetTierResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[103]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[104]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6899,7 +7018,7 @@ func (x *SetTierResponse) String() string {
 func (*SetTierResponse) ProtoMessage() {}
 
 func (x *SetTierResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[103]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[104]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6912,7 +7031,7 @@ func (x *SetTierResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetTierResponse.ProtoReflect.Descriptor instead.
 func (*SetTierResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{103}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{104}
 }
 
 type SetStripeCustomerIDRequest struct {
@@ -6927,7 +7046,7 @@ type SetStripeCustomerIDRequest struct {
 
 func (x *SetStripeCustomerIDRequest) Reset() {
 	*x = SetStripeCustomerIDRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[104]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[105]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6939,7 +7058,7 @@ func (x *SetStripeCustomerIDRequest) String() string {
 func (*SetStripeCustomerIDRequest) ProtoMessage() {}
 
 func (x *SetStripeCustomerIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[104]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[105]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6952,7 +7071,7 @@ func (x *SetStripeCustomerIDRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetStripeCustomerIDRequest.ProtoReflect.Descriptor instead.
 func (*SetStripeCustomerIDRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{104}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{105}
 }
 
 func (x *SetStripeCustomerIDRequest) GetOrganizationId() string {
@@ -6977,7 +7096,7 @@ type SetStripeCustomerIDResponse struct {
 
 func (x *SetStripeCustomerIDResponse) Reset() {
 	*x = SetStripeCustomerIDResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[105]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[106]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6989,7 +7108,7 @@ func (x *SetStripeCustomerIDResponse) String() string {
 func (*SetStripeCustomerIDResponse) ProtoMessage() {}
 
 func (x *SetStripeCustomerIDResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[105]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[106]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7002,7 +7121,7 @@ func (x *SetStripeCustomerIDResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetStripeCustomerIDResponse.ProtoReflect.Descriptor instead.
 func (*SetStripeCustomerIDResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{105}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{106}
 }
 
 // CustomDomain represents a custom domain configuration for an organization
@@ -7032,7 +7151,7 @@ type CustomDomain struct {
 
 func (x *CustomDomain) Reset() {
 	*x = CustomDomain{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[106]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[107]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7044,7 +7163,7 @@ func (x *CustomDomain) String() string {
 func (*CustomDomain) ProtoMessage() {}
 
 func (x *CustomDomain) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[106]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[107]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7057,7 +7176,7 @@ func (x *CustomDomain) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CustomDomain.ProtoReflect.Descriptor instead.
 func (*CustomDomain) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{106}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{107}
 }
 
 func (x *CustomDomain) GetId() string {
@@ -7138,7 +7257,7 @@ type CreateCustomDomainRequest struct {
 
 func (x *CreateCustomDomainRequest) Reset() {
 	*x = CreateCustomDomainRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[107]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[108]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7150,7 +7269,7 @@ func (x *CreateCustomDomainRequest) String() string {
 func (*CreateCustomDomainRequest) ProtoMessage() {}
 
 func (x *CreateCustomDomainRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[107]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[108]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7163,7 +7282,7 @@ func (x *CreateCustomDomainRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCustomDomainRequest.ProtoReflect.Descriptor instead.
 func (*CreateCustomDomainRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{107}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{108}
 }
 
 func (x *CreateCustomDomainRequest) GetOrganizationId() string {
@@ -7213,7 +7332,7 @@ type CreateCustomDomainResponse struct {
 
 func (x *CreateCustomDomainResponse) Reset() {
 	*x = CreateCustomDomainResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[108]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[109]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7225,7 +7344,7 @@ func (x *CreateCustomDomainResponse) String() string {
 func (*CreateCustomDomainResponse) ProtoMessage() {}
 
 func (x *CreateCustomDomainResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[108]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[109]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7238,7 +7357,7 @@ func (x *CreateCustomDomainResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCustomDomainResponse.ProtoReflect.Descriptor instead.
 func (*CreateCustomDomainResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{108}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{109}
 }
 
 func (x *CreateCustomDomainResponse) GetCustomDomain() *CustomDomain {
@@ -7259,7 +7378,7 @@ type GetCustomDomainRequest struct {
 
 func (x *GetCustomDomainRequest) Reset() {
 	*x = GetCustomDomainRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[109]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[110]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7271,7 +7390,7 @@ func (x *GetCustomDomainRequest) String() string {
 func (*GetCustomDomainRequest) ProtoMessage() {}
 
 func (x *GetCustomDomainRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[109]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[110]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7284,7 +7403,7 @@ func (x *GetCustomDomainRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCustomDomainRequest.ProtoReflect.Descriptor instead.
 func (*GetCustomDomainRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{109}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{110}
 }
 
 func (x *GetCustomDomainRequest) GetOrganizationId() string {
@@ -7303,7 +7422,7 @@ type GetCustomDomainResponse struct {
 
 func (x *GetCustomDomainResponse) Reset() {
 	*x = GetCustomDomainResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[110]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[111]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7315,7 +7434,7 @@ func (x *GetCustomDomainResponse) String() string {
 func (*GetCustomDomainResponse) ProtoMessage() {}
 
 func (x *GetCustomDomainResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[110]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[111]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7328,7 +7447,7 @@ func (x *GetCustomDomainResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCustomDomainResponse.ProtoReflect.Descriptor instead.
 func (*GetCustomDomainResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{110}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{111}
 }
 
 func (x *GetCustomDomainResponse) GetCustomDomain() *CustomDomain {
@@ -7359,7 +7478,7 @@ type UpdateCustomDomainRequest struct {
 
 func (x *UpdateCustomDomainRequest) Reset() {
 	*x = UpdateCustomDomainRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[111]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[112]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7371,7 +7490,7 @@ func (x *UpdateCustomDomainRequest) String() string {
 func (*UpdateCustomDomainRequest) ProtoMessage() {}
 
 func (x *UpdateCustomDomainRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[111]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[112]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7384,7 +7503,7 @@ func (x *UpdateCustomDomainRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateCustomDomainRequest.ProtoReflect.Descriptor instead.
 func (*UpdateCustomDomainRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{111}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{112}
 }
 
 func (x *UpdateCustomDomainRequest) GetOrganizationId() string {
@@ -7434,7 +7553,7 @@ type UpdateCustomDomainResponse struct {
 
 func (x *UpdateCustomDomainResponse) Reset() {
 	*x = UpdateCustomDomainResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[112]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[113]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7446,7 +7565,7 @@ func (x *UpdateCustomDomainResponse) String() string {
 func (*UpdateCustomDomainResponse) ProtoMessage() {}
 
 func (x *UpdateCustomDomainResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[112]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[113]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7459,7 +7578,7 @@ func (x *UpdateCustomDomainResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateCustomDomainResponse.ProtoReflect.Descriptor instead.
 func (*UpdateCustomDomainResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{112}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{113}
 }
 
 func (x *UpdateCustomDomainResponse) GetCustomDomain() *CustomDomain {
@@ -7480,7 +7599,7 @@ type DeleteCustomDomainRequest struct {
 
 func (x *DeleteCustomDomainRequest) Reset() {
 	*x = DeleteCustomDomainRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[113]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[114]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7492,7 +7611,7 @@ func (x *DeleteCustomDomainRequest) String() string {
 func (*DeleteCustomDomainRequest) ProtoMessage() {}
 
 func (x *DeleteCustomDomainRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[113]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[114]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7505,7 +7624,7 @@ func (x *DeleteCustomDomainRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCustomDomainRequest.ProtoReflect.Descriptor instead.
 func (*DeleteCustomDomainRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{113}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{114}
 }
 
 func (x *DeleteCustomDomainRequest) GetOrganizationId() string {
@@ -7524,7 +7643,7 @@ type DeleteCustomDomainResponse struct {
 
 func (x *DeleteCustomDomainResponse) Reset() {
 	*x = DeleteCustomDomainResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[114]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[115]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7536,7 +7655,7 @@ func (x *DeleteCustomDomainResponse) String() string {
 func (*DeleteCustomDomainResponse) ProtoMessage() {}
 
 func (x *DeleteCustomDomainResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[114]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[115]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7549,7 +7668,7 @@ func (x *DeleteCustomDomainResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCustomDomainResponse.ProtoReflect.Descriptor instead.
 func (*DeleteCustomDomainResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{114}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{115}
 }
 
 // GetOIDCConfigRequest is the request message for retrieving OIDC token configuration.
@@ -7563,7 +7682,7 @@ type GetOIDCConfigRequest struct {
 
 func (x *GetOIDCConfigRequest) Reset() {
 	*x = GetOIDCConfigRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[115]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[116]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7575,7 +7694,7 @@ func (x *GetOIDCConfigRequest) String() string {
 func (*GetOIDCConfigRequest) ProtoMessage() {}
 
 func (x *GetOIDCConfigRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[115]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[116]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7588,7 +7707,7 @@ func (x *GetOIDCConfigRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOIDCConfigRequest.ProtoReflect.Descriptor instead.
 func (*GetOIDCConfigRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{115}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{116}
 }
 
 func (x *GetOIDCConfigRequest) GetOrganizationId() string {
@@ -7609,7 +7728,7 @@ type GetOIDCConfigResponse struct {
 
 func (x *GetOIDCConfigResponse) Reset() {
 	*x = GetOIDCConfigResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[116]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[117]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7621,7 +7740,7 @@ func (x *GetOIDCConfigResponse) String() string {
 func (*GetOIDCConfigResponse) ProtoMessage() {}
 
 func (x *GetOIDCConfigResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[116]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[117]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7634,7 +7753,7 @@ func (x *GetOIDCConfigResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOIDCConfigResponse.ProtoReflect.Descriptor instead.
 func (*GetOIDCConfigResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{116}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{117}
 }
 
 func (x *GetOIDCConfigResponse) GetOidcConfig() *OIDCConfig {
@@ -7657,7 +7776,7 @@ type UpdateOIDCConfigRequest struct {
 
 func (x *UpdateOIDCConfigRequest) Reset() {
 	*x = UpdateOIDCConfigRequest{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[117]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[118]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7669,7 +7788,7 @@ func (x *UpdateOIDCConfigRequest) String() string {
 func (*UpdateOIDCConfigRequest) ProtoMessage() {}
 
 func (x *UpdateOIDCConfigRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[117]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[118]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7682,7 +7801,7 @@ func (x *UpdateOIDCConfigRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateOIDCConfigRequest.ProtoReflect.Descriptor instead.
 func (*UpdateOIDCConfigRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{117}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{118}
 }
 
 func (x *UpdateOIDCConfigRequest) GetOrganizationId() string {
@@ -7710,7 +7829,7 @@ type UpdateOIDCConfigResponse struct {
 
 func (x *UpdateOIDCConfigResponse) Reset() {
 	*x = UpdateOIDCConfigResponse{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[118]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[119]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7722,7 +7841,7 @@ func (x *UpdateOIDCConfigResponse) String() string {
 func (*UpdateOIDCConfigResponse) ProtoMessage() {}
 
 func (x *UpdateOIDCConfigResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[118]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[119]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7735,7 +7854,7 @@ func (x *UpdateOIDCConfigResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateOIDCConfigResponse.ProtoReflect.Descriptor instead.
 func (*UpdateOIDCConfigResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{118}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{119}
 }
 
 func (x *UpdateOIDCConfigResponse) GetOidcConfig() *OIDCConfig {
@@ -7760,7 +7879,7 @@ type OIDCConfig struct {
 
 func (x *OIDCConfig) Reset() {
 	*x = OIDCConfig{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[119]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[120]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7772,7 +7891,7 @@ func (x *OIDCConfig) String() string {
 func (*OIDCConfig) ProtoMessage() {}
 
 func (x *OIDCConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[119]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[120]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7785,7 +7904,7 @@ func (x *OIDCConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OIDCConfig.ProtoReflect.Descriptor instead.
 func (*OIDCConfig) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{119}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{120}
 }
 
 func (x *OIDCConfig) GetVersion() isOIDCConfig_Version {
@@ -7840,7 +7959,7 @@ type OIDCConfigV2 struct {
 
 func (x *OIDCConfigV2) Reset() {
 	*x = OIDCConfigV2{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[120]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[121]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7852,7 +7971,7 @@ func (x *OIDCConfigV2) String() string {
 func (*OIDCConfigV2) ProtoMessage() {}
 
 func (x *OIDCConfigV2) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[120]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[121]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7865,7 +7984,7 @@ func (x *OIDCConfigV2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OIDCConfigV2.ProtoReflect.Descriptor instead.
 func (*OIDCConfigV2) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{120}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{121}
 }
 
 // OIDCConfigV3 configures V3 OIDC tokens with optional sub claim customization.
@@ -7883,7 +8002,7 @@ type OIDCConfigV3 struct {
 
 func (x *OIDCConfigV3) Reset() {
 	*x = OIDCConfigV3{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[121]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[122]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7895,7 +8014,7 @@ func (x *OIDCConfigV3) String() string {
 func (*OIDCConfigV3) ProtoMessage() {}
 
 func (x *OIDCConfigV3) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[121]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[122]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7908,7 +8027,7 @@ func (x *OIDCConfigV3) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OIDCConfigV3.ProtoReflect.Descriptor instead.
 func (*OIDCConfigV3) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{121}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{122}
 }
 
 func (x *OIDCConfigV3) GetExtraSubFields() []string {
@@ -7938,7 +8057,7 @@ type ListMembersRequest_Filter struct {
 
 func (x *ListMembersRequest_Filter) Reset() {
 	*x = ListMembersRequest_Filter{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[122]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[123]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7950,7 +8069,7 @@ func (x *ListMembersRequest_Filter) String() string {
 func (*ListMembersRequest_Filter) ProtoMessage() {}
 
 func (x *ListMembersRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[122]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[123]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8018,7 +8137,7 @@ type ListMembersRequest_Sort struct {
 
 func (x *ListMembersRequest_Sort) Reset() {
 	*x = ListMembersRequest_Sort{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[123]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[124]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8030,7 +8149,7 @@ func (x *ListMembersRequest_Sort) String() string {
 func (*ListMembersRequest_Sort) ProtoMessage() {}
 
 func (x *ListMembersRequest_Sort) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[123]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[124]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8080,8 +8199,11 @@ type UpdateOrganizationPoliciesRequest_UpdateAgentPolicy struct {
 	// allowed_agent_ids contains the agent IDs users may select when the
 	// codex_rollout feature flag is enabled. Empty means all agents are allowed.
 	AllowedAgentIds []string `protobuf:"bytes,7,rep,name=allowed_agent_ids,json=allowedAgentIds,proto3" json:"allowed_agent_ids,omitempty"`
-	// allowed_codex_models contains the Codex models users may select when the
-	// codex_rollout feature flag is enabled. Empty means all Codex models are allowed.
+	// Deprecated: use codex_model_policy. This legacy allowlist cannot distinguish
+	// omitted from intentionally empty on update requests. Empty means all Codex
+	// models are allowed.
+	//
+	// Deprecated: Marked as deprecated in gitpod/v1/organization.proto.
 	AllowedCodexModels []CodexOpenAIModel `protobuf:"varint,8,rep,packed,name=allowed_codex_models,json=allowedCodexModels,proto3,enum=gitpod.v1.CodexOpenAIModel" json:"allowed_codex_models,omitempty"`
 	// allowed_codex_reasoning_efforts contains the Codex reasoning efforts users
 	// may select when the codex_rollout feature flag is enabled. Empty means all
@@ -8093,13 +8215,17 @@ type UpdateOrganizationPoliciesRequest_UpdateAgentPolicy struct {
 	AllowedCodexServiceTiers []CodexServiceTier `protobuf:"varint,10,rep,packed,name=allowed_codex_service_tiers,json=allowedCodexServiceTiers,proto3,enum=gitpod.v1.CodexServiceTier" json:"allowed_codex_service_tiers,omitempty"`
 	// goal_mode_disabled controls whether Codex goal mode is disabled for the organization.
 	GoalModeDisabled *bool `protobuf:"varint,11,opt,name=goal_mode_disabled,json=goalModeDisabled,proto3,oneof" json:"goal_mode_disabled,omitempty"`
+	// codex_model_policy contains explicit per-model Codex availability states.
+	// Omit to leave the current model policy unchanged. Send an empty policy to
+	// clear explicit model states.
+	CodexModelPolicy *CodexModelPolicy `protobuf:"bytes,12,opt,name=codex_model_policy,json=codexModelPolicy,proto3" json:"codex_model_policy,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
 
 func (x *UpdateOrganizationPoliciesRequest_UpdateAgentPolicy) Reset() {
 	*x = UpdateOrganizationPoliciesRequest_UpdateAgentPolicy{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[128]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[130]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8111,7 +8237,7 @@ func (x *UpdateOrganizationPoliciesRequest_UpdateAgentPolicy) String() string {
 func (*UpdateOrganizationPoliciesRequest_UpdateAgentPolicy) ProtoMessage() {}
 
 func (x *UpdateOrganizationPoliciesRequest_UpdateAgentPolicy) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[128]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[130]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8124,7 +8250,7 @@ func (x *UpdateOrganizationPoliciesRequest_UpdateAgentPolicy) ProtoReflect() pro
 
 // Deprecated: Use UpdateOrganizationPoliciesRequest_UpdateAgentPolicy.ProtoReflect.Descriptor instead.
 func (*UpdateOrganizationPoliciesRequest_UpdateAgentPolicy) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{76, 0}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{77, 0}
 }
 
 func (x *UpdateOrganizationPoliciesRequest_UpdateAgentPolicy) GetMcpDisabled() bool {
@@ -8176,6 +8302,7 @@ func (x *UpdateOrganizationPoliciesRequest_UpdateAgentPolicy) GetAllowedAgentIds
 	return nil
 }
 
+// Deprecated: Marked as deprecated in gitpod/v1/organization.proto.
 func (x *UpdateOrganizationPoliciesRequest_UpdateAgentPolicy) GetAllowedCodexModels() []CodexOpenAIModel {
 	if x != nil {
 		return x.AllowedCodexModels
@@ -8204,6 +8331,13 @@ func (x *UpdateOrganizationPoliciesRequest_UpdateAgentPolicy) GetGoalModeDisable
 	return false
 }
 
+func (x *UpdateOrganizationPoliciesRequest_UpdateAgentPolicy) GetCodexModelPolicy() *CodexModelPolicy {
+	if x != nil {
+		return x.CodexModelPolicy
+	}
+	return nil
+}
+
 // UpdateSecurityAgentPolicy contains security agent configuration updates
 type UpdateOrganizationPoliciesRequest_UpdateSecurityAgentPolicy struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -8218,7 +8352,7 @@ type UpdateOrganizationPoliciesRequest_UpdateSecurityAgentPolicy struct {
 
 func (x *UpdateOrganizationPoliciesRequest_UpdateSecurityAgentPolicy) Reset() {
 	*x = UpdateOrganizationPoliciesRequest_UpdateSecurityAgentPolicy{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[129]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[131]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8230,7 +8364,7 @@ func (x *UpdateOrganizationPoliciesRequest_UpdateSecurityAgentPolicy) String() s
 func (*UpdateOrganizationPoliciesRequest_UpdateSecurityAgentPolicy) ProtoMessage() {}
 
 func (x *UpdateOrganizationPoliciesRequest_UpdateSecurityAgentPolicy) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[129]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[131]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8243,7 +8377,7 @@ func (x *UpdateOrganizationPoliciesRequest_UpdateSecurityAgentPolicy) ProtoRefle
 
 // Deprecated: Use UpdateOrganizationPoliciesRequest_UpdateSecurityAgentPolicy.ProtoReflect.Descriptor instead.
 func (*UpdateOrganizationPoliciesRequest_UpdateSecurityAgentPolicy) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{76, 1}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{77, 1}
 }
 
 func (x *UpdateOrganizationPoliciesRequest_UpdateSecurityAgentPolicy) GetCrowdstrike() *UpdateOrganizationPoliciesRequest_UpdateCrowdStrikeConfig {
@@ -8279,7 +8413,7 @@ type UpdateOrganizationPoliciesRequest_UpdateCrowdStrikeConfig struct {
 
 func (x *UpdateOrganizationPoliciesRequest_UpdateCrowdStrikeConfig) Reset() {
 	*x = UpdateOrganizationPoliciesRequest_UpdateCrowdStrikeConfig{}
-	mi := &file_gitpod_v1_organization_proto_msgTypes[130]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[132]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8291,7 +8425,7 @@ func (x *UpdateOrganizationPoliciesRequest_UpdateCrowdStrikeConfig) String() str
 func (*UpdateOrganizationPoliciesRequest_UpdateCrowdStrikeConfig) ProtoMessage() {}
 
 func (x *UpdateOrganizationPoliciesRequest_UpdateCrowdStrikeConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_organization_proto_msgTypes[130]
+	mi := &file_gitpod_v1_organization_proto_msgTypes[132]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8304,7 +8438,7 @@ func (x *UpdateOrganizationPoliciesRequest_UpdateCrowdStrikeConfig) ProtoReflect
 
 // Deprecated: Use UpdateOrganizationPoliciesRequest_UpdateCrowdStrikeConfig.ProtoReflect.Descriptor instead.
 func (*UpdateOrganizationPoliciesRequest_UpdateCrowdStrikeConfig) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{76, 2}
+	return file_gitpod_v1_organization_proto_rawDescGZIP(), []int{77, 2}
 }
 
 func (x *UpdateOrganizationPoliciesRequest_UpdateCrowdStrikeConfig) GetEnabled() bool {
@@ -8346,7 +8480,7 @@ var File_gitpod_v1_organization_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\n" +
-	"\x1cgitpod/v1/organization.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x15gitpod/v1/agent.proto\x1a\x15gitpod/v1/count.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x14gitpod/v1/user.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe1\x01\n" +
+	"\x1cgitpod/v1/organization.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x15gitpod/v1/agent.proto\x1a\x15gitpod/v1/count.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x14gitpod/v1/user.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe1\x01\n" +
 	"\x19UpdateOrganizationRequest\x12I\n" +
 	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
 	"\x0forganization.idR\x0eorganizationId\x12\x17\n" +
@@ -8665,41 +8799,55 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	" DeleteDomainVerificationResponse\"\x87\x01\n" +
 	")OrganizationTierFailedPreconditionDetails\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\x12@\n" +
-	"\rrequired_tier\x18\x02 \x01(\x0e2\x1b.gitpod.v1.OrganizationTierR\frequiredTier\"\xb8\x13\n" +
-	"\x14OrganizationPolicies\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\xf2\x01\n" +
-	"\x1bmaximum_environment_timeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x96\x01\xbaH\x92\x01\xba\x01\x8e\x01\n" +
-	"\x1bmaximum_environment_timeout\x12:value must be 0s (no limit) or at least 1800s (30 minutes)\x1a3this == duration('0s') || this >= duration('1800s')R\x19maximumEnvironmentTimeout\x12@\n" +
-	"\x18members_require_projects\x18\x03 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x16membersRequireProjects\x12>\n" +
-	"\x17members_create_projects\x18\x04 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x15membersCreateProjects\x124\n" +
-	"\x12allowed_editor_ids\x18\x05 \x03(\tB\x06\xbaH\x03\xc8\x01\x01R\x10allowedEditorIds\x122\n" +
-	"\x11default_editor_id\x18\x06 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x0fdefaultEditorId\x126\n" +
-	"\x13allow_local_runners\x18\a \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x11allowLocalRunners\x12X\n" +
-	"%maximum_running_environments_per_user\x18\b \x01(\x03B\x06\xbaH\x03\xc8\x01\x01R!maximumRunningEnvironmentsPerUser\x12I\n" +
-	"\x1dmaximum_environments_per_user\x18\t \x01(\x03B\x06\xbaH\x03\xc8\x01\x01R\x1amaximumEnvironmentsPerUser\x12B\n" +
+	"\rrequired_tier\x18\x02 \x01(\x0e2\x1b.gitpod.v1.OrganizationTierR\frequiredTier\"\x95\x14\n" +
+	"\x14OrganizationPolicies\x12M\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB$\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
+	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12\xf6\x01\n" +
+	"\x1bmaximum_environment_timeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x9a\x01\xbaH\x92\x01\xba\x01\x8e\x01\n" +
+	"\x1bmaximum_environment_timeout\x12:value must be 0s (no limit) or at least 1800s (30 minutes)\x1a3this == duration('0s') || this >= duration('1800s')ګ\x1e\x00R\x19maximumEnvironmentTimeout\x12D\n" +
+	"\x18members_require_projects\x18\x03 \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x16membersRequireProjects\x12B\n" +
+	"\x17members_create_projects\x18\x04 \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x15membersCreateProjects\x128\n" +
+	"\x12allowed_editor_ids\x18\x05 \x03(\tB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x10allowedEditorIds\x126\n" +
+	"\x11default_editor_id\x18\x06 \x01(\tB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x0fdefaultEditorId\x12:\n" +
+	"\x13allow_local_runners\x18\a \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x11allowLocalRunners\x12\\\n" +
+	"%maximum_running_environments_per_user\x18\b \x01(\x03B\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R!maximumRunningEnvironmentsPerUser\x12M\n" +
+	"\x1dmaximum_environments_per_user\x18\t \x01(\x03B\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x1amaximumEnvironmentsPerUser\x12F\n" +
 	"\x19default_environment_image\x18\n" +
-	" \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x17defaultEnvironmentImage\x12:\n" +
-	"\x15port_sharing_disabled\x18\v \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x13portSharingDisabled\x12w\n" +
-	"\"delete_archived_environments_after\x18\f \x01(\v2\x19.google.protobuf.DurationB\x0f\xbaH\f\xaa\x01\t\"\x05\b\x80ԓ\x012\x00R\x1fdeleteArchivedEnvironmentsAfter\x12A\n" +
-	"\fagent_policy\x18\r \x01(\v2\x16.gitpod.v1.AgentPolicyB\x06\xbaH\x03\xc8\x01\x01R\vagentPolicy\x12l\n" +
-	"\x1cmaximum_environment_lifetime\x18\x0e \x01(\v2\x19.google.protobuf.DurationB\x0f\xbaH\f\xaa\x01\t\"\x05\b\x80\x9c\xb5\a2\x00R\x1amaximumEnvironmentLifetime\x12G\n" +
-	"\x1crequire_custom_domain_access\x18\x0f \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x19requireCustomDomainAccess\x12~\n" +
-	"\x1beditor_version_restrictions\x18\x10 \x03(\v2>.gitpod.v1.OrganizationPolicies.EditorVersionRestrictionsEntryR\x19editorVersionRestrictions\x12R\n" +
-	"\x15security_agent_policy\x18\x11 \x01(\v2\x1e.gitpod.v1.SecurityAgentPolicyR\x13securityAgentPolicy\x12P\n" +
-	"!restrict_account_creation_to_scim\x18\x12 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x1drestrictAccountCreationToScim\x12C\n" +
+	" \x01(\tB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x17defaultEnvironmentImage\x12>\n" +
+	"\x15port_sharing_disabled\x18\v \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x13portSharingDisabled\x12{\n" +
+	"\"delete_archived_environments_after\x18\f \x01(\v2\x19.google.protobuf.DurationB\x13\xbaH\f\xaa\x01\t\"\x05\b\x80ԓ\x012\x00ګ\x1e\x00R\x1fdeleteArchivedEnvironmentsAfter\x12E\n" +
+	"\fagent_policy\x18\r \x01(\v2\x16.gitpod.v1.AgentPolicyB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\vagentPolicy\x12p\n" +
+	"\x1cmaximum_environment_lifetime\x18\x0e \x01(\v2\x19.google.protobuf.DurationB\x13\xbaH\f\xaa\x01\t\"\x05\b\x80\x9c\xb5\a2\x00ګ\x1e\x00R\x1amaximumEnvironmentLifetime\x12K\n" +
+	"\x1crequire_custom_domain_access\x18\x0f \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x19requireCustomDomainAccess\x12\x84\x01\n" +
+	"\x1beditor_version_restrictions\x18\x10 \x03(\v2>.gitpod.v1.OrganizationPolicies.EditorVersionRestrictionsEntryB\x04ګ\x1e\x00R\x19editorVersionRestrictions\x12R\n" +
+	"\x15security_agent_policy\x18\x11 \x01(\v2\x1e.gitpod.v1.SecurityAgentPolicyR\x13securityAgentPolicy\x12T\n" +
+	"!restrict_account_creation_to_scim\x18\x12 \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x1drestrictAccountCreationToScim\x12C\n" +
 	"\x10veto_exec_policy\x18\x14 \x01(\v2\x19.gitpod.v1.VetoExecPolicyR\x0evetoExecPolicy\x12U\n" +
 	"#maximum_environment_lifetime_strict\x18\x15 \x01(\bB\x06ʫ\x1e\x02\b\x01R maximumEnvironmentLifetimeStrict\x12Z\n" +
-	"\x18max_port_admission_level\x18\x16 \x01(\x0e2\x19.gitpod.v1.AdmissionLevelB\x06ʫ\x1e\x02\b\x01R\x15maxPortAdmissionLevel\x128\n" +
-	"\x14web_browser_disabled\x18\x18 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x12webBrowserDisabled\x128\n" +
-	"\x14disable_from_scratch\x18\x19 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x12disableFromScratch\x12K\n" +
-	"\x10veto_file_policy\x18\x1a \x01(\v2\x19.gitpod.v1.VetoFilePolicyB\x06ʫ\x1e\x02\b\x01R\x0evetoFilePolicy\x12?\n" +
-	"\x12security_policy_id\x18\x1b \x01(\tB\x11\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01ʫ\x1e\x02\b\x01R\x10securityPolicyId\x12\xee\x01\n" +
-	"\x1aarchive_environments_after\x18\x1c \x01(\v2\x19.google.protobuf.DurationB\x94\x01\xbaH\x8a\x01\xba\x01w\n" +
-	"%archive_environments_after_whole_days\x12$value must be a whole number of days\x1a(int(this) % int(duration('86400s')) == 0\xaa\x01\r\"\x05\b\x80\x9a\x9e\x012\x04\b\x80\xa3\x05ʫ\x1e\x02\b\x01R\x18archiveEnvironmentsAfter\x1al\n" +
+	"\x18max_port_admission_level\x18\x16 \x01(\x0e2\x19.gitpod.v1.AdmissionLevelB\x06ʫ\x1e\x02\b\x01R\x15maxPortAdmissionLevel\x12<\n" +
+	"\x14web_browser_disabled\x18\x18 \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x12webBrowserDisabled\x12<\n" +
+	"\x14disable_from_scratch\x18\x19 \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x12disableFromScratch\x12K\n" +
+	"\x10veto_file_policy\x18\x1a \x01(\v2\x19.gitpod.v1.VetoFilePolicyB\x06ʫ\x1e\x02\b\x01R\x0evetoFilePolicy\x12C\n" +
+	"\x12security_policy_id\x18\x1b \x01(\tB\x15\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01ʫ\x1e\x02\b\x01ګ\x1e\x00R\x10securityPolicyId\x12\xf2\x01\n" +
+	"\x1aarchive_environments_after\x18\x1c \x01(\v2\x19.google.protobuf.DurationB\x98\x01\xbaH\x8a\x01\xba\x01w\n" +
+	"%archive_environments_after_whole_days\x12$value must be a whole number of days\x1a(int(this) % int(duration('86400s')) == 0\xaa\x01\r\"\x05\b\x80\x9a\x9e\x012\x04\b\x80\xa3\x05ʫ\x1e\x02\b\x01ګ\x1e\x00R\x18archiveEnvironmentsAfter\x1al\n" +
 	"\x1eEditorVersionRestrictionsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x124\n" +
-	"\x05value\x18\x02 \x01(\v2\x1e.gitpod.v1.EditorVersionPolicyR\x05value:\x028\x01J\x04\b\x13\x10\x14J\x04\b\x17\x10\x18R\x19project_creation_defaults\"\xa9\x01\n" +
+	"\x05value\x18\x02 \x01(\v2\x1e.gitpod.v1.EditorVersionPolicyR\x05value:\x028\x01:\x04ҫ\x1e\x00J\x04\b\x13\x10\x14J\x04\b\x17\x10\x18R\x19project_creation_defaults\"\xa9\x01\n" +
 	"\x0eVetoExecPolicy\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12 \n" +
 	"\vexecutables\x18\x02 \x03(\tR\vexecutables\x127\n" +
@@ -8709,23 +8857,32 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x123\n" +
 	"\x05paths\x18\x02 \x01(\v2\x1d.gitpod.v1.VetoFilePathPolicyR\x05paths\x12J\n" +
 	"\rblock_devices\x18\x03 \x01(\v2%.gitpod.v1.VetoFileBlockDevicesPolicyR\fblockDevices:\x1e\xba\xab\x1e\x1a\n" +
-	"\x16organizations.policies\x18\x01\"@\n" +
-	"\x13EditorVersionPolicy\x12)\n" +
-	"\x10allowed_versions\x18\x01 \x03(\tR\x0fallowedVersions\"\x87\x06\n" +
-	"\vAgentPolicy\x12)\n" +
-	"\fmcp_disabled\x18\x01 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\vmcpDisabled\x122\n" +
-	"\x11command_deny_list\x18\x02 \x03(\tB\x06\xbaH\x03\xc8\x01\x01R\x0fcommandDenyList\x124\n" +
-	"\x12scm_tools_disabled\x18\x03 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x10scmToolsDisabled\x12:\n" +
-	"\x1ascm_tools_allowed_group_id\x18\x04 \x01(\tR\x16scmToolsAllowedGroupId\x12d\n" +
-	"\x1bconversation_sharing_policy\x18\x05 \x01(\x0e2$.gitpod.v1.ConversationSharingPolicyR\x19conversationSharingPolicy\x12L\n" +
-	"\x1dmax_subagents_per_environment\x18\x06 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
-	"(\x00R\x1amaxSubagentsPerEnvironment\x12*\n" +
-	"\x11allowed_agent_ids\x18\a \x03(\tR\x0fallowedAgentIds\x12M\n" +
-	"\x14allowed_codex_models\x18\b \x03(\x0e2\x1b.gitpod.v1.CodexOpenAIModelR\x12allowedCodexModels\x12f\n" +
+	"\x16organizations.policies\x18\x01\"F\n" +
+	"\x13EditorVersionPolicy\x12/\n" +
+	"\x10allowed_versions\x18\x01 \x03(\tB\x04ګ\x1e\x00R\x0fallowedVersions\"\xc5\x01\n" +
+	"\x10CodexModelPolicy\x12O\n" +
+	"\fmodel_states\x18\x01 \x03(\v2,.gitpod.v1.CodexModelPolicy.ModelStatesEntryR\vmodelStates\x1a`\n" +
+	"\x10ModelStatesEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x126\n" +
+	"\x05value\x18\x02 \x01(\x0e2 .gitpod.v1.CodexModelPolicyStateR\x05value:\x028\x01\"\xf8\x06\n" +
+	"\vAgentPolicy\x12-\n" +
+	"\fmcp_disabled\x18\x01 \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\vmcpDisabled\x126\n" +
+	"\x11command_deny_list\x18\x02 \x03(\tB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x0fcommandDenyList\x128\n" +
+	"\x12scm_tools_disabled\x18\x03 \x01(\bB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x10scmToolsDisabled\x12@\n" +
+	"\x1ascm_tools_allowed_group_id\x18\x04 \x01(\tB\x04ګ\x1e\x00R\x16scmToolsAllowedGroupId\x12j\n" +
+	"\x1bconversation_sharing_policy\x18\x05 \x01(\x0e2$.gitpod.v1.ConversationSharingPolicyB\x04ګ\x1e\x00R\x19conversationSharingPolicy\x12P\n" +
+	"\x1dmax_subagents_per_environment\x18\x06 \x01(\x05B\r\xbaH\x06\x1a\x04\x18\n" +
+	"(\x00ګ\x1e\x00R\x1amaxSubagentsPerEnvironment\x120\n" +
+	"\x11allowed_agent_ids\x18\a \x03(\tB\x04ګ\x1e\x00R\x0fallowedAgentIds\x12Q\n" +
+	"\x14allowed_codex_models\x18\b \x03(\x0e2\x1b.gitpod.v1.CodexOpenAIModelB\x02\x18\x01R\x12allowedCodexModels\x12f\n" +
 	"\x1fallowed_codex_reasoning_efforts\x18\t \x03(\x0e2\x1f.gitpod.v1.CodexReasoningEffortR\x1callowedCodexReasoningEfforts\x12Z\n" +
 	"\x1ballowed_codex_service_tiers\x18\n" +
 	" \x03(\x0e2\x1b.gitpod.v1.CodexServiceTierR\x18allowedCodexServiceTiers\x124\n" +
-	"\x12goal_mode_disabled\x18\v \x01(\bB\x06ʫ\x1e\x02\b\x01R\x10goalModeDisabled\"\xa2\x01\n" +
+	"\x12goal_mode_disabled\x18\v \x01(\bB\x06ʫ\x1e\x02\b\x01R\x10goalModeDisabled\x12I\n" +
+	"\x12codex_model_policy\x18\f \x01(\v2\x1b.gitpod.v1.CodexModelPolicyR\x10codexModelPolicy\"\xa2\x01\n" +
 	"\x13SecurityAgentPolicy\x12>\n" +
 	"\vcrowdstrike\x18\x01 \x01(\v2\x1c.gitpod.v1.CrowdStrikeConfigR\vcrowdstrike\x12K\n" +
 	"\rcustom_agents\x18\x02 \x03(\v2\x1e.gitpod.v1.CustomSecurityAgentB\x06ʫ\x1e\x02\b\x01R\fcustomAgents\"\xaf\x02\n" +
@@ -8758,7 +8915,7 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
 	"\x0forganization.idR\x0eorganizationId\"\x87\x01\n" +
 	"&GetOrganizationLLMCapabilitiesResponse\x12]\n" +
-	"\x15disabled_capabilities\x18\x01 \x03(\x0e2 .gitpod.v1.LLMDisabledCapabilityB\x06ʫ\x1e\x02\b\x01R\x14disabledCapabilities\"\x86&\n" +
+	"\x15disabled_capabilities\x18\x01 \x03(\x0e2 .gitpod.v1.LLMDisabledCapabilityB\x06ʫ\x1e\x02\b\x01R\x14disabledCapabilities\"\xd5&\n" +
 	"!UpdateOrganizationPoliciesRequest\x12I\n" +
 	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
 	"\x0forganization.idR\x0eorganizationId\x12\xf7\x01\n" +
@@ -8790,7 +8947,7 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\x10veto_file_policy\x18\x1a \x01(\v2\x19.gitpod.v1.VetoFilePolicyB\x06ʫ\x1e\x02\b\x01H\x14R\x0evetoFilePolicy\x88\x01\x01\x12D\n" +
 	"\x12security_policy_id\x18\x1b \x01(\tB\x11\xbaH\b\xd8\x01\x02r\x03\xb0\x01\x01ʫ\x1e\x02\b\x01H\x15R\x10securityPolicyId\x88\x01\x01\x12\xf3\x01\n" +
 	"\x1aarchive_environments_after\x18\x1c \x01(\v2\x19.google.protobuf.DurationB\x94\x01\xbaH\x8a\x01\xba\x01w\n" +
-	"%archive_environments_after_whole_days\x12$value must be a whole number of days\x1a(int(this) % int(duration('86400s')) == 0\xaa\x01\r\"\x05\b\x80\x9a\x9e\x012\x04\b\x80\xa3\x05ʫ\x1e\x02\b\x01H\x16R\x18archiveEnvironmentsAfter\x88\x01\x01\x1a\xb3\a\n" +
+	"%archive_environments_after_whole_days\x12$value must be a whole number of days\x1a(int(this) % int(duration('86400s')) == 0\xaa\x01\r\"\x05\b\x80\x9a\x9e\x012\x04\b\x80\xa3\x05ʫ\x1e\x02\b\x01H\x16R\x18archiveEnvironmentsAfter\x88\x01\x01\x1a\x82\b\n" +
 	"\x11UpdateAgentPolicy\x12&\n" +
 	"\fmcp_disabled\x18\x01 \x01(\bH\x00R\vmcpDisabled\x88\x01\x01\x12*\n" +
 	"\x11command_deny_list\x18\x02 \x03(\tR\x0fcommandDenyList\x121\n" +
@@ -8799,12 +8956,13 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\x1bconversation_sharing_policy\x18\x05 \x01(\x0e2$.gitpod.v1.ConversationSharingPolicyH\x03R\x19conversationSharingPolicy\x88\x01\x01\x12Q\n" +
 	"\x1dmax_subagents_per_environment\x18\x06 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
 	"(\x00H\x04R\x1amaxSubagentsPerEnvironment\x88\x01\x01\x12*\n" +
-	"\x11allowed_agent_ids\x18\a \x03(\tR\x0fallowedAgentIds\x12M\n" +
-	"\x14allowed_codex_models\x18\b \x03(\x0e2\x1b.gitpod.v1.CodexOpenAIModelR\x12allowedCodexModels\x12f\n" +
+	"\x11allowed_agent_ids\x18\a \x03(\tR\x0fallowedAgentIds\x12Q\n" +
+	"\x14allowed_codex_models\x18\b \x03(\x0e2\x1b.gitpod.v1.CodexOpenAIModelB\x02\x18\x01R\x12allowedCodexModels\x12f\n" +
 	"\x1fallowed_codex_reasoning_efforts\x18\t \x03(\x0e2\x1f.gitpod.v1.CodexReasoningEffortR\x1callowedCodexReasoningEfforts\x12Z\n" +
 	"\x1ballowed_codex_service_tiers\x18\n" +
 	" \x03(\x0e2\x1b.gitpod.v1.CodexServiceTierR\x18allowedCodexServiceTiers\x129\n" +
-	"\x12goal_mode_disabled\x18\v \x01(\bB\x06ʫ\x1e\x02\b\x01H\x05R\x10goalModeDisabled\x88\x01\x01B\x0f\n" +
+	"\x12goal_mode_disabled\x18\v \x01(\bB\x06ʫ\x1e\x02\b\x01H\x05R\x10goalModeDisabled\x88\x01\x01\x12I\n" +
+	"\x12codex_model_policy\x18\f \x01(\v2\x1b.gitpod.v1.CodexModelPolicyR\x10codexModelPolicyB\x0f\n" +
 	"\r_mcp_disabledB\x15\n" +
 	"\x13_scm_tools_disabledB\x1d\n" +
 	"\x1b_scm_tools_allowed_group_idB\x1e\n" +
@@ -9078,7 +9236,11 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\x19ConversationSharingPolicy\x12+\n" +
 	"'CONVERSATION_SHARING_POLICY_UNSPECIFIED\x10\x00\x12(\n" +
 	"$CONVERSATION_SHARING_POLICY_DISABLED\x10\x01\x12,\n" +
-	"(CONVERSATION_SHARING_POLICY_ORGANIZATION\x10\x02*\xb5\x01\n" +
+	"(CONVERSATION_SHARING_POLICY_ORGANIZATION\x10\x02*\x8e\x01\n" +
+	"\x15CodexModelPolicyState\x12(\n" +
+	"$CODEX_MODEL_POLICY_STATE_UNSPECIFIED\x10\x00\x12$\n" +
+	" CODEX_MODEL_POLICY_STATE_ALLOWED\x10\x01\x12%\n" +
+	"!CODEX_MODEL_POLICY_STATE_DISABLED\x10\x02*\xb5\x01\n" +
 	"\x1eTermsOfServiceAcceptanceStatus\x122\n" +
 	".TERMS_OF_SERVICE_ACCEPTANCE_STATUS_UNSPECIFIED\x10\x00\x12/\n" +
 	"+TERMS_OF_SERVICE_ACCEPTANCE_STATUS_ACCEPTED\x10\x01\x12.\n" +
@@ -9178,407 +9340,414 @@ func file_gitpod_v1_organization_proto_rawDescGZIP() []byte {
 	return file_gitpod_v1_organization_proto_rawDescData
 }
 
-var file_gitpod_v1_organization_proto_enumTypes = make([]protoimpl.EnumInfo, 9)
-var file_gitpod_v1_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 133)
+var file_gitpod_v1_organization_proto_enumTypes = make([]protoimpl.EnumInfo, 10)
+var file_gitpod_v1_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 135)
 var file_gitpod_v1_organization_proto_goTypes = []any{
 	(OrganizationTier)(0),                                               // 0: gitpod.v1.OrganizationTier
 	(OrganizationRole)(0),                                               // 1: gitpod.v1.OrganizationRole
 	(SSOConfigurationState)(0),                                          // 2: gitpod.v1.SSOConfigurationState
 	(DomainVerificationState)(0),                                        // 3: gitpod.v1.DomainVerificationState
 	(ConversationSharingPolicy)(0),                                      // 4: gitpod.v1.ConversationSharingPolicy
-	(TermsOfServiceAcceptanceStatus)(0),                                 // 5: gitpod.v1.TermsOfServiceAcceptanceStatus
-	(CustomDomainProvider)(0),                                           // 6: gitpod.v1.CustomDomainProvider
-	(ListMembersRequest_SortField)(0),                                   // 7: gitpod.v1.ListMembersRequest.SortField
-	(SSOConfiguration_ProviderType)(0),                                  // 8: gitpod.v1.SSOConfiguration.ProviderType
-	(*UpdateOrganizationRequest)(nil),                                   // 9: gitpod.v1.UpdateOrganizationRequest
-	(*UpdateOrganizationResponse)(nil),                                  // 10: gitpod.v1.UpdateOrganizationResponse
-	(*CreateOrganizationRequest)(nil),                                   // 11: gitpod.v1.CreateOrganizationRequest
-	(*CreateOrganizationResponse)(nil),                                  // 12: gitpod.v1.CreateOrganizationResponse
-	(*JoinOrganizationRequest)(nil),                                     // 13: gitpod.v1.JoinOrganizationRequest
-	(*JoinOrganizationResponse)(nil),                                    // 14: gitpod.v1.JoinOrganizationResponse
-	(*LeaveOrganizationRequest)(nil),                                    // 15: gitpod.v1.LeaveOrganizationRequest
-	(*LeaveOrganizationResponse)(nil),                                   // 16: gitpod.v1.LeaveOrganizationResponse
-	(*GetOrganizationRequest)(nil),                                      // 17: gitpod.v1.GetOrganizationRequest
-	(*GetOrganizationResponse)(nil),                                     // 18: gitpod.v1.GetOrganizationResponse
-	(*DeleteOrganizationRequest)(nil),                                   // 19: gitpod.v1.DeleteOrganizationRequest
-	(*DeleteOrganizationResponse)(nil),                                  // 20: gitpod.v1.DeleteOrganizationResponse
-	(*ListMembersRequest)(nil),                                          // 21: gitpod.v1.ListMembersRequest
-	(*ListMembersResponse)(nil),                                         // 22: gitpod.v1.ListMembersResponse
-	(*SetRoleRequest)(nil),                                              // 23: gitpod.v1.SetRoleRequest
-	(*SetRoleResponse)(nil),                                             // 24: gitpod.v1.SetRoleResponse
-	(*GetOrganizationInviteRequest)(nil),                                // 25: gitpod.v1.GetOrganizationInviteRequest
-	(*GetOrganizationInviteResponse)(nil),                               // 26: gitpod.v1.GetOrganizationInviteResponse
-	(*OrganizationInvite)(nil),                                          // 27: gitpod.v1.OrganizationInvite
-	(*CreateOrganizationInviteRequest)(nil),                             // 28: gitpod.v1.CreateOrganizationInviteRequest
-	(*CreateOrganizationInviteResponse)(nil),                            // 29: gitpod.v1.CreateOrganizationInviteResponse
-	(*GetOrganizationInviteSummaryRequest)(nil),                         // 30: gitpod.v1.GetOrganizationInviteSummaryRequest
-	(*GetOrganizationInviteSummaryResponse)(nil),                        // 31: gitpod.v1.GetOrganizationInviteSummaryResponse
-	(*Organization)(nil),                                                // 32: gitpod.v1.Organization
-	(*OrganizationMember)(nil),                                          // 33: gitpod.v1.OrganizationMember
-	(*InviteDomains)(nil),                                               // 34: gitpod.v1.InviteDomains
-	(*CreateSSOConfigurationRequest)(nil),                               // 35: gitpod.v1.CreateSSOConfigurationRequest
-	(*CreateSSOConfigurationResponse)(nil),                              // 36: gitpod.v1.CreateSSOConfigurationResponse
-	(*SSOConfiguration)(nil),                                            // 37: gitpod.v1.SSOConfiguration
-	(*GetSSOConfigurationRequest)(nil),                                  // 38: gitpod.v1.GetSSOConfigurationRequest
-	(*GetSSOConfigurationResponse)(nil),                                 // 39: gitpod.v1.GetSSOConfigurationResponse
-	(*ListSSOConfigurationsRequest)(nil),                                // 40: gitpod.v1.ListSSOConfigurationsRequest
-	(*ListSSOConfigurationsResponse)(nil),                               // 41: gitpod.v1.ListSSOConfigurationsResponse
-	(*UpdateSSOConfigurationRequest)(nil),                               // 42: gitpod.v1.UpdateSSOConfigurationRequest
-	(*AdditionalScopesUpdate)(nil),                                      // 43: gitpod.v1.AdditionalScopesUpdate
-	(*UpdateSSOConfigurationResponse)(nil),                              // 44: gitpod.v1.UpdateSSOConfigurationResponse
-	(*DeleteSSOConfigurationRequest)(nil),                               // 45: gitpod.v1.DeleteSSOConfigurationRequest
-	(*DeleteSSOConfigurationResponse)(nil),                              // 46: gitpod.v1.DeleteSSOConfigurationResponse
-	(*SCIMConfiguration)(nil),                                           // 47: gitpod.v1.SCIMConfiguration
-	(*CreateSCIMConfigurationRequest)(nil),                              // 48: gitpod.v1.CreateSCIMConfigurationRequest
-	(*CreateSCIMConfigurationResponse)(nil),                             // 49: gitpod.v1.CreateSCIMConfigurationResponse
-	(*GetSCIMConfigurationRequest)(nil),                                 // 50: gitpod.v1.GetSCIMConfigurationRequest
-	(*GetSCIMConfigurationResponse)(nil),                                // 51: gitpod.v1.GetSCIMConfigurationResponse
-	(*ListSCIMConfigurationsRequest)(nil),                               // 52: gitpod.v1.ListSCIMConfigurationsRequest
-	(*ListSCIMConfigurationsResponse)(nil),                              // 53: gitpod.v1.ListSCIMConfigurationsResponse
-	(*UpdateSCIMConfigurationRequest)(nil),                              // 54: gitpod.v1.UpdateSCIMConfigurationRequest
-	(*UpdateSCIMConfigurationResponse)(nil),                             // 55: gitpod.v1.UpdateSCIMConfigurationResponse
-	(*DeleteSCIMConfigurationRequest)(nil),                              // 56: gitpod.v1.DeleteSCIMConfigurationRequest
-	(*DeleteSCIMConfigurationResponse)(nil),                             // 57: gitpod.v1.DeleteSCIMConfigurationResponse
-	(*RegenerateSCIMTokenRequest)(nil),                                  // 58: gitpod.v1.RegenerateSCIMTokenRequest
-	(*RegenerateSCIMTokenResponse)(nil),                                 // 59: gitpod.v1.RegenerateSCIMTokenResponse
-	(*DomainVerification)(nil),                                          // 60: gitpod.v1.DomainVerification
-	(*CreateDomainVerificationRequest)(nil),                             // 61: gitpod.v1.CreateDomainVerificationRequest
-	(*CreateDomainVerificationResponse)(nil),                            // 62: gitpod.v1.CreateDomainVerificationResponse
-	(*GetDomainVerificationRequest)(nil),                                // 63: gitpod.v1.GetDomainVerificationRequest
-	(*GetDomainVerificationResponse)(nil),                               // 64: gitpod.v1.GetDomainVerificationResponse
-	(*ListDomainVerificationsRequest)(nil),                              // 65: gitpod.v1.ListDomainVerificationsRequest
-	(*ListDomainVerificationsResponse)(nil),                             // 66: gitpod.v1.ListDomainVerificationsResponse
-	(*VerifyDomainRequest)(nil),                                         // 67: gitpod.v1.VerifyDomainRequest
-	(*VerifyDomainResponse)(nil),                                        // 68: gitpod.v1.VerifyDomainResponse
-	(*DeleteDomainVerificationRequest)(nil),                             // 69: gitpod.v1.DeleteDomainVerificationRequest
-	(*DeleteDomainVerificationResponse)(nil),                            // 70: gitpod.v1.DeleteDomainVerificationResponse
-	(*OrganizationTierFailedPreconditionDetails)(nil),                   // 71: gitpod.v1.OrganizationTierFailedPreconditionDetails
-	(*OrganizationPolicies)(nil),                                        // 72: gitpod.v1.OrganizationPolicies
-	(*VetoExecPolicy)(nil),                                              // 73: gitpod.v1.VetoExecPolicy
-	(*VetoFilePolicy)(nil),                                              // 74: gitpod.v1.VetoFilePolicy
-	(*EditorVersionPolicy)(nil),                                         // 75: gitpod.v1.EditorVersionPolicy
-	(*AgentPolicy)(nil),                                                 // 76: gitpod.v1.AgentPolicy
-	(*SecurityAgentPolicy)(nil),                                         // 77: gitpod.v1.SecurityAgentPolicy
-	(*CrowdStrikeConfig)(nil),                                           // 78: gitpod.v1.CrowdStrikeConfig
-	(*CustomSecurityAgent)(nil),                                         // 79: gitpod.v1.CustomSecurityAgent
-	(*CustomAgentEnvMapping)(nil),                                       // 80: gitpod.v1.CustomAgentEnvMapping
-	(*GetOrganizationPoliciesRequest)(nil),                              // 81: gitpod.v1.GetOrganizationPoliciesRequest
-	(*GetOrganizationPoliciesResponse)(nil),                             // 82: gitpod.v1.GetOrganizationPoliciesResponse
-	(*GetOrganizationLLMCapabilitiesRequest)(nil),                       // 83: gitpod.v1.GetOrganizationLLMCapabilitiesRequest
-	(*GetOrganizationLLMCapabilitiesResponse)(nil),                      // 84: gitpod.v1.GetOrganizationLLMCapabilitiesResponse
-	(*UpdateOrganizationPoliciesRequest)(nil),                           // 85: gitpod.v1.UpdateOrganizationPoliciesRequest
-	(*UpdateOrganizationPoliciesResponse)(nil),                          // 86: gitpod.v1.UpdateOrganizationPoliciesResponse
-	(*PolicyEnforcedFailedPreconditionDetails)(nil),                     // 87: gitpod.v1.PolicyEnforcedFailedPreconditionDetails
-	(*EnvironmentMaxLifetimeExceededDetails)(nil),                       // 88: gitpod.v1.EnvironmentMaxLifetimeExceededDetails
-	(*AnnouncementBanner)(nil),                                          // 89: gitpod.v1.AnnouncementBanner
-	(*GetAnnouncementBannerRequest)(nil),                                // 90: gitpod.v1.GetAnnouncementBannerRequest
-	(*GetAnnouncementBannerResponse)(nil),                               // 91: gitpod.v1.GetAnnouncementBannerResponse
-	(*UpdateAnnouncementBannerRequest)(nil),                             // 92: gitpod.v1.UpdateAnnouncementBannerRequest
-	(*UpdateAnnouncementBannerResponse)(nil),                            // 93: gitpod.v1.UpdateAnnouncementBannerResponse
-	(*TermsOfServiceVersion)(nil),                                       // 94: gitpod.v1.TermsOfServiceVersion
-	(*TermsOfServiceAcceptance)(nil),                                    // 95: gitpod.v1.TermsOfServiceAcceptance
-	(*TermsOfService)(nil),                                              // 96: gitpod.v1.TermsOfService
-	(*GetTermsOfServiceRequest)(nil),                                    // 97: gitpod.v1.GetTermsOfServiceRequest
-	(*GetTermsOfServiceResponse)(nil),                                   // 98: gitpod.v1.GetTermsOfServiceResponse
-	(*UpdateTermsOfServiceRequest)(nil),                                 // 99: gitpod.v1.UpdateTermsOfServiceRequest
-	(*UpdateTermsOfServiceResponse)(nil),                                // 100: gitpod.v1.UpdateTermsOfServiceResponse
-	(*AcceptTermsOfServiceRequest)(nil),                                 // 101: gitpod.v1.AcceptTermsOfServiceRequest
-	(*AcceptTermsOfServiceResponse)(nil),                                // 102: gitpod.v1.AcceptTermsOfServiceResponse
-	(*MemberTermsOfServiceAcceptance)(nil),                              // 103: gitpod.v1.MemberTermsOfServiceAcceptance
-	(*ListTermsOfServiceVersionsRequest)(nil),                           // 104: gitpod.v1.ListTermsOfServiceVersionsRequest
-	(*ListTermsOfServiceVersionsResponse)(nil),                          // 105: gitpod.v1.ListTermsOfServiceVersionsResponse
-	(*TermsOfServiceAcceptanceFilter)(nil),                              // 106: gitpod.v1.TermsOfServiceAcceptanceFilter
-	(*ListTermsOfServiceAcceptancesRequest)(nil),                        // 107: gitpod.v1.ListTermsOfServiceAcceptancesRequest
-	(*ListTermsOfServiceAcceptancesResponse)(nil),                       // 108: gitpod.v1.ListTermsOfServiceAcceptancesResponse
-	(*GetTermsOfServiceAcceptancesExportRequest)(nil),                   // 109: gitpod.v1.GetTermsOfServiceAcceptancesExportRequest
-	(*GetTermsOfServiceAcceptancesExportResponse)(nil),                  // 110: gitpod.v1.GetTermsOfServiceAcceptancesExportResponse
-	(*SetTierRequest)(nil),                                              // 111: gitpod.v1.SetTierRequest
-	(*SetTierResponse)(nil),                                             // 112: gitpod.v1.SetTierResponse
-	(*SetStripeCustomerIDRequest)(nil),                                  // 113: gitpod.v1.SetStripeCustomerIDRequest
-	(*SetStripeCustomerIDResponse)(nil),                                 // 114: gitpod.v1.SetStripeCustomerIDResponse
-	(*CustomDomain)(nil),                                                // 115: gitpod.v1.CustomDomain
-	(*CreateCustomDomainRequest)(nil),                                   // 116: gitpod.v1.CreateCustomDomainRequest
-	(*CreateCustomDomainResponse)(nil),                                  // 117: gitpod.v1.CreateCustomDomainResponse
-	(*GetCustomDomainRequest)(nil),                                      // 118: gitpod.v1.GetCustomDomainRequest
-	(*GetCustomDomainResponse)(nil),                                     // 119: gitpod.v1.GetCustomDomainResponse
-	(*UpdateCustomDomainRequest)(nil),                                   // 120: gitpod.v1.UpdateCustomDomainRequest
-	(*UpdateCustomDomainResponse)(nil),                                  // 121: gitpod.v1.UpdateCustomDomainResponse
-	(*DeleteCustomDomainRequest)(nil),                                   // 122: gitpod.v1.DeleteCustomDomainRequest
-	(*DeleteCustomDomainResponse)(nil),                                  // 123: gitpod.v1.DeleteCustomDomainResponse
-	(*GetOIDCConfigRequest)(nil),                                        // 124: gitpod.v1.GetOIDCConfigRequest
-	(*GetOIDCConfigResponse)(nil),                                       // 125: gitpod.v1.GetOIDCConfigResponse
-	(*UpdateOIDCConfigRequest)(nil),                                     // 126: gitpod.v1.UpdateOIDCConfigRequest
-	(*UpdateOIDCConfigResponse)(nil),                                    // 127: gitpod.v1.UpdateOIDCConfigResponse
-	(*OIDCConfig)(nil),                                                  // 128: gitpod.v1.OIDCConfig
-	(*OIDCConfigV2)(nil),                                                // 129: gitpod.v1.OIDCConfigV2
-	(*OIDCConfigV3)(nil),                                                // 130: gitpod.v1.OIDCConfigV3
-	(*ListMembersRequest_Filter)(nil),                                   // 131: gitpod.v1.ListMembersRequest.Filter
-	(*ListMembersRequest_Sort)(nil),                                     // 132: gitpod.v1.ListMembersRequest.Sort
-	nil,                                                                 // 133: gitpod.v1.SSOConfiguration.ClaimsEntry
-	nil,                                                                 // 134: gitpod.v1.UpdateSSOConfigurationRequest.ClaimsEntry
-	nil,                                                                 // 135: gitpod.v1.OrganizationPolicies.EditorVersionRestrictionsEntry
-	nil,                                                                 // 136: gitpod.v1.CrowdStrikeConfig.AdditionalOptionsEntry
-	(*UpdateOrganizationPoliciesRequest_UpdateAgentPolicy)(nil),         // 137: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy
-	(*UpdateOrganizationPoliciesRequest_UpdateSecurityAgentPolicy)(nil), // 138: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateSecurityAgentPolicy
-	(*UpdateOrganizationPoliciesRequest_UpdateCrowdStrikeConfig)(nil),   // 139: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfig
-	nil,                                // 140: gitpod.v1.UpdateOrganizationPoliciesRequest.EditorVersionRestrictionsEntry
-	nil,                                // 141: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfig.AdditionalOptionsEntry
-	(*PaginationRequest)(nil),          // 142: gitpod.v1.PaginationRequest
-	(*CountRequest)(nil),               // 143: gitpod.v1.CountRequest
-	(*PaginationResponse)(nil),         // 144: gitpod.v1.PaginationResponse
-	(*CountResponse)(nil),              // 145: gitpod.v1.CountResponse
-	(*timestamppb.Timestamp)(nil),      // 146: google.protobuf.Timestamp
-	(UserStatus)(0),                    // 147: gitpod.v1.UserStatus
-	(*durationpb.Duration)(nil),        // 148: google.protobuf.Duration
-	(AdmissionLevel)(0),                // 149: gitpod.v1.AdmissionLevel
-	(KernelControlsAction)(0),          // 150: gitpod.v1.KernelControlsAction
-	(*VetoFilePathPolicy)(nil),         // 151: gitpod.v1.VetoFilePathPolicy
-	(*VetoFileBlockDevicesPolicy)(nil), // 152: gitpod.v1.VetoFileBlockDevicesPolicy
-	(CodexOpenAIModel)(0),              // 153: gitpod.v1.CodexOpenAIModel
-	(CodexReasoningEffort)(0),          // 154: gitpod.v1.CodexReasoningEffort
-	(CodexServiceTier)(0),              // 155: gitpod.v1.CodexServiceTier
-	(LLMDisabledCapability)(0),         // 156: gitpod.v1.LLMDisabledCapability
-	(SortOrder)(0),                     // 157: gitpod.v1.SortOrder
+	(CodexModelPolicyState)(0),                                          // 5: gitpod.v1.CodexModelPolicyState
+	(TermsOfServiceAcceptanceStatus)(0),                                 // 6: gitpod.v1.TermsOfServiceAcceptanceStatus
+	(CustomDomainProvider)(0),                                           // 7: gitpod.v1.CustomDomainProvider
+	(ListMembersRequest_SortField)(0),                                   // 8: gitpod.v1.ListMembersRequest.SortField
+	(SSOConfiguration_ProviderType)(0),                                  // 9: gitpod.v1.SSOConfiguration.ProviderType
+	(*UpdateOrganizationRequest)(nil),                                   // 10: gitpod.v1.UpdateOrganizationRequest
+	(*UpdateOrganizationResponse)(nil),                                  // 11: gitpod.v1.UpdateOrganizationResponse
+	(*CreateOrganizationRequest)(nil),                                   // 12: gitpod.v1.CreateOrganizationRequest
+	(*CreateOrganizationResponse)(nil),                                  // 13: gitpod.v1.CreateOrganizationResponse
+	(*JoinOrganizationRequest)(nil),                                     // 14: gitpod.v1.JoinOrganizationRequest
+	(*JoinOrganizationResponse)(nil),                                    // 15: gitpod.v1.JoinOrganizationResponse
+	(*LeaveOrganizationRequest)(nil),                                    // 16: gitpod.v1.LeaveOrganizationRequest
+	(*LeaveOrganizationResponse)(nil),                                   // 17: gitpod.v1.LeaveOrganizationResponse
+	(*GetOrganizationRequest)(nil),                                      // 18: gitpod.v1.GetOrganizationRequest
+	(*GetOrganizationResponse)(nil),                                     // 19: gitpod.v1.GetOrganizationResponse
+	(*DeleteOrganizationRequest)(nil),                                   // 20: gitpod.v1.DeleteOrganizationRequest
+	(*DeleteOrganizationResponse)(nil),                                  // 21: gitpod.v1.DeleteOrganizationResponse
+	(*ListMembersRequest)(nil),                                          // 22: gitpod.v1.ListMembersRequest
+	(*ListMembersResponse)(nil),                                         // 23: gitpod.v1.ListMembersResponse
+	(*SetRoleRequest)(nil),                                              // 24: gitpod.v1.SetRoleRequest
+	(*SetRoleResponse)(nil),                                             // 25: gitpod.v1.SetRoleResponse
+	(*GetOrganizationInviteRequest)(nil),                                // 26: gitpod.v1.GetOrganizationInviteRequest
+	(*GetOrganizationInviteResponse)(nil),                               // 27: gitpod.v1.GetOrganizationInviteResponse
+	(*OrganizationInvite)(nil),                                          // 28: gitpod.v1.OrganizationInvite
+	(*CreateOrganizationInviteRequest)(nil),                             // 29: gitpod.v1.CreateOrganizationInviteRequest
+	(*CreateOrganizationInviteResponse)(nil),                            // 30: gitpod.v1.CreateOrganizationInviteResponse
+	(*GetOrganizationInviteSummaryRequest)(nil),                         // 31: gitpod.v1.GetOrganizationInviteSummaryRequest
+	(*GetOrganizationInviteSummaryResponse)(nil),                        // 32: gitpod.v1.GetOrganizationInviteSummaryResponse
+	(*Organization)(nil),                                                // 33: gitpod.v1.Organization
+	(*OrganizationMember)(nil),                                          // 34: gitpod.v1.OrganizationMember
+	(*InviteDomains)(nil),                                               // 35: gitpod.v1.InviteDomains
+	(*CreateSSOConfigurationRequest)(nil),                               // 36: gitpod.v1.CreateSSOConfigurationRequest
+	(*CreateSSOConfigurationResponse)(nil),                              // 37: gitpod.v1.CreateSSOConfigurationResponse
+	(*SSOConfiguration)(nil),                                            // 38: gitpod.v1.SSOConfiguration
+	(*GetSSOConfigurationRequest)(nil),                                  // 39: gitpod.v1.GetSSOConfigurationRequest
+	(*GetSSOConfigurationResponse)(nil),                                 // 40: gitpod.v1.GetSSOConfigurationResponse
+	(*ListSSOConfigurationsRequest)(nil),                                // 41: gitpod.v1.ListSSOConfigurationsRequest
+	(*ListSSOConfigurationsResponse)(nil),                               // 42: gitpod.v1.ListSSOConfigurationsResponse
+	(*UpdateSSOConfigurationRequest)(nil),                               // 43: gitpod.v1.UpdateSSOConfigurationRequest
+	(*AdditionalScopesUpdate)(nil),                                      // 44: gitpod.v1.AdditionalScopesUpdate
+	(*UpdateSSOConfigurationResponse)(nil),                              // 45: gitpod.v1.UpdateSSOConfigurationResponse
+	(*DeleteSSOConfigurationRequest)(nil),                               // 46: gitpod.v1.DeleteSSOConfigurationRequest
+	(*DeleteSSOConfigurationResponse)(nil),                              // 47: gitpod.v1.DeleteSSOConfigurationResponse
+	(*SCIMConfiguration)(nil),                                           // 48: gitpod.v1.SCIMConfiguration
+	(*CreateSCIMConfigurationRequest)(nil),                              // 49: gitpod.v1.CreateSCIMConfigurationRequest
+	(*CreateSCIMConfigurationResponse)(nil),                             // 50: gitpod.v1.CreateSCIMConfigurationResponse
+	(*GetSCIMConfigurationRequest)(nil),                                 // 51: gitpod.v1.GetSCIMConfigurationRequest
+	(*GetSCIMConfigurationResponse)(nil),                                // 52: gitpod.v1.GetSCIMConfigurationResponse
+	(*ListSCIMConfigurationsRequest)(nil),                               // 53: gitpod.v1.ListSCIMConfigurationsRequest
+	(*ListSCIMConfigurationsResponse)(nil),                              // 54: gitpod.v1.ListSCIMConfigurationsResponse
+	(*UpdateSCIMConfigurationRequest)(nil),                              // 55: gitpod.v1.UpdateSCIMConfigurationRequest
+	(*UpdateSCIMConfigurationResponse)(nil),                             // 56: gitpod.v1.UpdateSCIMConfigurationResponse
+	(*DeleteSCIMConfigurationRequest)(nil),                              // 57: gitpod.v1.DeleteSCIMConfigurationRequest
+	(*DeleteSCIMConfigurationResponse)(nil),                             // 58: gitpod.v1.DeleteSCIMConfigurationResponse
+	(*RegenerateSCIMTokenRequest)(nil),                                  // 59: gitpod.v1.RegenerateSCIMTokenRequest
+	(*RegenerateSCIMTokenResponse)(nil),                                 // 60: gitpod.v1.RegenerateSCIMTokenResponse
+	(*DomainVerification)(nil),                                          // 61: gitpod.v1.DomainVerification
+	(*CreateDomainVerificationRequest)(nil),                             // 62: gitpod.v1.CreateDomainVerificationRequest
+	(*CreateDomainVerificationResponse)(nil),                            // 63: gitpod.v1.CreateDomainVerificationResponse
+	(*GetDomainVerificationRequest)(nil),                                // 64: gitpod.v1.GetDomainVerificationRequest
+	(*GetDomainVerificationResponse)(nil),                               // 65: gitpod.v1.GetDomainVerificationResponse
+	(*ListDomainVerificationsRequest)(nil),                              // 66: gitpod.v1.ListDomainVerificationsRequest
+	(*ListDomainVerificationsResponse)(nil),                             // 67: gitpod.v1.ListDomainVerificationsResponse
+	(*VerifyDomainRequest)(nil),                                         // 68: gitpod.v1.VerifyDomainRequest
+	(*VerifyDomainResponse)(nil),                                        // 69: gitpod.v1.VerifyDomainResponse
+	(*DeleteDomainVerificationRequest)(nil),                             // 70: gitpod.v1.DeleteDomainVerificationRequest
+	(*DeleteDomainVerificationResponse)(nil),                            // 71: gitpod.v1.DeleteDomainVerificationResponse
+	(*OrganizationTierFailedPreconditionDetails)(nil),                   // 72: gitpod.v1.OrganizationTierFailedPreconditionDetails
+	(*OrganizationPolicies)(nil),                                        // 73: gitpod.v1.OrganizationPolicies
+	(*VetoExecPolicy)(nil),                                              // 74: gitpod.v1.VetoExecPolicy
+	(*VetoFilePolicy)(nil),                                              // 75: gitpod.v1.VetoFilePolicy
+	(*EditorVersionPolicy)(nil),                                         // 76: gitpod.v1.EditorVersionPolicy
+	(*CodexModelPolicy)(nil),                                            // 77: gitpod.v1.CodexModelPolicy
+	(*AgentPolicy)(nil),                                                 // 78: gitpod.v1.AgentPolicy
+	(*SecurityAgentPolicy)(nil),                                         // 79: gitpod.v1.SecurityAgentPolicy
+	(*CrowdStrikeConfig)(nil),                                           // 80: gitpod.v1.CrowdStrikeConfig
+	(*CustomSecurityAgent)(nil),                                         // 81: gitpod.v1.CustomSecurityAgent
+	(*CustomAgentEnvMapping)(nil),                                       // 82: gitpod.v1.CustomAgentEnvMapping
+	(*GetOrganizationPoliciesRequest)(nil),                              // 83: gitpod.v1.GetOrganizationPoliciesRequest
+	(*GetOrganizationPoliciesResponse)(nil),                             // 84: gitpod.v1.GetOrganizationPoliciesResponse
+	(*GetOrganizationLLMCapabilitiesRequest)(nil),                       // 85: gitpod.v1.GetOrganizationLLMCapabilitiesRequest
+	(*GetOrganizationLLMCapabilitiesResponse)(nil),                      // 86: gitpod.v1.GetOrganizationLLMCapabilitiesResponse
+	(*UpdateOrganizationPoliciesRequest)(nil),                           // 87: gitpod.v1.UpdateOrganizationPoliciesRequest
+	(*UpdateOrganizationPoliciesResponse)(nil),                          // 88: gitpod.v1.UpdateOrganizationPoliciesResponse
+	(*PolicyEnforcedFailedPreconditionDetails)(nil),                     // 89: gitpod.v1.PolicyEnforcedFailedPreconditionDetails
+	(*EnvironmentMaxLifetimeExceededDetails)(nil),                       // 90: gitpod.v1.EnvironmentMaxLifetimeExceededDetails
+	(*AnnouncementBanner)(nil),                                          // 91: gitpod.v1.AnnouncementBanner
+	(*GetAnnouncementBannerRequest)(nil),                                // 92: gitpod.v1.GetAnnouncementBannerRequest
+	(*GetAnnouncementBannerResponse)(nil),                               // 93: gitpod.v1.GetAnnouncementBannerResponse
+	(*UpdateAnnouncementBannerRequest)(nil),                             // 94: gitpod.v1.UpdateAnnouncementBannerRequest
+	(*UpdateAnnouncementBannerResponse)(nil),                            // 95: gitpod.v1.UpdateAnnouncementBannerResponse
+	(*TermsOfServiceVersion)(nil),                                       // 96: gitpod.v1.TermsOfServiceVersion
+	(*TermsOfServiceAcceptance)(nil),                                    // 97: gitpod.v1.TermsOfServiceAcceptance
+	(*TermsOfService)(nil),                                              // 98: gitpod.v1.TermsOfService
+	(*GetTermsOfServiceRequest)(nil),                                    // 99: gitpod.v1.GetTermsOfServiceRequest
+	(*GetTermsOfServiceResponse)(nil),                                   // 100: gitpod.v1.GetTermsOfServiceResponse
+	(*UpdateTermsOfServiceRequest)(nil),                                 // 101: gitpod.v1.UpdateTermsOfServiceRequest
+	(*UpdateTermsOfServiceResponse)(nil),                                // 102: gitpod.v1.UpdateTermsOfServiceResponse
+	(*AcceptTermsOfServiceRequest)(nil),                                 // 103: gitpod.v1.AcceptTermsOfServiceRequest
+	(*AcceptTermsOfServiceResponse)(nil),                                // 104: gitpod.v1.AcceptTermsOfServiceResponse
+	(*MemberTermsOfServiceAcceptance)(nil),                              // 105: gitpod.v1.MemberTermsOfServiceAcceptance
+	(*ListTermsOfServiceVersionsRequest)(nil),                           // 106: gitpod.v1.ListTermsOfServiceVersionsRequest
+	(*ListTermsOfServiceVersionsResponse)(nil),                          // 107: gitpod.v1.ListTermsOfServiceVersionsResponse
+	(*TermsOfServiceAcceptanceFilter)(nil),                              // 108: gitpod.v1.TermsOfServiceAcceptanceFilter
+	(*ListTermsOfServiceAcceptancesRequest)(nil),                        // 109: gitpod.v1.ListTermsOfServiceAcceptancesRequest
+	(*ListTermsOfServiceAcceptancesResponse)(nil),                       // 110: gitpod.v1.ListTermsOfServiceAcceptancesResponse
+	(*GetTermsOfServiceAcceptancesExportRequest)(nil),                   // 111: gitpod.v1.GetTermsOfServiceAcceptancesExportRequest
+	(*GetTermsOfServiceAcceptancesExportResponse)(nil),                  // 112: gitpod.v1.GetTermsOfServiceAcceptancesExportResponse
+	(*SetTierRequest)(nil),                                              // 113: gitpod.v1.SetTierRequest
+	(*SetTierResponse)(nil),                                             // 114: gitpod.v1.SetTierResponse
+	(*SetStripeCustomerIDRequest)(nil),                                  // 115: gitpod.v1.SetStripeCustomerIDRequest
+	(*SetStripeCustomerIDResponse)(nil),                                 // 116: gitpod.v1.SetStripeCustomerIDResponse
+	(*CustomDomain)(nil),                                                // 117: gitpod.v1.CustomDomain
+	(*CreateCustomDomainRequest)(nil),                                   // 118: gitpod.v1.CreateCustomDomainRequest
+	(*CreateCustomDomainResponse)(nil),                                  // 119: gitpod.v1.CreateCustomDomainResponse
+	(*GetCustomDomainRequest)(nil),                                      // 120: gitpod.v1.GetCustomDomainRequest
+	(*GetCustomDomainResponse)(nil),                                     // 121: gitpod.v1.GetCustomDomainResponse
+	(*UpdateCustomDomainRequest)(nil),                                   // 122: gitpod.v1.UpdateCustomDomainRequest
+	(*UpdateCustomDomainResponse)(nil),                                  // 123: gitpod.v1.UpdateCustomDomainResponse
+	(*DeleteCustomDomainRequest)(nil),                                   // 124: gitpod.v1.DeleteCustomDomainRequest
+	(*DeleteCustomDomainResponse)(nil),                                  // 125: gitpod.v1.DeleteCustomDomainResponse
+	(*GetOIDCConfigRequest)(nil),                                        // 126: gitpod.v1.GetOIDCConfigRequest
+	(*GetOIDCConfigResponse)(nil),                                       // 127: gitpod.v1.GetOIDCConfigResponse
+	(*UpdateOIDCConfigRequest)(nil),                                     // 128: gitpod.v1.UpdateOIDCConfigRequest
+	(*UpdateOIDCConfigResponse)(nil),                                    // 129: gitpod.v1.UpdateOIDCConfigResponse
+	(*OIDCConfig)(nil),                                                  // 130: gitpod.v1.OIDCConfig
+	(*OIDCConfigV2)(nil),                                                // 131: gitpod.v1.OIDCConfigV2
+	(*OIDCConfigV3)(nil),                                                // 132: gitpod.v1.OIDCConfigV3
+	(*ListMembersRequest_Filter)(nil),                                   // 133: gitpod.v1.ListMembersRequest.Filter
+	(*ListMembersRequest_Sort)(nil),                                     // 134: gitpod.v1.ListMembersRequest.Sort
+	nil,                                                                 // 135: gitpod.v1.SSOConfiguration.ClaimsEntry
+	nil,                                                                 // 136: gitpod.v1.UpdateSSOConfigurationRequest.ClaimsEntry
+	nil,                                                                 // 137: gitpod.v1.OrganizationPolicies.EditorVersionRestrictionsEntry
+	nil,                                                                 // 138: gitpod.v1.CodexModelPolicy.ModelStatesEntry
+	nil,                                                                 // 139: gitpod.v1.CrowdStrikeConfig.AdditionalOptionsEntry
+	(*UpdateOrganizationPoliciesRequest_UpdateAgentPolicy)(nil),         // 140: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy
+	(*UpdateOrganizationPoliciesRequest_UpdateSecurityAgentPolicy)(nil), // 141: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateSecurityAgentPolicy
+	(*UpdateOrganizationPoliciesRequest_UpdateCrowdStrikeConfig)(nil),   // 142: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfig
+	nil,                                // 143: gitpod.v1.UpdateOrganizationPoliciesRequest.EditorVersionRestrictionsEntry
+	nil,                                // 144: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfig.AdditionalOptionsEntry
+	(*PaginationRequest)(nil),          // 145: gitpod.v1.PaginationRequest
+	(*CountRequest)(nil),               // 146: gitpod.v1.CountRequest
+	(*PaginationResponse)(nil),         // 147: gitpod.v1.PaginationResponse
+	(*CountResponse)(nil),              // 148: gitpod.v1.CountResponse
+	(*timestamppb.Timestamp)(nil),      // 149: google.protobuf.Timestamp
+	(UserStatus)(0),                    // 150: gitpod.v1.UserStatus
+	(*durationpb.Duration)(nil),        // 151: google.protobuf.Duration
+	(AdmissionLevel)(0),                // 152: gitpod.v1.AdmissionLevel
+	(KernelControlsAction)(0),          // 153: gitpod.v1.KernelControlsAction
+	(*VetoFilePathPolicy)(nil),         // 154: gitpod.v1.VetoFilePathPolicy
+	(*VetoFileBlockDevicesPolicy)(nil), // 155: gitpod.v1.VetoFileBlockDevicesPolicy
+	(CodexOpenAIModel)(0),              // 156: gitpod.v1.CodexOpenAIModel
+	(CodexReasoningEffort)(0),          // 157: gitpod.v1.CodexReasoningEffort
+	(CodexServiceTier)(0),              // 158: gitpod.v1.CodexServiceTier
+	(LLMDisabledCapability)(0),         // 159: gitpod.v1.LLMDisabledCapability
+	(SortOrder)(0),                     // 160: gitpod.v1.SortOrder
 }
 var file_gitpod_v1_organization_proto_depIdxs = []int32{
-	34,  // 0: gitpod.v1.UpdateOrganizationRequest.invite_domains:type_name -> gitpod.v1.InviteDomains
-	32,  // 1: gitpod.v1.UpdateOrganizationResponse.organization:type_name -> gitpod.v1.Organization
-	32,  // 2: gitpod.v1.CreateOrganizationResponse.organization:type_name -> gitpod.v1.Organization
-	33,  // 3: gitpod.v1.CreateOrganizationResponse.member:type_name -> gitpod.v1.OrganizationMember
-	33,  // 4: gitpod.v1.JoinOrganizationResponse.member:type_name -> gitpod.v1.OrganizationMember
-	32,  // 5: gitpod.v1.GetOrganizationResponse.organization:type_name -> gitpod.v1.Organization
-	142, // 6: gitpod.v1.ListMembersRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	131, // 7: gitpod.v1.ListMembersRequest.filter:type_name -> gitpod.v1.ListMembersRequest.Filter
-	132, // 8: gitpod.v1.ListMembersRequest.sort:type_name -> gitpod.v1.ListMembersRequest.Sort
-	143, // 9: gitpod.v1.ListMembersRequest.count:type_name -> gitpod.v1.CountRequest
-	144, // 10: gitpod.v1.ListMembersResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	33,  // 11: gitpod.v1.ListMembersResponse.members:type_name -> gitpod.v1.OrganizationMember
-	145, // 12: gitpod.v1.ListMembersResponse.count:type_name -> gitpod.v1.CountResponse
+	35,  // 0: gitpod.v1.UpdateOrganizationRequest.invite_domains:type_name -> gitpod.v1.InviteDomains
+	33,  // 1: gitpod.v1.UpdateOrganizationResponse.organization:type_name -> gitpod.v1.Organization
+	33,  // 2: gitpod.v1.CreateOrganizationResponse.organization:type_name -> gitpod.v1.Organization
+	34,  // 3: gitpod.v1.CreateOrganizationResponse.member:type_name -> gitpod.v1.OrganizationMember
+	34,  // 4: gitpod.v1.JoinOrganizationResponse.member:type_name -> gitpod.v1.OrganizationMember
+	33,  // 5: gitpod.v1.GetOrganizationResponse.organization:type_name -> gitpod.v1.Organization
+	145, // 6: gitpod.v1.ListMembersRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	133, // 7: gitpod.v1.ListMembersRequest.filter:type_name -> gitpod.v1.ListMembersRequest.Filter
+	134, // 8: gitpod.v1.ListMembersRequest.sort:type_name -> gitpod.v1.ListMembersRequest.Sort
+	146, // 9: gitpod.v1.ListMembersRequest.count:type_name -> gitpod.v1.CountRequest
+	147, // 10: gitpod.v1.ListMembersResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	34,  // 11: gitpod.v1.ListMembersResponse.members:type_name -> gitpod.v1.OrganizationMember
+	148, // 12: gitpod.v1.ListMembersResponse.count:type_name -> gitpod.v1.CountResponse
 	1,   // 13: gitpod.v1.SetRoleRequest.role:type_name -> gitpod.v1.OrganizationRole
-	27,  // 14: gitpod.v1.GetOrganizationInviteResponse.invite:type_name -> gitpod.v1.OrganizationInvite
-	27,  // 15: gitpod.v1.CreateOrganizationInviteResponse.invite:type_name -> gitpod.v1.OrganizationInvite
-	146, // 16: gitpod.v1.Organization.created_at:type_name -> google.protobuf.Timestamp
-	146, // 17: gitpod.v1.Organization.updated_at:type_name -> google.protobuf.Timestamp
-	34,  // 18: gitpod.v1.Organization.invite_domains:type_name -> gitpod.v1.InviteDomains
+	28,  // 14: gitpod.v1.GetOrganizationInviteResponse.invite:type_name -> gitpod.v1.OrganizationInvite
+	28,  // 15: gitpod.v1.CreateOrganizationInviteResponse.invite:type_name -> gitpod.v1.OrganizationInvite
+	149, // 16: gitpod.v1.Organization.created_at:type_name -> google.protobuf.Timestamp
+	149, // 17: gitpod.v1.Organization.updated_at:type_name -> google.protobuf.Timestamp
+	35,  // 18: gitpod.v1.Organization.invite_domains:type_name -> gitpod.v1.InviteDomains
 	0,   // 19: gitpod.v1.Organization.tier:type_name -> gitpod.v1.OrganizationTier
 	1,   // 20: gitpod.v1.OrganizationMember.role:type_name -> gitpod.v1.OrganizationRole
-	146, // 21: gitpod.v1.OrganizationMember.member_since:type_name -> google.protobuf.Timestamp
-	147, // 22: gitpod.v1.OrganizationMember.status:type_name -> gitpod.v1.UserStatus
-	37,  // 23: gitpod.v1.CreateSSOConfigurationResponse.sso_configuration:type_name -> gitpod.v1.SSOConfiguration
+	149, // 21: gitpod.v1.OrganizationMember.member_since:type_name -> google.protobuf.Timestamp
+	150, // 22: gitpod.v1.OrganizationMember.status:type_name -> gitpod.v1.UserStatus
+	38,  // 23: gitpod.v1.CreateSSOConfigurationResponse.sso_configuration:type_name -> gitpod.v1.SSOConfiguration
 	2,   // 24: gitpod.v1.SSOConfiguration.state:type_name -> gitpod.v1.SSOConfigurationState
-	133, // 25: gitpod.v1.SSOConfiguration.claims:type_name -> gitpod.v1.SSOConfiguration.ClaimsEntry
-	8,   // 26: gitpod.v1.SSOConfiguration.provider_type:type_name -> gitpod.v1.SSOConfiguration.ProviderType
-	37,  // 27: gitpod.v1.GetSSOConfigurationResponse.sso_configuration:type_name -> gitpod.v1.SSOConfiguration
-	142, // 28: gitpod.v1.ListSSOConfigurationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	144, // 29: gitpod.v1.ListSSOConfigurationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	37,  // 30: gitpod.v1.ListSSOConfigurationsResponse.sso_configurations:type_name -> gitpod.v1.SSOConfiguration
+	135, // 25: gitpod.v1.SSOConfiguration.claims:type_name -> gitpod.v1.SSOConfiguration.ClaimsEntry
+	9,   // 26: gitpod.v1.SSOConfiguration.provider_type:type_name -> gitpod.v1.SSOConfiguration.ProviderType
+	38,  // 27: gitpod.v1.GetSSOConfigurationResponse.sso_configuration:type_name -> gitpod.v1.SSOConfiguration
+	145, // 28: gitpod.v1.ListSSOConfigurationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	147, // 29: gitpod.v1.ListSSOConfigurationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	38,  // 30: gitpod.v1.ListSSOConfigurationsResponse.sso_configurations:type_name -> gitpod.v1.SSOConfiguration
 	2,   // 31: gitpod.v1.UpdateSSOConfigurationRequest.state:type_name -> gitpod.v1.SSOConfigurationState
-	134, // 32: gitpod.v1.UpdateSSOConfigurationRequest.claims:type_name -> gitpod.v1.UpdateSSOConfigurationRequest.ClaimsEntry
-	43,  // 33: gitpod.v1.UpdateSSOConfigurationRequest.additional_scopes:type_name -> gitpod.v1.AdditionalScopesUpdate
-	146, // 34: gitpod.v1.SCIMConfiguration.created_at:type_name -> google.protobuf.Timestamp
-	146, // 35: gitpod.v1.SCIMConfiguration.updated_at:type_name -> google.protobuf.Timestamp
-	146, // 36: gitpod.v1.SCIMConfiguration.token_expires_at:type_name -> google.protobuf.Timestamp
-	148, // 37: gitpod.v1.CreateSCIMConfigurationRequest.token_expires_in:type_name -> google.protobuf.Duration
-	47,  // 38: gitpod.v1.CreateSCIMConfigurationResponse.scim_configuration:type_name -> gitpod.v1.SCIMConfiguration
-	146, // 39: gitpod.v1.CreateSCIMConfigurationResponse.token_expires_at:type_name -> google.protobuf.Timestamp
-	47,  // 40: gitpod.v1.GetSCIMConfigurationResponse.scim_configuration:type_name -> gitpod.v1.SCIMConfiguration
-	142, // 41: gitpod.v1.ListSCIMConfigurationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	144, // 42: gitpod.v1.ListSCIMConfigurationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	47,  // 43: gitpod.v1.ListSCIMConfigurationsResponse.scim_configurations:type_name -> gitpod.v1.SCIMConfiguration
-	47,  // 44: gitpod.v1.UpdateSCIMConfigurationResponse.scim_configuration:type_name -> gitpod.v1.SCIMConfiguration
-	148, // 45: gitpod.v1.RegenerateSCIMTokenRequest.token_expires_in:type_name -> google.protobuf.Duration
-	146, // 46: gitpod.v1.RegenerateSCIMTokenResponse.token_expires_at:type_name -> google.protobuf.Timestamp
+	136, // 32: gitpod.v1.UpdateSSOConfigurationRequest.claims:type_name -> gitpod.v1.UpdateSSOConfigurationRequest.ClaimsEntry
+	44,  // 33: gitpod.v1.UpdateSSOConfigurationRequest.additional_scopes:type_name -> gitpod.v1.AdditionalScopesUpdate
+	149, // 34: gitpod.v1.SCIMConfiguration.created_at:type_name -> google.protobuf.Timestamp
+	149, // 35: gitpod.v1.SCIMConfiguration.updated_at:type_name -> google.protobuf.Timestamp
+	149, // 36: gitpod.v1.SCIMConfiguration.token_expires_at:type_name -> google.protobuf.Timestamp
+	151, // 37: gitpod.v1.CreateSCIMConfigurationRequest.token_expires_in:type_name -> google.protobuf.Duration
+	48,  // 38: gitpod.v1.CreateSCIMConfigurationResponse.scim_configuration:type_name -> gitpod.v1.SCIMConfiguration
+	149, // 39: gitpod.v1.CreateSCIMConfigurationResponse.token_expires_at:type_name -> google.protobuf.Timestamp
+	48,  // 40: gitpod.v1.GetSCIMConfigurationResponse.scim_configuration:type_name -> gitpod.v1.SCIMConfiguration
+	145, // 41: gitpod.v1.ListSCIMConfigurationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	147, // 42: gitpod.v1.ListSCIMConfigurationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	48,  // 43: gitpod.v1.ListSCIMConfigurationsResponse.scim_configurations:type_name -> gitpod.v1.SCIMConfiguration
+	48,  // 44: gitpod.v1.UpdateSCIMConfigurationResponse.scim_configuration:type_name -> gitpod.v1.SCIMConfiguration
+	151, // 45: gitpod.v1.RegenerateSCIMTokenRequest.token_expires_in:type_name -> google.protobuf.Duration
+	149, // 46: gitpod.v1.RegenerateSCIMTokenResponse.token_expires_at:type_name -> google.protobuf.Timestamp
 	3,   // 47: gitpod.v1.DomainVerification.state:type_name -> gitpod.v1.DomainVerificationState
-	146, // 48: gitpod.v1.DomainVerification.verified_at:type_name -> google.protobuf.Timestamp
-	146, // 49: gitpod.v1.DomainVerification.created_at:type_name -> google.protobuf.Timestamp
-	60,  // 50: gitpod.v1.CreateDomainVerificationResponse.domain_verification:type_name -> gitpod.v1.DomainVerification
-	60,  // 51: gitpod.v1.GetDomainVerificationResponse.domain_verification:type_name -> gitpod.v1.DomainVerification
-	142, // 52: gitpod.v1.ListDomainVerificationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	60,  // 53: gitpod.v1.ListDomainVerificationsResponse.domain_verifications:type_name -> gitpod.v1.DomainVerification
-	144, // 54: gitpod.v1.ListDomainVerificationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	60,  // 55: gitpod.v1.VerifyDomainResponse.domain_verification:type_name -> gitpod.v1.DomainVerification
+	149, // 48: gitpod.v1.DomainVerification.verified_at:type_name -> google.protobuf.Timestamp
+	149, // 49: gitpod.v1.DomainVerification.created_at:type_name -> google.protobuf.Timestamp
+	61,  // 50: gitpod.v1.CreateDomainVerificationResponse.domain_verification:type_name -> gitpod.v1.DomainVerification
+	61,  // 51: gitpod.v1.GetDomainVerificationResponse.domain_verification:type_name -> gitpod.v1.DomainVerification
+	145, // 52: gitpod.v1.ListDomainVerificationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	61,  // 53: gitpod.v1.ListDomainVerificationsResponse.domain_verifications:type_name -> gitpod.v1.DomainVerification
+	147, // 54: gitpod.v1.ListDomainVerificationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	61,  // 55: gitpod.v1.VerifyDomainResponse.domain_verification:type_name -> gitpod.v1.DomainVerification
 	0,   // 56: gitpod.v1.OrganizationTierFailedPreconditionDetails.required_tier:type_name -> gitpod.v1.OrganizationTier
-	148, // 57: gitpod.v1.OrganizationPolicies.maximum_environment_timeout:type_name -> google.protobuf.Duration
-	148, // 58: gitpod.v1.OrganizationPolicies.delete_archived_environments_after:type_name -> google.protobuf.Duration
-	76,  // 59: gitpod.v1.OrganizationPolicies.agent_policy:type_name -> gitpod.v1.AgentPolicy
-	148, // 60: gitpod.v1.OrganizationPolicies.maximum_environment_lifetime:type_name -> google.protobuf.Duration
-	135, // 61: gitpod.v1.OrganizationPolicies.editor_version_restrictions:type_name -> gitpod.v1.OrganizationPolicies.EditorVersionRestrictionsEntry
-	77,  // 62: gitpod.v1.OrganizationPolicies.security_agent_policy:type_name -> gitpod.v1.SecurityAgentPolicy
-	73,  // 63: gitpod.v1.OrganizationPolicies.veto_exec_policy:type_name -> gitpod.v1.VetoExecPolicy
-	149, // 64: gitpod.v1.OrganizationPolicies.max_port_admission_level:type_name -> gitpod.v1.AdmissionLevel
-	74,  // 65: gitpod.v1.OrganizationPolicies.veto_file_policy:type_name -> gitpod.v1.VetoFilePolicy
-	148, // 66: gitpod.v1.OrganizationPolicies.archive_environments_after:type_name -> google.protobuf.Duration
-	150, // 67: gitpod.v1.VetoExecPolicy.action:type_name -> gitpod.v1.KernelControlsAction
-	151, // 68: gitpod.v1.VetoFilePolicy.paths:type_name -> gitpod.v1.VetoFilePathPolicy
-	152, // 69: gitpod.v1.VetoFilePolicy.block_devices:type_name -> gitpod.v1.VetoFileBlockDevicesPolicy
-	4,   // 70: gitpod.v1.AgentPolicy.conversation_sharing_policy:type_name -> gitpod.v1.ConversationSharingPolicy
-	153, // 71: gitpod.v1.AgentPolicy.allowed_codex_models:type_name -> gitpod.v1.CodexOpenAIModel
-	154, // 72: gitpod.v1.AgentPolicy.allowed_codex_reasoning_efforts:type_name -> gitpod.v1.CodexReasoningEffort
-	155, // 73: gitpod.v1.AgentPolicy.allowed_codex_service_tiers:type_name -> gitpod.v1.CodexServiceTier
-	78,  // 74: gitpod.v1.SecurityAgentPolicy.crowdstrike:type_name -> gitpod.v1.CrowdStrikeConfig
-	79,  // 75: gitpod.v1.SecurityAgentPolicy.custom_agents:type_name -> gitpod.v1.CustomSecurityAgent
-	136, // 76: gitpod.v1.CrowdStrikeConfig.additional_options:type_name -> gitpod.v1.CrowdStrikeConfig.AdditionalOptionsEntry
-	80,  // 77: gitpod.v1.CustomSecurityAgent.env_mappings:type_name -> gitpod.v1.CustomAgentEnvMapping
-	72,  // 78: gitpod.v1.GetOrganizationPoliciesResponse.policies:type_name -> gitpod.v1.OrganizationPolicies
-	156, // 79: gitpod.v1.GetOrganizationLLMCapabilitiesResponse.disabled_capabilities:type_name -> gitpod.v1.LLMDisabledCapability
-	148, // 80: gitpod.v1.UpdateOrganizationPoliciesRequest.maximum_environment_timeout:type_name -> google.protobuf.Duration
-	148, // 81: gitpod.v1.UpdateOrganizationPoliciesRequest.delete_archived_environments_after:type_name -> google.protobuf.Duration
-	137, // 82: gitpod.v1.UpdateOrganizationPoliciesRequest.agent_policy:type_name -> gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy
-	148, // 83: gitpod.v1.UpdateOrganizationPoliciesRequest.maximum_environment_lifetime:type_name -> google.protobuf.Duration
-	140, // 84: gitpod.v1.UpdateOrganizationPoliciesRequest.editor_version_restrictions:type_name -> gitpod.v1.UpdateOrganizationPoliciesRequest.EditorVersionRestrictionsEntry
-	138, // 85: gitpod.v1.UpdateOrganizationPoliciesRequest.security_agent_policy:type_name -> gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateSecurityAgentPolicy
-	73,  // 86: gitpod.v1.UpdateOrganizationPoliciesRequest.veto_exec_policy:type_name -> gitpod.v1.VetoExecPolicy
-	149, // 87: gitpod.v1.UpdateOrganizationPoliciesRequest.max_port_admission_level:type_name -> gitpod.v1.AdmissionLevel
-	74,  // 88: gitpod.v1.UpdateOrganizationPoliciesRequest.veto_file_policy:type_name -> gitpod.v1.VetoFilePolicy
-	148, // 89: gitpod.v1.UpdateOrganizationPoliciesRequest.archive_environments_after:type_name -> google.protobuf.Duration
-	88,  // 90: gitpod.v1.PolicyEnforcedFailedPreconditionDetails.max_lifetime_exceeded:type_name -> gitpod.v1.EnvironmentMaxLifetimeExceededDetails
-	146, // 91: gitpod.v1.EnvironmentMaxLifetimeExceededDetails.expired_at:type_name -> google.protobuf.Timestamp
-	148, // 92: gitpod.v1.EnvironmentMaxLifetimeExceededDetails.policy_value:type_name -> google.protobuf.Duration
-	89,  // 93: gitpod.v1.GetAnnouncementBannerResponse.banner:type_name -> gitpod.v1.AnnouncementBanner
-	89,  // 94: gitpod.v1.UpdateAnnouncementBannerResponse.banner:type_name -> gitpod.v1.AnnouncementBanner
-	146, // 95: gitpod.v1.TermsOfServiceVersion.created_at:type_name -> google.protobuf.Timestamp
-	146, // 96: gitpod.v1.TermsOfServiceAcceptance.accepted_at:type_name -> google.protobuf.Timestamp
-	94,  // 97: gitpod.v1.TermsOfService.current_version:type_name -> gitpod.v1.TermsOfServiceVersion
-	95,  // 98: gitpod.v1.TermsOfService.current_user_acceptance:type_name -> gitpod.v1.TermsOfServiceAcceptance
-	96,  // 99: gitpod.v1.GetTermsOfServiceResponse.terms_of_service:type_name -> gitpod.v1.TermsOfService
-	96,  // 100: gitpod.v1.UpdateTermsOfServiceResponse.terms_of_service:type_name -> gitpod.v1.TermsOfService
-	95,  // 101: gitpod.v1.AcceptTermsOfServiceResponse.acceptance:type_name -> gitpod.v1.TermsOfServiceAcceptance
-	33,  // 102: gitpod.v1.MemberTermsOfServiceAcceptance.member:type_name -> gitpod.v1.OrganizationMember
-	5,   // 103: gitpod.v1.MemberTermsOfServiceAcceptance.status:type_name -> gitpod.v1.TermsOfServiceAcceptanceStatus
-	146, // 104: gitpod.v1.MemberTermsOfServiceAcceptance.accepted_at:type_name -> google.protobuf.Timestamp
-	142, // 105: gitpod.v1.ListTermsOfServiceVersionsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	144, // 106: gitpod.v1.ListTermsOfServiceVersionsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	94,  // 107: gitpod.v1.ListTermsOfServiceVersionsResponse.versions:type_name -> gitpod.v1.TermsOfServiceVersion
-	5,   // 108: gitpod.v1.TermsOfServiceAcceptanceFilter.statuses:type_name -> gitpod.v1.TermsOfServiceAcceptanceStatus
-	142, // 109: gitpod.v1.ListTermsOfServiceAcceptancesRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	106, // 110: gitpod.v1.ListTermsOfServiceAcceptancesRequest.filter:type_name -> gitpod.v1.TermsOfServiceAcceptanceFilter
-	144, // 111: gitpod.v1.ListTermsOfServiceAcceptancesResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	103, // 112: gitpod.v1.ListTermsOfServiceAcceptancesResponse.acceptances:type_name -> gitpod.v1.MemberTermsOfServiceAcceptance
-	106, // 113: gitpod.v1.GetTermsOfServiceAcceptancesExportRequest.filter:type_name -> gitpod.v1.TermsOfServiceAcceptanceFilter
-	0,   // 114: gitpod.v1.SetTierRequest.tier:type_name -> gitpod.v1.OrganizationTier
-	6,   // 115: gitpod.v1.CustomDomain.provider:type_name -> gitpod.v1.CustomDomainProvider
-	146, // 116: gitpod.v1.CustomDomain.created_at:type_name -> google.protobuf.Timestamp
-	146, // 117: gitpod.v1.CustomDomain.updated_at:type_name -> google.protobuf.Timestamp
-	6,   // 118: gitpod.v1.CreateCustomDomainRequest.provider:type_name -> gitpod.v1.CustomDomainProvider
-	115, // 119: gitpod.v1.CreateCustomDomainResponse.custom_domain:type_name -> gitpod.v1.CustomDomain
-	115, // 120: gitpod.v1.GetCustomDomainResponse.custom_domain:type_name -> gitpod.v1.CustomDomain
-	6,   // 121: gitpod.v1.UpdateCustomDomainRequest.provider:type_name -> gitpod.v1.CustomDomainProvider
-	115, // 122: gitpod.v1.UpdateCustomDomainResponse.custom_domain:type_name -> gitpod.v1.CustomDomain
-	128, // 123: gitpod.v1.GetOIDCConfigResponse.oidc_config:type_name -> gitpod.v1.OIDCConfig
-	128, // 124: gitpod.v1.UpdateOIDCConfigRequest.oidc_config:type_name -> gitpod.v1.OIDCConfig
-	128, // 125: gitpod.v1.UpdateOIDCConfigResponse.oidc_config:type_name -> gitpod.v1.OIDCConfig
-	129, // 126: gitpod.v1.OIDCConfig.v2:type_name -> gitpod.v1.OIDCConfigV2
-	130, // 127: gitpod.v1.OIDCConfig.v3:type_name -> gitpod.v1.OIDCConfigV3
-	147, // 128: gitpod.v1.ListMembersRequest.Filter.statuses:type_name -> gitpod.v1.UserStatus
-	1,   // 129: gitpod.v1.ListMembersRequest.Filter.roles:type_name -> gitpod.v1.OrganizationRole
-	7,   // 130: gitpod.v1.ListMembersRequest.Sort.field:type_name -> gitpod.v1.ListMembersRequest.SortField
-	157, // 131: gitpod.v1.ListMembersRequest.Sort.order:type_name -> gitpod.v1.SortOrder
-	75,  // 132: gitpod.v1.OrganizationPolicies.EditorVersionRestrictionsEntry.value:type_name -> gitpod.v1.EditorVersionPolicy
-	4,   // 133: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.conversation_sharing_policy:type_name -> gitpod.v1.ConversationSharingPolicy
-	153, // 134: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.allowed_codex_models:type_name -> gitpod.v1.CodexOpenAIModel
-	154, // 135: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.allowed_codex_reasoning_efforts:type_name -> gitpod.v1.CodexReasoningEffort
-	155, // 136: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.allowed_codex_service_tiers:type_name -> gitpod.v1.CodexServiceTier
-	139, // 137: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateSecurityAgentPolicy.crowdstrike:type_name -> gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfig
-	79,  // 138: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateSecurityAgentPolicy.custom_agents:type_name -> gitpod.v1.CustomSecurityAgent
-	141, // 139: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfig.additional_options:type_name -> gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfig.AdditionalOptionsEntry
-	75,  // 140: gitpod.v1.UpdateOrganizationPoliciesRequest.EditorVersionRestrictionsEntry.value:type_name -> gitpod.v1.EditorVersionPolicy
-	11,  // 141: gitpod.v1.OrganizationService.CreateOrganization:input_type -> gitpod.v1.CreateOrganizationRequest
-	13,  // 142: gitpod.v1.OrganizationService.JoinOrganization:input_type -> gitpod.v1.JoinOrganizationRequest
-	17,  // 143: gitpod.v1.OrganizationService.GetOrganization:input_type -> gitpod.v1.GetOrganizationRequest
-	9,   // 144: gitpod.v1.OrganizationService.UpdateOrganization:input_type -> gitpod.v1.UpdateOrganizationRequest
-	19,  // 145: gitpod.v1.OrganizationService.DeleteOrganization:input_type -> gitpod.v1.DeleteOrganizationRequest
-	21,  // 146: gitpod.v1.OrganizationService.ListMembers:input_type -> gitpod.v1.ListMembersRequest
-	23,  // 147: gitpod.v1.OrganizationService.SetRole:input_type -> gitpod.v1.SetRoleRequest
-	28,  // 148: gitpod.v1.OrganizationService.CreateOrganizationInvite:input_type -> gitpod.v1.CreateOrganizationInviteRequest
-	25,  // 149: gitpod.v1.OrganizationService.GetOrganizationInvite:input_type -> gitpod.v1.GetOrganizationInviteRequest
-	30,  // 150: gitpod.v1.OrganizationService.GetOrganizationInviteSummary:input_type -> gitpod.v1.GetOrganizationInviteSummaryRequest
-	15,  // 151: gitpod.v1.OrganizationService.LeaveOrganization:input_type -> gitpod.v1.LeaveOrganizationRequest
-	35,  // 152: gitpod.v1.OrganizationService.CreateSSOConfiguration:input_type -> gitpod.v1.CreateSSOConfigurationRequest
-	38,  // 153: gitpod.v1.OrganizationService.GetSSOConfiguration:input_type -> gitpod.v1.GetSSOConfigurationRequest
-	40,  // 154: gitpod.v1.OrganizationService.ListSSOConfigurations:input_type -> gitpod.v1.ListSSOConfigurationsRequest
-	45,  // 155: gitpod.v1.OrganizationService.DeleteSSOConfiguration:input_type -> gitpod.v1.DeleteSSOConfigurationRequest
-	42,  // 156: gitpod.v1.OrganizationService.UpdateSSOConfiguration:input_type -> gitpod.v1.UpdateSSOConfigurationRequest
-	48,  // 157: gitpod.v1.OrganizationService.CreateSCIMConfiguration:input_type -> gitpod.v1.CreateSCIMConfigurationRequest
-	50,  // 158: gitpod.v1.OrganizationService.GetSCIMConfiguration:input_type -> gitpod.v1.GetSCIMConfigurationRequest
-	52,  // 159: gitpod.v1.OrganizationService.ListSCIMConfigurations:input_type -> gitpod.v1.ListSCIMConfigurationsRequest
-	54,  // 160: gitpod.v1.OrganizationService.UpdateSCIMConfiguration:input_type -> gitpod.v1.UpdateSCIMConfigurationRequest
-	56,  // 161: gitpod.v1.OrganizationService.DeleteSCIMConfiguration:input_type -> gitpod.v1.DeleteSCIMConfigurationRequest
-	58,  // 162: gitpod.v1.OrganizationService.RegenerateSCIMToken:input_type -> gitpod.v1.RegenerateSCIMTokenRequest
-	61,  // 163: gitpod.v1.OrganizationService.CreateDomainVerification:input_type -> gitpod.v1.CreateDomainVerificationRequest
-	63,  // 164: gitpod.v1.OrganizationService.GetDomainVerification:input_type -> gitpod.v1.GetDomainVerificationRequest
-	65,  // 165: gitpod.v1.OrganizationService.ListDomainVerifications:input_type -> gitpod.v1.ListDomainVerificationsRequest
-	67,  // 166: gitpod.v1.OrganizationService.VerifyDomain:input_type -> gitpod.v1.VerifyDomainRequest
-	69,  // 167: gitpod.v1.OrganizationService.DeleteDomainVerification:input_type -> gitpod.v1.DeleteDomainVerificationRequest
-	81,  // 168: gitpod.v1.OrganizationService.GetOrganizationPolicies:input_type -> gitpod.v1.GetOrganizationPoliciesRequest
-	85,  // 169: gitpod.v1.OrganizationService.UpdateOrganizationPolicies:input_type -> gitpod.v1.UpdateOrganizationPoliciesRequest
-	83,  // 170: gitpod.v1.OrganizationService.GetOrganizationLLMCapabilities:input_type -> gitpod.v1.GetOrganizationLLMCapabilitiesRequest
-	124, // 171: gitpod.v1.OrganizationService.GetOIDCConfig:input_type -> gitpod.v1.GetOIDCConfigRequest
-	126, // 172: gitpod.v1.OrganizationService.UpdateOIDCConfig:input_type -> gitpod.v1.UpdateOIDCConfigRequest
-	90,  // 173: gitpod.v1.OrganizationService.GetAnnouncementBanner:input_type -> gitpod.v1.GetAnnouncementBannerRequest
-	92,  // 174: gitpod.v1.OrganizationService.UpdateAnnouncementBanner:input_type -> gitpod.v1.UpdateAnnouncementBannerRequest
-	97,  // 175: gitpod.v1.OrganizationService.GetTermsOfService:input_type -> gitpod.v1.GetTermsOfServiceRequest
-	99,  // 176: gitpod.v1.OrganizationService.UpdateTermsOfService:input_type -> gitpod.v1.UpdateTermsOfServiceRequest
-	101, // 177: gitpod.v1.OrganizationService.AcceptTermsOfService:input_type -> gitpod.v1.AcceptTermsOfServiceRequest
-	104, // 178: gitpod.v1.OrganizationService.ListTermsOfServiceVersions:input_type -> gitpod.v1.ListTermsOfServiceVersionsRequest
-	107, // 179: gitpod.v1.OrganizationService.ListTermsOfServiceAcceptances:input_type -> gitpod.v1.ListTermsOfServiceAcceptancesRequest
-	109, // 180: gitpod.v1.OrganizationService.GetTermsOfServiceAcceptancesExport:input_type -> gitpod.v1.GetTermsOfServiceAcceptancesExportRequest
-	111, // 181: gitpod.v1.OrganizationService.SetTier:input_type -> gitpod.v1.SetTierRequest
-	113, // 182: gitpod.v1.OrganizationService.SetStripeCustomerID:input_type -> gitpod.v1.SetStripeCustomerIDRequest
-	116, // 183: gitpod.v1.OrganizationService.CreateCustomDomain:input_type -> gitpod.v1.CreateCustomDomainRequest
-	118, // 184: gitpod.v1.OrganizationService.GetCustomDomain:input_type -> gitpod.v1.GetCustomDomainRequest
-	120, // 185: gitpod.v1.OrganizationService.UpdateCustomDomain:input_type -> gitpod.v1.UpdateCustomDomainRequest
-	122, // 186: gitpod.v1.OrganizationService.DeleteCustomDomain:input_type -> gitpod.v1.DeleteCustomDomainRequest
-	12,  // 187: gitpod.v1.OrganizationService.CreateOrganization:output_type -> gitpod.v1.CreateOrganizationResponse
-	14,  // 188: gitpod.v1.OrganizationService.JoinOrganization:output_type -> gitpod.v1.JoinOrganizationResponse
-	18,  // 189: gitpod.v1.OrganizationService.GetOrganization:output_type -> gitpod.v1.GetOrganizationResponse
-	10,  // 190: gitpod.v1.OrganizationService.UpdateOrganization:output_type -> gitpod.v1.UpdateOrganizationResponse
-	20,  // 191: gitpod.v1.OrganizationService.DeleteOrganization:output_type -> gitpod.v1.DeleteOrganizationResponse
-	22,  // 192: gitpod.v1.OrganizationService.ListMembers:output_type -> gitpod.v1.ListMembersResponse
-	24,  // 193: gitpod.v1.OrganizationService.SetRole:output_type -> gitpod.v1.SetRoleResponse
-	29,  // 194: gitpod.v1.OrganizationService.CreateOrganizationInvite:output_type -> gitpod.v1.CreateOrganizationInviteResponse
-	26,  // 195: gitpod.v1.OrganizationService.GetOrganizationInvite:output_type -> gitpod.v1.GetOrganizationInviteResponse
-	31,  // 196: gitpod.v1.OrganizationService.GetOrganizationInviteSummary:output_type -> gitpod.v1.GetOrganizationInviteSummaryResponse
-	16,  // 197: gitpod.v1.OrganizationService.LeaveOrganization:output_type -> gitpod.v1.LeaveOrganizationResponse
-	36,  // 198: gitpod.v1.OrganizationService.CreateSSOConfiguration:output_type -> gitpod.v1.CreateSSOConfigurationResponse
-	39,  // 199: gitpod.v1.OrganizationService.GetSSOConfiguration:output_type -> gitpod.v1.GetSSOConfigurationResponse
-	41,  // 200: gitpod.v1.OrganizationService.ListSSOConfigurations:output_type -> gitpod.v1.ListSSOConfigurationsResponse
-	46,  // 201: gitpod.v1.OrganizationService.DeleteSSOConfiguration:output_type -> gitpod.v1.DeleteSSOConfigurationResponse
-	44,  // 202: gitpod.v1.OrganizationService.UpdateSSOConfiguration:output_type -> gitpod.v1.UpdateSSOConfigurationResponse
-	49,  // 203: gitpod.v1.OrganizationService.CreateSCIMConfiguration:output_type -> gitpod.v1.CreateSCIMConfigurationResponse
-	51,  // 204: gitpod.v1.OrganizationService.GetSCIMConfiguration:output_type -> gitpod.v1.GetSCIMConfigurationResponse
-	53,  // 205: gitpod.v1.OrganizationService.ListSCIMConfigurations:output_type -> gitpod.v1.ListSCIMConfigurationsResponse
-	55,  // 206: gitpod.v1.OrganizationService.UpdateSCIMConfiguration:output_type -> gitpod.v1.UpdateSCIMConfigurationResponse
-	57,  // 207: gitpod.v1.OrganizationService.DeleteSCIMConfiguration:output_type -> gitpod.v1.DeleteSCIMConfigurationResponse
-	59,  // 208: gitpod.v1.OrganizationService.RegenerateSCIMToken:output_type -> gitpod.v1.RegenerateSCIMTokenResponse
-	62,  // 209: gitpod.v1.OrganizationService.CreateDomainVerification:output_type -> gitpod.v1.CreateDomainVerificationResponse
-	64,  // 210: gitpod.v1.OrganizationService.GetDomainVerification:output_type -> gitpod.v1.GetDomainVerificationResponse
-	66,  // 211: gitpod.v1.OrganizationService.ListDomainVerifications:output_type -> gitpod.v1.ListDomainVerificationsResponse
-	68,  // 212: gitpod.v1.OrganizationService.VerifyDomain:output_type -> gitpod.v1.VerifyDomainResponse
-	70,  // 213: gitpod.v1.OrganizationService.DeleteDomainVerification:output_type -> gitpod.v1.DeleteDomainVerificationResponse
-	82,  // 214: gitpod.v1.OrganizationService.GetOrganizationPolicies:output_type -> gitpod.v1.GetOrganizationPoliciesResponse
-	86,  // 215: gitpod.v1.OrganizationService.UpdateOrganizationPolicies:output_type -> gitpod.v1.UpdateOrganizationPoliciesResponse
-	84,  // 216: gitpod.v1.OrganizationService.GetOrganizationLLMCapabilities:output_type -> gitpod.v1.GetOrganizationLLMCapabilitiesResponse
-	125, // 217: gitpod.v1.OrganizationService.GetOIDCConfig:output_type -> gitpod.v1.GetOIDCConfigResponse
-	127, // 218: gitpod.v1.OrganizationService.UpdateOIDCConfig:output_type -> gitpod.v1.UpdateOIDCConfigResponse
-	91,  // 219: gitpod.v1.OrganizationService.GetAnnouncementBanner:output_type -> gitpod.v1.GetAnnouncementBannerResponse
-	93,  // 220: gitpod.v1.OrganizationService.UpdateAnnouncementBanner:output_type -> gitpod.v1.UpdateAnnouncementBannerResponse
-	98,  // 221: gitpod.v1.OrganizationService.GetTermsOfService:output_type -> gitpod.v1.GetTermsOfServiceResponse
-	100, // 222: gitpod.v1.OrganizationService.UpdateTermsOfService:output_type -> gitpod.v1.UpdateTermsOfServiceResponse
-	102, // 223: gitpod.v1.OrganizationService.AcceptTermsOfService:output_type -> gitpod.v1.AcceptTermsOfServiceResponse
-	105, // 224: gitpod.v1.OrganizationService.ListTermsOfServiceVersions:output_type -> gitpod.v1.ListTermsOfServiceVersionsResponse
-	108, // 225: gitpod.v1.OrganizationService.ListTermsOfServiceAcceptances:output_type -> gitpod.v1.ListTermsOfServiceAcceptancesResponse
-	110, // 226: gitpod.v1.OrganizationService.GetTermsOfServiceAcceptancesExport:output_type -> gitpod.v1.GetTermsOfServiceAcceptancesExportResponse
-	112, // 227: gitpod.v1.OrganizationService.SetTier:output_type -> gitpod.v1.SetTierResponse
-	114, // 228: gitpod.v1.OrganizationService.SetStripeCustomerID:output_type -> gitpod.v1.SetStripeCustomerIDResponse
-	117, // 229: gitpod.v1.OrganizationService.CreateCustomDomain:output_type -> gitpod.v1.CreateCustomDomainResponse
-	119, // 230: gitpod.v1.OrganizationService.GetCustomDomain:output_type -> gitpod.v1.GetCustomDomainResponse
-	121, // 231: gitpod.v1.OrganizationService.UpdateCustomDomain:output_type -> gitpod.v1.UpdateCustomDomainResponse
-	123, // 232: gitpod.v1.OrganizationService.DeleteCustomDomain:output_type -> gitpod.v1.DeleteCustomDomainResponse
-	187, // [187:233] is the sub-list for method output_type
-	141, // [141:187] is the sub-list for method input_type
-	141, // [141:141] is the sub-list for extension type_name
-	141, // [141:141] is the sub-list for extension extendee
-	0,   // [0:141] is the sub-list for field type_name
+	151, // 57: gitpod.v1.OrganizationPolicies.maximum_environment_timeout:type_name -> google.protobuf.Duration
+	151, // 58: gitpod.v1.OrganizationPolicies.delete_archived_environments_after:type_name -> google.protobuf.Duration
+	78,  // 59: gitpod.v1.OrganizationPolicies.agent_policy:type_name -> gitpod.v1.AgentPolicy
+	151, // 60: gitpod.v1.OrganizationPolicies.maximum_environment_lifetime:type_name -> google.protobuf.Duration
+	137, // 61: gitpod.v1.OrganizationPolicies.editor_version_restrictions:type_name -> gitpod.v1.OrganizationPolicies.EditorVersionRestrictionsEntry
+	79,  // 62: gitpod.v1.OrganizationPolicies.security_agent_policy:type_name -> gitpod.v1.SecurityAgentPolicy
+	74,  // 63: gitpod.v1.OrganizationPolicies.veto_exec_policy:type_name -> gitpod.v1.VetoExecPolicy
+	152, // 64: gitpod.v1.OrganizationPolicies.max_port_admission_level:type_name -> gitpod.v1.AdmissionLevel
+	75,  // 65: gitpod.v1.OrganizationPolicies.veto_file_policy:type_name -> gitpod.v1.VetoFilePolicy
+	151, // 66: gitpod.v1.OrganizationPolicies.archive_environments_after:type_name -> google.protobuf.Duration
+	153, // 67: gitpod.v1.VetoExecPolicy.action:type_name -> gitpod.v1.KernelControlsAction
+	154, // 68: gitpod.v1.VetoFilePolicy.paths:type_name -> gitpod.v1.VetoFilePathPolicy
+	155, // 69: gitpod.v1.VetoFilePolicy.block_devices:type_name -> gitpod.v1.VetoFileBlockDevicesPolicy
+	138, // 70: gitpod.v1.CodexModelPolicy.model_states:type_name -> gitpod.v1.CodexModelPolicy.ModelStatesEntry
+	4,   // 71: gitpod.v1.AgentPolicy.conversation_sharing_policy:type_name -> gitpod.v1.ConversationSharingPolicy
+	156, // 72: gitpod.v1.AgentPolicy.allowed_codex_models:type_name -> gitpod.v1.CodexOpenAIModel
+	157, // 73: gitpod.v1.AgentPolicy.allowed_codex_reasoning_efforts:type_name -> gitpod.v1.CodexReasoningEffort
+	158, // 74: gitpod.v1.AgentPolicy.allowed_codex_service_tiers:type_name -> gitpod.v1.CodexServiceTier
+	77,  // 75: gitpod.v1.AgentPolicy.codex_model_policy:type_name -> gitpod.v1.CodexModelPolicy
+	80,  // 76: gitpod.v1.SecurityAgentPolicy.crowdstrike:type_name -> gitpod.v1.CrowdStrikeConfig
+	81,  // 77: gitpod.v1.SecurityAgentPolicy.custom_agents:type_name -> gitpod.v1.CustomSecurityAgent
+	139, // 78: gitpod.v1.CrowdStrikeConfig.additional_options:type_name -> gitpod.v1.CrowdStrikeConfig.AdditionalOptionsEntry
+	82,  // 79: gitpod.v1.CustomSecurityAgent.env_mappings:type_name -> gitpod.v1.CustomAgentEnvMapping
+	73,  // 80: gitpod.v1.GetOrganizationPoliciesResponse.policies:type_name -> gitpod.v1.OrganizationPolicies
+	159, // 81: gitpod.v1.GetOrganizationLLMCapabilitiesResponse.disabled_capabilities:type_name -> gitpod.v1.LLMDisabledCapability
+	151, // 82: gitpod.v1.UpdateOrganizationPoliciesRequest.maximum_environment_timeout:type_name -> google.protobuf.Duration
+	151, // 83: gitpod.v1.UpdateOrganizationPoliciesRequest.delete_archived_environments_after:type_name -> google.protobuf.Duration
+	140, // 84: gitpod.v1.UpdateOrganizationPoliciesRequest.agent_policy:type_name -> gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy
+	151, // 85: gitpod.v1.UpdateOrganizationPoliciesRequest.maximum_environment_lifetime:type_name -> google.protobuf.Duration
+	143, // 86: gitpod.v1.UpdateOrganizationPoliciesRequest.editor_version_restrictions:type_name -> gitpod.v1.UpdateOrganizationPoliciesRequest.EditorVersionRestrictionsEntry
+	141, // 87: gitpod.v1.UpdateOrganizationPoliciesRequest.security_agent_policy:type_name -> gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateSecurityAgentPolicy
+	74,  // 88: gitpod.v1.UpdateOrganizationPoliciesRequest.veto_exec_policy:type_name -> gitpod.v1.VetoExecPolicy
+	152, // 89: gitpod.v1.UpdateOrganizationPoliciesRequest.max_port_admission_level:type_name -> gitpod.v1.AdmissionLevel
+	75,  // 90: gitpod.v1.UpdateOrganizationPoliciesRequest.veto_file_policy:type_name -> gitpod.v1.VetoFilePolicy
+	151, // 91: gitpod.v1.UpdateOrganizationPoliciesRequest.archive_environments_after:type_name -> google.protobuf.Duration
+	90,  // 92: gitpod.v1.PolicyEnforcedFailedPreconditionDetails.max_lifetime_exceeded:type_name -> gitpod.v1.EnvironmentMaxLifetimeExceededDetails
+	149, // 93: gitpod.v1.EnvironmentMaxLifetimeExceededDetails.expired_at:type_name -> google.protobuf.Timestamp
+	151, // 94: gitpod.v1.EnvironmentMaxLifetimeExceededDetails.policy_value:type_name -> google.protobuf.Duration
+	91,  // 95: gitpod.v1.GetAnnouncementBannerResponse.banner:type_name -> gitpod.v1.AnnouncementBanner
+	91,  // 96: gitpod.v1.UpdateAnnouncementBannerResponse.banner:type_name -> gitpod.v1.AnnouncementBanner
+	149, // 97: gitpod.v1.TermsOfServiceVersion.created_at:type_name -> google.protobuf.Timestamp
+	149, // 98: gitpod.v1.TermsOfServiceAcceptance.accepted_at:type_name -> google.protobuf.Timestamp
+	96,  // 99: gitpod.v1.TermsOfService.current_version:type_name -> gitpod.v1.TermsOfServiceVersion
+	97,  // 100: gitpod.v1.TermsOfService.current_user_acceptance:type_name -> gitpod.v1.TermsOfServiceAcceptance
+	98,  // 101: gitpod.v1.GetTermsOfServiceResponse.terms_of_service:type_name -> gitpod.v1.TermsOfService
+	98,  // 102: gitpod.v1.UpdateTermsOfServiceResponse.terms_of_service:type_name -> gitpod.v1.TermsOfService
+	97,  // 103: gitpod.v1.AcceptTermsOfServiceResponse.acceptance:type_name -> gitpod.v1.TermsOfServiceAcceptance
+	34,  // 104: gitpod.v1.MemberTermsOfServiceAcceptance.member:type_name -> gitpod.v1.OrganizationMember
+	6,   // 105: gitpod.v1.MemberTermsOfServiceAcceptance.status:type_name -> gitpod.v1.TermsOfServiceAcceptanceStatus
+	149, // 106: gitpod.v1.MemberTermsOfServiceAcceptance.accepted_at:type_name -> google.protobuf.Timestamp
+	145, // 107: gitpod.v1.ListTermsOfServiceVersionsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	147, // 108: gitpod.v1.ListTermsOfServiceVersionsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	96,  // 109: gitpod.v1.ListTermsOfServiceVersionsResponse.versions:type_name -> gitpod.v1.TermsOfServiceVersion
+	6,   // 110: gitpod.v1.TermsOfServiceAcceptanceFilter.statuses:type_name -> gitpod.v1.TermsOfServiceAcceptanceStatus
+	145, // 111: gitpod.v1.ListTermsOfServiceAcceptancesRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	108, // 112: gitpod.v1.ListTermsOfServiceAcceptancesRequest.filter:type_name -> gitpod.v1.TermsOfServiceAcceptanceFilter
+	147, // 113: gitpod.v1.ListTermsOfServiceAcceptancesResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	105, // 114: gitpod.v1.ListTermsOfServiceAcceptancesResponse.acceptances:type_name -> gitpod.v1.MemberTermsOfServiceAcceptance
+	108, // 115: gitpod.v1.GetTermsOfServiceAcceptancesExportRequest.filter:type_name -> gitpod.v1.TermsOfServiceAcceptanceFilter
+	0,   // 116: gitpod.v1.SetTierRequest.tier:type_name -> gitpod.v1.OrganizationTier
+	7,   // 117: gitpod.v1.CustomDomain.provider:type_name -> gitpod.v1.CustomDomainProvider
+	149, // 118: gitpod.v1.CustomDomain.created_at:type_name -> google.protobuf.Timestamp
+	149, // 119: gitpod.v1.CustomDomain.updated_at:type_name -> google.protobuf.Timestamp
+	7,   // 120: gitpod.v1.CreateCustomDomainRequest.provider:type_name -> gitpod.v1.CustomDomainProvider
+	117, // 121: gitpod.v1.CreateCustomDomainResponse.custom_domain:type_name -> gitpod.v1.CustomDomain
+	117, // 122: gitpod.v1.GetCustomDomainResponse.custom_domain:type_name -> gitpod.v1.CustomDomain
+	7,   // 123: gitpod.v1.UpdateCustomDomainRequest.provider:type_name -> gitpod.v1.CustomDomainProvider
+	117, // 124: gitpod.v1.UpdateCustomDomainResponse.custom_domain:type_name -> gitpod.v1.CustomDomain
+	130, // 125: gitpod.v1.GetOIDCConfigResponse.oidc_config:type_name -> gitpod.v1.OIDCConfig
+	130, // 126: gitpod.v1.UpdateOIDCConfigRequest.oidc_config:type_name -> gitpod.v1.OIDCConfig
+	130, // 127: gitpod.v1.UpdateOIDCConfigResponse.oidc_config:type_name -> gitpod.v1.OIDCConfig
+	131, // 128: gitpod.v1.OIDCConfig.v2:type_name -> gitpod.v1.OIDCConfigV2
+	132, // 129: gitpod.v1.OIDCConfig.v3:type_name -> gitpod.v1.OIDCConfigV3
+	150, // 130: gitpod.v1.ListMembersRequest.Filter.statuses:type_name -> gitpod.v1.UserStatus
+	1,   // 131: gitpod.v1.ListMembersRequest.Filter.roles:type_name -> gitpod.v1.OrganizationRole
+	8,   // 132: gitpod.v1.ListMembersRequest.Sort.field:type_name -> gitpod.v1.ListMembersRequest.SortField
+	160, // 133: gitpod.v1.ListMembersRequest.Sort.order:type_name -> gitpod.v1.SortOrder
+	76,  // 134: gitpod.v1.OrganizationPolicies.EditorVersionRestrictionsEntry.value:type_name -> gitpod.v1.EditorVersionPolicy
+	5,   // 135: gitpod.v1.CodexModelPolicy.ModelStatesEntry.value:type_name -> gitpod.v1.CodexModelPolicyState
+	4,   // 136: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.conversation_sharing_policy:type_name -> gitpod.v1.ConversationSharingPolicy
+	156, // 137: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.allowed_codex_models:type_name -> gitpod.v1.CodexOpenAIModel
+	157, // 138: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.allowed_codex_reasoning_efforts:type_name -> gitpod.v1.CodexReasoningEffort
+	158, // 139: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.allowed_codex_service_tiers:type_name -> gitpod.v1.CodexServiceTier
+	77,  // 140: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.codex_model_policy:type_name -> gitpod.v1.CodexModelPolicy
+	142, // 141: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateSecurityAgentPolicy.crowdstrike:type_name -> gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfig
+	81,  // 142: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateSecurityAgentPolicy.custom_agents:type_name -> gitpod.v1.CustomSecurityAgent
+	144, // 143: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfig.additional_options:type_name -> gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfig.AdditionalOptionsEntry
+	76,  // 144: gitpod.v1.UpdateOrganizationPoliciesRequest.EditorVersionRestrictionsEntry.value:type_name -> gitpod.v1.EditorVersionPolicy
+	12,  // 145: gitpod.v1.OrganizationService.CreateOrganization:input_type -> gitpod.v1.CreateOrganizationRequest
+	14,  // 146: gitpod.v1.OrganizationService.JoinOrganization:input_type -> gitpod.v1.JoinOrganizationRequest
+	18,  // 147: gitpod.v1.OrganizationService.GetOrganization:input_type -> gitpod.v1.GetOrganizationRequest
+	10,  // 148: gitpod.v1.OrganizationService.UpdateOrganization:input_type -> gitpod.v1.UpdateOrganizationRequest
+	20,  // 149: gitpod.v1.OrganizationService.DeleteOrganization:input_type -> gitpod.v1.DeleteOrganizationRequest
+	22,  // 150: gitpod.v1.OrganizationService.ListMembers:input_type -> gitpod.v1.ListMembersRequest
+	24,  // 151: gitpod.v1.OrganizationService.SetRole:input_type -> gitpod.v1.SetRoleRequest
+	29,  // 152: gitpod.v1.OrganizationService.CreateOrganizationInvite:input_type -> gitpod.v1.CreateOrganizationInviteRequest
+	26,  // 153: gitpod.v1.OrganizationService.GetOrganizationInvite:input_type -> gitpod.v1.GetOrganizationInviteRequest
+	31,  // 154: gitpod.v1.OrganizationService.GetOrganizationInviteSummary:input_type -> gitpod.v1.GetOrganizationInviteSummaryRequest
+	16,  // 155: gitpod.v1.OrganizationService.LeaveOrganization:input_type -> gitpod.v1.LeaveOrganizationRequest
+	36,  // 156: gitpod.v1.OrganizationService.CreateSSOConfiguration:input_type -> gitpod.v1.CreateSSOConfigurationRequest
+	39,  // 157: gitpod.v1.OrganizationService.GetSSOConfiguration:input_type -> gitpod.v1.GetSSOConfigurationRequest
+	41,  // 158: gitpod.v1.OrganizationService.ListSSOConfigurations:input_type -> gitpod.v1.ListSSOConfigurationsRequest
+	46,  // 159: gitpod.v1.OrganizationService.DeleteSSOConfiguration:input_type -> gitpod.v1.DeleteSSOConfigurationRequest
+	43,  // 160: gitpod.v1.OrganizationService.UpdateSSOConfiguration:input_type -> gitpod.v1.UpdateSSOConfigurationRequest
+	49,  // 161: gitpod.v1.OrganizationService.CreateSCIMConfiguration:input_type -> gitpod.v1.CreateSCIMConfigurationRequest
+	51,  // 162: gitpod.v1.OrganizationService.GetSCIMConfiguration:input_type -> gitpod.v1.GetSCIMConfigurationRequest
+	53,  // 163: gitpod.v1.OrganizationService.ListSCIMConfigurations:input_type -> gitpod.v1.ListSCIMConfigurationsRequest
+	55,  // 164: gitpod.v1.OrganizationService.UpdateSCIMConfiguration:input_type -> gitpod.v1.UpdateSCIMConfigurationRequest
+	57,  // 165: gitpod.v1.OrganizationService.DeleteSCIMConfiguration:input_type -> gitpod.v1.DeleteSCIMConfigurationRequest
+	59,  // 166: gitpod.v1.OrganizationService.RegenerateSCIMToken:input_type -> gitpod.v1.RegenerateSCIMTokenRequest
+	62,  // 167: gitpod.v1.OrganizationService.CreateDomainVerification:input_type -> gitpod.v1.CreateDomainVerificationRequest
+	64,  // 168: gitpod.v1.OrganizationService.GetDomainVerification:input_type -> gitpod.v1.GetDomainVerificationRequest
+	66,  // 169: gitpod.v1.OrganizationService.ListDomainVerifications:input_type -> gitpod.v1.ListDomainVerificationsRequest
+	68,  // 170: gitpod.v1.OrganizationService.VerifyDomain:input_type -> gitpod.v1.VerifyDomainRequest
+	70,  // 171: gitpod.v1.OrganizationService.DeleteDomainVerification:input_type -> gitpod.v1.DeleteDomainVerificationRequest
+	83,  // 172: gitpod.v1.OrganizationService.GetOrganizationPolicies:input_type -> gitpod.v1.GetOrganizationPoliciesRequest
+	87,  // 173: gitpod.v1.OrganizationService.UpdateOrganizationPolicies:input_type -> gitpod.v1.UpdateOrganizationPoliciesRequest
+	85,  // 174: gitpod.v1.OrganizationService.GetOrganizationLLMCapabilities:input_type -> gitpod.v1.GetOrganizationLLMCapabilitiesRequest
+	126, // 175: gitpod.v1.OrganizationService.GetOIDCConfig:input_type -> gitpod.v1.GetOIDCConfigRequest
+	128, // 176: gitpod.v1.OrganizationService.UpdateOIDCConfig:input_type -> gitpod.v1.UpdateOIDCConfigRequest
+	92,  // 177: gitpod.v1.OrganizationService.GetAnnouncementBanner:input_type -> gitpod.v1.GetAnnouncementBannerRequest
+	94,  // 178: gitpod.v1.OrganizationService.UpdateAnnouncementBanner:input_type -> gitpod.v1.UpdateAnnouncementBannerRequest
+	99,  // 179: gitpod.v1.OrganizationService.GetTermsOfService:input_type -> gitpod.v1.GetTermsOfServiceRequest
+	101, // 180: gitpod.v1.OrganizationService.UpdateTermsOfService:input_type -> gitpod.v1.UpdateTermsOfServiceRequest
+	103, // 181: gitpod.v1.OrganizationService.AcceptTermsOfService:input_type -> gitpod.v1.AcceptTermsOfServiceRequest
+	106, // 182: gitpod.v1.OrganizationService.ListTermsOfServiceVersions:input_type -> gitpod.v1.ListTermsOfServiceVersionsRequest
+	109, // 183: gitpod.v1.OrganizationService.ListTermsOfServiceAcceptances:input_type -> gitpod.v1.ListTermsOfServiceAcceptancesRequest
+	111, // 184: gitpod.v1.OrganizationService.GetTermsOfServiceAcceptancesExport:input_type -> gitpod.v1.GetTermsOfServiceAcceptancesExportRequest
+	113, // 185: gitpod.v1.OrganizationService.SetTier:input_type -> gitpod.v1.SetTierRequest
+	115, // 186: gitpod.v1.OrganizationService.SetStripeCustomerID:input_type -> gitpod.v1.SetStripeCustomerIDRequest
+	118, // 187: gitpod.v1.OrganizationService.CreateCustomDomain:input_type -> gitpod.v1.CreateCustomDomainRequest
+	120, // 188: gitpod.v1.OrganizationService.GetCustomDomain:input_type -> gitpod.v1.GetCustomDomainRequest
+	122, // 189: gitpod.v1.OrganizationService.UpdateCustomDomain:input_type -> gitpod.v1.UpdateCustomDomainRequest
+	124, // 190: gitpod.v1.OrganizationService.DeleteCustomDomain:input_type -> gitpod.v1.DeleteCustomDomainRequest
+	13,  // 191: gitpod.v1.OrganizationService.CreateOrganization:output_type -> gitpod.v1.CreateOrganizationResponse
+	15,  // 192: gitpod.v1.OrganizationService.JoinOrganization:output_type -> gitpod.v1.JoinOrganizationResponse
+	19,  // 193: gitpod.v1.OrganizationService.GetOrganization:output_type -> gitpod.v1.GetOrganizationResponse
+	11,  // 194: gitpod.v1.OrganizationService.UpdateOrganization:output_type -> gitpod.v1.UpdateOrganizationResponse
+	21,  // 195: gitpod.v1.OrganizationService.DeleteOrganization:output_type -> gitpod.v1.DeleteOrganizationResponse
+	23,  // 196: gitpod.v1.OrganizationService.ListMembers:output_type -> gitpod.v1.ListMembersResponse
+	25,  // 197: gitpod.v1.OrganizationService.SetRole:output_type -> gitpod.v1.SetRoleResponse
+	30,  // 198: gitpod.v1.OrganizationService.CreateOrganizationInvite:output_type -> gitpod.v1.CreateOrganizationInviteResponse
+	27,  // 199: gitpod.v1.OrganizationService.GetOrganizationInvite:output_type -> gitpod.v1.GetOrganizationInviteResponse
+	32,  // 200: gitpod.v1.OrganizationService.GetOrganizationInviteSummary:output_type -> gitpod.v1.GetOrganizationInviteSummaryResponse
+	17,  // 201: gitpod.v1.OrganizationService.LeaveOrganization:output_type -> gitpod.v1.LeaveOrganizationResponse
+	37,  // 202: gitpod.v1.OrganizationService.CreateSSOConfiguration:output_type -> gitpod.v1.CreateSSOConfigurationResponse
+	40,  // 203: gitpod.v1.OrganizationService.GetSSOConfiguration:output_type -> gitpod.v1.GetSSOConfigurationResponse
+	42,  // 204: gitpod.v1.OrganizationService.ListSSOConfigurations:output_type -> gitpod.v1.ListSSOConfigurationsResponse
+	47,  // 205: gitpod.v1.OrganizationService.DeleteSSOConfiguration:output_type -> gitpod.v1.DeleteSSOConfigurationResponse
+	45,  // 206: gitpod.v1.OrganizationService.UpdateSSOConfiguration:output_type -> gitpod.v1.UpdateSSOConfigurationResponse
+	50,  // 207: gitpod.v1.OrganizationService.CreateSCIMConfiguration:output_type -> gitpod.v1.CreateSCIMConfigurationResponse
+	52,  // 208: gitpod.v1.OrganizationService.GetSCIMConfiguration:output_type -> gitpod.v1.GetSCIMConfigurationResponse
+	54,  // 209: gitpod.v1.OrganizationService.ListSCIMConfigurations:output_type -> gitpod.v1.ListSCIMConfigurationsResponse
+	56,  // 210: gitpod.v1.OrganizationService.UpdateSCIMConfiguration:output_type -> gitpod.v1.UpdateSCIMConfigurationResponse
+	58,  // 211: gitpod.v1.OrganizationService.DeleteSCIMConfiguration:output_type -> gitpod.v1.DeleteSCIMConfigurationResponse
+	60,  // 212: gitpod.v1.OrganizationService.RegenerateSCIMToken:output_type -> gitpod.v1.RegenerateSCIMTokenResponse
+	63,  // 213: gitpod.v1.OrganizationService.CreateDomainVerification:output_type -> gitpod.v1.CreateDomainVerificationResponse
+	65,  // 214: gitpod.v1.OrganizationService.GetDomainVerification:output_type -> gitpod.v1.GetDomainVerificationResponse
+	67,  // 215: gitpod.v1.OrganizationService.ListDomainVerifications:output_type -> gitpod.v1.ListDomainVerificationsResponse
+	69,  // 216: gitpod.v1.OrganizationService.VerifyDomain:output_type -> gitpod.v1.VerifyDomainResponse
+	71,  // 217: gitpod.v1.OrganizationService.DeleteDomainVerification:output_type -> gitpod.v1.DeleteDomainVerificationResponse
+	84,  // 218: gitpod.v1.OrganizationService.GetOrganizationPolicies:output_type -> gitpod.v1.GetOrganizationPoliciesResponse
+	88,  // 219: gitpod.v1.OrganizationService.UpdateOrganizationPolicies:output_type -> gitpod.v1.UpdateOrganizationPoliciesResponse
+	86,  // 220: gitpod.v1.OrganizationService.GetOrganizationLLMCapabilities:output_type -> gitpod.v1.GetOrganizationLLMCapabilitiesResponse
+	127, // 221: gitpod.v1.OrganizationService.GetOIDCConfig:output_type -> gitpod.v1.GetOIDCConfigResponse
+	129, // 222: gitpod.v1.OrganizationService.UpdateOIDCConfig:output_type -> gitpod.v1.UpdateOIDCConfigResponse
+	93,  // 223: gitpod.v1.OrganizationService.GetAnnouncementBanner:output_type -> gitpod.v1.GetAnnouncementBannerResponse
+	95,  // 224: gitpod.v1.OrganizationService.UpdateAnnouncementBanner:output_type -> gitpod.v1.UpdateAnnouncementBannerResponse
+	100, // 225: gitpod.v1.OrganizationService.GetTermsOfService:output_type -> gitpod.v1.GetTermsOfServiceResponse
+	102, // 226: gitpod.v1.OrganizationService.UpdateTermsOfService:output_type -> gitpod.v1.UpdateTermsOfServiceResponse
+	104, // 227: gitpod.v1.OrganizationService.AcceptTermsOfService:output_type -> gitpod.v1.AcceptTermsOfServiceResponse
+	107, // 228: gitpod.v1.OrganizationService.ListTermsOfServiceVersions:output_type -> gitpod.v1.ListTermsOfServiceVersionsResponse
+	110, // 229: gitpod.v1.OrganizationService.ListTermsOfServiceAcceptances:output_type -> gitpod.v1.ListTermsOfServiceAcceptancesResponse
+	112, // 230: gitpod.v1.OrganizationService.GetTermsOfServiceAcceptancesExport:output_type -> gitpod.v1.GetTermsOfServiceAcceptancesExportResponse
+	114, // 231: gitpod.v1.OrganizationService.SetTier:output_type -> gitpod.v1.SetTierResponse
+	116, // 232: gitpod.v1.OrganizationService.SetStripeCustomerID:output_type -> gitpod.v1.SetStripeCustomerIDResponse
+	119, // 233: gitpod.v1.OrganizationService.CreateCustomDomain:output_type -> gitpod.v1.CreateCustomDomainResponse
+	121, // 234: gitpod.v1.OrganizationService.GetCustomDomain:output_type -> gitpod.v1.GetCustomDomainResponse
+	123, // 235: gitpod.v1.OrganizationService.UpdateCustomDomain:output_type -> gitpod.v1.UpdateCustomDomainResponse
+	125, // 236: gitpod.v1.OrganizationService.DeleteCustomDomain:output_type -> gitpod.v1.DeleteCustomDomainResponse
+	191, // [191:237] is the sub-list for method output_type
+	145, // [145:191] is the sub-list for method input_type
+	145, // [145:145] is the sub-list for extension type_name
+	145, // [145:145] is the sub-list for extension extendee
+	0,   // [0:145] is the sub-list for field type_name
 }
 
 func init() { file_gitpod_v1_organization_proto_init() }
@@ -9601,29 +9770,29 @@ func file_gitpod_v1_organization_proto_init() {
 	file_gitpod_v1_organization_proto_msgTypes[39].OneofWrappers = []any{}
 	file_gitpod_v1_organization_proto_msgTypes[45].OneofWrappers = []any{}
 	file_gitpod_v1_organization_proto_msgTypes[49].OneofWrappers = []any{}
-	file_gitpod_v1_organization_proto_msgTypes[76].OneofWrappers = []any{}
-	file_gitpod_v1_organization_proto_msgTypes[78].OneofWrappers = []any{
+	file_gitpod_v1_organization_proto_msgTypes[77].OneofWrappers = []any{}
+	file_gitpod_v1_organization_proto_msgTypes[79].OneofWrappers = []any{
 		(*PolicyEnforcedFailedPreconditionDetails_MaxLifetimeExceeded)(nil),
 	}
-	file_gitpod_v1_organization_proto_msgTypes[83].OneofWrappers = []any{}
-	file_gitpod_v1_organization_proto_msgTypes[90].OneofWrappers = []any{}
-	file_gitpod_v1_organization_proto_msgTypes[94].OneofWrappers = []any{}
-	file_gitpod_v1_organization_proto_msgTypes[107].OneofWrappers = []any{}
-	file_gitpod_v1_organization_proto_msgTypes[111].OneofWrappers = []any{}
-	file_gitpod_v1_organization_proto_msgTypes[119].OneofWrappers = []any{
+	file_gitpod_v1_organization_proto_msgTypes[84].OneofWrappers = []any{}
+	file_gitpod_v1_organization_proto_msgTypes[91].OneofWrappers = []any{}
+	file_gitpod_v1_organization_proto_msgTypes[95].OneofWrappers = []any{}
+	file_gitpod_v1_organization_proto_msgTypes[108].OneofWrappers = []any{}
+	file_gitpod_v1_organization_proto_msgTypes[112].OneofWrappers = []any{}
+	file_gitpod_v1_organization_proto_msgTypes[120].OneofWrappers = []any{
 		(*OIDCConfig_V2)(nil),
 		(*OIDCConfig_V3)(nil),
 	}
-	file_gitpod_v1_organization_proto_msgTypes[128].OneofWrappers = []any{}
-	file_gitpod_v1_organization_proto_msgTypes[129].OneofWrappers = []any{}
 	file_gitpod_v1_organization_proto_msgTypes[130].OneofWrappers = []any{}
+	file_gitpod_v1_organization_proto_msgTypes[131].OneofWrappers = []any{}
+	file_gitpod_v1_organization_proto_msgTypes[132].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gitpod_v1_organization_proto_rawDesc), len(file_gitpod_v1_organization_proto_rawDesc)),
-			NumEnums:      9,
-			NumMessages:   133,
+			NumEnums:      10,
+			NumMessages:   135,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

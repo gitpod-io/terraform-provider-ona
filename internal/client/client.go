@@ -11,7 +11,7 @@ import (
 
 	gitpod "github.com/gitpod-io/gitpod-sdk-go"
 	"github.com/gitpod-io/gitpod-sdk-go/option"
-	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	providerversion "github.com/gitpod-io/terraform-provider-ona/version"
 )
 

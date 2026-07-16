@@ -210,7 +210,7 @@ func agentPolicyUpdateFromModel(ctx context.Context, model *AgentPolicyModel, cu
 	}
 	result := &v1.UpdateOrganizationPoliciesRequest_UpdateAgentPolicy{
 		AllowedAgentIds:              current.GetAllowedAgentIds(),
-		AllowedCodexModels:           current.GetAllowedCodexModels(),
+		AllowedCodexModels:           current.GetAllowedCodexModels(), //nolint:staticcheck // Existing Terraform schema still maps the legacy allowlist.
 		AllowedCodexReasoningEfforts: current.GetAllowedCodexReasoningEfforts(),
 		AllowedCodexServiceTiers:     current.GetAllowedCodexServiceTiers(),
 	}
