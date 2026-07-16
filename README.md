@@ -122,38 +122,6 @@ Beta releases are prerelease builds for validation and feedback. They are not
 stable releases and do not provide compatibility or availability guarantees.
 See [docs/release.md](docs/release.md) for the publish procedure.
 
-## Local Terraform Dev Loop
-
-To run Terraform against a locally built provider binary and the local dev loop
-workspace:
-
-```shell
-mkdir -p .bin
-go build -o .bin/terraform-provider-ona .
-cat > terraformrc <<EOF
-provider_installation {
-  dev_overrides {
-    "gitpod-io/ona" = "${PWD}/.bin"
-  }
-  direct {}
-}
-EOF
-ONA_TOKEN="<api-token>" \
-TF_CLI_CONFIG_FILE="${PWD}/terraformrc" \
-terraform -chdir=dev/local-devloop plan -input=false
-```
-
-This builds the provider, configures a temporary Terraform CLI development
-override for `gitpod-io/ona`, and runs `terraform plan` by default.
-
-Run a different Terraform command by changing the final Terraform invocation:
-
-```shell
-ONA_TOKEN="<api-token>" \
-TF_CLI_CONFIG_FILE="${PWD}/terraformrc" \
-terraform -chdir=dev/local-devloop apply -auto-approve -input=false
-```
-
 ## Query Existing Resources
 
 Terraform Query can discover existing Ona resources through provider list
