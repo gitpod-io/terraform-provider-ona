@@ -241,7 +241,7 @@ func TestCollectionFilter(t *testing.T) {
 		{
 			Name: "maps_filters",
 			Input: CollectionModel{
-				WorkflowIDs: mustSetValue(t, types.StringType, []string{testWorkflowID}), Search: types.StringValue("checks"), CreatorIDs: mustSetValue(t, types.StringType, []string{testServiceAccountID}),
+				AutomationIDs: mustSetValue(t, types.StringType, []string{testWorkflowID}), Search: types.StringValue("checks"), CreatorIDs: mustSetValue(t, types.StringType, []string{testServiceAccountID}),
 				StatusPhases: mustSetValue(t, types.StringType, []string{"running", "completed"}), HasFailedExecutionSince: types.StringNull(), Disabled: types.BoolValue(false),
 			},
 			Expected: Expectation{Filter: &v1.ListWorkflowsRequest_Filter{
@@ -252,7 +252,7 @@ func TestCollectionFilter(t *testing.T) {
 		{
 			Name: "maps_failed_since",
 			Input: CollectionModel{
-				WorkflowIDs: types.SetNull(types.StringType), Search: types.StringNull(), CreatorIDs: types.SetNull(types.StringType), StatusPhases: types.SetNull(types.StringType),
+				AutomationIDs: types.SetNull(types.StringType), Search: types.StringNull(), CreatorIDs: types.SetNull(types.StringType), StatusPhases: types.SetNull(types.StringType),
 				HasFailedExecutionSince: types.StringValue("2026-07-15T12:00:00Z"), Disabled: types.BoolNull(),
 			},
 			Expected: Expectation{Filter: &v1.ListWorkflowsRequest_Filter{HasFailedExecutionSince: timestamppb.New(time.Date(2026, 7, 15, 12, 0, 0, 0, time.UTC))}},
@@ -260,23 +260,23 @@ func TestCollectionFilter(t *testing.T) {
 		{
 			Name: "rejects_incompatible_filters",
 			Input: CollectionModel{
-				WorkflowIDs: types.SetNull(types.StringType), Search: types.StringNull(), CreatorIDs: types.SetNull(types.StringType), StatusPhases: mustSetValue(t, types.StringType, []string{"running"}),
+				AutomationIDs: types.SetNull(types.StringType), Search: types.StringNull(), CreatorIDs: types.SetNull(types.StringType), StatusPhases: mustSetValue(t, types.StringType, []string{"running"}),
 				HasFailedExecutionSince: types.StringValue("2026-07-15T12:00:00Z"), Disabled: types.BoolNull(),
 			},
-			Expected: Expectation{Errors: []string{"Incompatible Workflow Filters"}},
+			Expected: Expectation{Errors: []string{"Incompatible Automation Filters"}},
 		},
 		{
 			Name: "rejects_invalid_phase",
 			Input: CollectionModel{
-				WorkflowIDs: types.SetNull(types.StringType), Search: types.StringNull(), CreatorIDs: types.SetNull(types.StringType), StatusPhases: mustSetValue(t, types.StringType, []string{"failed"}),
+				AutomationIDs: types.SetNull(types.StringType), Search: types.StringNull(), CreatorIDs: types.SetNull(types.StringType), StatusPhases: mustSetValue(t, types.StringType, []string{"failed"}),
 				HasFailedExecutionSince: types.StringNull(), Disabled: types.BoolNull(),
 			},
-			Expected: Expectation{Errors: []string{"Invalid Workflow Execution Phase"}},
+			Expected: Expectation{Errors: []string{"Invalid Automation Execution Phase"}},
 		},
 		{
 			Name: "rejects_timestamp_outside_protobuf_range",
 			Input: CollectionModel{
-				WorkflowIDs: types.SetNull(types.StringType), Search: types.StringNull(), CreatorIDs: types.SetNull(types.StringType), StatusPhases: types.SetNull(types.StringType),
+				AutomationIDs: types.SetNull(types.StringType), Search: types.StringNull(), CreatorIDs: types.SetNull(types.StringType), StatusPhases: types.SetNull(types.StringType),
 				HasFailedExecutionSince: types.StringValue("0000-01-01T00:00:00Z"), Disabled: types.BoolNull(),
 			},
 			Expected: Expectation{Errors: []string{"Invalid Failed-Execution Timestamp"}},

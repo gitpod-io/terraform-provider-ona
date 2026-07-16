@@ -5,6 +5,6 @@ data "ona_automations" "enabled" {
   ]
 }
 
-output "workflow_names" {
-  value = [for workflow in data.ona_automations.enabled.workflows : workflow.name]
+output "automation_names" {
+  value = [for automation in data.ona_automations.enabled.automations : automation.name]
 }

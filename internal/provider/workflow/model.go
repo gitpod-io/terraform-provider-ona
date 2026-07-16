@@ -104,13 +104,13 @@ type SubjectModel struct {
 
 type CollectionModel struct {
 	ID                      types.String   `tfsdk:"id"`
-	WorkflowIDs             types.Set      `tfsdk:"workflow_ids"`
+	AutomationIDs           types.Set      `tfsdk:"automation_ids"`
 	Search                  types.String   `tfsdk:"search"`
 	CreatorIDs              types.Set      `tfsdk:"creator_ids"`
 	StatusPhases            types.Set      `tfsdk:"status_phases"`
 	HasFailedExecutionSince types.String   `tfsdk:"has_failed_execution_since"`
 	Disabled                types.Bool     `tfsdk:"disabled"`
-	Workflows               []SummaryModel `tfsdk:"workflows"`
+	Automations             []SummaryModel `tfsdk:"automations"`
 }
 
 type SummaryModel struct {

@@ -2,12 +2,12 @@
 page_title: "ona_automations Data Source - ona"
 subcategory: "Integrations and Automation"
 description: |-
-  Lists persistent Ona workflows visible to the configured provider token. System-managed workflows, such as Insights workflows, are excluded by the Ona API.
+  Lists persistent Ona automations visible to the configured provider token. System-managed automations, such as Insights automations, are excluded by the Ona API.
 ---
 
 # ona_automations (Data Source)
 
-Lists persistent Ona workflows visible to the configured provider token. System-managed workflows, such as Insights workflows, are excluded by the Ona API.
+Lists persistent Ona automations visible to the configured provider token. System-managed automations, such as Insights automations, are excluded by the Ona API.
 
 For product context, see [Background automations](https://ona.com/docs/ona/automations/overview) and [Configure Automations](https://ona.com/docs/ona/automations/configure-automations).
 
@@ -21,8 +21,8 @@ data "ona_automations" "enabled" {
   ]
 }
 
-output "workflow_names" {
-  value = [for workflow in data.ona_automations.enabled.workflows : workflow.name]
+output "automation_names" {
+  value = [for automation in data.ona_automations.enabled.automations : automation.name]
 }
 ```
 
@@ -31,36 +31,36 @@ output "workflow_names" {
 
 ### Optional
 
+- `automation_ids` (Set of String) Automation UUIDs to include. The API accepts at most 25 values.
 - `creator_ids` (Set of String) Creator user UUIDs to include. The API accepts at most 25 values.
-- `disabled` (Boolean) Filter by disabled state. Omit to include enabled and disabled workflows.
-- `has_failed_execution_since` (String) RFC 3339 timestamp. Includes workflows with a failed execution at or after this time. Do not combine with status_phases.
-- `search` (String) Case-insensitive search across workflow name, description, and ID. Must not exceed 256 characters.
+- `disabled` (Boolean) Filter by disabled state. Omit to include enabled and disabled automations.
+- `has_failed_execution_since` (String) RFC 3339 timestamp. Includes automations with a failed execution at or after this time. Do not combine with status_phases.
+- `search` (String) Case-insensitive search across automation name, description, and ID. Must not exceed 256 characters.
 - `status_phases` (Set of String) Latest execution phases to include: `pending`, `running`, `stopping`, `stopped`, `deleting`, `deleted`, or `completed`. Do not combine with has_failed_execution_since.
-- `workflow_ids` (Set of String) Workflow UUIDs to include. The API accepts at most 25 values.
 
 ### Read-Only
 
+- `automations` (Attributes List) Matching automation summaries sorted by automation ID. (see [below for nested schema](#nestedatt--automations))
 - `id` (String) Terraform data source ID. Always `automations`.
-- `workflows` (Attributes List) Matching workflow summaries sorted by workflow ID. (see [below for nested schema](#nestedatt--workflows))
 
-<a id="nestedatt--workflows"></a>
-### Nested Schema for `workflows`
+<a id="nestedatt--automations"></a>
+### Nested Schema for `automations`
 
 Read-Only:
 
-- `created_at` (String) Time when the workflow was created, in RFC 3339 format.
-- `creator` (Attributes) Identity that created the workflow. (see [below for nested schema](#nestedatt--workflows--creator))
+- `created_at` (String) Time when the automation was created, in RFC 3339 format.
+- `creator` (Attributes) Identity that created the automation. (see [below for nested schema](#nestedatt--automations--creator))
 - `deleting` (Boolean) Whether graceful deletion is in progress.
-- `description` (String) Workflow description.
-- `disabled` (Boolean) Whether workflow starts are disabled.
-- `executor` (Attributes) Identity that executes the workflow. (see [below for nested schema](#nestedatt--workflows--executor))
-- `id` (String) Workflow ID.
-- `name` (String) Workflow display name.
-- `updated_at` (String) Time when the workflow was last updated, in RFC 3339 format.
-- `webhook_url` (String) Generated workflow webhook URL.
+- `description` (String) Automation description.
+- `disabled` (Boolean) Whether automation starts are disabled.
+- `executor` (Attributes) Identity that executes the automation. (see [below for nested schema](#nestedatt--automations--executor))
+- `id` (String) Automation ID.
+- `name` (String) Automation display name.
+- `updated_at` (String) Time when the automation was last updated, in RFC 3339 format.
+- `webhook_url` (String) Generated automation webhook URL.
 
-<a id="nestedatt--workflows--creator"></a>
-### Nested Schema for `workflows.creator`
+<a id="nestedatt--automations--creator"></a>
+### Nested Schema for `automations.creator`
 
 Read-Only:
 
@@ -68,8 +68,8 @@ Read-Only:
 - `principal` (String) Subject principal type.
 
 
-<a id="nestedatt--workflows--executor"></a>
-### Nested Schema for `workflows.executor`
+<a id="nestedatt--automations--executor"></a>
+### Nested Schema for `automations.executor`
 
 Read-Only:
 

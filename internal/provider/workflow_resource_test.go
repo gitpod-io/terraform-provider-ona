@@ -140,10 +140,10 @@ func TestAccAutomationsDataSource(t *testing.T) {
 			Config: testAccAutomationsDataSourceConfig(server.URL),
 			Check: resource.ComposeAggregateTestCheckFunc(
 				resource.TestCheckResourceAttr("data.ona_automations.test", "id", "automations"),
-				resource.TestCheckResourceAttr("data.ona_automations.test", "workflows.#", "2"),
-				resource.TestCheckResourceAttr("data.ona_automations.test", "workflows.0.id", workflowAccID1),
-				resource.TestCheckResourceAttr("data.ona_automations.test", "workflows.1.id", workflowAccID2),
-				resource.TestCheckResourceAttr("data.ona_automations.test", "workflows.0.executor.principal", "user"),
+				resource.TestCheckResourceAttr("data.ona_automations.test", "automations.#", "2"),
+				resource.TestCheckResourceAttr("data.ona_automations.test", "automations.0.id", workflowAccID1),
+				resource.TestCheckResourceAttr("data.ona_automations.test", "automations.1.id", workflowAccID2),
+				resource.TestCheckResourceAttr("data.ona_automations.test", "automations.0.executor.principal", "user"),
 				func(*terraform.State) error {
 					filter, calls := server.service.listStats()
 					if calls != 2 {
@@ -371,8 +371,8 @@ provider "ona" {
 }
 
 data "ona_automations" "test" {
-  workflow_ids = [%[2]q, %[3]q]
-  disabled     = false
+  automation_ids = [%[2]q, %[3]q]
+  disabled       = false
 }
 `, host, workflowAccID2, workflowAccID1)
 }

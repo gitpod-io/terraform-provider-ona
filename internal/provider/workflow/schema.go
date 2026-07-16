@@ -258,20 +258,20 @@ func actionResourceAttributes() map[string]resourceschema.Attribute {
 
 func collectionDataSourceSchema() datasourceschema.Schema {
 	return datasourceschema.Schema{
-		MarkdownDescription: "Lists persistent Ona workflows visible to the configured provider token. System-managed workflows, such as Insights workflows, are excluded by the Ona API.",
+		MarkdownDescription: "Lists persistent Ona automations visible to the configured provider token. System-managed automations, such as Insights automations, are excluded by the Ona API.",
 		Attributes: map[string]datasourceschema.Attribute{
 			"id": datasourceschema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "Terraform data source ID. Always `automations`.",
 			},
-			"workflow_ids": datasourceschema.SetAttribute{
+			"automation_ids": datasourceschema.SetAttribute{
 				Optional:            true,
 				ElementType:         types.StringType,
-				MarkdownDescription: "Workflow UUIDs to include. The API accepts at most 25 values.",
+				MarkdownDescription: "Automation UUIDs to include. The API accepts at most 25 values.",
 			},
 			"search": datasourceschema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: "Case-insensitive search across workflow name, description, and ID. Must not exceed 256 characters.",
+				MarkdownDescription: "Case-insensitive search across automation name, description, and ID. Must not exceed 256 characters.",
 			},
 			"creator_ids": datasourceschema.SetAttribute{
 				Optional:            true,
@@ -285,15 +285,15 @@ func collectionDataSourceSchema() datasourceschema.Schema {
 			},
 			"has_failed_execution_since": datasourceschema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: "RFC 3339 timestamp. Includes workflows with a failed execution at or after this time. Do not combine with status_phases.",
+				MarkdownDescription: "RFC 3339 timestamp. Includes automations with a failed execution at or after this time. Do not combine with status_phases.",
 			},
 			"disabled": datasourceschema.BoolAttribute{
 				Optional:            true,
-				MarkdownDescription: "Filter by disabled state. Omit to include enabled and disabled workflows.",
+				MarkdownDescription: "Filter by disabled state. Omit to include enabled and disabled automations.",
 			},
-			"workflows": datasourceschema.ListNestedAttribute{
+			"automations": datasourceschema.ListNestedAttribute{
 				Computed:            true,
-				MarkdownDescription: "Matching workflow summaries sorted by workflow ID.",
+				MarkdownDescription: "Matching automation summaries sorted by automation ID.",
 				NestedObject: datasourceschema.NestedAttributeObject{
 					Attributes: summaryDataSourceAttributes(),
 				},
@@ -304,22 +304,22 @@ func collectionDataSourceSchema() datasourceschema.Schema {
 
 func summaryDataSourceAttributes() map[string]datasourceschema.Attribute {
 	return map[string]datasourceschema.Attribute{
-		"id":          computedDataSourceString("Workflow ID."),
-		"name":        computedDataSourceString("Workflow display name."),
-		"description": computedDataSourceString("Workflow description."),
+		"id":          computedDataSourceString("Automation ID."),
+		"name":        computedDataSourceString("Automation display name."),
+		"description": computedDataSourceString("Automation description."),
 		"disabled": datasourceschema.BoolAttribute{
 			Computed:            true,
-			MarkdownDescription: "Whether workflow starts are disabled.",
+			MarkdownDescription: "Whether automation starts are disabled.",
 		},
 		"deleting": datasourceschema.BoolAttribute{
 			Computed:            true,
 			MarkdownDescription: "Whether graceful deletion is in progress.",
 		},
-		"executor":    computedSubjectDataSourceAttribute("Identity that executes the workflow."),
-		"creator":     computedSubjectDataSourceAttribute("Identity that created the workflow."),
-		"created_at":  computedDataSourceString("Time when the workflow was created, in RFC 3339 format."),
-		"updated_at":  computedDataSourceString("Time when the workflow was last updated, in RFC 3339 format."),
-		"webhook_url": computedDataSourceString("Generated workflow webhook URL."),
+		"executor":    computedSubjectDataSourceAttribute("Identity that executes the automation."),
+		"creator":     computedSubjectDataSourceAttribute("Identity that created the automation."),
+		"created_at":  computedDataSourceString("Time when the automation was created, in RFC 3339 format."),
+		"updated_at":  computedDataSourceString("Time when the automation was last updated, in RFC 3339 format."),
+		"webhook_url": computedDataSourceString("Generated automation webhook URL."),
 	}
 }
 
