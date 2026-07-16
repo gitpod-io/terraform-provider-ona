@@ -138,20 +138,19 @@ func TestAccRunnerResourceMetrics(t *testing.T) {
 			{
 				Config: testAccRunnerResourceConfigWithManagedMetrics(server.URL),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.managed_metrics_enabled", "true"),
-					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.enabled", "false"),
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.managed.enabled", "true"),
+					resource.TestCheckNoResourceAttr("ona_runner.test", "configuration.metrics.custom"),
 					checkRunnerMetrics(server.service, &v1.MetricsConfiguration{ManagedMetricsEnabled: true}),
 				),
 			},
 			{
-				Config: testAccRunnerResourceConfigWithCustomMetrics(server.URL, "metrics-token-1", "1"),
+				Config: testAccRunnerResourceConfigWithCustomMetrics(server.URL, "metrics-token-1"),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.enabled", "true"),
-					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.url", "https://metrics.example.com/api/v1/write"),
-					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.username", "runner"),
-					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.password_version", "1"),
-					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.managed_metrics_enabled", "false"),
-					resource.TestCheckNoResourceAttr("ona_runner.test", "configuration.metrics.password"),
+					resource.TestCheckNoResourceAttr("ona_runner.test", "configuration.metrics.managed"),
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.custom.enabled", "true"),
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.custom.url", "https://metrics.example.com/api/v1/write"),
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.custom.username", "runner"),
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.custom.password", "metrics-token-1"),
 					checkRunnerMetrics(server.service, &v1.MetricsConfiguration{
 						Enabled:  true,
 						Url:      "https://metrics.example.com/api/v1/write",
@@ -161,10 +160,9 @@ func TestAccRunnerResourceMetrics(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccRunnerResourceConfigWithCustomMetrics(server.URL, "metrics-token-2", "2"),
+				Config: testAccRunnerResourceConfigWithCustomMetrics(server.URL, "metrics-token-2"),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.password_version", "2"),
-					resource.TestCheckNoResourceAttr("ona_runner.test", "configuration.metrics.password"),
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.custom.password", "metrics-token-2"),
 					checkRunnerMetrics(server.service, &v1.MetricsConfiguration{
 						Enabled:  true,
 						Url:      "https://metrics.example.com/api/v1/write",
@@ -174,15 +172,10 @@ func TestAccRunnerResourceMetrics(t *testing.T) {
 				),
 			},
 			{
-				Config:      testAccRunnerResourceConfigWithCustomMetricsWithoutPassword(server.URL, "3"),
-				ExpectError: regexp.MustCompile("Missing Metrics Pipeline Password"),
-			},
-			{
 				Config: testAccRunnerResourceConfigWithManagedMetrics(server.URL),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.managed_metrics_enabled", "true"),
-					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.enabled", "false"),
-					resource.TestCheckNoResourceAttr("ona_runner.test", "configuration.metrics.password_version"),
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.managed.enabled", "true"),
+					resource.TestCheckNoResourceAttr("ona_runner.test", "configuration.metrics.custom"),
 					checkRunnerMetrics(server.service, &v1.MetricsConfiguration{ManagedMetricsEnabled: true}),
 				),
 			},
@@ -367,14 +360,16 @@ resource "ona_runner" "test" {
     region = "eu-central-1"
 
     metrics {
-      managed_metrics_enabled = true
+      managed {
+        enabled = true
+      }
     }
   }
 }
 `, host)
 }
 
-func testAccRunnerResourceConfigWithCustomMetrics(host string, password string, passwordVersion string) string {
+func testAccRunnerResourceConfigWithCustomMetrics(host string, password string) string {
 	return fmt.Sprintf(`
 provider "ona" {
   host  = %[1]q
@@ -389,40 +384,16 @@ resource "ona_runner" "test" {
     region = "eu-central-1"
 
     metrics {
-      enabled          = true
-      url              = "https://metrics.example.com/api/v1/write"
-      username         = "runner"
-      password         = %[2]q
-      password_version = %[3]q
+      custom {
+        enabled  = true
+        url      = "https://metrics.example.com/api/v1/write"
+        username = "runner"
+        password = %[2]q
+      }
     }
   }
 }
-`, host, password, passwordVersion)
-}
-
-func testAccRunnerResourceConfigWithCustomMetricsWithoutPassword(host string, passwordVersion string) string {
-	return fmt.Sprintf(`
-provider "ona" {
-  host  = %[1]q
-  token = "test-token"
-}
-
-resource "ona_runner" "test" {
-  name            = "Metrics Runner"
-  runner_provider = "aws_ec2"
-
-  configuration {
-    region = "eu-central-1"
-
-    metrics {
-      enabled          = true
-      url              = "https://metrics.example.com/api/v1/write"
-      username         = "runner"
-      password_version = %[2]q
-    }
-  }
-}
-`, host, passwordVersion)
+`, host, password)
 }
 
 func testAccRunnerResourceConfigWithToken(host string, token string) string {
@@ -553,7 +524,11 @@ func (s *fakeRunnerService) GetRunner(ctx context.Context, req *connect.Request[
 	if runner == nil {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("runner not found"))
 	}
-	return connect.NewResponse(&v1.GetRunnerResponse{Runner: cloneRunner(runner)}), nil
+	result := cloneRunner(runner)
+	if result.GetSpec().GetConfiguration().GetMetrics() != nil {
+		result.Spec.Configuration.Metrics.Password = ""
+	}
+	return connect.NewResponse(&v1.GetRunnerResponse{Runner: result}), nil
 }
 
 func (s *fakeRunnerService) ListRunners(ctx context.Context, req *connect.Request[v1.ListRunnersRequest]) (*connect.Response[v1.ListRunnersResponse], error) {

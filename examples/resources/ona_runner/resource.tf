@@ -16,7 +16,9 @@ resource "ona_runner" "aws_primary" {
     log_level                        = "info"
 
     metrics {
-      managed_metrics_enabled = true
+      managed {
+        enabled = true
+      }
     }
 
     update_window {
@@ -43,11 +45,12 @@ resource "ona_runner" "gcp_primary" {
     log_level                        = "info"
 
     metrics {
-      enabled          = true
-      url              = "https://metrics.example.com/api/v1/write"
-      username         = "runner"
-      password         = var.custom_metrics_password
-      password_version = "1"
+      custom {
+        enabled  = true
+        url      = "https://metrics.example.com/api/v1/write"
+        username = "runner"
+        password = var.custom_metrics_password
+      }
     }
   }
 }

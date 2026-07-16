@@ -52,10 +52,18 @@ type DataSourceConfigurationModel struct {
 }
 
 type DataSourceMetricsModel struct {
-	Enabled               types.Bool   `tfsdk:"enabled"`
-	URL                   types.String `tfsdk:"url"`
-	Username              types.String `tfsdk:"username"`
-	ManagedMetricsEnabled types.Bool   `tfsdk:"managed_metrics_enabled"`
+	Managed *DataSourceManagedMetricsModel `tfsdk:"managed"`
+	Custom  *DataSourceCustomMetricsModel  `tfsdk:"custom"`
+}
+
+type DataSourceManagedMetricsModel struct {
+	Enabled types.Bool `tfsdk:"enabled"`
+}
+
+type DataSourceCustomMetricsModel struct {
+	Enabled  types.Bool   `tfsdk:"enabled"`
+	URL      types.String `tfsdk:"url"`
+	Username types.String `tfsdk:"username"`
 }
 
 func (d *SingularDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -206,21 +214,33 @@ func dataSourceConfigurationSchema() datasourceschema.SingleNestedAttribute {
 				Computed:            true,
 				MarkdownDescription: "Metrics delivery configuration. Custom pipeline passwords are never exposed by this data source.",
 				Attributes: map[string]datasourceschema.Attribute{
-					"enabled": datasourceschema.BoolAttribute{
+					"managed": datasourceschema.SingleNestedAttribute{
 						Computed:            true,
-						MarkdownDescription: "Whether the runner sends metrics to a custom remote-write pipeline.",
+						MarkdownDescription: "Ona-managed metrics pipeline configuration.",
+						Attributes: map[string]datasourceschema.Attribute{
+							"enabled": datasourceschema.BoolAttribute{
+								Computed:            true,
+								MarkdownDescription: "Whether the runner sends metrics through Ona's managed metrics pipeline.",
+							},
+						},
 					},
-					"url": datasourceschema.StringAttribute{
+					"custom": datasourceschema.SingleNestedAttribute{
 						Computed:            true,
-						MarkdownDescription: "Remote-write URL for the custom metrics pipeline.",
-					},
-					"username": datasourceschema.StringAttribute{
-						Computed:            true,
-						MarkdownDescription: "Username for authenticating to the custom metrics pipeline.",
-					},
-					"managed_metrics_enabled": datasourceschema.BoolAttribute{
-						Computed:            true,
-						MarkdownDescription: "Whether the runner sends metrics through Ona's managed metrics pipeline.",
+						MarkdownDescription: "Custom remote-write metrics pipeline configuration. Passwords are never exposed by this data source.",
+						Attributes: map[string]datasourceschema.Attribute{
+							"enabled": datasourceschema.BoolAttribute{
+								Computed:            true,
+								MarkdownDescription: "Whether the runner sends metrics to the custom pipeline.",
+							},
+							"url": datasourceschema.StringAttribute{
+								Computed:            true,
+								MarkdownDescription: "Remote-write URL for the custom metrics pipeline.",
+							},
+							"username": datasourceschema.StringAttribute{
+								Computed:            true,
+								MarkdownDescription: "Username for authenticating to the custom metrics pipeline.",
+							},
+						},
 					},
 				},
 			},
@@ -276,12 +296,18 @@ func dataSourceMetricsModel(metrics *MetricsModel) *DataSourceMetricsModel {
 	if metrics == nil {
 		return nil
 	}
-	return &DataSourceMetricsModel{
-		Enabled:               metrics.Enabled,
-		URL:                   metrics.URL,
-		Username:              metrics.Username,
-		ManagedMetricsEnabled: metrics.ManagedMetricsEnabled,
+	result := &DataSourceMetricsModel{}
+	if metrics.Managed != nil {
+		result.Managed = &DataSourceManagedMetricsModel{Enabled: metrics.Managed.Enabled}
 	}
+	if metrics.Custom != nil {
+		result.Custom = &DataSourceCustomMetricsModel{
+			Enabled:  metrics.Custom.Enabled,
+			URL:      metrics.Custom.URL,
+			Username: metrics.Custom.Username,
+		}
+	}
+	return result
 }
 
 func dataSourceRunnerID(data DataSourceModel) string {

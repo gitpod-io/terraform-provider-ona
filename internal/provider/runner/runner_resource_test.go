@@ -12,12 +12,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func TestMetricsPasswordSchema(t *testing.T) {
+func TestCustomMetricsSchema(t *testing.T) {
 	t.Parallel()
 
 	type Expectation struct {
-		Sensitive bool
-		WriteOnly bool
+		MetricsChildCount     int
+		ManagedAttributeCount int
+		CustomAttributeCount  int
+		PasswordSensitive     bool
 	}
 
 	schema := resourceSchema()
@@ -29,15 +31,28 @@ func TestMetricsPasswordSchema(t *testing.T) {
 	if !ok {
 		t.Fatalf("metrics schema has type %T, want resourceschema.SingleNestedBlock", configuration.Blocks["metrics"])
 	}
-	password, ok := metrics.Attributes["password"].(resourceschema.StringAttribute)
+	managed, ok := metrics.Blocks["managed"].(resourceschema.SingleNestedBlock)
 	if !ok {
-		t.Fatalf("password schema has type %T, want resourceschema.StringAttribute", metrics.Attributes["password"])
+		t.Fatalf("managed metrics schema has type %T, want resourceschema.SingleNestedBlock", metrics.Blocks["managed"])
+	}
+	custom, ok := metrics.Blocks["custom"].(resourceschema.SingleNestedBlock)
+	if !ok {
+		t.Fatalf("custom metrics schema has type %T, want resourceschema.SingleNestedBlock", metrics.Blocks["custom"])
+	}
+	password, ok := custom.Attributes["password"].(resourceschema.StringAttribute)
+	if !ok {
+		t.Fatalf("custom metrics password schema has type %T, want resourceschema.StringAttribute", custom.Attributes["password"])
 	}
 
-	expected := Expectation{Sensitive: true, WriteOnly: true}
-	got := Expectation{Sensitive: password.Sensitive, WriteOnly: password.WriteOnly}
+	expected := Expectation{MetricsChildCount: 2, ManagedAttributeCount: 1, CustomAttributeCount: 4, PasswordSensitive: true}
+	got := Expectation{
+		MetricsChildCount:     len(metrics.Blocks),
+		ManagedAttributeCount: len(managed.Attributes),
+		CustomAttributeCount:  len(custom.Attributes),
+		PasswordSensitive:     password.Sensitive,
+	}
 	if diff := cmp.Diff(expected, got); diff != "" {
-		t.Errorf("metrics password schema mismatch (-want +got):\n%s", diff)
+		t.Errorf("custom metrics schema mismatch (-want +got):\n%s", diff)
 	}
 }
 

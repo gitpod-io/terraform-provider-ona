@@ -55,10 +55,26 @@ Read-Only:
 
 Read-Only:
 
-- `enabled` (Boolean) Whether the runner sends metrics to a custom remote-write pipeline.
-- `managed_metrics_enabled` (Boolean) Whether the runner sends metrics through Ona's managed metrics pipeline.
+- `custom` (Attributes) Custom remote-write metrics pipeline configuration. Passwords are never exposed by this data source. (see [below for nested schema](#nestedatt--configuration--metrics--custom))
+- `managed` (Attributes) Ona-managed metrics pipeline configuration. (see [below for nested schema](#nestedatt--configuration--metrics--managed))
+
+<a id="nestedatt--configuration--metrics--custom"></a>
+### Nested Schema for `configuration.metrics.custom`
+
+Read-Only:
+
+- `enabled` (Boolean) Whether the runner sends metrics to the custom pipeline.
 - `url` (String) Remote-write URL for the custom metrics pipeline.
 - `username` (String) Username for authenticating to the custom metrics pipeline.
+
+
+<a id="nestedatt--configuration--metrics--managed"></a>
+### Nested Schema for `configuration.metrics.managed`
+
+Read-Only:
+
+- `enabled` (Boolean) Whether the runner sends metrics through Ona's managed metrics pipeline.
+
 
 
 <a id="nestedatt--configuration--update_window"></a>

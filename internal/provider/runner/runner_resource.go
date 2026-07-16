@@ -68,12 +68,19 @@ type ConfigurationModel struct {
 }
 
 type MetricsModel struct {
-	Enabled               types.Bool   `tfsdk:"enabled"`
-	URL                   types.String `tfsdk:"url"`
-	Username              types.String `tfsdk:"username"`
-	Password              types.String `tfsdk:"password"`
-	PasswordVersion       types.String `tfsdk:"password_version"`
-	ManagedMetricsEnabled types.Bool   `tfsdk:"managed_metrics_enabled"`
+	Managed *ManagedMetricsModel `tfsdk:"managed"`
+	Custom  *CustomMetricsModel  `tfsdk:"custom"`
+}
+
+type ManagedMetricsModel struct {
+	Enabled types.Bool `tfsdk:"enabled"`
+}
+
+type CustomMetricsModel struct {
+	Enabled  types.Bool   `tfsdk:"enabled"`
+	URL      types.String `tfsdk:"url"`
+	Username types.String `tfsdk:"username"`
+	Password types.String `tfsdk:"password"`
 }
 
 type UpdateWindowModel struct {
@@ -126,10 +133,6 @@ func (r *Resource) ValidateConfig(ctx context.Context, req resource.ValidateConf
 func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	input, diags := runnerInputFromPlan(ctx, req.Plan)
 	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-	setRunnerMetricsPassword(ctx, req.Config, &input, &resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -215,7 +218,7 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 	prior := data
 	data = RunnerModel{}
 	populateModelFromRunner(&data, runner)
-	preserveMetricsPasswordVersion(data.Configuration, prior.Configuration)
+	preserveMetricsState(data.Configuration, prior.Configuration)
 	resp.Diagnostics.Append(resp.Identity.Set(ctx, RunnerIdentityModel{
 		RunnerID: data.RunnerID,
 	})...)
@@ -228,10 +231,6 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	input, diags := runnerInputFromPlan(ctx, req.Plan)
 	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-	setRunnerMetricsPassword(ctx, req.Config, &input, &resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -356,19 +355,6 @@ func runnerInputFromPlan(ctx context.Context, plan tfsdk.Plan) (RunnerInputModel
 	return data, diags
 }
 
-func setRunnerMetricsPassword(ctx context.Context, config tfsdk.Config, data *RunnerInputModel, diags *diag.Diagnostics) {
-	if data == nil || data.Configuration == nil || data.Configuration.Metrics == nil {
-		return
-	}
-
-	var password types.String
-	diags.Append(config.GetAttribute(ctx, path.Root("configuration").AtName("metrics").AtName("password"), &password)...)
-	if diags.HasError() {
-		return
-	}
-	data.Configuration.Metrics.Password = password
-}
-
 func (data RunnerInputModel) runnerModel() RunnerModel {
 	return RunnerModel{
 		ID:             data.ID,
@@ -487,12 +473,7 @@ func updateRunnerConfiguration(config *ConfigurationModel, prior *ConfigurationM
 		value := config.AutoUpdate.ValueBool()
 		result.AutoUpdate = &value
 	}
-	metrics, metricsDiags := updateMetricsConfiguration(config.Metrics, metricsFromConfiguration(prior))
-	diags.Append(metricsDiags...)
-	if diags.HasError() {
-		return nil, diags
-	}
-	result.Metrics = metrics
+	result.Metrics = updateMetricsConfiguration(config.Metrics, metricsFromConfiguration(prior))
 	if !config.DevcontainerImageCacheEnabled.IsNull() && !config.DevcontainerImageCacheEnabled.IsUnknown() {
 		value := config.DevcontainerImageCacheEnabled.ValueBool()
 		result.DevcontainerImageCacheEnabled = &value
@@ -532,29 +513,30 @@ func metricsConfigurationFromModel(model *MetricsModel) *v1.MetricsConfiguration
 	}
 
 	result := &v1.MetricsConfiguration{}
-	if !model.Enabled.IsNull() && !model.Enabled.IsUnknown() {
-		result.Enabled = model.Enabled.ValueBool()
+	if model.Managed != nil && !model.Managed.Enabled.IsNull() && !model.Managed.Enabled.IsUnknown() {
+		result.ManagedMetricsEnabled = model.Managed.Enabled.ValueBool()
 	}
-	if !model.URL.IsNull() && !model.URL.IsUnknown() {
-		result.Url = model.URL.ValueString()
-	}
-	if !model.Username.IsNull() && !model.Username.IsUnknown() {
-		result.Username = model.Username.ValueString()
-	}
-	if !model.Password.IsNull() && !model.Password.IsUnknown() {
-		result.Password = model.Password.ValueString()
-	}
-	if !model.ManagedMetricsEnabled.IsNull() && !model.ManagedMetricsEnabled.IsUnknown() {
-		result.ManagedMetricsEnabled = model.ManagedMetricsEnabled.ValueBool()
+	if model.Custom != nil {
+		if !model.Custom.Enabled.IsNull() && !model.Custom.Enabled.IsUnknown() {
+			result.Enabled = model.Custom.Enabled.ValueBool()
+		}
+		if !model.Custom.URL.IsNull() && !model.Custom.URL.IsUnknown() {
+			result.Url = model.Custom.URL.ValueString()
+		}
+		if !model.Custom.Username.IsNull() && !model.Custom.Username.IsUnknown() {
+			result.Username = model.Custom.Username.ValueString()
+		}
+		if !model.Custom.Password.IsNull() && !model.Custom.Password.IsUnknown() {
+			result.Password = model.Custom.Password.ValueString()
+		}
 	}
 	return result
 }
 
-func updateMetricsConfiguration(model *MetricsModel, prior *MetricsModel) (*v1.UpdateRunnerRequest_MetricsConfiguration, diag.Diagnostics) {
-	var diags diag.Diagnostics
+func updateMetricsConfiguration(model *MetricsModel, prior *MetricsModel) *v1.UpdateRunnerRequest_MetricsConfiguration {
 	if model == nil {
 		if prior == nil {
-			return nil, diags
+			return nil
 		}
 		return &v1.UpdateRunnerRequest_MetricsConfiguration{
 			Enabled:               ptr(false),
@@ -562,48 +544,60 @@ func updateMetricsConfiguration(model *MetricsModel, prior *MetricsModel) (*v1.U
 			Username:              ptr(""),
 			Password:              ptr(""),
 			ManagedMetricsEnabled: ptr(false),
-		}, diags
+		}
 	}
 
 	result := &v1.UpdateRunnerRequest_MetricsConfiguration{}
-	if !model.Enabled.IsNull() && !model.Enabled.IsUnknown() {
-		result.Enabled = ptr(model.Enabled.ValueBool())
+	priorManaged := managedMetricsFromModel(prior)
+	if model.Managed != nil && !model.Managed.Enabled.IsNull() && !model.Managed.Enabled.IsUnknown() {
+		result.ManagedMetricsEnabled = ptr(model.Managed.Enabled.ValueBool())
+	} else if priorManaged != nil {
+		result.ManagedMetricsEnabled = ptr(false)
 	}
-	if !model.URL.IsNull() && !model.URL.IsUnknown() {
-		result.Url = ptr(model.URL.ValueString())
-	} else if prior != nil && !prior.URL.IsNull() && !prior.URL.IsUnknown() {
+
+	priorCustom := customMetricsFromModel(prior)
+	if model.Custom == nil {
+		if priorCustom != nil {
+			result.Enabled = ptr(false)
+			result.Url = ptr("")
+			result.Username = ptr("")
+			result.Password = ptr("")
+		}
+		return result
+	}
+	if !model.Custom.Enabled.IsNull() && !model.Custom.Enabled.IsUnknown() {
+		result.Enabled = ptr(model.Custom.Enabled.ValueBool())
+	}
+	if !model.Custom.URL.IsNull() && !model.Custom.URL.IsUnknown() {
+		result.Url = ptr(model.Custom.URL.ValueString())
+	} else if priorCustom != nil && !priorCustom.URL.IsNull() && !priorCustom.URL.IsUnknown() {
 		result.Url = ptr("")
 	}
-	if !model.Username.IsNull() && !model.Username.IsUnknown() {
-		result.Username = ptr(model.Username.ValueString())
-	} else if prior != nil && !prior.Username.IsNull() && !prior.Username.IsUnknown() {
+	if !model.Custom.Username.IsNull() && !model.Custom.Username.IsUnknown() {
+		result.Username = ptr(model.Custom.Username.ValueString())
+	} else if priorCustom != nil && !priorCustom.Username.IsNull() && !priorCustom.Username.IsUnknown() {
 		result.Username = ptr("")
 	}
-	if !model.ManagedMetricsEnabled.IsNull() && !model.ManagedMetricsEnabled.IsUnknown() {
-		result.ManagedMetricsEnabled = ptr(model.ManagedMetricsEnabled.ValueBool())
-	}
-	priorPasswordVersion := passwordVersion(prior)
-	if model.PasswordVersion.IsNull() && !priorPasswordVersion.IsNull() && !priorPasswordVersion.IsUnknown() {
+	if !model.Custom.Password.IsNull() && !model.Custom.Password.IsUnknown() {
+		result.Password = ptr(model.Custom.Password.ValueString())
+	} else if priorCustom != nil && !priorCustom.Password.IsNull() && !priorCustom.Password.IsUnknown() {
 		result.Password = ptr("")
-	} else if secretVersionChanged(model.PasswordVersion, priorPasswordVersion) {
-		if !isKnownString(model.Password) {
-			diags.AddAttributeError(
-				path.Root("configuration").AtName("metrics").AtName("password"),
-				"Missing Metrics Pipeline Password",
-				"Set password when changing password_version.",
-			)
-			return nil, diags
-		}
-		result.Password = ptr(model.Password.ValueString())
 	}
-	return result, diags
+	return result
 }
 
-func passwordVersion(model *MetricsModel) types.String {
+func managedMetricsFromModel(model *MetricsModel) *ManagedMetricsModel {
 	if model == nil {
-		return types.StringNull()
+		return nil
 	}
-	return model.PasswordVersion
+	return model.Managed
+}
+
+func customMetricsFromModel(model *MetricsModel) *CustomMetricsModel {
+	if model == nil {
+		return nil
+	}
+	return model.Custom
 }
 
 func populateModelFromRunner(data *RunnerModel, runner *v1.Runner) {
@@ -665,21 +659,72 @@ func preserveMetrics(data *MetricsModel, planned *MetricsModel) *MetricsModel {
 	if data == nil {
 		data = &MetricsModel{}
 	}
-	data.Enabled = preserveBool(data.Enabled, planned.Enabled)
-	data.URL = preserveString(data.URL, planned.URL)
-	data.Username = preserveString(data.Username, planned.Username)
-	data.Password = types.StringNull()
-	data.PasswordVersion = preserveString(data.PasswordVersion, planned.PasswordVersion)
-	data.ManagedMetricsEnabled = preserveBool(data.ManagedMetricsEnabled, planned.ManagedMetricsEnabled)
+	if planned.Managed != nil {
+		if data.Managed == nil {
+			data.Managed = &ManagedMetricsModel{}
+		}
+		data.Managed.Enabled = preserveBool(data.Managed.Enabled, planned.Managed.Enabled)
+	} else {
+		data.Managed = nil
+	}
+	if planned.Custom != nil {
+		if data.Custom == nil {
+			data.Custom = &CustomMetricsModel{}
+		}
+		data.Custom.Enabled = preserveBool(data.Custom.Enabled, planned.Custom.Enabled)
+		data.Custom.URL = preserveString(data.Custom.URL, planned.Custom.URL)
+		data.Custom.Username = preserveString(data.Custom.Username, planned.Custom.Username)
+		data.Custom.Password = preserveString(data.Custom.Password, planned.Custom.Password)
+	} else {
+		data.Custom = nil
+	}
 	return data
 }
 
-func preserveMetricsPasswordVersion(data *ConfigurationModel, prior *ConfigurationModel) {
-	if data == nil || data.Metrics == nil || prior == nil || prior.Metrics == nil {
+func preserveMetricsState(data *ConfigurationModel, prior *ConfigurationModel) {
+	if data == nil || prior == nil || prior.Metrics == nil {
 		return
 	}
-	data.Metrics.Password = types.StringNull()
-	data.Metrics.PasswordVersion = prior.Metrics.PasswordVersion
+	if data.Metrics == nil {
+		if metricsInactive(prior.Metrics) {
+			data.Metrics = prior.Metrics
+		}
+		return
+	}
+	if data.Metrics.Managed == nil && prior.Metrics.Managed != nil && !knownBoolValue(prior.Metrics.Managed.Enabled) {
+		data.Metrics.Managed = prior.Metrics.Managed
+	}
+	if data.Metrics.Custom == nil {
+		if prior.Metrics.Custom != nil && customMetricsInactive(prior.Metrics.Custom) {
+			data.Metrics.Custom = prior.Metrics.Custom
+		}
+		return
+	}
+	if prior.Metrics.Custom != nil && (data.Metrics.Custom.Password.IsNull() || data.Metrics.Custom.Password.ValueString() == "") {
+		data.Metrics.Custom.Password = prior.Metrics.Custom.Password
+	}
+}
+
+func metricsInactive(model *MetricsModel) bool {
+	return model != nil &&
+		(model.Managed == nil || !knownBoolValue(model.Managed.Enabled)) &&
+		(model.Custom == nil || customMetricsInactive(model.Custom))
+}
+
+func customMetricsInactive(model *CustomMetricsModel) bool {
+	return model != nil &&
+		!knownBoolValue(model.Enabled) &&
+		!knownStringValue(model.URL) &&
+		!knownStringValue(model.Username) &&
+		!knownStringValue(model.Password)
+}
+
+func knownBoolValue(value types.Bool) bool {
+	return !value.IsNull() && !value.IsUnknown() && value.ValueBool()
+}
+
+func knownStringValue(value types.String) bool {
+	return !value.IsNull() && !value.IsUnknown() && value.ValueString() != ""
 }
 
 func preserveUpdateWindow(data *UpdateWindowModel, planned *UpdateWindowModel) *UpdateWindowModel {
@@ -724,26 +769,25 @@ func configurationModel(config *v1.RunnerConfiguration) *ConfigurationModel {
 }
 
 func metricsModel(metrics *v1.MetricsConfiguration) *MetricsModel {
-	if metrics == nil || metricsConfigurationEmpty(metrics) {
+	if metrics == nil {
 		return nil
 	}
-	return &MetricsModel{
-		Enabled:               types.BoolValue(metrics.GetEnabled()),
-		URL:                   stringOptionalValue(metrics.GetUrl()),
-		Username:              stringOptionalValue(metrics.GetUsername()),
-		Password:              types.StringNull(),
-		PasswordVersion:       types.StringNull(),
-		ManagedMetricsEnabled: types.BoolValue(metrics.GetManagedMetricsEnabled()),
+	result := &MetricsModel{}
+	if metrics.GetManagedMetricsEnabled() {
+		result.Managed = &ManagedMetricsModel{Enabled: types.BoolValue(true)}
 	}
-}
-
-func metricsConfigurationEmpty(metrics *v1.MetricsConfiguration) bool {
-	return metrics != nil &&
-		!metrics.GetEnabled() &&
-		metrics.GetUrl() == "" &&
-		metrics.GetUsername() == "" &&
-		metrics.GetPassword() == "" &&
-		!metrics.GetManagedMetricsEnabled()
+	if metrics.GetEnabled() || metrics.GetUrl() != "" || metrics.GetUsername() != "" || metrics.GetPassword() != "" {
+		result.Custom = &CustomMetricsModel{
+			Enabled:  types.BoolValue(metrics.GetEnabled()),
+			URL:      stringOptionalValue(metrics.GetUrl()),
+			Username: stringOptionalValue(metrics.GetUsername()),
+			Password: stringOptionalValue(metrics.GetPassword()),
+		}
+	}
+	if result.Managed == nil && result.Custom == nil {
+		return nil
+	}
+	return result
 }
 
 func updateWindowModel(updateWindow *v1.UpdateWindow) *UpdateWindowModel {
