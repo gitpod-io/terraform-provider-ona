@@ -12,8 +12,7 @@ The provider is currently a beta release. The repository version is `0.2.0-beta.
 
 ## Requirements
 
-- Terraform CLI `>= 1.11` for provider resources and write-only arguments.
-- Terraform CLI `>= 1.14` for Terraform Query list resources.
+- Terraform CLI `>= 1.14`.
 - Linux `amd64` and Linux `arm64` provider packages. The current beta release configuration does not publish macOS or Windows packages.
 - An Ona API token supplied through `ONA_TOKEN`.
 

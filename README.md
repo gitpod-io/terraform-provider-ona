@@ -53,11 +53,7 @@ Terraform Query list resources:
 
 ## Requirements
 
-- [Terraform CLI](https://developer.hashicorp.com/terraform/downloads) >= 1.11
-  for standard provider resources, data sources, ephemeral resources, and
-  write-only arguments.
-- Terraform CLI >= 1.14 when using Terraform Query (`terraform query`) with
-  provider list resources.
+- [Terraform CLI](https://developer.hashicorp.com/terraform/downloads) >= 1.14
 - [Go](https://go.dev/doc/install) >= 1.25.12 for provider development.
 
 ## Building the Provider
