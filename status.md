@@ -2,9 +2,9 @@
 
 ## Current status
 
-The workflow automation provider work is implemented and locally validated. The change adds the `ona_automation` managed resource and the `ona_workflows` collection data source, using the existing generated `WorkflowService` client.
+The workflow automation provider work is implemented and locally validated. The change adds the `ona_automation` managed resource and the `ona_automations` collection data source, using the existing generated `WorkflowService` client.
 
-The implementation was checked against `/workspaces/gitpod-next` at commit `126e0b41dbf01a2d9642b489916e50f8c3a0dbec`. There are no known implementation blockers. The changes remain uncommitted in the local worktree; no pull request has been created.
+The implementation was checked against `/workspaces/gitpod-next` at commit `126e0b41dbf01a2d9642b489916e50f8c3a0dbec`. There are no known implementation blockers. Draft pull request #92 contains the changes.
 
 ## Work completed
 
@@ -27,7 +27,7 @@ The resource deliberately rejects imports or reads that would be lossy. This inc
 
 ### Collection data source
 
-Added `ona_workflows` backed by `ListWorkflows`. It supports:
+Added `ona_automations` backed by `ListWorkflows`. It supports:
 
 - workflow ID, creator ID, search, execution-phase, failed-since, and tri-state disabled filters;
 - validation matching the backend's UUID, cardinality, timestamp, and mutually exclusive filter rules;
@@ -39,9 +39,9 @@ Added `ona_workflows` backed by `ListWorkflows`. It supports:
 ### Provider integration and documentation
 
 - Registered the resource and data source in `internal/provider/provider.go`.
-- Added examples under `examples/resources/ona_automation/` and `examples/data-sources/ona_workflows/`.
+- Added examples under `examples/resources/ona_automation/` and `examples/data-sources/ona_automations/`.
 - Added direct import documentation to `examples/import.md`.
-- Generated `docs/resources/automation.md` and `docs/data-sources/workflows.md`.
+- Generated `docs/resources/automation.md` and `docs/data-sources/automations.md`.
 - Added `github.com/robfig/cron/v3` for backend-compatible cron validation and promoted `github.com/google/uuid` to a direct dependency.
 
 ## Difficulties encountered and resolutions
@@ -114,4 +114,4 @@ Credentialed live acceptance tests were not run because they require an Ona toke
 
 ## Remaining delivery work
 
-The implementation is ready for review. The remaining delivery steps are to inspect the final worktree, commit the intended files, open a pull request, and run any repository CI or explicitly authorized live acceptance validation.
+The implementation is ready for review in pull request #92.

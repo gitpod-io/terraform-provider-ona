@@ -39,7 +39,7 @@ Data sources:
 - `ona_runner` and `ona_runners`
 - `ona_security_policies`
 - `ona_warm_pool` and `ona_warm_pools`
-- `ona_workflows`
+- `ona_automations`
 
 Ephemeral resources:
 

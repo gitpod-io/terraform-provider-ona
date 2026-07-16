@@ -124,7 +124,7 @@ func TestAccAutomationResource(t *testing.T) {
 	})
 }
 
-func TestAccWorkflowsDataSource(t *testing.T) {
+func TestAccAutomationsDataSource(t *testing.T) {
 	t.Parallel()
 
 	server := newWorkflowAPIServer(t)
@@ -137,13 +137,13 @@ func TestAccWorkflowsDataSource(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{{
-			Config: testAccWorkflowsDataSourceConfig(server.URL),
+			Config: testAccAutomationsDataSourceConfig(server.URL),
 			Check: resource.ComposeAggregateTestCheckFunc(
-				resource.TestCheckResourceAttr("data.ona_workflows.test", "id", "workflows"),
-				resource.TestCheckResourceAttr("data.ona_workflows.test", "workflows.#", "2"),
-				resource.TestCheckResourceAttr("data.ona_workflows.test", "workflows.0.id", workflowAccID1),
-				resource.TestCheckResourceAttr("data.ona_workflows.test", "workflows.1.id", workflowAccID2),
-				resource.TestCheckResourceAttr("data.ona_workflows.test", "workflows.0.executor.principal", "user"),
+				resource.TestCheckResourceAttr("data.ona_automations.test", "id", "automations"),
+				resource.TestCheckResourceAttr("data.ona_automations.test", "workflows.#", "2"),
+				resource.TestCheckResourceAttr("data.ona_automations.test", "workflows.0.id", workflowAccID1),
+				resource.TestCheckResourceAttr("data.ona_automations.test", "workflows.1.id", workflowAccID2),
+				resource.TestCheckResourceAttr("data.ona_automations.test", "workflows.0.executor.principal", "user"),
 				func(*terraform.State) error {
 					filter, calls := server.service.listStats()
 					if calls != 2 {
@@ -231,7 +231,7 @@ func TestAccWorkflowUpdateOwnershipError(t *testing.T) {
 	})
 }
 
-func TestAccWorkflowsDataSourceAPIError(t *testing.T) {
+func TestAccAutomationsDataSourceAPIError(t *testing.T) {
 	t.Parallel()
 
 	server := newWorkflowAPIServer(t)
@@ -246,7 +246,7 @@ func TestAccWorkflowsDataSourceAPIError(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{{
-			Config:      testAccWorkflowsDataSourceConfig(server.URL),
+			Config:      testAccAutomationsDataSourceConfig(server.URL),
 			ExpectError: regexp.MustCompile("list failed"),
 		}},
 	})
@@ -363,14 +363,14 @@ resource "ona_automation" "test" {
 `, host, name, description, command, disabled, executor, workflowProjectID)
 }
 
-func testAccWorkflowsDataSourceConfig(host string) string {
+func testAccAutomationsDataSourceConfig(host string) string {
 	return fmt.Sprintf(`
 provider "ona" {
   host  = %[1]q
   token = "test-token"
 }
 
-data "ona_workflows" "test" {
+data "ona_automations" "test" {
   workflow_ids = [%[2]q, %[3]q]
   disabled     = false
 }

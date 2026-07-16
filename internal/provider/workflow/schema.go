@@ -262,7 +262,7 @@ func collectionDataSourceSchema() datasourceschema.Schema {
 		Attributes: map[string]datasourceschema.Attribute{
 			"id": datasourceschema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "Terraform data source ID. Always `workflows`.",
+				MarkdownDescription: "Terraform data source ID. Always `automations`.",
 			},
 			"workflow_ids": datasourceschema.SetAttribute{
 				Optional:            true,

@@ -1,11 +1,11 @@
 ---
-page_title: "ona_workflows Data Source - ona"
+page_title: "ona_automations Data Source - ona"
 subcategory: "Integrations and Automation"
 description: |-
   Lists persistent Ona workflows visible to the configured provider token. System-managed workflows, such as Insights workflows, are excluded by the Ona API.
 ---
 
-# ona_workflows (Data Source)
+# ona_automations (Data Source)
 
 Lists persistent Ona workflows visible to the configured provider token. System-managed workflows, such as Insights workflows, are excluded by the Ona API.
 
@@ -14,7 +14,7 @@ For product context, see [Background automations](https://ona.com/docs/ona/autom
 ## Example Usage
 
 ```terraform
-data "ona_workflows" "enabled" {
+data "ona_automations" "enabled" {
   disabled = false
   creator_ids = [
     "<creator-user-id>",
@@ -22,7 +22,7 @@ data "ona_workflows" "enabled" {
 }
 
 output "workflow_names" {
-  value = [for workflow in data.ona_workflows.enabled.workflows : workflow.name]
+  value = [for workflow in data.ona_automations.enabled.workflows : workflow.name]
 }
 ```
 
@@ -40,7 +40,7 @@ output "workflow_names" {
 
 ### Read-Only
 
-- `id` (String) Terraform data source ID. Always `workflows`.
+- `id` (String) Terraform data source ID. Always `automations`.
 - `workflows` (Attributes List) Matching workflow summaries sorted by workflow ID. (see [below for nested schema](#nestedatt--workflows))
 
 <a id="nestedatt--workflows"></a>

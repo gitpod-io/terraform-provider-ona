@@ -32,7 +32,7 @@ type CollectionDataSource struct {
 }
 
 func (d *CollectionDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_workflows"
+	resp.TypeName = req.ProviderTypeName + "_automations"
 }
 
 func (d *CollectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
@@ -58,7 +58,7 @@ func (d *CollectionDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 	if d.client == nil {
-		resp.Diagnostics.AddError("Ona API Client Is Not Configured", "Set the provider token argument or ONA_TOKEN before reading ona_workflows data sources.")
+		resp.Diagnostics.AddError("Ona API Client Is Not Configured", "Set the provider token argument or ONA_TOKEN before reading ona_automations data sources.")
 		return
 	}
 	filter := collectionFilter(data, &resp.Diagnostics)
@@ -71,7 +71,7 @@ func (d *CollectionDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 	sort.SliceStable(workflows, func(i, j int) bool { return workflows[i].GetId() < workflows[j].GetId() })
-	data.ID = types.StringValue("workflows")
+	data.ID = types.StringValue("automations")
 	data.Workflows = make([]SummaryModel, 0, len(workflows))
 	for _, workflow := range workflows {
 		data.Workflows = append(data.Workflows, summaryFromWorkflow(workflow, &resp.Diagnostics))
