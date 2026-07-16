@@ -59,6 +59,7 @@ The following capabilities are on the roadmap:
   `ona_group_membership` resource supports service-account membership only.
 - Assigning groups and users to projects, configuring their roles, and managing
   General access.
+- Managing default, per-user, and per-team monthly usage budgets.
 - Managing organization-level LLM provider configuration and agent skills.
 
 ## Requirements
