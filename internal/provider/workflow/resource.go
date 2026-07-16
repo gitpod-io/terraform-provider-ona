@@ -30,7 +30,7 @@ type Resource struct {
 }
 
 func (r *Resource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_workflow"
+	resp.TypeName = req.ProviderTypeName + "_automation"
 }
 
 func (r *Resource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -217,6 +217,6 @@ func (r *Resource) requireClient(diags *diag.Diagnostics, action string) bool {
 	if r.client != nil {
 		return true
 	}
-	diags.AddError("Ona API Client Is Not Configured", fmt.Sprintf("Set the provider token argument or ONA_TOKEN before %s ona_workflow resources.", action))
+	diags.AddError("Ona API Client Is Not Configured", fmt.Sprintf("Set the provider token argument or ONA_TOKEN before %s ona_automation resources.", action))
 	return false
 }

@@ -110,7 +110,7 @@ func TestUnsupportedWorkflowReason(t *testing.T) {
 				workflow.Spec.Report = &v1.WorkflowAction{}
 				return workflow
 			}(),
-			Expected: Expectation{Reason: "The workflow configures a report action, which is not supported by ona_workflow. Remove the report before importing it."},
+			Expected: Expectation{Reason: "The workflow configures a report action, which is not supported by ona_automation. Remove the report before importing it."},
 		},
 		{
 			Name: "agent_settings",
@@ -119,7 +119,7 @@ func TestUnsupportedWorkflowReason(t *testing.T) {
 				workflow.Spec.AgentId = "00000000-0000-0000-0000-000000000099"
 				return workflow
 			}(),
-			Expected: Expectation{Reason: "The workflow configures workflow-level agent or Codex settings, which are not supported by ona_workflow. Remove those settings before importing it."},
+			Expected: Expectation{Reason: "The workflow configures workflow-level agent or Codex settings, which are not supported by ona_automation. Remove those settings before importing it."},
 		},
 		{
 			Name: "codex_settings",
@@ -128,7 +128,7 @@ func TestUnsupportedWorkflowReason(t *testing.T) {
 				workflow.Spec.CodexSettings = &v1.CodexSettings{}
 				return workflow
 			}(),
-			Expected: Expectation{Reason: "The workflow configures workflow-level agent or Codex settings, which are not supported by ona_workflow. Remove those settings before importing it."},
+			Expected: Expectation{Reason: "The workflow configures workflow-level agent or Codex settings, which are not supported by ona_automation. Remove those settings before importing it."},
 		},
 		{
 			Name: "report_step",
@@ -137,7 +137,7 @@ func TestUnsupportedWorkflowReason(t *testing.T) {
 				workflow.Spec.Action.Steps = append(workflow.Spec.Action.Steps, &v1.WorkflowStep{Step: &v1.WorkflowStep_Report_{Report: &v1.WorkflowStep_Report{}}})
 				return workflow
 			}(),
-			Expected: Expectation{Reason: "The workflow contains a report step, which is not supported by ona_workflow. Remove the report step before importing it."},
+			Expected: Expectation{Reason: "The workflow contains a report step, which is not supported by ona_automation. Remove the report step before importing it."},
 		},
 		{
 			Name: "legacy_pull_request",

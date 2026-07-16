@@ -2,7 +2,7 @@
 
 ## Current status
 
-The workflow automation provider work is implemented and locally validated. The change adds the `ona_workflow` managed resource and the `ona_workflows` collection data source, using the existing generated `WorkflowService` client.
+The workflow automation provider work is implemented and locally validated. The change adds the `ona_automation` managed resource and the `ona_workflows` collection data source, using the existing generated `WorkflowService` client.
 
 The implementation was checked against `/workspaces/gitpod-next` at commit `126e0b41dbf01a2d9642b489916e50f8c3a0dbec`. There are no known implementation blockers. The changes remain uncommitted in the local worktree; no pull request has been created.
 
@@ -10,7 +10,7 @@ The implementation was checked against `/workspaces/gitpod-next` at commit `126e
 
 ### Managed workflow resource
 
-Added `ona_workflow` with support for:
+Added `ona_automation` with support for:
 
 - create, read, update, delete, and direct import by workflow ID;
 - workflow names and descriptions;
@@ -39,9 +39,9 @@ Added `ona_workflows` backed by `ListWorkflows`. It supports:
 ### Provider integration and documentation
 
 - Registered the resource and data source in `internal/provider/provider.go`.
-- Added examples under `examples/resources/ona_workflow/` and `examples/data-sources/ona_workflows/`.
+- Added examples under `examples/resources/ona_automation/` and `examples/data-sources/ona_workflows/`.
 - Added direct import documentation to `examples/import.md`.
-- Generated `docs/resources/workflow.md` and `docs/data-sources/workflows.md`.
+- Generated `docs/resources/automation.md` and `docs/data-sources/workflows.md`.
 - Added `github.com/robfig/cron/v3` for backend-compatible cron validation and promoted `github.com/google/uuid` to a direct dependency.
 
 ## Difficulties encountered and resolutions
@@ -101,7 +101,7 @@ The following checks pass:
 ```text
 make fmt
 make test-unit
-TF_ACC=1 go test -v ./internal/provider -run 'TestAccWorkflow' -count=1
+TF_ACC=1 go test -v ./internal/provider -run 'TestAcc(Automation|Workflow)' -count=1
 make lint
 make build
 make generate

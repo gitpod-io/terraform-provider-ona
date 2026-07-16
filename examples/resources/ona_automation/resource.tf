@@ -1,4 +1,4 @@
-resource "ona_workflow" "nightly_checks" {
+resource "ona_automation" "nightly_checks" {
   name        = "Nightly checks"
   description = "Runs repository checks every weekday."
   disabled    = false

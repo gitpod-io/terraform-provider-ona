@@ -325,17 +325,17 @@ func actionToObject(ctx context.Context, remote *v1.WorkflowAction, diags *diag.
 func unsupportedWorkflowReason(workflow *v1.Workflow) string {
 	spec := workflow.GetSpec()
 	if spec == nil {
-		return "The workflow has no specification and cannot be managed by ona_workflow."
+		return "The workflow has no specification and cannot be managed by ona_automation."
 	}
 	if spec.GetReport() != nil {
-		return "The workflow configures a report action, which is not supported by ona_workflow. Remove the report before importing it."
+		return "The workflow configures a report action, which is not supported by ona_automation. Remove the report before importing it."
 	}
 	if spec.GetAgentId() != "" || spec.GetCodexSettings() != nil {
-		return "The workflow configures workflow-level agent or Codex settings, which are not supported by ona_workflow. Remove those settings before importing it."
+		return "The workflow configures workflow-level agent or Codex settings, which are not supported by ona_automation. Remove those settings before importing it."
 	}
 	for _, step := range spec.GetAction().GetSteps() {
 		if step.GetReport() != nil {
-			return "The workflow contains a report step, which is not supported by ona_workflow. Remove the report step before importing it."
+			return "The workflow contains a report step, which is not supported by ona_automation. Remove the report step before importing it."
 		}
 	}
 	for _, trigger := range spec.GetTriggers() {
