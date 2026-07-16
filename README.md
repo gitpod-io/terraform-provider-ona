@@ -60,8 +60,7 @@ The following capabilities are on the roadmap:
 - Assigning groups and users to projects, configuring their roles, and managing
   General access.
 - Managing default, per-user, and per-team monthly usage budgets.
-- Managing organization-level LLM provider configuration.
-- Managing agent skills.
+- Managing organization-level LLM provider configuration and Agent Skills.
 
 ## Requirements
 
