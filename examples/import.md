@@ -58,7 +58,7 @@ Direct `terraform import` uses these resource IDs:
 | `ona_organization_role_assignment` | `group_id/organization_id/role` |
 | `ona_webhook` | Webhook ID |
 | `ona_integration` | Integration ID |
-| `ona_workflow` | Workflow ID |
+| `ona_automation` | Workflow ID |
 
 Importing `ona_integration` restores API-observable configuration, but Ona
 censors stored credentials in read responses. Terraform therefore leaves the
@@ -67,25 +67,26 @@ rotate an imported credential, configure the credential value and its matching
 version marker, review whether Terraform proposes an update or replacement,
 then apply.
 
-## Workflow Import
+## Automation Import
 
-Add an import block with the workflow ID:
+Add an import block with the automation ID:
 
 ```hcl
 import {
-  to = ona_workflow.nightly_checks
+  to = ona_automation.nightly_checks
   id = "00000000-0000-0000-0000-000000000000"
 }
 ```
 
 Run `terraform plan -generate-config-out=generated.tf`, review the generated
 configuration, apply the import, and run `terraform plan` again. The final plan
-should be empty. Existing workflows that use reports, report steps,
-workflow-level agent/Codex settings, or legacy pull-request triggers without a
-webhook or integration must be updated in Ona before import because
-`ona_workflow` cannot reproduce those fields.
+should be empty. Existing automations that use top-level report actions, report
+steps, workflow-level `agent_id`, or workflow-level Codex model,
+reasoning-effort, or service-tier settings must be updated in Ona before import
+because `ona_automation` does not model those fields. Legacy pull-request
+triggers without a webhook or integration must also be updated before import.
 
-Removing an imported `ona_workflow` from configuration deletes it remotely.
+Removing an imported `ona_automation` from configuration deletes it remotely.
 Remove its address from Terraform state instead when you only want Terraform to
 stop managing it.
 

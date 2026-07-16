@@ -31,7 +31,7 @@ Managed resources:
   `ona_oidc_config`, `ona_scim_configuration`, `ona_sso_configuration`.
 - Security and secrets: `ona_security_policy`, `ona_secret`.
 - Automations and integrations: `ona_integration`, `ona_webhook`,
-  `ona_workflow`.
+  `ona_automation`.
 
 Data sources:
 
@@ -39,7 +39,7 @@ Data sources:
 - `ona_runner` and `ona_runners`
 - `ona_security_policies`
 - `ona_warm_pool` and `ona_warm_pools`
-- `ona_workflows`
+- `ona_automations`
 
 Ephemeral resources:
 

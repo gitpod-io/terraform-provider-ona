@@ -110,7 +110,7 @@ func TestUnsupportedWorkflowReason(t *testing.T) {
 				workflow.Spec.Report = &v1.WorkflowAction{}
 				return workflow
 			}(),
-			Expected: Expectation{Reason: "The workflow configures a report action, which is not supported by ona_workflow. Remove the report before importing it."},
+			Expected: Expectation{Reason: "The workflow configures a report action, which is not supported by ona_automation. Remove the report before importing it."},
 		},
 		{
 			Name: "agent_settings",
@@ -119,7 +119,7 @@ func TestUnsupportedWorkflowReason(t *testing.T) {
 				workflow.Spec.AgentId = "00000000-0000-0000-0000-000000000099"
 				return workflow
 			}(),
-			Expected: Expectation{Reason: "The workflow configures workflow-level agent or Codex settings, which are not supported by ona_workflow. Remove those settings before importing it."},
+			Expected: Expectation{Reason: "The workflow configures workflow-level agent or Codex settings, which are not supported by ona_automation. Remove those settings before importing it."},
 		},
 		{
 			Name: "codex_settings",
@@ -128,7 +128,7 @@ func TestUnsupportedWorkflowReason(t *testing.T) {
 				workflow.Spec.CodexSettings = &v1.CodexSettings{}
 				return workflow
 			}(),
-			Expected: Expectation{Reason: "The workflow configures workflow-level agent or Codex settings, which are not supported by ona_workflow. Remove those settings before importing it."},
+			Expected: Expectation{Reason: "The workflow configures workflow-level agent or Codex settings, which are not supported by ona_automation. Remove those settings before importing it."},
 		},
 		{
 			Name: "report_step",
@@ -137,7 +137,7 @@ func TestUnsupportedWorkflowReason(t *testing.T) {
 				workflow.Spec.Action.Steps = append(workflow.Spec.Action.Steps, &v1.WorkflowStep{Step: &v1.WorkflowStep_Report_{Report: &v1.WorkflowStep_Report{}}})
 				return workflow
 			}(),
-			Expected: Expectation{Reason: "The workflow contains a report step, which is not supported by ona_workflow. Remove the report step before importing it."},
+			Expected: Expectation{Reason: "The workflow contains a report step, which is not supported by ona_automation. Remove the report step before importing it."},
 		},
 		{
 			Name: "legacy_pull_request",
@@ -241,7 +241,7 @@ func TestCollectionFilter(t *testing.T) {
 		{
 			Name: "maps_filters",
 			Input: CollectionModel{
-				WorkflowIDs: mustSetValue(t, types.StringType, []string{testWorkflowID}), Search: types.StringValue("checks"), CreatorIDs: mustSetValue(t, types.StringType, []string{testServiceAccountID}),
+				AutomationIDs: mustSetValue(t, types.StringType, []string{testWorkflowID}), Search: types.StringValue("checks"), CreatorIDs: mustSetValue(t, types.StringType, []string{testServiceAccountID}),
 				StatusPhases: mustSetValue(t, types.StringType, []string{"running", "completed"}), HasFailedExecutionSince: types.StringNull(), Disabled: types.BoolValue(false),
 			},
 			Expected: Expectation{Filter: &v1.ListWorkflowsRequest_Filter{
@@ -252,7 +252,7 @@ func TestCollectionFilter(t *testing.T) {
 		{
 			Name: "maps_failed_since",
 			Input: CollectionModel{
-				WorkflowIDs: types.SetNull(types.StringType), Search: types.StringNull(), CreatorIDs: types.SetNull(types.StringType), StatusPhases: types.SetNull(types.StringType),
+				AutomationIDs: types.SetNull(types.StringType), Search: types.StringNull(), CreatorIDs: types.SetNull(types.StringType), StatusPhases: types.SetNull(types.StringType),
 				HasFailedExecutionSince: types.StringValue("2026-07-15T12:00:00Z"), Disabled: types.BoolNull(),
 			},
 			Expected: Expectation{Filter: &v1.ListWorkflowsRequest_Filter{HasFailedExecutionSince: timestamppb.New(time.Date(2026, 7, 15, 12, 0, 0, 0, time.UTC))}},
@@ -260,23 +260,23 @@ func TestCollectionFilter(t *testing.T) {
 		{
 			Name: "rejects_incompatible_filters",
 			Input: CollectionModel{
-				WorkflowIDs: types.SetNull(types.StringType), Search: types.StringNull(), CreatorIDs: types.SetNull(types.StringType), StatusPhases: mustSetValue(t, types.StringType, []string{"running"}),
+				AutomationIDs: types.SetNull(types.StringType), Search: types.StringNull(), CreatorIDs: types.SetNull(types.StringType), StatusPhases: mustSetValue(t, types.StringType, []string{"running"}),
 				HasFailedExecutionSince: types.StringValue("2026-07-15T12:00:00Z"), Disabled: types.BoolNull(),
 			},
-			Expected: Expectation{Errors: []string{"Incompatible Workflow Filters"}},
+			Expected: Expectation{Errors: []string{"Incompatible Automation Filters"}},
 		},
 		{
 			Name: "rejects_invalid_phase",
 			Input: CollectionModel{
-				WorkflowIDs: types.SetNull(types.StringType), Search: types.StringNull(), CreatorIDs: types.SetNull(types.StringType), StatusPhases: mustSetValue(t, types.StringType, []string{"failed"}),
+				AutomationIDs: types.SetNull(types.StringType), Search: types.StringNull(), CreatorIDs: types.SetNull(types.StringType), StatusPhases: mustSetValue(t, types.StringType, []string{"failed"}),
 				HasFailedExecutionSince: types.StringNull(), Disabled: types.BoolNull(),
 			},
-			Expected: Expectation{Errors: []string{"Invalid Workflow Execution Phase"}},
+			Expected: Expectation{Errors: []string{"Invalid Automation Execution Phase"}},
 		},
 		{
 			Name: "rejects_timestamp_outside_protobuf_range",
 			Input: CollectionModel{
-				WorkflowIDs: types.SetNull(types.StringType), Search: types.StringNull(), CreatorIDs: types.SetNull(types.StringType), StatusPhases: types.SetNull(types.StringType),
+				AutomationIDs: types.SetNull(types.StringType), Search: types.StringNull(), CreatorIDs: types.SetNull(types.StringType), StatusPhases: types.SetNull(types.StringType),
 				HasFailedExecutionSince: types.StringValue("0000-01-01T00:00:00Z"), Disabled: types.BoolNull(),
 			},
 			Expected: Expectation{Errors: []string{"Invalid Failed-Execution Timestamp"}},

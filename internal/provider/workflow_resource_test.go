@@ -26,7 +26,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func TestAccWorkflowResource(t *testing.T) {
+func TestAccAutomationResource(t *testing.T) {
 	t.Parallel()
 
 	server := newWorkflowAPIServer(t)
@@ -50,16 +50,16 @@ func TestAccWorkflowResource(t *testing.T) {
 			{
 				Config: testAccWorkflowConfig(server.URL, "Nightly checks", "Runs checks", "make test", true, false),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("ona_workflow.test", "id", workflowAccID1),
-					resource.TestCheckResourceAttr("ona_workflow.test", "name", "Nightly checks"),
-					resource.TestCheckResourceAttr("ona_workflow.test", "description", "Runs checks"),
-					resource.TestCheckResourceAttr("ona_workflow.test", "disabled", "true"),
-					resource.TestCheckResourceAttr("ona_workflow.test", "executor.id", workflowCreatorID),
-					resource.TestCheckResourceAttr("ona_workflow.test", "executor.principal", "user"),
-					resource.TestCheckResourceAttr("ona_workflow.test", "triggers.#", "1"),
-					resource.TestCheckResourceAttr("ona_workflow.test", "action.limits.max_parallel", "2"),
-					resource.TestCheckResourceAttr("ona_workflow.test", "action.limits.max_time", "60m"),
-					resource.TestCheckResourceAttr("ona_workflow.test", "action.steps.0.task.command", "make test"),
+					resource.TestCheckResourceAttr("ona_automation.test", "id", workflowAccID1),
+					resource.TestCheckResourceAttr("ona_automation.test", "name", "Nightly checks"),
+					resource.TestCheckResourceAttr("ona_automation.test", "description", "Runs checks"),
+					resource.TestCheckResourceAttr("ona_automation.test", "disabled", "true"),
+					resource.TestCheckResourceAttr("ona_automation.test", "executor.id", workflowCreatorID),
+					resource.TestCheckResourceAttr("ona_automation.test", "executor.principal", "user"),
+					resource.TestCheckResourceAttr("ona_automation.test", "triggers.#", "1"),
+					resource.TestCheckResourceAttr("ona_automation.test", "action.limits.max_parallel", "2"),
+					resource.TestCheckResourceAttr("ona_automation.test", "action.limits.max_time", "60m"),
+					resource.TestCheckResourceAttr("ona_automation.test", "action.steps.0.task.command", "make test"),
 					func(*terraform.State) error {
 						if got := server.service.disabledUpdateCount(); got != 1 {
 							return fmt.Errorf("initial disabled update count = %d, want 1", got)
@@ -73,7 +73,7 @@ func TestAccWorkflowResource(t *testing.T) {
 				ConfigPlanChecks: resource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()}},
 			},
 			{
-				ResourceName:            "ona_workflow.test",
+				ResourceName:            "ona_automation.test",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"action.limits.max_time"},
@@ -85,19 +85,19 @@ func TestAccWorkflowResource(t *testing.T) {
 			{
 				Config: testAccWorkflowConfig(server.URL, "Nightly checks updated", "Updated checks", "make test-unit", false, true),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("ona_workflow.test", "name", "Nightly checks updated"),
-					resource.TestCheckResourceAttr("ona_workflow.test", "disabled", "false"),
-					resource.TestCheckResourceAttr("ona_workflow.test", "executor.id", workflowServiceAccountID),
-					resource.TestCheckResourceAttr("ona_workflow.test", "executor.principal", "service_account"),
-					resource.TestCheckResourceAttr("ona_workflow.test", "action.steps.0.task.command", "make test-unit"),
+					resource.TestCheckResourceAttr("ona_automation.test", "name", "Nightly checks updated"),
+					resource.TestCheckResourceAttr("ona_automation.test", "disabled", "false"),
+					resource.TestCheckResourceAttr("ona_automation.test", "executor.id", workflowServiceAccountID),
+					resource.TestCheckResourceAttr("ona_automation.test", "executor.principal", "service_account"),
+					resource.TestCheckResourceAttr("ona_automation.test", "action.steps.0.task.command", "make test-unit"),
 				),
 			},
 			{
 				Config: testAccWorkflowConfig(server.URL, "Nightly checks updated", "", "make test-unit", false, false),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("ona_workflow.test", "description", ""),
-					resource.TestCheckResourceAttr("ona_workflow.test", "executor.id", workflowServiceAccountID),
-					resource.TestCheckResourceAttr("ona_workflow.test", "executor.principal", "service_account"),
+					resource.TestCheckResourceAttr("ona_automation.test", "description", ""),
+					resource.TestCheckResourceAttr("ona_automation.test", "executor.id", workflowServiceAccountID),
+					resource.TestCheckResourceAttr("ona_automation.test", "executor.principal", "service_account"),
 				),
 			},
 			{
@@ -108,23 +108,23 @@ func TestAccWorkflowResource(t *testing.T) {
 				PreConfig:        func() { server.service.updateName(workflowAccID1, "Out-of-band name") },
 				Config:           testAccWorkflowConfig(server.URL, "Nightly checks updated", "", "make test-unit", false, false),
 				ConfigPlanChecks: resource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{plancheck.ExpectNonEmptyPlan()}},
-				Check:            resource.TestCheckResourceAttr("ona_workflow.test", "name", "Nightly checks updated"),
+				Check:            resource.TestCheckResourceAttr("ona_automation.test", "name", "Nightly checks updated"),
 			},
 			{
 				PreConfig: func() { server.service.markDeleting(workflowAccID1) },
 				Config:    testAccWorkflowConfig(server.URL, "Nightly checks updated", "", "make test-unit", false, false),
-				Check:     resource.TestCheckResourceAttr("ona_workflow.test", "id", workflowAccID2),
+				Check:     resource.TestCheckResourceAttr("ona_automation.test", "id", workflowAccID2),
 			},
 			{
 				PreConfig: func() { server.service.remove(workflowAccID2) },
 				Config:    testAccWorkflowConfig(server.URL, "Nightly checks updated", "", "make test-unit", false, false),
-				Check:     resource.TestCheckResourceAttr("ona_workflow.test", "id", workflowAccID3),
+				Check:     resource.TestCheckResourceAttr("ona_automation.test", "id", workflowAccID3),
 			},
 		},
 	})
 }
 
-func TestAccWorkflowsDataSource(t *testing.T) {
+func TestAccAutomationsDataSource(t *testing.T) {
 	t.Parallel()
 
 	server := newWorkflowAPIServer(t)
@@ -137,13 +137,13 @@ func TestAccWorkflowsDataSource(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{{
-			Config: testAccWorkflowsDataSourceConfig(server.URL),
+			Config: testAccAutomationsDataSourceConfig(server.URL),
 			Check: resource.ComposeAggregateTestCheckFunc(
-				resource.TestCheckResourceAttr("data.ona_workflows.test", "id", "workflows"),
-				resource.TestCheckResourceAttr("data.ona_workflows.test", "workflows.#", "2"),
-				resource.TestCheckResourceAttr("data.ona_workflows.test", "workflows.0.id", workflowAccID1),
-				resource.TestCheckResourceAttr("data.ona_workflows.test", "workflows.1.id", workflowAccID2),
-				resource.TestCheckResourceAttr("data.ona_workflows.test", "workflows.0.executor.principal", "user"),
+				resource.TestCheckResourceAttr("data.ona_automations.test", "id", "automations"),
+				resource.TestCheckResourceAttr("data.ona_automations.test", "automations.#", "2"),
+				resource.TestCheckResourceAttr("data.ona_automations.test", "automations.0.id", workflowAccID1),
+				resource.TestCheckResourceAttr("data.ona_automations.test", "automations.1.id", workflowAccID2),
+				resource.TestCheckResourceAttr("data.ona_automations.test", "automations.0.executor.principal", "user"),
 				func(*terraform.State) error {
 					filter, calls := server.service.listStats()
 					if calls != 2 {
@@ -194,8 +194,8 @@ func TestAccWorkflowInitialDisableRetry(t *testing.T) {
 			{
 				Config: testAccWorkflowConfig(server.URL, "Retry disable", "", "make test", true, false),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("ona_workflow.test", "id", workflowAccID2),
-					resource.TestCheckResourceAttr("ona_workflow.test", "disabled", "true"),
+					resource.TestCheckResourceAttr("ona_automation.test", "id", workflowAccID2),
+					resource.TestCheckResourceAttr("ona_automation.test", "disabled", "true"),
 					func(*terraform.State) error {
 						creates, deletes, active := server.service.lifecycleCounts()
 						if creates != 2 || deletes != 1 || active != 1 {
@@ -231,7 +231,7 @@ func TestAccWorkflowUpdateOwnershipError(t *testing.T) {
 	})
 }
 
-func TestAccWorkflowsDataSourceAPIError(t *testing.T) {
+func TestAccAutomationsDataSourceAPIError(t *testing.T) {
 	t.Parallel()
 
 	server := newWorkflowAPIServer(t)
@@ -246,7 +246,7 @@ func TestAccWorkflowsDataSourceAPIError(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{{
-			Config:      testAccWorkflowsDataSourceConfig(server.URL),
+			Config:      testAccAutomationsDataSourceConfig(server.URL),
 			ExpectError: regexp.MustCompile("list failed"),
 		}},
 	})
@@ -266,7 +266,7 @@ func TestAccWorkflowUnsupportedImport(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{{
 			Config:        testAccWorkflowConfig(server.URL, "Unsupported", "", "make test", false, false),
-			ResourceName:  "ona_workflow.test",
+			ResourceName:  "ona_automation.test",
 			ImportState:   true,
 			ImportStateId: workflowUnsupportedID,
 			ExpectError:   regexp.MustCompile("Unsupported Ona Workflow"),
@@ -333,7 +333,7 @@ provider "ona" {
   token = "test-token"
 }
 
-resource "ona_workflow" "test" {
+resource "ona_automation" "test" {
   name        = %[2]q
   description = %[3]q
   disabled    = %[5]t
@@ -363,16 +363,16 @@ resource "ona_workflow" "test" {
 `, host, name, description, command, disabled, executor, workflowProjectID)
 }
 
-func testAccWorkflowsDataSourceConfig(host string) string {
+func testAccAutomationsDataSourceConfig(host string) string {
 	return fmt.Sprintf(`
 provider "ona" {
   host  = %[1]q
   token = "test-token"
 }
 
-data "ona_workflows" "test" {
-  workflow_ids = [%[2]q, %[3]q]
-  disabled     = false
+data "ona_automations" "test" {
+  automation_ids = [%[2]q, %[3]q]
+  disabled       = false
 }
 `, host, workflowAccID2, workflowAccID1)
 }

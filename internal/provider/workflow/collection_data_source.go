@@ -32,7 +32,7 @@ type CollectionDataSource struct {
 }
 
 func (d *CollectionDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_workflows"
+	resp.TypeName = req.ProviderTypeName + "_automations"
 }
 
 func (d *CollectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
@@ -58,7 +58,7 @@ func (d *CollectionDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 	if d.client == nil {
-		resp.Diagnostics.AddError("Ona API Client Is Not Configured", "Set the provider token argument or ONA_TOKEN before reading ona_workflows data sources.")
+		resp.Diagnostics.AddError("Ona API Client Is Not Configured", "Set the provider token argument or ONA_TOKEN before reading ona_automations data sources.")
 		return
 	}
 	filter := collectionFilter(data, &resp.Diagnostics)
@@ -67,14 +67,14 @@ func (d *CollectionDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	}
 	workflows, err := d.listWorkflows(ctx, filter)
 	if err != nil {
-		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to List Ona Workflows", "listing Ona workflows", err)
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to List Ona Automations", "listing Ona automations", err)
 		return
 	}
 	sort.SliceStable(workflows, func(i, j int) bool { return workflows[i].GetId() < workflows[j].GetId() })
-	data.ID = types.StringValue("workflows")
-	data.Workflows = make([]SummaryModel, 0, len(workflows))
+	data.ID = types.StringValue("automations")
+	data.Automations = make([]SummaryModel, 0, len(workflows))
 	for _, workflow := range workflows {
-		data.Workflows = append(data.Workflows, summaryFromWorkflow(workflow, &resp.Diagnostics))
+		data.Automations = append(data.Automations, summaryFromWorkflow(workflow, &resp.Diagnostics))
 	}
 	if resp.Diagnostics.HasError() {
 		return
@@ -102,20 +102,20 @@ func (d *CollectionDataSource) listWorkflows(ctx context.Context, filter *v1.Lis
 }
 
 func collectionFilter(data CollectionModel, diags *diag.Diagnostics) *v1.ListWorkflowsRequest_Filter {
-	workflowIDs := collectionStringSet(data.WorkflowIDs, path.Root("workflow_ids"), 25, true, diags)
+	automationIDs := collectionStringSet(data.AutomationIDs, path.Root("automation_ids"), 25, true, diags)
 	creatorIDs := collectionStringSet(data.CreatorIDs, path.Root("creator_ids"), 25, true, diags)
 	statusNames := collectionStringSet(data.StatusPhases, path.Root("status_phases"), 10, false, diags)
-	filter := &v1.ListWorkflowsRequest_Filter{WorkflowIds: workflowIDs, Search: data.Search.ValueString(), CreatorIds: creatorIDs}
+	filter := &v1.ListWorkflowsRequest_Filter{WorkflowIds: automationIDs, Search: data.Search.ValueString(), CreatorIds: creatorIDs}
 	if !data.Search.IsNull() && !data.Search.IsUnknown() && len([]rune(data.Search.ValueString())) > 256 {
-		diags.AddAttributeError(path.Root("search"), "Workflow Search Is Too Long", "search must not exceed 256 characters.")
+		diags.AddAttributeError(path.Root("search"), "Automation Search Is Too Long", "search must not exceed 256 characters.")
 	}
 	if data.Search.IsUnknown() {
-		diags.AddAttributeError(path.Root("search"), "Unknown Workflow Search", "search must be known before reading the data source.")
+		diags.AddAttributeError(path.Root("search"), "Unknown Automation Search", "search must be known before reading the data source.")
 	}
 	for _, name := range statusNames {
 		phase, ok := workflowExecutionPhaseFromString(name)
 		if !ok {
-			diags.AddAttributeError(path.Root("status_phases"), "Invalid Workflow Execution Phase", fmt.Sprintf("Unsupported phase %q.", name))
+			diags.AddAttributeError(path.Root("status_phases"), "Invalid Automation Execution Phase", fmt.Sprintf("Unsupported phase %q.", name))
 			continue
 		}
 		filter.StatusPhases = append(filter.StatusPhases, phase)
@@ -136,7 +136,7 @@ func collectionFilter(data CollectionModel, diags *diag.Diagnostics) *v1.ListWor
 		diags.AddAttributeError(path.Root("has_failed_execution_since"), "Unknown Failed-Execution Timestamp", "has_failed_execution_since must be known before reading the data source.")
 	}
 	if len(filter.StatusPhases) > 0 && filter.HasFailedExecutionSince != nil {
-		diags.AddAttributeError(path.Root("status_phases"), "Incompatible Workflow Filters", "status_phases and has_failed_execution_since are mutually exclusive.")
+		diags.AddAttributeError(path.Root("status_phases"), "Incompatible Automation Filters", "status_phases and has_failed_execution_since are mutually exclusive.")
 	}
 	if !data.Disabled.IsNull() && !data.Disabled.IsUnknown() {
 		value := data.Disabled.ValueBool()
