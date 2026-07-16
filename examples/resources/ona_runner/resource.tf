@@ -1,3 +1,9 @@
+variable "custom_metrics_password" {
+  description = "Password or token for the custom metrics pipeline."
+  type        = string
+  sensitive   = true
+}
+
 resource "ona_runner" "aws_primary" {
   name            = "aws-us-east-primary"
   runner_provider = "aws_ec2"
@@ -8,6 +14,12 @@ resource "ona_runner" "aws_primary" {
     auto_update                      = true
     devcontainer_image_cache_enabled = true
     log_level                        = "info"
+
+    metrics {
+      managed {
+        enabled = true
+      }
+    }
 
     update_window {
       start = "02:00"
@@ -31,5 +43,17 @@ resource "ona_runner" "gcp_primary" {
     auto_update                      = true
     devcontainer_image_cache_enabled = true
     log_level                        = "info"
+
+    metrics {
+      custom {
+        enabled  = true
+        url      = "https://metrics.example.com/api/v1/write"
+        username = "runner"
+        password = var.custom_metrics_password
+
+        # Change this marker with password to rotate the custom metrics credentials.
+        password_version = "1"
+      }
+    }
   }
 }

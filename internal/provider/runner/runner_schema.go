@@ -103,6 +103,51 @@ func resourceConfigurationSchema() resourceschema.SingleNestedBlock {
 			},
 		},
 		Blocks: map[string]resourceschema.Block{
+			"metrics": resourceschema.SingleNestedBlock{
+				MarkdownDescription: "Metrics delivery configuration. Configure Ona-managed metrics, a custom remote-write pipeline, or both.",
+				Blocks: map[string]resourceschema.Block{
+					"managed": resourceschema.SingleNestedBlock{
+						MarkdownDescription: "Ona-managed metrics pipeline configuration.",
+						Attributes: map[string]resourceschema.Attribute{
+							"enabled": resourceschema.BoolAttribute{
+								Optional:            true,
+								Computed:            true,
+								Default:             booldefault.StaticBool(false),
+								MarkdownDescription: "Whether the runner sends metrics through Ona's managed metrics pipeline. Defaults to `false`.",
+							},
+						},
+					},
+					"custom": resourceschema.SingleNestedBlock{
+						MarkdownDescription: "Custom remote-write metrics pipeline configuration.",
+						Attributes: map[string]resourceschema.Attribute{
+							"enabled": resourceschema.BoolAttribute{
+								Optional:            true,
+								Computed:            true,
+								Default:             booldefault.StaticBool(false),
+								MarkdownDescription: "Whether the runner sends metrics to the custom pipeline. Defaults to `false`.",
+							},
+							"url": resourceschema.StringAttribute{
+								Optional:            true,
+								MarkdownDescription: "Remote-write URL for the custom metrics pipeline.",
+							},
+							"username": resourceschema.StringAttribute{
+								Optional:            true,
+								MarkdownDescription: "Username for authenticating to the custom metrics pipeline.",
+							},
+							"password": resourceschema.StringAttribute{
+								Optional:            true,
+								Sensitive:           true,
+								WriteOnly:           true,
+								MarkdownDescription: "Password or token for authenticating to the custom metrics pipeline. This write-only value is sent to Ona but is not stored in Terraform plan or state. Set this when creating the custom pipeline or changing `password_version`.",
+							},
+							"password_version": resourceschema.StringAttribute{
+								Optional:            true,
+								MarkdownDescription: "User-managed rotation marker for resubmitting `password`. Change this value with a new password to rotate the custom metrics credentials.",
+							},
+						},
+					},
+				},
+			},
 			"update_window": resourceschema.SingleNestedBlock{
 				MarkdownDescription: "Daily UTC window during which runner auto-updates may run.",
 				Attributes: map[string]resourceschema.Attribute{
