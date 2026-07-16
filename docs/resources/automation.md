@@ -2,14 +2,32 @@
 page_title: "ona_automation Resource - ona"
 subcategory: "Integrations and Automation"
 description: |-
-  Persistent Ona workflow automation. Creating workflows requires a permitted user credential; the Ona API rejects workflow creation by service accounts. A caller changing workflow triggers or actions must own the current user executor or set the executor to themselves or a service account. Reports, report steps, legacy pull-request triggers without a webhook or integration, and workflow-level agent/Codex settings cannot be imported or managed. Removing this resource uses graceful deletion: Ona immediately deletes idle workflows, but cancels active executions and finishes their cleanup asynchronously.
+  Persistent Ona automation. Creating automations requires a permitted user credential; the Ona API rejects automation creation by service accounts. A caller changing automation triggers or actions must own the current user executor or set the executor to themselves or a service account. Removing this resource uses graceful deletion: Ona immediately deletes idle automations, but cancels active executions and finishes their cleanup asynchronously.
 ---
 
 # ona_automation (Resource)
 
-Persistent Ona workflow automation. Creating workflows requires a permitted user credential; the Ona API rejects workflow creation by service accounts. A caller changing workflow triggers or actions must own the current user executor or set the executor to themselves or a service account. Reports, report steps, legacy pull-request triggers without a webhook or integration, and workflow-level agent/Codex settings cannot be imported or managed. Removing this resource uses graceful deletion: Ona immediately deletes idle workflows, but cancels active executions and finishes their cleanup asynchronously.
+Persistent Ona automation. Creating automations requires a permitted user credential; the Ona API rejects automation creation by service accounts. A caller changing automation triggers or actions must own the current user executor or set the executor to themselves or a service account. Removing this resource uses graceful deletion: Ona immediately deletes idle automations, but cancels active executions and finishes their cleanup asynchronously.
 
 For product context, see [Background automations](https://ona.com/docs/ona/automations/overview), [Configure Automations](https://ona.com/docs/ona/automations/configure-automations), and [Webhooks](https://ona.com/docs/ona/automations/webhooks).
+
+## Automation support and limitations
+
+The provider supports:
+
+- Manual, scheduled, and pull-request triggers
+- Project, repository, agent-prompt, and inherited trigger contexts
+- Shell-task, agent-prompt, and pull-request action steps
+- Executors, execution limits, and disabling automations
+
+It does not model:
+
+- Top-level report actions
+- Report steps
+- Workflow-level `agent_id`
+- Workflow-level Codex model, reasoning-effort, or service-tier settings
+
+Legacy pull-request triggers without a webhook or integration cannot be imported or managed.
 
 ## Example Usage
 

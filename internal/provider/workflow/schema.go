@@ -16,7 +16,7 @@ import (
 
 func resourceSchema() resourceschema.Schema {
 	return resourceschema.Schema{
-		MarkdownDescription: "Persistent Ona workflow automation. Creating workflows requires a permitted user credential; the Ona API rejects workflow creation by service accounts. A caller changing workflow triggers or actions must own the current user executor or set the executor to themselves or a service account. Reports, report steps, legacy pull-request triggers without a webhook or integration, and workflow-level agent/Codex settings cannot be imported or managed. Removing this resource uses graceful deletion: Ona immediately deletes idle workflows, but cancels active executions and finishes their cleanup asynchronously.",
+		MarkdownDescription: "Persistent Ona automation. Creating automations requires a permitted user credential; the Ona API rejects automation creation by service accounts. A caller changing automation triggers or actions must own the current user executor or set the executor to themselves or a service account. Removing this resource uses graceful deletion: Ona immediately deletes idle automations, but cancels active executions and finishes their cleanup asynchronously.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": stableComputedString("Workflow ID. Use this value as the Terraform import ID."),
 			"name": resourceschema.StringAttribute{

@@ -11,6 +11,24 @@ description: |-
 
 For product context, see [Background automations](https://ona.com/docs/ona/automations/overview), [Configure Automations](https://ona.com/docs/ona/automations/configure-automations), and [Webhooks](https://ona.com/docs/ona/automations/webhooks).
 
+## Automation support and limitations
+
+The provider supports:
+
+- Manual, scheduled, and pull-request triggers
+- Project, repository, agent-prompt, and inherited trigger contexts
+- Shell-task, agent-prompt, and pull-request action steps
+- Executors, execution limits, and disabling automations
+
+It does not model:
+
+- Top-level report actions
+- Report steps
+- Workflow-level `agent_id`
+- Workflow-level Codex model, reasoning-effort, or service-tier settings
+
+Legacy pull-request triggers without a webhook or integration cannot be imported or managed.
+
 {{ if .HasExamples -}}
 ## Example Usage
 
