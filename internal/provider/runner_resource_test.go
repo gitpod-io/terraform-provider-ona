@@ -144,13 +144,14 @@ func TestAccRunnerResourceMetrics(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccRunnerResourceConfigWithCustomMetrics(server.URL, "metrics-token-1"),
+				Config: testAccRunnerResourceConfigWithCustomMetrics(server.URL, "metrics-token-1", "1"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckNoResourceAttr("ona_runner.test", "configuration.metrics.managed"),
 					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.custom.enabled", "true"),
 					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.custom.url", "https://metrics.example.com/api/v1/write"),
 					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.custom.username", "runner"),
-					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.custom.password", "metrics-token-1"),
+					resource.TestCheckNoResourceAttr("ona_runner.test", "configuration.metrics.custom.password"),
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.custom.password_version", "1"),
 					checkRunnerMetrics(server.service, &v1.MetricsConfiguration{
 						Enabled:  true,
 						Url:      "https://metrics.example.com/api/v1/write",
@@ -160,9 +161,10 @@ func TestAccRunnerResourceMetrics(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccRunnerResourceConfigWithCustomMetrics(server.URL, "metrics-token-2"),
+				Config: testAccRunnerResourceConfigWithCustomMetrics(server.URL, "metrics-token-2", "2"),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.custom.password", "metrics-token-2"),
+					resource.TestCheckNoResourceAttr("ona_runner.test", "configuration.metrics.custom.password"),
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.custom.password_version", "2"),
 					checkRunnerMetrics(server.service, &v1.MetricsConfiguration{
 						Enabled:  true,
 						Url:      "https://metrics.example.com/api/v1/write",
@@ -369,7 +371,7 @@ resource "ona_runner" "test" {
 `, host)
 }
 
-func testAccRunnerResourceConfigWithCustomMetrics(host string, password string) string {
+func testAccRunnerResourceConfigWithCustomMetrics(host string, password string, passwordVersion string) string {
 	return fmt.Sprintf(`
 provider "ona" {
   host  = %[1]q
@@ -387,13 +389,14 @@ resource "ona_runner" "test" {
       custom {
         enabled  = true
         url      = "https://metrics.example.com/api/v1/write"
-        username = "runner"
-        password = %[2]q
+		username = "runner"
+		password = %[2]q
+		password_version = %[3]q
       }
     }
   }
 }
-`, host, password)
+	`, host, password, passwordVersion)
 }
 
 func testAccRunnerResourceConfigWithToken(host string, token string) string {
