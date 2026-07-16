@@ -50,6 +50,9 @@ resource "ona_runner" "gcp_primary" {
         url      = "https://metrics.example.com/api/v1/write"
         username = "runner"
         password = var.custom_metrics_password
+
+        # Change this marker with password to rotate the custom metrics credentials.
+        password_version = "1"
       }
     }
   }

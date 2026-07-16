@@ -66,6 +66,9 @@ resource "ona_runner" "gcp_primary" {
         url      = "https://metrics.example.com/api/v1/write"
         username = "runner"
         password = var.custom_metrics_password
+
+        # Change this marker with password to rotate the custom metrics credentials.
+        password_version = "1"
       }
     }
   }
@@ -81,6 +84,8 @@ resource "ona_runner" "gcp_primary" {
 - `runner_provider` (String) Cloud provider for the runner. Supported values are `aws_ec2` and `gcp`. Changing this value replaces the runner.
 
 ### Optional
+
+> **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
 
 - `configuration` (Block, Optional) Runner configuration applied to the remote runner. Some fields are provider defaults and are preserved in Terraform state after creation. (see [below for nested schema](#nestedblock--configuration))
 
@@ -98,6 +103,8 @@ resource "ona_runner" "gcp_primary" {
 
 Optional:
 
+> **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
+
 - `auto_update` (Boolean) Whether the runner should automatically update itself. Defaults to the provider value `true`.
 - `devcontainer_image_cache_enabled` (Boolean) Whether the shared devcontainer image build cache is enabled for this runner. Defaults to the provider value `true`.
 - `log_level` (String) Runner log level. Supported values are `debug`, `info`, `warn`, and `error`. Defaults to the provider value `info`.
@@ -111,6 +118,8 @@ Optional:
 
 Optional:
 
+> **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
+
 - `custom` (Block, Optional) Custom remote-write metrics pipeline configuration. (see [below for nested schema](#nestedblock--configuration--metrics--custom))
 - `managed` (Block, Optional) Ona-managed metrics pipeline configuration. (see [below for nested schema](#nestedblock--configuration--metrics--managed))
 
@@ -119,8 +128,11 @@ Optional:
 
 Optional:
 
+> **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
+
 - `enabled` (Boolean) Whether the runner sends metrics to the custom pipeline. Defaults to `false`.
-- `password` (String, Sensitive) Password or token for authenticating to the custom metrics pipeline. Terraform redacts this sensitive value from normal CLI output, but stores it in state.
+- `password` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) Password or token for authenticating to the custom metrics pipeline. This write-only value is sent to Ona but is not stored in Terraform plan or state. Set this when creating the custom pipeline or changing `password_version`.
+- `password_version` (String) User-managed rotation marker for resubmitting `password`. Change this value with a new password to rotate the custom metrics credentials.
 - `url` (String) Remote-write URL for the custom metrics pipeline.
 - `username` (String) Username for authenticating to the custom metrics pipeline.
 

@@ -20,6 +20,7 @@ func TestCustomMetricsSchema(t *testing.T) {
 		ManagedAttributeCount int
 		CustomAttributeCount  int
 		PasswordSensitive     bool
+		PasswordWriteOnly     bool
 	}
 
 	schema := resourceSchema()
@@ -44,15 +45,107 @@ func TestCustomMetricsSchema(t *testing.T) {
 		t.Fatalf("custom metrics password schema has type %T, want resourceschema.StringAttribute", custom.Attributes["password"])
 	}
 
-	expected := Expectation{MetricsChildCount: 2, ManagedAttributeCount: 1, CustomAttributeCount: 4, PasswordSensitive: true}
+	expected := Expectation{MetricsChildCount: 2, ManagedAttributeCount: 1, CustomAttributeCount: 5, PasswordSensitive: true, PasswordWriteOnly: true}
 	got := Expectation{
 		MetricsChildCount:     len(metrics.Blocks),
 		ManagedAttributeCount: len(managed.Attributes),
 		CustomAttributeCount:  len(custom.Attributes),
 		PasswordSensitive:     password.Sensitive,
+		PasswordWriteOnly:     password.WriteOnly,
 	}
 	if diff := cmp.Diff(expected, got); diff != "" {
 		t.Errorf("custom metrics schema mismatch (-want +got):\n%s", diff)
+	}
+}
+
+func TestUpdateMetricsConfiguration(t *testing.T) {
+	t.Parallel()
+
+	type Expectation struct {
+		Password          string
+		DiagnosticSummary string
+	}
+
+	tests := []struct {
+		Name     string
+		Model    *MetricsModel
+		Prior    *MetricsModel
+		Password types.String
+		Expected Expectation
+	}{
+		{
+			Name: "resubmits_password_when_version_changes",
+			Model: &MetricsModel{Custom: &CustomMetricsModel{
+				PasswordVersion: types.StringValue("2"),
+			}},
+			Prior: &MetricsModel{Custom: &CustomMetricsModel{
+				PasswordVersion: types.StringValue("1"),
+			}},
+			Password: types.StringValue("rotated-password"),
+			Expected: Expectation{
+				Password: "rotated-password",
+			},
+		},
+		{
+			Name: "requires_password_when_version_changes",
+			Model: &MetricsModel{Custom: &CustomMetricsModel{
+				PasswordVersion: types.StringValue("2"),
+			}},
+			Prior: &MetricsModel{Custom: &CustomMetricsModel{
+				PasswordVersion: types.StringValue("1"),
+			}},
+			Password: types.StringNull(),
+			Expected: Expectation{
+				DiagnosticSummary: "Missing Custom Metrics Password",
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			result, diags := updateMetricsConfiguration(tc.Model, tc.Prior, tc.Password)
+			got := Expectation{}
+			if result != nil && result.Password != nil {
+				got.Password = *result.Password
+			}
+			if diags.HasError() {
+				got.DiagnosticSummary = diags[0].Summary()
+			}
+
+			if diff := cmp.Diff(tc.Expected, got); diff != "" {
+				t.Errorf("updateMetricsConfiguration() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestMetricsModelDoesNotStorePassword(t *testing.T) {
+	t.Parallel()
+
+	type Expectation struct {
+		HasCustom      bool
+		PasswordIsNull bool
+	}
+
+	model := metricsModel(&v1.MetricsConfiguration{
+		Enabled:  true,
+		Url:      "https://metrics.example.com/api/v1/write",
+		Username: "runner",
+		Password: "secret",
+	})
+	got := Expectation{
+		HasCustom:      model != nil && model.Custom != nil,
+		PasswordIsNull: model != nil && model.Custom != nil && model.Custom.Password.IsNull(),
+	}
+	expected := Expectation{
+		HasCustom:      true,
+		PasswordIsNull: true,
+	}
+
+	if diff := cmp.Diff(expected, got); diff != "" {
+		t.Errorf("metricsModel() mismatch (-want +got):\n%s", diff)
 	}
 }
 

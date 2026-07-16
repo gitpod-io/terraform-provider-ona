@@ -137,7 +137,12 @@ func resourceConfigurationSchema() resourceschema.SingleNestedBlock {
 							"password": resourceschema.StringAttribute{
 								Optional:            true,
 								Sensitive:           true,
-								MarkdownDescription: "Password or token for authenticating to the custom metrics pipeline. Terraform redacts this sensitive value from normal CLI output, but stores it in state.",
+								WriteOnly:           true,
+								MarkdownDescription: "Password or token for authenticating to the custom metrics pipeline. This write-only value is sent to Ona but is not stored in Terraform plan or state. Set this when creating the custom pipeline or changing `password_version`.",
+							},
+							"password_version": resourceschema.StringAttribute{
+								Optional:            true,
+								MarkdownDescription: "User-managed rotation marker for resubmitting `password`. Change this value with a new password to rotate the custom metrics credentials.",
 							},
 						},
 					},
