@@ -1,6 +1,8 @@
 # Terraform-Native Import of Existing Ona Resources
 
-Brownfield import should be a Terraform-native workflow. An organization may start by managing resources in the Ona UI, then later move to Terraform for reviewable, repeatable, code-driven management.
+Importing existing resources should be a Terraform-native workflow. An
+organization may start by managing resources in the Ona UI, then later move to
+Terraform for reviewable, repeatable, code-driven management.
 
 The target workflow is:
 

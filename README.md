@@ -1,43 +1,60 @@
 # Terraform Provider for Ona
 
-This repository contains the Terraform provider for Ona. It is built with the
+The [Ona Provider](https://registry.terraform.io/providers/gitpod-io/ona/latest/docs)
+enables [Terraform](https://developer.hashicorp.com/terraform) to manage Ona
+projects, runners, identity and access settings, organization settings,
+security controls, secrets, workflows, webhooks, and integrations.
+
+- [Provider documentation](docs/)
+- [Examples](examples/)
+- [Release process](docs/release.md)
+- [Changelog](CHANGELOG.md)
+- [Support](https://ona.com/support)
+- [Security reporting](https://github.com/gitpod-io/terraform-provider-ona/security/policy)
+
+This provider is built with the
 [Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework).
 
-The provider manages the Ona resources listed below. It does not yet include
-native resources for product Automations, teams, or AI budget policies.
+## Supported Features
 
-The module includes the copied API client subset under `internal/api/go` so it
-can build without importing private monorepo Go modules.
+The provider currently includes these Terraform types.
 
-The provider currently includes:
+Managed resources:
 
-- `ona_project` for managing projects.
-- `ona_runner` for managing runner registrations.
-- `ona_environment_class` for managing runner environment classes.
-- `ona_warm_pool` for managing runner warm pools.
-- `ona_warm_pool` and `ona_warm_pools` data sources for reading runner warm
-  pools.
-- `ona_scm_integration` for managing runner SCM integrations.
-- `ona_security_policy` and `ona_security_policies` for managing and listing
-  runtime security policies.
-- `ona_secret` for managing durable organization, project, user, and
-  service-account secrets.
-- `ona_organization_policies` for managing organization-level policy settings.
-- `ona_announcement_banner` for managing the organization announcement banner.
-- `ona_terms_of_service` for managing organization terms of service.
-- `ona_custom_domain` for managing organization custom domains.
-- `ona_service_account` for managing service accounts.
-- `ona_group` for managing custom organization groups.
-- `ona_group_membership` for managing service-account group membership.
-- `ona_organization_role_assignment` for assigning organization-level roles to
-  groups.
-- `ona_service_account_token` for issuing service-account tokens.
-- `ona_runner_token` for issuing runner registration tokens.
+- Projects and runner infrastructure: `ona_project`, `ona_runner`,
+  `ona_environment_class`, `ona_warm_pool`, `ona_runner_policy`.
+- Runner integrations: `ona_scm_integration`, `ona_runner_llm_integration`.
+- Organization configuration: `ona_announcement_banner`, `ona_custom_domain`,
+  `ona_organization_policies`, `ona_terms_of_service`.
+- Identity and access: `ona_group`, `ona_group_membership`,
+  `ona_organization_role_assignment`, `ona_service_account`,
+  `ona_oidc_config`, `ona_scim_configuration`, `ona_sso_configuration`.
+- Security and secrets: `ona_security_policy`, `ona_secret`.
+- Automations and integrations: `ona_integration`, `ona_webhook`,
+  `ona_workflow`.
+
+Data sources:
+
+- `ona_integration_definitions`
+- `ona_runner` and `ona_runners`
+- `ona_security_policies`
+- `ona_warm_pool` and `ona_warm_pools`
+- `ona_workflows`
+
+Ephemeral resources:
+
+- `ona_runner_token`
+- `ona_service_account_token`
+- `ona_webhook_secret`
+
+Terraform Query list resources:
+
+- `ona_runner`
 
 ## Requirements
 
-- [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.11
-- [Go](https://go.dev/doc/install) >= 1.25.8
+- [Terraform CLI](https://developer.hashicorp.com/terraform/downloads) >= 1.14
+- [Go](https://go.dev/doc/install) >= 1.25.12 for provider development.
 
 ## Building the Provider
 
@@ -50,10 +67,16 @@ make build
 Download dependencies:
 
 ```shell
-go mod download
+make install-dependencies
 ```
 
 Run unit tests:
+
+```shell
+make test-unit
+```
+
+Run the full local test suite:
 
 ```shell
 make test
@@ -62,7 +85,7 @@ make test
 Run acceptance tests:
 
 ```shell
-TF_ACC=1 go test -v -cover -timeout 120m ./...
+make test-acc
 ```
 
 Generate documentation:
@@ -91,54 +114,21 @@ service-account resource. Create a custom group, add the service account with
 
 ## Releasing
 
-Beta releases are published from semver prerelease tags such as
-`v0.1.0-beta.1`. See [docs/release.md](docs/release.md) for the release
-checklist, required secrets, and registry smoke test.
-
-## Local Terraform Dev Loop
-
-To run Terraform against a locally built provider binary and the local dev loop
-workspace:
-
-```shell
-mkdir -p .bin
-go build -o .bin/terraform-provider-ona .
-cat > terraformrc <<EOF
-provider_installation {
-  dev_overrides {
-    "gitpod-io/ona" = "${PWD}/.bin"
-    "ona-com/ona"  = "${PWD}/.bin"
-  }
-  direct {}
-}
-EOF
-ONA_TOKEN="<api-token>" \
-TF_CLI_CONFIG_FILE="${PWD}/terraformrc" \
-terraform -chdir=dev/local-devloop plan -input=false
-```
-
-This builds the provider, configures a temporary Terraform CLI development
-override for `gitpod-io/ona` and `ona-com/ona`, and runs `terraform plan` by
-default.
-
-Run a different Terraform command by changing the final Terraform invocation:
-
-```shell
-ONA_TOKEN="<api-token>" \
-TF_CLI_CONFIG_FILE="${PWD}/terraformrc" \
-terraform -chdir=dev/local-devloop apply -auto-approve -input=false
-```
+Beta releases are prerelease builds for validation and feedback. They are not
+stable releases and do not provide compatibility or availability guarantees.
+See [docs/release.md](docs/release.md) for the publish procedure.
 
 ## Query Existing Resources
 
 Terraform Query can discover existing Ona resources through provider list
-resources and generate starter Terraform configuration.
+resources and generate starter Terraform configuration. This workflow requires
+Terraform CLI >= 1.14.
 
 See [examples/query.md](examples/query.md) for the runner query workflow.
 
 ## Import Existing Resources
 
-The Terraform-native brownfield workflow is:
+The Terraform-native import workflow is:
 
 1. discover existing Ona resources through the provider,
 2. create Terraform import blocks,
@@ -146,14 +136,14 @@ The Terraform-native brownfield workflow is:
 4. apply the imports, and
 5. verify that the resulting plan is a no-op.
 
-The provider supports importing project, runner registration, runner
-environment class, runner warm pool, runner SCM integration, security policy,
-organization policy, group, group membership, and organization role assignment
-resources. Resource families without native Terraform resources still need
-provider implementations before Terraform can import them directly, so this
-repository includes helper code that prepares Terraform-native import blocks and
-generated configuration only for registered/importable provider resource types.
-The brownfield import helper does not yet select groups, group memberships, or
-organization role assignments.
+Every managed resource listed above implements Terraform import support. See
+the generated resource docs under [docs/resources](docs/resources/) for
+resource-specific import IDs and examples.
+
+The import helper in [scripts](scripts/) still generates import blocks only for
+`ona_project`, `ona_runner`, and `ona_environment_class` resources. It
+discovers additional Ona objects for inventory and reference rewriting, but
+those resource families need helper selection support before the script can
+generate import blocks for them.
 
 See [examples/import.md](examples/import.md) for the full workflow and flags.

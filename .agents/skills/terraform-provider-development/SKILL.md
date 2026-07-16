@@ -110,7 +110,6 @@ cat > terraformrc <<EOF
 provider_installation {
   dev_overrides {
     "gitpod-io/ona" = "${PWD}/.bin"
-    "ona-com/ona"  = "${PWD}/.bin"
   }
   direct {}
 }
