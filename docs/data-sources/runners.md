@@ -48,9 +48,21 @@ Read-Only:
 - `auto_update` (Boolean) Whether the runner automatically updates itself.
 - `devcontainer_image_cache_enabled` (Boolean) Whether the shared devcontainer build cache is enabled for this runner.
 - `log_level` (String) Runner log level, such as `debug`, `info`, `warn`, or `error`.
+- `metrics` (Attributes) Metrics delivery configuration. Custom pipeline passwords are never exposed by this data source. (see [below for nested schema](#nestedatt--runners--configuration--metrics))
 - `region` (String) Cloud region configured for the runner, when the runner provider uses a region.
 - `release_channel` (String) Runner release channel, such as `stable` or `latest`.
 - `update_window` (Attributes) Daily UTC window during which auto-updates may run. (see [below for nested schema](#nestedatt--runners--configuration--update_window))
+
+<a id="nestedatt--runners--configuration--metrics"></a>
+### Nested Schema for `runners.configuration.metrics`
+
+Read-Only:
+
+- `enabled` (Boolean) Whether the runner sends metrics to a custom remote-write pipeline.
+- `managed_metrics_enabled` (Boolean) Whether the runner sends metrics through Ona's managed metrics pipeline.
+- `url` (String) Remote-write URL for the custom metrics pipeline.
+- `username` (String) Username for authenticating to the custom metrics pipeline.
+
 
 <a id="nestedatt--runners--configuration--update_window"></a>
 ### Nested Schema for `runners.configuration.update_window`

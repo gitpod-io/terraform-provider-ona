@@ -17,9 +17,11 @@ import (
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1/v1connect"
+	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/testing/protocmp"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -117,6 +119,78 @@ func TestAccRunnerResourceConfigurationDefaults(t *testing.T) {
 					resource.TestCheckResourceAttr("ona_runner.test", "configuration.devcontainer_image_cache_enabled", "true"),
 					resource.TestCheckResourceAttr("ona_runner.test", "configuration.log_level", "info"),
 					resource.TestCheckResourceAttr("ona_runner.test", "cloudformation_template_url", "https://gitpod-flex-releases.s3.amazonaws.com/ec2/stable/gitpod-ec2-runner.json"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccRunnerResourceMetrics(t *testing.T) {
+	t.Parallel()
+
+	server := newRunnerAPIServer(t, nil)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccRunnerResourceConfigWithManagedMetrics(server.URL),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.managed_metrics_enabled", "true"),
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.enabled", "false"),
+					checkRunnerMetrics(server.service, &v1.MetricsConfiguration{ManagedMetricsEnabled: true}),
+				),
+			},
+			{
+				Config: testAccRunnerResourceConfigWithCustomMetrics(server.URL, "metrics-token-1", "1"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.enabled", "true"),
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.url", "https://metrics.example.com/api/v1/write"),
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.username", "runner"),
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.password_version", "1"),
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.managed_metrics_enabled", "false"),
+					resource.TestCheckNoResourceAttr("ona_runner.test", "configuration.metrics.password"),
+					checkRunnerMetrics(server.service, &v1.MetricsConfiguration{
+						Enabled:  true,
+						Url:      "https://metrics.example.com/api/v1/write",
+						Username: "runner",
+						Password: "metrics-token-1",
+					}),
+				),
+			},
+			{
+				Config: testAccRunnerResourceConfigWithCustomMetrics(server.URL, "metrics-token-2", "2"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.password_version", "2"),
+					resource.TestCheckNoResourceAttr("ona_runner.test", "configuration.metrics.password"),
+					checkRunnerMetrics(server.service, &v1.MetricsConfiguration{
+						Enabled:  true,
+						Url:      "https://metrics.example.com/api/v1/write",
+						Username: "runner",
+						Password: "metrics-token-2",
+					}),
+				),
+			},
+			{
+				Config:      testAccRunnerResourceConfigWithCustomMetricsWithoutPassword(server.URL, "3"),
+				ExpectError: regexp.MustCompile("Missing Metrics Pipeline Password"),
+			},
+			{
+				Config: testAccRunnerResourceConfigWithManagedMetrics(server.URL),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.managed_metrics_enabled", "true"),
+					resource.TestCheckResourceAttr("ona_runner.test", "configuration.metrics.enabled", "false"),
+					resource.TestCheckNoResourceAttr("ona_runner.test", "configuration.metrics.password_version"),
+					checkRunnerMetrics(server.service, &v1.MetricsConfiguration{ManagedMetricsEnabled: true}),
+				),
+			},
+			{
+				Config: testAccRunnerResourceConfigWithDefaults(server.URL),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckNoResourceAttr("ona_runner.test", "configuration.metrics"),
+					checkRunnerMetrics(server.service, nil),
 				),
 			},
 		},
@@ -276,6 +350,79 @@ resource "ona_runner" "test" {
   }
 }
 `, host)
+}
+
+func testAccRunnerResourceConfigWithManagedMetrics(host string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_runner" "test" {
+  name            = "Metrics Runner"
+  runner_provider = "aws_ec2"
+
+  configuration {
+    region = "eu-central-1"
+
+    metrics {
+      managed_metrics_enabled = true
+    }
+  }
+}
+`, host)
+}
+
+func testAccRunnerResourceConfigWithCustomMetrics(host string, password string, passwordVersion string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_runner" "test" {
+  name            = "Metrics Runner"
+  runner_provider = "aws_ec2"
+
+  configuration {
+    region = "eu-central-1"
+
+    metrics {
+      enabled          = true
+      url              = "https://metrics.example.com/api/v1/write"
+      username         = "runner"
+      password         = %[2]q
+      password_version = %[3]q
+    }
+  }
+}
+`, host, password, passwordVersion)
+}
+
+func testAccRunnerResourceConfigWithCustomMetricsWithoutPassword(host string, passwordVersion string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_runner" "test" {
+  name            = "Metrics Runner"
+  runner_provider = "aws_ec2"
+
+  configuration {
+    region = "eu-central-1"
+
+    metrics {
+      enabled          = true
+      url              = "https://metrics.example.com/api/v1/write"
+      username         = "runner"
+      password_version = %[2]q
+    }
+  }
+}
+`, host, passwordVersion)
 }
 
 func testAccRunnerResourceConfigWithToken(host string, token string) string {
@@ -504,6 +651,27 @@ func (s *fakeRunnerService) tokenCount() int {
 	return len(s.tokens)
 }
 
+func (s *fakeRunnerService) metrics(id string) *v1.MetricsConfiguration {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	runner := s.runners[id]
+	if runner == nil || runner.GetSpec().GetConfiguration().GetMetrics() == nil {
+		return nil
+	}
+	return proto.CloneOf(runner.GetSpec().GetConfiguration().GetMetrics())
+}
+
+func checkRunnerMetrics(service *fakeRunnerService, expected *v1.MetricsConfiguration) resource.TestCheckFunc {
+	return func(_ *terraform.State) error {
+		got := service.metrics("runner-1")
+		if diff := cmp.Diff(expected, got, protocmp.Transform()); diff != "" {
+			return fmt.Errorf("runner metrics mismatch (-want +got):\n%s", diff)
+		}
+		return nil
+	}
+}
+
 func newTestRunner(id string, name string) *v1.Runner {
 	return &v1.Runner{
 		RunnerId:  id,
@@ -540,6 +708,33 @@ func applyUpdate(target *v1.RunnerConfiguration, update *v1.UpdateRunnerRequest_
 	}
 	if update.AutoUpdate != nil {
 		target.AutoUpdate = update.GetAutoUpdate()
+	}
+	if update.Metrics != nil {
+		if target.Metrics == nil {
+			target.Metrics = &v1.MetricsConfiguration{}
+		}
+		if update.Metrics.Enabled != nil {
+			target.Metrics.Enabled = update.Metrics.GetEnabled()
+		}
+		if update.Metrics.Url != nil {
+			target.Metrics.Url = update.Metrics.GetUrl()
+		}
+		if update.Metrics.Username != nil {
+			target.Metrics.Username = update.Metrics.GetUsername()
+		}
+		if update.Metrics.Password != nil {
+			target.Metrics.Password = update.Metrics.GetPassword()
+		}
+		if update.Metrics.ManagedMetricsEnabled != nil {
+			target.Metrics.ManagedMetricsEnabled = update.Metrics.GetManagedMetricsEnabled()
+		}
+		if !target.Metrics.GetEnabled() &&
+			target.Metrics.GetUrl() == "" &&
+			target.Metrics.GetUsername() == "" &&
+			target.Metrics.GetPassword() == "" &&
+			!target.Metrics.GetManagedMetricsEnabled() {
+			target.Metrics = nil
+		}
 	}
 	if update.LogLevel != nil {
 		target.LogLevel = update.GetLogLevel()

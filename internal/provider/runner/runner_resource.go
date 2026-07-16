@@ -61,9 +61,19 @@ type ConfigurationModel struct {
 	Region                        types.String       `tfsdk:"region"`
 	ReleaseChannel                types.String       `tfsdk:"release_channel"`
 	AutoUpdate                    types.Bool         `tfsdk:"auto_update"`
+	Metrics                       *MetricsModel      `tfsdk:"metrics"`
 	UpdateWindow                  *UpdateWindowModel `tfsdk:"update_window"`
 	DevcontainerImageCacheEnabled types.Bool         `tfsdk:"devcontainer_image_cache_enabled"`
 	LogLevel                      types.String       `tfsdk:"log_level"`
+}
+
+type MetricsModel struct {
+	Enabled               types.Bool   `tfsdk:"enabled"`
+	URL                   types.String `tfsdk:"url"`
+	Username              types.String `tfsdk:"username"`
+	Password              types.String `tfsdk:"password"`
+	PasswordVersion       types.String `tfsdk:"password_version"`
+	ManagedMetricsEnabled types.Bool   `tfsdk:"managed_metrics_enabled"`
 }
 
 type UpdateWindowModel struct {
@@ -116,6 +126,10 @@ func (r *Resource) ValidateConfig(ctx context.Context, req resource.ValidateConf
 func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	input, diags := runnerInputFromPlan(ctx, req.Plan)
 	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	setRunnerMetricsPassword(ctx, req.Config, &input, &resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -198,8 +212,10 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 		return
 	}
 
+	prior := data
 	data = RunnerModel{}
 	populateModelFromRunner(&data, runner)
+	preserveMetricsPasswordVersion(data.Configuration, prior.Configuration)
 	resp.Diagnostics.Append(resp.Identity.Set(ctx, RunnerIdentityModel{
 		RunnerID: data.RunnerID,
 	})...)
@@ -212,6 +228,10 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	input, diags := runnerInputFromPlan(ctx, req.Plan)
 	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	setRunnerMetricsPassword(ctx, req.Config, &input, &resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -336,6 +356,19 @@ func runnerInputFromPlan(ctx context.Context, plan tfsdk.Plan) (RunnerInputModel
 	return data, diags
 }
 
+func setRunnerMetricsPassword(ctx context.Context, config tfsdk.Config, data *RunnerInputModel, diags *diag.Diagnostics) {
+	if data == nil || data.Configuration == nil || data.Configuration.Metrics == nil {
+		return
+	}
+
+	var password types.String
+	diags.Append(config.GetAttribute(ctx, path.Root("configuration").AtName("metrics").AtName("password"), &password)...)
+	if diags.HasError() {
+		return
+	}
+	data.Configuration.Metrics.Password = password
+}
+
 func (data RunnerInputModel) runnerModel() RunnerModel {
 	return RunnerModel{
 		ID:             data.ID,
@@ -401,6 +434,9 @@ func createRunnerSpec(config *ConfigurationModel) (*v1.RunnerSpec, diag.Diagnost
 	if !config.AutoUpdate.IsNull() && !config.AutoUpdate.IsUnknown() {
 		spec.Configuration.AutoUpdate = config.AutoUpdate.ValueBool()
 	}
+	if config.Metrics != nil {
+		spec.Configuration.Metrics = metricsConfigurationFromModel(config.Metrics)
+	}
 	if !config.DevcontainerImageCacheEnabled.IsNull() && !config.DevcontainerImageCacheEnabled.IsUnknown() {
 		spec.Configuration.DevcontainerImageCacheEnabled = config.DevcontainerImageCacheEnabled.ValueBool()
 	}
@@ -451,6 +487,12 @@ func updateRunnerConfiguration(config *ConfigurationModel, prior *ConfigurationM
 		value := config.AutoUpdate.ValueBool()
 		result.AutoUpdate = &value
 	}
+	metrics, metricsDiags := updateMetricsConfiguration(config.Metrics, metricsFromConfiguration(prior))
+	diags.Append(metricsDiags...)
+	if diags.HasError() {
+		return nil, diags
+	}
+	result.Metrics = metrics
 	if !config.DevcontainerImageCacheEnabled.IsNull() && !config.DevcontainerImageCacheEnabled.IsUnknown() {
 		value := config.DevcontainerImageCacheEnabled.ValueBool()
 		result.DevcontainerImageCacheEnabled = &value
@@ -475,6 +517,93 @@ func updateRunnerConfiguration(config *ConfigurationModel, prior *ConfigurationM
 	}
 
 	return result, diags
+}
+
+func metricsFromConfiguration(config *ConfigurationModel) *MetricsModel {
+	if config == nil {
+		return nil
+	}
+	return config.Metrics
+}
+
+func metricsConfigurationFromModel(model *MetricsModel) *v1.MetricsConfiguration {
+	if model == nil {
+		return nil
+	}
+
+	result := &v1.MetricsConfiguration{}
+	if !model.Enabled.IsNull() && !model.Enabled.IsUnknown() {
+		result.Enabled = model.Enabled.ValueBool()
+	}
+	if !model.URL.IsNull() && !model.URL.IsUnknown() {
+		result.Url = model.URL.ValueString()
+	}
+	if !model.Username.IsNull() && !model.Username.IsUnknown() {
+		result.Username = model.Username.ValueString()
+	}
+	if !model.Password.IsNull() && !model.Password.IsUnknown() {
+		result.Password = model.Password.ValueString()
+	}
+	if !model.ManagedMetricsEnabled.IsNull() && !model.ManagedMetricsEnabled.IsUnknown() {
+		result.ManagedMetricsEnabled = model.ManagedMetricsEnabled.ValueBool()
+	}
+	return result
+}
+
+func updateMetricsConfiguration(model *MetricsModel, prior *MetricsModel) (*v1.UpdateRunnerRequest_MetricsConfiguration, diag.Diagnostics) {
+	var diags diag.Diagnostics
+	if model == nil {
+		if prior == nil {
+			return nil, diags
+		}
+		return &v1.UpdateRunnerRequest_MetricsConfiguration{
+			Enabled:               ptr(false),
+			Url:                   ptr(""),
+			Username:              ptr(""),
+			Password:              ptr(""),
+			ManagedMetricsEnabled: ptr(false),
+		}, diags
+	}
+
+	result := &v1.UpdateRunnerRequest_MetricsConfiguration{}
+	if !model.Enabled.IsNull() && !model.Enabled.IsUnknown() {
+		result.Enabled = ptr(model.Enabled.ValueBool())
+	}
+	if !model.URL.IsNull() && !model.URL.IsUnknown() {
+		result.Url = ptr(model.URL.ValueString())
+	} else if prior != nil && !prior.URL.IsNull() && !prior.URL.IsUnknown() {
+		result.Url = ptr("")
+	}
+	if !model.Username.IsNull() && !model.Username.IsUnknown() {
+		result.Username = ptr(model.Username.ValueString())
+	} else if prior != nil && !prior.Username.IsNull() && !prior.Username.IsUnknown() {
+		result.Username = ptr("")
+	}
+	if !model.ManagedMetricsEnabled.IsNull() && !model.ManagedMetricsEnabled.IsUnknown() {
+		result.ManagedMetricsEnabled = ptr(model.ManagedMetricsEnabled.ValueBool())
+	}
+	priorPasswordVersion := passwordVersion(prior)
+	if model.PasswordVersion.IsNull() && !priorPasswordVersion.IsNull() && !priorPasswordVersion.IsUnknown() {
+		result.Password = ptr("")
+	} else if secretVersionChanged(model.PasswordVersion, priorPasswordVersion) {
+		if !isKnownString(model.Password) {
+			diags.AddAttributeError(
+				path.Root("configuration").AtName("metrics").AtName("password"),
+				"Missing Metrics Pipeline Password",
+				"Set password when changing password_version.",
+			)
+			return nil, diags
+		}
+		result.Password = ptr(model.Password.ValueString())
+	}
+	return result, diags
+}
+
+func passwordVersion(model *MetricsModel) types.String {
+	if model == nil {
+		return types.StringNull()
+	}
+	return model.PasswordVersion
 }
 
 func populateModelFromRunner(data *RunnerModel, runner *v1.Runner) {
@@ -522,10 +651,35 @@ func preserveConfiguration(data *ConfigurationModel, planned *ConfigurationModel
 	data.Region = preserveString(data.Region, planned.Region)
 	data.ReleaseChannel = preserveString(data.ReleaseChannel, planned.ReleaseChannel)
 	data.AutoUpdate = preserveBool(data.AutoUpdate, planned.AutoUpdate)
+	data.Metrics = preserveMetrics(data.Metrics, planned.Metrics)
 	data.DevcontainerImageCacheEnabled = preserveBool(data.DevcontainerImageCacheEnabled, planned.DevcontainerImageCacheEnabled)
 	data.LogLevel = preserveString(data.LogLevel, planned.LogLevel)
 	data.UpdateWindow = preserveUpdateWindow(data.UpdateWindow, planned.UpdateWindow)
 	return data
+}
+
+func preserveMetrics(data *MetricsModel, planned *MetricsModel) *MetricsModel {
+	if planned == nil {
+		return data
+	}
+	if data == nil {
+		data = &MetricsModel{}
+	}
+	data.Enabled = preserveBool(data.Enabled, planned.Enabled)
+	data.URL = preserveString(data.URL, planned.URL)
+	data.Username = preserveString(data.Username, planned.Username)
+	data.Password = types.StringNull()
+	data.PasswordVersion = preserveString(data.PasswordVersion, planned.PasswordVersion)
+	data.ManagedMetricsEnabled = preserveBool(data.ManagedMetricsEnabled, planned.ManagedMetricsEnabled)
+	return data
+}
+
+func preserveMetricsPasswordVersion(data *ConfigurationModel, prior *ConfigurationModel) {
+	if data == nil || data.Metrics == nil || prior == nil || prior.Metrics == nil {
+		return
+	}
+	data.Metrics.Password = types.StringNull()
+	data.Metrics.PasswordVersion = prior.Metrics.PasswordVersion
 }
 
 func preserveUpdateWindow(data *UpdateWindowModel, planned *UpdateWindowModel) *UpdateWindowModel {
@@ -562,10 +716,34 @@ func configurationModel(config *v1.RunnerConfiguration) *ConfigurationModel {
 		Region:                        stringOptionalValue(config.GetRegion()),
 		ReleaseChannel:                stringValue(releaseChannelToString(config.GetReleaseChannel())),
 		AutoUpdate:                    types.BoolValue(config.GetAutoUpdate()),
+		Metrics:                       metricsModel(config.GetMetrics()),
 		UpdateWindow:                  updateWindowModel(config.GetUpdateWindow()),
 		DevcontainerImageCacheEnabled: types.BoolValue(config.GetDevcontainerImageCacheEnabled()),
 		LogLevel:                      stringValue(logLevelToString(config.GetLogLevel())),
 	}
+}
+
+func metricsModel(metrics *v1.MetricsConfiguration) *MetricsModel {
+	if metrics == nil || metricsConfigurationEmpty(metrics) {
+		return nil
+	}
+	return &MetricsModel{
+		Enabled:               types.BoolValue(metrics.GetEnabled()),
+		URL:                   stringOptionalValue(metrics.GetUrl()),
+		Username:              stringOptionalValue(metrics.GetUsername()),
+		Password:              types.StringNull(),
+		PasswordVersion:       types.StringNull(),
+		ManagedMetricsEnabled: types.BoolValue(metrics.GetManagedMetricsEnabled()),
+	}
+}
+
+func metricsConfigurationEmpty(metrics *v1.MetricsConfiguration) bool {
+	return metrics != nil &&
+		!metrics.GetEnabled() &&
+		metrics.GetUrl() == "" &&
+		metrics.GetUsername() == "" &&
+		metrics.GetPassword() == "" &&
+		!metrics.GetManagedMetricsEnabled()
 }
 
 func updateWindowModel(updateWindow *v1.UpdateWindow) *UpdateWindowModel {

@@ -8,8 +8,38 @@ import (
 
 	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
 	"github.com/google/go-cmp/cmp"
+	resourceschema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
+
+func TestMetricsPasswordSchema(t *testing.T) {
+	t.Parallel()
+
+	type Expectation struct {
+		Sensitive bool
+		WriteOnly bool
+	}
+
+	schema := resourceSchema()
+	configuration, ok := schema.Blocks["configuration"].(resourceschema.SingleNestedBlock)
+	if !ok {
+		t.Fatalf("configuration schema has type %T, want resourceschema.SingleNestedBlock", schema.Blocks["configuration"])
+	}
+	metrics, ok := configuration.Blocks["metrics"].(resourceschema.SingleNestedBlock)
+	if !ok {
+		t.Fatalf("metrics schema has type %T, want resourceschema.SingleNestedBlock", configuration.Blocks["metrics"])
+	}
+	password, ok := metrics.Attributes["password"].(resourceschema.StringAttribute)
+	if !ok {
+		t.Fatalf("password schema has type %T, want resourceschema.StringAttribute", metrics.Attributes["password"])
+	}
+
+	expected := Expectation{Sensitive: true, WriteOnly: true}
+	got := Expectation{Sensitive: password.Sensitive, WriteOnly: password.WriteOnly}
+	if diff := cmp.Diff(expected, got); diff != "" {
+		t.Errorf("metrics password schema mismatch (-want +got):\n%s", diff)
+	}
+}
 
 func TestEnumMappings(t *testing.T) {
 	t.Parallel()

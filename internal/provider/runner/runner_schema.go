@@ -103,6 +103,41 @@ func resourceConfigurationSchema() resourceschema.SingleNestedBlock {
 			},
 		},
 		Blocks: map[string]resourceschema.Block{
+			"metrics": resourceschema.SingleNestedBlock{
+				MarkdownDescription: "Metrics delivery configuration. Use `managed_metrics_enabled` for Ona-managed metrics, or configure the custom remote-write pipeline fields.",
+				Attributes: map[string]resourceschema.Attribute{
+					"enabled": resourceschema.BoolAttribute{
+						Optional:            true,
+						Computed:            true,
+						Default:             booldefault.StaticBool(false),
+						MarkdownDescription: "Whether the runner sends metrics to the configured custom remote-write pipeline. Defaults to `false`.",
+					},
+					"url": resourceschema.StringAttribute{
+						Optional:            true,
+						MarkdownDescription: "Remote-write URL for a custom metrics pipeline.",
+					},
+					"username": resourceschema.StringAttribute{
+						Optional:            true,
+						MarkdownDescription: "Username for authenticating to the custom metrics pipeline.",
+					},
+					"password": resourceschema.StringAttribute{
+						Optional:            true,
+						Sensitive:           true,
+						WriteOnly:           true,
+						MarkdownDescription: "Password or token for authenticating to the custom metrics pipeline. This value is sensitive and write-only, so Terraform does not store it in plan or state.",
+					},
+					"password_version": resourceschema.StringAttribute{
+						Optional:            true,
+						MarkdownDescription: "User-managed version marker for resubmitting or rotating `password`. Change this value when supplying a new password or token.",
+					},
+					"managed_metrics_enabled": resourceschema.BoolAttribute{
+						Optional:            true,
+						Computed:            true,
+						Default:             booldefault.StaticBool(false),
+						MarkdownDescription: "Whether the runner sends metrics through Ona's managed metrics pipeline. Defaults to `false`.",
+					},
+				},
+			},
 			"update_window": resourceschema.SingleNestedBlock{
 				MarkdownDescription: "Daily UTC window during which runner auto-updates may run.",
 				Attributes: map[string]resourceschema.Attribute{
