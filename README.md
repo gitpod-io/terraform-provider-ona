@@ -51,6 +51,17 @@ Terraform Query list resources:
 
 - `ona_runner`
 
+## Upcoming Features
+
+The following capabilities are on the roadmap:
+
+- Managing membership for groups and teams. The existing
+  `ona_group_membership` resource supports service-account membership only.
+- Assigning groups and users to projects, configuring their roles, and managing
+  General access.
+- Managing default, per-user, and per-team monthly usage budgets.
+- Managing organization-level LLM provider configuration and Agent Skills.
+
 ## Requirements
 
 - [Terraform CLI](https://developer.hashicorp.com/terraform/downloads) >= 1.14
