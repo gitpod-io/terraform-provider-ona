@@ -132,7 +132,7 @@ See [examples/query.md](examples/query.md) for the runner query workflow.
 
 ## Import Existing Resources
 
-The Terraform-native brownfield workflow is:
+The Terraform-native import workflow is:
 
 1. discover existing Ona resources through the provider,
 2. create Terraform import blocks,
@@ -144,10 +144,10 @@ Every managed resource listed above implements Terraform import support. See
 the generated resource docs under [docs/resources](docs/resources/) for
 resource-specific import IDs and examples.
 
-The brownfield import helper in [scripts](scripts/) still generates import
-blocks only for `ona_project`, `ona_runner`, and `ona_environment_class`
-resources. It discovers additional Ona objects for inventory and reference
-rewriting, but those resource families need helper selection support before the
-script can generate import blocks for them.
+The import helper in [scripts](scripts/) still generates import blocks only for
+`ona_project`, `ona_runner`, and `ona_environment_class` resources. It
+discovers additional Ona objects for inventory and reference rewriting, but
+those resource families need helper selection support before the script can
+generate import blocks for them.
 
 See [examples/import.md](examples/import.md) for the full workflow and flags.
