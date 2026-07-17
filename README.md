@@ -1,160 +1,153 @@
 # Terraform Provider for Ona
 
-The [Ona Provider](https://registry.terraform.io/providers/gitpod-io/ona/latest/docs)
-enables [Terraform](https://developer.hashicorp.com/terraform) to manage Ona
-projects, runners, identity and access settings, organization settings,
-security controls, secrets, workflows, webhooks, and integrations.
+## Overview
 
-- [Provider documentation](docs/)
-- [Examples](examples/)
-- [Release process](docs/release.md)
+The Ona Terraform provider manages Ona infrastructure and organization
+configuration as code. It is intended for platform, infrastructure, identity,
+and security teams that administer Ona projects, runners, access controls,
+policies, secrets, and automations.
+
+The provider is currently beta software. The current published release is
+`0.3.0-beta.5`.
+
+- [Terraform Registry provider documentation](https://registry.terraform.io/providers/gitpod-io/ona/latest/docs)
+- [Ona documentation](https://ona.com/docs/ona/getting-started)
+- [Source code](./)
 - [Changelog](CHANGELOG.md)
-- [Support](https://ona.com/support)
-- [Security reporting](https://github.com/gitpod-io/terraform-provider-ona/security/policy)
-
-This provider is built with the
-[Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework).
-
-## Supported Features
-
-The provider currently includes these Terraform types.
-
-Managed resources:
-
-- Projects and runner infrastructure: `ona_project`, `ona_runner`,
-  `ona_environment_class`, `ona_warm_pool`, `ona_runner_policy`.
-- Runner integrations: `ona_scm_integration`, `ona_runner_llm_integration`.
-- Organization configuration: `ona_announcement_banner`, `ona_custom_domain`,
-  `ona_organization_policies`, `ona_terms_of_service`.
-- Identity and access: `ona_group`, `ona_group_membership`,
-  `ona_organization_role_assignment`, `ona_service_account`,
-  `ona_oidc_config`, `ona_scim_configuration`, `ona_sso_configuration`.
-- Security and secrets: `ona_security_policy`, `ona_secret`.
-- Automations and integrations: `ona_integration`, `ona_webhook`,
-  `ona_automation`.
-
-Data sources:
-
-- `ona_integration_definitions`
-- `ona_runner` and `ona_runners`
-- `ona_security_policies`
-- `ona_warm_pool` and `ona_warm_pools`
-- `ona_automations`
-
-Ephemeral resources:
-
-- `ona_runner_token`
-- `ona_service_account_token`
-- `ona_webhook_secret`
-
-Terraform Query list resources:
-
-- `ona_runner`
-
-## Upcoming Features
-
-The following capabilities are on the roadmap:
-
-- Managing membership for groups and teams. The existing
-  `ona_group_membership` resource supports service-account membership only.
-- Assigning groups and users to projects, configuring their roles, and managing
-  General access.
-- Managing default, per-user, and per-team monthly usage budgets.
-- Managing organization-level LLM provider configuration and Agent Skills.
 
 ## Requirements
 
-- [Terraform CLI](https://developer.hashicorp.com/terraform/downloads) >= 1.14
-- [Go](https://go.dev/doc/install) >= 1.25.12 for provider development.
+Use Terraform CLI `1.14` or later. The published beta supports:
 
-## Building the Provider
+- Linux `amd64`
+- Linux `arm64`
 
-```shell
-make build
+macOS and Windows provider packages are not currently available.
+
+## Quick start
+
+Pin the published beta version intentionally:
+
+```hcl
+terraform {
+  required_version = ">= 1.14"
+
+  required_providers {
+    ona = {
+      source  = "gitpod-io/ona"
+      version = "= 0.3.0-beta.5"
+    }
+  }
+}
+
+provider "ona" {}
 ```
 
-## Developing the Provider
+Create a read-and-write [personal access token](https://ona.com/docs/ona/integrations/personal-access-token),
+keep it outside the Terraform configuration, and run:
 
-Download dependencies:
+```shell
+export ONA_TOKEN="<ona-personal-access-token>"
+terraform init
+terraform validate
+terraform plan
+```
+
+Most users should omit `ONA_HOST`. Set it only when your organization uses a
+non-default Ona application host:
+
+```shell
+export ONA_HOST="https://<ona-hostname>"
+```
+
+## Supported capabilities
+
+The provider covers these durable capability categories:
+
+- **Projects:** project configuration and project runtime capacity.
+- **Runners:** runners, environment classes, warm pools, policies, and runner
+  integrations.
+- **Identity and access:** groups, service accounts, role assignments, SSO,
+  SCIM, and OIDC configuration.
+- **Organization settings:** organization policies, announcements, custom
+  domains, and terms of service.
+- **Security and secrets:** security policies and scoped secrets.
+- **Integrations and automation:** integrations, webhooks, and automations.
+
+The [Terraform Registry navigation](https://registry.terraform.io/providers/gitpod-io/ona/latest/docs)
+is the authoritative inventory for each published version's managed resources,
+data sources, ephemeral resources, and list resources. The generated source for
+that reference is also checked into [docs/](docs/).
+
+## Authentication and permissions
+
+Use a personal access token (PAT) for Terraform write operations. PATs inherit
+the user's permissions and can be created with read-only or read-and-write
+access; a read-only PAT is suitable only for operations that do not modify Ona.
+Choose the shortest practical expiry and revoke tokens that are no longer used.
+See [Personal access tokens](https://ona.com/docs/ona/integrations/personal-access-token).
+
+Use service-account tokens only within their documented scope. Ona currently
+documents them for starting automations and performing API read operations, and
+directs users to contact Ona for additional use cases. Do not assume a
+service-account token can create, update, or delete provider-managed objects.
+See [Service accounts](https://ona.com/docs/ona/organizations/service-accounts).
+
+Only organization admins can create service-account tokens. Bootstrap and
+rotate them in a run authenticated with an authorized human or administrator
+PAT, then store the returned token in an external secret manager. Every token
+must also have permission to access the organization and objects used by the
+Terraform configuration.
+
+## State and secret safety
+
+Terraform's `Sensitive` marking redacts values in normal CLI output but does
+not keep ordinary attributes out of state. Treat state and saved plans as
+sensitive, and use the provider's write-only arguments and ephemeral resources
+when handling secret material. See the Registry guide to
+[state, secrets, and safe deletion](https://registry.terraform.io/providers/gitpod-io/ona/latest/docs/guides/state-secrets-and-safe-deletion).
+
+Removing a managed resource from configuration normally plans a destroy and
+may delete or disable the remote Ona object. By contrast, removing its address
+with `terraform state rm <address>` changes only Terraform state and leaves the
+remote object in place. Review every destroy plan before applying it.
+
+## Documentation and support
+
+- [Terraform Registry provider documentation](https://registry.terraform.io/providers/gitpod-io/ona/latest/docs)
+- [Generated provider reference in this repository](docs/)
+- [Public Ona documentation](https://ona.com/docs/ona/getting-started)
+- [Changelog](CHANGELOG.md)
+- [Security reporting](SECURITY.md)
+- [Ona support](https://ona.com/support)
+
+## Contributing
+
+Use [the contributing guide](contributing.md) for repository setup and policy.
+External pull requests are not currently accepted, but the repository can be
+cloned for local development. Contributors need Go `1.25.12`, Terraform `1.14`
+or later, GNU Make, `golangci-lint`, and ShellCheck.
+
+Use the Makefile targets as the command source of truth:
 
 ```shell
 make install-dependencies
-```
-
-Run unit tests:
-
-```shell
-make test-unit
-```
-
-Run the full local test suite:
-
-```shell
-make test
-```
-
-Run acceptance tests:
-
-```shell
-make test-acc
-```
-
-Generate documentation:
-
-```shell
+make fmt
 make generate
+make lint
+make test-unit
+make build
 ```
 
-## Service Account Credentials
+`make test` runs the unit and acceptance test suites. Run it, `make test-acc`,
+or the [local Terraform development loop](dev/local-devloop/README.md) only when
+you are authorized to perform credentialed operations and have the required Ona
+credentials.
 
-Use a human or admin personal access token for the first Terraform apply that
-creates service accounts and issues the initial service-account token. Store the
-service-account token in an external secret manager, then use that token as
-`ONA_TOKEN` for subsequent Terraform runs.
-
-The backend rejects service-account-token-to-service-account-token management:
-service-account tokens cannot create or rotate other service-account tokens. Run
-token bootstrap or rotation with a human/admin token.
-
-For organization-level settings, a service account needs organization-admin
-authorization through group membership. Terraform resources for group
-membership and organization role assignment are tracked separately from the
-service-account resource. Create a custom group, add the service account with
-`ona_group_membership`, and grant the group a supported organization role with
-`ona_organization_role_assignment`.
+Never commit tokens, private keys, Terraform state or saved plans, local
+provider override files, or release signing material.
 
 ## Releasing
 
-Beta releases are prerelease builds for validation and feedback. They are not
-stable releases and do not provide compatibility or availability guarantees.
-See [docs/release.md](docs/release.md) for the publish procedure.
-
-## Query Existing Resources
-
-Terraform Query can discover existing Ona resources through provider list
-resources and generate starter Terraform configuration. This workflow requires
-Terraform CLI >= 1.14.
-
-See [examples/query.md](examples/query.md) for the runner query workflow.
-
-## Import Existing Resources
-
-The Terraform-native import workflow is:
-
-1. discover existing Ona resources through the provider,
-2. create Terraform import blocks,
-3. run Terraform config generation,
-4. apply the imports, and
-5. verify that the resulting plan is a no-op.
-
-Every managed resource listed above implements Terraform import support. See
-the generated resource docs under [docs/resources](docs/resources/) for
-resource-specific import IDs and examples.
-
-The import helper in [scripts](scripts/) still generates import blocks only for
-`ona_project`, `ona_runner`, and `ona_environment_class` resources. It
-discovers additional Ona objects for inventory and reference rewriting, but
-those resource families need helper selection support before the script can
-generate import blocks for them.
-
-See [examples/import.md](examples/import.md) for the full workflow and flags.
+See the [release process](docs/release.md) for release preparation, publishing,
+and verification.
