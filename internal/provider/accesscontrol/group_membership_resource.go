@@ -169,7 +169,6 @@ func (r *GroupMembershipResource) ImportState(ctx context.Context, req resource.
 		}
 		tfvalue.SetImportString(ctx, resp, "group_id", identity.GroupID.ValueString())
 		tfvalue.SetImportString(ctx, resp, "service_account_id", identity.ServiceAccountID.ValueString())
-		tfvalue.SetImportString(ctx, resp, "principal", principalServiceAccount)
 		return
 	}
 	parts, diags := tfvalue.SplitImportID(req.ID, 2, "group_id/service_account_id")
