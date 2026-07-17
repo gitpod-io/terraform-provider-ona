@@ -27,4 +27,4 @@ list "ona_scm_integration" "all" {
 - `auth_modes` (List of String) Authentication modes to include. Supported values are `oauth` and `pat`.
 - `hosts` (List of String) SCM host names to include.
 - `runner_ids` (List of String) Runner IDs to include.
-- `scm_providers` (List of String) SCM provider IDs to include, such as `github` or `gitlab`.
+- `scm_providers` (List of String) SCM provider IDs to include. Known values are `github`, `gitlab`, `bitbucket`, `azuredevops_entra`, and `azuredevops_server`; the API can return additional runner-configured IDs.

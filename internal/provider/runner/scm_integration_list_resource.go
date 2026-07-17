@@ -53,7 +53,7 @@ func (r *SCMIntegrationResource) ListResourceConfigSchema(ctx context.Context, r
 			"scm_providers": listschema.ListAttribute{
 				Optional:            true,
 				ElementType:         types.StringType,
-				MarkdownDescription: "SCM provider IDs to include, such as `github` or `gitlab`.",
+				MarkdownDescription: "SCM provider IDs to include. Known values are `github`, `gitlab`, `bitbucket`, `azuredevops_entra`, and `azuredevops_server`; the API can return additional runner-configured IDs.",
 			},
 			"runner_ids": listschema.ListAttribute{
 				Optional:            true,
