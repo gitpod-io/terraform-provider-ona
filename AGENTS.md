@@ -2,14 +2,14 @@
 
 This repository is the standalone Go module for the Ona Terraform provider. It
 uses the [Terraform Plugin Framework](https://developer.hashicorp.com/terraform/plugin/framework)
-and keeps a copied generated public API client under `api/public-clients/go` so the
-provider can build without private monorepo modules.
+and keeps a copied API client subset under `internal/api/go` so the provider can
+build without private monorepo modules.
 
 ## Important Paths
 
 - `internal/provider/**`: provider implementation, resource/data source registration, and provider tests.
 - `internal/client/**`: Ona API client wrapper used by provider code.
-- `api/public-clients/go/**`: copied generated public API client. Do not hand-edit for lint-only or style changes.
+- `internal/api/go/**`: copied/generated API subset. Do not hand-edit for lint-only or style changes.
 - `docs/**`: generated Terraform provider documentation.
 - `examples/**`: Terraform examples consumed by docs generation.
 - `scripts/**`: import helper and release-related tooling.
