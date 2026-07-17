@@ -102,7 +102,7 @@ func TestAccOIDCConfigQuery(t *testing.T) {
 			querycheck.ExpectIdentity("ona_oidc_config.all", map[string]knownvalue.Check{"organization_id": knownvalue.StringExact("org-1")}),
 			querycheck.ExpectResourceKnownValues("ona_oidc_config.all", queryfilter.ByDisplayName(knownvalue.StringExact("org-1")), []querycheck.KnownValueCheck{
 				{Path: tfjsonpath.New("id"), KnownValue: knownvalue.StringExact("org-1")},
-				{Path: tfjsonpath.New("version"), KnownValue: knownvalue.StringExact("v3")},
+				{Path: tfjsonpath.New("custom_claim_fields"), KnownValue: knownvalue.SetExact([]knownvalue.Check{knownvalue.StringExact("project_id")})},
 			}),
 		},
 	}))
@@ -163,8 +163,8 @@ func checkOIDCConfigImportState(organizationID string) testresource.ImportStateC
 		if got := states[0].Attributes["id"]; got != organizationID {
 			return fmt.Errorf("expected imported OIDC config id %q, got %q", organizationID, got)
 		}
-		if got := states[0].Attributes["version"]; got != "v3" {
-			return fmt.Errorf("expected imported OIDC config version %q, got %q", "v3", got)
+		if got := states[0].Attributes["custom_claim_fields.#"]; got != "1" {
+			return fmt.Errorf("expected 1 imported OIDC custom claim field, got %q", got)
 		}
 		return nil
 	}
@@ -183,8 +183,7 @@ list "ona_oidc_config" "all" {
 func oidcConfigResourceConfig(host string) string {
 	return QueryProviderConfig(host) + `
 resource "ona_oidc_config" "org" {
-  version          = "v3"
-  extra_sub_fields = ["project_id"]
+  custom_claim_fields = ["project_id"]
 }
 `
 }
