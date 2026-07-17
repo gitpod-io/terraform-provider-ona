@@ -4,7 +4,6 @@
 package project
 
 import (
-	"context"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -15,7 +14,7 @@ import (
 func TestImportStateSeedsEquivalentProjectID(t *testing.T) {
 	t.Parallel()
 
-	ctx := context.Background()
+	ctx := t.Context()
 	identitySchemaResponse := resource.IdentitySchemaResponse{}
 	(&Resource{}).IdentitySchema(ctx, resource.IdentitySchemaRequest{}, &identitySchemaResponse)
 
@@ -60,14 +59,13 @@ func TestImportStateSeedsEquivalentProjectID(t *testing.T) {
 func emptyProjectModel() ProjectModel {
 	return ProjectModel{
 		ID:                   types.StringNull(),
-		OrganizationID:       types.StringNull(),
 		Name:                 types.StringNull(),
 		RepositoryCloneURL:   types.StringNull(),
 		Branch:               types.StringNull(),
+		InsightsEnabled:      types.BoolNull(),
 		DevcontainerFilePath: types.StringNull(),
 		AutomationsFilePath:  types.StringNull(),
 		CreatedAt:            types.StringNull(),
-		UpdatedAt:            types.StringNull(),
 		Creator:              types.ObjectNull(subjectObjectAttributeTypes),
 	}
 }
