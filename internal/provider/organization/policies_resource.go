@@ -292,7 +292,7 @@ func (r *PoliciesResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 	resp.Diagnostics.Append(resp.Identity.Set(ctx, PoliciesIdentityModel{
-		OrganizationID: data.OrganizationID,
+		OrganizationID: types.StringValue(organizationID),
 	})...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -339,7 +339,7 @@ func (r *PoliciesResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 	resp.Diagnostics.Append(resp.Identity.Set(ctx, PoliciesIdentityModel{
-		OrganizationID: data.OrganizationID,
+		OrganizationID: types.StringValue(organizationID),
 	})...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -397,7 +397,7 @@ func (r *PoliciesResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 	resp.Diagnostics.Append(resp.Identity.Set(ctx, PoliciesIdentityModel{
-		OrganizationID: data.OrganizationID,
+		OrganizationID: types.StringValue(organizationID),
 	})...)
 	if resp.Diagnostics.HasError() {
 		return
