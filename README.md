@@ -81,17 +81,14 @@ that reference is also checked into [docs/](docs/).
 
 ## Authentication and permissions
 
-Use a personal access token (PAT) for Terraform write operations. PATs inherit
-the user's permissions and can be created with read-only or read-and-write
-access; a read-only PAT is suitable only for operations that do not modify Ona.
-Choose the shortest practical expiry and revoke tokens that are no longer used.
-See [Personal access tokens](https://ona.com/docs/ona/integrations/personal-access-token).
+Authenticate the provider with either a
+[personal access token (PAT)](https://ona.com/docs/ona/integrations/personal-access-token)
+or a
+[service-account token (SAT)](https://ona.com/docs/ona/organizations/service-accounts).
+Both token types are supported, but a SAT is recommended for long-term use.
 
-Use service-account tokens only within their documented scope. Ona currently
-documents them for starting automations and performing API read operations, and
-directs users to contact Ona for additional use cases. Do not assume a
-service-account token can create, update, or delete provider-managed objects.
-See [Service accounts](https://ona.com/docs/ona/organizations/service-accounts).
+Supply the token through the `ONA_TOKEN` environment variable and store it
+securely outside the Terraform configuration.
 
 Only organization admins can create service-account tokens. Bootstrap and
 rotate them in a run authenticated with an authorized human or administrator
