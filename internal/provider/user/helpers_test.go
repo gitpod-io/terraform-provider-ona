@@ -4,14 +4,14 @@
 package user
 
 import (
+	"context"
 	"errors"
 	"testing"
 
 	"connectrpc.com/connect"
-	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/google/go-cmp/cmp"
-	"go.uber.org/mock/gomock"
 )
 
 func TestAuthenticatedOrganizationID(t *testing.T) {
@@ -57,10 +57,10 @@ func TestAuthenticatedOrganizationID(t *testing.T) {
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
 
-			ctrl := gomock.NewController(t)
-			api := managementclient.NewMock(ctrl)
-			api.IdentityService.EXPECT().GetAuthenticatedIdentity(gomock.Any(), gomock.Any()).Return(tc.Response, tc.Err)
-			holder := clientHolder{client: api.Client()}
+			api := managementclient.NewWithServices(managementclient.Services{
+				IdentityService: fakeIdentityService{response: tc.Response, err: tc.Err},
+			})
+			holder := clientHolder{client: api}
 
 			var got Expectation
 			organizationID, err := holder.authenticatedOrganizationID(t.Context())
@@ -74,4 +74,21 @@ func TestAuthenticatedOrganizationID(t *testing.T) {
 			}
 		})
 	}
+}
+
+type fakeIdentityService struct {
+	response *connect.Response[v1.GetAuthenticatedIdentityResponse]
+	err      error
+}
+
+func (f fakeIdentityService) GetIDToken(context.Context, *connect.Request[v1.GetIDTokenRequest]) (*connect.Response[v1.GetIDTokenResponse], error) {
+	return nil, errors.New("unexpected GetIDToken call")
+}
+
+func (f fakeIdentityService) GetAuthenticatedIdentity(context.Context, *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error) {
+	return f.response, f.err
+}
+
+func (f fakeIdentityService) ExchangeToken(context.Context, *connect.Request[v1.ExchangeTokenRequest]) (*connect.Response[v1.ExchangeTokenResponse], error) {
+	return nil, errors.New("unexpected ExchangeToken call")
 }
