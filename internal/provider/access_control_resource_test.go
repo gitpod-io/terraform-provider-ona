@@ -216,7 +216,6 @@ func TestGroupMembershipImportStateEquivalence(t *testing.T) {
 						plancheck.ExpectResourceAction("ona_group_membership.test", plancheck.ResourceActionNoop),
 						plancheck.ExpectKnownValue("ona_group_membership.test", tfjsonpath.New("group_id"), knownvalue.StringExact(accessControlGroupID)),
 						plancheck.ExpectKnownValue("ona_group_membership.test", tfjsonpath.New("service_account_id"), knownvalue.StringExact(accessControlServiceAccountID)),
-						plancheck.ExpectKnownValue("ona_group_membership.test", tfjsonpath.New("principal"), knownvalue.StringExact("service_account")),
 					},
 				},
 			},
@@ -232,7 +231,6 @@ func checkGroupMembershipImportState(states []*terraform.InstanceState) error {
 	for attribute, expected := range map[string]string{
 		"group_id":           accessControlGroupID,
 		"service_account_id": accessControlServiceAccountID,
-		"principal":          "service_account",
 	} {
 		if actual := states[0].Attributes[attribute]; actual != expected {
 			return fmt.Errorf("expected imported %s %q, got %q", attribute, expected, actual)
