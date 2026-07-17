@@ -604,7 +604,7 @@ provider "ona" {
 
 resource "ona_scm_integration" "test" {
   runner_id       = "runner-1"
-  scm_id          = "github"
+  kind            = "github"
   host            = "github.com"
   auth_mode       = "oauth"
   oauth_client_id = "client-1"
