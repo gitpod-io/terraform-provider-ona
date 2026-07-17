@@ -18,6 +18,8 @@ import (
 	"testing"
 )
 
+const projectInsightsTestProjectID = "11111111-1111-4111-8111-111111111111"
+
 type fakeInsightsProjectService struct {
 	v1connect.UnimplementedProjectServiceHandler
 }
