@@ -26,6 +26,7 @@ import (
 
 var _ resource.Resource = &PolicyResource{}
 var _ resource.ResourceWithConfigure = &PolicyResource{}
+var _ resource.ResourceWithIdentity = &PolicyResource{}
 var _ resource.ResourceWithImportState = &PolicyResource{}
 var _ resource.ResourceWithValidateConfig = &PolicyResource{}
 
@@ -153,6 +154,10 @@ func (r *PolicyResource) Create(ctx context.Context, req resource.CreateRequest,
 	}
 
 	data.ID = types.StringValue(runnerPolicyID(data.RunnerID.ValueString(), data.GroupID.ValueString()))
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, RunnerPolicyIdentityModel{RunnerID: data.RunnerID, GroupID: data.GroupID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -203,6 +208,10 @@ func (r *PolicyResource) Read(ctx context.Context, req resource.ReadRequest, res
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, RunnerPolicyIdentityModel{RunnerID: data.RunnerID, GroupID: data.GroupID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -238,15 +247,34 @@ func (r *PolicyResource) Delete(ctx context.Context, req resource.DeleteRequest,
 }
 
 func (r *PolicyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	parts, diags := parseRunnerPolicyImportID(req.ID)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
+	var runnerID, groupID string
+	if req.ID != "" {
+		parts, diags := parseRunnerPolicyImportID(req.ID)
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		runnerID, groupID = parts[0], parts[1]
+	} else {
+		if req.Identity == nil {
+			resp.Diagnostics.AddError("Invalid Import Identity", "Set runner_id and group_id in the structured identity.")
+			return
+		}
+		var identity RunnerPolicyIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		runnerID, groupID = identity.RunnerID.ValueString(), identity.GroupID.ValueString()
+		if runnerID == "" || groupID == "" {
+			resp.Diagnostics.AddError("Invalid Import Identity", "Set non-empty runner_id and group_id values in the structured identity.")
+			return
+		}
 	}
 
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), types.StringValue(req.ID))...)
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("runner_id"), types.StringValue(parts[0]))...)
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("group_id"), types.StringValue(parts[1]))...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), types.StringValue(runnerPolicyID(runnerID, groupID)))...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("runner_id"), types.StringValue(runnerID))...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("group_id"), types.StringValue(groupID))...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("role"), types.StringValue(runnerPolicyRoleUser))...)
 }
 
