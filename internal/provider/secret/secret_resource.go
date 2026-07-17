@@ -106,7 +106,7 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 	data.UserID = scope.UserID
 	data.ServiceAccountID = scope.ServiceAccountID
 	data.Value = types.StringNull()
-	resp.Diagnostics.Append(resp.Identity.Set(ctx, identityFromModel(data))...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, identityFromModel(data, scope.Scope.GetOrganizationId()))...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -149,7 +149,7 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 	if secret == nil {
 		// ListSecrets is the only metadata read endpoint here; a missing list row
 		// is not a definitive NotFound for this secret ID.
-		resp.Diagnostics.Append(resp.Identity.Set(ctx, identityFromModel(data))...)
+		resp.Diagnostics.Append(resp.Identity.Set(ctx, identityFromModel(data, scope.Scope.GetOrganizationId()))...)
 		resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 		return
 	}
@@ -161,7 +161,7 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	resp.Diagnostics.Append(resp.Identity.Set(ctx, identityFromModel(data))...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, identityFromModel(data, scope.Scope.GetOrganizationId()))...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -220,7 +220,7 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	resp.Diagnostics.Append(resp.Identity.Set(ctx, identityFromModel(data))...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, identityFromModel(data, scope.Scope.GetOrganizationId()))...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -263,7 +263,6 @@ func (r *Resource) ImportState(ctx context.Context, req resource.ImportStateRequ
 				resp.Diagnostics.AddError("Invalid Secret Identity", "organization_id is required for organization scope.")
 				return
 			}
-			resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("organization_id"), identity.OrganizationID)...)
 		case scopeProject:
 			if !isKnownString(identity.ProjectID) {
 				resp.Diagnostics.AddError("Invalid Secret Identity", "project_id is required for project scope.")
@@ -321,7 +320,6 @@ func (r *Resource) ImportState(ctx context.Context, req resource.ImportStateRequ
 			return
 		}
 		identity.OrganizationID = types.StringValue(authenticated.GetOrganizationId())
-		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("organization_id"), identity.OrganizationID)...)
 	case scopeProject:
 		identity.ProjectID = types.StringValue(importState.ProjectID)
 	case scopeUser:

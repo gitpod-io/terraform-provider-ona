@@ -9,7 +9,7 @@ import (
 	"sort"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/list"
@@ -49,9 +49,14 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 		if !listutil.PushDiagnostics(push, req.Config.Get(ctx, &config)) {
 			return
 		}
-		data := Model{Scope: config.Scope, OrganizationID: config.OrganizationID, ProjectID: config.ProjectID, UserID: config.UserID, ServiceAccountID: config.ServiceAccountID}
+		data := Model{Scope: config.Scope, ProjectID: config.ProjectID, UserID: config.UserID, ServiceAccountID: config.ServiceAccountID}
 		var resolveDiags diag.Diagnostics
-		resolved := r.resolveScope(ctx, &data, &resolveDiags)
+		var resolved resolvedScope
+		if config.Scope.ValueString() == scopeOrganization && isKnownString(config.OrganizationID) {
+			resolved.Scope = &v1.SecretScope{Scope: &v1.SecretScope_OrganizationId{OrganizationId: config.OrganizationID.ValueString()}}
+		} else {
+			resolved = r.resolveScope(ctx, &data, &resolveDiags)
+		}
 		if !listutil.PushDiagnostics(push, resolveDiags) {
 			return
 		}
@@ -79,7 +84,8 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 					item.DisplayName = remote.GetId()
 				}
 				item.Diagnostics.Append(itemDiags...)
-				item.Diagnostics.Append(item.Identity.Set(ctx, identityFromModel(model))...)
+				identity := identityFromModel(model, remote.GetScope().GetOrganizationId())
+				item.Diagnostics.Append(item.Identity.Set(ctx, identity)...)
 				if req.IncludeResource && !item.Diagnostics.HasError() {
 					item.Diagnostics.Append(item.Resource.Set(ctx, &model)...)
 				}

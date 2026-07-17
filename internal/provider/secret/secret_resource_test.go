@@ -5,6 +5,7 @@ package secret
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"testing"
 
@@ -19,7 +20,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
-	"go.uber.org/mock/gomock"
 	"google.golang.org/protobuf/testing/protocmp"
 )
 
@@ -357,7 +357,6 @@ func TestImportStateLegacyAndIdentitySeedEquivalentState(t *testing.T) {
 			Expected: importStateSnapshot{
 				ID:               testSecretID,
 				Scope:            scopeOrganization,
-				OrganizationID:   testOrgID,
 				ProjectID:        nullSnapshotValue,
 				UserID:           nullSnapshotValue,
 				ServiceAccountID: nullSnapshotValue,
@@ -377,7 +376,6 @@ func TestImportStateLegacyAndIdentitySeedEquivalentState(t *testing.T) {
 			Expected: importStateSnapshot{
 				ID:               testSecretID,
 				Scope:            scopeProject,
-				OrganizationID:   nullSnapshotValue,
 				ProjectID:        testProjectID,
 				UserID:           nullSnapshotValue,
 				ServiceAccountID: nullSnapshotValue,
@@ -397,7 +395,6 @@ func TestImportStateLegacyAndIdentitySeedEquivalentState(t *testing.T) {
 			Expected: importStateSnapshot{
 				ID:               testSecretID,
 				Scope:            scopeUser,
-				OrganizationID:   nullSnapshotValue,
 				ProjectID:        nullSnapshotValue,
 				UserID:           testUserID,
 				ServiceAccountID: nullSnapshotValue,
@@ -417,7 +414,6 @@ func TestImportStateLegacyAndIdentitySeedEquivalentState(t *testing.T) {
 			Expected: importStateSnapshot{
 				ID:               testSecretID,
 				Scope:            scopeServiceAccount,
-				OrganizationID:   nullSnapshotValue,
 				ProjectID:        nullSnapshotValue,
 				UserID:           nullSnapshotValue,
 				ServiceAccountID: testServiceAccountID,
@@ -480,21 +476,41 @@ func runImportState(t *testing.T, req resource.ImportStateRequest, expectIdentit
 		Identity: newTestIdentityData(t, ctx, identitySchema),
 	}
 
-	ctrl := gomock.NewController(t)
-	api := managementclient.NewMock(ctrl)
-	if expectIdentityLookup {
-		api.IdentityService.EXPECT().GetAuthenticatedIdentity(gomock.Any(), gomock.Any()).Return(connect.NewResponse(&v1.GetAuthenticatedIdentityResponse{
-			OrganizationId: testOrgID,
-		}), nil)
-	}
-
-	r := &Resource{client: api.Client()}
+	client := managementclient.NewWithServices(managementclient.Services{
+		IdentityService: &testIdentityClient{t: t, allowLookup: expectIdentityLookup},
+	})
+	r := &Resource{client: client}
 	r.ImportState(ctx, req, &resp)
 	if resp.Diagnostics.HasError() {
 		t.Fatalf("ImportState() returned diagnostics: %s", diagnosticsString(resp.Diagnostics))
 	}
 
 	return snapshotImportState(t, ctx, resp.State)
+}
+
+type testIdentityClient struct {
+	t           *testing.T
+	allowLookup bool
+}
+
+func (c *testIdentityClient) GetAuthenticatedIdentity(context.Context, *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error) {
+	c.t.Helper()
+	if !c.allowLookup {
+		c.t.Fatal("unexpected authenticated identity lookup")
+	}
+	return connect.NewResponse(&v1.GetAuthenticatedIdentityResponse{OrganizationId: testOrgID}), nil
+}
+
+func (c *testIdentityClient) GetIDToken(context.Context, *connect.Request[v1.GetIDTokenRequest]) (*connect.Response[v1.GetIDTokenResponse], error) {
+	c.t.Helper()
+	c.t.Fatal("unexpected ID token request")
+	return nil, errors.New("unexpected ID token request")
+}
+
+func (c *testIdentityClient) ExchangeToken(context.Context, *connect.Request[v1.ExchangeTokenRequest]) (*connect.Response[v1.ExchangeTokenResponse], error) {
+	c.t.Helper()
+	c.t.Fatal("unexpected token exchange")
+	return nil, errors.New("unexpected token exchange")
 }
 
 func newTestResourceIdentity(t *testing.T, data IdentityModel) *tfsdk.ResourceIdentity {
@@ -561,7 +577,6 @@ func snapshotImportState(t *testing.T, ctx context.Context, state tfsdk.State) i
 	return importStateSnapshot{
 		ID:               snapshotString(model.ID),
 		Scope:            snapshotString(model.Scope),
-		OrganizationID:   snapshotString(model.OrganizationID),
 		ProjectID:        snapshotString(model.ProjectID),
 		UserID:           snapshotString(model.UserID),
 		ServiceAccountID: snapshotString(model.ServiceAccountID),
@@ -582,7 +597,6 @@ func snapshotString(value types.String) string {
 type importStateSnapshot struct {
 	ID               string
 	Scope            string
-	OrganizationID   string
 	ProjectID        string
 	UserID           string
 	ServiceAccountID string
