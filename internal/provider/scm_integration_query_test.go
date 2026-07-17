@@ -253,7 +253,7 @@ func (e expectSCMIntegrationQueryResults) CheckQuery(_ context.Context, req quer
 			DisplayName:                          result.DisplayName,
 			ID:                                   stringMapValue(result.Identity, "id"),
 			RunnerID:                             stringMapValue(result.ResourceObject, "runner_id"),
-			SCMID:                                stringMapValue(result.ResourceObject, "scm_id"),
+			SCMID:                                stringMapValue(result.ResourceObject, "kind"),
 			Host:                                 stringMapValue(result.ResourceObject, "host"),
 			AuthMode:                             stringMapValue(result.ResourceObject, "auth_mode"),
 			OAuthClientID:                        result.ResourceObject["oauth_client_id"],
