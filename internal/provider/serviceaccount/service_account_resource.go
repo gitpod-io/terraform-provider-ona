@@ -153,7 +153,7 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 	planned := data
 	populateModelFromServiceAccount(&data, result.Msg.GetServiceAccount())
 	preservePlannedInputs(&data, planned)
-	resp.Diagnostics.Append(resp.Identity.Set(ctx, IdentityModel{ServiceAccountID: data.ServiceAccountID})...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, IdentityModel{ServiceAccountID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -186,7 +186,7 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 
 	data = Model{}
 	populateModelFromServiceAccount(&data, account)
-	resp.Diagnostics.Append(resp.Identity.Set(ctx, IdentityModel{ServiceAccountID: data.ServiceAccountID})...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, IdentityModel{ServiceAccountID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -232,7 +232,7 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 	planned := data
 	populateModelFromServiceAccount(&data, result.Msg.GetServiceAccount())
 	preservePlannedInputs(&data, planned)
-	resp.Diagnostics.Append(resp.Identity.Set(ctx, IdentityModel{ServiceAccountID: data.ServiceAccountID})...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, IdentityModel{ServiceAccountID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
