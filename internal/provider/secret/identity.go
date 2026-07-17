@@ -31,7 +31,7 @@ func (r *Resource) IdentitySchema(ctx context.Context, req resource.IdentitySche
 	}}
 }
 
-func identityFromModel(data Model) IdentityModel {
+func identityFromModel(data Model, organizationID string) IdentityModel {
 	identity := IdentityModel{
 		ID:               data.ID,
 		Scope:            data.Scope,
@@ -42,7 +42,7 @@ func identityFromModel(data Model) IdentityModel {
 	}
 	switch data.Scope.ValueString() {
 	case scopeOrganization:
-		identity.OrganizationID = data.OrganizationID
+		identity.OrganizationID = stringOptionalValue(organizationID)
 	case scopeProject:
 		identity.ProjectID = data.ProjectID
 	case scopeUser:
