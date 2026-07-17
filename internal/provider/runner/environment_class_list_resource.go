@@ -24,12 +24,17 @@ func NewEnvironmentClassListResource() list.ListResource {
 
 type environmentClassListModel struct {
 	RunnerIDs types.List `tfsdk:"runner_ids"`
+	Enabled   types.Bool `tfsdk:"enabled"`
 }
 
 func (r *EnvironmentClassResource) ListResourceConfigSchema(ctx context.Context, req list.ListResourceSchemaRequest, resp *list.ListResourceSchemaResponse) {
 	resp.Schema = listschema.Schema{
 		MarkdownDescription: "Lists Ona runner environment classes.",
 		Attributes: map[string]listschema.Attribute{
+			"enabled": listschema.BoolAttribute{
+				Optional:            true,
+				MarkdownDescription: "Whether to include only enabled (`true`) or disabled (`false`) environment classes.",
+			},
 			"runner_ids": listschema.ListAttribute{
 				Optional:            true,
 				ElementType:         types.StringType,
@@ -55,6 +60,10 @@ func (r *EnvironmentClassResource) List(ctx context.Context, req list.ListReques
 		if !listutil.PushDiagnostics(push, diags) {
 			return
 		}
+		var enabled *bool
+		if !config.Enabled.IsNull() && !config.Enabled.IsUnknown() {
+			enabled = ptr(config.Enabled.ValueBool())
+		}
 
 		var token string
 		var emitted int64
@@ -63,6 +72,7 @@ func (r *EnvironmentClassResource) List(ctx context.Context, req list.ListReques
 				Pagination: &v1.PaginationRequest{PageSize: listutil.PageSize(req.Limit, emitted), Token: token},
 				Filter: &v1.ListEnvironmentClassesRequest_Filter{
 					RunnerIds: runnerIDs,
+					Enabled:   enabled,
 					RunnerProviders: []v1.RunnerProvider{
 						v1.RunnerProvider_RUNNER_PROVIDER_AWS_EC2,
 						v1.RunnerProvider_RUNNER_PROVIDER_GCP,

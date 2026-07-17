@@ -28,6 +28,7 @@ func TestAccEnvironmentClassQuery(t *testing.T) {
 				Expected: []environmentClassQueryResult{
 					expectedLargeEnvironmentClassQueryResult(),
 					expectedSmallEnvironmentClassQueryResult(),
+					expectedDisabledEnvironmentClassQueryResult(),
 				},
 			},
 		},
@@ -39,20 +40,35 @@ func TestAccEnvironmentClassQueryFilters(t *testing.T) {
 
 	tests := []struct {
 		Name     string
-		RunnerID string
+		Config   string
 		Expected []environmentClassQueryResult
 	}{
 		{
-			Name:     "matching_runner_id",
-			RunnerID: "runner-1",
+			Name:   "matching_runner_id",
+			Config: `runner_ids = ["runner-1"]`,
 			Expected: []environmentClassQueryResult{
 				expectedLargeEnvironmentClassQueryResult(),
 			},
 		},
 		{
 			Name:     "unsupported_runner_provider",
-			RunnerID: "runner-3",
+			Config:   `runner_ids = ["runner-3"]`,
 			Expected: []environmentClassQueryResult{},
+		},
+		{
+			Name:   "enabled_environment_classes",
+			Config: "enabled = true",
+			Expected: []environmentClassQueryResult{
+				expectedLargeEnvironmentClassQueryResult(),
+				expectedSmallEnvironmentClassQueryResult(),
+			},
+		},
+		{
+			Name:   "disabled_environment_classes",
+			Config: "enabled = false",
+			Expected: []environmentClassQueryResult{
+				expectedDisabledEnvironmentClassQueryResult(),
+			},
 		},
 	}
 
@@ -64,10 +80,8 @@ func TestAccEnvironmentClassQueryFilters(t *testing.T) {
 			t.Cleanup(server.Close)
 
 			testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
-				Query: true,
-				Config: environmentClassQueryConfig(fmt.Sprintf(`
-runner_ids = [%q]
-`, tc.RunnerID)),
+				Query:  true,
+				Config: environmentClassQueryConfig(tc.Config),
 				QueryResultChecks: []querycheck.QueryResultCheck{
 					expectEnvironmentClassQueryResults{Expected: tc.Expected},
 				},
@@ -102,6 +116,13 @@ func newEnvironmentClassQueryAPIServer(t *testing.T) *runnerConfigurationAPIServ
 		DisplayName: "Managed",
 		Description: "Unsupported managed runner environment class",
 		Enabled:     true,
+	}
+	server.service.environmentClasses["class-4"] = &v1.EnvironmentClass{
+		Id:          "class-4",
+		RunnerId:    "runner-2",
+		DisplayName: "Disabled",
+		Description: "Disabled test environment class",
+		Enabled:     false,
 	}
 	server.service.environmentClassRunnerProviders["runner-1"] = v1.RunnerProvider_RUNNER_PROVIDER_AWS_EC2
 	server.service.environmentClassRunnerProviders["runner-2"] = v1.RunnerProvider_RUNNER_PROVIDER_GCP
@@ -163,6 +184,19 @@ func expectedSmallEnvironmentClassQueryResult() environmentClassQueryResult {
 		Description:   "Small test environment class",
 		Configuration: map[string]any{"machine_type": "e2-standard-4"},
 		Enabled:       true,
+	}
+}
+
+func expectedDisabledEnvironmentClassQueryResult() environmentClassQueryResult {
+	return environmentClassQueryResult{
+		Address:       "list.ona_environment_class.all",
+		DisplayName:   "Disabled",
+		IdentityID:    "class-4",
+		ResourceID:    "class-4",
+		RunnerID:      "runner-2",
+		Description:   "Disabled test environment class",
+		Configuration: map[string]any{},
+		Enabled:       false,
 	}
 }
 
