@@ -330,12 +330,10 @@ func newPolicyAPIServer(t *testing.T) *policyAPIServer {
 	}
 
 	securityPath, securityHandler := v1connect.NewSecurityServiceHandler(securityService)
-	identityPath, identityHandler := v1connect.NewIdentityServiceHandler(securityService)
 	organizationPath, organizationHandler := v1connect.NewOrganizationServiceHandler(organizationService)
 	identityPath, identityHandler := v1connect.NewIdentityServiceHandler(organizationService)
 	mux := http.NewServeMux()
 	mux.Handle(securityPath, securityHandler)
-	mux.Handle(identityPath, identityHandler)
 	mux.Handle(organizationPath, organizationHandler)
 	mux.Handle(identityPath, identityHandler)
 	server := httptest.NewServer(http.StripPrefix("/api", mux))
