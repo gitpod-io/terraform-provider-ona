@@ -1,0 +1,4 @@
+interface:
+  display_name: "Manage Ona with Terraform"
+  short_description: "Safely manage Ona with Terraform"
+  default_prompt: "Use $manage-ona-with-terraform to safely create, review, import, plan, or troubleshoot Ona Terraform configuration."
