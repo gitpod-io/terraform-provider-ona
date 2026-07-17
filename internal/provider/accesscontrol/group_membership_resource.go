@@ -166,7 +166,6 @@ func (r *GroupMembershipResource) ImportState(ctx context.Context, req resource.
 		}
 		setImportString(ctx, resp, "group_id", identity.GroupID.ValueString())
 		setImportString(ctx, resp, "service_account_id", identity.ServiceAccountID.ValueString())
-		setImportString(ctx, resp, "principal", principalServiceAccount)
 		return
 	}
 	parts, diags := splitImportID(req.ID, 2, "group_id/service_account_id")
