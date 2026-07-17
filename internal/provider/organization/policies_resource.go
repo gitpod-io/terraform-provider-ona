@@ -25,6 +25,7 @@ import (
 
 var _ resource.Resource = &PoliciesResource{}
 var _ resource.ResourceWithConfigure = &PoliciesResource{}
+var _ resource.ResourceWithIdentity = &PoliciesResource{}
 var _ resource.ResourceWithImportState = &PoliciesResource{}
 var _ resource.ResourceWithValidateConfig = &PoliciesResource{}
 
@@ -290,6 +291,12 @@ func (r *PoliciesResource) Create(ctx context.Context, req resource.CreateReques
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, PoliciesIdentityModel{
+		OrganizationID: types.StringValue(organizationID),
+	})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -328,6 +335,12 @@ func (r *PoliciesResource) Read(ctx context.Context, req resource.ReadRequest, r
 	prior := data
 	data = PoliciesModel{}
 	resp.Diagnostics.Append(populatePoliciesModel(ctx, &data, policies, prior, shouldPopulateUnmanagedPolicyFields(prior))...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, PoliciesIdentityModel{
+		OrganizationID: types.StringValue(organizationID),
+	})...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -383,6 +396,12 @@ func (r *PoliciesResource) Update(ctx context.Context, req resource.UpdateReques
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, PoliciesIdentityModel{
+		OrganizationID: types.StringValue(organizationID),
+	})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -431,14 +450,26 @@ func (r *PoliciesResource) ImportState(ctx context.Context, req resource.ImportS
 	if !r.requireClient(&resp.Diagnostics, "importing", "ona_organization_policies") {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
-	if err != nil {
-		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
-		return
-	}
-	if req.ID != "current" && req.ID != organizationID {
-		resp.Diagnostics.AddError("Invalid Ona Organization Policies Import ID", fmt.Sprintf("Import ona_organization_policies with \"current\" or the authenticated organization ID %q.", organizationID))
-		return
+	organizationID := req.ID
+	if organizationID == "" {
+		var identity PoliciesIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		organizationID = identity.OrganizationID.ValueString()
+	} else {
+		authenticatedOrganizationID, err := r.authenticatedOrganizationID(ctx)
+		if err != nil {
+			providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
+			return
+		}
+		if organizationID == "current" {
+			organizationID = authenticatedOrganizationID
+		} else if organizationID != authenticatedOrganizationID {
+			resp.Diagnostics.AddError("Invalid Ona Organization Policies Import ID", fmt.Sprintf("Import ona_organization_policies with \"current\" or the authenticated organization ID %q.", authenticatedOrganizationID))
+			return
+		}
 	}
 	baseline, err := r.getPolicies(ctx, organizationID)
 	if err != nil {
@@ -450,6 +481,7 @@ func (r *PoliciesResource) ImportState(ctx context.Context, req resource.ImportS
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), organizationID)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, PoliciesIdentityModel{OrganizationID: types.StringValue(organizationID)})...)
 }
 
 func (r *PoliciesResource) getPolicies(ctx context.Context, organizationID string) (*v1.OrganizationPolicies, error) {
