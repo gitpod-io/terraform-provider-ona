@@ -80,6 +80,20 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
+				ResourceName:    "ona_security_policy.baseline",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportStateCheck: func(states []*terraform.InstanceState) error {
+					if len(states) != 1 {
+						return fmt.Errorf("expected one imported security policy state, got %d", len(states))
+					}
+					if states[0].ID != "policy-1" || states[0].Attributes["organization_id"] != "org-1" {
+						return fmt.Errorf("structured identity imported unexpected security policy state: %#v", states[0].Attributes)
+					}
+					return nil
+				},
+			},
+			{
 				ResourceName:      "ona_organization_policies.test",
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -333,11 +347,22 @@ func newPolicyAPIServer(t *testing.T) *policyAPIServer {
 
 type fakeSecurityService struct {
 	v1connect.UnimplementedSecurityServiceHandler
+	v1connect.UnimplementedIdentityServiceHandler
 
 	mu       sync.Mutex
 	policies map[string]*v1.SecurityPolicy
 	deleted  []string
 	now      time.Time
+}
+
+func (s *fakeSecurityService) GetAuthenticatedIdentity(ctx context.Context, req *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error) {
+	return connect.NewResponse(&v1.GetAuthenticatedIdentityResponse{
+		OrganizationId: "org-1",
+		Subject: &v1.Subject{
+			Id:        "user-1",
+			Principal: v1.Principal_PRINCIPAL_USER,
+		},
+	}), nil
 }
 
 func (s *fakeSecurityService) CreateSecurityPolicy(ctx context.Context, req *connect.Request[v1.CreateSecurityPolicyRequest]) (*connect.Response[v1.CreateSecurityPolicyResponse], error) {
