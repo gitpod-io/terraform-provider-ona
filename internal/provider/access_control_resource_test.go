@@ -17,8 +17,12 @@ import (
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+	"github.com/hashicorp/terraform-plugin-testing/tfversion"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -120,6 +124,51 @@ func TestAccGroupResourceReadRemovesNotFound(t *testing.T) {
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("ona_group.test", plancheck.ResourceActionCreate),
+					},
+				},
+			},
+		},
+	})
+}
+
+func TestAccGroupResourceImportStateSupportsLegacyAndIdentity(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBelow(tfversion.Version1_12_0),
+		},
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.groupDeleted(accessControlGroupID) {
+				return errors.New("group was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccGroupResourceConfig(server.URL, "Terraform Admins", "Initial description"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectIdentity("ona_group.test", map[string]knownvalue.Check{"id": knownvalue.StringExact(accessControlGroupID)}),
+					statecheck.ExpectIdentityValueMatchesState("ona_group.test", tfjsonpath.New("id")),
+				},
+			},
+			{
+				ResourceName:      "ona_group.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				ResourceName:    "ona_group.test",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportPlanChecks: resource.ImportPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_group.test", plancheck.ResourceActionNoop),
 					},
 				},
 			},
