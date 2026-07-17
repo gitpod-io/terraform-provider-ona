@@ -18,6 +18,7 @@ import (
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/secret"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/security"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/serviceaccount"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/user"
 	warmpool "github.com/gitpod-io/terraform-provider-ona/internal/provider/warm_pool"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/webhook"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/workflow"
@@ -186,6 +187,8 @@ func (p *OnaProvider) DataSources(ctx context.Context) []func() datasource.DataS
 		security.NewPolicyCollectionDataSource,
 		integration.NewDefinitionsDataSource,
 		workflow.NewCollectionDataSource,
+		user.NewUserDataSource,
+		user.NewUserCollectionDataSource,
 	}
 }
 
