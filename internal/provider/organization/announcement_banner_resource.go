@@ -27,6 +27,7 @@ const announcementBannerResourceType = "ona_announcement_banner"
 
 var _ resource.Resource = &AnnouncementBannerResource{}
 var _ resource.ResourceWithConfigure = &AnnouncementBannerResource{}
+var _ resource.ResourceWithIdentity = &AnnouncementBannerResource{}
 var _ resource.ResourceWithImportState = &AnnouncementBannerResource{}
 var _ resource.ResourceWithValidateConfig = &AnnouncementBannerResource{}
 
@@ -104,6 +105,12 @@ func (r *AnnouncementBannerResource) Create(ctx context.Context, req resource.Cr
 	}
 
 	data.ID = types.StringValue(authenticated.ID)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, AnnouncementBannerIdentityModel{
+		OrganizationID: data.ID,
+	})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -153,6 +160,12 @@ func (r *AnnouncementBannerResource) Read(ctx context.Context, req resource.Read
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, AnnouncementBannerIdentityModel{
+		OrganizationID: data.ID,
+	})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -189,6 +202,12 @@ func (r *AnnouncementBannerResource) Update(ctx context.Context, req resource.Up
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, AnnouncementBannerIdentityModel{
+		OrganizationID: data.ID,
+	})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -219,6 +238,10 @@ func (r *AnnouncementBannerResource) Delete(ctx context.Context, req resource.De
 }
 
 func (r *AnnouncementBannerResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	if req.ID == "" {
+		resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("organization_id"), req, resp)
+		return
+	}
 	if !r.requireClient(&resp.Diagnostics, "importing", announcementBannerResourceType) {
 		return
 	}
@@ -233,6 +256,9 @@ func (r *AnnouncementBannerResource) ImportState(ctx context.Context, req resour
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), types.StringValue(authenticated.ID))...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, AnnouncementBannerIdentityModel{
+		OrganizationID: types.StringValue(authenticated.ID),
+	})...)
 }
 
 func (r *AnnouncementBannerResource) getAnnouncementBanner(ctx context.Context, organizationID string) (*v1.AnnouncementBanner, error) {
@@ -278,6 +304,10 @@ func populateAnnouncementBannerModel(data *AnnouncementBannerModel, banner *v1.A
 		data.Message = planned.Message
 	}
 	return diags
+}
+
+func announcementBannerConfigured(banner *v1.AnnouncementBanner) bool {
+	return banner != nil && (banner.GetEnabled() || banner.GetMessage() != "")
 }
 
 func validateAnnouncementBannerConfig(ctx context.Context, cfg tfsdk.Config) diag.Diagnostics {
