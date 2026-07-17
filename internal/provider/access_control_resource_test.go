@@ -290,8 +290,6 @@ func TestOrganizationRoleAssignmentResourceImports(t *testing.T) {
 				Config: testAccOrganizationRoleAssignmentResourceConfig(server.URL, "runners_admin"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "id", accessControlAssignmentID),
-					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "resource_type", "organization"),
-					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "resource_id", accessControlOrgID),
 				),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectIdentity("ona_organization_role_assignment.test", map[string]knownvalue.Check{
@@ -304,7 +302,7 @@ func TestOrganizationRoleAssignmentResourceImports(t *testing.T) {
 			{
 				ResourceName:      "ona_organization_role_assignment.test",
 				ImportState:       true,
-				ImportStateId:     accessControlGroupID + "/" + accessControlOrgID + "/runners_admin",
+				ImportStateId:     accessControlGroupID + "/runners_admin",
 				ImportStateVerify: true,
 			},
 			{
@@ -315,10 +313,7 @@ func TestOrganizationRoleAssignmentResourceImports(t *testing.T) {
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectKnownValue("ona_organization_role_assignment.test", tfjsonpath.New("id"), knownvalue.StringExact(accessControlAssignmentID)),
 						plancheck.ExpectKnownValue("ona_organization_role_assignment.test", tfjsonpath.New("group_id"), knownvalue.StringExact(accessControlGroupID)),
-						plancheck.ExpectKnownValue("ona_organization_role_assignment.test", tfjsonpath.New("organization_id"), knownvalue.StringExact(accessControlOrgID)),
 						plancheck.ExpectKnownValue("ona_organization_role_assignment.test", tfjsonpath.New("role"), knownvalue.StringExact("runners_admin")),
-						plancheck.ExpectKnownValue("ona_organization_role_assignment.test", tfjsonpath.New("resource_type"), knownvalue.StringExact("organization")),
-						plancheck.ExpectKnownValue("ona_organization_role_assignment.test", tfjsonpath.New("resource_id"), knownvalue.StringExact(accessControlOrgID)),
 					},
 				},
 			},
