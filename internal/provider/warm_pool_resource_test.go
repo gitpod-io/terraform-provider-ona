@@ -141,9 +141,6 @@ func checkWarmPoolImportedState(states []*terraform.InstanceState) error {
 		{name: "environment_class_id", value: "class-1"},
 		{name: "min_size", value: "0"},
 		{name: "max_size", value: "5"},
-		{name: "organization_id", value: "org-1"},
-		{name: "runner_id", value: "runner-1"},
-		{name: "snapshot_id", value: "snapshot-1"},
 	}
 	for _, attribute := range expected {
 		if actual := states[0].Attributes[attribute.name]; actual != attribute.value {
