@@ -1158,6 +1158,9 @@ func (s *fakeRunnerConfigurationService) ListEnvironmentClasses(ctx context.Cont
 				continue
 			}
 		}
+		if enabled := req.Msg.GetFilter().Enabled; enabled != nil && class.GetEnabled() != *enabled {
+			continue
+		}
 		classes = append(classes, cloneEnvironmentClass(class))
 	}
 	sort.Slice(classes, func(i, j int) bool { return classes[i].GetId() < classes[j].GetId() })

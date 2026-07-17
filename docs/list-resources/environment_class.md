@@ -24,4 +24,5 @@ list "ona_environment_class" "all" {
 
 ### Optional
 
+- `enabled` (Boolean) Whether to include only enabled (`true`) or disabled (`false`) environment classes.
 - `runner_ids` (List of String) Runner IDs to include.
