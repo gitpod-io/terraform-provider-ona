@@ -148,6 +148,7 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		organization.NewSCIMConfigurationResource,
 		organization.NewSSOConfigurationResource,
 		organization.NewTermsOfServiceResource,
+		project.NewInsightsResource,
 		project.NewResource,
 		runner.NewEnvironmentClassResource,
 		runner.NewLLMIntegrationResource,
