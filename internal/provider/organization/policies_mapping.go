@@ -8,7 +8,7 @@ import (
 	"sort"
 	"time"
 
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
@@ -210,7 +210,7 @@ func agentPolicyUpdateFromModel(ctx context.Context, model *AgentPolicyModel, cu
 	}
 	result := &v1.UpdateOrganizationPoliciesRequest_UpdateAgentPolicy{
 		AllowedAgentIds:              current.GetAllowedAgentIds(),
-		AllowedCodexModels:           current.GetAllowedCodexModels(),
+		AllowedCodexModels:           current.GetAllowedCodexModels(), //nolint:staticcheck // Existing Terraform schema still maps the legacy allowlist.
 		AllowedCodexReasoningEfforts: current.GetAllowedCodexReasoningEfforts(),
 		AllowedCodexServiceTiers:     current.GetAllowedCodexServiceTiers(),
 	}

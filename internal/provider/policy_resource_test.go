@@ -17,8 +17,8 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1/v1connect"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
@@ -603,7 +603,7 @@ func applyAgentPolicyUpdate(policy *v1.AgentPolicy, update *v1.UpdateOrganizatio
 		policy.MaxSubagentsPerEnvironment = update.GetMaxSubagentsPerEnvironment()
 	}
 	policy.AllowedAgentIds = append([]string(nil), update.AllowedAgentIds...)
-	policy.AllowedCodexModels = append([]v1.CodexOpenAIModel(nil), update.AllowedCodexModels...)
+	policy.AllowedCodexModels = append([]v1.CodexOpenAIModel(nil), update.AllowedCodexModels...) //nolint:staticcheck // Existing Terraform schema still maps the legacy allowlist.
 	policy.AllowedCodexReasoningEfforts = append([]v1.CodexReasoningEffort(nil), update.AllowedCodexReasoningEfforts...)
 	policy.AllowedCodexServiceTiers = append([]v1.CodexServiceTier(nil), update.AllowedCodexServiceTiers...)
 }

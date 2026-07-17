@@ -15,8 +15,8 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1/v1connect"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"

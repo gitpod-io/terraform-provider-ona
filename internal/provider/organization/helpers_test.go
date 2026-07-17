@@ -4,14 +4,24 @@
 package organization
 
 import (
+	"context"
 	"testing"
 
 	"connectrpc.com/connect"
-	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/google/go-cmp/cmp"
-	"go.uber.org/mock/gomock"
 )
+
+type identityServiceClient struct {
+	v1connect.IdentityServiceClient
+	getAuthenticatedIdentity func(context.Context, *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error)
+}
+
+func (c identityServiceClient) GetAuthenticatedIdentity(ctx context.Context, req *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error) {
+	return c.getAuthenticatedIdentity(ctx, req)
+}
 
 func TestAuthenticatedOrganizationID(t *testing.T) {
 	t.Parallel()
@@ -48,14 +58,16 @@ func TestAuthenticatedOrganizationID(t *testing.T) {
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
 
-			ctrl := gomock.NewController(t)
-			mockClient := managementclient.NewMock(ctrl)
-			mockClient.IdentityService.EXPECT().
-				GetAuthenticatedIdentity(gomock.Any(), gomock.Any()).
-				Return(connect.NewResponse(tc.IdentityResponse), nil)
+			client := managementclient.NewWithServices(managementclient.Services{
+				IdentityService: identityServiceClient{
+					getAuthenticatedIdentity: func(context.Context, *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error) {
+						return connect.NewResponse(tc.IdentityResponse), nil
+					},
+				},
+			})
 
 			var got Expectation
-			organizationID, err := (&clientHolder{client: mockClient.Client()}).authenticatedOrganizationID(t.Context())
+			organizationID, err := (&clientHolder{client: client}).authenticatedOrganizationID(t.Context())
 			if err != nil {
 				got.Err = err.Error()
 			} else {
