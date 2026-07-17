@@ -130,9 +130,7 @@ func TestAccServiceAccountResourceImportState(t *testing.T) {
 					Config: testAccServiceAccountResourceConfigWithIdentityImport(server.URL, "Imported Account", "Managed by Terraform"),
 					ConfigStateChecks: []statecheck.StateCheck{
 						statecheck.ExpectKnownValue("ona_service_account.test", tfjsonpath.New("id"), knownvalue.StringExact(serviceAccountID1)),
-						statecheck.ExpectKnownValue("ona_service_account.test", tfjsonpath.New("service_account_id"), knownvalue.StringExact(serviceAccountID1)),
 						statecheck.ExpectIdentityValueMatchesStateAtPath("ona_service_account.test", tfjsonpath.New("service_account_id"), tfjsonpath.New("id")),
-						statecheck.ExpectIdentityValueMatchesStateAtPath("ona_service_account.test", tfjsonpath.New("service_account_id"), tfjsonpath.New("service_account_id")),
 					},
 				},
 			},
@@ -144,10 +142,8 @@ func expectImportedServiceAccountIDs(states []*terraform.InstanceState) error {
 	if len(states) != 1 {
 		return fmt.Errorf("imported state count = %d, want 1", len(states))
 	}
-	for _, attribute := range []string{"id", "service_account_id"} {
-		if got := states[0].Attributes[attribute]; got != serviceAccountID1 {
-			return fmt.Errorf("imported %s = %q, want %q", attribute, got, serviceAccountID1)
-		}
+	if got := states[0].Attributes["id"]; got != serviceAccountID1 {
+		return fmt.Errorf("imported id = %q, want %q", got, serviceAccountID1)
 	}
 	return nil
 }
