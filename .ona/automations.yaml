@@ -59,7 +59,7 @@ services:
     commands:
       start: |
         gitpod environment port open 8808 --dont-wait --admission creator_only --name docs-preview --protocol http
-        go run ./scripts/preview-docs --host 0.0.0.0
+        go run ./scripts/preview-docs --host 0.0.0.0 --watch docs
       ready: curl -sf http://localhost:8808
     triggeredBy:
       - manual

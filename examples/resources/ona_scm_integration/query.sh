@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Inputs: ONA_TOKEN, ONA_HOST, TMPDIR, and TERRAFORM from the environment;
 # optional output argument names a destination file for generated Terraform.
-# Example: ./query.sh generated-runners.tf
+# Example: ./query.sh generated-scm-integrations.tf
 # Output: runs Terraform Query for query.hcl and prints the generated file path.
 set -euo pipefail
 # BASH_SOURCE points at this script even when it is invoked from elsewhere.
@@ -13,7 +13,7 @@ if [[ -n "$output" && -e "$output" ]]; then
   echo "$output already exists" >&2
   exit 1
 fi
-workdir="$(mktemp -d "${TMPDIR:-/tmp}/ona-runner-query.XXXXXX")"
+workdir="$(mktemp -d "${TMPDIR:-/tmp}/ona-scm-integration-query.XXXXXX")"
 cleanup_dir="$workdir"
 if [[ -z "$output" ]]; then
   output="$workdir/generated.tf"

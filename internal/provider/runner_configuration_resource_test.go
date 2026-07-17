@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"regexp"
+	"sort"
 	"sync"
 	"testing"
 
@@ -64,6 +65,21 @@ func TestAccSCMIntegrationResourceLifecycle(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"oauth_client_secret", "oauth_client_secret_version"},
+			},
+			{
+				Config:          testAccSCMIntegrationImportedConfig(server.URL),
+				ResourceName:    "ona_scm_integration.test",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportStateCheck: func(states []*terraform.InstanceState) error {
+					if len(states) != 1 {
+						return fmt.Errorf("expected one imported SCM integration state, got %d", len(states))
+					}
+					if states[0].ID != "scm-1" || states[0].Attributes["runner_id"] != "runner-1" {
+						return fmt.Errorf("structured identity imported unexpected SCM integration state: %#v", states[0].Attributes)
+					}
+					return nil
+				},
 			},
 			{
 				Config: testAccSCMIntegrationOAuthConfig(server.URL, "client-2", "secret-2", "v2"),
@@ -579,6 +595,23 @@ resource "ona_scm_integration" "test" {
 `, host, clientID, secret, secretVersion)
 }
 
+func testAccSCMIntegrationImportedConfig(host string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_scm_integration" "test" {
+  runner_id       = "runner-1"
+  kind            = "github"
+  host            = "github.com"
+  auth_mode       = "oauth"
+  oauth_client_id = "client-1"
+}
+`, host)
+}
+
 func testAccSCMIntegrationPATConfig(host string) string {
 	return fmt.Sprintf(`
 provider "ona" {
@@ -948,6 +981,30 @@ func (s *fakeRunnerConfigurationService) GetSCMIntegration(ctx context.Context, 
 	return connect.NewResponse(&v1.GetSCMIntegrationResponse{Integration: cloneSCMIntegration(integration)}), nil
 }
 
+func (s *fakeRunnerConfigurationService) ListSCMIntegrations(ctx context.Context, req *connect.Request[v1.ListSCMIntegrationsRequest]) (*connect.Response[v1.ListSCMIntegrationsResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	runnerIDs := map[string]struct{}{}
+	for _, id := range req.Msg.GetFilter().GetRunnerIds() {
+		runnerIDs[id] = struct{}{}
+	}
+
+	var integrations []*v1.SCMIntegration
+	for _, integration := range s.scmIntegrations {
+		if len(runnerIDs) > 0 {
+			if _, ok := runnerIDs[integration.GetRunnerId()]; !ok {
+				continue
+			}
+		}
+		integrations = append(integrations, cloneSCMIntegration(integration))
+	}
+	sort.Slice(integrations, func(i, j int) bool {
+		return integrations[i].GetId() < integrations[j].GetId()
+	})
+	return connect.NewResponse(&v1.ListSCMIntegrationsResponse{Integrations: integrations}), nil
+}
+
 func (s *fakeRunnerConfigurationService) UpdateSCMIntegration(ctx context.Context, req *connect.Request[v1.UpdateSCMIntegrationRequest]) (*connect.Response[v1.UpdateSCMIntegrationResponse], error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -1184,6 +1241,17 @@ func (s *fakeRunnerConfigurationService) llmAPIKeyUpdated(id string, apiKey stri
 		}
 	}
 	return false
+}
+
+func (s *fakeRunnerConfigurationService) scmSecretUpdateCount() int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	var count int
+	for _, updates := range s.scmSecretUpdates {
+		count += len(updates)
+	}
+	return count
 }
 
 func (s *fakeRunnerConfigurationService) scmCreateIssuerURLSent(id string) bool {
