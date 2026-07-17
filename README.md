@@ -1,3 +1,13 @@
+<p align="center">
+  <a href="https://ona.com/media">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://ona.com/ona-symbol.svg">
+      <source media="(prefers-color-scheme: light)" srcset="https://ona.com/ona-symbol-black.svg">
+      <img alt="Ona symbol" src="https://ona.com/ona-symbol-black.svg" width="96">
+    </picture>
+  </a>
+</p>
+
 # Terraform Provider for Ona
 
 ## Overview
