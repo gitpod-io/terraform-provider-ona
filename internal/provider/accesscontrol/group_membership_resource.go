@@ -8,7 +8,7 @@ import (
 	"fmt"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	resourceschema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"

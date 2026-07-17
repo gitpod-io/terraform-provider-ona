@@ -41,7 +41,7 @@ make install-dependencies
 | --- | --- |
 | `internal/provider/` | Provider, resource, data source, and ephemeral resource implementations and tests |
 | `internal/client/` | Ona API client wrapper used by the provider |
-| `internal/api/go/` | Copied/generated API client subset; do not hand-edit it for lint-only or style changes |
+| `api/public-clients/go/` | Copied generated public API client; do not hand-edit it for lint-only or style changes |
 | `examples/` | Terraform examples used to generate provider documentation |
 | `docs/` | Generated Terraform Registry documentation |
 | `templates/` | Source templates used by documentation generation |
