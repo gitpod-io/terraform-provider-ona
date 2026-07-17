@@ -138,6 +138,7 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		runner.NewEnvironmentClassResource,
 		runner.NewPolicyResource,
 		project.NewResource,
+		project.NewInsightsResource,
 		security.NewPolicyResource,
 		secret.NewResource,
 		organization.NewPoliciesResource,
@@ -171,6 +172,7 @@ func (p *OnaProvider) EphemeralResources(ctx context.Context) []func() ephemeral
 func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResource {
 	return []func() list.ListResource{
 		runner.NewRunnerListResource,
+		project.NewInsightsListResource,
 	}
 }
 
