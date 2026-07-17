@@ -23,6 +23,7 @@ import (
 
 var _ resource.Resource = &SCIMConfigurationResource{}
 var _ resource.ResourceWithConfigure = &SCIMConfigurationResource{}
+var _ resource.ResourceWithIdentity = &SCIMConfigurationResource{}
 var _ resource.ResourceWithImportState = &SCIMConfigurationResource{}
 var _ resource.ResourceWithValidateConfig = &SCIMConfigurationResource{}
 
@@ -146,6 +147,7 @@ func (r *SCIMConfigurationResource) Create(ctx context.Context, req resource.Cre
 	}
 
 	data.ID = types.StringValue(scim.GetId())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, SCIMConfigurationIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -211,6 +213,7 @@ func (r *SCIMConfigurationResource) Read(ctx context.Context, req resource.ReadR
 	prior := data
 	data = SCIMConfigurationModel{}
 	populateSCIMConfigurationModel(&data, scim, prior)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, SCIMConfigurationIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -256,6 +259,7 @@ func (r *SCIMConfigurationResource) Update(ctx context.Context, req resource.Upd
 	planned := data
 	populateSCIMConfigurationModel(&data, scim, planned)
 	preserveSCIMConfigurationPlannedInputs(&data, planned)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, SCIMConfigurationIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -283,7 +287,7 @@ func (r *SCIMConfigurationResource) Delete(ctx context.Context, req resource.Del
 }
 
 func (r *SCIMConfigurationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("id"), req, resp)
 }
 
 func (r *SCIMConfigurationResource) getSCIMConfiguration(ctx context.Context, id string) (*v1.SCIMConfiguration, error) {

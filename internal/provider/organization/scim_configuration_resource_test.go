@@ -4,6 +4,7 @@
 package organization
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -11,7 +12,10 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -109,4 +113,80 @@ func TestPopulateSCIMConfigurationModel(t *testing.T) {
 	if diff := cmp.Diff(expected, got); diff != "" {
 		t.Errorf("populateSCIMConfigurationModel() mismatch (-want +got):\n%s", diff)
 	}
+}
+
+func TestSCIMConfigurationImportStateSeedsEquivalentRefreshState(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+	resourceUnderTest := &SCIMConfigurationResource{}
+	const scimConfigurationID = "scim-1"
+
+	legacy := importSCIMConfigurationState(t, ctx, resourceUnderTest, resource.ImportStateRequest{
+		ID: scimConfigurationID,
+	})
+	structured := importSCIMConfigurationState(t, ctx, resourceUnderTest, resource.ImportStateRequest{
+		Identity: newSCIMConfigurationImportIdentity(t, ctx, resourceUnderTest, scimConfigurationID),
+	})
+
+	if !legacy.State.Raw.Equal(structured.State.Raw) {
+		t.Fatalf("legacy and structured import state differ\nlegacy: %s\nstructured: %s", legacy.State.Raw, structured.State.Raw)
+	}
+	if got := scimConfigurationStateID(t, ctx, structured.State); got != scimConfigurationID {
+		t.Fatalf("structured import seeded state id %q, want %q", got, scimConfigurationID)
+	}
+}
+
+func importSCIMConfigurationState(t *testing.T, ctx context.Context, resourceUnderTest *SCIMConfigurationResource, req resource.ImportStateRequest) resource.ImportStateResponse {
+	t.Helper()
+
+	var schemaResp resource.SchemaResponse
+	resourceUnderTest.Schema(ctx, resource.SchemaRequest{}, &schemaResp)
+	if schemaResp.Diagnostics.HasError() {
+		t.Fatalf("Schema() diagnostics: %v", schemaResp.Diagnostics)
+	}
+
+	resp := resource.ImportStateResponse{
+		State: tfsdk.State{Schema: schemaResp.Schema},
+	}
+	resp.Diagnostics.Append(resp.State.Set(ctx, SCIMConfigurationModel{})...)
+	if resp.Diagnostics.HasError() {
+		t.Fatalf("empty state diagnostics: %v", resp.Diagnostics)
+	}
+
+	resourceUnderTest.ImportState(ctx, req, &resp)
+	if resp.Diagnostics.HasError() {
+		t.Fatalf("ImportState() diagnostics: %v", resp.Diagnostics)
+	}
+
+	return resp
+}
+
+func newSCIMConfigurationImportIdentity(t *testing.T, ctx context.Context, resourceUnderTest *SCIMConfigurationResource, id string) *tfsdk.ResourceIdentity {
+	t.Helper()
+
+	var identitySchemaResp resource.IdentitySchemaResponse
+	resourceUnderTest.IdentitySchema(ctx, resource.IdentitySchemaRequest{}, &identitySchemaResp)
+	if identitySchemaResp.Diagnostics.HasError() {
+		t.Fatalf("IdentitySchema() diagnostics: %v", identitySchemaResp.Diagnostics)
+	}
+
+	return &tfsdk.ResourceIdentity{
+		Raw: tftypes.NewValue(identitySchemaResp.IdentitySchema.Type().TerraformType(ctx), map[string]tftypes.Value{
+			"id": tftypes.NewValue(tftypes.String, id),
+		}),
+		Schema: identitySchemaResp.IdentitySchema,
+	}
+}
+
+func scimConfigurationStateID(t *testing.T, ctx context.Context, state tfsdk.State) string {
+	t.Helper()
+
+	var id types.String
+	diags := state.GetAttribute(ctx, path.Root("id"), &id)
+	if diags.HasError() {
+		t.Fatalf("state id diagnostics: %v", diags)
+	}
+
+	return id.ValueString()
 }
