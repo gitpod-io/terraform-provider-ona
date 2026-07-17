@@ -66,9 +66,9 @@ auth_modes = ["pat"]
 			},
 		},
 		{
-			Name: "provider",
+			Name: "scm_provider",
 			Config: scmIntegrationQueryConfig(`
-providers = ["gitlab"]
+scm_providers = ["gitlab"]
 `),
 			Expected: []scmIntegrationQueryResult{
 				expectedPATSCMIntegrationQueryResult(),
@@ -86,10 +86,10 @@ runner_ids = ["runner-1"]
 		{
 			Name: "combined_filters",
 			Config: scmIntegrationQueryConfig(`
-hosts      = ["github.com"]
-auth_modes = ["oauth"]
-providers  = ["github"]
-runner_ids = ["runner-1"]
+hosts         = ["github.com"]
+auth_modes    = ["oauth"]
+scm_providers = ["github"]
+runner_ids    = ["runner-1"]
 `),
 			Expected: []scmIntegrationQueryResult{
 				expectedOAuthSCMIntegrationQueryResult(),

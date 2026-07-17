@@ -4,6 +4,7 @@ go 1.25.12
 
 require (
 	connectrpc.com/connect v1.18.1
+	github.com/fsnotify/fsnotify v1.9.0
 	github.com/gitpod-io/gitpod-sdk-go v0.13.0
 	github.com/google/go-cmp v0.7.0
 	github.com/google/uuid v1.6.0

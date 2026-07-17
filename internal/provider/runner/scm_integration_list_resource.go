@@ -23,10 +23,10 @@ func NewSCMIntegrationListResource() list.ListResource {
 }
 
 type scmIntegrationListModel struct {
-	AuthModes types.List `tfsdk:"auth_modes"`
-	Hosts     types.List `tfsdk:"hosts"`
-	Providers types.List `tfsdk:"providers"`
-	RunnerIDs types.List `tfsdk:"runner_ids"`
+	AuthModes    types.List `tfsdk:"auth_modes"`
+	Hosts        types.List `tfsdk:"hosts"`
+	SCMProviders types.List `tfsdk:"scm_providers"`
+	RunnerIDs    types.List `tfsdk:"runner_ids"`
 }
 
 type scmIntegrationListFilter struct {
@@ -50,7 +50,7 @@ func (r *SCMIntegrationResource) ListResourceConfigSchema(ctx context.Context, r
 				ElementType:         types.StringType,
 				MarkdownDescription: "SCM host names to include.",
 			},
-			"providers": listschema.ListAttribute{
+			"scm_providers": listschema.ListAttribute{
 				Optional:            true,
 				ElementType:         types.StringType,
 				MarkdownDescription: "SCM provider IDs to include, such as `github` or `gitlab`.",
@@ -140,7 +140,7 @@ func newSCMIntegrationListFilter(ctx context.Context, req list.ListRequest, push
 	if !listutil.PushDiagnostics(push, diags) {
 		return scmIntegrationListFilter{}, false
 	}
-	providers, diags := listutil.StringList(ctx, config.Providers)
+	providers, diags := listutil.StringList(ctx, config.SCMProviders)
 	if !listutil.PushDiagnostics(push, diags) {
 		return scmIntegrationListFilter{}, false
 	}

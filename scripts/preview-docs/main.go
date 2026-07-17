@@ -14,6 +14,8 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+
+	"github.com/fsnotify/fsnotify"
 )
 
 type page struct {
@@ -21,6 +23,20 @@ type page struct {
 	Title   string
 	Source  string
 	Link    string
+}
+
+type watchPaths []string
+
+func (paths *watchPaths) String() string {
+	return strings.Join(*paths, ",")
+}
+
+func (paths *watchPaths) Set(path string) error {
+	if path == "" {
+		return fmt.Errorf("watch path must not be empty")
+	}
+	*paths = append(*paths, path)
+	return nil
 }
 
 func main() {
@@ -34,6 +50,8 @@ func main() {
 	siteDir := flag.String("site-dir", envDefault("SITE_DIR", filepath.Join(providerDir, ".tmp", "docs-preview")), "rendered site directory")
 	skipGenerate := flag.Bool("skip-generate", os.Getenv("SKIP_GENERATE") == "1", "render existing docs without regenerating them")
 	noServe := flag.Bool("no-serve", os.Getenv("NO_SERVE") == "1", "render the preview site and exit without starting a server")
+	var watchedPaths watchPaths
+	flag.Var(&watchedPaths, "watch", "path to watch for preview updates; repeat this flag for multiple paths")
 	flag.Parse()
 
 	if !*skipGenerate {
@@ -52,6 +70,20 @@ func main() {
 		fmt.Printf("Rendered Terraform provider docs preview to %s\n", *siteDir)
 		return
 	}
+	if len(watchedPaths) > 0 {
+		paths, err := resolveWatchPaths(providerDir, watchedPaths)
+		if err != nil {
+			exit(err)
+		}
+		go func() {
+			if err := watchDocs(paths, func() error {
+				return renderSite(providerDir, *siteDir)
+			}); err != nil {
+				fmt.Fprintf(os.Stderr, "watch docs preview: %v\n", err)
+			}
+		}()
+		fmt.Printf("Watching docs paths: %s\n", strings.Join(paths, ", "))
+	}
 
 	addr := fmt.Sprintf("%s:%d", *host, *port)
 	fmt.Printf("Terraform provider docs preview: http://%s/\n", addr)
@@ -59,6 +91,85 @@ func main() {
 	if err := http.ListenAndServe(addr, http.FileServer(http.Dir(*siteDir))); err != nil {
 		exit(fmt.Errorf("serve docs preview: %w", err))
 	}
+}
+
+func resolveWatchPaths(providerDir string, paths []string) ([]string, error) {
+	result := make([]string, 0, len(paths))
+	seen := make(map[string]struct{}, len(paths))
+	for _, path := range paths {
+		if !filepath.IsAbs(path) {
+			path = filepath.Join(providerDir, path)
+		}
+		path = filepath.Clean(path)
+		info, err := os.Stat(path)
+		if err != nil {
+			return nil, fmt.Errorf("watch path %s: %w", path, err)
+		}
+		if !info.IsDir() {
+			path = filepath.Dir(path)
+		}
+		if _, ok := seen[path]; ok {
+			continue
+		}
+		seen[path] = struct{}{}
+		result = append(result, path)
+	}
+	return result, nil
+}
+
+func watchDocs(paths []string, render func() error) error {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		return fmt.Errorf("create file watcher: %w", err)
+	}
+	defer watcher.Close()
+
+	for _, path := range paths {
+		if err := addWatchDirectories(watcher, path); err != nil {
+			return err
+		}
+	}
+
+	for {
+		select {
+		case event, ok := <-watcher.Events:
+			if !ok {
+				return nil
+			}
+			if event.Has(fsnotify.Create) {
+				if info, err := os.Stat(event.Name); err == nil && info.IsDir() {
+					if err := addWatchDirectories(watcher, event.Name); err != nil {
+						return err
+					}
+				}
+			}
+			if event.Has(fsnotify.Write | fsnotify.Create | fsnotify.Remove | fsnotify.Rename) {
+				if err := render(); err != nil {
+					fmt.Fprintf(os.Stderr, "rerender docs preview: %v\n", err)
+				}
+			}
+		case err, ok := <-watcher.Errors:
+			if !ok {
+				return nil
+			}
+			return fmt.Errorf("watch docs: %w", err)
+		}
+	}
+}
+
+func addWatchDirectories(watcher *fsnotify.Watcher, path string) error {
+	return filepath.WalkDir(path, func(path string, entry os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if !entry.IsDir() {
+			return nil
+		}
+		if err := watcher.Add(path); err != nil {
+			return fmt.Errorf("watch directory %s: %w", path, err)
+		}
+		return nil
+	})
 }
 
 func providerDir() (string, error) {
