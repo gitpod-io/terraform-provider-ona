@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"testing"
 
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	testresource "github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/querycheck"
