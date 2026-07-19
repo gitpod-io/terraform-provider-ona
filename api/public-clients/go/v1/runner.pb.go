@@ -4150,14 +4150,14 @@ const file_gitpod_v1_runner_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x123\n" +
-	"\bpolicies\x18\x02 \x03(\v2\x17.gitpod.v1.RunnerPolicyR\bpolicies\"\xaf\x01\n" +
-	"\x19CreateRunnerPolicyRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x121\n" +
-	"\bgroup_id\x18\x02 \x01(\tB\x16\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
+	"\bpolicies\x18\x02 \x03(\v2\x17.gitpod.v1.RunnerPolicyR\bpolicies\"\xbd\x01\n" +
+	"\x19CreateRunnerPolicyRequest\x128\n" +
+	"\trunner_id\x18\x01 \x01(\tB\x1b\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
+	"\trunner.idګ\x1e\x00R\brunnerId\x125\n" +
+	"\bgroup_id\x18\x02 \x01(\tB\x1a\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
 	"\n" +
-	"\bgroup.idR\agroupId\x12)\n" +
-	"\x04role\x18\x03 \x01(\x0e2\x15.gitpod.v1.RunnerRoleR\x04role\"U\n" +
+	"\bgroup.idګ\x1e\x00R\agroupId\x12/\n" +
+	"\x04role\x18\x03 \x01(\x0e2\x15.gitpod.v1.RunnerRoleB\x04ګ\x1e\x00R\x04role\"U\n" +
 	"\x1aCreateRunnerPolicyResponse\x127\n" +
 	"\x06policy\x18\x01 \x01(\v2\x17.gitpod.v1.RunnerPolicyB\x06\xbaH\x03\xc8\x01\x01R\x06policy\"\xaf\x01\n" +
 	"\x19UpdateRunnerPolicyRequest\x124\n" +
@@ -4239,12 +4239,12 @@ const file_gitpod_v1_runner_proto_rawDesc = "" +
 	"\x12support_bundle_url\x18\r \x01(\tB\x04ګ\x1e\x00R\x10supportBundleUrl\"p\n" +
 	"\vGatewayInfo\x12,\n" +
 	"\agateway\x18\x01 \x01(\v2\x12.gitpod.v1.GatewayR\agateway\x123\n" +
-	"\alatency\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\alatency\"l\n" +
-	"\fRunnerPolicy\x121\n" +
-	"\bgroup_id\x18\x01 \x01(\tB\x16\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
+	"\alatency\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\alatency\"|\n" +
+	"\fRunnerPolicy\x125\n" +
+	"\bgroup_id\x18\x01 \x01(\tB\x1a\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
 	"\n" +
-	"\bgroup.idR\agroupId\x12)\n" +
-	"\x04role\x18\x02 \x01(\x0e2\x15.gitpod.v1.RunnerRoleR\x04role*w\n" +
+	"\bgroup.idګ\x1e\x00R\agroupId\x12/\n" +
+	"\x04role\x18\x02 \x01(\x0e2\x15.gitpod.v1.RunnerRoleB\x04ګ\x1e\x00R\x04role:\x04ҫ\x1e\x00*w\n" +
 	"\bLogLevel\x12\x19\n" +
 	"\x15LOG_LEVEL_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fLOG_LEVEL_DEBUG\x10\x01\x12\x12\n" +
