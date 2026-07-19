@@ -53,9 +53,8 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "id", "policy-1"),
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "organization_id", "org-1"),
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "name", "baseline"),
-					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.ports.default_effect", "allow"),
-					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.ports.rule.0.range_from", "22"),
-					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.files.default_actions.#", "2"),
+					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.executables.default_effect", "allow"),
+					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.executables.rule.0.path", "/usr/bin/nc"),
 					resource.TestCheckResourceAttr("data.ona_security_policies.all", "policies.#", "1"),
 					resource.TestCheckResourceAttr("data.ona_security_policies.all", "policies.0.id", "policy-1"),
 					resource.TestCheckResourceAttr("ona_organization_policies.test", "id", "org-1"),
@@ -127,6 +126,11 @@ func TestAccPolicyResourcesRejectInvalidAgentPolicyAtPlan(t *testing.T) {
 				PlanOnly:    true,
 				ExpectError: regexp.MustCompile(`Invalid Max Subagents`),
 			},
+			{
+				Config:      testAccUnsupportedSecurityPolicySectionConfig(server.URL),
+				PlanOnly:    true,
+				ExpectError: regexp.MustCompile(`Unsupported Security Policy Section`),
+			},
 		},
 	})
 }
@@ -174,52 +178,12 @@ resource "ona_security_policy" "baseline" {
   name            = %[2]q
 
   spec {
-    ports {
-      default_effect = "allow"
-
-      rule {
-        range_from = 22
-        range_to   = 22
-        effect     = "block"
-      }
-    }
-
     executables {
       default_effect = "allow"
 
       rule {
         path   = "/usr/bin/nc"
         effect = "audit"
-      }
-    }
-
-    files {
-      default_effect  = "allow"
-      default_actions = ["read", "write"]
-
-      rule {
-        path    = "/etc/shadow"
-        actions = ["read"]
-        effect  = "block"
-      }
-    }
-
-    block_devices {
-      default_effect = "block"
-    }
-
-    data {
-      default_effect = "allow"
-
-      rule {
-        source {
-          file     = "/workspace/secrets.env"
-          selector = "10:20"
-        }
-        destination {
-          host = "example.com"
-        }
-        effect = "block"
       }
     }
   }
@@ -267,6 +231,26 @@ resource "ona_organization_policies" "test" {
   }
 }
 `, host, policyName, archiveAfter)
+}
+
+func testAccUnsupportedSecurityPolicySectionConfig(host string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_security_policy" "unsupported" {
+  organization_id = "org-1"
+  name            = "unsupported"
+
+  spec {
+    ports {
+      default_effect = "allow"
+    }
+  }
+}
+`, host)
 }
 
 func testAccMinimalPolicyConfig(host string) string {
