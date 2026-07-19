@@ -31,20 +31,8 @@ func securityPolicySpecFromModel(model *SpecModel, root path.Path) (*v1.Security
 	}
 
 	spec := &v1.SecurityPolicy_Spec{}
-	if model.Ports != nil {
-		diags.AddAttributeError(root.AtName("ports"), "Unsupported Security Policy Section", "The public Ona API client does not support port policy sections.")
-	}
 	if model.Executables != nil {
 		spec.Executables = executablePolicyFromModel(model.Executables, root.AtName("executables"), &diags)
-	}
-	if model.Files != nil {
-		diags.AddAttributeError(root.AtName("files"), "Unsupported Security Policy Section", "The public Ona API client does not support file policy sections.")
-	}
-	if model.BlockDevices != nil {
-		diags.AddAttributeError(root.AtName("block_devices"), "Unsupported Security Policy Section", "The public Ona API client does not support block device policy sections.")
-	}
-	if model.Data != nil {
-		diags.AddAttributeError(root.AtName("data"), "Unsupported Security Policy Section", "The public Ona API client does not support data policy sections.")
 	}
 	return spec, diags
 }
@@ -119,6 +107,12 @@ func executablePolicyModelFromProto(policy *v1.SecurityPolicy_Spec_ExecutablePol
 }
 
 func preserveSpecPlannedInputs(data *SpecModel, planned *SpecModel) {
+	if data.Ports == nil {
+		data.Ports = planned.Ports
+	}
+	if data.Files == nil {
+		data.Files = planned.Files
+	}
 	if data.Files != nil && planned.Files != nil {
 		data.Files.DefaultActions = preserveSet(data.Files.DefaultActions, planned.Files.DefaultActions)
 		for i := range data.Files.Rules {
@@ -126,5 +120,11 @@ func preserveSpecPlannedInputs(data *SpecModel, planned *SpecModel) {
 				data.Files.Rules[i].Actions = preserveSet(data.Files.Rules[i].Actions, planned.Files.Rules[i].Actions)
 			}
 		}
+	}
+	if data.BlockDevices == nil {
+		data.BlockDevices = planned.BlockDevices
+	}
+	if data.Data == nil {
+		data.Data = planned.Data
 	}
 }
