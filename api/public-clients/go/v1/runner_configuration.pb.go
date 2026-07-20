@@ -4720,7 +4720,7 @@ var File_gitpod_v1_runner_configuration_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\n" +
-	"$gitpod/v1/runner_configuration.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x18gitpod/v1/identity.proto\x1a\x15gitpod/v1/model.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x99\x04\n" +
+	"$gitpod/v1/runner_configuration.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x15gitpod/v1/agent.proto\x1a\x18gitpod/v1/identity.proto\x1a\x15gitpod/v1/model.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x99\x04\n" +
 	"$CreateHostAuthenticationTokenRequest\x124\n" +
 	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
 	"\trunner.idR\brunnerId\x123\n" +
@@ -5045,35 +5045,35 @@ const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\x03pat\x18\x05 \x01(\v28.gitpod.v1.RunnerConfigurationSchema.PersonalAccessTokenR\x03pat\"E\n" +
 	"\x1bLLMIntegrationRequestHeader\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\fR\x05value\"\xf8\x03\n" +
-	"\x0eLLMIntegration\x12'\n" +
-	"\x02id\x18\x01 \x01(\tB\x17\xa2\xab\x1e\x13\n" +
-	"\x11llmintegration.idR\x02id\x12,\n" +
-	"\trunner_id\x18\x02 \x01(\tB\x0f\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12D\n" +
-	"\x06models\x18\x03 \x03(\x0e2\x19.gitpod.v1.SupportedModelB\x11\xa2\xab\x1e\r\n" +
-	"\vmodel.namesR\x06models\x12\x1a\n" +
-	"\bendpoint\x18\x04 \x01(\tR\bendpoint\x12*\n" +
-	"\x11encrypted_api_key\x18\x05 \x01(\fR\x0fencryptedApiKey\x12\x1d\n" +
+	"\x05value\x18\x02 \x01(\fR\x05value\"\xa8\x04\n" +
+	"\x0eLLMIntegration\x12+\n" +
+	"\x02id\x18\x01 \x01(\tB\x1b\xa2\xab\x1e\x13\n" +
+	"\x11llmintegration.idګ\x1e\x00R\x02id\x120\n" +
+	"\trunner_id\x18\x02 \x01(\tB\x13\xa2\xab\x1e\v\n" +
+	"\trunner.idګ\x1e\x00R\brunnerId\x12H\n" +
+	"\x06models\x18\x03 \x03(\x0e2\x19.gitpod.v1.SupportedModelB\x15\xa2\xab\x1e\r\n" +
+	"\vmodel.namesګ\x1e\x00R\x06models\x12 \n" +
+	"\bendpoint\x18\x04 \x01(\tB\x04ګ\x1e\x00R\bendpoint\x12*\n" +
+	"\x11encrypted_api_key\x18\x05 \x01(\fR\x0fencryptedApiKey\x12#\n" +
 	"\n" +
-	"max_tokens\x18\x06 \x01(\x04R\tmaxTokens\x124\n" +
-	"\x05phase\x18\a \x01(\x0e2\x1e.gitpod.v1.LLMIntegrationPhaseR\x05phase\x12!\n" +
-	"\fphase_reason\x18\b \x01(\tR\vphaseReason\x12O\n" +
-	"\x0frequest_headers\x18\t \x03(\v2&.gitpod.v1.LLMIntegrationRequestHeaderR\x0erequestHeaders\x122\n" +
-	"\bprovider\x18\v \x01(\x0e2\x16.gitpod.v1.LLMProviderR\bproviderJ\x04\b\n" +
-	"\x10\v\"\xfc\x01\n" +
-	"\x1bCreateLLMIntegrationRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12S\n" +
-	"\x06models\x18\x02 \x03(\x0e2\x19.gitpod.v1.SupportedModelB \xbaH\f\x92\x01\t\b\x01\"\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\r\n" +
-	"\vmodel.namesR\x06models\x12\x1a\n" +
-	"\bendpoint\x18\x03 \x01(\tR\bendpoint\x12\x17\n" +
-	"\aapi_key\x18\x04 \x01(\tR\x06apiKey\x12\x1d\n" +
+	"max_tokens\x18\x06 \x01(\x04B\x04ګ\x1e\x00R\tmaxTokens\x12:\n" +
+	"\x05phase\x18\a \x01(\x0e2\x1e.gitpod.v1.LLMIntegrationPhaseB\x04ګ\x1e\x00R\x05phase\x12'\n" +
+	"\fphase_reason\x18\b \x01(\tB\x04ګ\x1e\x00R\vphaseReason\x12O\n" +
+	"\x0frequest_headers\x18\t \x03(\v2&.gitpod.v1.LLMIntegrationRequestHeaderR\x0erequestHeaders\x128\n" +
+	"\bprovider\x18\v \x01(\x0e2\x16.gitpod.v1.LLMProviderB\x04ګ\x1e\x00R\bprovider:\x04ҫ\x1e\x00J\x04\b\n" +
+	"\x10\v\"\x96\x02\n" +
+	"\x1bCreateLLMIntegrationRequest\x128\n" +
+	"\trunner_id\x18\x01 \x01(\tB\x1b\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
+	"\trunner.idګ\x1e\x00R\brunnerId\x12W\n" +
+	"\x06models\x18\x02 \x03(\x0e2\x19.gitpod.v1.SupportedModelB$\xbaH\f\x92\x01\t\b\x01\"\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\r\n" +
+	"\vmodel.namesګ\x1e\x00R\x06models\x12 \n" +
+	"\bendpoint\x18\x03 \x01(\tB\x04ګ\x1e\x00R\bendpoint\x12\x1d\n" +
+	"\aapi_key\x18\x04 \x01(\tB\x04ګ\x1e\x00R\x06apiKey\x12#\n" +
 	"\n" +
-	"max_tokens\x18\x05 \x01(\x04R\tmaxTokens\"O\n" +
-	"\x1cCreateLLMIntegrationResponse\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11llmintegration.idR\x02id\"K\n" +
+	"max_tokens\x18\x05 \x01(\x04B\x04ګ\x1e\x00R\tmaxTokens\"S\n" +
+	"\x1cCreateLLMIntegrationResponse\x123\n" +
+	"\x02id\x18\x01 \x01(\tB#\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
+	"\x11llmintegration.idګ\x1e\x00R\x02id\"K\n" +
 	"\x18GetLLMIntegrationRequest\x12/\n" +
 	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
 	"\x11llmintegration.idR\x02id\"X\n" +
@@ -5094,17 +5094,17 @@ const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"pagination\x12=\n" +
 	"\fintegrations\x18\x02 \x03(\v2\x19.gitpod.v1.LLMIntegrationR\fintegrations\x12/\n" +
 	"\x12llm_managed_by_ona\x18\x03 \x01(\bB\x02\x18\x01R\x0fllmManagedByOna\x12T\n" +
-	"\x1aona_intelligence_providers\x18\x04 \x03(\x0e2\x16.gitpod.v1.LLMProviderR\x18onaIntelligenceProviders\"\xb1\x03\n" +
+	"\x1aona_intelligence_providers\x18\x04 \x03(\x0e2\x16.gitpod.v1.LLMProviderR\x18onaIntelligenceProviders\"\xcd\x03\n" +
 	"\x1bUpdateLLMIntegrationRequest\x12/\n" +
 	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11llmintegration.idR\x02id\x12\x1f\n" +
-	"\bendpoint\x18\x02 \x01(\tH\x00R\bendpoint\x88\x01\x01\x12@\n" +
-	"\x06models\x18\x03 \x03(\x0e2\x19.gitpod.v1.SupportedModelB\r\xbaH\n" +
-	"\x92\x01\a\"\x05\x82\x01\x02\x10\x01R\x06models\x12\x1c\n" +
-	"\aapi_key\x18\x04 \x01(\tH\x01R\x06apiKey\x88\x01\x01\x12\"\n" +
+	"\x11llmintegration.idR\x02id\x12%\n" +
+	"\bendpoint\x18\x02 \x01(\tB\x04ګ\x1e\x00H\x00R\bendpoint\x88\x01\x01\x12D\n" +
+	"\x06models\x18\x03 \x03(\x0e2\x19.gitpod.v1.SupportedModelB\x11\xbaH\n" +
+	"\x92\x01\a\"\x05\x82\x01\x02\x10\x01ګ\x1e\x00R\x06models\x12\"\n" +
+	"\aapi_key\x18\x04 \x01(\tB\x04ګ\x1e\x00H\x01R\x06apiKey\x88\x01\x01\x12(\n" +
 	"\n" +
-	"max_tokens\x18\x05 \x01(\x04H\x02R\tmaxTokens\x88\x01\x01\x129\n" +
-	"\x05phase\x18\x06 \x01(\x0e2\x1e.gitpod.v1.LLMIntegrationPhaseH\x03R\x05phase\x88\x01\x01\x12O\n" +
+	"max_tokens\x18\x05 \x01(\x04B\x04ګ\x1e\x00H\x02R\tmaxTokens\x88\x01\x01\x12?\n" +
+	"\x05phase\x18\x06 \x01(\x0e2\x1e.gitpod.v1.LLMIntegrationPhaseB\x04ګ\x1e\x00H\x03R\x05phase\x88\x01\x01\x12O\n" +
 	"\x0frequest_headers\x18\a \x03(\v2&.gitpod.v1.LLMIntegrationRequestHeaderR\x0erequestHeadersB\v\n" +
 	"\t_endpointB\n" +
 	"\n" +
@@ -5394,6 +5394,7 @@ func file_gitpod_v1_runner_configuration_proto_init() {
 	if File_gitpod_v1_runner_configuration_proto != nil {
 		return
 	}
+	file_gitpod_v1_agent_proto_init()
 	file_gitpod_v1_identity_proto_init()
 	file_gitpod_v1_model_proto_init()
 	file_gitpod_v1_pagination_proto_init()
