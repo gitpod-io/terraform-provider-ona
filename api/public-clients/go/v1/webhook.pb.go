@@ -9,6 +9,7 @@ package v1
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
+	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -1468,50 +1469,48 @@ var File_gitpod_v1_webhook_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_webhook_proto_rawDesc = "" +
 	"\n" +
-	"\x17gitpod/v1/webhook.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x18gitpod/v1/workflow.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"w\n" +
-	"\x16WebhookRepositoryScope\x12\x1b\n" +
-	"\x04host\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x04host\x12\x1d\n" +
-	"\x05owner\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x05owner\x12\x1b\n" +
-	"\x04name\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x04nameJ\x04\b\x01\x10\x02\"T\n" +
-	"\x18WebhookOrganizationScope\x12\x1b\n" +
-	"\x04host\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x04host\x12\x1b\n" +
-	"\x04name\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x04name\"\x88\a\n" +
-	"\aWebhook\x12(\n" +
-	"\x02id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
+	"\x17gitpod/v1/webhook.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x18gitpod/v1/workflow.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x83\x01\n" +
+	"\x16WebhookRepositoryScope\x12\x1f\n" +
+	"\x04host\x18\x02 \x01(\tB\v\xbaH\x04r\x02\x10\x01ګ\x1e\x00R\x04host\x12!\n" +
+	"\x05owner\x18\x03 \x01(\tB\v\xbaH\x04r\x02\x10\x01ګ\x1e\x00R\x05owner\x12\x1f\n" +
+	"\x04name\x18\x04 \x01(\tB\v\xbaH\x04r\x02\x10\x01ګ\x1e\x00R\x04nameJ\x04\b\x01\x10\x02\"\\\n" +
+	"\x18WebhookOrganizationScope\x12\x1f\n" +
+	"\x04host\x18\x01 \x01(\tB\v\xbaH\x04r\x02\x10\x01ګ\x1e\x00R\x04host\x12\x1f\n" +
+	"\x04name\x18\x02 \x01(\tB\v\xbaH\x04r\x02\x10\x01ګ\x1e\x00R\x04name\"\xe4\a\n" +
+	"\aWebhook\x12,\n" +
+	"\x02id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
 	"\n" +
-	"webhook.idR\x02id\x127\n" +
-	"\bmetadata\x18\x02 \x01(\v2\x1b.gitpod.v1.Webhook.MetadataR\bmetadata\x12+\n" +
-	"\x04spec\x18\x03 \x01(\v2\x17.gitpod.v1.Webhook.SpecR\x04spec\x12\x10\n" +
-	"\x03url\x18\x04 \x01(\tR\x03url\x120\n" +
-	"\x14bound_workflow_count\x18\x05 \x01(\x05R\x12boundWorkflowCount\x12F\n" +
-	"\x11last_triggered_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x0flastTriggeredAt\x1a\xac\x02\n" +
-	"\bMetadata\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\x12,\n" +
-	"\acreator\x18\x04 \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x129\n" +
+	"webhook.idګ\x1e\x00R\x02id\x12=\n" +
+	"\bmetadata\x18\x02 \x01(\v2\x1b.gitpod.v1.Webhook.MetadataB\x04ګ\x1e\x00R\bmetadata\x121\n" +
+	"\x04spec\x18\x03 \x01(\v2\x17.gitpod.v1.Webhook.SpecB\x04ګ\x1e\x00R\x04spec\x12\x16\n" +
+	"\x03url\x18\x04 \x01(\tB\x04ګ\x1e\x00R\x03url\x126\n" +
+	"\x14bound_workflow_count\x18\x05 \x01(\x05B\x04ګ\x1e\x00R\x12boundWorkflowCount\x12L\n" +
+	"\x11last_triggered_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\x0flastTriggeredAt\x1a\xce\x02\n" +
+	"\bMetadata\x12J\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB!\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
+	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12\x18\n" +
+	"\x04name\x18\x02 \x01(\tB\x04ګ\x1e\x00R\x04name\x12&\n" +
+	"\vdescription\x18\x03 \x01(\tB\x04ګ\x1e\x00R\vdescription\x122\n" +
+	"\acreator\x18\x04 \x01(\v2\x12.gitpod.v1.SubjectB\x04ګ\x1e\x00R\acreator\x12?\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tcreatedAt\x12?\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x1a\xb1\x02\n" +
-	"\x04Spec\x124\n" +
-	"\x04type\x18\x01 \x01(\x0e2\x16.gitpod.v1.WebhookTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12\x18\n" +
-	"\x05scope\x18\x02 \x01(\tB\x02\x18\x01R\x05scope\x12@\n" +
-	"\bprovider\x18\x03 \x01(\x0e2\x1a.gitpod.v1.WebhookProviderB\b\xbaH\x05\x82\x01\x02\x10\x01R\bprovider\x12C\n" +
-	"\x06scopes\x18\x04 \x03(\v2!.gitpod.v1.WebhookRepositoryScopeB\b\xbaH\x05\x92\x01\x02\x10dR\x06scopes\x12R\n" +
-	"\x12organization_scope\x18\x05 \x01(\v2#.gitpod.v1.WebhookOrganizationScopeR\x11organizationScope\"\x98\x03\n" +
-	"\x14CreateWebhookRequest\x12\x1d\n" +
-	"\x04name\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18PR\x04name\x12*\n" +
-	"\vdescription\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03R\vdescription\x126\n" +
-	"\x04type\x18\x03 \x01(\x0e2\x16.gitpod.v1.WebhookTypeB\n" +
-	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\x04type\x12 \n" +
+	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tupdatedAt\x1a\xc3\x02\n" +
+	"\x04Spec\x128\n" +
+	"\x04type\x18\x01 \x01(\x0e2\x16.gitpod.v1.WebhookTypeB\f\xbaH\x05\x82\x01\x02\x10\x01ګ\x1e\x00R\x04type\x12\x18\n" +
+	"\x05scope\x18\x02 \x01(\tB\x02\x18\x01R\x05scope\x12D\n" +
+	"\bprovider\x18\x03 \x01(\x0e2\x1a.gitpod.v1.WebhookProviderB\f\xbaH\x05\x82\x01\x02\x10\x01ګ\x1e\x00R\bprovider\x12G\n" +
+	"\x06scopes\x18\x04 \x03(\v2!.gitpod.v1.WebhookRepositoryScopeB\f\xbaH\x05\x92\x01\x02\x10dګ\x1e\x00R\x06scopes\x12X\n" +
+	"\x12organization_scope\x18\x05 \x01(\v2#.gitpod.v1.WebhookOrganizationScopeB\x04ګ\x1e\x00R\x11organizationScope:\x04ҫ\x1e\x00\"\xb2\x03\n" +
+	"\x14CreateWebhookRequest\x12!\n" +
+	"\x04name\x18\x01 \x01(\tB\r\xbaH\x06r\x04\x10\x01\x18Pګ\x1e\x00R\x04name\x12.\n" +
+	"\vdescription\x18\x02 \x01(\tB\f\xbaH\x05r\x03\x18\xf4\x03ګ\x1e\x00R\vdescription\x12:\n" +
+	"\x04type\x18\x03 \x01(\x0e2\x16.gitpod.v1.WebhookTypeB\x0e\xbaH\a\x82\x01\x04\x10\x01 \x00ګ\x1e\x00R\x04type\x12 \n" +
 	"\x05scope\x18\x04 \x01(\tB\n" +
-	"\xbaH\x05r\x03\x18\xff\x01\x18\x01R\x05scope\x12B\n" +
-	"\bprovider\x18\x05 \x01(\x0e2\x1a.gitpod.v1.WebhookProviderB\n" +
-	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\bprovider\x12C\n" +
-	"\x06scopes\x18\x06 \x03(\v2!.gitpod.v1.WebhookRepositoryScopeB\b\xbaH\x05\x92\x01\x02\x10dR\x06scopes\x12R\n" +
-	"\x12organization_scope\x18\a \x01(\v2#.gitpod.v1.WebhookOrganizationScopeR\x11organizationScope\"E\n" +
+	"\xbaH\x05r\x03\x18\xff\x01\x18\x01R\x05scope\x12F\n" +
+	"\bprovider\x18\x05 \x01(\x0e2\x1a.gitpod.v1.WebhookProviderB\x0e\xbaH\a\x82\x01\x04\x10\x01 \x00ګ\x1e\x00R\bprovider\x12G\n" +
+	"\x06scopes\x18\x06 \x03(\v2!.gitpod.v1.WebhookRepositoryScopeB\f\xbaH\x05\x92\x01\x02\x10dګ\x1e\x00R\x06scopes\x12X\n" +
+	"\x12organization_scope\x18\a \x01(\v2#.gitpod.v1.WebhookOrganizationScopeB\x04ګ\x1e\x00R\x11organizationScope\"E\n" +
 	"\x15CreateWebhookResponse\x12,\n" +
 	"\awebhook\x18\x01 \x01(\v2\x12.gitpod.v1.WebhookR\awebhook\"L\n" +
 	"\x11GetWebhookRequest\x127\n" +
@@ -1559,14 +1558,14 @@ const file_gitpod_v1_webhook_proto_rawDesc = "" +
 	"\n" +
 	"webhook.idR\twebhookId\"K\n" +
 	"\x15DeleteWebhookResponse\x122\n" +
-	"\x15affected_workflow_ids\x18\x01 \x03(\tR\x13affectedWorkflowIds\"R\n" +
-	"\x17GetWebhookSecretRequest\x127\n" +
+	"\x15affected_workflow_ids\x18\x01 \x03(\tR\x13affectedWorkflowIds\"V\n" +
+	"\x17GetWebhookSecretRequest\x12;\n" +
 	"\n" +
-	"webhook_id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
+	"webhook_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
 	"\n" +
-	"webhook.idR\twebhookId\"2\n" +
-	"\x18GetWebhookSecretResponse\x12\x16\n" +
-	"\x06secret\x18\x01 \x01(\tR\x06secret\"U\n" +
+	"webhook.idګ\x1e\x00R\twebhookId\"8\n" +
+	"\x18GetWebhookSecretResponse\x12\x1c\n" +
+	"\x06secret\x18\x01 \x01(\tB\x04ګ\x1e\x00R\x06secret\"U\n" +
 	"\x1aRotateWebhookSecretRequest\x127\n" +
 	"\n" +
 	"webhook_id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
