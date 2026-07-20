@@ -31,10 +31,25 @@ func securityPolicySpecFromModel(model *SpecModel, root path.Path) (*v1.Security
 	}
 
 	spec := &v1.SecurityPolicy_Spec{}
+	addUnsupportedPolicySectionWarning(model.Ports != nil, root.AtName("ports"), "ports", &diags)
 	if model.Executables != nil {
 		spec.Executables = executablePolicyFromModel(model.Executables, root.AtName("executables"), &diags)
 	}
+	addUnsupportedPolicySectionWarning(model.Files != nil, root.AtName("files"), "files", &diags)
+	addUnsupportedPolicySectionWarning(model.BlockDevices != nil, root.AtName("block_devices"), "block_devices", &diags)
+	addUnsupportedPolicySectionWarning(model.Data != nil, root.AtName("data"), "data", &diags)
 	return spec, diags
+}
+
+func addUnsupportedPolicySectionWarning(configured bool, attrPath path.Path, name string, diags *diag.Diagnostics) {
+	if !configured {
+		return
+	}
+	diags.AddAttributeWarning(
+		attrPath,
+		"Security Policy Section Not Applied",
+		"The copied public API client no longer exposes spec."+name+". This block is ignored by this provider version.",
+	)
 }
 
 func executablePolicyFromModel(model *ExecutablePolicyModel, root path.Path, diags *diag.Diagnostics) *v1.SecurityPolicy_Spec_ExecutablePolicy {
