@@ -1,6 +1,7 @@
 # Local Dev Loop Module
 
-This module exercises all Terraform provider resources and both runner data sources:
+This module exercises the Terraform provider resources, ephemeral resources,
+and data sources:
 
 - `ona_runner.devloop`
 - `ona_service_account.devloop`
@@ -15,8 +16,10 @@ This module exercises all Terraform provider resources and both runner data sour
 - `ona_scm_integration.gitlab_pat`
 - `ona_scm_integration.azuredevops_entra`
 - `ona_scm_integration.azuredevops_server`
+- `ona_integration.linear`
 - `ephemeral.ona_runner_token.devloop`
 - `ephemeral.ona_webhook_secret.devloop`
+- `data.ona_integration_definitions.available`
 - `data.ona_runners.all`
 - `data.ona_runner.devloop`
 - `data.ona_warm_pool.devloop`
@@ -31,7 +34,6 @@ cat > terraformrc <<EOF
 provider_installation {
   dev_overrides {
     "gitpod-io/ona" = "${PWD}/.bin"
-    "ona-com/ona"  = "${PWD}/.bin"
   }
   direct {}
 }
@@ -56,10 +58,14 @@ terraform -chdir=dev/local-devloop apply -auto-approve -input=false
 ```
 
 The apply output includes `cloudformation_template_url` for AWS EC2 runners,
-`managed_service_account_id` for the managed service account, and the managed
-warm pool ID. Runner registration tokens are consumed through
+`managed_service_account_id` for the managed service account, the managed warm
+pool and integration IDs, and the number of visible integration definitions.
+Runner registration tokens are consumed through
 `ephemeral.ona_runner_token` during apply, so they are not written as normal
 Terraform outputs or stored in state.
+
+The integration uses the visible built-in definition for `linear.app`, so the
+dev loop does not require or persist an OAuth client secret.
 
 Webhook creation requires a user or administrator token; the Ona API rejects
 service-account credentials for this operation. The dev loop retrieves the

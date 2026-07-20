@@ -1,20 +1,30 @@
 name: Terraform provider CI
-run-name: "${{ inputs.publish_release && 'Create Terraform provider release' || 'Build Terraform provider' }}"
+run-name: "${{ inputs.release_channel != 'none' && format('Create Terraform provider {0} release', inputs.release_channel) || 'Build Terraform provider' }}"
 
 on:
   workflow_dispatch:
-  workflow_call:
     inputs:
-      publish_release:
-        description: "Publish a prerelease to GitHub releases"
+      release_channel:
+        description: "Release channel to publish"
         required: false
-        type: boolean
-        default: false
-      version:
-        description: "Optional prerelease version, for example v0.1.0-beta.1. Defaults to v0.1.0-beta.<run number> when publishing."
+        type: choice
+        options:
+          - none
+          - stable
+          - beta
+        default: none
+      release_environment:
+        description: "GitHub environment that contains release credentials"
         required: false
         type: string
-        default: ""
+        default: main
+  workflow_call:
+    inputs:
+      release_channel:
+        description: "Release channel to publish: none, stable, or beta"
+        required: false
+        type: string
+        default: none
       release_environment:
         description: "GitHub environment that contains release credentials"
         required: false
@@ -23,16 +33,15 @@ on:
     outputs:
       version:
         description: Published release version, including the leading v.
-        value: ${{ jobs.resolve-prerelease-version.outputs.version }}
+        value: ${{ jobs.resolve-release-version.outputs.version }}
       version_no_v:
         description: Published release version without the leading v.
-        value: ${{ jobs.resolve-prerelease-version.outputs.version_no_v }}
+        value: ${{ jobs.resolve-release-version.outputs.version_no_v }}
 
 permissions:
   contents: read
 
 env:
-  DEFAULT_PRERELEASE_PREFIX: v0.1.0-beta
   GOLANGCI_LINT_VERSION: v2.11.4
   RELEASE_REPOSITORY: gitpod-io/terraform-provider-ona
   REGISTRY_PROVIDER_SOURCE: gitpod-io/ona
@@ -53,10 +62,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
+      - name: Validate stable release metadata
+        run: scripts/validate-release-version.sh --channel stable --no-tag-precedence
+
+      - name: Validate beta release metadata
+        run: scripts/validate-release-version.sh --channel beta --no-tag-precedence
+
+      - name: Read Go version
+        id: go_version
+        uses: ./.github/actions/read-go-version
+
       - name: Setup Go
         uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
-          go-version-file: go.mod
+          go-version: ${{ steps.go_version.outputs.version }}
           cache-dependency-path: |
             go.sum
             tools/go.sum
@@ -104,7 +123,7 @@ jobs:
   release-snapshot:
     name: Build release snapshot
     needs: [verify]
-    if: ${{ !inputs.publish_release }}
+    if: ${{ inputs.release_channel == 'none' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -112,10 +131,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
+      - name: Read Go version
+        id: go_version
+        uses: ./.github/actions/read-go-version
+
       - name: Setup Go
         uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
-          go-version-file: go.mod
+          go-version: ${{ steps.go_version.outputs.version }}
           cache-dependency-path: |
             go.sum
             tools/go.sum
@@ -123,42 +146,40 @@ jobs:
       - name: Build snapshot release artifacts
         run: make release-snapshot RELEASE_SNAPSHOT_VERSION=0.0.0-SNAPSHOT
 
-  resolve-prerelease-version:
+  resolve-release-version:
     name: Select release version
-    if: ${{ inputs.publish_release }}
+    if: ${{ inputs.release_channel != 'none' }}
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
       version_no_v: ${{ steps.version.outputs.version_no_v }}
     steps:
-      - name: Resolve version
-        id: version
+      - name: Require main branch for publishing
         env:
-          DEFAULT_PRERELEASE_PREFIX: ${{ env.DEFAULT_PRERELEASE_PREFIX }}
-          INPUT_VERSION: ${{ inputs.version || '' }}
-          RUN_NUMBER: ${{ github.run_number }}
+          REF_NAME: ${{ github.ref }}
         run: |
           set -euo pipefail
 
-          version="${INPUT_VERSION//[[:space:]]/}"
-          if [[ -z "$version" ]]; then
-            version="${DEFAULT_PRERELEASE_PREFIX}.${RUN_NUMBER}"
-          fi
-          [[ "$version" == v* ]] || version="v${version}"
-
-          if ! [[ "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-[0-9A-Za-z][0-9A-Za-z.-]*$ ]]; then
-            echo "::error::Version must be a prerelease semver such as v0.1.0-beta.1, got: ${version}"
+          if [[ "$REF_NAME" != "refs/heads/main" ]]; then
+            echo "::error::Release publishing must run from main after the release-prep PR merges, got ${REF_NAME}."
             exit 1
           fi
 
-          echo "version=${version}" >>"$GITHUB_OUTPUT"
-          echo "version_no_v=${version#v}" >>"$GITHUB_OUTPUT"
-          echo "Resolved prerelease version: ${version}"
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Resolve version
+        id: version
+        env:
+          RELEASE_CHANNEL: ${{ inputs.release_channel }}
+        run: scripts/validate-release-version.sh --channel "$RELEASE_CHANNEL" --github-output
 
   publish-preflight:
     name: Check release prerequisites
-    needs: [resolve-prerelease-version]
-    if: ${{ inputs.publish_release }}
+    needs: [resolve-release-version]
+    if: ${{ inputs.release_channel != 'none' }}
     runs-on: ubuntu-latest
     environment:
       name: ${{ inputs.release_environment }}
@@ -169,18 +190,21 @@ jobs:
       GPG_FINGERPRINT: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_FINGERPRINT }}
       GPG_PRIVATE_KEY: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_PRIVATE_KEY }}
       RELEASE_REPOSITORY: gitpod-io/terraform-provider-ona
-      VERSION: ${{ needs.resolve-prerelease-version.outputs.version }}
+      RELEASE_CHANNEL: ${{ inputs.release_channel }}
+      VERSION: ${{ needs.resolve-release-version.outputs.version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
 
       - name: Validate publish inputs and external prerequisites
         run: scripts/preflight-publish-release.sh
 
   create-release:
     name: Create GitHub release
-    needs: [verify, resolve-prerelease-version, publish-preflight]
-    if: ${{ inputs.publish_release }}
+    needs: [verify, resolve-release-version, publish-preflight]
+    if: ${{ inputs.release_channel != 'none' }}
     runs-on: ubuntu-latest
     environment:
       name: ${{ inputs.release_environment }}
@@ -189,6 +213,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Read Go version
+        id: go_version
+        uses: ./.github/actions/read-go-version
 
       - name: Generate GitHub App token
         id: generate-token
@@ -201,7 +231,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
-          go-version-file: go.mod
+          go-version: ${{ steps.go_version.outputs.version }}
           cache-dependency-path: |
             go.sum
             tools/go.sum
@@ -214,5 +244,6 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_PASSPHRASE }}
           GPG_PRIVATE_KEY: ${{ secrets.TERRAFORM_PROVIDER_ONA_GPG_PRIVATE_KEY }}
           RELEASE_REPOSITORY: gitpod-io/terraform-provider-ona
-          VERSION: ${{ needs.resolve-prerelease-version.outputs.version }}
+          RELEASE_CHANNEL: ${{ inputs.release_channel }}
+          VERSION: ${{ needs.resolve-release-version.outputs.version }}
         run: scripts/publish-release.sh

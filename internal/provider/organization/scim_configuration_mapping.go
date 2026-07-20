@@ -7,7 +7,7 @@ import (
 	"context"
 	"time"
 
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
@@ -68,7 +68,6 @@ func populateSCIMConfigurationModel(data *SCIMConfigurationModel, scim *v1.SCIMC
 	data.TokenExpiresIn = prior.TokenExpiresIn
 	data.TokenExpiresAt = timestampString(scim.GetTokenExpiresAt())
 	data.CreatedAt = timestampString(scim.GetCreatedAt())
-	data.UpdatedAt = timestampString(scim.GetUpdatedAt())
 }
 
 func preserveSCIMConfigurationPlannedInputs(data *SCIMConfigurationModel, planned SCIMConfigurationModel) {
@@ -98,7 +97,7 @@ func validateSCIMDurationValue(value types.String, attrPath path.Path, diags *di
 	}
 	duration, err := time.ParseDuration(value.ValueString())
 	if err != nil {
-		diags.AddAttributeError(attrPath, "Invalid SCIM Token Duration", "Use a Go duration string such as \"24h\" or \"8760h\".")
+		diags.AddAttributeError(attrPath, "Invalid SCIM Token Duration", "Use a number followed by a time unit, such as \"24h\" or \"8760h\".")
 		return
 	}
 	if duration < 24*time.Hour || duration > 2*365*24*time.Hour {
@@ -114,7 +113,7 @@ func scimTokenExpiresIn(ctx context.Context, cfg tfsdk.Config, diags *diag.Diagn
 	}
 	duration, err := time.ParseDuration(value.ValueString())
 	if err != nil {
-		diags.AddAttributeError(path.Root("token_expires_in"), "Invalid SCIM Token Duration", "Use a Go duration string such as \"24h\" or \"8760h\".")
+		diags.AddAttributeError(path.Root("token_expires_in"), "Invalid SCIM Token Duration", "Use a number followed by a time unit, such as \"24h\" or \"8760h\".")
 		return nil
 	}
 	return durationpb.New(duration)

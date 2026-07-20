@@ -1,0 +1,57 @@
+---
+page_title: "{{.ProviderShortName}} Provider"
+description: |-
+  Manage Ona projects, runners, identity and access settings, organization settings, security controls, secrets, and automation integrations with Terraform.
+---
+
+# Ona Provider
+
+The Ona provider manages Ona infrastructure and organization configuration from Terraform. It is intended for platform, infrastructure, and security teams that want Ona projects, runners, access controls, policy settings, secrets, and automation integrations to be reviewed, versioned, and applied through Terraform.
+
+The provider is currently a beta release. The repository version is `0.2.0-beta.2`, and the release process publishes beta artifacts from SemVer prerelease versions.
+
+## Requirements
+
+- Terraform CLI `>= 1.14`.
+- Linux `amd64` and Linux `arm64` provider packages. The current beta release configuration does not publish macOS or Windows packages.
+- An Ona API token supplied through `ONA_TOKEN`.
+
+## Example Usage
+
+{{ if .HasExamples -}}
+{{- range .ExampleFiles }}
+
+{{ tffile . }}
+{{- end }}
+{{- end }}
+
+Set `ONA_TOKEN` in the environment before running Terraform:
+
+```shell
+export ONA_TOKEN="<api-token>"
+terraform init
+terraform plan
+```
+
+Set `ONA_HOST` only when your organization uses a non-default Ona host:
+
+```shell
+export ONA_HOST="https://<ona-hostname>"
+```
+
+## Guides
+
+- [Authentication and permissions](guides/authentication-and-permissions)
+- [State, secrets, and safe deletion](guides/state-secrets-and-safe-deletion)
+- [Troubleshooting and support](guides/troubleshooting-and-support)
+
+## Links
+
+- [Ona getting started](https://ona.com/docs/ona/getting-started)
+- [Ona API reference](https://ona.com/docs/ona/api-reference)
+- [Source repository](https://github.com/gitpod-io/terraform-provider-ona)
+- [Changelog](https://github.com/gitpod-io/terraform-provider-ona/blob/main/CHANGELOG.md)
+- [Support](https://ona.com/support)
+- [Security reporting](https://github.com/gitpod-io/terraform-provider-ona/security/policy)
+
+{{ .SchemaMarkdown | trimspace }}

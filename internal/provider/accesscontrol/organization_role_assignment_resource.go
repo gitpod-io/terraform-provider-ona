@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -34,12 +34,9 @@ type OrganizationRoleAssignmentResource struct {
 }
 
 type OrganizationRoleAssignmentModel struct {
-	ID             types.String `tfsdk:"id"`
-	GroupID        types.String `tfsdk:"group_id"`
-	OrganizationID types.String `tfsdk:"organization_id"`
-	Role           types.String `tfsdk:"role"`
-	ResourceType   types.String `tfsdk:"resource_type"`
-	ResourceID     types.String `tfsdk:"resource_id"`
+	ID      types.String `tfsdk:"id"`
+	GroupID types.String `tfsdk:"group_id"`
+	Role    types.String `tfsdk:"role"`
 }
 
 var roleToAPI = map[string]v1.ResourceRole{
@@ -84,32 +81,11 @@ func (r *OrganizationRoleAssignmentResource) Schema(ctx context.Context, req res
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"organization_id": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Organization ID whose role is assigned. This is resolved from the authenticated provider token.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
-			},
 			"role": resourceschema.StringAttribute{
 				Required:            true,
 				MarkdownDescription: "Organization role. Supported values are `organization_admin`, `runners_admin`, `projects_admin`, `automations_admin`, `groups_admin`, `environments_reader`, `insights_viewer`, `audit_log_reader`, and `billing_viewer`. Changing this value replaces the assignment.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
-				},
-			},
-			"resource_type": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Resource type for the assignment. Always `organization`.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
-			},
-			"resource_id": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Resource ID for the assignment. This is the same as `organization_id`.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 		},
@@ -180,14 +156,10 @@ func (r *OrganizationRoleAssignmentResource) Read(ctx context.Context, req resou
 		return
 	}
 
-	organizationID := data.OrganizationID.ValueString()
-	if organizationID == "" {
-		var err error
-		organizationID, err = r.authenticatedOrganizationID(ctx)
-		if err != nil {
-			resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
-			return
-		}
+	organizationID, err := r.authenticatedOrganizationID(ctx)
+	if err != nil {
+		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
+		return
 	}
 
 	assignment, err := r.findAssignment(ctx, data.GroupID.ValueString(), organizationID, data.Role.ValueString())
@@ -234,20 +206,17 @@ func (r *OrganizationRoleAssignmentResource) Delete(ctx context.Context, req res
 }
 
 func (r *OrganizationRoleAssignmentResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	parts, diags := splitImportID(req.ID, 3, "group_id/organization_id/role")
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
+	parts := strings.Split(req.ID, "/")
+	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
+		resp.Diagnostics.AddError("Invalid Import ID", "Use group_id/role to import an Ona organization role assignment.")
 		return
 	}
-	if _, ok := roleToAPI[parts[2]]; !ok {
-		addInvalidRoleDiagnostic(path.Root("role"), parts[2], &resp.Diagnostics)
+	if _, ok := roleToAPI[parts[1]]; !ok {
+		addInvalidRoleDiagnostic(path.Root("role"), parts[1], &resp.Diagnostics)
 		return
 	}
 	setImportString(ctx, resp, "group_id", parts[0])
-	setImportString(ctx, resp, "organization_id", parts[1])
-	setImportString(ctx, resp, "role", parts[2])
-	setImportString(ctx, resp, "resource_type", resourceTypeOrganization)
-	setImportString(ctx, resp, "resource_id", parts[1])
+	setImportString(ctx, resp, "role", parts[1])
 }
 
 func (r *OrganizationRoleAssignmentResource) findAssignment(ctx context.Context, groupID string, organizationID string, role string) (*v1.RoleAssignment, error) {
@@ -281,10 +250,7 @@ func populateOrganizationRoleAssignmentModel(data *OrganizationRoleAssignmentMod
 	role := apiToRole[assignment.GetResourceRole()]
 	data.ID = types.StringValue(assignment.GetId())
 	data.GroupID = types.StringValue(assignment.GetGroupId())
-	data.OrganizationID = types.StringValue(assignment.GetResourceId())
 	data.Role = types.StringValue(role)
-	data.ResourceType = types.StringValue(resourceTypeOrganization)
-	data.ResourceID = types.StringValue(assignment.GetResourceId())
 }
 
 func validateOrganizationRole(role types.String, diags *diag.Diagnostics) {

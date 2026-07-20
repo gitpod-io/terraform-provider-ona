@@ -17,11 +17,12 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1/v1connect"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/durationpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -40,8 +41,8 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 			if !server.security.policyDeleted("policy-1") {
 				return errors.New("policy-1 was not deleted")
 			}
-			if server.organization.lastSecurityPolicyID() != "policy-1" {
-				return errors.New("organization policies did not receive the managed security policy ID")
+			if diff := server.organization.defaultsDiff(); diff != "" {
+				return fmt.Errorf("organization policies were not restored to their server-defined defaults: %s", diff)
 			}
 			return nil
 		},
@@ -231,7 +232,6 @@ data "ona_security_policies" "all" {
 }
 
 resource "ona_organization_policies" "test" {
-  organization_id                         = "org-1"
   members_require_projects                = true
   members_create_projects                 = false
   allowed_editor_ids                      = ["editor-a"]
@@ -277,7 +277,6 @@ provider "ona" {
 }
 
 resource "ona_organization_policies" "test" {
-  organization_id = "org-1"
 }
 `, host)
 }
@@ -290,8 +289,6 @@ provider "ona" {
 }
 
 resource "ona_organization_policies" "test" {
-  organization_id = "org-1"
-
   agent_policy = {
     %[2]s
   }
@@ -312,15 +309,19 @@ func newPolicyAPIServer(t *testing.T) *policyAPIServer {
 		policies: map[string]*v1.SecurityPolicy{},
 		now:      time.Date(2026, 6, 25, 12, 0, 0, 0, time.UTC),
 	}
+	defaults := newTestOrganizationPolicies("org-1")
 	organizationService := &fakeOrganizationService{
-		policies: newTestOrganizationPolicies("org-1"),
+		policies: cloneOrganizationPolicies(defaults),
+		defaults: cloneOrganizationPolicies(defaults),
 	}
 
 	securityPath, securityHandler := v1connect.NewSecurityServiceHandler(securityService)
 	organizationPath, organizationHandler := v1connect.NewOrganizationServiceHandler(organizationService)
+	identityPath, identityHandler := v1connect.NewIdentityServiceHandler(organizationService)
 	mux := http.NewServeMux()
 	mux.Handle(securityPath, securityHandler)
 	mux.Handle(organizationPath, organizationHandler)
+	mux.Handle(identityPath, identityHandler)
 	server := httptest.NewServer(http.StripPrefix("/api", mux))
 
 	return &policyAPIServer{
@@ -445,6 +446,25 @@ type fakeOrganizationService struct {
 
 	mu       sync.Mutex
 	policies *v1.OrganizationPolicies
+	defaults *v1.OrganizationPolicies
+}
+
+func (s *fakeOrganizationService) GetAuthenticatedIdentity(ctx context.Context, req *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error) {
+	return connect.NewResponse(&v1.GetAuthenticatedIdentityResponse{
+		OrganizationId: s.policies.GetOrganizationId(),
+		Subject: &v1.Subject{
+			Id:        "user-1",
+			Principal: v1.Principal_PRINCIPAL_USER,
+		},
+	}), nil
+}
+
+func (s *fakeOrganizationService) GetIDToken(ctx context.Context, req *connect.Request[v1.GetIDTokenRequest]) (*connect.Response[v1.GetIDTokenResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("GetIDToken is not implemented"))
+}
+
+func (s *fakeOrganizationService) ExchangeToken(ctx context.Context, req *connect.Request[v1.ExchangeTokenRequest]) (*connect.Response[v1.ExchangeTokenResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ExchangeToken is not implemented"))
 }
 
 func (s *fakeOrganizationService) GetOrganizationPolicies(ctx context.Context, req *connect.Request[v1.GetOrganizationPoliciesRequest]) (*connect.Response[v1.GetOrganizationPoliciesResponse], error) {
@@ -527,11 +547,16 @@ func (s *fakeOrganizationService) UpdateOrganizationPolicies(ctx context.Context
 	return connect.NewResponse(&v1.UpdateOrganizationPoliciesResponse{}), nil
 }
 
-func (s *fakeOrganizationService) lastSecurityPolicyID() string {
+func (s *fakeOrganizationService) defaultsDiff() string {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	return s.policies.GetSecurityPolicyId()
+	if proto.Equal(s.defaults, s.policies) {
+		return ""
+	}
+	defaults, _ := protojson.Marshal(s.defaults)
+	actual, _ := protojson.Marshal(s.policies)
+	return fmt.Sprintf("want %s, got %s", defaults, actual)
 }
 
 func newTestOrganizationPolicies(organizationID string) *v1.OrganizationPolicies {
@@ -548,9 +573,13 @@ func newTestOrganizationPolicies(organizationID string) *v1.OrganizationPolicies
 		DefaultEnvironmentImage:           "ubuntu:22.04",
 		DeleteArchivedEnvironmentsAfter:   durationpb.New(24 * time.Hour),
 		MaximumEnvironmentLifetime:        durationpb.New(720 * time.Hour),
-		EditorVersionRestrictions:         map[string]*v1.EditorVersionPolicy{},
-		AgentPolicy:                       &v1.AgentPolicy{},
-		ArchiveEnvironmentsAfter:          durationpb.New(24 * time.Hour),
+		EditorVersionRestrictions: map[string]*v1.EditorVersionPolicy{
+			"editor-default": {AllowedVersions: []string{"stable"}},
+		},
+		AgentPolicy: &v1.AgentPolicy{
+			CommandDenyList: []string{"server-default-command"},
+		},
+		ArchiveEnvironmentsAfter: durationpb.New(24 * time.Hour),
 	}
 }
 
@@ -574,7 +603,7 @@ func applyAgentPolicyUpdate(policy *v1.AgentPolicy, update *v1.UpdateOrganizatio
 		policy.MaxSubagentsPerEnvironment = update.GetMaxSubagentsPerEnvironment()
 	}
 	policy.AllowedAgentIds = append([]string(nil), update.AllowedAgentIds...)
-	policy.AllowedCodexModels = append([]v1.CodexOpenAIModel(nil), update.AllowedCodexModels...)
+	policy.AllowedCodexModels = append([]v1.CodexOpenAIModel(nil), update.AllowedCodexModels...) //nolint:staticcheck // Existing Terraform schema still maps the legacy allowlist.
 	policy.AllowedCodexReasoningEfforts = append([]v1.CodexReasoningEffort(nil), update.AllowedCodexReasoningEfforts...)
 	policy.AllowedCodexServiceTiers = append([]v1.CodexServiceTier(nil), update.AllowedCodexServiceTiers...)
 }

@@ -8,8 +8,8 @@ import (
 	"fmt"
 
 	"connectrpc.com/connect"
-	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -30,17 +30,40 @@ type SingularDataSource struct {
 }
 
 type DataSourceModel struct {
-	ID                        types.String        `tfsdk:"id"`
-	RunnerID                  types.String        `tfsdk:"runner_id"`
-	Name                      types.String        `tfsdk:"name"`
-	RunnerProvider            types.String        `tfsdk:"runner_provider"`
-	Kind                      types.String        `tfsdk:"kind"`
-	CloudFormationTemplateURL types.String        `tfsdk:"cloudformation_template_url"`
-	CreatedAt                 types.String        `tfsdk:"created_at"`
-	UpdatedAt                 types.String        `tfsdk:"updated_at"`
-	Configuration             *ConfigurationModel `tfsdk:"configuration"`
-	Status                    *StatusModel        `tfsdk:"status"`
-	Creator                   *CreatorModel       `tfsdk:"creator"`
+	ID                        types.String                  `tfsdk:"id"`
+	RunnerID                  types.String                  `tfsdk:"runner_id"`
+	Name                      types.String                  `tfsdk:"name"`
+	RunnerProvider            types.String                  `tfsdk:"runner_provider"`
+	Kind                      types.String                  `tfsdk:"kind"`
+	CloudFormationTemplateURL types.String                  `tfsdk:"cloudformation_template_url"`
+	CreatedAt                 types.String                  `tfsdk:"created_at"`
+	Configuration             *DataSourceConfigurationModel `tfsdk:"configuration"`
+	Creator                   *CreatorModel                 `tfsdk:"creator"`
+}
+
+type DataSourceConfigurationModel struct {
+	Region                        types.String            `tfsdk:"region"`
+	ReleaseChannel                types.String            `tfsdk:"release_channel"`
+	AutoUpdate                    types.Bool              `tfsdk:"auto_update"`
+	Metrics                       *DataSourceMetricsModel `tfsdk:"metrics"`
+	UpdateWindow                  *UpdateWindowModel      `tfsdk:"update_window"`
+	DevcontainerImageCacheEnabled types.Bool              `tfsdk:"devcontainer_image_cache_enabled"`
+	LogLevel                      types.String            `tfsdk:"log_level"`
+}
+
+type DataSourceMetricsModel struct {
+	Managed *DataSourceManagedMetricsModel `tfsdk:"managed"`
+	Custom  *DataSourceCustomMetricsModel  `tfsdk:"custom"`
+}
+
+type DataSourceManagedMetricsModel struct {
+	Enabled types.Bool `tfsdk:"enabled"`
+}
+
+type DataSourceCustomMetricsModel struct {
+	Enabled  types.Bool   `tfsdk:"enabled"`
+	URL      types.String `tfsdk:"url"`
+	Username types.String `tfsdk:"username"`
 }
 
 func (d *SingularDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -157,12 +180,7 @@ func dataSourceRunnerAttributes(runnerID datasourceschema.StringAttribute) map[s
 			Computed:            true,
 			MarkdownDescription: "Time when the runner was created.",
 		},
-		"updated_at": datasourceschema.StringAttribute{
-			Computed:            true,
-			MarkdownDescription: "Time when the runner was last updated.",
-		},
 		"configuration": dataSourceConfigurationSchema(),
-		"status":        dataSourceStatusSchema(),
 		"creator":       dataSourceCreatorSchema(),
 	}
 }
@@ -191,6 +209,40 @@ func dataSourceConfigurationSchema() datasourceschema.SingleNestedAttribute {
 			"log_level": datasourceschema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "Runner log level, such as `debug`, `info`, `warn`, or `error`.",
+			},
+			"metrics": datasourceschema.SingleNestedAttribute{
+				Computed:            true,
+				MarkdownDescription: "Metrics delivery configuration. Custom pipeline passwords are never exposed by this data source.",
+				Attributes: map[string]datasourceschema.Attribute{
+					"managed": datasourceschema.SingleNestedAttribute{
+						Computed:            true,
+						MarkdownDescription: "Ona-managed metrics pipeline configuration.",
+						Attributes: map[string]datasourceschema.Attribute{
+							"enabled": datasourceschema.BoolAttribute{
+								Computed:            true,
+								MarkdownDescription: "Whether the runner sends metrics through Ona's managed metrics pipeline.",
+							},
+						},
+					},
+					"custom": datasourceschema.SingleNestedAttribute{
+						Computed:            true,
+						MarkdownDescription: "Custom remote-write metrics pipeline configuration. Passwords are never exposed by this data source.",
+						Attributes: map[string]datasourceschema.Attribute{
+							"enabled": datasourceschema.BoolAttribute{
+								Computed:            true,
+								MarkdownDescription: "Whether the runner sends metrics to the custom pipeline.",
+							},
+							"url": datasourceschema.StringAttribute{
+								Computed:            true,
+								MarkdownDescription: "Remote-write URL for the custom metrics pipeline.",
+							},
+							"username": datasourceschema.StringAttribute{
+								Computed:            true,
+								MarkdownDescription: "Username for authenticating to the custom metrics pipeline.",
+							},
+						},
+					},
+				},
 			},
 			"update_window": datasourceschema.SingleNestedAttribute{
 				Computed:            true,
@@ -221,10 +273,41 @@ func populateDataSourceModelFromRunner(data *DataSourceModel, runner *v1.Runner)
 	data.Kind = model.Kind
 	data.CloudFormationTemplateURL = model.CloudFormationTemplateURL
 	data.CreatedAt = model.CreatedAt
-	data.UpdatedAt = model.UpdatedAt
-	data.Configuration = model.Configuration
-	data.Status = model.Status
+	data.Configuration = dataSourceConfigurationModel(model.Configuration)
 	data.Creator = model.Creator
+}
+
+func dataSourceConfigurationModel(config *ConfigurationModel) *DataSourceConfigurationModel {
+	if config == nil {
+		return nil
+	}
+	return &DataSourceConfigurationModel{
+		Region:                        config.Region,
+		ReleaseChannel:                config.ReleaseChannel,
+		AutoUpdate:                    config.AutoUpdate,
+		Metrics:                       dataSourceMetricsModel(config.Metrics),
+		UpdateWindow:                  config.UpdateWindow,
+		DevcontainerImageCacheEnabled: config.DevcontainerImageCacheEnabled,
+		LogLevel:                      config.LogLevel,
+	}
+}
+
+func dataSourceMetricsModel(metrics *MetricsModel) *DataSourceMetricsModel {
+	if metrics == nil {
+		return nil
+	}
+	result := &DataSourceMetricsModel{}
+	if metrics.Managed != nil {
+		result.Managed = &DataSourceManagedMetricsModel{Enabled: metrics.Managed.Enabled}
+	}
+	if metrics.Custom != nil {
+		result.Custom = &DataSourceCustomMetricsModel{
+			Enabled:  metrics.Custom.Enabled,
+			URL:      metrics.Custom.URL,
+			Username: metrics.Custom.Username,
+		}
+	}
+	return result
 }
 
 func dataSourceRunnerID(data DataSourceModel) string {
@@ -235,47 +318,6 @@ func dataSourceRunnerID(data DataSourceModel) string {
 		return data.ID.ValueString()
 	}
 	return ""
-}
-
-func dataSourceStatusSchema() datasourceschema.SingleNestedAttribute {
-	return datasourceschema.SingleNestedAttribute{
-		Computed:            true,
-		MarkdownDescription: "Runner status reported by the runner.",
-		Attributes: map[string]datasourceschema.Attribute{
-			"phase": datasourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner phase.",
-			},
-			"region": datasourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Actual region reported by the runner.",
-			},
-			"message": datasourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner status message.",
-			},
-			"version": datasourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner version.",
-			},
-			"log_url": datasourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner log URL.",
-			},
-			"updated_at": datasourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Time when the runner status was last updated.",
-			},
-			"system_details": datasourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner system details.",
-			},
-			"support_bundle_url": datasourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Runner support bundle URL.",
-			},
-		},
-	}
 }
 
 func dataSourceCreatorSchema() datasourceschema.SingleNestedAttribute {

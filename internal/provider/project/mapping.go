@@ -10,7 +10,7 @@ import (
 	"sort"
 	"time"
 
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -26,16 +26,15 @@ const (
 
 type ProjectModel struct {
 	ID                   types.String                 `tfsdk:"id"`
-	OrganizationID       types.String                 `tfsdk:"organization_id"`
 	Name                 types.String                 `tfsdk:"name"`
 	RepositoryCloneURL   types.String                 `tfsdk:"repository_clone_url"`
 	Branch               types.String                 `tfsdk:"branch"`
+	InsightsEnabled      types.Bool                   `tfsdk:"insights_enabled"`
 	DevcontainerFilePath types.String                 `tfsdk:"devcontainer_file_path"`
 	AutomationsFilePath  types.String                 `tfsdk:"automations_file_path"`
 	EnvironmentClasses   []EnvironmentClassModel      `tfsdk:"environment_class"`
 	Prebuild             []PrebuildConfigurationModel `tfsdk:"prebuild_configuration"`
 	CreatedAt            types.String                 `tfsdk:"created_at"`
-	UpdatedAt            types.String                 `tfsdk:"updated_at"`
 	Creator              types.Object                 `tfsdk:"creator"`
 }
 
@@ -70,7 +69,7 @@ var subjectObjectAttributeTypes = map[string]attr.Type{
 
 func projectCreateRequest(ctx context.Context, data ProjectModel) (*v1.CreateProjectRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
-	prebuild, prebuildDiags := prebuildConfigurationFromModel(ctx, data.Prebuild, path.Root("prebuild_configuration"))
+	prebuild, prebuildDiags := prebuildConfigurationFromModel(ctx, data.Prebuild, path.Root("prebuild_configuration"), false)
 	diags.Append(prebuildDiags...)
 	if diags.HasError() {
 		return nil, diags
@@ -105,7 +104,7 @@ func projectUpdateRequest(ctx context.Context, plan ProjectModel, prior ProjectM
 		req.AutomationsFilePath = ptr("")
 	}
 
-	prebuild, prebuildDiags := prebuildConfigurationFromModel(ctx, plan.Prebuild, path.Root("prebuild_configuration"))
+	prebuild, prebuildDiags := prebuildConfigurationFromModel(ctx, plan.Prebuild, path.Root("prebuild_configuration"), false)
 	diags.Append(prebuildDiags...)
 	if len(plan.Prebuild) > 0 {
 		req.PrebuildConfiguration = prebuild
@@ -220,7 +219,7 @@ func projectEnvironmentClassesFromModel(values []EnvironmentClassModel, root pat
 	return classes, diags
 }
 
-func prebuildConfigurationFromModel(ctx context.Context, values []PrebuildConfigurationModel, root path.Path) (*v1.ProjectPrebuildConfiguration, diag.Diagnostics) {
+func prebuildConfigurationFromModel(ctx context.Context, values []PrebuildConfigurationModel, root path.Path, allowUnknown bool) (*v1.ProjectPrebuildConfiguration, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	if len(values) == 0 {
 		return nil, diags
@@ -247,9 +246,23 @@ func prebuildConfigurationFromModel(ctx context.Context, values []PrebuildConfig
 
 	var environmentClassIDs []string
 	if !value.EnvironmentClassIDs.IsNull() && !value.EnvironmentClassIDs.IsUnknown() {
-		diags.Append(value.EnvironmentClassIDs.ElementsAs(ctx, &environmentClassIDs, false)...)
-		if diags.HasError() {
-			return nil, diags
+		if allowUnknown {
+			for _, element := range value.EnvironmentClassIDs.Elements() {
+				environmentClassID, ok := element.(types.String)
+				if !ok {
+					diags.AddAttributeError(root.AtName("environment_class_ids"), "Invalid Environment Class ID", "environment_class_ids must contain string values.")
+					return nil, diags
+				}
+				if environmentClassID.IsUnknown() || environmentClassID.IsNull() {
+					continue
+				}
+				environmentClassIDs = append(environmentClassIDs, environmentClassID.ValueString())
+			}
+		} else {
+			diags.Append(value.EnvironmentClassIDs.ElementsAs(ctx, &environmentClassIDs, false)...)
+			if diags.HasError() {
+				return nil, diags
+			}
 		}
 		sort.Strings(environmentClassIDs)
 	}
@@ -285,6 +298,9 @@ func prebuildConfigurationFromModel(ctx context.Context, values []PrebuildConfig
 		return nil, diags
 	}
 	if len(value.Executor) == 1 {
+		if allowUnknown && (value.Executor[0].ID.IsUnknown() || value.Executor[0].Principal.IsUnknown()) {
+			return cfg, diags
+		}
 		if value.Executor[0].ID.IsNull() || value.Executor[0].ID.IsUnknown() || value.Executor[0].ID.ValueString() == "" {
 			diags.AddAttributeError(root.AtName("executor").AtListIndex(0).AtName("id"), "Missing Prebuild Executor ID", "Executor id must not be empty.")
 			return nil, diags
@@ -313,16 +329,15 @@ func projectModelFromProto(ctx context.Context, project *v1.Project) (ProjectMod
 	diags.Append(repoDiags...)
 	data := ProjectModel{
 		ID:                   types.StringValue(project.GetId()),
-		OrganizationID:       stringOptionalValue(metadata.GetOrganizationId()),
 		Name:                 types.StringValue(metadata.GetName()),
 		RepositoryCloneURL:   repository.CloneURL,
 		Branch:               repository.Branch,
+		InsightsEnabled:      types.BoolValue(false),
 		DevcontainerFilePath: stringOptionalValue(project.GetDevcontainerFilePath()),
 		AutomationsFilePath:  stringOptionalValue(project.GetAutomationsFilePath()),
 		EnvironmentClasses:   environmentClassesFromProto(project.GetEnvironmentClasses()),
 		Prebuild:             prebuildConfigurationFromProto(ctx, project.GetPrebuildConfiguration(), &diags),
 		CreatedAt:            timestampValue(metadata.GetCreatedAt()),
-		UpdatedAt:            timestampValue(metadata.GetUpdatedAt()),
 		Creator:              subjectObjectFromProto(metadata.GetCreator(), &diags),
 	}
 	return data, diags

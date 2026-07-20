@@ -8,7 +8,7 @@ import (
 	"sort"
 	"time"
 
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
@@ -16,10 +16,10 @@ import (
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
-func updatePoliciesRequestFromConfig(ctx context.Context, plan PoliciesModel, cfg tfsdk.Config, current *v1.OrganizationPolicies) (*v1.UpdateOrganizationPoliciesRequest, diag.Diagnostics) {
+func updatePoliciesRequestFromConfig(ctx context.Context, organizationID string, plan PoliciesModel, cfg tfsdk.Config, current *v1.OrganizationPolicies) (*v1.UpdateOrganizationPoliciesRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	req := &v1.UpdateOrganizationPoliciesRequest{
-		OrganizationId: plan.OrganizationID.ValueString(),
+		OrganizationId: organizationID,
 	}
 
 	if value, ok := durationFromConfig(ctx, cfg, path.Root("maximum_environment_timeout"), &diags); ok {
@@ -97,7 +97,6 @@ func populatePoliciesModel(ctx context.Context, data *PoliciesModel, policies *v
 	}
 
 	data.ID = types.StringValue(policies.GetOrganizationId())
-	data.OrganizationID = types.StringValue(policies.GetOrganizationId())
 	data.MaximumEnvironmentTimeout = durationValue(policies.GetMaximumEnvironmentTimeout(), prior.MaximumEnvironmentTimeout)
 	data.MembersRequireProjects = types.BoolValue(policies.GetMembersRequireProjects())
 	data.MembersCreateProjects = types.BoolValue(policies.GetMembersCreateProjects())
@@ -211,7 +210,7 @@ func agentPolicyUpdateFromModel(ctx context.Context, model *AgentPolicyModel, cu
 	}
 	result := &v1.UpdateOrganizationPoliciesRequest_UpdateAgentPolicy{
 		AllowedAgentIds:              current.GetAllowedAgentIds(),
-		AllowedCodexModels:           current.GetAllowedCodexModels(),
+		AllowedCodexModels:           current.GetAllowedCodexModels(), //nolint:staticcheck // Existing Terraform schema still maps the legacy allowlist.
 		AllowedCodexReasoningEfforts: current.GetAllowedCodexReasoningEfforts(),
 		AllowedCodexServiceTiers:     current.GetAllowedCodexServiceTiers(),
 	}

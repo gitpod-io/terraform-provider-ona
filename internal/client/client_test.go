@@ -1,8 +1,15 @@
 package client
 
 import (
+	"context"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
+	"connectrpc.com/connect"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
+	providerversion "github.com/gitpod-io/terraform-provider-ona/version"
 	"github.com/google/go-cmp/cmp"
 )
 
@@ -71,6 +78,41 @@ func TestAPIBaseURL(t *testing.T) {
 				t.Errorf("APIBaseURL() mismatch (-want +got):\n%s", diff)
 			}
 		})
+	}
+}
+
+func TestNewManagementPlaneDefaultUserAgent(t *testing.T) {
+	previous := providerversion.ProviderVersion
+	providerversion.ProviderVersion = "1.2.3-beta.4"
+	t.Cleanup(func() {
+		providerversion.ProviderVersion = previous
+	})
+
+	fake := &fakeIdentityService{}
+	path, handler := v1connect.NewIdentityServiceHandler(fake)
+	mux := http.NewServeMux()
+	mux.Handle(path, handler)
+	server := httptest.NewServer(http.StripPrefix("/api", mux))
+	t.Cleanup(server.Close)
+
+	api, _, err := NewManagementPlane(Config{
+		Host:  server.URL,
+		Token: "test-token",
+	})
+	if err != nil {
+		t.Fatalf("NewManagementPlane() error = %v", err)
+	}
+
+	_, err = api.IdentityService().GetAuthenticatedIdentity(
+		context.Background(),
+		connect.NewRequest(&v1.GetAuthenticatedIdentityRequest{}),
+	)
+	if err != nil {
+		t.Fatalf("GetAuthenticatedIdentity() error = %v", err)
+	}
+
+	if got, want := fake.userAgent, "terraform-provider-ona/1.2.3-beta.4"; got != want {
+		t.Fatalf("User-Agent = %q, want %q", got, want)
 	}
 }
 
@@ -191,4 +233,21 @@ func TestResolveToken(t *testing.T) {
 			}
 		})
 	}
+}
+
+type fakeIdentityService struct {
+	userAgent string
+}
+
+func (s *fakeIdentityService) GetIDToken(context.Context, *connect.Request[v1.GetIDTokenRequest]) (*connect.Response[v1.GetIDTokenResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, nil)
+}
+
+func (s *fakeIdentityService) GetAuthenticatedIdentity(_ context.Context, req *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error) {
+	s.userAgent = req.Header().Get("User-Agent")
+	return connect.NewResponse(&v1.GetAuthenticatedIdentityResponse{}), nil
+}
+
+func (s *fakeIdentityService) ExchangeToken(context.Context, *connect.Request[v1.ExchangeTokenRequest]) (*connect.Response[v1.ExchangeTokenResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, nil)
 }

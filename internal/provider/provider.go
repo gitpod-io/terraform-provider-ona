@@ -6,10 +6,10 @@ package provider
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	onaclient "github.com/gitpod-io/terraform-provider-ona/internal/client"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/accesscontrol"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/integration"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/organization"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/project"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
@@ -18,10 +18,14 @@ import (
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/secret"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/security"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/serviceaccount"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/user"
 	warmpool "github.com/gitpod-io/terraform-provider-ona/internal/provider/warm_pool"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/webhook"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/workflow"
+	providerversion "github.com/gitpod-io/terraform-provider-ona/version"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
+	"github.com/hashicorp/terraform-plugin-framework/list"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
@@ -32,6 +36,7 @@ import (
 // Ensure OnaProvider satisfies various provider interfaces.
 var _ provider.Provider = &OnaProvider{}
 var _ provider.ProviderWithEphemeralResources = &OnaProvider{}
+var _ provider.ProviderWithListResources = &OnaProvider{}
 
 // OnaProvider defines the provider implementation.
 type OnaProvider struct {
@@ -61,7 +66,7 @@ func (p *OnaProvider) Schema(ctx context.Context, req provider.SchemaRequest, re
 				Optional:            true,
 			},
 			"token": schema.StringAttribute{
-				MarkdownDescription: "Ona API token used by the provider. Defaults to `ONA_TOKEN` when set. Use a service-account token for automation and avoid committing this value to configuration.",
+				MarkdownDescription: "Ona API token used by the provider. Defaults to `ONA_TOKEN` when set. Use a personal access token for Terraform write workflows unless Ona has confirmed service-account-token permissions for your organization and use case. Avoid committing this value to configuration.",
 				Optional:            true,
 				Sensitive:           true,
 			},
@@ -103,7 +108,7 @@ func (p *OnaProvider) Configure(ctx context.Context, req provider.ConfigureReque
 	if !data.Token.IsNull() {
 		cfg.Token = data.Token.ValueString()
 	}
-	cfg.UserAgent = fmt.Sprintf("terraform-provider-ona/%s", p.version)
+	cfg.UserAgent = providerversion.UserAgentFor(p.version)
 
 	api, apiBaseURL, err := onaclient.NewManagementPlane(cfg)
 	if err != nil {
@@ -121,6 +126,7 @@ func (p *OnaProvider) Configure(ctx context.Context, req provider.ConfigureReque
 
 	resp.DataSourceData = providerData
 	resp.EphemeralResourceData = providerData
+	resp.ListResourceData = providerData
 	resp.ResourceData = providerData
 }
 
@@ -128,10 +134,10 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 	return []func() resource.Resource{
 		runner.NewResource,
 		runner.NewSCMIntegrationResource,
+		runner.NewLLMIntegrationResource,
 		runner.NewEnvironmentClassResource,
 		runner.NewPolicyResource,
 		project.NewResource,
-		project.NewInsightsResource,
 		security.NewPolicyResource,
 		secret.NewResource,
 		organization.NewPoliciesResource,
@@ -147,6 +153,8 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		accesscontrol.NewGroupMembershipResource,
 		accesscontrol.NewOrganizationRoleAssignmentResource,
 		webhook.NewResource,
+		integration.NewResource,
+		workflow.NewResource,
 	}
 }
 
@@ -155,6 +163,15 @@ func (p *OnaProvider) EphemeralResources(ctx context.Context) []func() ephemeral
 		runner.NewTokenEphemeralResource,
 		serviceaccount.NewTokenEphemeralResource,
 		webhook.NewSecretEphemeralResource,
+	}
+}
+
+// ListResources returns the managed-resource discovery implementations
+// registered by the provider. Resource-specific PRs add constructors here.
+func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResource {
+	return []func() list.ListResource{
+		runner.NewRunnerListResource,
+		runner.NewSCMIntegrationListResource,
 	}
 }
 
@@ -169,6 +186,10 @@ func (p *OnaProvider) DataSources(ctx context.Context) []func() datasource.DataS
 		warmpool.NewWarmPoolDataSource,
 		warmpool.NewWarmPoolCollectionDataSource,
 		security.NewPolicyCollectionDataSource,
+		integration.NewDefinitionsDataSource,
+		workflow.NewCollectionDataSource,
+		user.NewUserDataSource,
+		user.NewUserCollectionDataSource,
 	}
 }
 

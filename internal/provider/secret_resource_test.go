@@ -13,8 +13,8 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1/v1connect"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
@@ -56,7 +56,8 @@ func TestAccSecretResourceLifecycle(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_secret.test", "id", secretTestSecretID(1)),
 					resource.TestCheckResourceAttr("ona_secret.test", "scope", "organization"),
-					resource.TestCheckResourceAttr("ona_secret.test", "organization_id", secretTestOrgID),
+					resource.TestCheckNoResourceAttr("ona_secret.test", "organization_id"),
+					resource.TestCheckNoResourceAttr("ona_secret.test", "updated_at"),
 					resource.TestCheckResourceAttr("ona_secret.test", "name", "THIRD_PARTY_API_KEY"),
 					resource.TestCheckResourceAttr("ona_secret.test", "environment_variable", "true"),
 					resource.TestCheckResourceAttr("ona_secret.test", "value_version", "v1"),

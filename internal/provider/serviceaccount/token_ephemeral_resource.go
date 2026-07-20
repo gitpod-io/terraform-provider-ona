@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -35,13 +35,11 @@ type TokenEphemeralResource struct {
 }
 
 type TokenEphemeralModel struct {
-	ServiceAccountID      types.String `tfsdk:"service_account_id"`
-	Description           types.String `tfsdk:"description"`
-	ValidFor              types.String `tfsdk:"valid_for"`
-	Token                 types.String `tfsdk:"token"`
-	ServiceAccountTokenID types.String `tfsdk:"service_account_token_id"`
-	ExpiresAt             types.String `tfsdk:"expires_at"`
-	CreatedAt             types.String `tfsdk:"created_at"`
+	ServiceAccountID types.String `tfsdk:"service_account_id"`
+	Description      types.String `tfsdk:"description"`
+	ValidFor         types.String `tfsdk:"valid_for"`
+	Token            types.String `tfsdk:"token"`
+	ExpiresAt        types.String `tfsdk:"expires_at"`
 }
 
 func (r *TokenEphemeralResource) Metadata(ctx context.Context, req ephemeral.MetadataRequest, resp *ephemeral.MetadataResponse) {
@@ -50,7 +48,7 @@ func (r *TokenEphemeralResource) Metadata(ctx context.Context, req ephemeral.Met
 
 func (r *TokenEphemeralResource) Schema(ctx context.Context, req ephemeral.SchemaRequest, resp *ephemeral.SchemaResponse) {
 	resp.Schema = ephemeralschema.Schema{
-		MarkdownDescription: "Creates an Ona service-account token without storing the token value in Terraform plan or state. Use this in bootstrap or rotation workflows with a human or admin token, store the returned token in an external secret target, then use it as `ONA_TOKEN` on later Terraform runs. Reference the token only from Terraform ephemeral contexts such as provider configurations, write-only arguments, or child module ephemeral outputs.",
+		MarkdownDescription: "Creates an Ona service-account token without storing the token value in Terraform plan or state. Use this in bootstrap or rotation workflows with a human or admin token, then store the returned token in an external secret target. Use the token as `ONA_TOKEN` only for supported service-account-token workflows or when Ona has confirmed write permissions for your organization and use case. Reference the token only from Terraform ephemeral contexts such as provider configurations, write-only arguments, or child module ephemeral outputs.",
 		Attributes: map[string]ephemeralschema.Attribute{
 			"service_account_id": ephemeralschema.StringAttribute{
 				Required:            true,
@@ -69,17 +67,9 @@ func (r *TokenEphemeralResource) Schema(ctx context.Context, req ephemeral.Schem
 				Sensitive:           true,
 				MarkdownDescription: "Service-account token value. This value is returned once and is not stored in Terraform plan or state.",
 			},
-			"service_account_token_id": ephemeralschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Service-account token metadata ID.",
-			},
 			"expires_at": ephemeralschema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "Time when the service-account token expires.",
-			},
-			"created_at": ephemeralschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Time when the service-account token was created.",
 			},
 		},
 	}
@@ -164,9 +154,7 @@ func (r *TokenEphemeralResource) Open(ctx context.Context, req ephemeral.OpenReq
 
 	data.Token = types.StringValue(result.Msg.GetToken())
 	if token := result.Msg.GetServiceAccountToken(); token != nil {
-		data.ServiceAccountTokenID = types.StringValue(token.GetId())
 		data.ExpiresAt = timestampValue(token.GetExpiresAt())
-		data.CreatedAt = timestampValue(token.GetCreatedAt())
 	}
 	resp.Diagnostics.Append(resp.Result.Set(ctx, &data)...)
 }

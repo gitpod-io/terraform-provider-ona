@@ -1,0 +1,4 @@
+interface:
+  display_name: "Manage Ona with Terraform"
+  short_description: "Manage Ona resources safely with Terraform"
+  default_prompt: "Use $manage-ona-with-terraform to model and safely manage Ona runners, projects, access, integrations, and secrets with Terraform."

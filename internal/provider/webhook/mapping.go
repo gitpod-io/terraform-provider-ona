@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"sort"
 
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -121,13 +121,9 @@ func populateModel(ctx context.Context, data *Model, webhook *v1.Webhook, diags 
 	data.Description = optionalStringValue(metadata.GetDescription())
 	data.Type = types.StringValue(webhookType)
 	data.Provider = types.StringValue(provider)
-	data.OrganizationID = stringValue(metadata.GetOrganizationId())
 	data.URL = stringValue(webhook.GetUrl())
-	data.BoundWorkflowCount = types.Int32Value(webhook.GetBoundWorkflowCount())
-	data.LastTriggeredAt = timestampValue(webhook.GetLastTriggeredAt())
 	data.Creator = creatorObject(metadata.GetCreator(), diags)
 	data.CreatedAt = timestampValue(metadata.GetCreatedAt())
-	data.UpdatedAt = timestampValue(metadata.GetUpdatedAt())
 	data.SecretVersion = types.StringNull()
 
 	data.RepositoryScopes = types.SetNull(types.ObjectType{AttrTypes: repositoryScopeAttributeTypes})

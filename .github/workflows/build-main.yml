@@ -3,19 +3,21 @@ name: Build main
 on:
   workflow_dispatch:
     inputs:
-      publish_release:
-        description: "Publish a prerelease to GitHub releases. Pushes to main always publish."
+      release_channel:
+        description: "Release channel to publish. Pushes to main publish beta automatically."
         required: false
-        type: boolean
-        default: false
-      version:
-        description: "Optional prerelease version, for example v0.1.0-beta.1. Defaults to v0.1.0-beta.<run number> when publishing."
-        required: false
-        type: string
-        default: ""
+        type: choice
+        options:
+          - none
+          - stable
+        default: none
   push:
     branches:
       - main
+
+concurrency:
+  group: ${{ github.event_name == 'push' && 'terraform-provider-release' || (inputs.release_channel == 'stable' && 'terraform-provider-release' || format('terraform-provider-ci-{0}', github.run_id)) }}
+  cancel-in-progress: false
 
 jobs:
   build-terraform-provider:
@@ -25,14 +27,13 @@ jobs:
       contents: read
     secrets: inherit
     with:
-      release_environment: main
-      publish_release: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish_release) }}
-      version: ${{ github.event_name == 'workflow_dispatch' && inputs.version || '' }}
+      release_channel: ${{ github.event_name == 'push' && 'beta' || inputs.release_channel }}
+      release_environment: ${{ github.event_name == 'push' && 'beta' || 'main' }}
 
   trigger-registry-verification:
     name: Start Registry verification
     needs: [build-terraform-provider]
-    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish_release) }}
+    if: ${{ github.event_name == 'push' || inputs.release_channel == 'stable' }}
     runs-on: ubuntu-latest
     permissions:
       actions: write

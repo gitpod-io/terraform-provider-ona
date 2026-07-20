@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -395,9 +395,10 @@ func TestPrebuildConfigurationFromModel(t *testing.T) {
 	}
 
 	tests := []struct {
-		Name     string
-		Input    []PrebuildConfigurationModel
-		Expected Expectation
+		Name         string
+		Input        []PrebuildConfigurationModel
+		AllowUnknown bool
+		Expected     Expectation
 	}{
 		{
 			Name: "daily_schedule_with_executor",
@@ -464,6 +465,23 @@ func TestPrebuildConfigurationFromModel(t *testing.T) {
 			},
 		},
 		{
+			Name: "terraform_validate_allows_unknown_environment_class_ids",
+			Input: []PrebuildConfigurationModel{{
+				Enabled: types.BoolValue(true),
+				EnvironmentClassIDs: types.SetValueMust(types.StringType, []attr.Value{
+					types.StringUnknown(),
+				}),
+				Timeout: types.StringValue("1h"),
+			}},
+			AllowUnknown: true,
+			Expected: Expectation{
+				Result: &v1.ProjectPrebuildConfiguration{
+					Enabled: true,
+					Timeout: durationpb.New(time.Hour),
+				},
+			},
+		},
+		{
 			Name: "rejects_daily_schedule_hour_out_of_range",
 			Input: []PrebuildConfigurationModel{{
 				Enabled:               types.BoolValue(true),
@@ -495,6 +513,42 @@ func TestPrebuildConfigurationFromModel(t *testing.T) {
 			},
 		},
 		{
+			Name: "terraform_validate_allows_unknown_executor_id",
+			Input: []PrebuildConfigurationModel{{
+				Enabled:               types.BoolValue(true),
+				EnvironmentClassIDs:   types.SetNull(types.StringType),
+				Timeout:               types.StringValue("1h"),
+				EnableJetbrainsWarmup: types.BoolValue(false),
+				Executor: []SubjectModel{{
+					ID:        types.StringUnknown(),
+					Principal: types.StringValue(principalServiceAccount),
+				}},
+			}},
+			AllowUnknown: true,
+			Expected: Expectation{
+				Result: &v1.ProjectPrebuildConfiguration{
+					Enabled: true,
+					Timeout: durationpb.New(time.Hour),
+				},
+			},
+		},
+		{
+			Name: "rejects_unknown_executor_id_before_apply",
+			Input: []PrebuildConfigurationModel{{
+				Enabled:               types.BoolValue(true),
+				EnvironmentClassIDs:   types.SetNull(types.StringType),
+				Timeout:               types.StringValue("1h"),
+				EnableJetbrainsWarmup: types.BoolValue(false),
+				Executor: []SubjectModel{{
+					ID:        types.StringUnknown(),
+					Principal: types.StringValue(principalServiceAccount),
+				}},
+			}},
+			Expected: Expectation{
+				Err: "Missing Prebuild Executor ID",
+			},
+		},
+		{
 			Name: "rejects_invalid_executor_principal",
 			Input: []PrebuildConfigurationModel{{
 				Enabled:               types.BoolValue(true),
@@ -517,7 +571,7 @@ func TestPrebuildConfigurationFromModel(t *testing.T) {
 			t.Parallel()
 
 			var got Expectation
-			result, diags := prebuildConfigurationFromModel(t.Context(), tc.Input, path.Root("prebuild_configuration"))
+			result, diags := prebuildConfigurationFromModel(t.Context(), tc.Input, path.Root("prebuild_configuration"), tc.AllowUnknown)
 			if diags.HasError() {
 				got.Err = diags[0].Summary()
 			} else {

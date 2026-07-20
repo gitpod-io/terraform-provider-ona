@@ -9,13 +9,22 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
-	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.uber.org/mock/gomock"
 )
+
+type runnerServiceClient struct {
+	v1connect.RunnerServiceClient
+	listRunnerPolicies func(context.Context, *connect.Request[v1.ListRunnerPoliciesRequest]) (*connect.Response[v1.ListRunnerPoliciesResponse], error)
+}
+
+func (c runnerServiceClient) ListRunnerPolicies(ctx context.Context, req *connect.Request[v1.ListRunnerPoliciesRequest]) (*connect.Response[v1.ListRunnerPoliciesResponse], error) {
+	return c.listRunnerPolicies(ctx, req)
+}
 
 func TestParseRunnerPolicyImportID(t *testing.T) {
 	t.Parallel()
@@ -126,35 +135,35 @@ func TestPolicyResourceFindRunnerPolicyPagesUntilMatch(t *testing.T) {
 	}
 
 	ctx := t.Context()
-	ctrl := gomock.NewController(t)
-	api := managementclient.NewMock(ctrl)
-	resource := &PolicyResource{client: api.Client()}
 	tokens := []string{}
 
-	api.RunnerService.EXPECT().
-		ListRunnerPolicies(gomock.Any(), gomock.Any()).
-		DoAndReturn(func(_ context.Context, req *connect.Request[v1.ListRunnerPoliciesRequest]) (*connect.Response[v1.ListRunnerPoliciesResponse], error) {
-			token := req.Msg.GetPagination().GetToken()
-			tokens = append(tokens, token)
-			if req.Msg.GetRunnerId() != "runner-1" {
-				return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("runner_id = %q", req.Msg.GetRunnerId()))
-			}
-			if token == "" {
-				return connect.NewResponse(&v1.ListRunnerPoliciesResponse{
-					Pagination: &v1.PaginationResponse{NextToken: "next"},
-					Policies: []*v1.RunnerPolicy{
-						{GroupId: "group-other", Role: v1.RunnerRole_RUNNER_ROLE_USER},
-					},
-				}), nil
-			}
-			return connect.NewResponse(&v1.ListRunnerPoliciesResponse{
-				Pagination: &v1.PaginationResponse{},
-				Policies: []*v1.RunnerPolicy{
-					{GroupId: "group-1", Role: v1.RunnerRole_RUNNER_ROLE_USER},
+	resource := &PolicyResource{
+		client: managementclient.NewWithServices(managementclient.Services{
+			RunnerService: runnerServiceClient{
+				listRunnerPolicies: func(_ context.Context, req *connect.Request[v1.ListRunnerPoliciesRequest]) (*connect.Response[v1.ListRunnerPoliciesResponse], error) {
+					token := req.Msg.GetPagination().GetToken()
+					tokens = append(tokens, token)
+					if req.Msg.GetRunnerId() != "runner-1" {
+						return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("runner_id = %q", req.Msg.GetRunnerId()))
+					}
+					if token == "" {
+						return connect.NewResponse(&v1.ListRunnerPoliciesResponse{
+							Pagination: &v1.PaginationResponse{NextToken: "next"},
+							Policies: []*v1.RunnerPolicy{
+								{GroupId: "group-other", Role: v1.RunnerRole_RUNNER_ROLE_USER},
+							},
+						}), nil
+					}
+					return connect.NewResponse(&v1.ListRunnerPoliciesResponse{
+						Pagination: &v1.PaginationResponse{},
+						Policies: []*v1.RunnerPolicy{
+							{GroupId: "group-1", Role: v1.RunnerRole_RUNNER_ROLE_USER},
+						},
+					}), nil
 				},
-			}), nil
-		}).
-		Times(2)
+			},
+		}),
+	}
 
 	var got Expectation
 	policy, err := resource.findRunnerPolicy(ctx, "runner-1", "group-1")

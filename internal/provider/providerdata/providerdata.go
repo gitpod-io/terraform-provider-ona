@@ -4,7 +4,7 @@
 package providerdata
 
 import (
-	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/api/go/client"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 )
 
 type Data struct {

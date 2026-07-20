@@ -1,3 +1,4 @@
 # Security
 
-Gitpod treats security issues with the highest priority. Please visit https://www.gitpod.io/security for information on how to report security issues.
+Ona treats security issues with the highest priority. Please visit
+https://ona.com/security for information on how to report security issues.

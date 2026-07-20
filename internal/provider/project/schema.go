@@ -24,13 +24,6 @@ func resourceSchema() resourceschema.Schema {
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"organization_id": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Organization ID that owns the project.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
-			},
 			"name": resourceschema.StringAttribute{
 				Required:            true,
 				MarkdownDescription: "Project display name shown in Ona.",
@@ -42,6 +35,12 @@ func resourceSchema() resourceschema.Schema {
 			"branch": resourceschema.StringAttribute{
 				Required:            true,
 				MarkdownDescription: "Git branch name Ona should use when creating environments and prebuilds.",
+			},
+			"insights_enabled": resourceschema.BoolAttribute{
+				Optional:            true,
+				Computed:            true,
+				Default:             booldefault.StaticBool(false),
+				MarkdownDescription: "Whether Ona Insights is enabled for the project. Defaults to `false`.",
 			},
 			"devcontainer_file_path": resourceschema.StringAttribute{
 				Optional:            true,
@@ -56,13 +55,6 @@ func resourceSchema() resourceschema.Schema {
 			"created_at": resourceschema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "Time when the project was created.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
-			},
-			"updated_at": resourceschema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "Time when the project was last updated.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},

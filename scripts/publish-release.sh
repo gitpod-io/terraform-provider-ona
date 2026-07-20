@@ -5,6 +5,7 @@ set -euo pipefail
 PROVIDER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RELEASE_REPOSITORY="${RELEASE_REPOSITORY:-gitpod-io/terraform-provider-ona}"
 VERSION="${VERSION:-}"
+RELEASE_CHANNEL="${RELEASE_CHANNEL:-stable}"
 DRY_RUN="${DRY_RUN:-0}"
 TEMP_GNUPGHOME=""
 TEMP_DOWNLOAD_DIRS=()
@@ -48,6 +49,24 @@ normalize_version() {
 		die "VERSION must be a Terraform-compatible semver such as v0.1.0 or v0.1.0-beta.1, got: $version"
 	fi
 	printf '%s' "$version"
+}
+
+require_github_actions_main() {
+	if [[ "${GITHUB_ACTIONS:-}" != "true" ]]; then
+		die "publishing is only supported from the manual GitHub Actions release workflow"
+	fi
+	if [[ "${GITHUB_REF:-}" != "refs/heads/main" ]]; then
+		die "publishing must run from main after the release-prep PR merges, got ${GITHUB_REF:-<unset>}"
+	fi
+}
+
+validate_release_metadata() {
+	local version="$1"
+
+	STABLE_VERSION_FILE="${PROVIDER_DIR}/version/STABLE_VERSION" \
+	BETA_VERSION_FILE="${PROVIDER_DIR}/version/BETA_VERSION" \
+	CHANGELOG_FILE="${PROVIDER_DIR}/CHANGELOG.md" \
+		"${PROVIDER_DIR}/scripts/validate-release-version.sh" --channel "$RELEASE_CHANNEL" --expect-tag "$version" >/dev/null
 }
 
 import_gpg_key() {
@@ -189,8 +208,10 @@ main() {
 	trap cleanup EXIT
 
 	stage "Validate publish inputs"
+	require_github_actions_main
 	version="$(normalize_version "$VERSION")"
 	repo="$(normalize_repo "$RELEASE_REPOSITORY")"
+	validate_release_metadata "$version"
 
 	stage "Check required commands"
 	need_command git

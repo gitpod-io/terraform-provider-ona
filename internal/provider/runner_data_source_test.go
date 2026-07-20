@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"testing"
 
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -37,15 +37,15 @@ func TestAccRunnerDataSource(t *testing.T) {
 					resource.TestCheckResourceAttr("data.ona_runner.test", "configuration.auto_update", "true"),
 					resource.TestCheckResourceAttr("data.ona_runner.test", "configuration.devcontainer_image_cache_enabled", "true"),
 					resource.TestCheckResourceAttr("data.ona_runner.test", "configuration.log_level", "debug"),
+					resource.TestCheckNoResourceAttr("data.ona_runner.test", "configuration.metrics.managed"),
+					resource.TestCheckResourceAttr("data.ona_runner.test", "configuration.metrics.custom.enabled", "true"),
+					resource.TestCheckResourceAttr("data.ona_runner.test", "configuration.metrics.custom.url", "https://metrics.example.com/api/v1/write"),
+					resource.TestCheckResourceAttr("data.ona_runner.test", "configuration.metrics.custom.username", "runner"),
+					resource.TestCheckNoResourceAttr("data.ona_runner.test", "configuration.metrics.custom.password"),
 					resource.TestCheckResourceAttr("data.ona_runner.test", "configuration.update_window.start", "02:00"),
 					resource.TestCheckResourceAttr("data.ona_runner.test", "configuration.update_window.end", "04:00"),
-					resource.TestCheckResourceAttr("data.ona_runner.test", "status.phase", "active"),
-					resource.TestCheckResourceAttr("data.ona_runner.test", "status.region", "eu-central-1"),
-					resource.TestCheckResourceAttr("data.ona_runner.test", "status.message", "ready"),
-					resource.TestCheckResourceAttr("data.ona_runner.test", "status.version", "1.2.3"),
-					resource.TestCheckResourceAttr("data.ona_runner.test", "status.log_url", "https://example.com/logs"),
-					resource.TestCheckResourceAttr("data.ona_runner.test", "status.system_details", "linux/amd64"),
-					resource.TestCheckResourceAttr("data.ona_runner.test", "status.support_bundle_url", "https://example.com/support-bundle"),
+					resource.TestCheckNoResourceAttr("data.ona_runner.test", "status"),
+					resource.TestCheckNoResourceAttr("data.ona_runner.test", "updated_at"),
 					resource.TestCheckResourceAttr("data.ona_runner.test", "creator.id", "creator-1"),
 					resource.TestCheckResourceAttr("data.ona_runner.test", "creator.principal", "user"),
 					resource.TestCheckNoResourceAttr("data.ona_runner.test", "runner_manager_id"),
@@ -77,7 +77,10 @@ func TestAccRunnersDataSource(t *testing.T) {
 					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.0.name", "Frankfurt Runner"),
 					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.0.cloudformation_template_url", "https://gitpod-flex-releases.s3.amazonaws.com/ec2/stable/gitpod-ec2-runner.json"),
 					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.0.configuration.region", "eu-central-1"),
-					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.0.status.phase", "active"),
+					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.0.configuration.metrics.custom.enabled", "true"),
+					resource.TestCheckNoResourceAttr("data.ona_runners.test", "runners.0.configuration.metrics.custom.password"),
+					resource.TestCheckNoResourceAttr("data.ona_runners.test", "runners.0.status"),
+					resource.TestCheckNoResourceAttr("data.ona_runners.test", "runners.0.updated_at"),
 					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.1.runner_id", "runner-2"),
 					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.1.name", "Zurich Runner"),
 					resource.TestCheckNoResourceAttr("data.ona_runners.test", "runners.0.runner_manager_id"),
@@ -124,6 +127,12 @@ func newTestRunnerForDataSource(id string, name string) *v1.Runner {
 		AutoUpdate:                    true,
 		DevcontainerImageCacheEnabled: true,
 		LogLevel:                      v1.LogLevel_LOG_LEVEL_DEBUG,
+		Metrics: &v1.MetricsConfiguration{
+			Enabled:  true,
+			Url:      "https://metrics.example.com/api/v1/write",
+			Username: "runner",
+			Password: "metrics-token",
+		},
 		UpdateWindow: &v1.UpdateWindow{
 			StartHour: &startHour,
 			EndHour:   &endHour,

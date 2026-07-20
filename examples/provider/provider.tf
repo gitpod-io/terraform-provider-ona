@@ -1,8 +1,16 @@
-# The provider reads ONA_TOKEN by default. Use a service-account token for
-# automation after the initial service-account bootstrap.
+terraform {
+  required_providers {
+    ona = {
+      source  = "gitpod-io/ona"
+      version = "= 0.2.0-beta.2"
+    }
+  }
+}
+
+# Set ONA_TOKEN in the environment before running Terraform.
 provider "ona" {}
 
-# Set host only when using a non-default Ona API host.
+# Optional: set host only when using a non-default Ona API host.
 # provider "ona" {
-#   host = "https://app.gitpod.io"
+#   host = "https://<ona-hostname>"
 # }

@@ -15,8 +15,8 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1/v1connect"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
@@ -48,12 +48,21 @@ func TestAccWarmPoolResourceLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr("ona_warm_pool.api", "environment_class_id", "class-1"),
 					resource.TestCheckResourceAttr("ona_warm_pool.api", "min_size", "0"),
 					resource.TestCheckResourceAttr("ona_warm_pool.api", "max_size", "5"),
-					resource.TestCheckResourceAttr("ona_warm_pool.api", "organization_id", "org-1"),
-					resource.TestCheckResourceAttr("ona_warm_pool.api", "runner_id", "runner-1"),
-					resource.TestCheckResourceAttr("ona_warm_pool.api", "snapshot_id", "snapshot-1"),
+					resource.TestCheckNoResourceAttr("ona_warm_pool.api", "organization_id"),
+					resource.TestCheckNoResourceAttr("ona_warm_pool.api", "snapshot_id"),
+					resource.TestCheckNoResourceAttr("ona_warm_pool.api", "runner_id"),
+					resource.TestCheckNoResourceAttr("ona_warm_pool.api", "updated_at"),
 					resource.TestCheckResourceAttr("data.ona_warm_pool.api", "warm_pool_id", "warm-pool-1"),
+					resource.TestCheckNoResourceAttr("data.ona_warm_pool.api", "organization_id"),
+					resource.TestCheckNoResourceAttr("data.ona_warm_pool.api", "runner_id"),
+					resource.TestCheckNoResourceAttr("data.ona_warm_pool.api", "snapshot_id"),
+					resource.TestCheckNoResourceAttr("data.ona_warm_pool.api", "updated_at"),
 					resource.TestCheckResourceAttr("data.ona_warm_pools.project", "warm_pools.#", "1"),
 					resource.TestCheckResourceAttr("data.ona_warm_pools.project", "warm_pools.0.id", "warm-pool-1"),
+					resource.TestCheckNoResourceAttr("data.ona_warm_pools.project", "warm_pools.0.organization_id"),
+					resource.TestCheckNoResourceAttr("data.ona_warm_pools.project", "warm_pools.0.runner_id"),
+					resource.TestCheckNoResourceAttr("data.ona_warm_pools.project", "warm_pools.0.snapshot_id"),
+					resource.TestCheckNoResourceAttr("data.ona_warm_pools.project", "warm_pools.0.updated_at"),
 				),
 			},
 			{

@@ -14,8 +14,8 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1/v1connect"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
@@ -54,14 +54,14 @@ func TestAccGroupResourceLifecycle(t *testing.T) {
 				Config: testAccGroupResourceConfig(server.URL, "Terraform Admins", "Initial description"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_group.test", "id", accessControlGroupID),
-					resource.TestCheckResourceAttr("ona_group.test", "organization_id", accessControlOrgID),
 					resource.TestCheckResourceAttr("ona_group.test", "name", "Terraform Admins"),
 					resource.TestCheckResourceAttr("ona_group.test", "description", "Initial description"),
-					resource.TestCheckResourceAttr("ona_group.test", "system_managed", "false"),
-					resource.TestCheckResourceAttr("ona_group.test", "direct_share", "false"),
 					resource.TestCheckResourceAttr("ona_group.test", "created_at", accessControlCreatedAt),
-					resource.TestCheckResourceAttr("ona_group.test", "updated_at", accessControlCreatedAt),
-					resource.TestCheckResourceAttr("ona_group.test", "member_count", "0"),
+					resource.TestCheckNoResourceAttr("ona_group.test", "organization_id"),
+					resource.TestCheckNoResourceAttr("ona_group.test", "system_managed"),
+					resource.TestCheckNoResourceAttr("ona_group.test", "direct_share"),
+					resource.TestCheckNoResourceAttr("ona_group.test", "updated_at"),
+					resource.TestCheckNoResourceAttr("ona_group.test", "member_count"),
 				),
 			},
 			{
@@ -87,7 +87,6 @@ func TestAccGroupResourceLifecycle(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_group.test", "name", "Terraform Operators"),
 					resource.TestCheckResourceAttr("ona_group.test", "description", "Updated description"),
-					resource.TestCheckResourceAttr("ona_group.test", "updated_at", accessControlUpdatedAt),
 				),
 			},
 		},
@@ -151,8 +150,9 @@ func TestAccGroupMembershipResourceLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr("ona_group_membership.test", "id", accessControlMembershipID),
 					resource.TestCheckResourceAttr("ona_group_membership.test", "group_id", accessControlGroupID),
 					resource.TestCheckResourceAttr("ona_group_membership.test", "service_account_id", accessControlServiceAccountID),
-					resource.TestCheckResourceAttr("ona_group_membership.test", "principal", "service_account"),
-					resource.TestCheckResourceAttr("ona_group_membership.test", "name", "Terraform Service Account"),
+					resource.TestCheckNoResourceAttr("ona_group_membership.test", "principal"),
+					resource.TestCheckNoResourceAttr("ona_group_membership.test", "name"),
+					resource.TestCheckNoResourceAttr("ona_group_membership.test", "avatar_url"),
 				),
 			},
 			{
@@ -238,10 +238,10 @@ func TestAccOrganizationRoleAssignmentResourceLifecycle(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "id", accessControlAssignmentID),
 					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "group_id", accessControlGroupID),
-					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "organization_id", accessControlOrgID),
+					resource.TestCheckNoResourceAttr("ona_organization_role_assignment.test", "organization_id"),
 					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "role", "runners_admin"),
-					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "resource_type", "organization"),
-					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "resource_id", accessControlOrgID),
+					resource.TestCheckNoResourceAttr("ona_organization_role_assignment.test", "resource_type"),
+					resource.TestCheckNoResourceAttr("ona_organization_role_assignment.test", "resource_id"),
 				),
 			},
 			{
@@ -255,7 +255,7 @@ func TestAccOrganizationRoleAssignmentResourceLifecycle(t *testing.T) {
 			{
 				ResourceName:      "ona_organization_role_assignment.test",
 				ImportState:       true,
-				ImportStateId:     accessControlGroupID + "/" + accessControlOrgID + "/runners_admin",
+				ImportStateId:     accessControlGroupID + "/runners_admin",
 				ImportStateVerify: true,
 			},
 			{

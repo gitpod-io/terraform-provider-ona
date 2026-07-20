@@ -1,0 +1,17 @@
+name: Read Go version
+description: Read the repository's shared Go version.
+
+outputs:
+  version:
+    description: The Go version from dev/go/go.version.
+    value: ${{ steps.read.outputs.version }}
+
+runs:
+  using: composite
+  steps:
+    - id: read
+      shell: bash
+      run: |
+        version="$(awk '!/^[[:space:]]*#/ && NF { print; exit }' dev/go/go.version)"
+        test -n "$version"
+        echo "version=$version" >> "$GITHUB_OUTPUT"

@@ -15,8 +15,8 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/internal/api/go/v1/v1connect"
+	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
@@ -54,8 +54,10 @@ func TestAccWebhookResourceLifecycle(t *testing.T) {
 						"owner": "gitpod-io",
 						"name":  "terraform-provider-ona",
 					}),
-					resource.TestCheckResourceAttr("ona_webhook.deployments", "organization_id", "00000000-0000-0000-0000-000000000010"),
-					resource.TestCheckResourceAttr("ona_webhook.deployments", "bound_workflow_count", "1"),
+					resource.TestCheckNoResourceAttr("ona_webhook.deployments", "organization_id"),
+					resource.TestCheckNoResourceAttr("ona_webhook.deployments", "bound_workflow_count"),
+					resource.TestCheckNoResourceAttr("ona_webhook.deployments", "last_triggered_at"),
+					resource.TestCheckNoResourceAttr("ona_webhook.deployments", "updated_at"),
 					resource.TestCheckResourceAttr("ona_webhook.deployments", "secret_version", "v1"),
 				),
 			},
