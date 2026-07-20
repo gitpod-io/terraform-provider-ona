@@ -82,6 +82,51 @@ func (ResourceOperation) EnumDescriptor() ([]byte, []int) {
 	return file_gitpod_v1_event_proto_rawDescGZIP(), []int{0}
 }
 
+// AuditLogEntryKind identifies the typed details associated with an audit-log entry.
+// No concrete kinds are defined yet.
+type AuditLogEntryKind int32
+
+const (
+	AuditLogEntryKind_AUDIT_LOG_ENTRY_KIND_UNSPECIFIED AuditLogEntryKind = 0
+)
+
+// Enum value maps for AuditLogEntryKind.
+var (
+	AuditLogEntryKind_name = map[int32]string{
+		0: "AUDIT_LOG_ENTRY_KIND_UNSPECIFIED",
+	}
+	AuditLogEntryKind_value = map[string]int32{
+		"AUDIT_LOG_ENTRY_KIND_UNSPECIFIED": 0,
+	}
+)
+
+func (x AuditLogEntryKind) Enum() *AuditLogEntryKind {
+	p := new(AuditLogEntryKind)
+	*p = x
+	return p
+}
+
+func (x AuditLogEntryKind) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AuditLogEntryKind) Descriptor() protoreflect.EnumDescriptor {
+	return file_gitpod_v1_event_proto_enumTypes[1].Descriptor()
+}
+
+func (AuditLogEntryKind) Type() protoreflect.EnumType {
+	return &file_gitpod_v1_event_proto_enumTypes[1]
+}
+
+func (x AuditLogEntryKind) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AuditLogEntryKind.Descriptor instead.
+func (AuditLogEntryKind) EnumDescriptor() ([]byte, []int) {
+	return file_gitpod_v1_event_proto_rawDescGZIP(), []int{1}
+}
+
 type ResourceType int32
 
 const (
@@ -265,11 +310,11 @@ func (x ResourceType) String() string {
 }
 
 func (ResourceType) Descriptor() protoreflect.EnumDescriptor {
-	return file_gitpod_v1_event_proto_enumTypes[1].Descriptor()
+	return file_gitpod_v1_event_proto_enumTypes[2].Descriptor()
 }
 
 func (ResourceType) Type() protoreflect.EnumType {
-	return &file_gitpod_v1_event_proto_enumTypes[1]
+	return &file_gitpod_v1_event_proto_enumTypes[2]
 }
 
 func (x ResourceType) Number() protoreflect.EnumNumber {
@@ -278,7 +323,7 @@ func (x ResourceType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ResourceType.Descriptor instead.
 func (ResourceType) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_event_proto_rawDescGZIP(), []int{1}
+	return file_gitpod_v1_event_proto_rawDescGZIP(), []int{2}
 }
 
 type WatchEventsRequest struct {
@@ -720,6 +765,7 @@ type ListAuditLogsResponse_AuditLogEntry struct {
 	SubjectType    ResourceType           `protobuf:"varint,5,opt,name=subject_type,json=subjectType,proto3,enum=gitpod.v1.ResourceType" json:"subject_type,omitempty"`
 	Action         string                 `protobuf:"bytes,6,opt,name=action,proto3" json:"action,omitempty"`
 	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Kind           AuditLogEntryKind      `protobuf:"varint,8,opt,name=kind,proto3,enum=gitpod.v1.AuditLogEntryKind" json:"kind,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -803,6 +849,13 @@ func (x *ListAuditLogsResponse_AuditLogEntry) GetCreatedAt() *timestamppb.Timest
 	return nil
 }
 
+func (x *ListAuditLogsResponse_AuditLogEntry) GetKind() AuditLogEntryKind {
+	if x != nil {
+		return x.Kind
+	}
+	return AuditLogEntryKind_AUDIT_LOG_ENTRY_KIND_UNSPECIFIED
+}
+
 var File_gitpod_v1_event_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_event_proto_rawDesc = "" +
@@ -845,12 +898,12 @@ const file_gitpod_v1_event_proto_rawDesc = "" +
 	"\x02to\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x0f\xa2\xab\x1e\v\n" +
 	"\tfilter.toH\x01R\x02to\x88\x01\x01B\a\n" +
 	"\x05_fromB\x05\n" +
-	"\x03_to\"\xca\x03\n" +
+	"\x03_to\"\xfc\x03\n" +
 	"\x15ListAuditLogsResponse\x12H\n" +
 	"\aentries\x18\x01 \x03(\v2..gitpod.v1.ListAuditLogsResponse.AuditLogEntryR\aentries\x12=\n" +
 	"\n" +
 	"pagination\x18\x02 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
-	"pagination\x1a\xa7\x02\n" +
+	"pagination\x1a\xd9\x02\n" +
 	"\rAuditLogEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
 	"\bactor_id\x18\x02 \x01(\tR\aactorId\x12=\n" +
@@ -860,13 +913,16 @@ const file_gitpod_v1_event_proto_rawDesc = "" +
 	"\fsubject_type\x18\x05 \x01(\x0e2\x17.gitpod.v1.ResourceTypeR\vsubjectType\x12\x16\n" +
 	"\x06action\x18\x06 \x01(\tR\x06action\x129\n" +
 	"\n" +
-	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt*\xba\x01\n" +
+	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x120\n" +
+	"\x04kind\x18\b \x01(\x0e2\x1c.gitpod.v1.AuditLogEntryKindR\x04kind*\xba\x01\n" +
 	"\x11ResourceOperation\x12\"\n" +
 	"\x1eRESOURCE_OPERATION_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19RESOURCE_OPERATION_CREATE\x10\x01\x12\x1d\n" +
 	"\x19RESOURCE_OPERATION_UPDATE\x10\x02\x12\x1d\n" +
 	"\x19RESOURCE_OPERATION_DELETE\x10\x03\x12$\n" +
-	" RESOURCE_OPERATION_UPDATE_STATUS\x10\x04*\x9c\x0e\n" +
+	" RESOURCE_OPERATION_UPDATE_STATUS\x10\x04*9\n" +
+	"\x11AuditLogEntryKind\x12$\n" +
+	" AUDIT_LOG_ENTRY_KIND_UNSPECIFIED\x10\x00*\x9c\x0e\n" +
 	"\fResourceType\x12\x1d\n" +
 	"\x19RESOURCE_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19RESOURCE_TYPE_ENVIRONMENT\x10\x01\x12\x18\n" +
@@ -939,50 +995,52 @@ func file_gitpod_v1_event_proto_rawDescGZIP() []byte {
 	return file_gitpod_v1_event_proto_rawDescData
 }
 
-var file_gitpod_v1_event_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_gitpod_v1_event_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_gitpod_v1_event_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_gitpod_v1_event_proto_goTypes = []any{
 	(ResourceOperation)(0),                        // 0: gitpod.v1.ResourceOperation
-	(ResourceType)(0),                             // 1: gitpod.v1.ResourceType
-	(*WatchEventsRequest)(nil),                    // 2: gitpod.v1.WatchEventsRequest
-	(*WatchEventsResponse)(nil),                   // 3: gitpod.v1.WatchEventsResponse
-	(*ListAuditLogsRequest)(nil),                  // 4: gitpod.v1.ListAuditLogsRequest
-	(*ListAuditLogsResponse)(nil),                 // 5: gitpod.v1.ListAuditLogsResponse
-	(*WatchEventsRequest_ResourceTypeFilter)(nil), // 6: gitpod.v1.WatchEventsRequest.ResourceTypeFilter
-	(*ListAuditLogsRequest_Filter)(nil),           // 7: gitpod.v1.ListAuditLogsRequest.Filter
-	(*ListAuditLogsResponse_AuditLogEntry)(nil),   // 8: gitpod.v1.ListAuditLogsResponse.AuditLogEntry
-	(*PaginationRequest)(nil),                     // 9: gitpod.v1.PaginationRequest
-	(*Sort)(nil),                                  // 10: gitpod.v1.Sort
-	(*PaginationResponse)(nil),                    // 11: gitpod.v1.PaginationResponse
-	(Principal)(0),                                // 12: gitpod.v1.Principal
-	(*timestamppb.Timestamp)(nil),                 // 13: google.protobuf.Timestamp
+	(AuditLogEntryKind)(0),                        // 1: gitpod.v1.AuditLogEntryKind
+	(ResourceType)(0),                             // 2: gitpod.v1.ResourceType
+	(*WatchEventsRequest)(nil),                    // 3: gitpod.v1.WatchEventsRequest
+	(*WatchEventsResponse)(nil),                   // 4: gitpod.v1.WatchEventsResponse
+	(*ListAuditLogsRequest)(nil),                  // 5: gitpod.v1.ListAuditLogsRequest
+	(*ListAuditLogsResponse)(nil),                 // 6: gitpod.v1.ListAuditLogsResponse
+	(*WatchEventsRequest_ResourceTypeFilter)(nil), // 7: gitpod.v1.WatchEventsRequest.ResourceTypeFilter
+	(*ListAuditLogsRequest_Filter)(nil),           // 8: gitpod.v1.ListAuditLogsRequest.Filter
+	(*ListAuditLogsResponse_AuditLogEntry)(nil),   // 9: gitpod.v1.ListAuditLogsResponse.AuditLogEntry
+	(*PaginationRequest)(nil),                     // 10: gitpod.v1.PaginationRequest
+	(*Sort)(nil),                                  // 11: gitpod.v1.Sort
+	(*PaginationResponse)(nil),                    // 12: gitpod.v1.PaginationResponse
+	(Principal)(0),                                // 13: gitpod.v1.Principal
+	(*timestamppb.Timestamp)(nil),                 // 14: google.protobuf.Timestamp
 }
 var file_gitpod_v1_event_proto_depIdxs = []int32{
-	6,  // 0: gitpod.v1.WatchEventsRequest.resource_type_filters:type_name -> gitpod.v1.WatchEventsRequest.ResourceTypeFilter
+	7,  // 0: gitpod.v1.WatchEventsRequest.resource_type_filters:type_name -> gitpod.v1.WatchEventsRequest.ResourceTypeFilter
 	0,  // 1: gitpod.v1.WatchEventsResponse.operation:type_name -> gitpod.v1.ResourceOperation
-	1,  // 2: gitpod.v1.WatchEventsResponse.resource_type:type_name -> gitpod.v1.ResourceType
-	9,  // 3: gitpod.v1.ListAuditLogsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	7,  // 4: gitpod.v1.ListAuditLogsRequest.filter:type_name -> gitpod.v1.ListAuditLogsRequest.Filter
-	10, // 5: gitpod.v1.ListAuditLogsRequest.sort:type_name -> gitpod.v1.Sort
-	8,  // 6: gitpod.v1.ListAuditLogsResponse.entries:type_name -> gitpod.v1.ListAuditLogsResponse.AuditLogEntry
-	11, // 7: gitpod.v1.ListAuditLogsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	1,  // 8: gitpod.v1.WatchEventsRequest.ResourceTypeFilter.resource_type:type_name -> gitpod.v1.ResourceType
-	12, // 9: gitpod.v1.ListAuditLogsRequest.Filter.actor_principals:type_name -> gitpod.v1.Principal
-	1,  // 10: gitpod.v1.ListAuditLogsRequest.Filter.subject_types:type_name -> gitpod.v1.ResourceType
-	13, // 11: gitpod.v1.ListAuditLogsRequest.Filter.from:type_name -> google.protobuf.Timestamp
-	13, // 12: gitpod.v1.ListAuditLogsRequest.Filter.to:type_name -> google.protobuf.Timestamp
-	12, // 13: gitpod.v1.ListAuditLogsResponse.AuditLogEntry.actor_principal:type_name -> gitpod.v1.Principal
-	1,  // 14: gitpod.v1.ListAuditLogsResponse.AuditLogEntry.subject_type:type_name -> gitpod.v1.ResourceType
-	13, // 15: gitpod.v1.ListAuditLogsResponse.AuditLogEntry.created_at:type_name -> google.protobuf.Timestamp
-	2,  // 16: gitpod.v1.EventService.WatchEvents:input_type -> gitpod.v1.WatchEventsRequest
-	4,  // 17: gitpod.v1.EventService.ListAuditLogs:input_type -> gitpod.v1.ListAuditLogsRequest
-	3,  // 18: gitpod.v1.EventService.WatchEvents:output_type -> gitpod.v1.WatchEventsResponse
-	5,  // 19: gitpod.v1.EventService.ListAuditLogs:output_type -> gitpod.v1.ListAuditLogsResponse
-	18, // [18:20] is the sub-list for method output_type
-	16, // [16:18] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	2,  // 2: gitpod.v1.WatchEventsResponse.resource_type:type_name -> gitpod.v1.ResourceType
+	10, // 3: gitpod.v1.ListAuditLogsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	8,  // 4: gitpod.v1.ListAuditLogsRequest.filter:type_name -> gitpod.v1.ListAuditLogsRequest.Filter
+	11, // 5: gitpod.v1.ListAuditLogsRequest.sort:type_name -> gitpod.v1.Sort
+	9,  // 6: gitpod.v1.ListAuditLogsResponse.entries:type_name -> gitpod.v1.ListAuditLogsResponse.AuditLogEntry
+	12, // 7: gitpod.v1.ListAuditLogsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	2,  // 8: gitpod.v1.WatchEventsRequest.ResourceTypeFilter.resource_type:type_name -> gitpod.v1.ResourceType
+	13, // 9: gitpod.v1.ListAuditLogsRequest.Filter.actor_principals:type_name -> gitpod.v1.Principal
+	2,  // 10: gitpod.v1.ListAuditLogsRequest.Filter.subject_types:type_name -> gitpod.v1.ResourceType
+	14, // 11: gitpod.v1.ListAuditLogsRequest.Filter.from:type_name -> google.protobuf.Timestamp
+	14, // 12: gitpod.v1.ListAuditLogsRequest.Filter.to:type_name -> google.protobuf.Timestamp
+	13, // 13: gitpod.v1.ListAuditLogsResponse.AuditLogEntry.actor_principal:type_name -> gitpod.v1.Principal
+	2,  // 14: gitpod.v1.ListAuditLogsResponse.AuditLogEntry.subject_type:type_name -> gitpod.v1.ResourceType
+	14, // 15: gitpod.v1.ListAuditLogsResponse.AuditLogEntry.created_at:type_name -> google.protobuf.Timestamp
+	1,  // 16: gitpod.v1.ListAuditLogsResponse.AuditLogEntry.kind:type_name -> gitpod.v1.AuditLogEntryKind
+	3,  // 17: gitpod.v1.EventService.WatchEvents:input_type -> gitpod.v1.WatchEventsRequest
+	5,  // 18: gitpod.v1.EventService.ListAuditLogs:input_type -> gitpod.v1.ListAuditLogsRequest
+	4,  // 19: gitpod.v1.EventService.WatchEvents:output_type -> gitpod.v1.WatchEventsResponse
+	6,  // 20: gitpod.v1.EventService.ListAuditLogs:output_type -> gitpod.v1.ListAuditLogsResponse
+	19, // [19:21] is the sub-list for method output_type
+	17, // [17:19] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_gitpod_v1_event_proto_init() }
@@ -1002,7 +1060,7 @@ func file_gitpod_v1_event_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gitpod_v1_event_proto_rawDesc), len(file_gitpod_v1_event_proto_rawDesc)),
-			NumEnums:      2,
+			NumEnums:      3,
 			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
