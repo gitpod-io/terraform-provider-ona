@@ -571,6 +571,9 @@ func populatePolicyModel(data *PolicyModel, policy *v1.SecurityPolicy) {
 func preservePolicyPlannedInputs(data *PolicyModel, planned PolicyModel) {
 	data.OrganizationID = preserveString(data.OrganizationID, planned.OrganizationID)
 	data.Name = preserveString(data.Name, planned.Name)
+	if data.Spec != nil && planned.Spec != nil {
+		preserveSpecPlannedInputs(data.Spec, planned.Spec)
+	}
 }
 
 func timestampValue(ts *timestamppb.Timestamp) types.String {
@@ -581,6 +584,13 @@ func timestampValue(ts *timestamppb.Timestamp) types.String {
 }
 
 func preserveString(current types.String, planned types.String) types.String {
+	if !planned.IsNull() && !planned.IsUnknown() {
+		return planned
+	}
+	return current
+}
+
+func preserveSet(current types.Set, planned types.Set) types.Set {
 	if !planned.IsNull() && !planned.IsUnknown() {
 		return planned
 	}
