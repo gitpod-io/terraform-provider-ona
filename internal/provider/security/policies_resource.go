@@ -562,6 +562,24 @@ func populatePolicyModel(data *PolicyModel, policy *v1.SecurityPolicy) {
 func preservePolicyPlannedInputs(data *PolicyModel, planned PolicyModel) {
 	data.OrganizationID = preserveString(data.OrganizationID, planned.OrganizationID)
 	data.Name = preserveString(data.Name, planned.Name)
+	if data.Spec != nil && planned.Spec != nil {
+		preserveSpecPlannedInputs(data.Spec, planned.Spec)
+	}
+}
+
+func preserveSpecPlannedInputs(data *SpecModel, planned *SpecModel) {
+	if planned.Ports != nil {
+		data.Ports = planned.Ports
+	}
+	if planned.Files != nil {
+		data.Files = planned.Files
+	}
+	if planned.BlockDevices != nil {
+		data.BlockDevices = planned.BlockDevices
+	}
+	if planned.Data != nil {
+		data.Data = planned.Data
+	}
 }
 
 func timestampValue(ts *timestamppb.Timestamp) types.String {

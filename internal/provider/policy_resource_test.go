@@ -78,6 +78,12 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 				ResourceName:      "ona_security_policy.baseline",
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"spec.ports",
+					"spec.files",
+					"spec.block_devices",
+					"spec.data",
+				},
 			},
 			{
 				ResourceName:      "ona_organization_policies.test",
