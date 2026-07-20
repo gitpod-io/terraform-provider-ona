@@ -224,62 +224,7 @@ resource "ona_security_policy" "data_only" {
 
 Optional:
 
-- `block_devices` (Block, Optional) Block device access policy for environment runtime controls. (see [below for nested schema](#nestedblock--spec--block_devices))
-- `data` (Block, Optional) Data flow policy. Rules describe allowed or blocked movement from a source to a destination. (see [below for nested schema](#nestedblock--spec--data))
 - `executables` (Block, Optional) Executable access policy. Rules match executable paths inside the environment. (see [below for nested schema](#nestedblock--spec--executables))
-- `files` (Block, Optional) File access policy. Rules match file paths inside the environment and can control read and write actions separately. (see [below for nested schema](#nestedblock--spec--files))
-- `ports` (Block, Optional) Port access policy. Rules match inclusive TCP/UDP port ranges from 0 through 65535. (see [below for nested schema](#nestedblock--spec--ports))
-
-<a id="nestedblock--spec--block_devices"></a>
-### Nested Schema for `spec.block_devices`
-
-Required:
-
-- `default_effect` (String) Default block device access effect. Supported values are `allow`, `block`, and `audit`.
-
-
-<a id="nestedblock--spec--data"></a>
-### Nested Schema for `spec.data`
-
-Required:
-
-- `default_effect` (String) Default data flow effect. Supported values are `allow`, `block`, and `audit`.
-
-Optional:
-
-- `rule` (Block List) Data flow rule. (see [below for nested schema](#nestedblock--spec--data--rule))
-
-<a id="nestedblock--spec--data--rule"></a>
-### Nested Schema for `spec.data.rule`
-
-Required:
-
-- `effect` (String) Effect for this data flow. Supported values are `allow`, `block`, and `audit`.
-
-Optional:
-
-- `destination` (Block, Optional) Data destination. (see [below for nested schema](#nestedblock--spec--data--rule--destination))
-- `source` (Block, Optional) Data source. Exactly one of `file` or `integration` must be set. (see [below for nested schema](#nestedblock--spec--data--rule--source))
-
-<a id="nestedblock--spec--data--rule--destination"></a>
-### Nested Schema for `spec.data.rule.destination`
-
-Required:
-
-- `host` (String) Destination host, domain, service endpoint, or app-owned host.
-
-
-<a id="nestedblock--spec--data--rule--source"></a>
-### Nested Schema for `spec.data.rule.source`
-
-Optional:
-
-- `file` (String) Source file path.
-- `integration` (String) Source integration ID.
-- `selector` (String) Source-dependent selector for narrowing what data within the source is matched.
-
-
-
 
 <a id="nestedblock--spec--executables"></a>
 ### Nested Schema for `spec.executables`
@@ -299,54 +244,6 @@ Required:
 
 - `effect` (String) Effect for this executable path. Supported values are `allow`, `block`, and `audit`.
 - `path` (String) Executable path inside the environment.
-
-
-
-<a id="nestedblock--spec--files"></a>
-### Nested Schema for `spec.files`
-
-Required:
-
-- `default_effect` (String) Default file access effect. Supported values are `allow`, `block`, and `audit`.
-
-Optional:
-
-- `default_actions` (Set of String) Actions applied to file rules that omit actions. Supported values are `read` and `write`; omit to use the API default.
-- `rule` (Block List) File path rule. (see [below for nested schema](#nestedblock--spec--files--rule))
-
-<a id="nestedblock--spec--files--rule"></a>
-### Nested Schema for `spec.files.rule`
-
-Required:
-
-- `effect` (String) Effect for this file path. Supported values are `allow`, `block`, and `audit`.
-- `path` (String) File path inside the environment.
-
-Optional:
-
-- `actions` (Set of String) File actions controlled by this rule. Supported values are `read` and `write`; omit to use `default_actions`.
-
-
-
-<a id="nestedblock--spec--ports"></a>
-### Nested Schema for `spec.ports`
-
-Required:
-
-- `default_effect` (String) Default port access effect. Supported values are `allow`, `block`, and `audit`.
-
-Optional:
-
-- `rule` (Block List) Port range rule. (see [below for nested schema](#nestedblock--spec--ports--rule))
-
-<a id="nestedblock--spec--ports--rule"></a>
-### Nested Schema for `spec.ports.rule`
-
-Required:
-
-- `effect` (String) Effect for this port range. Supported values are `allow`, `block`, and `audit`.
-- `range_from` (Number) First port in the inclusive range. Must be between 0 and 65535.
-- `range_to` (Number) Last port in the inclusive range. Must be between `range_from` and 65535.
 
 ## Import
 
