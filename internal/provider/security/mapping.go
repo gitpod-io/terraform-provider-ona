@@ -29,6 +29,18 @@ func securityPolicySpecFromModel(model *SpecModel, root path.Path) (*v1.Security
 		diags.AddAttributeError(root, "Missing Security Policy Spec", "Set a spec block before creating an Ona security policy.")
 		return nil, diags
 	}
+	if model.Ports != nil {
+		diags.AddAttributeError(root.AtName("ports"), "Unsupported Security Policy Section", "The public Ona API client does not currently expose port security policies.")
+	}
+	if model.Files != nil {
+		diags.AddAttributeError(root.AtName("files"), "Unsupported Security Policy Section", "The public Ona API client does not currently expose file security policies.")
+	}
+	if model.BlockDevices != nil {
+		diags.AddAttributeError(root.AtName("block_devices"), "Unsupported Security Policy Section", "The public Ona API client does not currently expose block device security policies.")
+	}
+	if model.Data != nil {
+		diags.AddAttributeError(root.AtName("data"), "Unsupported Security Policy Section", "The public Ona API client does not currently expose data security policies.")
+	}
 
 	spec := &v1.SecurityPolicy_Spec{}
 	if model.Executables != nil {
