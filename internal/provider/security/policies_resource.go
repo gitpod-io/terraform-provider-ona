@@ -115,9 +115,6 @@ const (
 	effectAllow = "allow"
 	effectBlock = "block"
 	effectAudit = "audit"
-
-	fileActionRead  = "read"
-	fileActionWrite = "write"
 )
 
 func (r *PolicyResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -353,7 +350,7 @@ func (r *PolicyResource) ValidateConfig(ctx context.Context, req resource.Valida
 		return
 	}
 
-	resp.Diagnostics.Append(validatePolicyModel(ctx, data)...)
+	resp.Diagnostics.Append(validatePolicyModel(data)...)
 }
 
 func (r *PolicyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -371,7 +368,7 @@ func (r *PolicyResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	createReq, diags := createPolicyRequest(ctx, data)
+	createReq, diags := createPolicyRequest(data)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -395,7 +392,7 @@ func (r *PolicyResource) Create(ctx context.Context, req resource.CreateRequest,
 	}
 
 	planned := data
-	resp.Diagnostics.Append(populatePolicyModel(ctx, &data, policy)...)
+	populatePolicyModel(&data, policy)
 	preservePolicyPlannedInputs(&data, planned)
 	if resp.Diagnostics.HasError() {
 		return
@@ -436,7 +433,7 @@ func (r *PolicyResource) Read(ctx context.Context, req resource.ReadRequest, res
 
 	prior := data
 	data = PolicyModel{}
-	resp.Diagnostics.Append(populatePolicyModel(ctx, &data, policy)...)
+	populatePolicyModel(&data, policy)
 	preservePolicyPlannedInputs(&data, prior)
 	if resp.Diagnostics.HasError() {
 		return
@@ -459,7 +456,7 @@ func (r *PolicyResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	updateReq, diags := updatePolicyRequest(ctx, data)
+	updateReq, diags := updatePolicyRequest(data)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -477,7 +474,7 @@ func (r *PolicyResource) Update(ctx context.Context, req resource.UpdateRequest,
 	}
 
 	planned := data
-	resp.Diagnostics.Append(populatePolicyModel(ctx, &data, policy)...)
+	populatePolicyModel(&data, policy)
 	preservePolicyPlannedInputs(&data, planned)
 	if resp.Diagnostics.HasError() {
 		return
@@ -534,8 +531,8 @@ func (r *PolicyResource) getPolicy(ctx context.Context, id string) (*v1.Security
 	return result.Msg.GetSecurityPolicy(), nil
 }
 
-func createPolicyRequest(ctx context.Context, data PolicyModel) (*v1.CreateSecurityPolicyRequest, diag.Diagnostics) {
-	spec, diags := securityPolicySpecFromModel(ctx, data.Spec, path.Root("spec"))
+func createPolicyRequest(data PolicyModel) (*v1.CreateSecurityPolicyRequest, diag.Diagnostics) {
+	spec, diags := securityPolicySpecFromModel(data.Spec, path.Root("spec"))
 	if diags.HasError() {
 		return nil, diags
 	}
@@ -548,8 +545,8 @@ func createPolicyRequest(ctx context.Context, data PolicyModel) (*v1.CreateSecur
 	}, diags
 }
 
-func updatePolicyRequest(ctx context.Context, data PolicyModel) (*v1.UpdateSecurityPolicyRequest, diag.Diagnostics) {
-	spec, diags := securityPolicySpecFromModel(ctx, data.Spec, path.Root("spec"))
+func updatePolicyRequest(data PolicyModel) (*v1.UpdateSecurityPolicyRequest, diag.Diagnostics) {
+	spec, diags := securityPolicySpecFromModel(data.Spec, path.Root("spec"))
 	if diags.HasError() {
 		return nil, diags
 	}
@@ -562,15 +559,13 @@ func updatePolicyRequest(ctx context.Context, data PolicyModel) (*v1.UpdateSecur
 	}, diags
 }
 
-func populatePolicyModel(ctx context.Context, data *PolicyModel, policy *v1.SecurityPolicy) diag.Diagnostics {
-	var diags diag.Diagnostics
+func populatePolicyModel(data *PolicyModel, policy *v1.SecurityPolicy) {
 	data.ID = types.StringValue(policy.GetId())
 	data.OrganizationID = types.StringValue(policy.GetOrganizationId())
 	data.Name = types.StringValue(policy.GetMetadata().GetName())
 	data.CreatedAt = timestampValue(policy.GetCreatedAt())
 	data.UpdatedAt = timestampValue(policy.GetUpdatedAt())
-	data.Spec, diags = specModelFromSecurityPolicy(ctx, policy.GetSpec())
-	return diags
+	data.Spec = specModelFromSecurityPolicy(policy.GetSpec())
 }
 
 func preservePolicyPlannedInputs(data *PolicyModel, planned PolicyModel) {
@@ -593,19 +588,4 @@ func preserveString(current types.String, planned types.String) types.String {
 		return planned
 	}
 	return current
-}
-
-func preserveSet(current types.Set, planned types.Set) types.Set {
-	if !planned.IsNull() && !planned.IsUnknown() {
-		return planned
-	}
-	return current
-}
-
-func isKnownString(value types.String) bool {
-	return !value.IsNull() && !value.IsUnknown()
-}
-
-func isKnownSet(value types.Set) bool {
-	return !value.IsNull() && !value.IsUnknown()
 }
