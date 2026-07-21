@@ -31,10 +31,26 @@ func securityPolicySpecFromModel(model *SpecModel, root path.Path) (*v1.Security
 	}
 
 	spec := &v1.SecurityPolicy_Spec{}
+	if model.Ports != nil {
+		addUnsupportedPolicySection(&diags, root.AtName("ports"), "ports")
+	}
 	if model.Executables != nil {
 		spec.Executables = executablePolicyFromModel(model.Executables, root.AtName("executables"), &diags)
 	}
+	if model.Files != nil {
+		addUnsupportedPolicySection(&diags, root.AtName("files"), "files")
+	}
+	if model.BlockDevices != nil {
+		addUnsupportedPolicySection(&diags, root.AtName("block_devices"), "block_devices")
+	}
+	if model.Data != nil {
+		addUnsupportedPolicySection(&diags, root.AtName("data"), "data")
+	}
 	return spec, diags
+}
+
+func addUnsupportedPolicySection(diags *diag.Diagnostics, attrPath path.Path, section string) {
+	diags.AddAttributeError(attrPath, "Unsupported Security Policy Section", "The public Ona API client does not expose spec."+section+". Use spec.executables for public security policy rules.")
 }
 
 func executablePolicyFromModel(model *ExecutablePolicyModel, root path.Path, diags *diag.Diagnostics) *v1.SecurityPolicy_Spec_ExecutablePolicy {
@@ -104,4 +120,15 @@ func executablePolicyModelFromProto(policy *v1.SecurityPolicy_Spec_ExecutablePol
 		})
 	}
 	return model
+}
+
+func preserveSpecPlannedInputs(data *SpecModel, planned *SpecModel) {
+	if data.Files != nil && planned.Files != nil {
+		data.Files.DefaultActions = preserveSet(data.Files.DefaultActions, planned.Files.DefaultActions)
+		for i := range data.Files.Rules {
+			if i < len(planned.Files.Rules) {
+				data.Files.Rules[i].Actions = preserveSet(data.Files.Rules[i].Actions, planned.Files.Rules[i].Actions)
+			}
+		}
+	}
 }
