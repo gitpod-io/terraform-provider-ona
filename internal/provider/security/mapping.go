@@ -31,26 +31,10 @@ func securityPolicySpecFromModel(model *SpecModel, root path.Path) (*v1.Security
 	}
 
 	spec := &v1.SecurityPolicy_Spec{}
-	if model.Ports != nil {
-		addUnsupportedSpecBlockDiagnostic(root.AtName("ports"), &diags)
-	}
 	if model.Executables != nil {
 		spec.Executables = executablePolicyFromModel(model.Executables, root.AtName("executables"), &diags)
 	}
-	if model.Files != nil {
-		addUnsupportedSpecBlockDiagnostic(root.AtName("files"), &diags)
-	}
-	if model.BlockDevices != nil {
-		addUnsupportedSpecBlockDiagnostic(root.AtName("block_devices"), &diags)
-	}
-	if model.Data != nil {
-		addUnsupportedSpecBlockDiagnostic(root.AtName("data"), &diags)
-	}
 	return spec, diags
-}
-
-func addUnsupportedSpecBlockDiagnostic(attrPath path.Path, diags *diag.Diagnostics) {
-	diags.AddAttributeError(attrPath, "Unsupported Security Policy Block", "The public Ona API currently supports only the executables security policy block.")
 }
 
 func executablePolicyFromModel(model *ExecutablePolicyModel, root path.Path, diags *diag.Diagnostics) *v1.SecurityPolicy_Spec_ExecutablePolicy {
