@@ -47,7 +47,6 @@ type AgentSecurityServiceClient interface {
 	//	  pid: 1234
 	//	  tid: 1234
 	//	  name: "curl"
-	//	  cmdline: "curl https://example.com"
 	//	  startedAt: "2026-01-15T10:30:00Z"
 	//	  ppid: 1000
 	//	  pgid: 1000
@@ -100,7 +99,6 @@ type AgentSecurityServiceServer interface {
 	//	  pid: 1234
 	//	  tid: 1234
 	//	  name: "curl"
-	//	  cmdline: "curl https://example.com"
 	//	  startedAt: "2026-01-15T10:30:00Z"
 	//	  ppid: 1000
 	//	  pgid: 1000
