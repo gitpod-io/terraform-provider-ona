@@ -107,6 +107,15 @@ func executablePolicyModelFromProto(policy *v1.SecurityPolicy_Spec_ExecutablePol
 }
 
 func preserveSpecPlannedInputs(data *SpecModel, planned *SpecModel) {
+	if data.Ports == nil {
+		data.Ports = planned.Ports
+	}
+	if data.BlockDevices == nil {
+		data.BlockDevices = planned.BlockDevices
+	}
+	if data.Data == nil {
+		data.Data = planned.Data
+	}
 	if data.Files != nil && planned.Files != nil {
 		data.Files.DefaultActions = preserveSet(data.Files.DefaultActions, planned.Files.DefaultActions)
 		for i := range data.Files.Rules {
@@ -114,5 +123,8 @@ func preserveSpecPlannedInputs(data *SpecModel, planned *SpecModel) {
 				data.Files.Rules[i].Actions = preserveSet(data.Files.Rules[i].Actions, planned.Files.Rules[i].Actions)
 			}
 		}
+	}
+	if data.Files == nil {
+		data.Files = planned.Files
 	}
 }
