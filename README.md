@@ -2,10 +2,9 @@
 
 ## Overview
 
-The Ona Terraform provider manages Ona infrastructure and organization
-configuration as code. It is intended for platform, infrastructure, identity,
-and security teams that administer Ona projects, runners, access controls,
-policies, secrets, and automations.
+The Ona Terraform provider manages Ona organization configuration as code. It
+is intended for platform, identity, and security teams that administer Ona
+projects, runners, access controls, policies, secrets, and automations.
 
 The provider is currently beta software. The current published release is
 `0.3.0-beta.5`.

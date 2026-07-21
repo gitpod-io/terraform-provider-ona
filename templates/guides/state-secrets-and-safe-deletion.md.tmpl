@@ -7,7 +7,7 @@ description: |-
 
 # State, Secrets, and Safe Deletion
 
-Terraform state is the durable record of managed infrastructure. Treat state and plan files as sensitive, store them in an encrypted remote backend, and restrict access to users who are allowed to inspect Ona resource attributes.
+Terraform state is the durable record of managed Ona organization configuration. Treat state and plan files as sensitive, store them in an encrypted remote backend, and restrict access to users who are allowed to inspect Ona resource attributes.
 
 ## Sensitive Is Redaction
 
@@ -65,6 +65,6 @@ Review every destroy plan for these behaviors before applying it.
 
 ## Plan and State Expectations
 
-Use `terraform plan` as a review artifact, but do not store plan files in long-lived or broadly accessible locations. A plan can contain enough information to reveal sensitive infrastructure details even when Terraform redacts marked sensitive values.
+Use `terraform plan` as a review artifact, but do not store plan files in long-lived or broadly accessible locations. A plan can contain enough information to reveal sensitive Ona organization configuration details even when Terraform redacts marked sensitive values.
 
 Prefer a remote backend with locking for shared workflows. Do not run simultaneous applies against the same Ona organization from separate state files unless you have intentionally split ownership.
