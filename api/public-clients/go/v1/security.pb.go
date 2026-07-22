@@ -9,6 +9,7 @@ package v1
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
+	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
 	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -75,55 +76,6 @@ func (x SecurityPolicy_Effect) Number() protoreflect.EnumNumber {
 // Deprecated: Use SecurityPolicy_Effect.Descriptor instead.
 func (SecurityPolicy_Effect) EnumDescriptor() ([]byte, []int) {
 	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 0}
-}
-
-type SecurityPolicy_Spec_FilePolicy_Action int32
-
-const (
-	SecurityPolicy_Spec_FilePolicy_ACTION_UNSPECIFIED SecurityPolicy_Spec_FilePolicy_Action = 0
-	SecurityPolicy_Spec_FilePolicy_ACTION_READ        SecurityPolicy_Spec_FilePolicy_Action = 1
-	SecurityPolicy_Spec_FilePolicy_ACTION_WRITE       SecurityPolicy_Spec_FilePolicy_Action = 2
-)
-
-// Enum value maps for SecurityPolicy_Spec_FilePolicy_Action.
-var (
-	SecurityPolicy_Spec_FilePolicy_Action_name = map[int32]string{
-		0: "ACTION_UNSPECIFIED",
-		1: "ACTION_READ",
-		2: "ACTION_WRITE",
-	}
-	SecurityPolicy_Spec_FilePolicy_Action_value = map[string]int32{
-		"ACTION_UNSPECIFIED": 0,
-		"ACTION_READ":        1,
-		"ACTION_WRITE":       2,
-	}
-)
-
-func (x SecurityPolicy_Spec_FilePolicy_Action) Enum() *SecurityPolicy_Spec_FilePolicy_Action {
-	p := new(SecurityPolicy_Spec_FilePolicy_Action)
-	*p = x
-	return p
-}
-
-func (x SecurityPolicy_Spec_FilePolicy_Action) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (SecurityPolicy_Spec_FilePolicy_Action) Descriptor() protoreflect.EnumDescriptor {
-	return file_gitpod_v1_security_proto_enumTypes[1].Descriptor()
-}
-
-func (SecurityPolicy_Spec_FilePolicy_Action) Type() protoreflect.EnumType {
-	return &file_gitpod_v1_security_proto_enumTypes[1]
-}
-
-func (x SecurityPolicy_Spec_FilePolicy_Action) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use SecurityPolicy_Spec_FilePolicy_Action.Descriptor instead.
-func (SecurityPolicy_Spec_FilePolicy_Action) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 1, 2, 0}
 }
 
 type CreateSecurityPolicyRequest struct {
@@ -796,17 +748,8 @@ func (x *SecurityPolicy_Metadata) GetName() string {
 
 type SecurityPolicy_Spec struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// ports is not part of the public Veto Exec GA contract.
-	Ports *SecurityPolicy_Spec_PortPolicy `protobuf:"bytes,1,opt,name=ports,proto3" json:"ports,omitempty"`
 	// executables is the public Veto Exec GA policy surface.
-	Executables *SecurityPolicy_Spec_ExecutablePolicy `protobuf:"bytes,2,opt,name=executables,proto3" json:"executables,omitempty"`
-	// files is not part of the public Veto Exec GA contract. Veto File will
-	// define its public contract separately.
-	Files *SecurityPolicy_Spec_FilePolicy `protobuf:"bytes,3,opt,name=files,proto3" json:"files,omitempty"`
-	// block_devices is not part of the public Veto Exec GA contract.
-	BlockDevices *SecurityPolicy_Spec_BlockDevicePolicy `protobuf:"bytes,4,opt,name=block_devices,json=blockDevices,proto3" json:"block_devices,omitempty"`
-	// data is not part of the public Veto Exec GA contract.
-	Data          *SecurityPolicy_Spec_DataPolicy `protobuf:"bytes,5,opt,name=data,proto3" json:"data,omitempty"`
+	Executables   *SecurityPolicy_Spec_ExecutablePolicy `protobuf:"bytes,2,opt,name=executables,proto3" json:"executables,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -841,89 +784,9 @@ func (*SecurityPolicy_Spec) Descriptor() ([]byte, []int) {
 	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 1}
 }
 
-func (x *SecurityPolicy_Spec) GetPorts() *SecurityPolicy_Spec_PortPolicy {
-	if x != nil {
-		return x.Ports
-	}
-	return nil
-}
-
 func (x *SecurityPolicy_Spec) GetExecutables() *SecurityPolicy_Spec_ExecutablePolicy {
 	if x != nil {
 		return x.Executables
-	}
-	return nil
-}
-
-func (x *SecurityPolicy_Spec) GetFiles() *SecurityPolicy_Spec_FilePolicy {
-	if x != nil {
-		return x.Files
-	}
-	return nil
-}
-
-func (x *SecurityPolicy_Spec) GetBlockDevices() *SecurityPolicy_Spec_BlockDevicePolicy {
-	if x != nil {
-		return x.BlockDevices
-	}
-	return nil
-}
-
-func (x *SecurityPolicy_Spec) GetData() *SecurityPolicy_Spec_DataPolicy {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-type SecurityPolicy_Spec_PortPolicy struct {
-	state         protoimpl.MessageState                 `protogen:"open.v1"`
-	DefaultEffect SecurityPolicy_Effect                  `protobuf:"varint,1,opt,name=default_effect,json=defaultEffect,proto3,enum=gitpod.v1.SecurityPolicy_Effect" json:"default_effect,omitempty"`
-	Rules         []*SecurityPolicy_Spec_PortPolicy_Rule `protobuf:"bytes,2,rep,name=rules,proto3" json:"rules,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SecurityPolicy_Spec_PortPolicy) Reset() {
-	*x = SecurityPolicy_Spec_PortPolicy{}
-	mi := &file_gitpod_v1_security_proto_msgTypes[14]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SecurityPolicy_Spec_PortPolicy) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SecurityPolicy_Spec_PortPolicy) ProtoMessage() {}
-
-func (x *SecurityPolicy_Spec_PortPolicy) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_security_proto_msgTypes[14]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SecurityPolicy_Spec_PortPolicy.ProtoReflect.Descriptor instead.
-func (*SecurityPolicy_Spec_PortPolicy) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 1, 0}
-}
-
-func (x *SecurityPolicy_Spec_PortPolicy) GetDefaultEffect() SecurityPolicy_Effect {
-	if x != nil {
-		return x.DefaultEffect
-	}
-	return SecurityPolicy_EFFECT_UNSPECIFIED
-}
-
-func (x *SecurityPolicy_Spec_PortPolicy) GetRules() []*SecurityPolicy_Spec_PortPolicy_Rule {
-	if x != nil {
-		return x.Rules
 	}
 	return nil
 }
@@ -942,7 +805,7 @@ type SecurityPolicy_Spec_ExecutablePolicy struct {
 
 func (x *SecurityPolicy_Spec_ExecutablePolicy) Reset() {
 	*x = SecurityPolicy_Spec_ExecutablePolicy{}
-	mi := &file_gitpod_v1_security_proto_msgTypes[15]
+	mi := &file_gitpod_v1_security_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -954,7 +817,7 @@ func (x *SecurityPolicy_Spec_ExecutablePolicy) String() string {
 func (*SecurityPolicy_Spec_ExecutablePolicy) ProtoMessage() {}
 
 func (x *SecurityPolicy_Spec_ExecutablePolicy) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_security_proto_msgTypes[15]
+	mi := &file_gitpod_v1_security_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -967,7 +830,7 @@ func (x *SecurityPolicy_Spec_ExecutablePolicy) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use SecurityPolicy_Spec_ExecutablePolicy.ProtoReflect.Descriptor instead.
 func (*SecurityPolicy_Spec_ExecutablePolicy) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 1, 1}
+	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 1, 0}
 }
 
 func (x *SecurityPolicy_Spec_ExecutablePolicy) GetDefaultEffect() SecurityPolicy_Effect {
@@ -982,268 +845,6 @@ func (x *SecurityPolicy_Spec_ExecutablePolicy) GetRules() []*SecurityPolicy_Spec
 		return x.Rules
 	}
 	return nil
-}
-
-type SecurityPolicy_Spec_FilePolicy struct {
-	state         protoimpl.MessageState                 `protogen:"open.v1"`
-	DefaultEffect SecurityPolicy_Effect                  `protobuf:"varint,1,opt,name=default_effect,json=defaultEffect,proto3,enum=gitpod.v1.SecurityPolicy_Effect" json:"default_effect,omitempty"`
-	Rules         []*SecurityPolicy_Spec_FilePolicy_Rule `protobuf:"bytes,2,rep,name=rules,proto3" json:"rules,omitempty"`
-	// Actions applied to rules that omit the actions field.
-	// If empty, rules must specify actions explicitly.
-	DefaultActions []SecurityPolicy_Spec_FilePolicy_Action `protobuf:"varint,3,rep,packed,name=default_actions,json=defaultActions,proto3,enum=gitpod.v1.SecurityPolicy_Spec_FilePolicy_Action" json:"default_actions,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *SecurityPolicy_Spec_FilePolicy) Reset() {
-	*x = SecurityPolicy_Spec_FilePolicy{}
-	mi := &file_gitpod_v1_security_proto_msgTypes[16]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SecurityPolicy_Spec_FilePolicy) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SecurityPolicy_Spec_FilePolicy) ProtoMessage() {}
-
-func (x *SecurityPolicy_Spec_FilePolicy) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_security_proto_msgTypes[16]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SecurityPolicy_Spec_FilePolicy.ProtoReflect.Descriptor instead.
-func (*SecurityPolicy_Spec_FilePolicy) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 1, 2}
-}
-
-func (x *SecurityPolicy_Spec_FilePolicy) GetDefaultEffect() SecurityPolicy_Effect {
-	if x != nil {
-		return x.DefaultEffect
-	}
-	return SecurityPolicy_EFFECT_UNSPECIFIED
-}
-
-func (x *SecurityPolicy_Spec_FilePolicy) GetRules() []*SecurityPolicy_Spec_FilePolicy_Rule {
-	if x != nil {
-		return x.Rules
-	}
-	return nil
-}
-
-func (x *SecurityPolicy_Spec_FilePolicy) GetDefaultActions() []SecurityPolicy_Spec_FilePolicy_Action {
-	if x != nil {
-		return x.DefaultActions
-	}
-	return nil
-}
-
-type SecurityPolicy_Spec_BlockDevicePolicy struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DefaultEffect SecurityPolicy_Effect  `protobuf:"varint,1,opt,name=default_effect,json=defaultEffect,proto3,enum=gitpod.v1.SecurityPolicy_Effect" json:"default_effect,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SecurityPolicy_Spec_BlockDevicePolicy) Reset() {
-	*x = SecurityPolicy_Spec_BlockDevicePolicy{}
-	mi := &file_gitpod_v1_security_proto_msgTypes[17]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SecurityPolicy_Spec_BlockDevicePolicy) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SecurityPolicy_Spec_BlockDevicePolicy) ProtoMessage() {}
-
-func (x *SecurityPolicy_Spec_BlockDevicePolicy) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_security_proto_msgTypes[17]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SecurityPolicy_Spec_BlockDevicePolicy.ProtoReflect.Descriptor instead.
-func (*SecurityPolicy_Spec_BlockDevicePolicy) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 1, 3}
-}
-
-func (x *SecurityPolicy_Spec_BlockDevicePolicy) GetDefaultEffect() SecurityPolicy_Effect {
-	if x != nil {
-		return x.DefaultEffect
-	}
-	return SecurityPolicy_EFFECT_UNSPECIFIED
-}
-
-type SecurityPolicy_Spec_DataPolicy struct {
-	state         protoimpl.MessageState                 `protogen:"open.v1"`
-	DefaultEffect SecurityPolicy_Effect                  `protobuf:"varint,1,opt,name=default_effect,json=defaultEffect,proto3,enum=gitpod.v1.SecurityPolicy_Effect" json:"default_effect,omitempty"`
-	Rules         []*SecurityPolicy_Spec_DataPolicy_Rule `protobuf:"bytes,2,rep,name=rules,proto3" json:"rules,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy) Reset() {
-	*x = SecurityPolicy_Spec_DataPolicy{}
-	mi := &file_gitpod_v1_security_proto_msgTypes[18]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SecurityPolicy_Spec_DataPolicy) ProtoMessage() {}
-
-func (x *SecurityPolicy_Spec_DataPolicy) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_security_proto_msgTypes[18]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SecurityPolicy_Spec_DataPolicy.ProtoReflect.Descriptor instead.
-func (*SecurityPolicy_Spec_DataPolicy) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 1, 4}
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy) GetDefaultEffect() SecurityPolicy_Effect {
-	if x != nil {
-		return x.DefaultEffect
-	}
-	return SecurityPolicy_EFFECT_UNSPECIFIED
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy) GetRules() []*SecurityPolicy_Spec_DataPolicy_Rule {
-	if x != nil {
-		return x.Rules
-	}
-	return nil
-}
-
-type SecurityPolicy_Spec_PortPolicy_Rule struct {
-	state         protoimpl.MessageState                `protogen:"open.v1"`
-	Range         *SecurityPolicy_Spec_PortPolicy_Range `protobuf:"bytes,1,opt,name=range,proto3" json:"range,omitempty"`
-	Effect        SecurityPolicy_Effect                 `protobuf:"varint,4,opt,name=effect,proto3,enum=gitpod.v1.SecurityPolicy_Effect" json:"effect,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SecurityPolicy_Spec_PortPolicy_Rule) Reset() {
-	*x = SecurityPolicy_Spec_PortPolicy_Rule{}
-	mi := &file_gitpod_v1_security_proto_msgTypes[19]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SecurityPolicy_Spec_PortPolicy_Rule) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SecurityPolicy_Spec_PortPolicy_Rule) ProtoMessage() {}
-
-func (x *SecurityPolicy_Spec_PortPolicy_Rule) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_security_proto_msgTypes[19]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SecurityPolicy_Spec_PortPolicy_Rule.ProtoReflect.Descriptor instead.
-func (*SecurityPolicy_Spec_PortPolicy_Rule) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 1, 0, 0}
-}
-
-func (x *SecurityPolicy_Spec_PortPolicy_Rule) GetRange() *SecurityPolicy_Spec_PortPolicy_Range {
-	if x != nil {
-		return x.Range
-	}
-	return nil
-}
-
-func (x *SecurityPolicy_Spec_PortPolicy_Rule) GetEffect() SecurityPolicy_Effect {
-	if x != nil {
-		return x.Effect
-	}
-	return SecurityPolicy_EFFECT_UNSPECIFIED
-}
-
-type SecurityPolicy_Spec_PortPolicy_Range struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	From          uint32                 `protobuf:"varint,1,opt,name=from,proto3" json:"from,omitempty"`
-	To            uint32                 `protobuf:"varint,2,opt,name=to,proto3" json:"to,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SecurityPolicy_Spec_PortPolicy_Range) Reset() {
-	*x = SecurityPolicy_Spec_PortPolicy_Range{}
-	mi := &file_gitpod_v1_security_proto_msgTypes[20]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SecurityPolicy_Spec_PortPolicy_Range) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SecurityPolicy_Spec_PortPolicy_Range) ProtoMessage() {}
-
-func (x *SecurityPolicy_Spec_PortPolicy_Range) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_security_proto_msgTypes[20]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SecurityPolicy_Spec_PortPolicy_Range.ProtoReflect.Descriptor instead.
-func (*SecurityPolicy_Spec_PortPolicy_Range) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 1, 0, 1}
-}
-
-func (x *SecurityPolicy_Spec_PortPolicy_Range) GetFrom() uint32 {
-	if x != nil {
-		return x.From
-	}
-	return 0
-}
-
-func (x *SecurityPolicy_Spec_PortPolicy_Range) GetTo() uint32 {
-	if x != nil {
-		return x.To
-	}
-	return 0
 }
 
 type SecurityPolicy_Spec_ExecutablePolicy_Rule struct {
@@ -1265,7 +866,7 @@ type SecurityPolicy_Spec_ExecutablePolicy_Rule struct {
 
 func (x *SecurityPolicy_Spec_ExecutablePolicy_Rule) Reset() {
 	*x = SecurityPolicy_Spec_ExecutablePolicy_Rule{}
-	mi := &file_gitpod_v1_security_proto_msgTypes[21]
+	mi := &file_gitpod_v1_security_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1277,7 +878,7 @@ func (x *SecurityPolicy_Spec_ExecutablePolicy_Rule) String() string {
 func (*SecurityPolicy_Spec_ExecutablePolicy_Rule) ProtoMessage() {}
 
 func (x *SecurityPolicy_Spec_ExecutablePolicy_Rule) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_security_proto_msgTypes[21]
+	mi := &file_gitpod_v1_security_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1290,7 +891,7 @@ func (x *SecurityPolicy_Spec_ExecutablePolicy_Rule) ProtoReflect() protoreflect.
 
 // Deprecated: Use SecurityPolicy_Spec_ExecutablePolicy_Rule.ProtoReflect.Descriptor instead.
 func (*SecurityPolicy_Spec_ExecutablePolicy_Rule) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 1, 1, 0}
+	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 1, 0, 0}
 }
 
 func (x *SecurityPolicy_Spec_ExecutablePolicy_Rule) GetPath() string {
@@ -1307,278 +908,11 @@ func (x *SecurityPolicy_Spec_ExecutablePolicy_Rule) GetEffect() SecurityPolicy_E
 	return SecurityPolicy_EFFECT_UNSPECIFIED
 }
 
-type SecurityPolicy_Spec_FilePolicy_Rule struct {
-	state         protoimpl.MessageState                  `protogen:"open.v1"`
-	Path          string                                  `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
-	Actions       []SecurityPolicy_Spec_FilePolicy_Action `protobuf:"varint,3,rep,packed,name=actions,proto3,enum=gitpod.v1.SecurityPolicy_Spec_FilePolicy_Action" json:"actions,omitempty"`
-	Effect        SecurityPolicy_Effect                   `protobuf:"varint,4,opt,name=effect,proto3,enum=gitpod.v1.SecurityPolicy_Effect" json:"effect,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SecurityPolicy_Spec_FilePolicy_Rule) Reset() {
-	*x = SecurityPolicy_Spec_FilePolicy_Rule{}
-	mi := &file_gitpod_v1_security_proto_msgTypes[22]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SecurityPolicy_Spec_FilePolicy_Rule) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SecurityPolicy_Spec_FilePolicy_Rule) ProtoMessage() {}
-
-func (x *SecurityPolicy_Spec_FilePolicy_Rule) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_security_proto_msgTypes[22]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SecurityPolicy_Spec_FilePolicy_Rule.ProtoReflect.Descriptor instead.
-func (*SecurityPolicy_Spec_FilePolicy_Rule) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 1, 2, 0}
-}
-
-func (x *SecurityPolicy_Spec_FilePolicy_Rule) GetPath() string {
-	if x != nil {
-		return x.Path
-	}
-	return ""
-}
-
-func (x *SecurityPolicy_Spec_FilePolicy_Rule) GetActions() []SecurityPolicy_Spec_FilePolicy_Action {
-	if x != nil {
-		return x.Actions
-	}
-	return nil
-}
-
-func (x *SecurityPolicy_Spec_FilePolicy_Rule) GetEffect() SecurityPolicy_Effect {
-	if x != nil {
-		return x.Effect
-	}
-	return SecurityPolicy_EFFECT_UNSPECIFIED
-}
-
-type SecurityPolicy_Spec_DataPolicy_Rule struct {
-	state         protoimpl.MessageState                      `protogen:"open.v1"`
-	Source        *SecurityPolicy_Spec_DataPolicy_Source      `protobuf:"bytes,1,opt,name=source,proto3" json:"source,omitempty"`
-	Destination   *SecurityPolicy_Spec_DataPolicy_Destination `protobuf:"bytes,3,opt,name=destination,proto3" json:"destination,omitempty"`
-	Effect        SecurityPolicy_Effect                       `protobuf:"varint,5,opt,name=effect,proto3,enum=gitpod.v1.SecurityPolicy_Effect" json:"effect,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Rule) Reset() {
-	*x = SecurityPolicy_Spec_DataPolicy_Rule{}
-	mi := &file_gitpod_v1_security_proto_msgTypes[23]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Rule) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SecurityPolicy_Spec_DataPolicy_Rule) ProtoMessage() {}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Rule) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_security_proto_msgTypes[23]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SecurityPolicy_Spec_DataPolicy_Rule.ProtoReflect.Descriptor instead.
-func (*SecurityPolicy_Spec_DataPolicy_Rule) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 1, 4, 0}
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Rule) GetSource() *SecurityPolicy_Spec_DataPolicy_Source {
-	if x != nil {
-		return x.Source
-	}
-	return nil
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Rule) GetDestination() *SecurityPolicy_Spec_DataPolicy_Destination {
-	if x != nil {
-		return x.Destination
-	}
-	return nil
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Rule) GetEffect() SecurityPolicy_Effect {
-	if x != nil {
-		return x.Effect
-	}
-	return SecurityPolicy_EFFECT_UNSPECIFIED
-}
-
-type SecurityPolicy_Spec_DataPolicy_Source struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Types that are valid to be assigned to Reference:
-	//
-	//	*SecurityPolicy_Spec_DataPolicy_Source_File
-	//	*SecurityPolicy_Spec_DataPolicy_Source_Integration
-	Reference isSecurityPolicy_Spec_DataPolicy_Source_Reference `protobuf_oneof:"reference"`
-	// Selector syntax is source-dependent.
-	//
-	// Examples:
-	//
-	//	selector: 10:200
-	//	selector: ?s=leo
-	Selector      string `protobuf:"bytes,3,opt,name=selector,proto3" json:"selector,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Source) Reset() {
-	*x = SecurityPolicy_Spec_DataPolicy_Source{}
-	mi := &file_gitpod_v1_security_proto_msgTypes[24]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Source) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SecurityPolicy_Spec_DataPolicy_Source) ProtoMessage() {}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Source) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_security_proto_msgTypes[24]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SecurityPolicy_Spec_DataPolicy_Source.ProtoReflect.Descriptor instead.
-func (*SecurityPolicy_Spec_DataPolicy_Source) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 1, 4, 1}
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Source) GetReference() isSecurityPolicy_Spec_DataPolicy_Source_Reference {
-	if x != nil {
-		return x.Reference
-	}
-	return nil
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Source) GetFile() string {
-	if x != nil {
-		if x, ok := x.Reference.(*SecurityPolicy_Spec_DataPolicy_Source_File); ok {
-			return x.File
-		}
-	}
-	return ""
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Source) GetIntegration() string {
-	if x != nil {
-		if x, ok := x.Reference.(*SecurityPolicy_Spec_DataPolicy_Source_Integration); ok {
-			return x.Integration
-		}
-	}
-	return ""
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Source) GetSelector() string {
-	if x != nil {
-		return x.Selector
-	}
-	return ""
-}
-
-type isSecurityPolicy_Spec_DataPolicy_Source_Reference interface {
-	isSecurityPolicy_Spec_DataPolicy_Source_Reference()
-}
-
-type SecurityPolicy_Spec_DataPolicy_Source_File struct {
-	File string `protobuf:"bytes,1,opt,name=file,proto3,oneof"`
-}
-
-type SecurityPolicy_Spec_DataPolicy_Source_Integration struct {
-	Integration string `protobuf:"bytes,2,opt,name=integration,proto3,oneof"`
-}
-
-func (*SecurityPolicy_Spec_DataPolicy_Source_File) isSecurityPolicy_Spec_DataPolicy_Source_Reference() {
-}
-
-func (*SecurityPolicy_Spec_DataPolicy_Source_Integration) isSecurityPolicy_Spec_DataPolicy_Source_Reference() {
-}
-
-type SecurityPolicy_Spec_DataPolicy_Destination struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Destination host, domain, service endpoint, or app-owned host.
-	//
-	// Example:
-	//
-	//	host: foobar.com
-	Host          string `protobuf:"bytes,1,opt,name=host,proto3" json:"host,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Destination) Reset() {
-	*x = SecurityPolicy_Spec_DataPolicy_Destination{}
-	mi := &file_gitpod_v1_security_proto_msgTypes[25]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Destination) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SecurityPolicy_Spec_DataPolicy_Destination) ProtoMessage() {}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Destination) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_security_proto_msgTypes[25]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SecurityPolicy_Spec_DataPolicy_Destination.ProtoReflect.Descriptor instead.
-func (*SecurityPolicy_Spec_DataPolicy_Destination) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_security_proto_rawDescGZIP(), []int{10, 1, 4, 2}
-}
-
-func (x *SecurityPolicy_Spec_DataPolicy_Destination) GetHost() string {
-	if x != nil {
-		return x.Host
-	}
-	return ""
-}
-
 var File_gitpod_v1_security_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_security_proto_rawDesc = "" +
 	"\n" +
-	"\x18gitpod/v1/security.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe9\x01\n" +
+	"\x18gitpod/v1/security.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe9\x01\n" +
 	"\x1bCreateSecurityPolicyRequest\x12F\n" +
 	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
 	"\x0forganization.idR\x0eorganizationId\x12F\n" +
@@ -1617,7 +951,7 @@ const file_gitpod_v1_security_proto_rawDesc = "" +
 	"\x1bDeleteSecurityPolicyRequest\x12N\n" +
 	"\x12security_policy_id\x18\x01 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
 	"\x12security_policy.idR\x10securityPolicyId\"\x1e\n" +
-	"\x1cDeleteSecurityPolicyResponse\"\xf9\x15\n" +
+	"\x1cDeleteSecurityPolicyResponse\"\xa3\a\n" +
 	"\x0eSecurityPolicy\x124\n" +
 	"\x02id\x18\x01 \x01(\tB$\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
 	"\x12security_policy.idګ\x1e\x00R\x02id\x12F\n" +
@@ -1631,70 +965,28 @@ const file_gitpod_v1_security_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tupdatedAt\x1a-\n" +
 	"\bMetadata\x12!\n" +
-	"\x04name\x18\x01 \x01(\tB\r\xbaH\x06r\x04\x10\x01\x18Pګ\x1e\x00R\x04name\x1a\xcd\x11\n" +
-	"\x04Spec\x12E\n" +
-	"\x05ports\x18\x01 \x01(\v2).gitpod.v1.SecurityPolicy.Spec.PortPolicyB\x04ګ\x1e\x00R\x05ports\x12W\n" +
-	"\vexecutables\x18\x02 \x01(\v2/.gitpod.v1.SecurityPolicy.Spec.ExecutablePolicyB\x04ګ\x1e\x00R\vexecutables\x12E\n" +
-	"\x05files\x18\x03 \x01(\v2).gitpod.v1.SecurityPolicy.Spec.FilePolicyB\x04ګ\x1e\x00R\x05files\x12[\n" +
-	"\rblock_devices\x18\x04 \x01(\v20.gitpod.v1.SecurityPolicy.Spec.BlockDevicePolicyB\x04ګ\x1e\x00R\fblockDevices\x12C\n" +
-	"\x04data\x18\x05 \x01(\v2).gitpod.v1.SecurityPolicy.Spec.DataPolicyB\x04ګ\x1e\x00R\x04data\x1a\xf0\x02\n" +
-	"\n" +
-	"PortPolicy\x12M\n" +
-	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\rdefaultEffect\x12J\n" +
-	"\x05rules\x18\x02 \x03(\v2..gitpod.v1.SecurityPolicy.Spec.PortPolicy.RuleB\x04ګ\x1e\x00R\x05rules\x1a\x8d\x01\n" +
-	"\x04Rule\x12E\n" +
-	"\x05range\x18\x01 \x01(\v2/.gitpod.v1.SecurityPolicy.Spec.PortPolicy.RangeR\x05range\x12>\n" +
-	"\x06effect\x18\x04 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\x06effect\x1a7\n" +
-	"\x05Range\x12\x18\n" +
-	"\x04from\x18\x01 \x01(\rB\x04ګ\x1e\x00R\x04from\x12\x14\n" +
-	"\x02to\x18\x02 \x01(\rB\x04ګ\x1e\x00R\x02to\x1a\x95\x02\n" +
+	"\x04name\x18\x01 \x01(\tB\r\xbaH\x06r\x04\x10\x01\x18Pګ\x1e\x00R\x04name\x1a\xf7\x02\n" +
+	"\x04Spec\x12W\n" +
+	"\vexecutables\x18\x02 \x01(\v2/.gitpod.v1.SecurityPolicy.Spec.ExecutablePolicyB\x04ګ\x1e\x00R\vexecutables\x1a\x95\x02\n" +
 	"\x10ExecutablePolicy\x12M\n" +
 	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\rdefaultEffect\x12P\n" +
 	"\x05rules\x18\x02 \x03(\v24.gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy.RuleB\x04ګ\x1e\x00R\x05rules\x1a`\n" +
 	"\x04Rule\x12\x18\n" +
 	"\x04path\x18\x01 \x01(\tB\x04ګ\x1e\x00R\x04path\x12>\n" +
-	"\x06effect\x18\x04 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\x06effect\x1a\x82\x04\n" +
-	"\n" +
-	"FilePolicy\x12M\n" +
-	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\rdefaultEffect\x12J\n" +
-	"\x05rules\x18\x02 \x03(\v2..gitpod.v1.SecurityPolicy.Spec.FilePolicy.RuleB\x04ګ\x1e\x00R\x05rules\x12_\n" +
-	"\x0fdefault_actions\x18\x03 \x03(\x0e20.gitpod.v1.SecurityPolicy.Spec.FilePolicy.ActionB\x04ګ\x1e\x00R\x0edefaultActions\x1a\xb2\x01\n" +
-	"\x04Rule\x12\x18\n" +
-	"\x04path\x18\x01 \x01(\tB\x04ګ\x1e\x00R\x04path\x12P\n" +
-	"\aactions\x18\x03 \x03(\x0e20.gitpod.v1.SecurityPolicy.Spec.FilePolicy.ActionB\x04ګ\x1e\x00R\aactions\x12>\n" +
-	"\x06effect\x18\x04 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\x06effect\"C\n" +
-	"\x06Action\x12\x16\n" +
-	"\x12ACTION_UNSPECIFIED\x10\x00\x12\x0f\n" +
-	"\vACTION_READ\x10\x01\x12\x10\n" +
-	"\fACTION_WRITE\x10\x02\x1ab\n" +
-	"\x11BlockDevicePolicy\x12M\n" +
-	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\rdefaultEffect\x1a\xc7\x04\n" +
-	"\n" +
-	"DataPolicy\x12M\n" +
-	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\rdefaultEffect\x12J\n" +
-	"\x05rules\x18\x02 \x03(\v2..gitpod.v1.SecurityPolicy.Spec.DataPolicy.RuleB\x04ګ\x1e\x00R\x05rules\x1a\xf5\x01\n" +
-	"\x04Rule\x12N\n" +
-	"\x06source\x18\x01 \x01(\v20.gitpod.v1.SecurityPolicy.Spec.DataPolicy.SourceB\x04ګ\x1e\x00R\x06source\x12]\n" +
-	"\vdestination\x18\x03 \x01(\v25.gitpod.v1.SecurityPolicy.Spec.DataPolicy.DestinationB\x04ګ\x1e\x00R\vdestination\x12>\n" +
-	"\x06effect\x18\x05 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\x06effect\x1a}\n" +
-	"\x06Source\x12\x1a\n" +
-	"\x04file\x18\x01 \x01(\tB\x04ګ\x1e\x00H\x00R\x04file\x12(\n" +
-	"\vintegration\x18\x02 \x01(\tB\x04ګ\x1e\x00H\x00R\vintegration\x12 \n" +
-	"\bselector\x18\x03 \x01(\tB\x04ګ\x1e\x00R\bselectorB\v\n" +
-	"\treference\x1a'\n" +
-	"\vDestination\x12\x18\n" +
-	"\x04host\x18\x01 \x01(\tB\x04ګ\x1e\x00R\x04host\"V\n" +
+	"\x06effect\x18\x04 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\x06effect\"V\n" +
 	"\x06Effect\x12\x16\n" +
 	"\x12EFFECT_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fEFFECT_ALLOW\x10\x01\x12\x10\n" +
 	"\fEFFECT_BLOCK\x10\x02\x12\x10\n" +
-	"\fEFFECT_AUDIT\x10\x03:\x04ҫ\x1e\x002\xa5\x04\n" +
-	"\x0fSecurityService\x12i\n" +
-	"\x14CreateSecurityPolicy\x12&.gitpod.v1.CreateSecurityPolicyRequest\x1a'.gitpod.v1.CreateSecurityPolicyResponse\"\x00\x12c\n" +
-	"\x11GetSecurityPolicy\x12#.gitpod.v1.GetSecurityPolicyRequest\x1a$.gitpod.v1.GetSecurityPolicyResponse\"\x03\x90\x02\x01\x12l\n" +
-	"\x14ListSecurityPolicies\x12&.gitpod.v1.ListSecurityPoliciesRequest\x1a'.gitpod.v1.ListSecurityPoliciesResponse\"\x03\x90\x02\x01\x12i\n" +
-	"\x14UpdateSecurityPolicy\x12&.gitpod.v1.UpdateSecurityPolicyRequest\x1a'.gitpod.v1.UpdateSecurityPolicyResponse\"\x00\x12i\n" +
-	"\x14DeleteSecurityPolicy\x12&.gitpod.v1.DeleteSecurityPolicyRequest\x1a'.gitpod.v1.DeleteSecurityPolicyResponse\"\x00B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\fEFFECT_AUDIT\x10\x03:\x04ҫ\x1e\x002\xfa\x04\n" +
+	"\x0fSecurityService\x12u\n" +
+	"\x14CreateSecurityPolicy\x12&.gitpod.v1.CreateSecurityPolicyRequest\x1a'.gitpod.v1.CreateSecurityPolicyResponse\"\f\xb2\xab\x1e\b\x12\x06create\x12q\n" +
+	"\x11GetSecurityPolicy\x12#.gitpod.v1.GetSecurityPolicyRequest\x1a$.gitpod.v1.GetSecurityPolicyResponse\"\x11\xb2\xab\x1e\n" +
+	"\x12\bretrieve\x90\x02\x01\x12v\n" +
+	"\x14ListSecurityPolicies\x12&.gitpod.v1.ListSecurityPoliciesRequest\x1a'.gitpod.v1.ListSecurityPoliciesResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x12u\n" +
+	"\x14UpdateSecurityPolicy\x12&.gitpod.v1.UpdateSecurityPolicyRequest\x1a'.gitpod.v1.UpdateSecurityPolicyResponse\"\f\xb2\xab\x1e\b\x12\x06update\x12u\n" +
+	"\x14DeleteSecurityPolicy\x12&.gitpod.v1.DeleteSecurityPolicyRequest\x1a'.gitpod.v1.DeleteSecurityPolicyResponse\"\f\xb2\xab\x1e\b\x12\x06delete\x1a\x17\xaa\xab\x1e\x13\n" +
+	"\x11security_policiesB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_security_proto_rawDescOnce sync.Once
@@ -1708,95 +1000,65 @@ func file_gitpod_v1_security_proto_rawDescGZIP() []byte {
 	return file_gitpod_v1_security_proto_rawDescData
 }
 
-var file_gitpod_v1_security_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_gitpod_v1_security_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
+var file_gitpod_v1_security_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_gitpod_v1_security_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_gitpod_v1_security_proto_goTypes = []any{
-	(SecurityPolicy_Effect)(0),                         // 0: gitpod.v1.SecurityPolicy.Effect
-	(SecurityPolicy_Spec_FilePolicy_Action)(0),         // 1: gitpod.v1.SecurityPolicy.Spec.FilePolicy.Action
-	(*CreateSecurityPolicyRequest)(nil),                // 2: gitpod.v1.CreateSecurityPolicyRequest
-	(*CreateSecurityPolicyResponse)(nil),               // 3: gitpod.v1.CreateSecurityPolicyResponse
-	(*GetSecurityPolicyRequest)(nil),                   // 4: gitpod.v1.GetSecurityPolicyRequest
-	(*GetSecurityPolicyResponse)(nil),                  // 5: gitpod.v1.GetSecurityPolicyResponse
-	(*ListSecurityPoliciesRequest)(nil),                // 6: gitpod.v1.ListSecurityPoliciesRequest
-	(*ListSecurityPoliciesResponse)(nil),               // 7: gitpod.v1.ListSecurityPoliciesResponse
-	(*UpdateSecurityPolicyRequest)(nil),                // 8: gitpod.v1.UpdateSecurityPolicyRequest
-	(*UpdateSecurityPolicyResponse)(nil),               // 9: gitpod.v1.UpdateSecurityPolicyResponse
-	(*DeleteSecurityPolicyRequest)(nil),                // 10: gitpod.v1.DeleteSecurityPolicyRequest
-	(*DeleteSecurityPolicyResponse)(nil),               // 11: gitpod.v1.DeleteSecurityPolicyResponse
-	(*SecurityPolicy)(nil),                             // 12: gitpod.v1.SecurityPolicy
-	(*ListSecurityPoliciesRequest_Filter)(nil),         // 13: gitpod.v1.ListSecurityPoliciesRequest.Filter
-	(*SecurityPolicy_Metadata)(nil),                    // 14: gitpod.v1.SecurityPolicy.Metadata
-	(*SecurityPolicy_Spec)(nil),                        // 15: gitpod.v1.SecurityPolicy.Spec
-	(*SecurityPolicy_Spec_PortPolicy)(nil),             // 16: gitpod.v1.SecurityPolicy.Spec.PortPolicy
-	(*SecurityPolicy_Spec_ExecutablePolicy)(nil),       // 17: gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy
-	(*SecurityPolicy_Spec_FilePolicy)(nil),             // 18: gitpod.v1.SecurityPolicy.Spec.FilePolicy
-	(*SecurityPolicy_Spec_BlockDevicePolicy)(nil),      // 19: gitpod.v1.SecurityPolicy.Spec.BlockDevicePolicy
-	(*SecurityPolicy_Spec_DataPolicy)(nil),             // 20: gitpod.v1.SecurityPolicy.Spec.DataPolicy
-	(*SecurityPolicy_Spec_PortPolicy_Rule)(nil),        // 21: gitpod.v1.SecurityPolicy.Spec.PortPolicy.Rule
-	(*SecurityPolicy_Spec_PortPolicy_Range)(nil),       // 22: gitpod.v1.SecurityPolicy.Spec.PortPolicy.Range
-	(*SecurityPolicy_Spec_ExecutablePolicy_Rule)(nil),  // 23: gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy.Rule
-	(*SecurityPolicy_Spec_FilePolicy_Rule)(nil),        // 24: gitpod.v1.SecurityPolicy.Spec.FilePolicy.Rule
-	(*SecurityPolicy_Spec_DataPolicy_Rule)(nil),        // 25: gitpod.v1.SecurityPolicy.Spec.DataPolicy.Rule
-	(*SecurityPolicy_Spec_DataPolicy_Source)(nil),      // 26: gitpod.v1.SecurityPolicy.Spec.DataPolicy.Source
-	(*SecurityPolicy_Spec_DataPolicy_Destination)(nil), // 27: gitpod.v1.SecurityPolicy.Spec.DataPolicy.Destination
-	(*PaginationRequest)(nil),                          // 28: gitpod.v1.PaginationRequest
-	(*PaginationResponse)(nil),                         // 29: gitpod.v1.PaginationResponse
-	(*timestamppb.Timestamp)(nil),                      // 30: google.protobuf.Timestamp
+	(SecurityPolicy_Effect)(0),                        // 0: gitpod.v1.SecurityPolicy.Effect
+	(*CreateSecurityPolicyRequest)(nil),               // 1: gitpod.v1.CreateSecurityPolicyRequest
+	(*CreateSecurityPolicyResponse)(nil),              // 2: gitpod.v1.CreateSecurityPolicyResponse
+	(*GetSecurityPolicyRequest)(nil),                  // 3: gitpod.v1.GetSecurityPolicyRequest
+	(*GetSecurityPolicyResponse)(nil),                 // 4: gitpod.v1.GetSecurityPolicyResponse
+	(*ListSecurityPoliciesRequest)(nil),               // 5: gitpod.v1.ListSecurityPoliciesRequest
+	(*ListSecurityPoliciesResponse)(nil),              // 6: gitpod.v1.ListSecurityPoliciesResponse
+	(*UpdateSecurityPolicyRequest)(nil),               // 7: gitpod.v1.UpdateSecurityPolicyRequest
+	(*UpdateSecurityPolicyResponse)(nil),              // 8: gitpod.v1.UpdateSecurityPolicyResponse
+	(*DeleteSecurityPolicyRequest)(nil),               // 9: gitpod.v1.DeleteSecurityPolicyRequest
+	(*DeleteSecurityPolicyResponse)(nil),              // 10: gitpod.v1.DeleteSecurityPolicyResponse
+	(*SecurityPolicy)(nil),                            // 11: gitpod.v1.SecurityPolicy
+	(*ListSecurityPoliciesRequest_Filter)(nil),        // 12: gitpod.v1.ListSecurityPoliciesRequest.Filter
+	(*SecurityPolicy_Metadata)(nil),                   // 13: gitpod.v1.SecurityPolicy.Metadata
+	(*SecurityPolicy_Spec)(nil),                       // 14: gitpod.v1.SecurityPolicy.Spec
+	(*SecurityPolicy_Spec_ExecutablePolicy)(nil),      // 15: gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy
+	(*SecurityPolicy_Spec_ExecutablePolicy_Rule)(nil), // 16: gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy.Rule
+	(*PaginationRequest)(nil),                         // 17: gitpod.v1.PaginationRequest
+	(*PaginationResponse)(nil),                        // 18: gitpod.v1.PaginationResponse
+	(*timestamppb.Timestamp)(nil),                     // 19: google.protobuf.Timestamp
 }
 var file_gitpod_v1_security_proto_depIdxs = []int32{
-	14, // 0: gitpod.v1.CreateSecurityPolicyRequest.metadata:type_name -> gitpod.v1.SecurityPolicy.Metadata
-	15, // 1: gitpod.v1.CreateSecurityPolicyRequest.spec:type_name -> gitpod.v1.SecurityPolicy.Spec
-	12, // 2: gitpod.v1.CreateSecurityPolicyResponse.security_policy:type_name -> gitpod.v1.SecurityPolicy
-	12, // 3: gitpod.v1.GetSecurityPolicyResponse.security_policy:type_name -> gitpod.v1.SecurityPolicy
-	28, // 4: gitpod.v1.ListSecurityPoliciesRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	13, // 5: gitpod.v1.ListSecurityPoliciesRequest.filter:type_name -> gitpod.v1.ListSecurityPoliciesRequest.Filter
-	29, // 6: gitpod.v1.ListSecurityPoliciesResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	12, // 7: gitpod.v1.ListSecurityPoliciesResponse.security_policies:type_name -> gitpod.v1.SecurityPolicy
-	14, // 8: gitpod.v1.UpdateSecurityPolicyRequest.metadata:type_name -> gitpod.v1.SecurityPolicy.Metadata
-	15, // 9: gitpod.v1.UpdateSecurityPolicyRequest.spec:type_name -> gitpod.v1.SecurityPolicy.Spec
-	12, // 10: gitpod.v1.UpdateSecurityPolicyResponse.security_policy:type_name -> gitpod.v1.SecurityPolicy
-	14, // 11: gitpod.v1.SecurityPolicy.metadata:type_name -> gitpod.v1.SecurityPolicy.Metadata
-	15, // 12: gitpod.v1.SecurityPolicy.spec:type_name -> gitpod.v1.SecurityPolicy.Spec
-	30, // 13: gitpod.v1.SecurityPolicy.created_at:type_name -> google.protobuf.Timestamp
-	30, // 14: gitpod.v1.SecurityPolicy.updated_at:type_name -> google.protobuf.Timestamp
-	16, // 15: gitpod.v1.SecurityPolicy.Spec.ports:type_name -> gitpod.v1.SecurityPolicy.Spec.PortPolicy
-	17, // 16: gitpod.v1.SecurityPolicy.Spec.executables:type_name -> gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy
-	18, // 17: gitpod.v1.SecurityPolicy.Spec.files:type_name -> gitpod.v1.SecurityPolicy.Spec.FilePolicy
-	19, // 18: gitpod.v1.SecurityPolicy.Spec.block_devices:type_name -> gitpod.v1.SecurityPolicy.Spec.BlockDevicePolicy
-	20, // 19: gitpod.v1.SecurityPolicy.Spec.data:type_name -> gitpod.v1.SecurityPolicy.Spec.DataPolicy
-	0,  // 20: gitpod.v1.SecurityPolicy.Spec.PortPolicy.default_effect:type_name -> gitpod.v1.SecurityPolicy.Effect
-	21, // 21: gitpod.v1.SecurityPolicy.Spec.PortPolicy.rules:type_name -> gitpod.v1.SecurityPolicy.Spec.PortPolicy.Rule
-	0,  // 22: gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy.default_effect:type_name -> gitpod.v1.SecurityPolicy.Effect
-	23, // 23: gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy.rules:type_name -> gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy.Rule
-	0,  // 24: gitpod.v1.SecurityPolicy.Spec.FilePolicy.default_effect:type_name -> gitpod.v1.SecurityPolicy.Effect
-	24, // 25: gitpod.v1.SecurityPolicy.Spec.FilePolicy.rules:type_name -> gitpod.v1.SecurityPolicy.Spec.FilePolicy.Rule
-	1,  // 26: gitpod.v1.SecurityPolicy.Spec.FilePolicy.default_actions:type_name -> gitpod.v1.SecurityPolicy.Spec.FilePolicy.Action
-	0,  // 27: gitpod.v1.SecurityPolicy.Spec.BlockDevicePolicy.default_effect:type_name -> gitpod.v1.SecurityPolicy.Effect
-	0,  // 28: gitpod.v1.SecurityPolicy.Spec.DataPolicy.default_effect:type_name -> gitpod.v1.SecurityPolicy.Effect
-	25, // 29: gitpod.v1.SecurityPolicy.Spec.DataPolicy.rules:type_name -> gitpod.v1.SecurityPolicy.Spec.DataPolicy.Rule
-	22, // 30: gitpod.v1.SecurityPolicy.Spec.PortPolicy.Rule.range:type_name -> gitpod.v1.SecurityPolicy.Spec.PortPolicy.Range
-	0,  // 31: gitpod.v1.SecurityPolicy.Spec.PortPolicy.Rule.effect:type_name -> gitpod.v1.SecurityPolicy.Effect
-	0,  // 32: gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy.Rule.effect:type_name -> gitpod.v1.SecurityPolicy.Effect
-	1,  // 33: gitpod.v1.SecurityPolicy.Spec.FilePolicy.Rule.actions:type_name -> gitpod.v1.SecurityPolicy.Spec.FilePolicy.Action
-	0,  // 34: gitpod.v1.SecurityPolicy.Spec.FilePolicy.Rule.effect:type_name -> gitpod.v1.SecurityPolicy.Effect
-	26, // 35: gitpod.v1.SecurityPolicy.Spec.DataPolicy.Rule.source:type_name -> gitpod.v1.SecurityPolicy.Spec.DataPolicy.Source
-	27, // 36: gitpod.v1.SecurityPolicy.Spec.DataPolicy.Rule.destination:type_name -> gitpod.v1.SecurityPolicy.Spec.DataPolicy.Destination
-	0,  // 37: gitpod.v1.SecurityPolicy.Spec.DataPolicy.Rule.effect:type_name -> gitpod.v1.SecurityPolicy.Effect
-	2,  // 38: gitpod.v1.SecurityService.CreateSecurityPolicy:input_type -> gitpod.v1.CreateSecurityPolicyRequest
-	4,  // 39: gitpod.v1.SecurityService.GetSecurityPolicy:input_type -> gitpod.v1.GetSecurityPolicyRequest
-	6,  // 40: gitpod.v1.SecurityService.ListSecurityPolicies:input_type -> gitpod.v1.ListSecurityPoliciesRequest
-	8,  // 41: gitpod.v1.SecurityService.UpdateSecurityPolicy:input_type -> gitpod.v1.UpdateSecurityPolicyRequest
-	10, // 42: gitpod.v1.SecurityService.DeleteSecurityPolicy:input_type -> gitpod.v1.DeleteSecurityPolicyRequest
-	3,  // 43: gitpod.v1.SecurityService.CreateSecurityPolicy:output_type -> gitpod.v1.CreateSecurityPolicyResponse
-	5,  // 44: gitpod.v1.SecurityService.GetSecurityPolicy:output_type -> gitpod.v1.GetSecurityPolicyResponse
-	7,  // 45: gitpod.v1.SecurityService.ListSecurityPolicies:output_type -> gitpod.v1.ListSecurityPoliciesResponse
-	9,  // 46: gitpod.v1.SecurityService.UpdateSecurityPolicy:output_type -> gitpod.v1.UpdateSecurityPolicyResponse
-	11, // 47: gitpod.v1.SecurityService.DeleteSecurityPolicy:output_type -> gitpod.v1.DeleteSecurityPolicyResponse
-	43, // [43:48] is the sub-list for method output_type
-	38, // [38:43] is the sub-list for method input_type
-	38, // [38:38] is the sub-list for extension type_name
-	38, // [38:38] is the sub-list for extension extendee
-	0,  // [0:38] is the sub-list for field type_name
+	13, // 0: gitpod.v1.CreateSecurityPolicyRequest.metadata:type_name -> gitpod.v1.SecurityPolicy.Metadata
+	14, // 1: gitpod.v1.CreateSecurityPolicyRequest.spec:type_name -> gitpod.v1.SecurityPolicy.Spec
+	11, // 2: gitpod.v1.CreateSecurityPolicyResponse.security_policy:type_name -> gitpod.v1.SecurityPolicy
+	11, // 3: gitpod.v1.GetSecurityPolicyResponse.security_policy:type_name -> gitpod.v1.SecurityPolicy
+	17, // 4: gitpod.v1.ListSecurityPoliciesRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	12, // 5: gitpod.v1.ListSecurityPoliciesRequest.filter:type_name -> gitpod.v1.ListSecurityPoliciesRequest.Filter
+	18, // 6: gitpod.v1.ListSecurityPoliciesResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	11, // 7: gitpod.v1.ListSecurityPoliciesResponse.security_policies:type_name -> gitpod.v1.SecurityPolicy
+	13, // 8: gitpod.v1.UpdateSecurityPolicyRequest.metadata:type_name -> gitpod.v1.SecurityPolicy.Metadata
+	14, // 9: gitpod.v1.UpdateSecurityPolicyRequest.spec:type_name -> gitpod.v1.SecurityPolicy.Spec
+	11, // 10: gitpod.v1.UpdateSecurityPolicyResponse.security_policy:type_name -> gitpod.v1.SecurityPolicy
+	13, // 11: gitpod.v1.SecurityPolicy.metadata:type_name -> gitpod.v1.SecurityPolicy.Metadata
+	14, // 12: gitpod.v1.SecurityPolicy.spec:type_name -> gitpod.v1.SecurityPolicy.Spec
+	19, // 13: gitpod.v1.SecurityPolicy.created_at:type_name -> google.protobuf.Timestamp
+	19, // 14: gitpod.v1.SecurityPolicy.updated_at:type_name -> google.protobuf.Timestamp
+	15, // 15: gitpod.v1.SecurityPolicy.Spec.executables:type_name -> gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy
+	0,  // 16: gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy.default_effect:type_name -> gitpod.v1.SecurityPolicy.Effect
+	16, // 17: gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy.rules:type_name -> gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy.Rule
+	0,  // 18: gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy.Rule.effect:type_name -> gitpod.v1.SecurityPolicy.Effect
+	1,  // 19: gitpod.v1.SecurityService.CreateSecurityPolicy:input_type -> gitpod.v1.CreateSecurityPolicyRequest
+	3,  // 20: gitpod.v1.SecurityService.GetSecurityPolicy:input_type -> gitpod.v1.GetSecurityPolicyRequest
+	5,  // 21: gitpod.v1.SecurityService.ListSecurityPolicies:input_type -> gitpod.v1.ListSecurityPoliciesRequest
+	7,  // 22: gitpod.v1.SecurityService.UpdateSecurityPolicy:input_type -> gitpod.v1.UpdateSecurityPolicyRequest
+	9,  // 23: gitpod.v1.SecurityService.DeleteSecurityPolicy:input_type -> gitpod.v1.DeleteSecurityPolicyRequest
+	2,  // 24: gitpod.v1.SecurityService.CreateSecurityPolicy:output_type -> gitpod.v1.CreateSecurityPolicyResponse
+	4,  // 25: gitpod.v1.SecurityService.GetSecurityPolicy:output_type -> gitpod.v1.GetSecurityPolicyResponse
+	6,  // 26: gitpod.v1.SecurityService.ListSecurityPolicies:output_type -> gitpod.v1.ListSecurityPoliciesResponse
+	8,  // 27: gitpod.v1.SecurityService.UpdateSecurityPolicy:output_type -> gitpod.v1.UpdateSecurityPolicyResponse
+	10, // 28: gitpod.v1.SecurityService.DeleteSecurityPolicy:output_type -> gitpod.v1.DeleteSecurityPolicyResponse
+	24, // [24:29] is the sub-list for method output_type
+	19, // [19:24] is the sub-list for method input_type
+	19, // [19:19] is the sub-list for extension type_name
+	19, // [19:19] is the sub-list for extension extendee
+	0,  // [0:19] is the sub-list for field type_name
 }
 
 func init() { file_gitpod_v1_security_proto_init() }
@@ -1805,17 +1067,13 @@ func file_gitpod_v1_security_proto_init() {
 		return
 	}
 	file_gitpod_v1_pagination_proto_init()
-	file_gitpod_v1_security_proto_msgTypes[24].OneofWrappers = []any{
-		(*SecurityPolicy_Spec_DataPolicy_Source_File)(nil),
-		(*SecurityPolicy_Spec_DataPolicy_Source_Integration)(nil),
-	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gitpod_v1_security_proto_rawDesc), len(file_gitpod_v1_security_proto_rawDesc)),
-			NumEnums:      2,
-			NumMessages:   26,
+			NumEnums:      1,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
