@@ -46,22 +46,12 @@ type PolicyModel struct {
 }
 
 type SpecModel struct {
-	Ports        *PortPolicyModel        `tfsdk:"ports"`
-	Executables  *ExecutablePolicyModel  `tfsdk:"executables"`
-	Files        *FilePolicyModel        `tfsdk:"files"`
-	BlockDevices *BlockDevicePolicyModel `tfsdk:"block_devices"`
-	Data         *DataPolicyModel        `tfsdk:"data"`
+	Ports       *PortPolicyModel       `tfsdk:"ports"`
+	Executables *ExecutablePolicyModel `tfsdk:"executables"`
 }
 
 type PortPolicyModel struct {
-	DefaultEffect types.String    `tfsdk:"default_effect"`
-	Rules         []PortRuleModel `tfsdk:"rule"`
-}
-
-type PortRuleModel struct {
-	RangeFrom types.Int64  `tfsdk:"range_from"`
-	RangeTo   types.Int64  `tfsdk:"range_to"`
-	Effect    types.String `tfsdk:"effect"`
+	MaxAdmissionLevel types.String `tfsdk:"max_admission_level"`
 }
 
 type ExecutablePolicyModel struct {
@@ -74,50 +64,14 @@ type ExecutableRuleModel struct {
 	Effect types.String `tfsdk:"effect"`
 }
 
-type FilePolicyModel struct {
-	DefaultEffect  types.String    `tfsdk:"default_effect"`
-	DefaultActions types.Set       `tfsdk:"default_actions"`
-	Rules          []FileRuleModel `tfsdk:"rule"`
-}
-
-type FileRuleModel struct {
-	Path    types.String `tfsdk:"path"`
-	Actions types.Set    `tfsdk:"actions"`
-	Effect  types.String `tfsdk:"effect"`
-}
-
-type BlockDevicePolicyModel struct {
-	DefaultEffect types.String `tfsdk:"default_effect"`
-}
-
-type DataPolicyModel struct {
-	DefaultEffect types.String    `tfsdk:"default_effect"`
-	Rules         []DataRuleModel `tfsdk:"rule"`
-}
-
-type DataRuleModel struct {
-	Source      *DataSourceModel      `tfsdk:"source"`
-	Destination *DataDestinationModel `tfsdk:"destination"`
-	Effect      types.String          `tfsdk:"effect"`
-}
-
-type DataSourceModel struct {
-	File        types.String `tfsdk:"file"`
-	Integration types.String `tfsdk:"integration"`
-	Selector    types.String `tfsdk:"selector"`
-}
-
-type DataDestinationModel struct {
-	Host types.String `tfsdk:"host"`
-}
-
 const (
 	effectAllow = "allow"
 	effectBlock = "block"
 	effectAudit = "audit"
 
-	fileActionRead  = "read"
-	fileActionWrite = "write"
+	admissionLevelCreatorOnly  = "creator_only"
+	admissionLevelOrganization = "organization"
+	admissionLevelEveryone     = "everyone"
 )
 
 func (r *PolicyResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -172,37 +126,19 @@ func specBlock() resourceschema.SingleNestedBlock {
 	return resourceschema.SingleNestedBlock{
 		MarkdownDescription: "Runtime security controls enforced for environments using this policy. Configure one or more policy sections depending on what the policy should control.",
 		Blocks: map[string]resourceschema.Block{
-			"ports":         portPolicyBlock(),
-			"executables":   executablePolicyBlock(),
-			"files":         filePolicyBlock(),
-			"block_devices": blockDevicePolicyBlock(),
-			"data":          dataPolicyBlock(),
+			"ports":       portPolicyBlock(),
+			"executables": executablePolicyBlock(),
 		},
 	}
 }
 
 func portPolicyBlock() resourceschema.SingleNestedBlock {
 	return resourceschema.SingleNestedBlock{
-		MarkdownDescription: "Port access policy. Rules match inclusive TCP/UDP port ranges from 0 through 65535.",
+		MarkdownDescription: "Port access policy.",
 		Attributes: map[string]resourceschema.Attribute{
-			"default_effect": effectAttribute("Default port access effect."),
-		},
-		Blocks: map[string]resourceschema.Block{
-			"rule": resourceschema.ListNestedBlock{
-				MarkdownDescription: "Port range rule.",
-				NestedObject: resourceschema.NestedBlockObject{
-					Attributes: map[string]resourceschema.Attribute{
-						"range_from": resourceschema.Int64Attribute{
-							Required:            true,
-							MarkdownDescription: "First port in the inclusive range. Must be between 0 and 65535.",
-						},
-						"range_to": resourceschema.Int64Attribute{
-							Required:            true,
-							MarkdownDescription: "Last port in the inclusive range. Must be between `range_from` and 65535.",
-						},
-						"effect": effectAttribute("Effect for this port range."),
-					},
-				},
+			"max_admission_level": resourceschema.StringAttribute{
+				Required:            true,
+				MarkdownDescription: "Maximum admission level for user-opened ports. Supported values are `creator_only`, `organization`, and `everyone`.",
 			},
 		},
 	}
@@ -224,97 +160,6 @@ func executablePolicyBlock() resourceschema.SingleNestedBlock {
 							MarkdownDescription: "Executable path inside the environment.",
 						},
 						"effect": effectAttribute("Effect for this executable path."),
-					},
-				},
-			},
-		},
-	}
-}
-
-func filePolicyBlock() resourceschema.SingleNestedBlock {
-	return resourceschema.SingleNestedBlock{
-		MarkdownDescription: "File access policy. Rules match file paths inside the environment and can control read and write actions separately.",
-		Attributes: map[string]resourceschema.Attribute{
-			"default_effect": effectAttribute("Default file access effect."),
-			"default_actions": resourceschema.SetAttribute{
-				Optional:            true,
-				Computed:            true,
-				ElementType:         types.StringType,
-				MarkdownDescription: "Actions applied to file rules that omit actions. Supported values are `read` and `write`; omit to use the API default.",
-			},
-		},
-		Blocks: map[string]resourceschema.Block{
-			"rule": resourceschema.ListNestedBlock{
-				MarkdownDescription: "File path rule.",
-				NestedObject: resourceschema.NestedBlockObject{
-					Attributes: map[string]resourceschema.Attribute{
-						"path": resourceschema.StringAttribute{
-							Required:            true,
-							MarkdownDescription: "File path inside the environment.",
-						},
-						"actions": resourceschema.SetAttribute{
-							Optional:            true,
-							Computed:            true,
-							ElementType:         types.StringType,
-							MarkdownDescription: "File actions controlled by this rule. Supported values are `read` and `write`; omit to use `default_actions`.",
-						},
-						"effect": effectAttribute("Effect for this file path."),
-					},
-				},
-			},
-		},
-	}
-}
-
-func blockDevicePolicyBlock() resourceschema.SingleNestedBlock {
-	return resourceschema.SingleNestedBlock{
-		MarkdownDescription: "Block device access policy for environment runtime controls.",
-		Attributes: map[string]resourceschema.Attribute{
-			"default_effect": effectAttribute("Default block device access effect."),
-		},
-	}
-}
-
-func dataPolicyBlock() resourceschema.SingleNestedBlock {
-	return resourceschema.SingleNestedBlock{
-		MarkdownDescription: "Data flow policy. Rules describe allowed or blocked movement from a source to a destination.",
-		Attributes: map[string]resourceschema.Attribute{
-			"default_effect": effectAttribute("Default data flow effect."),
-		},
-		Blocks: map[string]resourceschema.Block{
-			"rule": resourceschema.ListNestedBlock{
-				MarkdownDescription: "Data flow rule.",
-				NestedObject: resourceschema.NestedBlockObject{
-					Attributes: map[string]resourceschema.Attribute{
-						"effect": effectAttribute("Effect for this data flow."),
-					},
-					Blocks: map[string]resourceschema.Block{
-						"source": resourceschema.SingleNestedBlock{
-							MarkdownDescription: "Data source. Exactly one of `file` or `integration` must be set.",
-							Attributes: map[string]resourceschema.Attribute{
-								"file": resourceschema.StringAttribute{
-									Optional:            true,
-									MarkdownDescription: "Source file path.",
-								},
-								"integration": resourceschema.StringAttribute{
-									Optional:            true,
-									MarkdownDescription: "Source integration ID.",
-								},
-								"selector": resourceschema.StringAttribute{
-									Optional:            true,
-									MarkdownDescription: "Source-dependent selector for narrowing what data within the source is matched.",
-								},
-							},
-						},
-						"destination": resourceschema.SingleNestedBlock{
-							MarkdownDescription: "Data destination.",
-							Attributes: map[string]resourceschema.Attribute{
-								"host": resourceschema.StringAttribute{
-									Required:            true,
-									MarkdownDescription: "Destination host, domain, service endpoint, or app-owned host.",
-								},
-							},
-						},
 					},
 				},
 			},
@@ -353,7 +198,7 @@ func (r *PolicyResource) ValidateConfig(ctx context.Context, req resource.Valida
 		return
 	}
 
-	resp.Diagnostics.Append(validatePolicyModel(ctx, data)...)
+	resp.Diagnostics.Append(validatePolicyModel(data)...)
 }
 
 func (r *PolicyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -371,7 +216,7 @@ func (r *PolicyResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	createReq, diags := createPolicyRequest(ctx, data)
+	createReq, diags := createPolicyRequest(data)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -395,11 +240,8 @@ func (r *PolicyResource) Create(ctx context.Context, req resource.CreateRequest,
 	}
 
 	planned := data
-	resp.Diagnostics.Append(populatePolicyModel(ctx, &data, policy)...)
+	populatePolicyModel(&data, policy)
 	preservePolicyPlannedInputs(&data, planned)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -436,11 +278,8 @@ func (r *PolicyResource) Read(ctx context.Context, req resource.ReadRequest, res
 
 	prior := data
 	data = PolicyModel{}
-	resp.Diagnostics.Append(populatePolicyModel(ctx, &data, policy)...)
+	populatePolicyModel(&data, policy)
 	preservePolicyPlannedInputs(&data, prior)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -459,7 +298,7 @@ func (r *PolicyResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	updateReq, diags := updatePolicyRequest(ctx, data)
+	updateReq, diags := updatePolicyRequest(data)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -477,11 +316,8 @@ func (r *PolicyResource) Update(ctx context.Context, req resource.UpdateRequest,
 	}
 
 	planned := data
-	resp.Diagnostics.Append(populatePolicyModel(ctx, &data, policy)...)
+	populatePolicyModel(&data, policy)
 	preservePolicyPlannedInputs(&data, planned)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -534,8 +370,8 @@ func (r *PolicyResource) getPolicy(ctx context.Context, id string) (*v1.Security
 	return result.Msg.GetSecurityPolicy(), nil
 }
 
-func createPolicyRequest(ctx context.Context, data PolicyModel) (*v1.CreateSecurityPolicyRequest, diag.Diagnostics) {
-	spec, diags := securityPolicySpecFromModel(ctx, data.Spec, path.Root("spec"))
+func createPolicyRequest(data PolicyModel) (*v1.CreateSecurityPolicyRequest, diag.Diagnostics) {
+	spec, diags := securityPolicySpecFromModel(data.Spec, path.Root("spec"))
 	if diags.HasError() {
 		return nil, diags
 	}
@@ -548,8 +384,8 @@ func createPolicyRequest(ctx context.Context, data PolicyModel) (*v1.CreateSecur
 	}, diags
 }
 
-func updatePolicyRequest(ctx context.Context, data PolicyModel) (*v1.UpdateSecurityPolicyRequest, diag.Diagnostics) {
-	spec, diags := securityPolicySpecFromModel(ctx, data.Spec, path.Root("spec"))
+func updatePolicyRequest(data PolicyModel) (*v1.UpdateSecurityPolicyRequest, diag.Diagnostics) {
+	spec, diags := securityPolicySpecFromModel(data.Spec, path.Root("spec"))
 	if diags.HasError() {
 		return nil, diags
 	}
@@ -562,23 +398,18 @@ func updatePolicyRequest(ctx context.Context, data PolicyModel) (*v1.UpdateSecur
 	}, diags
 }
 
-func populatePolicyModel(ctx context.Context, data *PolicyModel, policy *v1.SecurityPolicy) diag.Diagnostics {
-	var diags diag.Diagnostics
+func populatePolicyModel(data *PolicyModel, policy *v1.SecurityPolicy) {
 	data.ID = types.StringValue(policy.GetId())
 	data.OrganizationID = types.StringValue(policy.GetOrganizationId())
 	data.Name = types.StringValue(policy.GetMetadata().GetName())
 	data.CreatedAt = timestampValue(policy.GetCreatedAt())
 	data.UpdatedAt = timestampValue(policy.GetUpdatedAt())
-	data.Spec, diags = specModelFromSecurityPolicy(ctx, policy.GetSpec())
-	return diags
+	data.Spec = specModelFromSecurityPolicy(policy.GetSpec())
 }
 
 func preservePolicyPlannedInputs(data *PolicyModel, planned PolicyModel) {
 	data.OrganizationID = preserveString(data.OrganizationID, planned.OrganizationID)
 	data.Name = preserveString(data.Name, planned.Name)
-	if data.Spec != nil && planned.Spec != nil {
-		preserveSpecPlannedInputs(data.Spec, planned.Spec)
-	}
 }
 
 func timestampValue(ts *timestamppb.Timestamp) types.String {
@@ -593,19 +424,4 @@ func preserveString(current types.String, planned types.String) types.String {
 		return planned
 	}
 	return current
-}
-
-func preserveSet(current types.Set, planned types.Set) types.Set {
-	if !planned.IsNull() && !planned.IsUnknown() {
-		return planned
-	}
-	return current
-}
-
-func isKnownString(value types.String) bool {
-	return !value.IsNull() && !value.IsUnknown()
-}
-
-func isKnownSet(value types.Set) bool {
-	return !value.IsNull() && !value.IsUnknown()
 }
