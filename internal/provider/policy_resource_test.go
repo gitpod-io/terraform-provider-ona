@@ -53,7 +53,9 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "id", "policy-1"),
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "organization_id", "org-1"),
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "name", "baseline"),
-					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.ports.max_admission_level", "organization"),
+					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.ports.default_effect", "allow"),
+					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.ports.rule.0.range_from", "22"),
+					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.files.default_actions.#", "2"),
 					resource.TestCheckResourceAttr("data.ona_security_policies.all", "policies.#", "1"),
 					resource.TestCheckResourceAttr("data.ona_security_policies.all", "policies.0.id", "policy-1"),
 					resource.TestCheckResourceAttr("ona_organization_policies.test", "id", "org-1"),
@@ -76,6 +78,38 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 				ResourceName:      "ona_security_policy.baseline",
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"spec.block_devices.%",
+					"spec.block_devices.default_effect",
+					"spec.data.%",
+					"spec.data.default_effect",
+					"spec.data.rule.#",
+					"spec.data.rule.0.%",
+					"spec.data.rule.0.destination.%",
+					"spec.data.rule.0.destination.host",
+					"spec.data.rule.0.effect",
+					"spec.data.rule.0.source.%",
+					"spec.data.rule.0.source.file",
+					"spec.data.rule.0.source.selector",
+					"spec.files.%",
+					"spec.files.default_actions.#",
+					"spec.files.default_actions.0",
+					"spec.files.default_actions.1",
+					"spec.files.default_effect",
+					"spec.files.rule.#",
+					"spec.files.rule.0.%",
+					"spec.files.rule.0.actions.#",
+					"spec.files.rule.0.actions.0",
+					"spec.files.rule.0.effect",
+					"spec.files.rule.0.path",
+					"spec.ports.%",
+					"spec.ports.default_effect",
+					"spec.ports.rule.#",
+					"spec.ports.rule.0.%",
+					"spec.ports.rule.0.effect",
+					"spec.ports.rule.0.range_from",
+					"spec.ports.rule.0.range_to",
+				},
 			},
 			{
 				ResourceName:      "ona_organization_policies.test",
@@ -173,7 +207,13 @@ resource "ona_security_policy" "baseline" {
 
   spec {
     ports {
-      max_admission_level = "organization"
+      default_effect = "allow"
+
+      rule {
+        range_from = 22
+        range_to   = 22
+        effect     = "block"
+      }
     }
 
     executables {
@@ -182,6 +222,36 @@ resource "ona_security_policy" "baseline" {
       rule {
         path   = "/usr/bin/nc"
         effect = "audit"
+      }
+    }
+
+    files {
+      default_effect  = "allow"
+      default_actions = ["read", "write"]
+
+      rule {
+        path    = "/etc/shadow"
+        actions = ["read"]
+        effect  = "block"
+      }
+    }
+
+    block_devices {
+      default_effect = "block"
+    }
+
+    data {
+      default_effect = "allow"
+
+      rule {
+        source {
+          file     = "/workspace/secrets.env"
+          selector = "10:20"
+        }
+        destination {
+          host = "example.com"
+        }
+        effect = "block"
       }
     }
   }

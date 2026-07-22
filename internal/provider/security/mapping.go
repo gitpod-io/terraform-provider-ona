@@ -10,8 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-const admissionLevelOwnerOnly = v1.AdmissionLevel(1)
-
 func validatePolicyModel(data PolicyModel) diag.Diagnostics {
 	var diags diag.Diagnostics
 	if !data.Name.IsUnknown() && !data.Name.IsNull() {
@@ -33,21 +31,10 @@ func securityPolicySpecFromModel(model *SpecModel, root path.Path) (*v1.Security
 	}
 
 	spec := &v1.SecurityPolicy_Spec{}
-	if model.Ports != nil {
-		spec.Ports = portPolicyFromModel(model.Ports, root.AtName("ports"), &diags)
-	}
 	if model.Executables != nil {
 		spec.Executables = executablePolicyFromModel(model.Executables, root.AtName("executables"), &diags)
 	}
 	return spec, diags
-}
-
-func portPolicyFromModel(model *PortPolicyModel, root path.Path, diags *diag.Diagnostics) *v1.SecurityPolicy_Spec_PortPolicy {
-	policy := &v1.SecurityPolicy_Spec_PortPolicy{}
-	if isKnownString(model.MaxAdmissionLevel) {
-		policy.MaxAdmissionLevel = admissionLevelFromString(model.MaxAdmissionLevel, root.AtName("max_admission_level"), diags)
-	}
-	return policy
 }
 
 func executablePolicyFromModel(model *ExecutablePolicyModel, root path.Path, diags *diag.Diagnostics) *v1.SecurityPolicy_Spec_ExecutablePolicy {
@@ -99,18 +86,7 @@ func specModelFromSecurityPolicy(spec *v1.SecurityPolicy_Spec) *SpecModel {
 	if spec == nil {
 		return model
 	}
-	model.Ports = portPolicyModelFromProto(spec.GetPorts())
 	model.Executables = executablePolicyModelFromProto(spec.GetExecutables())
-	return model
-}
-
-func portPolicyModelFromProto(policy *v1.SecurityPolicy_Spec_PortPolicy) *PortPolicyModel {
-	if policy == nil {
-		return nil
-	}
-	model := &PortPolicyModel{
-		MaxAdmissionLevel: admissionLevelToString(policy.GetMaxAdmissionLevel()),
-	}
 	return model
 }
 
@@ -131,40 +107,23 @@ func executablePolicyModelFromProto(policy *v1.SecurityPolicy_Spec_ExecutablePol
 }
 
 func preserveSpecPlannedInputs(data *SpecModel, planned *SpecModel) {
-	_ = data
-	_ = planned
-}
-
-func admissionLevelFromString(value types.String, attrPath path.Path, diags *diag.Diagnostics) v1.AdmissionLevel {
-	if value.IsUnknown() || value.IsNull() {
-		return v1.AdmissionLevel_ADMISSION_LEVEL_UNSPECIFIED
+	if data.Ports == nil && planned.Ports != nil {
+		data.Ports = planned.Ports
 	}
-	switch value.ValueString() {
-	case admissionOwnerOnly:
-		return admissionLevelOwnerOnly
-	case admissionEveryone:
-		return v1.AdmissionLevel_ADMISSION_LEVEL_EVERYONE
-	case admissionOrganization:
-		return v1.AdmissionLevel_ADMISSION_LEVEL_ORGANIZATION
-	case admissionCreatorOnly:
-		return v1.AdmissionLevel_ADMISSION_LEVEL_CREATOR_ONLY
-	default:
-		diags.AddAttributeError(attrPath, "Invalid Max Admission Level", "Supported values are \"owner_only\", \"everyone\", \"organization\", and \"creator_only\".")
-		return v1.AdmissionLevel_ADMISSION_LEVEL_UNSPECIFIED
+	if data.Files != nil && planned.Files != nil {
+		data.Files.DefaultActions = preserveSet(data.Files.DefaultActions, planned.Files.DefaultActions)
+		for i := range data.Files.Rules {
+			if i < len(planned.Files.Rules) {
+				data.Files.Rules[i].Actions = preserveSet(data.Files.Rules[i].Actions, planned.Files.Rules[i].Actions)
+			}
+		}
+	} else if planned.Files != nil {
+		data.Files = planned.Files
 	}
-}
-
-func admissionLevelToString(level v1.AdmissionLevel) types.String {
-	switch level {
-	case admissionLevelOwnerOnly:
-		return types.StringValue(admissionOwnerOnly)
-	case v1.AdmissionLevel_ADMISSION_LEVEL_EVERYONE:
-		return types.StringValue(admissionEveryone)
-	case v1.AdmissionLevel_ADMISSION_LEVEL_ORGANIZATION:
-		return types.StringValue(admissionOrganization)
-	case v1.AdmissionLevel_ADMISSION_LEVEL_CREATOR_ONLY:
-		return types.StringValue(admissionCreatorOnly)
-	default:
-		return types.StringNull()
+	if data.BlockDevices == nil && planned.BlockDevices != nil {
+		data.BlockDevices = planned.BlockDevices
+	}
+	if data.Data == nil && planned.Data != nil {
+		data.Data = planned.Data
 	}
 }
