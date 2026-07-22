@@ -11,5 +11,9 @@ resource "ona_organization_policies" "current" {
     conversation_sharing_policy   = "organization"
     max_subagents_per_environment = 5
     allowed_agent_ids             = []
+    codex_model_states = {
+      CODEX_OPEN_AI_MODEL_GPT_5_5     = "disabled"
+      CODEX_OPEN_AI_MODEL_GPT_5_6_SOL = "allowed"
+    }
   }
 }

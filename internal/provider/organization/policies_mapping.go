@@ -5,6 +5,7 @@ package organization
 
 import (
 	"context"
+	"fmt"
 	"sort"
 	"time"
 
@@ -210,7 +211,6 @@ func agentPolicyUpdateFromModel(ctx context.Context, model *AgentPolicyModel, cu
 	}
 	result := &v1.UpdateOrganizationPoliciesRequest_UpdateAgentPolicy{
 		AllowedAgentIds:              current.GetAllowedAgentIds(),
-		AllowedCodexModels:           current.GetAllowedCodexModels(), //nolint:staticcheck // Existing Terraform schema still maps the legacy allowlist.
 		AllowedCodexReasoningEfforts: current.GetAllowedCodexReasoningEfforts(),
 		AllowedCodexServiceTiers:     current.GetAllowedCodexServiceTiers(),
 	}
@@ -240,6 +240,7 @@ func agentPolicyUpdateFromModel(ctx context.Context, model *AgentPolicyModel, cu
 	if !model.AllowedAgentIDs.IsNull() && !model.AllowedAgentIDs.IsUnknown() {
 		result.AllowedAgentIds = stringSliceFromSet(ctx, model.AllowedAgentIDs, diags)
 	}
+	result.CodexModelPolicy = codexModelPolicyFromMap(ctx, model.CodexModelStates, diags)
 	return result
 }
 
@@ -261,7 +262,143 @@ func agentPolicyToModel(ctx context.Context, policy *v1.AgentPolicy, prior *Agen
 		ConversationSharingPolicy:  conversationSharingPolicyToString(policy.GetConversationSharingPolicy(), prior.ConversationSharingPolicy, populateUnmanaged),
 		MaxSubagentsPerEnvironment: int32Value(policy.GetMaxSubagentsPerEnvironment(), prior.MaxSubagentsPerEnvironment, populateUnmanaged),
 		AllowedAgentIDs:            stringSetValue(ctx, policy.GetAllowedAgentIds(), prior.AllowedAgentIDs, populateUnmanaged, diags),
+		CodexModelStates:           codexModelStatesToMap(ctx, policy.GetCodexModelPolicy(), prior.CodexModelStates, populateUnmanaged, diags),
 	}
+}
+
+const (
+	codexModelStateAllowed  = "allowed"
+	codexModelStateDisabled = "disabled"
+)
+
+func codexModelPolicyFromMap(ctx context.Context, value types.Map, diags *diag.Diagnostics) *v1.CodexModelPolicy {
+	if value.IsNull() || value.IsUnknown() {
+		return nil
+	}
+
+	modelStates := make(map[string]string, len(value.Elements()))
+	diags.Append(value.ElementsAs(ctx, &modelStates, false)...)
+	if diags.HasError() {
+		return nil
+	}
+
+	result := &v1.CodexModelPolicy{
+		ModelStates: make(map[string]v1.CodexModelPolicyState, len(modelStates)),
+	}
+	for model, state := range modelStates {
+		entryPath := path.Root("agent_policy").AtName("codex_model_states").AtMapKey(model)
+		if !validCodexModelName(model) {
+			diags.AddAttributeError(entryPath, "Invalid Codex Model", fmt.Sprintf("%q is not a supported CodexOpenAIModel enum name.", model))
+			continue
+		}
+		switch state {
+		case codexModelStateAllowed:
+			result.ModelStates[model] = v1.CodexModelPolicyState_CODEX_MODEL_POLICY_STATE_ALLOWED
+		case codexModelStateDisabled:
+			result.ModelStates[model] = v1.CodexModelPolicyState_CODEX_MODEL_POLICY_STATE_DISABLED
+		default:
+			diags.AddAttributeError(
+				entryPath,
+				"Invalid Codex Model State",
+				"Supported values are \"allowed\" and \"disabled\".",
+			)
+		}
+	}
+	return result
+}
+
+func codexModelStatesToMap(ctx context.Context, policy *v1.CodexModelPolicy, prior types.Map, populateUnmanaged bool, diags *diag.Diagnostics) types.Map {
+	if !populateUnmanaged && (prior.IsNull() || prior.IsUnknown()) {
+		return prior
+	}
+
+	modelStates := make(map[string]string)
+	if policy != nil {
+		for model, state := range policy.GetModelStates() {
+			entryPath := path.Root("agent_policy").AtName("codex_model_states").AtMapKey(model)
+			if !validCodexModelName(model) {
+				diags.AddAttributeError(entryPath, "Unknown Codex Model", fmt.Sprintf("The Ona API returned unsupported Codex model key %q.", model))
+				continue
+			}
+			switch state {
+			case v1.CodexModelPolicyState_CODEX_MODEL_POLICY_STATE_UNSPECIFIED,
+				v1.CodexModelPolicyState_CODEX_MODEL_POLICY_STATE_ALLOWED:
+				modelStates[model] = codexModelStateAllowed
+			case v1.CodexModelPolicyState_CODEX_MODEL_POLICY_STATE_DISABLED:
+				modelStates[model] = codexModelStateDisabled
+			default:
+				diags.AddAttributeError(entryPath, "Unknown Codex Model State", fmt.Sprintf("The Ona API returned unsupported Codex model policy state %d.", state))
+			}
+		}
+	}
+
+	if !prior.IsNull() && !prior.IsUnknown() {
+		var priorStates map[string]string
+		diags.Append(prior.ElementsAs(ctx, &priorStates, false)...)
+		if !diags.HasError() {
+			for model, state := range priorStates {
+				if state == codexModelStateAllowed {
+					if _, present := modelStates[model]; !present {
+						modelStates[model] = codexModelStateAllowed
+					}
+				}
+			}
+		}
+	}
+
+	result, valueDiags := types.MapValueFrom(ctx, types.StringType, modelStates)
+	diags.Append(valueDiags...)
+	return result
+}
+
+func validateCodexModelStates(attrPath path.Path, value types.Map, diags *diag.Diagnostics) {
+	if value.IsNull() || value.IsUnknown() {
+		return
+	}
+	for model, rawState := range value.Elements() {
+		entryPath := attrPath.AtMapKey(model)
+		if !validCodexModelName(model) {
+			diags.AddAttributeError(entryPath, "Invalid Codex Model", fmt.Sprintf("%q is not a supported CodexOpenAIModel enum name.", model))
+		}
+		state, ok := rawState.(types.String)
+		if !ok || state.IsNull() {
+			diags.AddAttributeError(entryPath, "Invalid Codex Model State", "Supported values are \"allowed\" and \"disabled\".")
+			continue
+		}
+		if state.IsUnknown() {
+			continue
+		}
+		switch state.ValueString() {
+		case codexModelStateAllowed, codexModelStateDisabled:
+		default:
+			diags.AddAttributeError(entryPath, "Invalid Codex Model State", "Supported values are \"allowed\" and \"disabled\".")
+		}
+	}
+}
+
+func validCodexModelName(model string) bool {
+	value, ok := v1.CodexOpenAIModel_value[model]
+	return ok && v1.CodexOpenAIModel(value) != v1.CodexOpenAIModel_CODEX_OPEN_AI_MODEL_UNSPECIFIED
+}
+
+func cloneCodexModelPolicy(policy *v1.CodexModelPolicy) *v1.CodexModelPolicy {
+	if policy == nil {
+		return nil
+	}
+	result := &v1.CodexModelPolicy{
+		ModelStates: make(map[string]v1.CodexModelPolicyState, len(policy.GetModelStates())),
+	}
+	for model, state := range policy.GetModelStates() {
+		result.ModelStates[model] = state
+	}
+	return result
+}
+
+func codexModelPolicyForRestore(policy *v1.CodexModelPolicy) *v1.CodexModelPolicy {
+	if policy == nil {
+		return &v1.CodexModelPolicy{}
+	}
+	return cloneCodexModelPolicy(policy)
 }
 
 func boolValue(value bool, prior types.Bool, populateUnmanaged bool) types.Bool {
@@ -320,6 +457,7 @@ func validateAgentPolicy(policy *AgentPolicyModel, diags *diag.Diagnostics) {
 	if !policy.MaxSubagentsPerEnvironment.IsNull() && !policy.MaxSubagentsPerEnvironment.IsUnknown() {
 		validateMaxSubagents(path.Root("agent_policy").AtName("max_subagents_per_environment"), policy.MaxSubagentsPerEnvironment.ValueInt32(), diags)
 	}
+	validateCodexModelStates(path.Root("agent_policy").AtName("codex_model_states"), policy.CodexModelStates, diags)
 }
 
 func validateConversationSharingPolicy(attrPath path.Path, value string, diags *diag.Diagnostics) {
