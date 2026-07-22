@@ -167,9 +167,40 @@ func policyResourceSchema() resourceschema.Schema {
 
 func specBlock() resourceschema.SingleNestedBlock {
 	return resourceschema.SingleNestedBlock{
-		MarkdownDescription: "Runtime security controls enforced for environments using this policy.",
+		MarkdownDescription: "Runtime security controls enforced for environments using this policy. Configure one or more policy sections depending on what the policy should control.",
 		Blocks: map[string]resourceschema.Block{
-			"executables": executablePolicyBlock(),
+			"ports":         portPolicyBlock(),
+			"executables":   executablePolicyBlock(),
+			"files":         filePolicyBlock(),
+			"block_devices": blockDevicePolicyBlock(),
+			"data":          dataPolicyBlock(),
+		},
+	}
+}
+
+func portPolicyBlock() resourceschema.SingleNestedBlock {
+	return resourceschema.SingleNestedBlock{
+		MarkdownDescription: "Port access policy. Rules match inclusive TCP/UDP port ranges from 0 through 65535.",
+		Attributes: map[string]resourceschema.Attribute{
+			"default_effect": effectAttribute("Default port access effect."),
+		},
+		Blocks: map[string]resourceschema.Block{
+			"rule": resourceschema.ListNestedBlock{
+				MarkdownDescription: "Port range rule.",
+				NestedObject: resourceschema.NestedBlockObject{
+					Attributes: map[string]resourceschema.Attribute{
+						"range_from": resourceschema.Int64Attribute{
+							Required:            true,
+							MarkdownDescription: "First port in the inclusive range. Must be between 0 and 65535.",
+						},
+						"range_to": resourceschema.Int64Attribute{
+							Required:            true,
+							MarkdownDescription: "Last port in the inclusive range. Must be between `range_from` and 65535.",
+						},
+						"effect": effectAttribute("Effect for this port range."),
+					},
+				},
+			},
 		},
 	}
 }
@@ -190,6 +221,97 @@ func executablePolicyBlock() resourceschema.SingleNestedBlock {
 							MarkdownDescription: "Executable path inside the environment.",
 						},
 						"effect": effectAttribute("Effect for this executable path."),
+					},
+				},
+			},
+		},
+	}
+}
+
+func filePolicyBlock() resourceschema.SingleNestedBlock {
+	return resourceschema.SingleNestedBlock{
+		MarkdownDescription: "File access policy. Rules match file paths inside the environment and can control read and write actions separately.",
+		Attributes: map[string]resourceschema.Attribute{
+			"default_effect": effectAttribute("Default file access effect."),
+			"default_actions": resourceschema.SetAttribute{
+				Optional:            true,
+				Computed:            true,
+				ElementType:         types.StringType,
+				MarkdownDescription: "Actions applied to file rules that omit actions. Supported values are `read` and `write`; omit to use the API default.",
+			},
+		},
+		Blocks: map[string]resourceschema.Block{
+			"rule": resourceschema.ListNestedBlock{
+				MarkdownDescription: "File path rule.",
+				NestedObject: resourceschema.NestedBlockObject{
+					Attributes: map[string]resourceschema.Attribute{
+						"path": resourceschema.StringAttribute{
+							Required:            true,
+							MarkdownDescription: "File path inside the environment.",
+						},
+						"actions": resourceschema.SetAttribute{
+							Optional:            true,
+							Computed:            true,
+							ElementType:         types.StringType,
+							MarkdownDescription: "File actions controlled by this rule. Supported values are `read` and `write`; omit to use `default_actions`.",
+						},
+						"effect": effectAttribute("Effect for this file path."),
+					},
+				},
+			},
+		},
+	}
+}
+
+func blockDevicePolicyBlock() resourceschema.SingleNestedBlock {
+	return resourceschema.SingleNestedBlock{
+		MarkdownDescription: "Block device access policy for environment runtime controls.",
+		Attributes: map[string]resourceschema.Attribute{
+			"default_effect": effectAttribute("Default block device access effect."),
+		},
+	}
+}
+
+func dataPolicyBlock() resourceschema.SingleNestedBlock {
+	return resourceschema.SingleNestedBlock{
+		MarkdownDescription: "Data flow policy. Rules describe allowed or blocked movement from a source to a destination.",
+		Attributes: map[string]resourceschema.Attribute{
+			"default_effect": effectAttribute("Default data flow effect."),
+		},
+		Blocks: map[string]resourceschema.Block{
+			"rule": resourceschema.ListNestedBlock{
+				MarkdownDescription: "Data flow rule.",
+				NestedObject: resourceschema.NestedBlockObject{
+					Attributes: map[string]resourceschema.Attribute{
+						"effect": effectAttribute("Effect for this data flow."),
+					},
+					Blocks: map[string]resourceschema.Block{
+						"source": resourceschema.SingleNestedBlock{
+							MarkdownDescription: "Data source. Exactly one of `file` or `integration` must be set.",
+							Attributes: map[string]resourceschema.Attribute{
+								"file": resourceschema.StringAttribute{
+									Optional:            true,
+									MarkdownDescription: "Source file path.",
+								},
+								"integration": resourceschema.StringAttribute{
+									Optional:            true,
+									MarkdownDescription: "Source integration ID.",
+								},
+								"selector": resourceschema.StringAttribute{
+									Optional:            true,
+									MarkdownDescription: "Source-dependent selector for narrowing what data within the source is matched.",
+								},
+							},
+						},
+						"destination": resourceschema.SingleNestedBlock{
+							MarkdownDescription: "Data destination.",
+							Attributes: map[string]resourceschema.Attribute{
+								"host": resourceschema.StringAttribute{
+									Required:            true,
+									MarkdownDescription: "Destination host, domain, service endpoint, or app-owned host.",
+								},
+							},
+						},
 					},
 				},
 			},
@@ -453,6 +575,13 @@ func timestampValue(ts *timestamppb.Timestamp) types.String {
 }
 
 func preserveString(current types.String, planned types.String) types.String {
+	if !planned.IsNull() && !planned.IsUnknown() {
+		return planned
+	}
+	return current
+}
+
+func preserveSet(current types.Set, planned types.Set) types.Set {
 	if !planned.IsNull() && !planned.IsUnknown() {
 		return planned
 	}
