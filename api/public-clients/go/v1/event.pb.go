@@ -82,6 +82,56 @@ func (ResourceOperation) EnumDescriptor() ([]byte, []int) {
 	return file_gitpod_v1_event_proto_rawDescGZIP(), []int{0}
 }
 
+// AuditLogEntryKind identifies the semantic event represented by an audit-log entry.
+type AuditLogEntryKind int32
+
+const (
+	AuditLogEntryKind_AUDIT_LOG_ENTRY_KIND_UNSPECIFIED                 AuditLogEntryKind = 0
+	AuditLogEntryKind_AUDIT_LOG_ENTRY_KIND_AGENT_SECURITY_EXEC_BLOCKED AuditLogEntryKind = 1
+	AuditLogEntryKind_AUDIT_LOG_ENTRY_KIND_AGENT_SECURITY_EXEC_AUDITED AuditLogEntryKind = 2
+)
+
+// Enum value maps for AuditLogEntryKind.
+var (
+	AuditLogEntryKind_name = map[int32]string{
+		0: "AUDIT_LOG_ENTRY_KIND_UNSPECIFIED",
+		1: "AUDIT_LOG_ENTRY_KIND_AGENT_SECURITY_EXEC_BLOCKED",
+		2: "AUDIT_LOG_ENTRY_KIND_AGENT_SECURITY_EXEC_AUDITED",
+	}
+	AuditLogEntryKind_value = map[string]int32{
+		"AUDIT_LOG_ENTRY_KIND_UNSPECIFIED":                 0,
+		"AUDIT_LOG_ENTRY_KIND_AGENT_SECURITY_EXEC_BLOCKED": 1,
+		"AUDIT_LOG_ENTRY_KIND_AGENT_SECURITY_EXEC_AUDITED": 2,
+	}
+)
+
+func (x AuditLogEntryKind) Enum() *AuditLogEntryKind {
+	p := new(AuditLogEntryKind)
+	*p = x
+	return p
+}
+
+func (x AuditLogEntryKind) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AuditLogEntryKind) Descriptor() protoreflect.EnumDescriptor {
+	return file_gitpod_v1_event_proto_enumTypes[1].Descriptor()
+}
+
+func (AuditLogEntryKind) Type() protoreflect.EnumType {
+	return &file_gitpod_v1_event_proto_enumTypes[1]
+}
+
+func (x AuditLogEntryKind) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AuditLogEntryKind.Descriptor instead.
+func (AuditLogEntryKind) EnumDescriptor() ([]byte, []int) {
+	return file_gitpod_v1_event_proto_rawDescGZIP(), []int{1}
+}
+
 type ResourceType int32
 
 const (
@@ -265,11 +315,11 @@ func (x ResourceType) String() string {
 }
 
 func (ResourceType) Descriptor() protoreflect.EnumDescriptor {
-	return file_gitpod_v1_event_proto_enumTypes[1].Descriptor()
+	return file_gitpod_v1_event_proto_enumTypes[2].Descriptor()
 }
 
 func (ResourceType) Type() protoreflect.EnumType {
-	return &file_gitpod_v1_event_proto_enumTypes[1]
+	return &file_gitpod_v1_event_proto_enumTypes[2]
 }
 
 func (x ResourceType) Number() protoreflect.EnumNumber {
@@ -278,7 +328,7 @@ func (x ResourceType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ResourceType.Descriptor instead.
 func (ResourceType) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_event_proto_rawDescGZIP(), []int{1}
+	return file_gitpod_v1_event_proto_rawDescGZIP(), []int{2}
 }
 
 type WatchEventsRequest struct {
@@ -559,6 +609,174 @@ func (x *ListAuditLogsResponse) GetPagination() *PaginationResponse {
 	return nil
 }
 
+type GetAuditLogRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// audit_log_entry_id is the ID of the audit-log entry to retrieve.
+	AuditLogEntryId string `protobuf:"bytes,1,opt,name=audit_log_entry_id,json=auditLogEntryId,proto3" json:"audit_log_entry_id,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *GetAuditLogRequest) Reset() {
+	*x = GetAuditLogRequest{}
+	mi := &file_gitpod_v1_event_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAuditLogRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAuditLogRequest) ProtoMessage() {}
+
+func (x *GetAuditLogRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_gitpod_v1_event_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAuditLogRequest.ProtoReflect.Descriptor instead.
+func (*GetAuditLogRequest) Descriptor() ([]byte, []int) {
+	return file_gitpod_v1_event_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetAuditLogRequest) GetAuditLogEntryId() string {
+	if x != nil {
+		return x.AuditLogEntryId
+	}
+	return ""
+}
+
+type GetAuditLogResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// entry contains the common audit-log fields also returned by ListAuditLogs.
+	Entry *ListAuditLogsResponse_AuditLogEntry `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	// details contains typed evidence captured with the audit entry.
+	// It is absent when the entry has no supported, valid details.
+	Details       *AuditLogEntryDetails `protobuf:"bytes,2,opt,name=details,proto3" json:"details,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAuditLogResponse) Reset() {
+	*x = GetAuditLogResponse{}
+	mi := &file_gitpod_v1_event_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAuditLogResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAuditLogResponse) ProtoMessage() {}
+
+func (x *GetAuditLogResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_gitpod_v1_event_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAuditLogResponse.ProtoReflect.Descriptor instead.
+func (*GetAuditLogResponse) Descriptor() ([]byte, []int) {
+	return file_gitpod_v1_event_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetAuditLogResponse) GetEntry() *ListAuditLogsResponse_AuditLogEntry {
+	if x != nil {
+		return x.Entry
+	}
+	return nil
+}
+
+func (x *GetAuditLogResponse) GetDetails() *AuditLogEntryDetails {
+	if x != nil {
+		return x.Details
+	}
+	return nil
+}
+
+// AuditLogEntryDetails contains the typed evidence stored with an audit-log entry.
+type AuditLogEntryDetails struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to Payload:
+	//
+	//	*AuditLogEntryDetails_VetoExec
+	Payload       isAuditLogEntryDetails_Payload `protobuf_oneof:"payload"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AuditLogEntryDetails) Reset() {
+	*x = AuditLogEntryDetails{}
+	mi := &file_gitpod_v1_event_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AuditLogEntryDetails) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AuditLogEntryDetails) ProtoMessage() {}
+
+func (x *AuditLogEntryDetails) ProtoReflect() protoreflect.Message {
+	mi := &file_gitpod_v1_event_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AuditLogEntryDetails.ProtoReflect.Descriptor instead.
+func (*AuditLogEntryDetails) Descriptor() ([]byte, []int) {
+	return file_gitpod_v1_event_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *AuditLogEntryDetails) GetPayload() isAuditLogEntryDetails_Payload {
+	if x != nil {
+		return x.Payload
+	}
+	return nil
+}
+
+func (x *AuditLogEntryDetails) GetVetoExec() *ReportExecEventRequest {
+	if x != nil {
+		if x, ok := x.Payload.(*AuditLogEntryDetails_VetoExec); ok {
+			return x.VetoExec
+		}
+	}
+	return nil
+}
+
+type isAuditLogEntryDetails_Payload interface {
+	isAuditLogEntryDetails_Payload()
+}
+
+type AuditLogEntryDetails_VetoExec struct {
+	// veto_exec contains Veto Exec event details without process.cmdline.
+	VetoExec *ReportExecEventRequest `protobuf:"bytes,1,opt,name=veto_exec,json=vetoExec,proto3,oneof"`
+}
+
+func (*AuditLogEntryDetails_VetoExec) isAuditLogEntryDetails_Payload() {}
+
 // ResourceTypeFilter restricts which events are delivered for a specific resource type.
 type WatchEventsRequest_ResourceTypeFilter struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -576,7 +794,7 @@ type WatchEventsRequest_ResourceTypeFilter struct {
 
 func (x *WatchEventsRequest_ResourceTypeFilter) Reset() {
 	*x = WatchEventsRequest_ResourceTypeFilter{}
-	mi := &file_gitpod_v1_event_proto_msgTypes[4]
+	mi := &file_gitpod_v1_event_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -588,7 +806,7 @@ func (x *WatchEventsRequest_ResourceTypeFilter) String() string {
 func (*WatchEventsRequest_ResourceTypeFilter) ProtoMessage() {}
 
 func (x *WatchEventsRequest_ResourceTypeFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_event_proto_msgTypes[4]
+	mi := &file_gitpod_v1_event_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -641,7 +859,7 @@ type ListAuditLogsRequest_Filter struct {
 
 func (x *ListAuditLogsRequest_Filter) Reset() {
 	*x = ListAuditLogsRequest_Filter{}
-	mi := &file_gitpod_v1_event_proto_msgTypes[5]
+	mi := &file_gitpod_v1_event_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -653,7 +871,7 @@ func (x *ListAuditLogsRequest_Filter) String() string {
 func (*ListAuditLogsRequest_Filter) ProtoMessage() {}
 
 func (x *ListAuditLogsRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_event_proto_msgTypes[5]
+	mi := &file_gitpod_v1_event_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -720,13 +938,14 @@ type ListAuditLogsResponse_AuditLogEntry struct {
 	SubjectType    ResourceType           `protobuf:"varint,5,opt,name=subject_type,json=subjectType,proto3,enum=gitpod.v1.ResourceType" json:"subject_type,omitempty"`
 	Action         string                 `protobuf:"bytes,6,opt,name=action,proto3" json:"action,omitempty"`
 	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Kind           AuditLogEntryKind      `protobuf:"varint,8,opt,name=kind,proto3,enum=gitpod.v1.AuditLogEntryKind" json:"kind,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
 
 func (x *ListAuditLogsResponse_AuditLogEntry) Reset() {
 	*x = ListAuditLogsResponse_AuditLogEntry{}
-	mi := &file_gitpod_v1_event_proto_msgTypes[6]
+	mi := &file_gitpod_v1_event_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -738,7 +957,7 @@ func (x *ListAuditLogsResponse_AuditLogEntry) String() string {
 func (*ListAuditLogsResponse_AuditLogEntry) ProtoMessage() {}
 
 func (x *ListAuditLogsResponse_AuditLogEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_event_proto_msgTypes[6]
+	mi := &file_gitpod_v1_event_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -803,11 +1022,18 @@ func (x *ListAuditLogsResponse_AuditLogEntry) GetCreatedAt() *timestamppb.Timest
 	return nil
 }
 
+func (x *ListAuditLogsResponse_AuditLogEntry) GetKind() AuditLogEntryKind {
+	if x != nil {
+		return x.Kind
+	}
+	return AuditLogEntryKind_AUDIT_LOG_ENTRY_KIND_UNSPECIFIED
+}
+
 var File_gitpod_v1_event_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_event_proto_rawDesc = "" +
 	"\n" +
-	"\x15gitpod/v1/event.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa3\x03\n" +
+	"\x15gitpod/v1/event.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1egitpod/v1/agent_security.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa3\x03\n" +
 	"\x12WatchEventsRequest\x12$\n" +
 	"\forganization\x18\x01 \x01(\bH\x00R\forganization\x12'\n" +
 	"\x0eenvironment_id\x18\x02 \x01(\tH\x00R\renvironmentId\x12n\n" +
@@ -845,12 +1071,12 @@ const file_gitpod_v1_event_proto_rawDesc = "" +
 	"\x02to\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x0f\xa2\xab\x1e\v\n" +
 	"\tfilter.toH\x01R\x02to\x88\x01\x01B\a\n" +
 	"\x05_fromB\x05\n" +
-	"\x03_to\"\xca\x03\n" +
+	"\x03_to\"\xfc\x03\n" +
 	"\x15ListAuditLogsResponse\x12H\n" +
 	"\aentries\x18\x01 \x03(\v2..gitpod.v1.ListAuditLogsResponse.AuditLogEntryR\aentries\x12=\n" +
 	"\n" +
 	"pagination\x18\x02 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
-	"pagination\x1a\xa7\x02\n" +
+	"pagination\x1a\xd9\x02\n" +
 	"\rAuditLogEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
 	"\bactor_id\x18\x02 \x01(\tR\aactorId\x12=\n" +
@@ -860,13 +1086,27 @@ const file_gitpod_v1_event_proto_rawDesc = "" +
 	"\fsubject_type\x18\x05 \x01(\x0e2\x17.gitpod.v1.ResourceTypeR\vsubjectType\x12\x16\n" +
 	"\x06action\x18\x06 \x01(\tR\x06action\x129\n" +
 	"\n" +
-	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt*\xba\x01\n" +
+	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x120\n" +
+	"\x04kind\x18\b \x01(\x0e2\x1c.gitpod.v1.AuditLogEntryKindR\x04kind\"f\n" +
+	"\x12GetAuditLogRequest\x12P\n" +
+	"\x12audit_log_entry_id\x18\x01 \x01(\tB#\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
+	"\x12audit_log_entry.idR\x0fauditLogEntryId\"\x9e\x01\n" +
+	"\x13GetAuditLogResponse\x12L\n" +
+	"\x05entry\x18\x01 \x01(\v2..gitpod.v1.ListAuditLogsResponse.AuditLogEntryB\x06\xbaH\x03\xc8\x01\x01R\x05entry\x129\n" +
+	"\adetails\x18\x02 \x01(\v2\x1f.gitpod.v1.AuditLogEntryDetailsR\adetails\"j\n" +
+	"\x14AuditLogEntryDetails\x12@\n" +
+	"\tveto_exec\x18\x01 \x01(\v2!.gitpod.v1.ReportExecEventRequestH\x00R\bvetoExecB\x10\n" +
+	"\apayload\x12\x05\xbaH\x02\b\x01*\xba\x01\n" +
 	"\x11ResourceOperation\x12\"\n" +
 	"\x1eRESOURCE_OPERATION_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19RESOURCE_OPERATION_CREATE\x10\x01\x12\x1d\n" +
 	"\x19RESOURCE_OPERATION_UPDATE\x10\x02\x12\x1d\n" +
 	"\x19RESOURCE_OPERATION_DELETE\x10\x03\x12$\n" +
-	" RESOURCE_OPERATION_UPDATE_STATUS\x10\x04*\x9c\x0e\n" +
+	" RESOURCE_OPERATION_UPDATE_STATUS\x10\x04*\xa5\x01\n" +
+	"\x11AuditLogEntryKind\x12$\n" +
+	" AUDIT_LOG_ENTRY_KIND_UNSPECIFIED\x10\x00\x124\n" +
+	"0AUDIT_LOG_ENTRY_KIND_AGENT_SECURITY_EXEC_BLOCKED\x10\x01\x124\n" +
+	"0AUDIT_LOG_ENTRY_KIND_AGENT_SECURITY_EXEC_AUDITED\x10\x02*\x9c\x0e\n" +
 	"\fResourceType\x12\x1d\n" +
 	"\x19RESOURCE_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19RESOURCE_TYPE_ENVIRONMENT\x10\x01\x12\x18\n" +
@@ -921,10 +1161,12 @@ const file_gitpod_v1_event_proto_rawDesc = "" +
 	"\x1aRESOURCE_TYPE_NOTIFICATION\x101\x12!\n" +
 	"\x1dRESOURCE_TYPE_SECURITY_POLICY\x102\x12\x1f\n" +
 	"\x1bRESOURCE_TYPE_BASE_SNAPSHOT\x103\x12&\n" +
-	"\"RESOURCE_TYPE_BASE_SNAPSHOT_CONFIG\x1042\xdc\x01\n" +
+	"\"RESOURCE_TYPE_BASE_SNAPSHOT_CONFIG\x1042\xbd\x02\n" +
 	"\fEventService\x12[\n" +
 	"\vWatchEvents\x12\x1d.gitpod.v1.WatchEventsRequest\x1a\x1e.gitpod.v1.WatchEventsResponse\"\v\xb2\xab\x1e\a\x12\x05watch0\x01\x12a\n" +
-	"\rListAuditLogs\x12\x1f.gitpod.v1.ListAuditLogsRequest\x1a .gitpod.v1.ListAuditLogsResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x1a\f\xaa\xab\x1e\b\n" +
+	"\rListAuditLogs\x12\x1f.gitpod.v1.ListAuditLogsRequest\x1a .gitpod.v1.ListAuditLogsResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x12_\n" +
+	"\vGetAuditLog\x12\x1d.gitpod.v1.GetAuditLogRequest\x1a\x1e.gitpod.v1.GetAuditLogResponse\"\x11\xb2\xab\x1e\n" +
+	"\x12\bretrieve\x90\x02\x01\x1a\f\xaa\xab\x1e\b\n" +
 	"\x06eventsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
 
 var (
@@ -939,50 +1181,61 @@ func file_gitpod_v1_event_proto_rawDescGZIP() []byte {
 	return file_gitpod_v1_event_proto_rawDescData
 }
 
-var file_gitpod_v1_event_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_gitpod_v1_event_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_gitpod_v1_event_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_gitpod_v1_event_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_gitpod_v1_event_proto_goTypes = []any{
 	(ResourceOperation)(0),                        // 0: gitpod.v1.ResourceOperation
-	(ResourceType)(0),                             // 1: gitpod.v1.ResourceType
-	(*WatchEventsRequest)(nil),                    // 2: gitpod.v1.WatchEventsRequest
-	(*WatchEventsResponse)(nil),                   // 3: gitpod.v1.WatchEventsResponse
-	(*ListAuditLogsRequest)(nil),                  // 4: gitpod.v1.ListAuditLogsRequest
-	(*ListAuditLogsResponse)(nil),                 // 5: gitpod.v1.ListAuditLogsResponse
-	(*WatchEventsRequest_ResourceTypeFilter)(nil), // 6: gitpod.v1.WatchEventsRequest.ResourceTypeFilter
-	(*ListAuditLogsRequest_Filter)(nil),           // 7: gitpod.v1.ListAuditLogsRequest.Filter
-	(*ListAuditLogsResponse_AuditLogEntry)(nil),   // 8: gitpod.v1.ListAuditLogsResponse.AuditLogEntry
-	(*PaginationRequest)(nil),                     // 9: gitpod.v1.PaginationRequest
-	(*Sort)(nil),                                  // 10: gitpod.v1.Sort
-	(*PaginationResponse)(nil),                    // 11: gitpod.v1.PaginationResponse
-	(Principal)(0),                                // 12: gitpod.v1.Principal
-	(*timestamppb.Timestamp)(nil),                 // 13: google.protobuf.Timestamp
+	(AuditLogEntryKind)(0),                        // 1: gitpod.v1.AuditLogEntryKind
+	(ResourceType)(0),                             // 2: gitpod.v1.ResourceType
+	(*WatchEventsRequest)(nil),                    // 3: gitpod.v1.WatchEventsRequest
+	(*WatchEventsResponse)(nil),                   // 4: gitpod.v1.WatchEventsResponse
+	(*ListAuditLogsRequest)(nil),                  // 5: gitpod.v1.ListAuditLogsRequest
+	(*ListAuditLogsResponse)(nil),                 // 6: gitpod.v1.ListAuditLogsResponse
+	(*GetAuditLogRequest)(nil),                    // 7: gitpod.v1.GetAuditLogRequest
+	(*GetAuditLogResponse)(nil),                   // 8: gitpod.v1.GetAuditLogResponse
+	(*AuditLogEntryDetails)(nil),                  // 9: gitpod.v1.AuditLogEntryDetails
+	(*WatchEventsRequest_ResourceTypeFilter)(nil), // 10: gitpod.v1.WatchEventsRequest.ResourceTypeFilter
+	(*ListAuditLogsRequest_Filter)(nil),           // 11: gitpod.v1.ListAuditLogsRequest.Filter
+	(*ListAuditLogsResponse_AuditLogEntry)(nil),   // 12: gitpod.v1.ListAuditLogsResponse.AuditLogEntry
+	(*PaginationRequest)(nil),                     // 13: gitpod.v1.PaginationRequest
+	(*Sort)(nil),                                  // 14: gitpod.v1.Sort
+	(*PaginationResponse)(nil),                    // 15: gitpod.v1.PaginationResponse
+	(*ReportExecEventRequest)(nil),                // 16: gitpod.v1.ReportExecEventRequest
+	(Principal)(0),                                // 17: gitpod.v1.Principal
+	(*timestamppb.Timestamp)(nil),                 // 18: google.protobuf.Timestamp
 }
 var file_gitpod_v1_event_proto_depIdxs = []int32{
-	6,  // 0: gitpod.v1.WatchEventsRequest.resource_type_filters:type_name -> gitpod.v1.WatchEventsRequest.ResourceTypeFilter
+	10, // 0: gitpod.v1.WatchEventsRequest.resource_type_filters:type_name -> gitpod.v1.WatchEventsRequest.ResourceTypeFilter
 	0,  // 1: gitpod.v1.WatchEventsResponse.operation:type_name -> gitpod.v1.ResourceOperation
-	1,  // 2: gitpod.v1.WatchEventsResponse.resource_type:type_name -> gitpod.v1.ResourceType
-	9,  // 3: gitpod.v1.ListAuditLogsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	7,  // 4: gitpod.v1.ListAuditLogsRequest.filter:type_name -> gitpod.v1.ListAuditLogsRequest.Filter
-	10, // 5: gitpod.v1.ListAuditLogsRequest.sort:type_name -> gitpod.v1.Sort
-	8,  // 6: gitpod.v1.ListAuditLogsResponse.entries:type_name -> gitpod.v1.ListAuditLogsResponse.AuditLogEntry
-	11, // 7: gitpod.v1.ListAuditLogsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	1,  // 8: gitpod.v1.WatchEventsRequest.ResourceTypeFilter.resource_type:type_name -> gitpod.v1.ResourceType
-	12, // 9: gitpod.v1.ListAuditLogsRequest.Filter.actor_principals:type_name -> gitpod.v1.Principal
-	1,  // 10: gitpod.v1.ListAuditLogsRequest.Filter.subject_types:type_name -> gitpod.v1.ResourceType
-	13, // 11: gitpod.v1.ListAuditLogsRequest.Filter.from:type_name -> google.protobuf.Timestamp
-	13, // 12: gitpod.v1.ListAuditLogsRequest.Filter.to:type_name -> google.protobuf.Timestamp
-	12, // 13: gitpod.v1.ListAuditLogsResponse.AuditLogEntry.actor_principal:type_name -> gitpod.v1.Principal
-	1,  // 14: gitpod.v1.ListAuditLogsResponse.AuditLogEntry.subject_type:type_name -> gitpod.v1.ResourceType
-	13, // 15: gitpod.v1.ListAuditLogsResponse.AuditLogEntry.created_at:type_name -> google.protobuf.Timestamp
-	2,  // 16: gitpod.v1.EventService.WatchEvents:input_type -> gitpod.v1.WatchEventsRequest
-	4,  // 17: gitpod.v1.EventService.ListAuditLogs:input_type -> gitpod.v1.ListAuditLogsRequest
-	3,  // 18: gitpod.v1.EventService.WatchEvents:output_type -> gitpod.v1.WatchEventsResponse
-	5,  // 19: gitpod.v1.EventService.ListAuditLogs:output_type -> gitpod.v1.ListAuditLogsResponse
-	18, // [18:20] is the sub-list for method output_type
-	16, // [16:18] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	2,  // 2: gitpod.v1.WatchEventsResponse.resource_type:type_name -> gitpod.v1.ResourceType
+	13, // 3: gitpod.v1.ListAuditLogsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	11, // 4: gitpod.v1.ListAuditLogsRequest.filter:type_name -> gitpod.v1.ListAuditLogsRequest.Filter
+	14, // 5: gitpod.v1.ListAuditLogsRequest.sort:type_name -> gitpod.v1.Sort
+	12, // 6: gitpod.v1.ListAuditLogsResponse.entries:type_name -> gitpod.v1.ListAuditLogsResponse.AuditLogEntry
+	15, // 7: gitpod.v1.ListAuditLogsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	12, // 8: gitpod.v1.GetAuditLogResponse.entry:type_name -> gitpod.v1.ListAuditLogsResponse.AuditLogEntry
+	9,  // 9: gitpod.v1.GetAuditLogResponse.details:type_name -> gitpod.v1.AuditLogEntryDetails
+	16, // 10: gitpod.v1.AuditLogEntryDetails.veto_exec:type_name -> gitpod.v1.ReportExecEventRequest
+	2,  // 11: gitpod.v1.WatchEventsRequest.ResourceTypeFilter.resource_type:type_name -> gitpod.v1.ResourceType
+	17, // 12: gitpod.v1.ListAuditLogsRequest.Filter.actor_principals:type_name -> gitpod.v1.Principal
+	2,  // 13: gitpod.v1.ListAuditLogsRequest.Filter.subject_types:type_name -> gitpod.v1.ResourceType
+	18, // 14: gitpod.v1.ListAuditLogsRequest.Filter.from:type_name -> google.protobuf.Timestamp
+	18, // 15: gitpod.v1.ListAuditLogsRequest.Filter.to:type_name -> google.protobuf.Timestamp
+	17, // 16: gitpod.v1.ListAuditLogsResponse.AuditLogEntry.actor_principal:type_name -> gitpod.v1.Principal
+	2,  // 17: gitpod.v1.ListAuditLogsResponse.AuditLogEntry.subject_type:type_name -> gitpod.v1.ResourceType
+	18, // 18: gitpod.v1.ListAuditLogsResponse.AuditLogEntry.created_at:type_name -> google.protobuf.Timestamp
+	1,  // 19: gitpod.v1.ListAuditLogsResponse.AuditLogEntry.kind:type_name -> gitpod.v1.AuditLogEntryKind
+	3,  // 20: gitpod.v1.EventService.WatchEvents:input_type -> gitpod.v1.WatchEventsRequest
+	5,  // 21: gitpod.v1.EventService.ListAuditLogs:input_type -> gitpod.v1.ListAuditLogsRequest
+	7,  // 22: gitpod.v1.EventService.GetAuditLog:input_type -> gitpod.v1.GetAuditLogRequest
+	4,  // 23: gitpod.v1.EventService.WatchEvents:output_type -> gitpod.v1.WatchEventsResponse
+	6,  // 24: gitpod.v1.EventService.ListAuditLogs:output_type -> gitpod.v1.ListAuditLogsResponse
+	8,  // 25: gitpod.v1.EventService.GetAuditLog:output_type -> gitpod.v1.GetAuditLogResponse
+	23, // [23:26] is the sub-list for method output_type
+	20, // [20:23] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_gitpod_v1_event_proto_init() }
@@ -990,20 +1243,24 @@ func file_gitpod_v1_event_proto_init() {
 	if File_gitpod_v1_event_proto != nil {
 		return
 	}
+	file_gitpod_v1_agent_security_proto_init()
 	file_gitpod_v1_identity_proto_init()
 	file_gitpod_v1_pagination_proto_init()
 	file_gitpod_v1_event_proto_msgTypes[0].OneofWrappers = []any{
 		(*WatchEventsRequest_Organization)(nil),
 		(*WatchEventsRequest_EnvironmentId)(nil),
 	}
-	file_gitpod_v1_event_proto_msgTypes[5].OneofWrappers = []any{}
+	file_gitpod_v1_event_proto_msgTypes[6].OneofWrappers = []any{
+		(*AuditLogEntryDetails_VetoExec)(nil),
+	}
+	file_gitpod_v1_event_proto_msgTypes[8].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gitpod_v1_event_proto_rawDesc), len(file_gitpod_v1_event_proto_rawDesc)),
-			NumEnums:      2,
-			NumMessages:   7,
+			NumEnums:      3,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
