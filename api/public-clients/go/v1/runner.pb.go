@@ -365,6 +365,10 @@ const (
 	RunnerCapability_RUNNER_CAPABILITY_REDIS_STREAM RunnerCapability = 16
 	// RUNNER_CAPABILITY_BASE_SNAPSHOT indicates the runner supports base snapshots.
 	RunnerCapability_RUNNER_CAPABILITY_BASE_SNAPSHOT RunnerCapability = 17
+	// RUNNER_CAPABILITY_DYNAMIC_LLM_REQUEST_HEADERS indicates the runner can
+	// distinguish CEL-backed LLM headers from literal proxy fallbacks and
+	// forward CEL expressions to supported in-environment agents.
+	RunnerCapability_RUNNER_CAPABILITY_DYNAMIC_LLM_REQUEST_HEADERS RunnerCapability = 18
 )
 
 // Enum value maps for RunnerCapability.
@@ -388,6 +392,7 @@ var (
 		15: "RUNNER_CAPABILITY_AGENT_EXECUTION_CNF",
 		16: "RUNNER_CAPABILITY_REDIS_STREAM",
 		17: "RUNNER_CAPABILITY_BASE_SNAPSHOT",
+		18: "RUNNER_CAPABILITY_DYNAMIC_LLM_REQUEST_HEADERS",
 	}
 	RunnerCapability_value = map[string]int32{
 		"RUNNER_CAPABILITY_UNSPECIFIED":                       0,
@@ -408,6 +413,7 @@ var (
 		"RUNNER_CAPABILITY_AGENT_EXECUTION_CNF":               15,
 		"RUNNER_CAPABILITY_REDIS_STREAM":                      16,
 		"RUNNER_CAPABILITY_BASE_SNAPSHOT":                     17,
+		"RUNNER_CAPABILITY_DYNAMIC_LLM_REQUEST_HEADERS":       18,
 	}
 )
 
@@ -4271,7 +4277,7 @@ const file_gitpod_v1_runner_proto_rawDesc = "" +
 	"\x13RUNNER_PHASE_ACTIVE\x10\x03\x12\x19\n" +
 	"\x15RUNNER_PHASE_DELETING\x10\x04\x12\x18\n" +
 	"\x14RUNNER_PHASE_DELETED\x10\x05\x12\x19\n" +
-	"\x15RUNNER_PHASE_DEGRADED\x10\x06*\xa0\x06\n" +
+	"\x15RUNNER_PHASE_DEGRADED\x10\x06*\xd3\x06\n" +
 	"\x10RunnerCapability\x12!\n" +
 	"\x1dRUNNER_CAPABILITY_UNSPECIFIED\x10\x00\x122\n" +
 	".RUNNER_CAPABILITY_FETCH_LOCAL_SCM_INTEGRATIONS\x10\x01\x12/\n" +
@@ -4291,7 +4297,8 @@ const file_gitpod_v1_runner_proto_rawDesc = "" +
 	"$RUNNER_CAPABILITY_HORIZONTAL_SCALING\x10\x0e\x12)\n" +
 	"%RUNNER_CAPABILITY_AGENT_EXECUTION_CNF\x10\x0f\x12\"\n" +
 	"\x1eRUNNER_CAPABILITY_REDIS_STREAM\x10\x10\x12#\n" +
-	"\x1fRUNNER_CAPABILITY_BASE_SNAPSHOT\x10\x11*V\n" +
+	"\x1fRUNNER_CAPABILITY_BASE_SNAPSHOT\x10\x11\x121\n" +
+	"-RUNNER_CAPABILITY_DYNAMIC_LLM_REQUEST_HEADERS\x10\x12*V\n" +
 	"\n" +
 	"RunnerRole\x12\x1b\n" +
 	"\x17RUNNER_ROLE_UNSPECIFIED\x10\x00\x12\x15\n" +
