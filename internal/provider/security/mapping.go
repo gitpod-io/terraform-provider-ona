@@ -31,10 +31,19 @@ func securityPolicySpecFromModel(model *SpecModel, root path.Path) (*v1.Security
 	}
 
 	spec := &v1.SecurityPolicy_Spec{}
+	if model.Ports != nil {
+		spec.Ports = portPolicyFromModel(model.Ports, root.AtName("ports"), &diags)
+	}
 	if model.Executables != nil {
 		spec.Executables = executablePolicyFromModel(model.Executables, root.AtName("executables"), &diags)
 	}
 	return spec, diags
+}
+
+func portPolicyFromModel(model *PortPolicyModel, root path.Path, diags *diag.Diagnostics) *v1.SecurityPolicy_Spec_PortPolicy {
+	return &v1.SecurityPolicy_Spec_PortPolicy{
+		MaxAdmissionLevel: admissionLevelFromString(model.MaxAdmissionLevel, root.AtName("max_admission_level"), diags),
+	}
 }
 
 func executablePolicyFromModel(model *ExecutablePolicyModel, root path.Path, diags *diag.Diagnostics) *v1.SecurityPolicy_Spec_ExecutablePolicy {
@@ -81,13 +90,53 @@ func effectToString(effect v1.SecurityPolicy_Effect) types.String {
 	}
 }
 
+func admissionLevelFromString(value types.String, attrPath path.Path, diags *diag.Diagnostics) v1.AdmissionLevel {
+	if value.IsUnknown() || value.IsNull() {
+		return v1.AdmissionLevel_ADMISSION_LEVEL_UNSPECIFIED
+	}
+	switch value.ValueString() {
+	case admissionLevelEveryone:
+		return v1.AdmissionLevel_ADMISSION_LEVEL_EVERYONE
+	case admissionLevelOrganization:
+		return v1.AdmissionLevel_ADMISSION_LEVEL_ORGANIZATION
+	case admissionLevelCreatorOnly:
+		return v1.AdmissionLevel_ADMISSION_LEVEL_CREATOR_ONLY
+	default:
+		diags.AddAttributeError(attrPath, "Invalid Port Admission Level", "Supported values are \"everyone\", \"organization\", and \"creator_only\".")
+		return v1.AdmissionLevel_ADMISSION_LEVEL_UNSPECIFIED
+	}
+}
+
+func admissionLevelToString(value v1.AdmissionLevel) types.String {
+	switch value {
+	case v1.AdmissionLevel_ADMISSION_LEVEL_EVERYONE:
+		return types.StringValue(admissionLevelEveryone)
+	case v1.AdmissionLevel_ADMISSION_LEVEL_ORGANIZATION:
+		return types.StringValue(admissionLevelOrganization)
+	case v1.AdmissionLevel_ADMISSION_LEVEL_CREATOR_ONLY:
+		return types.StringValue(admissionLevelCreatorOnly)
+	default:
+		return types.StringNull()
+	}
+}
+
 func specModelFromSecurityPolicy(spec *v1.SecurityPolicy_Spec) *SpecModel {
 	model := &SpecModel{}
 	if spec == nil {
 		return model
 	}
+	model.Ports = portPolicyModelFromProto(spec.GetPorts())
 	model.Executables = executablePolicyModelFromProto(spec.GetExecutables())
 	return model
+}
+
+func portPolicyModelFromProto(policy *v1.SecurityPolicy_Spec_PortPolicy) *PortPolicyModel {
+	if policy == nil {
+		return nil
+	}
+	return &PortPolicyModel{
+		MaxAdmissionLevel: admissionLevelToString(policy.GetMaxAdmissionLevel()),
+	}
 }
 
 func executablePolicyModelFromProto(policy *v1.SecurityPolicy_Spec_ExecutablePolicy) *ExecutablePolicyModel {

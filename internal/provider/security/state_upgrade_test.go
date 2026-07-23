@@ -72,6 +72,7 @@ func TestPolicyResourceUpgradeStateV0(t *testing.T) {
 		ExecutableDefaultEffect string
 		ExecutableRulePath      string
 		ExecutableRuleEffect    string
+		HasPorts                bool
 	}
 	want := stateSnapshot{
 		ID:                      "policy-1",
@@ -92,8 +93,55 @@ func TestPolicyResourceUpgradeStateV0(t *testing.T) {
 		ExecutableDefaultEffect: upgraded.Spec.Executables.DefaultEffect.ValueString(),
 		ExecutableRulePath:      upgraded.Spec.Executables.Rules[0].Path.ValueString(),
 		ExecutableRuleEffect:    upgraded.Spec.Executables.Rules[0].Effect.ValueString(),
+		HasPorts:                upgraded.Spec.Ports != nil,
 	}
 	if diff := cmp.Diff(want, got); diff != "" {
 		t.Fatalf("upgraded state mismatch (-want +got):\n%s", diff)
+	}
+}
+
+func TestPolicyResourceUpgradeStateV1(t *testing.T) {
+	ctx := t.Context()
+	upgrader := (&PolicyResource{}).UpgradeState(ctx)[1]
+	priorState := tfsdk.State{Schema: *upgrader.PriorSchema}
+	prior := policyModelV1{
+		ID:             types.StringValue("policy-1"),
+		OrganizationID: types.StringValue("org-1"),
+		Name:           types.StringValue("baseline"),
+		CreatedAt:      types.StringValue("2026-07-01T00:00:00Z"),
+		UpdatedAt:      types.StringValue("2026-07-02T00:00:00Z"),
+		Spec: &policySpecModelV1{
+			Executables: &ExecutablePolicyModel{
+				DefaultEffect: types.StringValue(effectAllow),
+				Rules: []ExecutableRuleModel{{
+					Path:   types.StringValue("/usr/bin/nc"),
+					Effect: types.StringValue(effectAudit),
+				}},
+			},
+		},
+	}
+	if diags := priorState.Set(ctx, &prior); diags.HasError() {
+		t.Fatalf("setting prior state: %v", diags)
+	}
+
+	currentSchema := policyResourceSchema()
+	response := resource.UpgradeStateResponse{State: tfsdk.State{Schema: currentSchema}}
+	upgrader.StateUpgrader(ctx, resource.UpgradeStateRequest{State: &priorState}, &response)
+	if response.Diagnostics.HasError() {
+		t.Fatalf("upgrading state: %v", response.Diagnostics)
+	}
+
+	var upgraded PolicyModel
+	if diags := response.State.Get(ctx, &upgraded); diags.HasError() {
+		t.Fatalf("reading upgraded state: %v", diags)
+	}
+	if upgraded.Spec == nil || upgraded.Spec.Executables == nil {
+		t.Fatal("upgraded state did not preserve executable policy")
+	}
+	if upgraded.Spec.Ports != nil {
+		t.Fatal("upgraded state unexpectedly configured a port policy")
+	}
+	if diff := cmp.Diff("/usr/bin/nc", upgraded.Spec.Executables.Rules[0].Path.ValueString()); diff != "" {
+		t.Fatalf("upgraded executable rule mismatch (-want +got):\n%s", diff)
 	}
 }

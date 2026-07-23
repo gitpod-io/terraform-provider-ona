@@ -47,7 +47,12 @@ type PolicyModel struct {
 }
 
 type SpecModel struct {
+	Ports       *PortPolicyModel       `tfsdk:"ports"`
 	Executables *ExecutablePolicyModel `tfsdk:"executables"`
+}
+
+type PortPolicyModel struct {
+	MaxAdmissionLevel types.String `tfsdk:"max_admission_level"`
 }
 
 type ExecutablePolicyModel struct {
@@ -64,6 +69,10 @@ const (
 	effectAllow = "allow"
 	effectBlock = "block"
 	effectAudit = "audit"
+
+	admissionLevelEveryone     = "everyone"
+	admissionLevelOrganization = "organization"
+	admissionLevelCreatorOnly  = "creator_only"
 )
 
 func (r *PolicyResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -75,7 +84,7 @@ func (r *PolicyResource) Schema(ctx context.Context, req resource.SchemaRequest,
 }
 
 func policyResourceSchema() resourceschema.Schema {
-	return policyResourceSchemaWithSpec(1, specBlock())
+	return policyResourceSchemaWithSpec(2, specBlock())
 }
 
 func policyResourceSchemaWithSpec(version int64, spec resourceschema.SingleNestedBlock) resourceschema.Schema {
@@ -123,7 +132,20 @@ func specBlock() resourceschema.SingleNestedBlock {
 	return resourceschema.SingleNestedBlock{
 		MarkdownDescription: "Runtime security controls enforced for environments using this policy. Configure one or more policy sections depending on what the policy should control.",
 		Blocks: map[string]resourceschema.Block{
+			"ports":       portPolicyBlock(),
 			"executables": executablePolicyBlock(),
+		},
+	}
+}
+
+func portPolicyBlock() resourceschema.SingleNestedBlock {
+	return resourceschema.SingleNestedBlock{
+		MarkdownDescription: "Port admission policy for user-opened ports.",
+		Attributes: map[string]resourceschema.Attribute{
+			"max_admission_level": resourceschema.StringAttribute{
+				Optional:            true,
+				MarkdownDescription: "Maximum admission level for user-opened ports. Supported values are `everyone`, `organization`, and `creator_only`. Omit the ports block to leave port admission unrestricted by this security policy.",
+			},
 		},
 	}
 }
