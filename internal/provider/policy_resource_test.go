@@ -48,11 +48,12 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccPolicyConfig(server.URL, "baseline", "24h"),
+				Config: testAccPolicyConfig(server.URL, "baseline", "24h", "organization"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "id", "policy-1"),
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "organization_id", "org-1"),
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "name", "baseline"),
+					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.ports.max_admission_level", "organization"),
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.executables.rule.0.path", "/usr/bin/nc"),
 					resource.TestCheckResourceAttr("data.ona_security_policies.all", "policies.#", "1"),
 					resource.TestCheckResourceAttr("data.ona_security_policies.all", "policies.0.id", "policy-1"),
@@ -65,7 +66,7 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccPolicyConfig(server.URL, "baseline", "24h"),
+				Config: testAccPolicyConfig(server.URL, "baseline", "24h", "organization"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectEmptyPlan(),
@@ -90,7 +91,7 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 				},
 			},
 			{
-				Config: testAccPolicyConfig(server.URL, "baseline-updated", "48h"),
+				Config: testAccPolicyConfig(server.URL, "baseline-updated", "48h", "creator_only"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("ona_security_policy.baseline", plancheck.ResourceActionUpdate),
@@ -99,8 +100,53 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 				},
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "name", "baseline-updated"),
+					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.ports.max_admission_level", "creator_only"),
 					resource.TestCheckResourceAttr("ona_organization_policies.test", "archive_environments_after", "48h"),
 				),
+			},
+		},
+	})
+}
+
+func TestAccSecurityPolicyRejectsInvalidAdmissionLevelAtPlan(t *testing.T) {
+	t.Parallel()
+
+	server := newPolicyAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{{
+			Config:      testAccSecurityPolicyOnlyConfig(server.URL, "public"),
+			PlanOnly:    true,
+			ExpectError: regexp.MustCompile(`Invalid Port Admission Level`),
+		}},
+	})
+}
+
+func TestAccSecurityPolicyOmittedPortsHasNoCap(t *testing.T) {
+	t.Parallel()
+
+	server := newPolicyAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccSecurityPolicyOnlyConfig(server.URL, ""),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckNoResourceAttr("ona_security_policy.test", "spec.ports"),
+					resource.TestCheckResourceAttr("ona_security_policy.test", "spec.executables.default_effect", "allow"),
+				),
+			},
+			{
+				Config: testAccSecurityPolicyOnlyConfig(server.URL, ""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
 			},
 		},
 	})
@@ -280,7 +326,7 @@ func TestAccPolicyResourcesOmittedSettingsRemainUnmanaged(t *testing.T) {
 	})
 }
 
-func testAccPolicyConfig(host string, policyName string, archiveAfter string) string {
+func testAccPolicyConfig(host string, policyName string, archiveAfter string, maxAdmissionLevel string) string {
 	return fmt.Sprintf(`
 provider "ona" {
   host  = %[1]q
@@ -292,6 +338,10 @@ resource "ona_security_policy" "baseline" {
   name            = %[2]q
 
   spec {
+    ports {
+      max_admission_level = %[4]q
+    }
+
     executables {
       default_effect = "allow"
 
@@ -344,7 +394,37 @@ resource "ona_organization_policies" "test" {
     allowed_agent_ids             = ["ona"]
   }
 }
-`, host, policyName, archiveAfter)
+`, host, policyName, archiveAfter, maxAdmissionLevel)
+}
+
+func testAccSecurityPolicyOnlyConfig(host string, maxAdmissionLevel string) string {
+	portsBlock := ""
+	if maxAdmissionLevel != "" {
+		portsBlock = fmt.Sprintf(`
+    ports {
+      max_admission_level = %q
+    }
+`, maxAdmissionLevel)
+	}
+
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_security_policy" "test" {
+  organization_id = "org-1"
+  name            = "test"
+
+  spec {
+%[2]s
+    executables {
+      default_effect = "allow"
+    }
+  }
+}
+`, host, portsBlock)
 }
 
 func testAccMinimalPolicyConfig(host string) string {

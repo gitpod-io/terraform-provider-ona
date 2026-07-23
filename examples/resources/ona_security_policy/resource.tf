@@ -3,6 +3,10 @@ resource "ona_security_policy" "baseline" {
   name            = "baseline"
 
   spec {
+    ports {
+      max_admission_level = "organization"
+    }
+
     executables {
       default_effect = "allow"
 
@@ -10,6 +14,17 @@ resource "ona_security_policy" "baseline" {
         path   = "/usr/bin/nc"
         effect = "audit"
       }
+    }
+  }
+}
+
+resource "ona_security_policy" "ports_only" {
+  organization_id = "00000000-0000-0000-0000-000000000000"
+  name            = "port-controls"
+
+  spec {
+    ports {
+      max_admission_level = "creator_only"
     }
   }
 }
