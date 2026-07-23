@@ -19,10 +19,6 @@ resource "ona_security_policy" "baseline" {
   name            = "baseline"
 
   spec {
-    ports {
-      max_admission_level = "organization"
-    }
-
     executables {
       default_effect = "allow"
 
@@ -30,17 +26,6 @@ resource "ona_security_policy" "baseline" {
         path   = "/usr/bin/nc"
         effect = "audit"
       }
-    }
-  }
-}
-
-resource "ona_security_policy" "ports_only" {
-  organization_id = "00000000-0000-0000-0000-000000000000"
-  name            = "port-controls"
-
-  spec {
-    ports {
-      max_admission_level = "creator_only"
     }
   }
 }
@@ -86,7 +71,6 @@ resource "ona_security_policy" "executables_only" {
 Optional:
 
 - `executables` (Block, Optional) Executable access policy. Rules match executable paths inside the environment. (see [below for nested schema](#nestedblock--spec--executables))
-- `ports` (Block, Optional) Port access policy for user-opened ports. (see [below for nested schema](#nestedblock--spec--ports))
 
 <a id="nestedblock--spec--executables"></a>
 ### Nested Schema for `spec.executables`
@@ -107,15 +91,6 @@ Required:
 - `effect` (String) Effect for this executable path. Supported values are `allow`, `block`, and `audit`.
 - `path` (String) Executable path inside the environment.
 
-
-
-<a id="nestedblock--spec--ports"></a>
-### Nested Schema for `spec.ports`
-
-Optional:
-
-- `max_admission_level` (String) Maximum admission level for user-opened ports. Supported values are `everyone`, `organization`, and `creator_only`. Omit to leave the API default.
-
 ## Import
 
 Import is supported using the following syntax:
@@ -125,5 +100,5 @@ The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/c
 ```shell
 #!/usr/bin/env bash
 
-terraform import ona_security_policy.ports_only 00000000-0000-0000-0000-000000000000
+terraform import ona_security_policy.executables_only 00000000-0000-0000-0000-000000000000
 ```

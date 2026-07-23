@@ -53,7 +53,6 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "id", "policy-1"),
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "organization_id", "org-1"),
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "name", "baseline"),
-					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.ports.max_admission_level", "organization"),
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.executables.rule.0.path", "/usr/bin/nc"),
 					resource.TestCheckResourceAttr("data.ona_security_policies.all", "policies.#", "1"),
 					resource.TestCheckResourceAttr("data.ona_security_policies.all", "policies.0.id", "policy-1"),
@@ -173,10 +172,6 @@ resource "ona_security_policy" "baseline" {
   name            = %[2]q
 
   spec {
-    ports {
-      max_admission_level = "organization"
-    }
-
     executables {
       default_effect = "allow"
 

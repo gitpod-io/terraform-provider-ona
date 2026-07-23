@@ -26,6 +26,7 @@ import (
 var _ resource.Resource = &PolicyResource{}
 var _ resource.ResourceWithConfigure = &PolicyResource{}
 var _ resource.ResourceWithImportState = &PolicyResource{}
+var _ resource.ResourceWithUpgradeState = &PolicyResource{}
 var _ resource.ResourceWithValidateConfig = &PolicyResource{}
 
 func NewPolicyResource() resource.Resource {
@@ -46,12 +47,7 @@ type PolicyModel struct {
 }
 
 type SpecModel struct {
-	Ports       *PortPolicyModel       `tfsdk:"ports"`
 	Executables *ExecutablePolicyModel `tfsdk:"executables"`
-}
-
-type PortPolicyModel struct {
-	MaxAdmissionLevel types.String `tfsdk:"max_admission_level"`
 }
 
 type ExecutablePolicyModel struct {
@@ -68,10 +64,6 @@ const (
 	effectAllow = "allow"
 	effectBlock = "block"
 	effectAudit = "audit"
-
-	admissionLevelEveryone     = "everyone"
-	admissionLevelOrganization = "organization"
-	admissionLevelCreatorOnly  = "creator_only"
 )
 
 func (r *PolicyResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -83,7 +75,12 @@ func (r *PolicyResource) Schema(ctx context.Context, req resource.SchemaRequest,
 }
 
 func policyResourceSchema() resourceschema.Schema {
+	return policyResourceSchemaWithSpec(1, specBlock())
+}
+
+func policyResourceSchemaWithSpec(version int64, spec resourceschema.SingleNestedBlock) resourceschema.Schema {
 	return resourceschema.Schema{
+		Version:             version,
 		MarkdownDescription: "Ona security policy for environment runtime controls. Attach the resulting policy through organization policy settings to make it the default for new environments.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
@@ -117,7 +114,7 @@ func policyResourceSchema() resourceschema.Schema {
 			},
 		},
 		Blocks: map[string]resourceschema.Block{
-			"spec": specBlock(),
+			"spec": spec,
 		},
 	}
 }
@@ -126,20 +123,7 @@ func specBlock() resourceschema.SingleNestedBlock {
 	return resourceschema.SingleNestedBlock{
 		MarkdownDescription: "Runtime security controls enforced for environments using this policy. Configure one or more policy sections depending on what the policy should control.",
 		Blocks: map[string]resourceschema.Block{
-			"ports":       portPolicyBlock(),
 			"executables": executablePolicyBlock(),
-		},
-	}
-}
-
-func portPolicyBlock() resourceschema.SingleNestedBlock {
-	return resourceschema.SingleNestedBlock{
-		MarkdownDescription: "Port access policy for user-opened ports.",
-		Attributes: map[string]resourceschema.Attribute{
-			"max_admission_level": resourceschema.StringAttribute{
-				Optional:            true,
-				MarkdownDescription: "Maximum admission level for user-opened ports. Supported values are `everyone`, `organization`, and `creator_only`. Omit to leave the API default.",
-			},
 		},
 	}
 }
