@@ -20,6 +20,19 @@ type policyModelV0 struct {
 	Spec           *policySpecModelV0 `tfsdk:"spec"`
 }
 
+type policyModelV1 struct {
+	ID             types.String       `tfsdk:"id"`
+	OrganizationID types.String       `tfsdk:"organization_id"`
+	Name           types.String       `tfsdk:"name"`
+	CreatedAt      types.String       `tfsdk:"created_at"`
+	UpdatedAt      types.String       `tfsdk:"updated_at"`
+	Spec           *policySpecModelV1 `tfsdk:"spec"`
+}
+
+type policySpecModelV1 struct {
+	Executables *ExecutablePolicyModel `tfsdk:"executables"`
+}
+
 type policySpecModelV0 struct {
 	Ports        *portPolicyModelV0        `tfsdk:"ports"`
 	Executables  *ExecutablePolicyModel    `tfsdk:"executables"`
@@ -77,11 +90,12 @@ type dataDestinationModelV0 struct {
 }
 
 func (r *PolicyResource) UpgradeState(context.Context) map[int64]resource.StateUpgrader {
-	priorSchema := policyResourceSchemaWithSpec(0, policySpecBlockV0())
+	v0Schema := policyResourceSchemaWithSpec(0, policySpecBlockV0())
+	v1Schema := policyResourceSchemaWithSpec(1, policySpecBlockV1())
 
 	return map[int64]resource.StateUpgrader{
 		0: {
-			PriorSchema: &priorSchema,
+			PriorSchema: &v0Schema,
 			StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
 				var prior policyModelV0
 				resp.Diagnostics.Append(req.State.Get(ctx, &prior)...)
@@ -89,19 +103,48 @@ func (r *PolicyResource) UpgradeState(context.Context) map[int64]resource.StateU
 					return
 				}
 
-				upgraded := PolicyModel{
-					ID:             prior.ID,
-					OrganizationID: prior.OrganizationID,
-					Name:           prior.Name,
-					CreatedAt:      prior.CreatedAt,
-					UpdatedAt:      prior.UpdatedAt,
-				}
+				upgraded := newPolicyModel(prior.ID, prior.OrganizationID, prior.Name, prior.CreatedAt, prior.UpdatedAt)
 				if prior.Spec != nil {
 					upgraded.Spec = &SpecModel{Executables: prior.Spec.Executables}
 				}
 
 				resp.Diagnostics.Append(resp.State.Set(ctx, &upgraded)...)
 			},
+		},
+		1: {
+			PriorSchema: &v1Schema,
+			StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+				var prior policyModelV1
+				resp.Diagnostics.Append(req.State.Get(ctx, &prior)...)
+				if resp.Diagnostics.HasError() {
+					return
+				}
+
+				upgraded := newPolicyModel(prior.ID, prior.OrganizationID, prior.Name, prior.CreatedAt, prior.UpdatedAt)
+				if prior.Spec != nil {
+					upgraded.Spec = &SpecModel{Executables: prior.Spec.Executables}
+				}
+
+				resp.Diagnostics.Append(resp.State.Set(ctx, &upgraded)...)
+			},
+		},
+	}
+}
+
+func newPolicyModel(id, organizationID, name, createdAt, updatedAt types.String) PolicyModel {
+	return PolicyModel{
+		ID:             id,
+		OrganizationID: organizationID,
+		Name:           name,
+		CreatedAt:      createdAt,
+		UpdatedAt:      updatedAt,
+	}
+}
+
+func policySpecBlockV1() resourceschema.SingleNestedBlock {
+	return resourceschema.SingleNestedBlock{
+		Blocks: map[string]resourceschema.Block{
+			"executables": executablePolicyBlock(),
 		},
 	}
 }
