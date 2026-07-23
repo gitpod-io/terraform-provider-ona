@@ -9,6 +9,7 @@ package v1
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
+	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/terraform"
 	_ "github.com/google/gnostic/openapiv3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -2795,94 +2796,94 @@ var File_gitpod_v1_integration_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_integration_proto_rawDesc = "" +
 	"\n" +
-	"\x1bgitpod/v1/integration.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x83\x03\n" +
-	"\x15IntegrationDefinition\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x19\n" +
-	"\bicon_url\x18\x04 \x01(\tR\aiconUrl\x12F\n" +
-	"\fcapabilities\x18\x05 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesR\fcapabilities\x128\n" +
-	"\x04auth\x18\x06 \x01(\v2$.gitpod.v1.IntegrationAuthenticationR\x04auth\x12\x12\n" +
-	"\x04host\x18\a \x01(\tR\x04host\x12\"\n" +
-	"\fexperimental\x18\b \x01(\bR\fexperimental\x12>\n" +
+	"\x1bgitpod/v1/integration.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb9\x03\n" +
+	"\x15IntegrationDefinition\x12\x14\n" +
+	"\x02id\x18\x01 \x01(\tB\x04ګ\x1e\x00R\x02id\x12\x18\n" +
+	"\x04name\x18\x02 \x01(\tB\x04ګ\x1e\x00R\x04name\x12&\n" +
+	"\vdescription\x18\x03 \x01(\tB\x04ګ\x1e\x00R\vdescription\x12\x1f\n" +
+	"\bicon_url\x18\x04 \x01(\tB\x04ګ\x1e\x00R\aiconUrl\x12L\n" +
+	"\fcapabilities\x18\x05 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesB\x04ګ\x1e\x00R\fcapabilities\x12>\n" +
+	"\x04auth\x18\x06 \x01(\v2$.gitpod.v1.IntegrationAuthenticationB\x04ګ\x1e\x00R\x04auth\x12\x18\n" +
+	"\x04host\x18\a \x01(\tB\x04ګ\x1e\x00R\x04host\x12(\n" +
+	"\fexperimental\x18\b \x01(\bB\x04ګ\x1e\x00R\fexperimental\x12D\n" +
 	"\n" +
-	"categories\x18\t \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryR\n" +
-	"categories:\x0f\xbaG\f\xba\x01\x02id\xba\x01\x04name\"\xe7\x03\n" +
-	"\x17IntegrationCapabilities\x125\n" +
-	"\x03mcp\x18\x01 \x01(\v2#.gitpod.v1.IntegrationMCPCapabilityR\x03mcp\x12W\n" +
-	"\x0fcontext_parsing\x18\x02 \x01(\v2..gitpod.v1.IntegrationContextParsingCapabilityR\x0econtextParsing\x12^\n" +
-	"\x12source_code_access\x18\x03 \x01(\v20.gitpod.v1.IntegrationSourceCodeAccessCapabilityR\x10sourceCodeAccess\x12;\n" +
-	"\x05login\x18\x04 \x01(\v2%.gitpod.v1.IntegrationLoginCapabilityR\x05login\x12N\n" +
-	"\fagent_client\x18\x05 \x01(\v2+.gitpod.v1.IntegrationAgentClientCapabilityR\vagentClient\x12O\n" +
-	"\rscm_pr_events\x18\x06 \x01(\v2+.gitpod.v1.IntegrationScmPrEventsCapabilityR\vscmPrEvents\"6\n" +
-	"\x18IntegrationMCPCapability\x12\x1a\n" +
-	"\x03url\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x03url\"%\n" +
+	"categories\x18\t \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryB\x04ګ\x1e\x00R\n" +
+	"categories:\x0f\xbaG\f\xba\x01\x02id\xba\x01\x04name\"\x8b\x04\n" +
+	"\x17IntegrationCapabilities\x12;\n" +
+	"\x03mcp\x18\x01 \x01(\v2#.gitpod.v1.IntegrationMCPCapabilityB\x04ګ\x1e\x00R\x03mcp\x12]\n" +
+	"\x0fcontext_parsing\x18\x02 \x01(\v2..gitpod.v1.IntegrationContextParsingCapabilityB\x04ګ\x1e\x00R\x0econtextParsing\x12d\n" +
+	"\x12source_code_access\x18\x03 \x01(\v20.gitpod.v1.IntegrationSourceCodeAccessCapabilityB\x04ګ\x1e\x00R\x10sourceCodeAccess\x12A\n" +
+	"\x05login\x18\x04 \x01(\v2%.gitpod.v1.IntegrationLoginCapabilityB\x04ګ\x1e\x00R\x05login\x12T\n" +
+	"\fagent_client\x18\x05 \x01(\v2+.gitpod.v1.IntegrationAgentClientCapabilityB\x04ګ\x1e\x00R\vagentClient\x12U\n" +
+	"\rscm_pr_events\x18\x06 \x01(\v2+.gitpod.v1.IntegrationScmPrEventsCapabilityB\x04ګ\x1e\x00R\vscmPrEvents\":\n" +
+	"\x18IntegrationMCPCapability\x12\x1e\n" +
+	"\x03url\x18\x01 \x01(\tB\f\xbaH\x05r\x03\x18\xff\x01ګ\x1e\x00R\x03url\"%\n" +
 	"#IntegrationContextParsingCapability\"'\n" +
 	"%IntegrationSourceCodeAccessCapability\"\x1c\n" +
-	"\x1aIntegrationLoginCapability\"\xb9\x01\n" +
-	" IntegrationAgentClientCapability\x12-\n" +
-	"\x12severity_threshold\x18\x02 \x01(\tR\x11severityThreshold\x129\n" +
-	"\x12default_project_id\x18\x03 \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\x10defaultProjectIdJ\x04\b\x01\x10\x02J\x04\b\x04\x10\x05R\x16webhook_signing_secretR\aapi_key\"\"\n" +
-	" IntegrationScmPrEventsCapability\"\x8b\x02\n" +
-	"\x19IntegrationAuthentication\x12#\n" +
-	"\rrequires_auth\x18\x01 \x01(\bR\frequiresAuth\x12;\n" +
-	"\aapi_key\x18\x02 \x01(\v2\".gitpod.v1.IntegrationAPIKeyConfigR\x06apiKey\x127\n" +
-	"\x05oauth\x18\x03 \x01(\v2!.gitpod.v1.IntegrationOAuthConfigR\x05oauth\x12S\n" +
-	"\x0fproprietary_app\x18\x04 \x01(\v2*.gitpod.v1.IntegrationProprietaryAppConfigR\x0eproprietaryApp\"\x19\n" +
-	"\x17IntegrationAPIKeyConfig\"\x93\x03\n" +
-	"\x16IntegrationOAuthConfig\x12\x19\n" +
-	"\bauth_url\x18\x01 \x01(\tR\aauthUrl\x12\x1b\n" +
-	"\ttoken_url\x18\x02 \x01(\tR\btokenUrl\x12\x16\n" +
-	"\x06scopes\x18\x03 \x03(\tR\x06scopes\x12\x1b\n" +
-	"\tclient_id\x18\x04 \x01(\tR\bclientId\x12#\n" +
-	"\rclient_secret\x18\x05 \x01(\tR\fclientSecret\x12!\n" +
-	"\fredirect_url\x18\x06 \x01(\tR\vredirectUrl\x121\n" +
-	"\x14dynamic_registration\x18\a \x01(\bR\x13dynamicRegistration\x12R\n" +
-	"\vauth_params\x18\b \x03(\v21.gitpod.v1.IntegrationOAuthConfig.AuthParamsEntryR\n" +
+	"\x1aIntegrationLoginCapability\"\xc3\x01\n" +
+	" IntegrationAgentClientCapability\x123\n" +
+	"\x12severity_threshold\x18\x02 \x01(\tB\x04ګ\x1e\x00R\x11severityThreshold\x12=\n" +
+	"\x12default_project_id\x18\x03 \x01(\tB\x0f\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01ګ\x1e\x00R\x10defaultProjectIdJ\x04\b\x01\x10\x02J\x04\b\x04\x10\x05R\x16webhook_signing_secretR\aapi_key\"\"\n" +
+	" IntegrationScmPrEventsCapability\"\xa3\x02\n" +
+	"\x19IntegrationAuthentication\x12)\n" +
+	"\rrequires_auth\x18\x01 \x01(\bB\x04ګ\x1e\x00R\frequiresAuth\x12A\n" +
+	"\aapi_key\x18\x02 \x01(\v2\".gitpod.v1.IntegrationAPIKeyConfigB\x04ګ\x1e\x00R\x06apiKey\x12=\n" +
+	"\x05oauth\x18\x03 \x01(\v2!.gitpod.v1.IntegrationOAuthConfigB\x04ګ\x1e\x00R\x05oauth\x12Y\n" +
+	"\x0fproprietary_app\x18\x04 \x01(\v2*.gitpod.v1.IntegrationProprietaryAppConfigB\x04ګ\x1e\x00R\x0eproprietaryApp\"\x19\n" +
+	"\x17IntegrationAPIKeyConfig\"\xc3\x03\n" +
+	"\x16IntegrationOAuthConfig\x12\x1f\n" +
+	"\bauth_url\x18\x01 \x01(\tB\x04ګ\x1e\x00R\aauthUrl\x12!\n" +
+	"\ttoken_url\x18\x02 \x01(\tB\x04ګ\x1e\x00R\btokenUrl\x12\x1c\n" +
+	"\x06scopes\x18\x03 \x03(\tB\x04ګ\x1e\x00R\x06scopes\x12!\n" +
+	"\tclient_id\x18\x04 \x01(\tB\x04ګ\x1e\x00R\bclientId\x12)\n" +
+	"\rclient_secret\x18\x05 \x01(\tB\x04ګ\x1e\x00R\fclientSecret\x12'\n" +
+	"\fredirect_url\x18\x06 \x01(\tB\x04ګ\x1e\x00R\vredirectUrl\x127\n" +
+	"\x14dynamic_registration\x18\a \x01(\bB\x04ګ\x1e\x00R\x13dynamicRegistration\x12X\n" +
+	"\vauth_params\x18\b \x03(\v21.gitpod.v1.IntegrationOAuthConfig.AuthParamsEntryB\x04ګ\x1e\x00R\n" +
 	"authParams\x1a=\n" +
 	"\x0fAuthParamsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xce\x03\n" +
-	"\x1fIntegrationProprietaryAppConfig\x12\x1b\n" +
-	"\tclient_id\x18\x01 \x01(\tR\bclientId\x12#\n" +
-	"\rclient_secret\x18\x02 \x01(\tR\fclientSecret\x12%\n" +
-	"\x0ewebhook_secret\x18\x03 \x01(\tR\rwebhookSecret\x12[\n" +
-	"\vauth_params\x18\x04 \x03(\v2:.gitpod.v1.IntegrationProprietaryAppConfig.AuthParamsEntryR\n" +
-	"authParams\x12\x1d\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x8a\x04\n" +
+	"\x1fIntegrationProprietaryAppConfig\x12!\n" +
+	"\tclient_id\x18\x01 \x01(\tB\x04ګ\x1e\x00R\bclientId\x12)\n" +
+	"\rclient_secret\x18\x02 \x01(\tB\x04ګ\x1e\x00R\fclientSecret\x12+\n" +
+	"\x0ewebhook_secret\x18\x03 \x01(\tB\x04ګ\x1e\x00R\rwebhookSecret\x12a\n" +
+	"\vauth_params\x18\x04 \x03(\v2:.gitpod.v1.IntegrationProprietaryAppConfig.AuthParamsEntryB\x04ګ\x1e\x00R\n" +
+	"authParams\x12#\n" +
 	"\n" +
-	"app_scopes\x18\x05 \x03(\tR\tappScopes\x12\x1b\n" +
-	"\ttoken_url\x18\x06 \x01(\tR\btokenUrl\x12\x15\n" +
-	"\x06app_id\x18\a \x01(\tR\x05appId\x12\x1f\n" +
-	"\vprivate_key\x18\b \x01(\tR\n" +
-	"privateKey\x12\x19\n" +
-	"\bapp_slug\x18\t \x01(\tR\aappSlug\x12\x17\n" +
+	"app_scopes\x18\x05 \x03(\tB\x04ګ\x1e\x00R\tappScopes\x12!\n" +
+	"\ttoken_url\x18\x06 \x01(\tB\x04ګ\x1e\x00R\btokenUrl\x12\x1b\n" +
+	"\x06app_id\x18\a \x01(\tB\x04ګ\x1e\x00R\x05appId\x12%\n" +
+	"\vprivate_key\x18\b \x01(\tB\x04ګ\x1e\x00R\n" +
+	"privateKey\x12\x1f\n" +
+	"\bapp_slug\x18\t \x01(\tB\x04ګ\x1e\x00R\aappSlug\x12\x1d\n" +
 	"\aapi_key\x18\n" +
-	" \x01(\tR\x06apiKey\x1a=\n" +
+	" \x01(\tB\x04ګ\x1e\x00R\x06apiKey\x1a=\n" +
 	"\x0fAuthParamsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xfb\x04\n" +
-	"\vIntegration\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
-	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12:\n" +
-	"\x19integration_definition_id\x18\x03 \x01(\tR\x17integrationDefinitionId\x12\x18\n" +
-	"\aenabled\x18\x04 \x01(\bR\aenabled\x12F\n" +
-	"\fcapabilities\x18\x05 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesR\fcapabilities\x12\x1b\n" +
-	"\trunner_id\x18\x06 \x01(\tR\brunnerId\x128\n" +
-	"\x04auth\x18\a \x01(\v2$.gitpod.v1.IntegrationAuthenticationR\x04auth\x12\x12\n" +
-	"\x04host\x18\b \x01(\tR\x04host\x12\x12\n" +
-	"\x04name\x18\t \x01(\tR\x04name\x12 \n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xcd\x05\n" +
+	"\vIntegration\x12\x14\n" +
+	"\x02id\x18\x01 \x01(\tB\x04ګ\x1e\x00R\x02id\x12-\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\x04ګ\x1e\x00R\x0eorganizationId\x12@\n" +
+	"\x19integration_definition_id\x18\x03 \x01(\tB\x04ګ\x1e\x00R\x17integrationDefinitionId\x12\x1e\n" +
+	"\aenabled\x18\x04 \x01(\bB\x04ګ\x1e\x00R\aenabled\x12L\n" +
+	"\fcapabilities\x18\x05 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesB\x04ګ\x1e\x00R\fcapabilities\x12!\n" +
+	"\trunner_id\x18\x06 \x01(\tB\x04ګ\x1e\x00R\brunnerId\x12>\n" +
+	"\x04auth\x18\a \x01(\v2$.gitpod.v1.IntegrationAuthenticationB\x04ګ\x1e\x00R\x04auth\x12\x18\n" +
+	"\x04host\x18\b \x01(\tB\x04ګ\x1e\x00R\x04host\x12\x18\n" +
+	"\x04name\x18\t \x01(\tB\x04ګ\x1e\x00R\x04name\x12&\n" +
 	"\vdescription\x18\n" +
-	" \x01(\tR\vdescription\x12\x19\n" +
-	"\bicon_url\x18\v \x01(\tR\aiconUrl\x12>\n" +
+	" \x01(\tB\x04ګ\x1e\x00R\vdescription\x12\x1f\n" +
+	"\bicon_url\x18\v \x01(\tB\x04ګ\x1e\x00R\aiconUrl\x12D\n" +
 	"\n" +
-	"categories\x18\f \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryR\n" +
-	"categories\x12d\n" +
-	"\x15external_installation\x18\r \x01(\v2*.gitpod.v1.IntegrationExternalInstallationH\x00R\x14externalInstallation\x88\x01\x01:\x19\xbaG\x16\xba\x01\x02id\xba\x01\x0eorganizationIdB\x18\n" +
-	"\x16_external_installation\"w\n" +
-	"\x1fIntegrationExternalInstallation\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
-	"\faccount_name\x18\x02 \x01(\tR\vaccountName\x12!\n" +
-	"\faccount_type\x18\x03 \x01(\tR\vaccountType\"a\n" +
+	"categories\x18\f \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryB\x04ګ\x1e\x00R\n" +
+	"categories\x12j\n" +
+	"\x15external_installation\x18\r \x01(\v2*.gitpod.v1.IntegrationExternalInstallationB\x04ګ\x1e\x00H\x00R\x14externalInstallation\x88\x01\x01:\x1d\xbaG\x16\xba\x01\x02id\xba\x01\x0eorganizationIdҫ\x1e\x00B\x18\n" +
+	"\x16_external_installation\"\x89\x01\n" +
+	"\x1fIntegrationExternalInstallation\x12\x14\n" +
+	"\x02id\x18\x01 \x01(\tB\x04ګ\x1e\x00R\x02id\x12'\n" +
+	"\faccount_name\x18\x02 \x01(\tB\x04ګ\x1e\x00R\vaccountName\x12'\n" +
+	"\faccount_type\x18\x03 \x01(\tB\x04ګ\x1e\x00R\vaccountType\"a\n" +
 	"!ListIntegrationDefinitionsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
@@ -2891,20 +2892,20 @@ const file_gitpod_v1_integration_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12B\n" +
-	"\vdefinitions\x18\x02 \x03(\v2 .gitpod.v1.IntegrationDefinitionR\vdefinitions\"\xf4\x03\n" +
-	"\x18CreateIntegrationRequest\x12[\n" +
-	"\x19integration_definition_id\x18\x01 \x01(\tB\x1f\xa2\xab\x1e\x1b\n" +
-	"\x19integration_definition.idR\x17integrationDefinitionId\x127\n" +
-	"\trunner_id\x18\x02 \x01(\tB\x1a\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12\x18\n" +
-	"\aenabled\x18\x03 \x01(\bR\aenabled\x12F\n" +
-	"\fcapabilities\x18\x04 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesR\fcapabilities\x128\n" +
-	"\x04auth\x18\x05 \x01(\v2$.gitpod.v1.IntegrationAuthenticationR\x04auth\x12\x1c\n" +
-	"\x04host\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x04host\x12\x1c\n" +
-	"\x04name\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x04name\x12*\n" +
-	"\vdescription\x18\b \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03R\vdescription\x12>\n" +
+	"\vdefinitions\x18\x02 \x03(\v2 .gitpod.v1.IntegrationDefinitionR\vdefinitions\"\xa0\x04\n" +
+	"\x18CreateIntegrationRequest\x12_\n" +
+	"\x19integration_definition_id\x18\x01 \x01(\tB#\xa2\xab\x1e\x1b\n" +
+	"\x19integration_definition.idګ\x1e\x00R\x17integrationDefinitionId\x12;\n" +
+	"\trunner_id\x18\x02 \x01(\tB\x1e\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
+	"\trunner.idګ\x1e\x00R\brunnerId\x12\x1e\n" +
+	"\aenabled\x18\x03 \x01(\bB\x04ګ\x1e\x00R\aenabled\x12L\n" +
+	"\fcapabilities\x18\x04 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesB\x04ګ\x1e\x00R\fcapabilities\x12>\n" +
+	"\x04auth\x18\x05 \x01(\v2$.gitpod.v1.IntegrationAuthenticationB\x04ګ\x1e\x00R\x04auth\x12 \n" +
+	"\x04host\x18\x06 \x01(\tB\f\xbaH\x05r\x03\x18\xff\x01ګ\x1e\x00R\x04host\x12 \n" +
+	"\x04name\x18\a \x01(\tB\f\xbaH\x05r\x03\x18\xff\x01ګ\x1e\x00R\x04name\x12.\n" +
+	"\vdescription\x18\b \x01(\tB\f\xbaH\x05r\x03\x18\xf4\x03ګ\x1e\x00R\vdescription\x12D\n" +
 	"\n" +
-	"categories\x18\t \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryR\n" +
+	"categories\x18\t \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryB\x04ګ\x1e\x00R\n" +
 	"categories\"]\n" +
 	"\x19CreateIntegrationResponse\x12@\n" +
 	"\vintegration\x18\x01 \x01(\v2\x16.gitpod.v1.IntegrationB\x06\xbaH\x03\xc8\x01\x01R\vintegration\"E\n" +
@@ -2912,18 +2913,18 @@ const file_gitpod_v1_integration_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
 	"\x0eintegration.idR\x02id\"Z\n" +
 	"\x16GetIntegrationResponse\x12@\n" +
-	"\vintegration\x18\x01 \x01(\v2\x16.gitpod.v1.IntegrationB\x06\xbaH\x03\xc8\x01\x01R\vintegration\"\xf2\x03\n" +
-	"\x18UpdateIntegrationRequest\x12,\n" +
-	"\x02id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eintegration.idR\x02id\x12\x1d\n" +
-	"\aenabled\x18\x02 \x01(\bH\x00R\aenabled\x88\x01\x01\x12K\n" +
-	"\fcapabilities\x18\x03 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesH\x01R\fcapabilities\x88\x01\x01\x12=\n" +
-	"\x04auth\x18\x04 \x01(\v2$.gitpod.v1.IntegrationAuthenticationH\x02R\x04auth\x88\x01\x01\x12!\n" +
+	"\vintegration\x18\x01 \x01(\v2\x16.gitpod.v1.IntegrationB\x06\xbaH\x03\xc8\x01\x01R\vintegration\"\x8e\x04\n" +
+	"\x18UpdateIntegrationRequest\x120\n" +
+	"\x02id\x18\x01 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
+	"\x0eintegration.idګ\x1e\x00R\x02id\x12#\n" +
+	"\aenabled\x18\x02 \x01(\bB\x04ګ\x1e\x00H\x00R\aenabled\x88\x01\x01\x12Q\n" +
+	"\fcapabilities\x18\x03 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesB\x04ګ\x1e\x00H\x01R\fcapabilities\x88\x01\x01\x12C\n" +
+	"\x04auth\x18\x04 \x01(\v2$.gitpod.v1.IntegrationAuthenticationB\x04ګ\x1e\x00H\x02R\x04auth\x88\x01\x01\x12!\n" +
 	"\x04host\x18\x05 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x03R\x04host\x88\x01\x01\x12!\n" +
 	"\x04name\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x04R\x04name\x88\x01\x01\x12/\n" +
-	"\vdescription\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03H\x05R\vdescription\x88\x01\x01\x12>\n" +
+	"\vdescription\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03H\x05R\vdescription\x88\x01\x01\x12D\n" +
 	"\n" +
-	"categories\x18\b \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryR\n" +
+	"categories\x18\b \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryB\x04ګ\x1e\x00R\n" +
 	"categoriesB\n" +
 	"\n" +
 	"\b_enabledB\x0f\n" +

@@ -39,6 +39,9 @@ const (
 	// EventServiceListAuditLogsProcedure is the fully-qualified name of the EventService's
 	// ListAuditLogs RPC.
 	EventServiceListAuditLogsProcedure = "/gitpod.v1.EventService/ListAuditLogs"
+	// EventServiceGetAuditLogProcedure is the fully-qualified name of the EventService's GetAuditLog
+	// RPC.
+	EventServiceGetAuditLogProcedure = "/gitpod.v1.EventService/GetAuditLog"
 )
 
 // EventServiceClient is a client for the gitpod.v1.EventService service.
@@ -95,6 +98,20 @@ type EventServiceClient interface {
 	//	  pageSize: 20
 	//	```
 	ListAuditLogs(context.Context, *connect.Request[v1.ListAuditLogsRequest]) (*connect.Response[v1.ListAuditLogsResponse], error)
+	// Gets one audit-log entry, including any typed details stored for it.
+	//
+	// Use this method to:
+	// - Inspect the details of a specific audit-log entry
+	// - Retrieve the evidence associated with a Veto Exec audit event
+	//
+	// ### Examples
+	//
+	// - Get an audit-log entry:
+	//
+	//	```yaml
+	//	auditLogEntryId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+	//	```
+	GetAuditLog(context.Context, *connect.Request[v1.GetAuditLogRequest]) (*connect.Response[v1.GetAuditLogResponse], error)
 }
 
 // NewEventServiceClient constructs a client for the gitpod.v1.EventService service. By default, it
@@ -121,6 +138,13 @@ func NewEventServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
+		getAuditLog: connect.NewClient[v1.GetAuditLogRequest, v1.GetAuditLogResponse](
+			httpClient,
+			baseURL+EventServiceGetAuditLogProcedure,
+			connect.WithSchema(eventServiceMethods.ByName("GetAuditLog")),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -128,6 +152,7 @@ func NewEventServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 type eventServiceClient struct {
 	watchEvents   *connect.Client[v1.WatchEventsRequest, v1.WatchEventsResponse]
 	listAuditLogs *connect.Client[v1.ListAuditLogsRequest, v1.ListAuditLogsResponse]
+	getAuditLog   *connect.Client[v1.GetAuditLogRequest, v1.GetAuditLogResponse]
 }
 
 // WatchEvents calls gitpod.v1.EventService.WatchEvents.
@@ -138,6 +163,11 @@ func (c *eventServiceClient) WatchEvents(ctx context.Context, req *connect.Reque
 // ListAuditLogs calls gitpod.v1.EventService.ListAuditLogs.
 func (c *eventServiceClient) ListAuditLogs(ctx context.Context, req *connect.Request[v1.ListAuditLogsRequest]) (*connect.Response[v1.ListAuditLogsResponse], error) {
 	return c.listAuditLogs.CallUnary(ctx, req)
+}
+
+// GetAuditLog calls gitpod.v1.EventService.GetAuditLog.
+func (c *eventServiceClient) GetAuditLog(ctx context.Context, req *connect.Request[v1.GetAuditLogRequest]) (*connect.Response[v1.GetAuditLogResponse], error) {
+	return c.getAuditLog.CallUnary(ctx, req)
 }
 
 // EventServiceHandler is an implementation of the gitpod.v1.EventService service.
@@ -194,6 +224,20 @@ type EventServiceHandler interface {
 	//	  pageSize: 20
 	//	```
 	ListAuditLogs(context.Context, *connect.Request[v1.ListAuditLogsRequest]) (*connect.Response[v1.ListAuditLogsResponse], error)
+	// Gets one audit-log entry, including any typed details stored for it.
+	//
+	// Use this method to:
+	// - Inspect the details of a specific audit-log entry
+	// - Retrieve the evidence associated with a Veto Exec audit event
+	//
+	// ### Examples
+	//
+	// - Get an audit-log entry:
+	//
+	//	```yaml
+	//	auditLogEntryId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+	//	```
+	GetAuditLog(context.Context, *connect.Request[v1.GetAuditLogRequest]) (*connect.Response[v1.GetAuditLogResponse], error)
 }
 
 // NewEventServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -216,12 +260,21 @@ func NewEventServiceHandler(svc EventServiceHandler, opts ...connect.HandlerOpti
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
+	eventServiceGetAuditLogHandler := connect.NewUnaryHandler(
+		EventServiceGetAuditLogProcedure,
+		svc.GetAuditLog,
+		connect.WithSchema(eventServiceMethods.ByName("GetAuditLog")),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/gitpod.v1.EventService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case EventServiceWatchEventsProcedure:
 			eventServiceWatchEventsHandler.ServeHTTP(w, r)
 		case EventServiceListAuditLogsProcedure:
 			eventServiceListAuditLogsHandler.ServeHTTP(w, r)
+		case EventServiceGetAuditLogProcedure:
+			eventServiceGetAuditLogHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -237,4 +290,8 @@ func (UnimplementedEventServiceHandler) WatchEvents(context.Context, *connect.Re
 
 func (UnimplementedEventServiceHandler) ListAuditLogs(context.Context, *connect.Request[v1.ListAuditLogsRequest]) (*connect.Response[v1.ListAuditLogsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.EventService.ListAuditLogs is not implemented"))
+}
+
+func (UnimplementedEventServiceHandler) GetAuditLog(context.Context, *connect.Request[v1.GetAuditLogRequest]) (*connect.Response[v1.GetAuditLogResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.EventService.GetAuditLog is not implemented"))
 }
