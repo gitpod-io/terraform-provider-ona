@@ -47,7 +47,12 @@ type PolicyModel struct {
 }
 
 type SpecModel struct {
+	Ports       *PortPolicyModel       `tfsdk:"ports"`
 	Executables *ExecutablePolicyModel `tfsdk:"executables"`
+}
+
+type PortPolicyModel struct {
+	MaxAdmissionLevel types.String `tfsdk:"max_admission_level"`
 }
 
 type ExecutablePolicyModel struct {
@@ -64,6 +69,10 @@ const (
 	effectAllow = "allow"
 	effectBlock = "block"
 	effectAudit = "audit"
+
+	admissionLevelEveryone     = "everyone"
+	admissionLevelOrganization = "organization"
+	admissionLevelCreatorOnly  = "creator_only"
 )
 
 func (r *PolicyResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -123,7 +132,20 @@ func specBlock() resourceschema.SingleNestedBlock {
 	return resourceschema.SingleNestedBlock{
 		MarkdownDescription: "Runtime security controls enforced for environments using this policy. Configure one or more policy sections depending on what the policy should control.",
 		Blocks: map[string]resourceschema.Block{
+			"ports":       portPolicyBlock(),
 			"executables": executablePolicyBlock(),
+		},
+	}
+}
+
+func portPolicyBlock() resourceschema.SingleNestedBlock {
+	return resourceschema.SingleNestedBlock{
+		MarkdownDescription: "Port access policy.",
+		Attributes: map[string]resourceschema.Attribute{
+			"max_admission_level": resourceschema.StringAttribute{
+				Optional:            true,
+				MarkdownDescription: "Maximum admission level for user-opened ports. Supported values are `everyone`, `organization`, and `creator_only`; omit for no additional cap.",
+			},
 		},
 	}
 }
