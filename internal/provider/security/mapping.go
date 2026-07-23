@@ -47,6 +47,9 @@ func portPolicyFromModel(model *PortPolicyModel, root path.Path, diags *diag.Dia
 }
 
 func executablePolicyFromModel(model *ExecutablePolicyModel, root path.Path, diags *diag.Diagnostics) *v1.SecurityPolicy_Spec_ExecutablePolicy {
+	if model.DefaultEffect.IsNull() {
+		diags.AddAttributeError(root.AtName("default_effect"), "Missing Executable Default Effect", "Set default_effect when configuring the executables block.")
+	}
 	policy := &v1.SecurityPolicy_Spec_ExecutablePolicy{
 		DefaultEffect: effectFromString(model.DefaultEffect, root.AtName("default_effect"), diags),
 	}

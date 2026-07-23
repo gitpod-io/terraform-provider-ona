@@ -125,6 +125,42 @@ func TestAccSecurityPolicyRejectsInvalidAdmissionLevelAtPlan(t *testing.T) {
 	})
 }
 
+func TestAccSecurityPolicyPortsOnly(t *testing.T) {
+	t.Parallel()
+
+	server := newPolicyAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{{
+			Config: testAccSecurityPolicyPortsOnlyConfig(server.URL),
+			Check: resource.ComposeAggregateTestCheckFunc(
+				resource.TestCheckResourceAttr("ona_security_policy.test", "spec.ports.max_admission_level", "organization"),
+				resource.TestCheckNoResourceAttr("ona_security_policy.test", "spec.executables"),
+			),
+		}},
+	})
+}
+
+func TestAccSecurityPolicyExecutablesRequiresDefaultEffectAtPlan(t *testing.T) {
+	t.Parallel()
+
+	server := newPolicyAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{{
+			Config:      testAccSecurityPolicyExecutablesWithoutDefaultConfig(server.URL),
+			PlanOnly:    true,
+			ExpectError: regexp.MustCompile(`Missing Executable Default Effect`),
+		}},
+	})
+}
+
 func TestAccSecurityPolicyOmittedPortsHasNoCap(t *testing.T) {
 	t.Parallel()
 
@@ -425,6 +461,49 @@ resource "ona_security_policy" "test" {
   }
 }
 `, host, portsBlock)
+}
+
+func testAccSecurityPolicyPortsOnlyConfig(host string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_security_policy" "test" {
+  organization_id = "org-1"
+  name            = "test"
+
+  spec {
+    ports {
+      max_admission_level = "organization"
+    }
+  }
+}
+`, host)
+}
+
+func testAccSecurityPolicyExecutablesWithoutDefaultConfig(host string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_security_policy" "test" {
+  organization_id = "org-1"
+  name            = "test"
+
+  spec {
+    executables {
+      rule {
+        path   = "/usr/bin/nc"
+        effect = "block"
+      }
+    }
+  }
+}
+`, host)
 }
 
 func testAccMinimalPolicyConfig(host string) string {

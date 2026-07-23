@@ -151,10 +151,21 @@ func portPolicyBlock() resourceschema.SingleNestedBlock {
 }
 
 func executablePolicyBlock() resourceschema.SingleNestedBlock {
+	return executablePolicyBlockWithDefaultEffect(resourceschema.StringAttribute{
+		Optional:            true,
+		MarkdownDescription: "Default executable access effect. Required when the executables block is configured. Supported values are `allow`, `block`, and `audit`.",
+	})
+}
+
+func executablePolicyBlockPrior() resourceschema.SingleNestedBlock {
+	return executablePolicyBlockWithDefaultEffect(effectAttribute("Default executable access effect."))
+}
+
+func executablePolicyBlockWithDefaultEffect(defaultEffect resourceschema.StringAttribute) resourceschema.SingleNestedBlock {
 	return resourceschema.SingleNestedBlock{
 		MarkdownDescription: "Executable access policy. Rules match executable paths inside the environment.",
 		Attributes: map[string]resourceschema.Attribute{
-			"default_effect": effectAttribute("Default executable access effect."),
+			"default_effect": defaultEffect,
 		},
 		Blocks: map[string]resourceschema.Block{
 			"rule": resourceschema.ListNestedBlock{

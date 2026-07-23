@@ -91,12 +91,9 @@ Optional:
 <a id="nestedblock--spec--executables"></a>
 ### Nested Schema for `spec.executables`
 
-Required:
-
-- `default_effect` (String) Default executable access effect. Supported values are `allow`, `block`, and `audit`.
-
 Optional:
 
+- `default_effect` (String) Default executable access effect. Required when the executables block is configured. Supported values are `allow`, `block`, and `audit`.
 - `rule` (Block List) Executable path rule. (see [below for nested schema](#nestedblock--spec--executables--rule))
 
 <a id="nestedblock--spec--executables--rule"></a>

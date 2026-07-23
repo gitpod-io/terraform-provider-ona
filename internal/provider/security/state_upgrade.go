@@ -144,7 +144,7 @@ func newPolicyModel(id, organizationID, name, createdAt, updatedAt types.String)
 func policySpecBlockV1() resourceschema.SingleNestedBlock {
 	return resourceschema.SingleNestedBlock{
 		Blocks: map[string]resourceschema.Block{
-			"executables": executablePolicyBlock(),
+			"executables": executablePolicyBlockPrior(),
 		},
 	}
 }
@@ -153,7 +153,7 @@ func policySpecBlockV0() resourceschema.SingleNestedBlock {
 	return resourceschema.SingleNestedBlock{
 		Blocks: map[string]resourceschema.Block{
 			"ports":         portPolicyBlockV0(),
-			"executables":   executablePolicyBlock(),
+			"executables":   executablePolicyBlockPrior(),
 			"files":         filePolicyBlockV0(),
 			"block_devices": blockDevicePolicyBlockV0(),
 			"data":          dataPolicyBlockV0(),
