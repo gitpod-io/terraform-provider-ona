@@ -20,13 +20,7 @@ resource "ona_security_policy" "baseline" {
 
   spec {
     ports {
-      default_effect = "allow"
-
-      rule {
-        range_from = 22
-        range_to   = 22
-        effect     = "block"
-      }
+      max_admission_level = "organization"
     }
 
     executables {
@@ -34,46 +28,6 @@ resource "ona_security_policy" "baseline" {
 
       rule {
         path   = "/usr/bin/nc"
-        effect = "audit"
-      }
-    }
-
-    files {
-      default_effect  = "allow"
-      default_actions = ["read", "write"]
-
-      rule {
-        path    = "/etc/shadow"
-        actions = ["read"]
-        effect  = "block"
-      }
-    }
-
-    block_devices {
-      default_effect = "block"
-    }
-
-    data {
-      default_effect = "allow"
-
-      rule {
-        source {
-          file = "/workspace/secrets.env"
-        }
-        destination {
-          host = "example.com"
-        }
-        effect = "block"
-      }
-
-      rule {
-        source {
-          integration = "00000000-0000-0000-0000-000000000001"
-          selector    = "example-organization/private-repository"
-        }
-        destination {
-          host = "api.example.com"
-        }
         effect = "audit"
       }
     }
@@ -86,36 +40,14 @@ resource "ona_security_policy" "ports_only" {
 
   spec {
     ports {
-      default_effect = "allow"
-
-      rule {
-        range_from = 22
-        range_to   = 22
-        effect     = "block"
-      }
-    }
-
-    executables {
-      default_effect = "allow"
-    }
-
-    files {
-      default_effect = "allow"
-    }
-
-    block_devices {
-      default_effect = "allow"
-    }
-
-    data {
-      default_effect = "allow"
+      max_admission_level = "creator_only"
     }
   }
 }
 
-resource "ona_security_policy" "files_only" {
+resource "ona_security_policy" "executables_only" {
   organization_id = "00000000-0000-0000-0000-000000000000"
-  name            = "file-controls"
+  name            = "executable-controls"
 
   spec {
     executables {
@@ -125,77 +57,6 @@ resource "ona_security_policy" "files_only" {
         path   = "/usr/bin/nc"
         effect = "audit"
       }
-    }
-
-    files {
-      default_effect  = "allow"
-      default_actions = ["read", "write"]
-
-      rule {
-        path    = "/etc/shadow"
-        actions = ["read"]
-        effect  = "block"
-      }
-    }
-
-    ports {
-      default_effect = "allow"
-    }
-
-    block_devices {
-      default_effect = "allow"
-    }
-
-    data {
-      default_effect = "allow"
-    }
-  }
-}
-
-resource "ona_security_policy" "data_only" {
-  organization_id = "00000000-0000-0000-0000-000000000000"
-  name            = "data-controls"
-
-  spec {
-    block_devices {
-      default_effect = "block"
-    }
-
-    data {
-      default_effect = "allow"
-
-      rule {
-        source {
-          file = "/workspace/secrets.env"
-        }
-        destination {
-          host = "example.com"
-        }
-        effect = "block"
-      }
-
-      rule {
-        source {
-          integration = "00000000-0000-0000-0000-000000000001"
-          selector    = "example-organization/private-repository"
-        }
-        destination {
-          host = "api.example.com"
-        }
-        effect = "audit"
-      }
-    }
-
-    ports {
-      default_effect = "allow"
-    }
-
-    executables {
-      default_effect = "allow"
-    }
-
-    files {
-      default_effect = "allow"
     }
   }
 }
@@ -224,62 +85,8 @@ resource "ona_security_policy" "data_only" {
 
 Optional:
 
-- `block_devices` (Block, Optional) Block device access policy for environment runtime controls. (see [below for nested schema](#nestedblock--spec--block_devices))
-- `data` (Block, Optional) Data flow policy. Rules describe allowed or blocked movement from a source to a destination. (see [below for nested schema](#nestedblock--spec--data))
 - `executables` (Block, Optional) Executable access policy. Rules match executable paths inside the environment. (see [below for nested schema](#nestedblock--spec--executables))
-- `files` (Block, Optional) File access policy. Rules match file paths inside the environment and can control read and write actions separately. (see [below for nested schema](#nestedblock--spec--files))
-- `ports` (Block, Optional) Port access policy. Rules match inclusive TCP/UDP port ranges from 0 through 65535. (see [below for nested schema](#nestedblock--spec--ports))
-
-<a id="nestedblock--spec--block_devices"></a>
-### Nested Schema for `spec.block_devices`
-
-Required:
-
-- `default_effect` (String) Default block device access effect. Supported values are `allow`, `block`, and `audit`.
-
-
-<a id="nestedblock--spec--data"></a>
-### Nested Schema for `spec.data`
-
-Required:
-
-- `default_effect` (String) Default data flow effect. Supported values are `allow`, `block`, and `audit`.
-
-Optional:
-
-- `rule` (Block List) Data flow rule. (see [below for nested schema](#nestedblock--spec--data--rule))
-
-<a id="nestedblock--spec--data--rule"></a>
-### Nested Schema for `spec.data.rule`
-
-Required:
-
-- `effect` (String) Effect for this data flow. Supported values are `allow`, `block`, and `audit`.
-
-Optional:
-
-- `destination` (Block, Optional) Data destination. (see [below for nested schema](#nestedblock--spec--data--rule--destination))
-- `source` (Block, Optional) Data source. Exactly one of `file` or `integration` must be set. (see [below for nested schema](#nestedblock--spec--data--rule--source))
-
-<a id="nestedblock--spec--data--rule--destination"></a>
-### Nested Schema for `spec.data.rule.destination`
-
-Required:
-
-- `host` (String) Destination host, domain, service endpoint, or app-owned host.
-
-
-<a id="nestedblock--spec--data--rule--source"></a>
-### Nested Schema for `spec.data.rule.source`
-
-Optional:
-
-- `file` (String) Source file path.
-- `integration` (String) Source integration ID.
-- `selector` (String) Source-dependent selector for narrowing what data within the source is matched.
-
-
-
+- `ports` (Block, Optional) Port access policy for user-opened ports. (see [below for nested schema](#nestedblock--spec--ports))
 
 <a id="nestedblock--spec--executables"></a>
 ### Nested Schema for `spec.executables`
@@ -302,51 +109,12 @@ Required:
 
 
 
-<a id="nestedblock--spec--files"></a>
-### Nested Schema for `spec.files`
-
-Required:
-
-- `default_effect` (String) Default file access effect. Supported values are `allow`, `block`, and `audit`.
-
-Optional:
-
-- `default_actions` (Set of String) Actions applied to file rules that omit actions. Supported values are `read` and `write`; omit to use the API default.
-- `rule` (Block List) File path rule. (see [below for nested schema](#nestedblock--spec--files--rule))
-
-<a id="nestedblock--spec--files--rule"></a>
-### Nested Schema for `spec.files.rule`
-
-Required:
-
-- `effect` (String) Effect for this file path. Supported values are `allow`, `block`, and `audit`.
-- `path` (String) File path inside the environment.
-
-Optional:
-
-- `actions` (Set of String) File actions controlled by this rule. Supported values are `read` and `write`; omit to use `default_actions`.
-
-
-
 <a id="nestedblock--spec--ports"></a>
 ### Nested Schema for `spec.ports`
 
-Required:
-
-- `default_effect` (String) Default port access effect. Supported values are `allow`, `block`, and `audit`.
-
 Optional:
 
-- `rule` (Block List) Port range rule. (see [below for nested schema](#nestedblock--spec--ports--rule))
-
-<a id="nestedblock--spec--ports--rule"></a>
-### Nested Schema for `spec.ports.rule`
-
-Required:
-
-- `effect` (String) Effect for this port range. Supported values are `allow`, `block`, and `audit`.
-- `range_from` (Number) First port in the inclusive range. Must be between 0 and 65535.
-- `range_to` (Number) Last port in the inclusive range. Must be between `range_from` and 65535.
+- `max_admission_level` (String) Maximum admission level for user-opened ports. Supported values are `everyone`, `organization`, and `creator_only`. Omit to leave the API default.
 
 ## Import
 
