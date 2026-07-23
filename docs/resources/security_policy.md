@@ -71,6 +71,7 @@ resource "ona_security_policy" "executables_only" {
 Optional:
 
 - `executables` (Block, Optional) Executable access policy. Rules match executable paths inside the environment. (see [below for nested schema](#nestedblock--spec--executables))
+- `ports` (Block, Optional) Port access policy. (see [below for nested schema](#nestedblock--spec--ports))
 
 <a id="nestedblock--spec--executables"></a>
 ### Nested Schema for `spec.executables`
@@ -90,6 +91,15 @@ Required:
 
 - `effect` (String) Effect for this executable path. Supported values are `allow`, `block`, and `audit`.
 - `path` (String) Executable path inside the environment.
+
+
+
+<a id="nestedblock--spec--ports"></a>
+### Nested Schema for `spec.ports`
+
+Optional:
+
+- `max_admission_level` (String) Maximum admission level for user-opened ports. Supported values are `everyone`, `organization`, and `creator_only`; omit for no additional cap.
 
 ## Import
 
