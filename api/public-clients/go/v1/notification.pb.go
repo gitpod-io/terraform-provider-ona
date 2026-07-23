@@ -27,24 +27,25 @@ const (
 type NotificationType int32
 
 const (
-	NotificationType_NOTIFICATION_TYPE_UNSPECIFIED                   NotificationType = 0
-	NotificationType_NOTIFICATION_TYPE_AGENT_COMPLETED               NotificationType = 1
-	NotificationType_NOTIFICATION_TYPE_AGENT_WAITING_FOR_INPUT       NotificationType = 2
-	NotificationType_NOTIFICATION_TYPE_ENVIRONMENT_ARCHIVED          NotificationType = 3
-	NotificationType_NOTIFICATION_TYPE_ENVIRONMENT_LIFETIME_EXCEEDED NotificationType = 4
-	NotificationType_NOTIFICATION_TYPE_BILLING_CREDITS_LOW           NotificationType = 5
-	NotificationType_NOTIFICATION_TYPE_BILLING_PAYMENT_FAILED        NotificationType = 6
-	NotificationType_NOTIFICATION_TYPE_BILLING_ACCOUNT_SUSPENDED     NotificationType = 7
-	NotificationType_NOTIFICATION_TYPE_AUTOMATION_COMPLETED          NotificationType = 8
-	NotificationType_NOTIFICATION_TYPE_AUTOMATION_STOPPED            NotificationType = 9
-	NotificationType_NOTIFICATION_TYPE_PREBUILD_FAILED               NotificationType = 10
-	NotificationType_NOTIFICATION_TYPE_USER_ADDED_TO_GROUP           NotificationType = 11
-	NotificationType_NOTIFICATION_TYPE_USER_REMOVED_FROM_GROUP       NotificationType = 12
-	NotificationType_NOTIFICATION_TYPE_PROJECT_SHARED_WITH_GROUP     NotificationType = 13
-	NotificationType_NOTIFICATION_TYPE_PROJECT_REMOVED_FROM_GROUP    NotificationType = 14
-	NotificationType_NOTIFICATION_TYPE_USER_ADDED_TO_TEAM            NotificationType = 15
-	NotificationType_NOTIFICATION_TYPE_USER_REMOVED_FROM_TEAM        NotificationType = 16
-	NotificationType_NOTIFICATION_TYPE_TEAM_CREDIT_BUDGET_EXHAUSTED  NotificationType = 17
+	NotificationType_NOTIFICATION_TYPE_UNSPECIFIED                       NotificationType = 0
+	NotificationType_NOTIFICATION_TYPE_AGENT_COMPLETED                   NotificationType = 1
+	NotificationType_NOTIFICATION_TYPE_AGENT_WAITING_FOR_INPUT           NotificationType = 2
+	NotificationType_NOTIFICATION_TYPE_ENVIRONMENT_ARCHIVED              NotificationType = 3
+	NotificationType_NOTIFICATION_TYPE_ENVIRONMENT_LIFETIME_EXCEEDED     NotificationType = 4
+	NotificationType_NOTIFICATION_TYPE_BILLING_CREDITS_LOW               NotificationType = 5
+	NotificationType_NOTIFICATION_TYPE_BILLING_PAYMENT_FAILED            NotificationType = 6
+	NotificationType_NOTIFICATION_TYPE_BILLING_ACCOUNT_SUSPENDED         NotificationType = 7
+	NotificationType_NOTIFICATION_TYPE_AUTOMATION_COMPLETED              NotificationType = 8
+	NotificationType_NOTIFICATION_TYPE_AUTOMATION_STOPPED                NotificationType = 9
+	NotificationType_NOTIFICATION_TYPE_PREBUILD_FAILED                   NotificationType = 10
+	NotificationType_NOTIFICATION_TYPE_USER_ADDED_TO_GROUP               NotificationType = 11
+	NotificationType_NOTIFICATION_TYPE_USER_REMOVED_FROM_GROUP           NotificationType = 12
+	NotificationType_NOTIFICATION_TYPE_PROJECT_SHARED_WITH_GROUP         NotificationType = 13
+	NotificationType_NOTIFICATION_TYPE_PROJECT_REMOVED_FROM_GROUP        NotificationType = 14
+	NotificationType_NOTIFICATION_TYPE_USER_ADDED_TO_TEAM                NotificationType = 15
+	NotificationType_NOTIFICATION_TYPE_USER_REMOVED_FROM_TEAM            NotificationType = 16
+	NotificationType_NOTIFICATION_TYPE_TEAM_CREDIT_BUDGET_EXHAUSTED      NotificationType = 17
+	NotificationType_NOTIFICATION_TYPE_DYNAMIC_LLM_REQUEST_HEADER_FAILED NotificationType = 18
 )
 
 // Enum value maps for NotificationType.
@@ -68,26 +69,28 @@ var (
 		15: "NOTIFICATION_TYPE_USER_ADDED_TO_TEAM",
 		16: "NOTIFICATION_TYPE_USER_REMOVED_FROM_TEAM",
 		17: "NOTIFICATION_TYPE_TEAM_CREDIT_BUDGET_EXHAUSTED",
+		18: "NOTIFICATION_TYPE_DYNAMIC_LLM_REQUEST_HEADER_FAILED",
 	}
 	NotificationType_value = map[string]int32{
-		"NOTIFICATION_TYPE_UNSPECIFIED":                   0,
-		"NOTIFICATION_TYPE_AGENT_COMPLETED":               1,
-		"NOTIFICATION_TYPE_AGENT_WAITING_FOR_INPUT":       2,
-		"NOTIFICATION_TYPE_ENVIRONMENT_ARCHIVED":          3,
-		"NOTIFICATION_TYPE_ENVIRONMENT_LIFETIME_EXCEEDED": 4,
-		"NOTIFICATION_TYPE_BILLING_CREDITS_LOW":           5,
-		"NOTIFICATION_TYPE_BILLING_PAYMENT_FAILED":        6,
-		"NOTIFICATION_TYPE_BILLING_ACCOUNT_SUSPENDED":     7,
-		"NOTIFICATION_TYPE_AUTOMATION_COMPLETED":          8,
-		"NOTIFICATION_TYPE_AUTOMATION_STOPPED":            9,
-		"NOTIFICATION_TYPE_PREBUILD_FAILED":               10,
-		"NOTIFICATION_TYPE_USER_ADDED_TO_GROUP":           11,
-		"NOTIFICATION_TYPE_USER_REMOVED_FROM_GROUP":       12,
-		"NOTIFICATION_TYPE_PROJECT_SHARED_WITH_GROUP":     13,
-		"NOTIFICATION_TYPE_PROJECT_REMOVED_FROM_GROUP":    14,
-		"NOTIFICATION_TYPE_USER_ADDED_TO_TEAM":            15,
-		"NOTIFICATION_TYPE_USER_REMOVED_FROM_TEAM":        16,
-		"NOTIFICATION_TYPE_TEAM_CREDIT_BUDGET_EXHAUSTED":  17,
+		"NOTIFICATION_TYPE_UNSPECIFIED":                       0,
+		"NOTIFICATION_TYPE_AGENT_COMPLETED":                   1,
+		"NOTIFICATION_TYPE_AGENT_WAITING_FOR_INPUT":           2,
+		"NOTIFICATION_TYPE_ENVIRONMENT_ARCHIVED":              3,
+		"NOTIFICATION_TYPE_ENVIRONMENT_LIFETIME_EXCEEDED":     4,
+		"NOTIFICATION_TYPE_BILLING_CREDITS_LOW":               5,
+		"NOTIFICATION_TYPE_BILLING_PAYMENT_FAILED":            6,
+		"NOTIFICATION_TYPE_BILLING_ACCOUNT_SUSPENDED":         7,
+		"NOTIFICATION_TYPE_AUTOMATION_COMPLETED":              8,
+		"NOTIFICATION_TYPE_AUTOMATION_STOPPED":                9,
+		"NOTIFICATION_TYPE_PREBUILD_FAILED":                   10,
+		"NOTIFICATION_TYPE_USER_ADDED_TO_GROUP":               11,
+		"NOTIFICATION_TYPE_USER_REMOVED_FROM_GROUP":           12,
+		"NOTIFICATION_TYPE_PROJECT_SHARED_WITH_GROUP":         13,
+		"NOTIFICATION_TYPE_PROJECT_REMOVED_FROM_GROUP":        14,
+		"NOTIFICATION_TYPE_USER_ADDED_TO_TEAM":                15,
+		"NOTIFICATION_TYPE_USER_REMOVED_FROM_TEAM":            16,
+		"NOTIFICATION_TYPE_TEAM_CREDIT_BUDGET_EXHAUSTED":      17,
+		"NOTIFICATION_TYPE_DYNAMIC_LLM_REQUEST_HEADER_FAILED": 18,
 	}
 )
 
@@ -1394,7 +1397,7 @@ const file_gitpod_v1_notification_proto_rawDesc = "" +
 	"\x1fMarkNotificationsUnreadResponse\"Z\n" +
 	"\x1aDeleteNotificationsRequest\x12<\n" +
 	"\x10notification_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x01\x10\x19\"\x05r\x03\xb0\x01\x01R\x0fnotificationIds\"\x1d\n" +
-	"\x1bDeleteNotificationsResponse*\xbc\x06\n" +
+	"\x1bDeleteNotificationsResponse*\xf5\x06\n" +
 	"\x10NotificationType\x12!\n" +
 	"\x1dNOTIFICATION_TYPE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!NOTIFICATION_TYPE_AGENT_COMPLETED\x10\x01\x12-\n" +
@@ -1414,7 +1417,8 @@ const file_gitpod_v1_notification_proto_rawDesc = "" +
 	",NOTIFICATION_TYPE_PROJECT_REMOVED_FROM_GROUP\x10\x0e\x12(\n" +
 	"$NOTIFICATION_TYPE_USER_ADDED_TO_TEAM\x10\x0f\x12,\n" +
 	"(NOTIFICATION_TYPE_USER_REMOVED_FROM_TEAM\x10\x10\x122\n" +
-	".NOTIFICATION_TYPE_TEAM_CREDIT_BUDGET_EXHAUSTED\x10\x112\xa3\x04\n" +
+	".NOTIFICATION_TYPE_TEAM_CREDIT_BUDGET_EXHAUSTED\x10\x11\x127\n" +
+	"3NOTIFICATION_TYPE_DYNAMIC_LLM_REQUEST_HEADER_FAILED\x10\x122\xa3\x04\n" +
 	"\x13NotificationService\x12c\n" +
 	"\x11ListNotifications\x12#.gitpod.v1.ListNotificationsRequest\x1a$.gitpod.v1.ListNotificationsResponse\"\x03\x90\x02\x01\x12]\n" +
 	"\x0fGetNotification\x12!.gitpod.v1.GetNotificationRequest\x1a\".gitpod.v1.GetNotificationResponse\"\x03\x90\x02\x01\x12l\n" +

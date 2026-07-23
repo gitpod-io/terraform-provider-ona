@@ -222,6 +222,61 @@ func (RunnerProvider) EnumDescriptor() ([]byte, []int) {
 	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{2}
 }
 
+// LLMIntegrationRequestHeaderType describes how an LLM integration request
+// header value is resolved.
+type LLMIntegrationRequestHeaderType int32
+
+const (
+	// Existing untyped headers are literal values.
+	LLMIntegrationRequestHeaderType_LLM_INTEGRATION_REQUEST_HEADER_TYPE_UNSPECIFIED LLMIntegrationRequestHeaderType = 0
+	// The configured value is sent as-is when the request does not already
+	// contain the header.
+	LLMIntegrationRequestHeaderType_LLM_INTEGRATION_REQUEST_HEADER_TYPE_LITERAL LLMIntegrationRequestHeaderType = 1
+	// The configured value is a CEL expression evaluated by a supported agent.
+	LLMIntegrationRequestHeaderType_LLM_INTEGRATION_REQUEST_HEADER_TYPE_CEL_EXPRESSION LLMIntegrationRequestHeaderType = 2
+)
+
+// Enum value maps for LLMIntegrationRequestHeaderType.
+var (
+	LLMIntegrationRequestHeaderType_name = map[int32]string{
+		0: "LLM_INTEGRATION_REQUEST_HEADER_TYPE_UNSPECIFIED",
+		1: "LLM_INTEGRATION_REQUEST_HEADER_TYPE_LITERAL",
+		2: "LLM_INTEGRATION_REQUEST_HEADER_TYPE_CEL_EXPRESSION",
+	}
+	LLMIntegrationRequestHeaderType_value = map[string]int32{
+		"LLM_INTEGRATION_REQUEST_HEADER_TYPE_UNSPECIFIED":    0,
+		"LLM_INTEGRATION_REQUEST_HEADER_TYPE_LITERAL":        1,
+		"LLM_INTEGRATION_REQUEST_HEADER_TYPE_CEL_EXPRESSION": 2,
+	}
+)
+
+func (x LLMIntegrationRequestHeaderType) Enum() *LLMIntegrationRequestHeaderType {
+	p := new(LLMIntegrationRequestHeaderType)
+	*p = x
+	return p
+}
+
+func (x LLMIntegrationRequestHeaderType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (LLMIntegrationRequestHeaderType) Descriptor() protoreflect.EnumDescriptor {
+	return file_gitpod_v1_runner_configuration_proto_enumTypes[3].Descriptor()
+}
+
+func (LLMIntegrationRequestHeaderType) Type() protoreflect.EnumType {
+	return &file_gitpod_v1_runner_configuration_proto_enumTypes[3]
+}
+
+func (x LLMIntegrationRequestHeaderType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use LLMIntegrationRequestHeaderType.Descriptor instead.
+func (LLMIntegrationRequestHeaderType) EnumDescriptor() ([]byte, []int) {
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{3}
+}
+
 type LLMProvider int32
 
 const (
@@ -258,11 +313,11 @@ func (x LLMProvider) String() string {
 }
 
 func (LLMProvider) Descriptor() protoreflect.EnumDescriptor {
-	return file_gitpod_v1_runner_configuration_proto_enumTypes[3].Descriptor()
+	return file_gitpod_v1_runner_configuration_proto_enumTypes[4].Descriptor()
 }
 
 func (LLMProvider) Type() protoreflect.EnumType {
-	return &file_gitpod_v1_runner_configuration_proto_enumTypes[3]
+	return &file_gitpod_v1_runner_configuration_proto_enumTypes[4]
 }
 
 func (x LLMProvider) Number() protoreflect.EnumNumber {
@@ -271,7 +326,7 @@ func (x LLMProvider) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use LLMProvider.Descriptor instead.
 func (LLMProvider) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{3}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{4}
 }
 
 type CreateHostAuthenticationTokenRequest struct {
@@ -2899,9 +2954,12 @@ func (x *RunnerConfigurationSchema) GetScm() []*RunnerConfigurationSchema_SCMCon
 // - Plain text values in update requests (will be encrypted server-side).
 // - Encrypted binary values on read requests (decrypt directly to get original value).
 type LLMIntegrationRequestHeader struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	Value         []byte                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Key   string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Value []byte                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	// header_type controls how value is interpreted. Unspecified values are
+	// treated as literals for backward compatibility.
+	HeaderType    LLMIntegrationRequestHeaderType `protobuf:"varint,3,opt,name=header_type,json=headerType,proto3,enum=gitpod.v1.LLMIntegrationRequestHeaderType" json:"header_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2948,6 +3006,13 @@ func (x *LLMIntegrationRequestHeader) GetValue() []byte {
 		return x.Value
 	}
 	return nil
+}
+
+func (x *LLMIntegrationRequestHeader) GetHeaderType() LLMIntegrationRequestHeaderType {
+	if x != nil {
+		return x.HeaderType
+	}
+	return LLMIntegrationRequestHeaderType_LLM_INTEGRATION_REQUEST_HEADER_TYPE_UNSPECIFIED
 }
 
 type LLMIntegration struct {
@@ -5042,10 +5107,12 @@ const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12#\n" +
 	"\rdefault_hosts\x18\x03 \x03(\tR\fdefaultHosts\x12@\n" +
 	"\x05oauth\x18\x04 \x01(\v2*.gitpod.v1.RunnerConfigurationSchema.OAuthR\x05oauth\x12J\n" +
-	"\x03pat\x18\x05 \x01(\v28.gitpod.v1.RunnerConfigurationSchema.PersonalAccessTokenR\x03pat\"E\n" +
+	"\x03pat\x18\x05 \x01(\v28.gitpod.v1.RunnerConfigurationSchema.PersonalAccessTokenR\x03pat\"\x9c\x01\n" +
 	"\x1bLLMIntegrationRequestHeader\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\fR\x05value\"\xa8\x04\n" +
+	"\x05value\x18\x02 \x01(\fR\x05value\x12U\n" +
+	"\vheader_type\x18\x03 \x01(\x0e2*.gitpod.v1.LLMIntegrationRequestHeaderTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\n" +
+	"headerType\"\xa8\x04\n" +
 	"\x0eLLMIntegration\x12+\n" +
 	"\x02id\x18\x01 \x01(\tB\x1b\xa2\xab\x1e\x13\n" +
 	"\x11llmintegration.idګ\x1e\x00R\x02id\x120\n" +
@@ -5134,7 +5201,11 @@ const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\x1bRUNNER_PROVIDER_DESKTOP_MAC\x10\x03\x1a\x02\b\x01\x12\x1b\n" +
 	"\x17RUNNER_PROVIDER_MANAGED\x10\x04\x12\x17\n" +
 	"\x13RUNNER_PROVIDER_GCP\x10\x05\x12\x1d\n" +
-	"\x19RUNNER_PROVIDER_DEV_AGENT\x10\x06*`\n" +
+	"\x19RUNNER_PROVIDER_DEV_AGENT\x10\x06*\xbf\x01\n" +
+	"\x1fLLMIntegrationRequestHeaderType\x123\n" +
+	"/LLM_INTEGRATION_REQUEST_HEADER_TYPE_UNSPECIFIED\x10\x00\x12/\n" +
+	"+LLM_INTEGRATION_REQUEST_HEADER_TYPE_LITERAL\x10\x01\x126\n" +
+	"2LLM_INTEGRATION_REQUEST_HEADER_TYPE_CEL_EXPRESSION\x10\x02*`\n" +
 	"\vLLMProvider\x12\x1c\n" +
 	"\x18LLM_PROVIDER_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16LLM_PROVIDER_ANTHROPIC\x10\x01\x12\x17\n" +
@@ -5192,201 +5263,203 @@ func file_gitpod_v1_runner_configuration_proto_rawDescGZIP() []byte {
 	return file_gitpod_v1_runner_configuration_proto_rawDescData
 }
 
-var file_gitpod_v1_runner_configuration_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
+var file_gitpod_v1_runner_configuration_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
 var file_gitpod_v1_runner_configuration_proto_msgTypes = make([]protoimpl.MessageInfo, 71)
 var file_gitpod_v1_runner_configuration_proto_goTypes = []any{
 	(HostAuthenticationTokenSource)(0),                                // 0: gitpod.v1.HostAuthenticationTokenSource
 	(RunnerKind)(0),                                                   // 1: gitpod.v1.RunnerKind
 	(RunnerProvider)(0),                                               // 2: gitpod.v1.RunnerProvider
-	(LLMProvider)(0),                                                  // 3: gitpod.v1.LLMProvider
-	(*CreateHostAuthenticationTokenRequest)(nil),                      // 4: gitpod.v1.CreateHostAuthenticationTokenRequest
-	(*CreateHostAuthenticationTokenResponse)(nil),                     // 5: gitpod.v1.CreateHostAuthenticationTokenResponse
-	(*HostAuthenticationToken)(nil),                                   // 6: gitpod.v1.HostAuthenticationToken
-	(*GetHostAuthenticationTokenRequest)(nil),                         // 7: gitpod.v1.GetHostAuthenticationTokenRequest
-	(*GetHostAuthenticationTokenResponse)(nil),                        // 8: gitpod.v1.GetHostAuthenticationTokenResponse
-	(*ListHostAuthenticationTokensRequest)(nil),                       // 9: gitpod.v1.ListHostAuthenticationTokensRequest
-	(*ListHostAuthenticationTokensResponse)(nil),                      // 10: gitpod.v1.ListHostAuthenticationTokensResponse
-	(*UpdateHostAuthenticationTokenRequest)(nil),                      // 11: gitpod.v1.UpdateHostAuthenticationTokenRequest
-	(*UpdateHostAuthenticationTokenResponse)(nil),                     // 12: gitpod.v1.UpdateHostAuthenticationTokenResponse
-	(*UpdateHostAuthenticationTokenMetadataRequest)(nil),              // 13: gitpod.v1.UpdateHostAuthenticationTokenMetadataRequest
-	(*UpdateHostAuthenticationTokenMetadataResponse)(nil),             // 14: gitpod.v1.UpdateHostAuthenticationTokenMetadataResponse
-	(*DeleteHostAuthenticationTokenRequest)(nil),                      // 15: gitpod.v1.DeleteHostAuthenticationTokenRequest
-	(*DeleteHostAuthenticationTokenResponse)(nil),                     // 16: gitpod.v1.DeleteHostAuthenticationTokenResponse
-	(*FieldValue)(nil),                                                // 17: gitpod.v1.FieldValue
-	(*FieldValueUpdate)(nil),                                          // 18: gitpod.v1.FieldValueUpdate
-	(*GetRunnerConfigurationSchemaRequest)(nil),                       // 19: gitpod.v1.GetRunnerConfigurationSchemaRequest
-	(*GetRunnerConfigurationSchemaResponse)(nil),                      // 20: gitpod.v1.GetRunnerConfigurationSchemaResponse
-	(*CreateSCMIntegrationRequest)(nil),                               // 21: gitpod.v1.CreateSCMIntegrationRequest
-	(*CreateSCMIntegrationResponse)(nil),                              // 22: gitpod.v1.CreateSCMIntegrationResponse
-	(*SCMIntegrationOAuthConfig)(nil),                                 // 23: gitpod.v1.SCMIntegrationOAuthConfig
-	(*SCMIntegration)(nil),                                            // 24: gitpod.v1.SCMIntegration
-	(*GetSCMIntegrationRequest)(nil),                                  // 25: gitpod.v1.GetSCMIntegrationRequest
-	(*GetSCMIntegrationResponse)(nil),                                 // 26: gitpod.v1.GetSCMIntegrationResponse
-	(*ListSCMIntegrationsRequest)(nil),                                // 27: gitpod.v1.ListSCMIntegrationsRequest
-	(*ListSCMIntegrationsResponse)(nil),                               // 28: gitpod.v1.ListSCMIntegrationsResponse
-	(*UpdateSCMIntegrationRequest)(nil),                               // 29: gitpod.v1.UpdateSCMIntegrationRequest
-	(*UpdateSCMIntegrationResponse)(nil),                              // 30: gitpod.v1.UpdateSCMIntegrationResponse
-	(*DeleteSCMIntegrationRequest)(nil),                               // 31: gitpod.v1.DeleteSCMIntegrationRequest
-	(*DeleteSCMIntegrationResponse)(nil),                              // 32: gitpod.v1.DeleteSCMIntegrationResponse
-	(*EnvironmentClass)(nil),                                          // 33: gitpod.v1.EnvironmentClass
-	(*CreateEnvironmentClassRequest)(nil),                             // 34: gitpod.v1.CreateEnvironmentClassRequest
-	(*CreateEnvironmentClassResponse)(nil),                            // 35: gitpod.v1.CreateEnvironmentClassResponse
-	(*GetEnvironmentClassRequest)(nil),                                // 36: gitpod.v1.GetEnvironmentClassRequest
-	(*GetEnvironmentClassResponse)(nil),                               // 37: gitpod.v1.GetEnvironmentClassResponse
-	(*ListEnvironmentClassesRequest)(nil),                             // 38: gitpod.v1.ListEnvironmentClassesRequest
-	(*ListEnvironmentClassesResponse)(nil),                            // 39: gitpod.v1.ListEnvironmentClassesResponse
-	(*UpdateEnvironmentClassRequest)(nil),                             // 40: gitpod.v1.UpdateEnvironmentClassRequest
-	(*UpdateEnvironmentClassResponse)(nil),                            // 41: gitpod.v1.UpdateEnvironmentClassResponse
-	(*ValidateRunnerConfigurationRequest)(nil),                        // 42: gitpod.v1.ValidateRunnerConfigurationRequest
-	(*FieldValidationError)(nil),                                      // 43: gitpod.v1.FieldValidationError
-	(*EnvironmentClassValidationResult)(nil),                          // 44: gitpod.v1.EnvironmentClassValidationResult
-	(*SCMIntegrationValidationResult)(nil),                            // 45: gitpod.v1.SCMIntegrationValidationResult
-	(*ValidateRunnerConfigurationResponse)(nil),                       // 46: gitpod.v1.ValidateRunnerConfigurationResponse
-	(*RunnerConfigurationSchema)(nil),                                 // 47: gitpod.v1.RunnerConfigurationSchema
-	(*LLMIntegrationRequestHeader)(nil),                               // 48: gitpod.v1.LLMIntegrationRequestHeader
-	(*LLMIntegration)(nil),                                            // 49: gitpod.v1.LLMIntegration
-	(*CreateLLMIntegrationRequest)(nil),                               // 50: gitpod.v1.CreateLLMIntegrationRequest
-	(*CreateLLMIntegrationResponse)(nil),                              // 51: gitpod.v1.CreateLLMIntegrationResponse
-	(*GetLLMIntegrationRequest)(nil),                                  // 52: gitpod.v1.GetLLMIntegrationRequest
-	(*GetLLMIntegrationResponse)(nil),                                 // 53: gitpod.v1.GetLLMIntegrationResponse
-	(*ListLLMIntegrationsRequest)(nil),                                // 54: gitpod.v1.ListLLMIntegrationsRequest
-	(*ListLLMIntegrationsResponse)(nil),                               // 55: gitpod.v1.ListLLMIntegrationsResponse
-	(*UpdateLLMIntegrationRequest)(nil),                               // 56: gitpod.v1.UpdateLLMIntegrationRequest
-	(*UpdateLLMIntegrationResponse)(nil),                              // 57: gitpod.v1.UpdateLLMIntegrationResponse
-	(*DeleteLLMIntegrationRequest)(nil),                               // 58: gitpod.v1.DeleteLLMIntegrationRequest
-	(*DeleteLLMIntegrationResponse)(nil),                              // 59: gitpod.v1.DeleteLLMIntegrationResponse
-	(*ListHostAuthenticationTokensRequest_Filter)(nil),                // 60: gitpod.v1.ListHostAuthenticationTokensRequest.Filter
-	(*ListSCMIntegrationsRequest_Filter)(nil),                         // 61: gitpod.v1.ListSCMIntegrationsRequest.Filter
-	(*ListEnvironmentClassesRequest_Filter)(nil),                      // 62: gitpod.v1.ListEnvironmentClassesRequest.Filter
-	(*ValidateRunnerConfigurationRequest_ValidateSCMIntegration)(nil), // 63: gitpod.v1.ValidateRunnerConfigurationRequest.ValidateSCMIntegration
-	(*RunnerConfigurationSchema_StringField)(nil),                     // 64: gitpod.v1.RunnerConfigurationSchema.StringField
-	(*RunnerConfigurationSchema_BoolField)(nil),                       // 65: gitpod.v1.RunnerConfigurationSchema.BoolField
-	(*RunnerConfigurationSchema_IntField)(nil),                        // 66: gitpod.v1.RunnerConfigurationSchema.IntField
-	(*RunnerConfigurationSchema_EnumField)(nil),                       // 67: gitpod.v1.RunnerConfigurationSchema.EnumField
-	(*RunnerConfigurationSchema_DisplayField)(nil),                    // 68: gitpod.v1.RunnerConfigurationSchema.DisplayField
-	(*RunnerConfigurationSchema_Field)(nil),                           // 69: gitpod.v1.RunnerConfigurationSchema.Field
-	(*RunnerConfigurationSchema_OAuth)(nil),                           // 70: gitpod.v1.RunnerConfigurationSchema.OAuth
-	(*RunnerConfigurationSchema_PersonalAccessToken)(nil),             // 71: gitpod.v1.RunnerConfigurationSchema.PersonalAccessToken
-	(*RunnerConfigurationSchema_SCMConfigSchema)(nil),                 // 72: gitpod.v1.RunnerConfigurationSchema.SCMConfigSchema
-	(*RunnerConfigurationSchema_EnumField_Value)(nil),                 // 73: gitpod.v1.RunnerConfigurationSchema.EnumField.Value
-	(*ListLLMIntegrationsRequest_Filter)(nil),                         // 74: gitpod.v1.ListLLMIntegrationsRequest.Filter
-	(*timestamppb.Timestamp)(nil),                                     // 75: google.protobuf.Timestamp
-	(*Subject)(nil),                                                   // 76: gitpod.v1.Subject
-	(*PaginationRequest)(nil),                                         // 77: gitpod.v1.PaginationRequest
-	(*PaginationResponse)(nil),                                        // 78: gitpod.v1.PaginationResponse
-	(SupportedModel)(0),                                               // 79: gitpod.v1.SupportedModel
-	(LLMIntegrationPhase)(0),                                          // 80: gitpod.v1.LLMIntegrationPhase
+	(LLMIntegrationRequestHeaderType)(0),                              // 3: gitpod.v1.LLMIntegrationRequestHeaderType
+	(LLMProvider)(0),                                                  // 4: gitpod.v1.LLMProvider
+	(*CreateHostAuthenticationTokenRequest)(nil),                      // 5: gitpod.v1.CreateHostAuthenticationTokenRequest
+	(*CreateHostAuthenticationTokenResponse)(nil),                     // 6: gitpod.v1.CreateHostAuthenticationTokenResponse
+	(*HostAuthenticationToken)(nil),                                   // 7: gitpod.v1.HostAuthenticationToken
+	(*GetHostAuthenticationTokenRequest)(nil),                         // 8: gitpod.v1.GetHostAuthenticationTokenRequest
+	(*GetHostAuthenticationTokenResponse)(nil),                        // 9: gitpod.v1.GetHostAuthenticationTokenResponse
+	(*ListHostAuthenticationTokensRequest)(nil),                       // 10: gitpod.v1.ListHostAuthenticationTokensRequest
+	(*ListHostAuthenticationTokensResponse)(nil),                      // 11: gitpod.v1.ListHostAuthenticationTokensResponse
+	(*UpdateHostAuthenticationTokenRequest)(nil),                      // 12: gitpod.v1.UpdateHostAuthenticationTokenRequest
+	(*UpdateHostAuthenticationTokenResponse)(nil),                     // 13: gitpod.v1.UpdateHostAuthenticationTokenResponse
+	(*UpdateHostAuthenticationTokenMetadataRequest)(nil),              // 14: gitpod.v1.UpdateHostAuthenticationTokenMetadataRequest
+	(*UpdateHostAuthenticationTokenMetadataResponse)(nil),             // 15: gitpod.v1.UpdateHostAuthenticationTokenMetadataResponse
+	(*DeleteHostAuthenticationTokenRequest)(nil),                      // 16: gitpod.v1.DeleteHostAuthenticationTokenRequest
+	(*DeleteHostAuthenticationTokenResponse)(nil),                     // 17: gitpod.v1.DeleteHostAuthenticationTokenResponse
+	(*FieldValue)(nil),                                                // 18: gitpod.v1.FieldValue
+	(*FieldValueUpdate)(nil),                                          // 19: gitpod.v1.FieldValueUpdate
+	(*GetRunnerConfigurationSchemaRequest)(nil),                       // 20: gitpod.v1.GetRunnerConfigurationSchemaRequest
+	(*GetRunnerConfigurationSchemaResponse)(nil),                      // 21: gitpod.v1.GetRunnerConfigurationSchemaResponse
+	(*CreateSCMIntegrationRequest)(nil),                               // 22: gitpod.v1.CreateSCMIntegrationRequest
+	(*CreateSCMIntegrationResponse)(nil),                              // 23: gitpod.v1.CreateSCMIntegrationResponse
+	(*SCMIntegrationOAuthConfig)(nil),                                 // 24: gitpod.v1.SCMIntegrationOAuthConfig
+	(*SCMIntegration)(nil),                                            // 25: gitpod.v1.SCMIntegration
+	(*GetSCMIntegrationRequest)(nil),                                  // 26: gitpod.v1.GetSCMIntegrationRequest
+	(*GetSCMIntegrationResponse)(nil),                                 // 27: gitpod.v1.GetSCMIntegrationResponse
+	(*ListSCMIntegrationsRequest)(nil),                                // 28: gitpod.v1.ListSCMIntegrationsRequest
+	(*ListSCMIntegrationsResponse)(nil),                               // 29: gitpod.v1.ListSCMIntegrationsResponse
+	(*UpdateSCMIntegrationRequest)(nil),                               // 30: gitpod.v1.UpdateSCMIntegrationRequest
+	(*UpdateSCMIntegrationResponse)(nil),                              // 31: gitpod.v1.UpdateSCMIntegrationResponse
+	(*DeleteSCMIntegrationRequest)(nil),                               // 32: gitpod.v1.DeleteSCMIntegrationRequest
+	(*DeleteSCMIntegrationResponse)(nil),                              // 33: gitpod.v1.DeleteSCMIntegrationResponse
+	(*EnvironmentClass)(nil),                                          // 34: gitpod.v1.EnvironmentClass
+	(*CreateEnvironmentClassRequest)(nil),                             // 35: gitpod.v1.CreateEnvironmentClassRequest
+	(*CreateEnvironmentClassResponse)(nil),                            // 36: gitpod.v1.CreateEnvironmentClassResponse
+	(*GetEnvironmentClassRequest)(nil),                                // 37: gitpod.v1.GetEnvironmentClassRequest
+	(*GetEnvironmentClassResponse)(nil),                               // 38: gitpod.v1.GetEnvironmentClassResponse
+	(*ListEnvironmentClassesRequest)(nil),                             // 39: gitpod.v1.ListEnvironmentClassesRequest
+	(*ListEnvironmentClassesResponse)(nil),                            // 40: gitpod.v1.ListEnvironmentClassesResponse
+	(*UpdateEnvironmentClassRequest)(nil),                             // 41: gitpod.v1.UpdateEnvironmentClassRequest
+	(*UpdateEnvironmentClassResponse)(nil),                            // 42: gitpod.v1.UpdateEnvironmentClassResponse
+	(*ValidateRunnerConfigurationRequest)(nil),                        // 43: gitpod.v1.ValidateRunnerConfigurationRequest
+	(*FieldValidationError)(nil),                                      // 44: gitpod.v1.FieldValidationError
+	(*EnvironmentClassValidationResult)(nil),                          // 45: gitpod.v1.EnvironmentClassValidationResult
+	(*SCMIntegrationValidationResult)(nil),                            // 46: gitpod.v1.SCMIntegrationValidationResult
+	(*ValidateRunnerConfigurationResponse)(nil),                       // 47: gitpod.v1.ValidateRunnerConfigurationResponse
+	(*RunnerConfigurationSchema)(nil),                                 // 48: gitpod.v1.RunnerConfigurationSchema
+	(*LLMIntegrationRequestHeader)(nil),                               // 49: gitpod.v1.LLMIntegrationRequestHeader
+	(*LLMIntegration)(nil),                                            // 50: gitpod.v1.LLMIntegration
+	(*CreateLLMIntegrationRequest)(nil),                               // 51: gitpod.v1.CreateLLMIntegrationRequest
+	(*CreateLLMIntegrationResponse)(nil),                              // 52: gitpod.v1.CreateLLMIntegrationResponse
+	(*GetLLMIntegrationRequest)(nil),                                  // 53: gitpod.v1.GetLLMIntegrationRequest
+	(*GetLLMIntegrationResponse)(nil),                                 // 54: gitpod.v1.GetLLMIntegrationResponse
+	(*ListLLMIntegrationsRequest)(nil),                                // 55: gitpod.v1.ListLLMIntegrationsRequest
+	(*ListLLMIntegrationsResponse)(nil),                               // 56: gitpod.v1.ListLLMIntegrationsResponse
+	(*UpdateLLMIntegrationRequest)(nil),                               // 57: gitpod.v1.UpdateLLMIntegrationRequest
+	(*UpdateLLMIntegrationResponse)(nil),                              // 58: gitpod.v1.UpdateLLMIntegrationResponse
+	(*DeleteLLMIntegrationRequest)(nil),                               // 59: gitpod.v1.DeleteLLMIntegrationRequest
+	(*DeleteLLMIntegrationResponse)(nil),                              // 60: gitpod.v1.DeleteLLMIntegrationResponse
+	(*ListHostAuthenticationTokensRequest_Filter)(nil),                // 61: gitpod.v1.ListHostAuthenticationTokensRequest.Filter
+	(*ListSCMIntegrationsRequest_Filter)(nil),                         // 62: gitpod.v1.ListSCMIntegrationsRequest.Filter
+	(*ListEnvironmentClassesRequest_Filter)(nil),                      // 63: gitpod.v1.ListEnvironmentClassesRequest.Filter
+	(*ValidateRunnerConfigurationRequest_ValidateSCMIntegration)(nil), // 64: gitpod.v1.ValidateRunnerConfigurationRequest.ValidateSCMIntegration
+	(*RunnerConfigurationSchema_StringField)(nil),                     // 65: gitpod.v1.RunnerConfigurationSchema.StringField
+	(*RunnerConfigurationSchema_BoolField)(nil),                       // 66: gitpod.v1.RunnerConfigurationSchema.BoolField
+	(*RunnerConfigurationSchema_IntField)(nil),                        // 67: gitpod.v1.RunnerConfigurationSchema.IntField
+	(*RunnerConfigurationSchema_EnumField)(nil),                       // 68: gitpod.v1.RunnerConfigurationSchema.EnumField
+	(*RunnerConfigurationSchema_DisplayField)(nil),                    // 69: gitpod.v1.RunnerConfigurationSchema.DisplayField
+	(*RunnerConfigurationSchema_Field)(nil),                           // 70: gitpod.v1.RunnerConfigurationSchema.Field
+	(*RunnerConfigurationSchema_OAuth)(nil),                           // 71: gitpod.v1.RunnerConfigurationSchema.OAuth
+	(*RunnerConfigurationSchema_PersonalAccessToken)(nil),             // 72: gitpod.v1.RunnerConfigurationSchema.PersonalAccessToken
+	(*RunnerConfigurationSchema_SCMConfigSchema)(nil),                 // 73: gitpod.v1.RunnerConfigurationSchema.SCMConfigSchema
+	(*RunnerConfigurationSchema_EnumField_Value)(nil),                 // 74: gitpod.v1.RunnerConfigurationSchema.EnumField.Value
+	(*ListLLMIntegrationsRequest_Filter)(nil),                         // 75: gitpod.v1.ListLLMIntegrationsRequest.Filter
+	(*timestamppb.Timestamp)(nil),                                     // 76: google.protobuf.Timestamp
+	(*Subject)(nil),                                                   // 77: gitpod.v1.Subject
+	(*PaginationRequest)(nil),                                         // 78: gitpod.v1.PaginationRequest
+	(*PaginationResponse)(nil),                                        // 79: gitpod.v1.PaginationResponse
+	(SupportedModel)(0),                                               // 80: gitpod.v1.SupportedModel
+	(LLMIntegrationPhase)(0),                                          // 81: gitpod.v1.LLMIntegrationPhase
 }
 var file_gitpod_v1_runner_configuration_proto_depIdxs = []int32{
 	0,  // 0: gitpod.v1.CreateHostAuthenticationTokenRequest.source:type_name -> gitpod.v1.HostAuthenticationTokenSource
-	75, // 1: gitpod.v1.CreateHostAuthenticationTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
-	76, // 2: gitpod.v1.CreateHostAuthenticationTokenRequest.subject:type_name -> gitpod.v1.Subject
-	6,  // 3: gitpod.v1.CreateHostAuthenticationTokenResponse.token:type_name -> gitpod.v1.HostAuthenticationToken
+	76, // 1: gitpod.v1.CreateHostAuthenticationTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
+	77, // 2: gitpod.v1.CreateHostAuthenticationTokenRequest.subject:type_name -> gitpod.v1.Subject
+	7,  // 3: gitpod.v1.CreateHostAuthenticationTokenResponse.token:type_name -> gitpod.v1.HostAuthenticationToken
 	0,  // 4: gitpod.v1.HostAuthenticationToken.source:type_name -> gitpod.v1.HostAuthenticationTokenSource
-	75, // 5: gitpod.v1.HostAuthenticationToken.expires_at:type_name -> google.protobuf.Timestamp
-	76, // 6: gitpod.v1.HostAuthenticationToken.subject:type_name -> gitpod.v1.Subject
-	6,  // 7: gitpod.v1.GetHostAuthenticationTokenResponse.token:type_name -> gitpod.v1.HostAuthenticationToken
-	77, // 8: gitpod.v1.ListHostAuthenticationTokensRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	60, // 9: gitpod.v1.ListHostAuthenticationTokensRequest.filter:type_name -> gitpod.v1.ListHostAuthenticationTokensRequest.Filter
-	78, // 10: gitpod.v1.ListHostAuthenticationTokensResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	6,  // 11: gitpod.v1.ListHostAuthenticationTokensResponse.tokens:type_name -> gitpod.v1.HostAuthenticationToken
-	75, // 12: gitpod.v1.UpdateHostAuthenticationTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
-	47, // 13: gitpod.v1.GetRunnerConfigurationSchemaResponse.schema:type_name -> gitpod.v1.RunnerConfigurationSchema
-	23, // 14: gitpod.v1.SCMIntegration.oauth:type_name -> gitpod.v1.SCMIntegrationOAuthConfig
-	24, // 15: gitpod.v1.GetSCMIntegrationResponse.integration:type_name -> gitpod.v1.SCMIntegration
-	77, // 16: gitpod.v1.ListSCMIntegrationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	61, // 17: gitpod.v1.ListSCMIntegrationsRequest.filter:type_name -> gitpod.v1.ListSCMIntegrationsRequest.Filter
-	78, // 18: gitpod.v1.ListSCMIntegrationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	24, // 19: gitpod.v1.ListSCMIntegrationsResponse.integrations:type_name -> gitpod.v1.SCMIntegration
-	17, // 20: gitpod.v1.EnvironmentClass.configuration:type_name -> gitpod.v1.FieldValue
-	17, // 21: gitpod.v1.CreateEnvironmentClassRequest.configuration:type_name -> gitpod.v1.FieldValue
-	33, // 22: gitpod.v1.GetEnvironmentClassResponse.environment_class:type_name -> gitpod.v1.EnvironmentClass
-	77, // 23: gitpod.v1.ListEnvironmentClassesRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	62, // 24: gitpod.v1.ListEnvironmentClassesRequest.filter:type_name -> gitpod.v1.ListEnvironmentClassesRequest.Filter
-	78, // 25: gitpod.v1.ListEnvironmentClassesResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	33, // 26: gitpod.v1.ListEnvironmentClassesResponse.environment_classes:type_name -> gitpod.v1.EnvironmentClass
-	33, // 27: gitpod.v1.ValidateRunnerConfigurationRequest.environment_class:type_name -> gitpod.v1.EnvironmentClass
-	63, // 28: gitpod.v1.ValidateRunnerConfigurationRequest.scm_integration:type_name -> gitpod.v1.ValidateRunnerConfigurationRequest.ValidateSCMIntegration
-	43, // 29: gitpod.v1.EnvironmentClassValidationResult.configuration_errors:type_name -> gitpod.v1.FieldValidationError
-	44, // 30: gitpod.v1.ValidateRunnerConfigurationResponse.environment_class:type_name -> gitpod.v1.EnvironmentClassValidationResult
-	45, // 31: gitpod.v1.ValidateRunnerConfigurationResponse.scm_integration:type_name -> gitpod.v1.SCMIntegrationValidationResult
-	69, // 32: gitpod.v1.RunnerConfigurationSchema.runner_config:type_name -> gitpod.v1.RunnerConfigurationSchema.Field
-	69, // 33: gitpod.v1.RunnerConfigurationSchema.environment_classes:type_name -> gitpod.v1.RunnerConfigurationSchema.Field
-	72, // 34: gitpod.v1.RunnerConfigurationSchema.scm:type_name -> gitpod.v1.RunnerConfigurationSchema.SCMConfigSchema
-	79, // 35: gitpod.v1.LLMIntegration.models:type_name -> gitpod.v1.SupportedModel
-	80, // 36: gitpod.v1.LLMIntegration.phase:type_name -> gitpod.v1.LLMIntegrationPhase
-	48, // 37: gitpod.v1.LLMIntegration.request_headers:type_name -> gitpod.v1.LLMIntegrationRequestHeader
-	3,  // 38: gitpod.v1.LLMIntegration.provider:type_name -> gitpod.v1.LLMProvider
-	79, // 39: gitpod.v1.CreateLLMIntegrationRequest.models:type_name -> gitpod.v1.SupportedModel
-	49, // 40: gitpod.v1.GetLLMIntegrationResponse.integration:type_name -> gitpod.v1.LLMIntegration
-	77, // 41: gitpod.v1.ListLLMIntegrationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	74, // 42: gitpod.v1.ListLLMIntegrationsRequest.filter:type_name -> gitpod.v1.ListLLMIntegrationsRequest.Filter
-	78, // 43: gitpod.v1.ListLLMIntegrationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	49, // 44: gitpod.v1.ListLLMIntegrationsResponse.integrations:type_name -> gitpod.v1.LLMIntegration
-	3,  // 45: gitpod.v1.ListLLMIntegrationsResponse.ona_intelligence_providers:type_name -> gitpod.v1.LLMProvider
-	79, // 46: gitpod.v1.UpdateLLMIntegrationRequest.models:type_name -> gitpod.v1.SupportedModel
-	80, // 47: gitpod.v1.UpdateLLMIntegrationRequest.phase:type_name -> gitpod.v1.LLMIntegrationPhase
-	48, // 48: gitpod.v1.UpdateLLMIntegrationRequest.request_headers:type_name -> gitpod.v1.LLMIntegrationRequestHeader
-	1,  // 49: gitpod.v1.ListEnvironmentClassesRequest.Filter.runner_kinds:type_name -> gitpod.v1.RunnerKind
-	2,  // 50: gitpod.v1.ListEnvironmentClassesRequest.Filter.runner_providers:type_name -> gitpod.v1.RunnerProvider
-	73, // 51: gitpod.v1.RunnerConfigurationSchema.EnumField.default_value:type_name -> gitpod.v1.RunnerConfigurationSchema.EnumField.Value
-	73, // 52: gitpod.v1.RunnerConfigurationSchema.EnumField.possible_values:type_name -> gitpod.v1.RunnerConfigurationSchema.EnumField.Value
-	64, // 53: gitpod.v1.RunnerConfigurationSchema.Field.string:type_name -> gitpod.v1.RunnerConfigurationSchema.StringField
-	65, // 54: gitpod.v1.RunnerConfigurationSchema.Field.bool:type_name -> gitpod.v1.RunnerConfigurationSchema.BoolField
-	66, // 55: gitpod.v1.RunnerConfigurationSchema.Field.int:type_name -> gitpod.v1.RunnerConfigurationSchema.IntField
-	67, // 56: gitpod.v1.RunnerConfigurationSchema.Field.enum:type_name -> gitpod.v1.RunnerConfigurationSchema.EnumField
-	68, // 57: gitpod.v1.RunnerConfigurationSchema.Field.display:type_name -> gitpod.v1.RunnerConfigurationSchema.DisplayField
-	70, // 58: gitpod.v1.RunnerConfigurationSchema.SCMConfigSchema.oauth:type_name -> gitpod.v1.RunnerConfigurationSchema.OAuth
-	71, // 59: gitpod.v1.RunnerConfigurationSchema.SCMConfigSchema.pat:type_name -> gitpod.v1.RunnerConfigurationSchema.PersonalAccessToken
-	4,  // 60: gitpod.v1.RunnerConfigurationService.CreateHostAuthenticationToken:input_type -> gitpod.v1.CreateHostAuthenticationTokenRequest
-	7,  // 61: gitpod.v1.RunnerConfigurationService.GetHostAuthenticationToken:input_type -> gitpod.v1.GetHostAuthenticationTokenRequest
-	9,  // 62: gitpod.v1.RunnerConfigurationService.ListHostAuthenticationTokens:input_type -> gitpod.v1.ListHostAuthenticationTokensRequest
-	11, // 63: gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationToken:input_type -> gitpod.v1.UpdateHostAuthenticationTokenRequest
-	13, // 64: gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationTokenMetadata:input_type -> gitpod.v1.UpdateHostAuthenticationTokenMetadataRequest
-	15, // 65: gitpod.v1.RunnerConfigurationService.DeleteHostAuthenticationToken:input_type -> gitpod.v1.DeleteHostAuthenticationTokenRequest
-	19, // 66: gitpod.v1.RunnerConfigurationService.GetRunnerConfigurationSchema:input_type -> gitpod.v1.GetRunnerConfigurationSchemaRequest
-	21, // 67: gitpod.v1.RunnerConfigurationService.CreateSCMIntegration:input_type -> gitpod.v1.CreateSCMIntegrationRequest
-	25, // 68: gitpod.v1.RunnerConfigurationService.GetSCMIntegration:input_type -> gitpod.v1.GetSCMIntegrationRequest
-	27, // 69: gitpod.v1.RunnerConfigurationService.ListSCMIntegrations:input_type -> gitpod.v1.ListSCMIntegrationsRequest
-	29, // 70: gitpod.v1.RunnerConfigurationService.UpdateSCMIntegration:input_type -> gitpod.v1.UpdateSCMIntegrationRequest
-	31, // 71: gitpod.v1.RunnerConfigurationService.DeleteSCMIntegration:input_type -> gitpod.v1.DeleteSCMIntegrationRequest
-	34, // 72: gitpod.v1.RunnerConfigurationService.CreateEnvironmentClass:input_type -> gitpod.v1.CreateEnvironmentClassRequest
-	36, // 73: gitpod.v1.RunnerConfigurationService.GetEnvironmentClass:input_type -> gitpod.v1.GetEnvironmentClassRequest
-	38, // 74: gitpod.v1.RunnerConfigurationService.ListEnvironmentClasses:input_type -> gitpod.v1.ListEnvironmentClassesRequest
-	40, // 75: gitpod.v1.RunnerConfigurationService.UpdateEnvironmentClass:input_type -> gitpod.v1.UpdateEnvironmentClassRequest
-	42, // 76: gitpod.v1.RunnerConfigurationService.ValidateRunnerConfiguration:input_type -> gitpod.v1.ValidateRunnerConfigurationRequest
-	50, // 77: gitpod.v1.RunnerConfigurationService.CreateLLMIntegration:input_type -> gitpod.v1.CreateLLMIntegrationRequest
-	52, // 78: gitpod.v1.RunnerConfigurationService.GetLLMIntegration:input_type -> gitpod.v1.GetLLMIntegrationRequest
-	54, // 79: gitpod.v1.RunnerConfigurationService.ListLLMIntegrations:input_type -> gitpod.v1.ListLLMIntegrationsRequest
-	56, // 80: gitpod.v1.RunnerConfigurationService.UpdateLLMIntegration:input_type -> gitpod.v1.UpdateLLMIntegrationRequest
-	58, // 81: gitpod.v1.RunnerConfigurationService.DeleteLLMIntegration:input_type -> gitpod.v1.DeleteLLMIntegrationRequest
-	5,  // 82: gitpod.v1.RunnerConfigurationService.CreateHostAuthenticationToken:output_type -> gitpod.v1.CreateHostAuthenticationTokenResponse
-	8,  // 83: gitpod.v1.RunnerConfigurationService.GetHostAuthenticationToken:output_type -> gitpod.v1.GetHostAuthenticationTokenResponse
-	10, // 84: gitpod.v1.RunnerConfigurationService.ListHostAuthenticationTokens:output_type -> gitpod.v1.ListHostAuthenticationTokensResponse
-	12, // 85: gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationToken:output_type -> gitpod.v1.UpdateHostAuthenticationTokenResponse
-	14, // 86: gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationTokenMetadata:output_type -> gitpod.v1.UpdateHostAuthenticationTokenMetadataResponse
-	16, // 87: gitpod.v1.RunnerConfigurationService.DeleteHostAuthenticationToken:output_type -> gitpod.v1.DeleteHostAuthenticationTokenResponse
-	20, // 88: gitpod.v1.RunnerConfigurationService.GetRunnerConfigurationSchema:output_type -> gitpod.v1.GetRunnerConfigurationSchemaResponse
-	22, // 89: gitpod.v1.RunnerConfigurationService.CreateSCMIntegration:output_type -> gitpod.v1.CreateSCMIntegrationResponse
-	26, // 90: gitpod.v1.RunnerConfigurationService.GetSCMIntegration:output_type -> gitpod.v1.GetSCMIntegrationResponse
-	28, // 91: gitpod.v1.RunnerConfigurationService.ListSCMIntegrations:output_type -> gitpod.v1.ListSCMIntegrationsResponse
-	30, // 92: gitpod.v1.RunnerConfigurationService.UpdateSCMIntegration:output_type -> gitpod.v1.UpdateSCMIntegrationResponse
-	32, // 93: gitpod.v1.RunnerConfigurationService.DeleteSCMIntegration:output_type -> gitpod.v1.DeleteSCMIntegrationResponse
-	35, // 94: gitpod.v1.RunnerConfigurationService.CreateEnvironmentClass:output_type -> gitpod.v1.CreateEnvironmentClassResponse
-	37, // 95: gitpod.v1.RunnerConfigurationService.GetEnvironmentClass:output_type -> gitpod.v1.GetEnvironmentClassResponse
-	39, // 96: gitpod.v1.RunnerConfigurationService.ListEnvironmentClasses:output_type -> gitpod.v1.ListEnvironmentClassesResponse
-	41, // 97: gitpod.v1.RunnerConfigurationService.UpdateEnvironmentClass:output_type -> gitpod.v1.UpdateEnvironmentClassResponse
-	46, // 98: gitpod.v1.RunnerConfigurationService.ValidateRunnerConfiguration:output_type -> gitpod.v1.ValidateRunnerConfigurationResponse
-	51, // 99: gitpod.v1.RunnerConfigurationService.CreateLLMIntegration:output_type -> gitpod.v1.CreateLLMIntegrationResponse
-	53, // 100: gitpod.v1.RunnerConfigurationService.GetLLMIntegration:output_type -> gitpod.v1.GetLLMIntegrationResponse
-	55, // 101: gitpod.v1.RunnerConfigurationService.ListLLMIntegrations:output_type -> gitpod.v1.ListLLMIntegrationsResponse
-	57, // 102: gitpod.v1.RunnerConfigurationService.UpdateLLMIntegration:output_type -> gitpod.v1.UpdateLLMIntegrationResponse
-	59, // 103: gitpod.v1.RunnerConfigurationService.DeleteLLMIntegration:output_type -> gitpod.v1.DeleteLLMIntegrationResponse
-	82, // [82:104] is the sub-list for method output_type
-	60, // [60:82] is the sub-list for method input_type
-	60, // [60:60] is the sub-list for extension type_name
-	60, // [60:60] is the sub-list for extension extendee
-	0,  // [0:60] is the sub-list for field type_name
+	76, // 5: gitpod.v1.HostAuthenticationToken.expires_at:type_name -> google.protobuf.Timestamp
+	77, // 6: gitpod.v1.HostAuthenticationToken.subject:type_name -> gitpod.v1.Subject
+	7,  // 7: gitpod.v1.GetHostAuthenticationTokenResponse.token:type_name -> gitpod.v1.HostAuthenticationToken
+	78, // 8: gitpod.v1.ListHostAuthenticationTokensRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	61, // 9: gitpod.v1.ListHostAuthenticationTokensRequest.filter:type_name -> gitpod.v1.ListHostAuthenticationTokensRequest.Filter
+	79, // 10: gitpod.v1.ListHostAuthenticationTokensResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	7,  // 11: gitpod.v1.ListHostAuthenticationTokensResponse.tokens:type_name -> gitpod.v1.HostAuthenticationToken
+	76, // 12: gitpod.v1.UpdateHostAuthenticationTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
+	48, // 13: gitpod.v1.GetRunnerConfigurationSchemaResponse.schema:type_name -> gitpod.v1.RunnerConfigurationSchema
+	24, // 14: gitpod.v1.SCMIntegration.oauth:type_name -> gitpod.v1.SCMIntegrationOAuthConfig
+	25, // 15: gitpod.v1.GetSCMIntegrationResponse.integration:type_name -> gitpod.v1.SCMIntegration
+	78, // 16: gitpod.v1.ListSCMIntegrationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	62, // 17: gitpod.v1.ListSCMIntegrationsRequest.filter:type_name -> gitpod.v1.ListSCMIntegrationsRequest.Filter
+	79, // 18: gitpod.v1.ListSCMIntegrationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	25, // 19: gitpod.v1.ListSCMIntegrationsResponse.integrations:type_name -> gitpod.v1.SCMIntegration
+	18, // 20: gitpod.v1.EnvironmentClass.configuration:type_name -> gitpod.v1.FieldValue
+	18, // 21: gitpod.v1.CreateEnvironmentClassRequest.configuration:type_name -> gitpod.v1.FieldValue
+	34, // 22: gitpod.v1.GetEnvironmentClassResponse.environment_class:type_name -> gitpod.v1.EnvironmentClass
+	78, // 23: gitpod.v1.ListEnvironmentClassesRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	63, // 24: gitpod.v1.ListEnvironmentClassesRequest.filter:type_name -> gitpod.v1.ListEnvironmentClassesRequest.Filter
+	79, // 25: gitpod.v1.ListEnvironmentClassesResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	34, // 26: gitpod.v1.ListEnvironmentClassesResponse.environment_classes:type_name -> gitpod.v1.EnvironmentClass
+	34, // 27: gitpod.v1.ValidateRunnerConfigurationRequest.environment_class:type_name -> gitpod.v1.EnvironmentClass
+	64, // 28: gitpod.v1.ValidateRunnerConfigurationRequest.scm_integration:type_name -> gitpod.v1.ValidateRunnerConfigurationRequest.ValidateSCMIntegration
+	44, // 29: gitpod.v1.EnvironmentClassValidationResult.configuration_errors:type_name -> gitpod.v1.FieldValidationError
+	45, // 30: gitpod.v1.ValidateRunnerConfigurationResponse.environment_class:type_name -> gitpod.v1.EnvironmentClassValidationResult
+	46, // 31: gitpod.v1.ValidateRunnerConfigurationResponse.scm_integration:type_name -> gitpod.v1.SCMIntegrationValidationResult
+	70, // 32: gitpod.v1.RunnerConfigurationSchema.runner_config:type_name -> gitpod.v1.RunnerConfigurationSchema.Field
+	70, // 33: gitpod.v1.RunnerConfigurationSchema.environment_classes:type_name -> gitpod.v1.RunnerConfigurationSchema.Field
+	73, // 34: gitpod.v1.RunnerConfigurationSchema.scm:type_name -> gitpod.v1.RunnerConfigurationSchema.SCMConfigSchema
+	3,  // 35: gitpod.v1.LLMIntegrationRequestHeader.header_type:type_name -> gitpod.v1.LLMIntegrationRequestHeaderType
+	80, // 36: gitpod.v1.LLMIntegration.models:type_name -> gitpod.v1.SupportedModel
+	81, // 37: gitpod.v1.LLMIntegration.phase:type_name -> gitpod.v1.LLMIntegrationPhase
+	49, // 38: gitpod.v1.LLMIntegration.request_headers:type_name -> gitpod.v1.LLMIntegrationRequestHeader
+	4,  // 39: gitpod.v1.LLMIntegration.provider:type_name -> gitpod.v1.LLMProvider
+	80, // 40: gitpod.v1.CreateLLMIntegrationRequest.models:type_name -> gitpod.v1.SupportedModel
+	50, // 41: gitpod.v1.GetLLMIntegrationResponse.integration:type_name -> gitpod.v1.LLMIntegration
+	78, // 42: gitpod.v1.ListLLMIntegrationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	75, // 43: gitpod.v1.ListLLMIntegrationsRequest.filter:type_name -> gitpod.v1.ListLLMIntegrationsRequest.Filter
+	79, // 44: gitpod.v1.ListLLMIntegrationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	50, // 45: gitpod.v1.ListLLMIntegrationsResponse.integrations:type_name -> gitpod.v1.LLMIntegration
+	4,  // 46: gitpod.v1.ListLLMIntegrationsResponse.ona_intelligence_providers:type_name -> gitpod.v1.LLMProvider
+	80, // 47: gitpod.v1.UpdateLLMIntegrationRequest.models:type_name -> gitpod.v1.SupportedModel
+	81, // 48: gitpod.v1.UpdateLLMIntegrationRequest.phase:type_name -> gitpod.v1.LLMIntegrationPhase
+	49, // 49: gitpod.v1.UpdateLLMIntegrationRequest.request_headers:type_name -> gitpod.v1.LLMIntegrationRequestHeader
+	1,  // 50: gitpod.v1.ListEnvironmentClassesRequest.Filter.runner_kinds:type_name -> gitpod.v1.RunnerKind
+	2,  // 51: gitpod.v1.ListEnvironmentClassesRequest.Filter.runner_providers:type_name -> gitpod.v1.RunnerProvider
+	74, // 52: gitpod.v1.RunnerConfigurationSchema.EnumField.default_value:type_name -> gitpod.v1.RunnerConfigurationSchema.EnumField.Value
+	74, // 53: gitpod.v1.RunnerConfigurationSchema.EnumField.possible_values:type_name -> gitpod.v1.RunnerConfigurationSchema.EnumField.Value
+	65, // 54: gitpod.v1.RunnerConfigurationSchema.Field.string:type_name -> gitpod.v1.RunnerConfigurationSchema.StringField
+	66, // 55: gitpod.v1.RunnerConfigurationSchema.Field.bool:type_name -> gitpod.v1.RunnerConfigurationSchema.BoolField
+	67, // 56: gitpod.v1.RunnerConfigurationSchema.Field.int:type_name -> gitpod.v1.RunnerConfigurationSchema.IntField
+	68, // 57: gitpod.v1.RunnerConfigurationSchema.Field.enum:type_name -> gitpod.v1.RunnerConfigurationSchema.EnumField
+	69, // 58: gitpod.v1.RunnerConfigurationSchema.Field.display:type_name -> gitpod.v1.RunnerConfigurationSchema.DisplayField
+	71, // 59: gitpod.v1.RunnerConfigurationSchema.SCMConfigSchema.oauth:type_name -> gitpod.v1.RunnerConfigurationSchema.OAuth
+	72, // 60: gitpod.v1.RunnerConfigurationSchema.SCMConfigSchema.pat:type_name -> gitpod.v1.RunnerConfigurationSchema.PersonalAccessToken
+	5,  // 61: gitpod.v1.RunnerConfigurationService.CreateHostAuthenticationToken:input_type -> gitpod.v1.CreateHostAuthenticationTokenRequest
+	8,  // 62: gitpod.v1.RunnerConfigurationService.GetHostAuthenticationToken:input_type -> gitpod.v1.GetHostAuthenticationTokenRequest
+	10, // 63: gitpod.v1.RunnerConfigurationService.ListHostAuthenticationTokens:input_type -> gitpod.v1.ListHostAuthenticationTokensRequest
+	12, // 64: gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationToken:input_type -> gitpod.v1.UpdateHostAuthenticationTokenRequest
+	14, // 65: gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationTokenMetadata:input_type -> gitpod.v1.UpdateHostAuthenticationTokenMetadataRequest
+	16, // 66: gitpod.v1.RunnerConfigurationService.DeleteHostAuthenticationToken:input_type -> gitpod.v1.DeleteHostAuthenticationTokenRequest
+	20, // 67: gitpod.v1.RunnerConfigurationService.GetRunnerConfigurationSchema:input_type -> gitpod.v1.GetRunnerConfigurationSchemaRequest
+	22, // 68: gitpod.v1.RunnerConfigurationService.CreateSCMIntegration:input_type -> gitpod.v1.CreateSCMIntegrationRequest
+	26, // 69: gitpod.v1.RunnerConfigurationService.GetSCMIntegration:input_type -> gitpod.v1.GetSCMIntegrationRequest
+	28, // 70: gitpod.v1.RunnerConfigurationService.ListSCMIntegrations:input_type -> gitpod.v1.ListSCMIntegrationsRequest
+	30, // 71: gitpod.v1.RunnerConfigurationService.UpdateSCMIntegration:input_type -> gitpod.v1.UpdateSCMIntegrationRequest
+	32, // 72: gitpod.v1.RunnerConfigurationService.DeleteSCMIntegration:input_type -> gitpod.v1.DeleteSCMIntegrationRequest
+	35, // 73: gitpod.v1.RunnerConfigurationService.CreateEnvironmentClass:input_type -> gitpod.v1.CreateEnvironmentClassRequest
+	37, // 74: gitpod.v1.RunnerConfigurationService.GetEnvironmentClass:input_type -> gitpod.v1.GetEnvironmentClassRequest
+	39, // 75: gitpod.v1.RunnerConfigurationService.ListEnvironmentClasses:input_type -> gitpod.v1.ListEnvironmentClassesRequest
+	41, // 76: gitpod.v1.RunnerConfigurationService.UpdateEnvironmentClass:input_type -> gitpod.v1.UpdateEnvironmentClassRequest
+	43, // 77: gitpod.v1.RunnerConfigurationService.ValidateRunnerConfiguration:input_type -> gitpod.v1.ValidateRunnerConfigurationRequest
+	51, // 78: gitpod.v1.RunnerConfigurationService.CreateLLMIntegration:input_type -> gitpod.v1.CreateLLMIntegrationRequest
+	53, // 79: gitpod.v1.RunnerConfigurationService.GetLLMIntegration:input_type -> gitpod.v1.GetLLMIntegrationRequest
+	55, // 80: gitpod.v1.RunnerConfigurationService.ListLLMIntegrations:input_type -> gitpod.v1.ListLLMIntegrationsRequest
+	57, // 81: gitpod.v1.RunnerConfigurationService.UpdateLLMIntegration:input_type -> gitpod.v1.UpdateLLMIntegrationRequest
+	59, // 82: gitpod.v1.RunnerConfigurationService.DeleteLLMIntegration:input_type -> gitpod.v1.DeleteLLMIntegrationRequest
+	6,  // 83: gitpod.v1.RunnerConfigurationService.CreateHostAuthenticationToken:output_type -> gitpod.v1.CreateHostAuthenticationTokenResponse
+	9,  // 84: gitpod.v1.RunnerConfigurationService.GetHostAuthenticationToken:output_type -> gitpod.v1.GetHostAuthenticationTokenResponse
+	11, // 85: gitpod.v1.RunnerConfigurationService.ListHostAuthenticationTokens:output_type -> gitpod.v1.ListHostAuthenticationTokensResponse
+	13, // 86: gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationToken:output_type -> gitpod.v1.UpdateHostAuthenticationTokenResponse
+	15, // 87: gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationTokenMetadata:output_type -> gitpod.v1.UpdateHostAuthenticationTokenMetadataResponse
+	17, // 88: gitpod.v1.RunnerConfigurationService.DeleteHostAuthenticationToken:output_type -> gitpod.v1.DeleteHostAuthenticationTokenResponse
+	21, // 89: gitpod.v1.RunnerConfigurationService.GetRunnerConfigurationSchema:output_type -> gitpod.v1.GetRunnerConfigurationSchemaResponse
+	23, // 90: gitpod.v1.RunnerConfigurationService.CreateSCMIntegration:output_type -> gitpod.v1.CreateSCMIntegrationResponse
+	27, // 91: gitpod.v1.RunnerConfigurationService.GetSCMIntegration:output_type -> gitpod.v1.GetSCMIntegrationResponse
+	29, // 92: gitpod.v1.RunnerConfigurationService.ListSCMIntegrations:output_type -> gitpod.v1.ListSCMIntegrationsResponse
+	31, // 93: gitpod.v1.RunnerConfigurationService.UpdateSCMIntegration:output_type -> gitpod.v1.UpdateSCMIntegrationResponse
+	33, // 94: gitpod.v1.RunnerConfigurationService.DeleteSCMIntegration:output_type -> gitpod.v1.DeleteSCMIntegrationResponse
+	36, // 95: gitpod.v1.RunnerConfigurationService.CreateEnvironmentClass:output_type -> gitpod.v1.CreateEnvironmentClassResponse
+	38, // 96: gitpod.v1.RunnerConfigurationService.GetEnvironmentClass:output_type -> gitpod.v1.GetEnvironmentClassResponse
+	40, // 97: gitpod.v1.RunnerConfigurationService.ListEnvironmentClasses:output_type -> gitpod.v1.ListEnvironmentClassesResponse
+	42, // 98: gitpod.v1.RunnerConfigurationService.UpdateEnvironmentClass:output_type -> gitpod.v1.UpdateEnvironmentClassResponse
+	47, // 99: gitpod.v1.RunnerConfigurationService.ValidateRunnerConfiguration:output_type -> gitpod.v1.ValidateRunnerConfigurationResponse
+	52, // 100: gitpod.v1.RunnerConfigurationService.CreateLLMIntegration:output_type -> gitpod.v1.CreateLLMIntegrationResponse
+	54, // 101: gitpod.v1.RunnerConfigurationService.GetLLMIntegration:output_type -> gitpod.v1.GetLLMIntegrationResponse
+	56, // 102: gitpod.v1.RunnerConfigurationService.ListLLMIntegrations:output_type -> gitpod.v1.ListLLMIntegrationsResponse
+	58, // 103: gitpod.v1.RunnerConfigurationService.UpdateLLMIntegration:output_type -> gitpod.v1.UpdateLLMIntegrationResponse
+	60, // 104: gitpod.v1.RunnerConfigurationService.DeleteLLMIntegration:output_type -> gitpod.v1.DeleteLLMIntegrationResponse
+	83, // [83:105] is the sub-list for method output_type
+	61, // [61:83] is the sub-list for method input_type
+	61, // [61:61] is the sub-list for extension type_name
+	61, // [61:61] is the sub-list for extension extendee
+	0,  // [0:61] is the sub-list for field type_name
 }
 
 func init() { file_gitpod_v1_runner_configuration_proto_init() }
@@ -5433,7 +5506,7 @@ func file_gitpod_v1_runner_configuration_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gitpod_v1_runner_configuration_proto_rawDesc), len(file_gitpod_v1_runner_configuration_proto_rawDesc)),
-			NumEnums:      4,
+			NumEnums:      5,
 			NumMessages:   71,
 			NumExtensions: 0,
 			NumServices:   1,
