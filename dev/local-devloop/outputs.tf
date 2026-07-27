@@ -28,6 +28,30 @@ output "managed_group_membership_id" {
   value       = ona_group_membership.devloop.id
 }
 
+output "managed_organization_ai_budget_ids" {
+  description = "Mode-specific organization AI budget policy IDs when AI budget testing is enabled."
+  value = {
+    credits = try(ona_organization_ai_budget.credits[0].id, null)
+    byok    = try(ona_organization_ai_budget.byok[0].id, null)
+  }
+}
+
+output "managed_user_ai_budget_ids" {
+  description = "Mode-specific direct service-account AI budget policy IDs when AI budget testing is enabled."
+  value = {
+    credits = try(ona_user_ai_budget.service_account_credits[0].id, null)
+    byok    = try(ona_user_ai_budget.service_account_byok_exemption[0].id, null)
+  }
+}
+
+output "managed_team_ai_budget_ids" {
+  description = "Mode-specific team AI budget allocation IDs when AI budget and team testing are enabled. Both modes may share one API ID."
+  value = {
+    credits = try(ona_team_ai_budget.credits[0].id, null)
+    byok    = try(ona_team_ai_budget.byok[0].id, null)
+  }
+}
+
 output "managed_organization_role_assignment_id" {
   description = "IDs of the organization role assignments managed by this module, keyed by role."
   value = {

@@ -56,9 +56,14 @@ Direct `terraform import` uses these resource IDs:
 | `ona_group` | Group ID |
 | `ona_group_membership` | `group_id/service_account_id` |
 | `ona_organization_role_assignment` | `group_id/organization_id/role` |
+| `ona_organization_ai_budget` | `organization_id/mode` |
+| `ona_user_ai_budget` | `organization_id/user_id/mode` |
+| `ona_team_ai_budget` | `organization_id/team_id/mode` |
 | `ona_webhook` | Webhook ID |
 | `ona_integration` | Integration ID |
 | `ona_automation` | Workflow ID |
+
+AI budget imports are mode-specific. User imports manage only a direct override; an inherited effective organization policy does not create an `ona_user_ai_budget` resource. Team credit and BYOK resources can import separate dimensions of the same remote allocation ID, and each resource preserves the other mode.
 
 Importing `ona_integration` restores API-observable configuration, but Ona
 censors stored credentials in read responses. Terraform therefore leaves the

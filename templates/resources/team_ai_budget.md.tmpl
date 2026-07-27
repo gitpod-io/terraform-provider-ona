@@ -1,0 +1,41 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: "Billing"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+The API stores credit and BYOK budgets in one team allocation, while Terraform manages them as separate mode-specific resources. Both resources may therefore have the same computed `id`. Updating or deleting one mode preserves the other mode. Team budgets are soft reporting and alerting budgets, not usage enforcement limits.
+
+{{ if .HasExamples -}}
+## Example Usage
+
+{{- range .ExampleFiles }}
+
+{{ tffile . }}
+{{- end }}
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+{{- if or .HasImport .HasImportIDConfig .HasImportIdentityConfig }}
+
+## Import
+
+Import is supported with `organization_id/team_id/mode`. Import `credits` and `byok` separately when both dimensions exist on the shared allocation.
+{{- end }}
+{{- if .HasImportIDConfig }}
+
+In Terraform v1.5.0 and later, the [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the `id` attribute, for example:
+
+{{tffile .ImportIDConfigFile }}
+{{- end }}
+{{- if .HasImport }}
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
+{{codefile "shell" .ImportFile }}
+{{- end }}
