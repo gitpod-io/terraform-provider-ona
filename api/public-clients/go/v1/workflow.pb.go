@@ -5817,7 +5817,7 @@ const file_gitpod_v1_workflow_proto_rawDesc = "" +
 	"\x18GetWorkflowWebhookSecret\x12*.gitpod.v1.GetWorkflowWebhookSecretRequest\x1a+.gitpod.v1.GetWorkflowWebhookSecretResponse\"\x03\x90\x02\x01\x12~\n" +
 	"\x1bRotateWorkflowWebhookSecret\x12-.gitpod.v1.RotateWorkflowWebhookSecretRequest\x1a..gitpod.v1.RotateWorkflowWebhookSecretResponse\"\x00\x12\x81\x01\n" +
 	"\x1bGetWorkflowExecutionSummary\x12-.gitpod.v1.GetWorkflowExecutionSummaryRequest\x1a..gitpod.v1.GetWorkflowExecutionSummaryResponse\"\x03\x90\x02\x01\x1a\x11\xaa\xab\x1e\r\n" +
-	"\vautomationsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\vautomationsB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_workflow_proto_rawDescOnce sync.Once

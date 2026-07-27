@@ -1798,7 +1798,7 @@ const file_gitpod_v1_runner_manager_proto_rawDesc = "" +
 	"\x13UpdateRunnerManager\x12%.gitpod.v1.UpdateRunnerManagerRequest\x1a&.gitpod.v1.UpdateRunnerManagerResponse\"\x00\x12f\n" +
 	"\x13DeleteRunnerManager\x12%.gitpod.v1.DeleteRunnerManagerRequest\x1a&.gitpod.v1.DeleteRunnerManagerResponse\"\x00\x12c\n" +
 	"\x12ListRunnerManagers\x12$.gitpod.v1.ListRunnerManagersRequest\x1a%.gitpod.v1.ListRunnerManagersResponse\"\x00\x12~\n" +
-	"\x1bListAvailableRunnerManagers\x12-.gitpod.v1.ListAvailableRunnerManagersRequest\x1a..gitpod.v1.ListAvailableRunnerManagersResponse\"\x00B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x1bListAvailableRunnerManagers\x12-.gitpod.v1.ListAvailableRunnerManagersRequest\x1a..gitpod.v1.ListAvailableRunnerManagersResponse\"\x00B;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_runner_manager_proto_rawDescOnce sync.Once

@@ -99,7 +99,7 @@ const file_gitpod_tools_v1_apiadapter_proto_rawDesc = "" +
 	"\x05input\x18\x01 \x01(\tR\x05input:]\n" +
 	"\n" +
 	"apiadapter\x12\x1e.google.protobuf.MethodOptions\x18\xb5\xe5\x03 \x01(\v2\x1b.gitpod.tools.v1.ApiAdapterR\n" +
-	"apiadapterBEZCgithub.com/gitpod-io/gitpod-next/api/go/tools/apiadapter;apiadapterb\x06proto3"
+	"apiadapterBTZRgithub.com/gitpod-io/gitpod-next/api/public-clients/go/tools/apiadapter;apiadapterb\x06proto3"
 
 var (
 	file_gitpod_tools_v1_apiadapter_proto_rawDescOnce sync.Once

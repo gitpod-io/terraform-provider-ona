@@ -666,7 +666,7 @@ const file_gitpod_v1_ona_intelligence_proto_rawDesc = "" +
 	"\"UpdateOrganizationLLMConfiguration\x124.gitpod.v1.UpdateOrganizationLLMConfigurationRequest\x1a5.gitpod.v1.UpdateOrganizationLLMConfigurationResponse\"\x00\x12\x8d\x01\n" +
 	"\x1fGetOrganizationLLMConfiguration\x121.gitpod.v1.GetOrganizationLLMConfigurationRequest\x1a2.gitpod.v1.GetOrganizationLLMConfigurationResponse\"\x03\x90\x02\x01\x12\x93\x01\n" +
 	"!ListOrganizationLLMConfigurations\x123.gitpod.v1.ListOrganizationLLMConfigurationsRequest\x1a4.gitpod.v1.ListOrganizationLLMConfigurationsResponse\"\x03\x90\x02\x01\x12\x93\x01\n" +
-	"\"DeleteOrganizationLLMConfiguration\x124.gitpod.v1.DeleteOrganizationLLMConfigurationRequest\x1a5.gitpod.v1.DeleteOrganizationLLMConfigurationResponse\"\x00B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\"DeleteOrganizationLLMConfiguration\x124.gitpod.v1.DeleteOrganizationLLMConfigurationRequest\x1a5.gitpod.v1.DeleteOrganizationLLMConfigurationResponse\"\x00B;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_ona_intelligence_proto_rawDescOnce sync.Once

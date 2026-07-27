@@ -3026,7 +3026,7 @@ const file_gitpod_v1_project_proto_rawDesc = "" +
 	"\x1fUpdateProjectEnvironmentClasses\x121.gitpod.v1.UpdateProjectEnvironmentClassesRequest\x1a2.gitpod.v1.UpdateProjectEnvironmentClassesResponse\"(\xb2\xab\x1e$\n" +
 	"\x1aprojects.environmentClases\x12\x06update\x1a\x0e\xaa\xab\x1e\n" +
 	"\n" +
-	"\bprojectsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\bprojectsB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_project_proto_rawDescOnce sync.Once

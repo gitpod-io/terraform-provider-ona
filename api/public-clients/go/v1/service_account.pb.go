@@ -1354,7 +1354,7 @@ const file_gitpod_v1_service_account_proto_rawDesc = "" +
 	"\x19CreateServiceAccountToken\x12+.gitpod.v1.CreateServiceAccountTokenRequest\x1a,.gitpod.v1.CreateServiceAccountTokenResponse\"\x00\x12x\n" +
 	"\x18ListServiceAccountTokens\x12*.gitpod.v1.ListServiceAccountTokensRequest\x1a+.gitpod.v1.ListServiceAccountTokensResponse\"\x03\x90\x02\x01\x12r\n" +
 	"\x16GetServiceAccountToken\x12(.gitpod.v1.GetServiceAccountTokenRequest\x1a).gitpod.v1.GetServiceAccountTokenResponse\"\x03\x90\x02\x01\x12x\n" +
-	"\x19DeleteServiceAccountToken\x12+.gitpod.v1.DeleteServiceAccountTokenRequest\x1a,.gitpod.v1.DeleteServiceAccountTokenResponse\"\x00B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x19DeleteServiceAccountToken\x12+.gitpod.v1.DeleteServiceAccountTokenRequest\x1a,.gitpod.v1.DeleteServiceAccountTokenResponse\"\x00B;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_service_account_proto_rawDescOnce sync.Once

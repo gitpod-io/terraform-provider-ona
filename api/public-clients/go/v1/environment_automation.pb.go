@@ -5140,7 +5140,7 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\x11StopTaskExecution\x12#.gitpod.v1.StopTaskExecutionRequest\x1a$.gitpod.v1.StopTaskExecutionResponse\"5\xb2\xab\x1e1\n" +
 	")environments.automations.tasks.executions\x12\x04stop\x12x\n" +
 	"\x19UpdateTaskExecutionStatus\x12+.gitpod.v1.UpdateTaskExecutionStatusRequest\x1a,.gitpod.v1.UpdateTaskExecutionStatusResponse\"\x00\x1a\x1e\xaa\xab\x1e\x1a\n" +
-	"\x18environments.automationsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x18environments.automationsB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_environment_automation_proto_rawDescOnce sync.Once

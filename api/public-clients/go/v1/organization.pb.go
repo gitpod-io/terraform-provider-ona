@@ -9334,7 +9334,7 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\x1corganizations.custom_domains\x12\x06update\x12\x8d\x01\n" +
 	"\x12DeleteCustomDomain\x12$.gitpod.v1.DeleteCustomDomainRequest\x1a%.gitpod.v1.DeleteCustomDomainResponse\"*\xb2\xab\x1e&\n" +
 	"\x1corganizations.custom_domains\x12\x06delete\x1a\x13\xaa\xab\x1e\x0f\n" +
-	"\rorganizationsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\rorganizationsB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_organization_proto_rawDescOnce sync.Once

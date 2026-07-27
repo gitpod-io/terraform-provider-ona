@@ -1167,7 +1167,7 @@ const file_gitpod_v1_event_proto_rawDesc = "" +
 	"\rListAuditLogs\x12\x1f.gitpod.v1.ListAuditLogsRequest\x1a .gitpod.v1.ListAuditLogsResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x12_\n" +
 	"\vGetAuditLog\x12\x1d.gitpod.v1.GetAuditLogRequest\x1a\x1e.gitpod.v1.GetAuditLogResponse\"\x11\xb2\xab\x1e\n" +
 	"\x12\bretrieve\x90\x02\x01\x1a\f\xaa\xab\x1e\b\n" +
-	"\x06eventsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x06eventsB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_event_proto_rawDescOnce sync.Once

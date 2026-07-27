@@ -1900,7 +1900,7 @@ const file_gitpod_v1_user_proto_rawDesc = "" +
 	"\x0eusers.dotfiles\x12\x03get\x90\x02\x01\x12\x8e\x01\n" +
 	"\x18SetDotfilesConfiguration\x12*.gitpod.v1.SetDotfilesConfigurationRequest\x1a+.gitpod.v1.SetDotfilesConfigurationResponse\"\x19\xb2\xab\x1e\x15\n" +
 	"\x0eusers.dotfiles\x12\x03set\x1a\v\xaa\xab\x1e\a\n" +
-	"\x05usersB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x05usersB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_user_proto_rawDescOnce sync.Once
