@@ -19,9 +19,9 @@ runner environment classes, runner SCM integrations, security policies, and
 organization policies, announcement banners, Terms of Service, groups, group
 runner environment classes, runner SCM integrations, security policies,
 organization policies, announcement banners, Terms of Service, custom domains,
-groups, group memberships, and organization role assignments. Terraform can
-create, read, update, delete where the Ona API supports deletion, and import
-those resource types directly.
+groups, group memberships, teams, and organization role assignments. Terraform
+can create, read, update, delete where the Ona API supports deletion, and
+import those resource types directly.
 
 Terraform cannot discover or import a resource type natively until each resource has:
 
@@ -37,8 +37,8 @@ resource graph for inventory and future reference rewriting, but it writes
 import blocks only for resource types enabled in the helper's selection path,
 which currently includes project, runner, and environment class resources.
 Security policies, organization policies, custom domains, groups, group
-memberships, and organization role assignments are provider-native resources,
-but the helper does not yet select them for generated import blocks.
+memberships, teams, and organization role assignments are provider-native
+resources, but the helper does not yet select them for generated import blocks.
 
 Direct `terraform import` uses these resource IDs:
 
@@ -55,6 +55,7 @@ Direct `terraform import` uses these resource IDs:
 | `ona_custom_domain` | `current` |
 | `ona_group` | Group ID |
 | `ona_group_membership` | `group_id/service_account_id` |
+| `ona_team` | Team ID |
 | `ona_organization_role_assignment` | `group_id/organization_id/role` |
 | `ona_webhook` | Webhook ID |
 | `ona_integration` | Integration ID |
@@ -238,16 +239,16 @@ import blocks, including groups, group memberships, organization role
 assignments, announcement banners, Terms of Service, teams, security policies,
 organization policies, automations, or AI budget policies. Security policies,
 organization policies, announcement banners, Terms of Service, groups, group
-memberships, and organization role assignments can still be imported directly
-with Terraform import blocks because the provider now implements those
-resources.
+memberships, teams, and organization role assignments can still be imported
+directly with Terraform import blocks because the provider now implements
+those resources.
 import blocks, including custom domains, groups, group memberships,
 organization role assignments, announcement banners, Terms of Service, teams,
 security policies, organization policies, automations, or AI budget policies.
 Security policies, organization policies, announcement banners, Terms of
-Service, custom domains, groups, group memberships, and organization role
-assignments can still be imported directly with Terraform import blocks because
-the provider now implements those resources.
+Service, custom domains, groups, group memberships, teams, and organization
+role assignments can still be imported directly with Terraform import blocks
+because the provider now implements those resources.
 
 ## Output Files
 

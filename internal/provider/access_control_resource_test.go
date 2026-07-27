@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -30,6 +32,7 @@ const (
 	accessControlServiceAccountID = "44444444-4444-4444-8444-444444444444"
 	accessControlAssignmentID     = "55555555-5555-4555-8555-555555555555"
 	accessControlOtherServiceID   = "66666666-6666-4666-8666-666666666666"
+	accessControlTeamID           = "77777777-7777-4777-8777-777777777777"
 	accessControlCreatedAt        = "2026-01-02T03:04:05Z"
 	accessControlUpdatedAt        = "2026-01-03T03:04:05Z"
 )
@@ -124,6 +127,426 @@ func TestAccGroupResourceReadRemovesNotFound(t *testing.T) {
 				},
 			},
 		},
+	})
+}
+
+func TestAccTeamResourceLifecycle(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.teamDeleted() {
+				return errors.New("team was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_team.test", "id", accessControlTeamID),
+					resource.TestCheckResourceAttr("ona_team.test", "name", "Platform Engineering"),
+					resource.TestCheckResourceAttr("ona_team.test", "created_at", accessControlCreatedAt),
+					resource.TestCheckNoResourceAttr("ona_team.test", "organization_id"),
+					resource.TestCheckNoResourceAttr("ona_team.test", "updated_at"),
+					resource.TestCheckNoResourceAttr("ona_team.test", "member_count"),
+					resource.TestCheckNoResourceAttr("ona_team.test", "creator_id"),
+				),
+			},
+			{
+				Config: testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				ResourceName:      "ona_team.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccTeamResourceConfig(server.URL, "Developer Productivity"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_team.test", plancheck.ResourceActionUpdate),
+					},
+				},
+				Check: resource.TestCheckResourceAttr("ona_team.test", "name", "Developer Productivity"),
+			},
+			{
+				Config: testAccTeamResourceConfig(server.URL, "Developer Productivity"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+func TestAccTeamResourceReadRemovesNotFound(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.teamDeleted() {
+				return errors.New("team was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+			},
+			{
+				PreConfig: func() {
+					server.service.deleteTeam(accessControlTeamID)
+				},
+				Config: testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_team.test", plancheck.ResourceActionCreate),
+					},
+				},
+			},
+		},
+	})
+}
+
+func TestAccTeamResourceDeleteAcceptsNotFound(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.teamDeleted() {
+				return errors.New("team was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+			},
+			{
+				PreConfig: func() {
+					server.service.setNextTeamDeleteError(connect.NewError(connect.CodeNotFound, errors.New("team not found")))
+				},
+				Config: testAccProviderConfig(server.URL),
+			},
+		},
+	})
+}
+
+func TestAccTeamResourceNameValidation(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.teamDeleted() {
+				return errors.New("team was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccTeamResourceConfig(server.URL, "ab"),
+				ExpectError: regexp.MustCompile("string length must be between 3 and 80"),
+			},
+			{
+				Config: testAccTeamResourceConfig(server.URL, "abc"),
+				Check:  resource.TestCheckResourceAttr("ona_team.test", "name", "abc"),
+			},
+			{
+				Config:      testAccTeamResourceConfig(server.URL, strings.Repeat("x", 81)),
+				ExpectError: regexp.MustCompile("string length must be between 3 and 80"),
+			},
+			{
+				Config: testAccTeamResourceConfig(server.URL, strings.Repeat("x", 80)),
+				Check:  resource.TestCheckResourceAttr("ona_team.test", "name", strings.Repeat("x", 80)),
+			},
+		},
+	})
+}
+
+func TestAccTeamResourceRejectsEmptyCreateResponse(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.setNextTeamCreateEmpty()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+				ExpectError: regexp.MustCompile(`Unable to Create Ona Team[\s\S]*empty team`),
+			},
+		},
+	})
+}
+
+func TestAccTeamResourceRejectsEmptyUpdateResponse(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.teamDeleted() {
+				return errors.New("team was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+			},
+			{
+				PreConfig: func() {
+					server.service.setNextTeamUpdateEmpty()
+				},
+				Config:      testAccTeamResourceConfig(server.URL, "Developer Productivity"),
+				ExpectError: regexp.MustCompile(`Unable to Update Ona Team[\s\S]*empty team`),
+			},
+			{
+				Config: testAccTeamResourceConfig(server.URL, "Developer Productivity"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+func TestAccTeamResourceReadErrorPreservesState(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.teamDeleted() {
+				return errors.New("team was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+			},
+			{
+				PreConfig: func() {
+					server.service.setNextTeamGetError(errors.New("temporary team read failure"))
+				},
+				Config:      testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+				ExpectError: regexp.MustCompile(`Unable to Read Ona Team[\s\S]*temporary team read failure`),
+			},
+			{
+				Config: testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+func TestAccTeamResourceEmptyReadResponsePreservesState(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.teamDeleted() {
+				return errors.New("team was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+			},
+			{
+				PreConfig: func() {
+					server.service.setNextTeamGetEmpty()
+				},
+				Config:      testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+				ExpectError: regexp.MustCompile(`Unable to Read Ona Team[\s\S]*empty team`),
+			},
+			{
+				Config: testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+func TestAccTeamResourcePersistsIDBeforePostCreateReadError(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.setNextTeamGetError(errors.New("post-create read failure"))
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.teamDeleted() {
+				return errors.New("team was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+				ExpectError: regexp.MustCompile(`Unable to Read Created Ona Team[\s\S]*post-create read failure`),
+			},
+			{
+				Config: testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_team.test", plancheck.ResourceActionReplace),
+					},
+				},
+				Check: func(state *terraform.State) error {
+					createCalls, deleteCalls := server.service.teamMutationCalls()
+					if createCalls != 2 || deleteCalls != 1 {
+						return fmt.Errorf("expected two team creates and one cleanup delete, got %d creates and %d deletes", createCalls, deleteCalls)
+					}
+					return nil
+				},
+			},
+		},
+	})
+}
+
+func TestAccTeamResourceAPIErrors(t *testing.T) {
+	t.Parallel()
+
+	t.Run("create", func(t *testing.T) {
+		t.Parallel()
+
+		server := newAccessControlAPIServer(t)
+		t.Cleanup(server.Close)
+		server.service.setNextTeamCreateError(errors.New("create team denied"))
+
+		resource.Test(t, resource.TestCase{
+			PreCheck:                 func() { testAccPreCheck(t) },
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config:      testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+					ExpectError: regexp.MustCompile(`Unable to Create Ona Team[\s\S]*create team denied`),
+				},
+			},
+		})
+	})
+
+	t.Run("update", func(t *testing.T) {
+		t.Parallel()
+
+		server := newAccessControlAPIServer(t)
+		t.Cleanup(server.Close)
+
+		resource.Test(t, resource.TestCase{
+			PreCheck:                 func() { testAccPreCheck(t) },
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			CheckDestroy: func(state *terraform.State) error {
+				if !server.service.teamDeleted() {
+					return errors.New("team was not deleted")
+				}
+				return nil
+			},
+			Steps: []resource.TestStep{
+				{
+					Config: testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+				},
+				{
+					PreConfig: func() {
+						server.service.setNextTeamUpdateError(errors.New("update team denied"))
+					},
+					Config:      testAccTeamResourceConfig(server.URL, "Developer Productivity"),
+					ExpectError: regexp.MustCompile(`Unable to Update Ona Team[\s\S]*update team denied`),
+				},
+			},
+		})
+	})
+
+	t.Run("delete", func(t *testing.T) {
+		t.Parallel()
+
+		server := newAccessControlAPIServer(t)
+		t.Cleanup(server.Close)
+
+		resource.Test(t, resource.TestCase{
+			PreCheck:                 func() { testAccPreCheck(t) },
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			CheckDestroy: func(state *terraform.State) error {
+				if !server.service.teamDeleted() {
+					return errors.New("team was not deleted")
+				}
+				return nil
+			},
+			Steps: []resource.TestStep{
+				{
+					Config: testAccTeamResourceConfig(server.URL, "Platform Engineering"),
+				},
+				{
+					PreConfig: func() {
+						server.service.setNextTeamDeleteError(errors.New("delete team denied"))
+					},
+					Config:      testAccProviderConfig(server.URL),
+					ExpectError: regexp.MustCompile(`Unable to Delete Ona Team[\s\S]*delete team denied`),
+				},
+				{
+					Config: testAccProviderConfig(server.URL),
+				},
+			},
+		})
 	})
 }
 
@@ -333,6 +756,28 @@ resource "ona_group_membership" "test" {
 `, host, accessControlGroupID, serviceAccountID)
 }
 
+func testAccTeamResourceConfig(host string, name string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_team" "test" {
+  name = %[2]q
+}
+`, host, name)
+}
+
+func testAccProviderConfig(host string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+`, host)
+}
+
 func testAccOrganizationRoleAssignmentResourceConfig(host string, role string) string {
 	return fmt.Sprintf(`
 provider "ona" {
@@ -358,6 +803,8 @@ func newAccessControlAPIServer(t *testing.T) *accessControlAPIServer {
 	service := &fakeGroupService{
 		groups:              map[string]*v1.Group{},
 		deletedGroups:       map[string]bool{},
+		teams:               map[string]*v1.Team{},
+		deletedTeams:        map[string]bool{},
 		memberships:         map[string]*v1.GroupMembership{},
 		deletedMemberships:  map[string]bool{},
 		assignments:         map[string]*v1.RoleAssignment{},
@@ -367,8 +814,10 @@ func newAccessControlAPIServer(t *testing.T) *accessControlAPIServer {
 	mux := http.NewServeMux()
 	groupPath, groupHandler := v1connect.NewGroupServiceHandler(service)
 	identityPath, identityHandler := v1connect.NewIdentityServiceHandler(service)
+	teamPath, teamHandler := v1connect.NewTeamServiceHandler(service)
 	mux.Handle(groupPath, groupHandler)
 	mux.Handle(identityPath, identityHandler)
+	mux.Handle(teamPath, teamHandler)
 	server := httptest.NewServer(http.StripPrefix("/api", mux))
 	return &accessControlAPIServer{
 		Server:  server,
@@ -379,10 +828,22 @@ func newAccessControlAPIServer(t *testing.T) *accessControlAPIServer {
 type fakeGroupService struct {
 	v1connect.UnimplementedGroupServiceHandler
 	v1connect.UnimplementedIdentityServiceHandler
+	v1connect.UnimplementedTeamServiceHandler
 
 	mu                  sync.Mutex
 	groups              map[string]*v1.Group
 	deletedGroups       map[string]bool
+	teams               map[string]*v1.Team
+	deletedTeams        map[string]bool
+	nextTeamCreateEmpty bool
+	nextTeamCreateError error
+	teamCreateCallCount int
+	teamDeleteCallCount int
+	nextTeamGetEmpty    bool
+	nextTeamGetError    error
+	nextTeamDeleteError error
+	nextTeamUpdateEmpty bool
+	nextTeamUpdateError error
 	memberships         map[string]*v1.GroupMembership
 	deletedMemberships  map[string]bool
 	assignments         map[string]*v1.RoleAssignment
@@ -435,6 +896,94 @@ func (s *fakeGroupService) UpdateGroup(ctx context.Context, req *connect.Request
 func (s *fakeGroupService) DeleteGroup(ctx context.Context, req *connect.Request[v1.DeleteGroupRequest]) (*connect.Response[v1.DeleteGroupResponse], error) {
 	s.deleteGroup(req.Msg.GetGroupId())
 	return connect.NewResponse(&v1.DeleteGroupResponse{}), nil
+}
+
+func (s *fakeGroupService) CreateTeam(ctx context.Context, req *connect.Request[v1.CreateTeamRequest]) (*connect.Response[v1.CreateTeamResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.nextTeamCreateError != nil {
+		err := s.nextTeamCreateError
+		s.nextTeamCreateError = nil
+		return nil, err
+	}
+	if s.nextTeamCreateEmpty {
+		s.nextTeamCreateEmpty = false
+		return connect.NewResponse(&v1.CreateTeamResponse{}), nil
+	}
+	s.teamCreateCallCount++
+
+	team := &v1.Team{
+		Id:             accessControlTeamID,
+		OrganizationId: req.Msg.GetOrganizationId(),
+		Name:           req.Msg.GetName(),
+		CreatedAt:      timestampForTest(accessControlCreatedAt),
+		UpdatedAt:      timestampForTest(accessControlCreatedAt),
+		MemberCount:    7,
+	}
+	s.teams[team.GetId()] = team
+	s.deletedTeams[team.GetId()] = false
+	return connect.NewResponse(&v1.CreateTeamResponse{Team: cloneTeam(team)}), nil
+}
+
+func (s *fakeGroupService) GetTeam(ctx context.Context, req *connect.Request[v1.GetTeamRequest]) (*connect.Response[v1.GetTeamResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.nextTeamGetError != nil {
+		err := s.nextTeamGetError
+		s.nextTeamGetError = nil
+		return nil, err
+	}
+	if s.nextTeamGetEmpty {
+		s.nextTeamGetEmpty = false
+		return connect.NewResponse(&v1.GetTeamResponse{}), nil
+	}
+
+	team := s.teams[req.Msg.GetTeamId()]
+	if team == nil {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("team not found"))
+	}
+	return connect.NewResponse(&v1.GetTeamResponse{Team: cloneTeam(team)}), nil
+}
+
+func (s *fakeGroupService) UpdateTeam(ctx context.Context, req *connect.Request[v1.UpdateTeamRequest]) (*connect.Response[v1.UpdateTeamResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.nextTeamUpdateError != nil {
+		err := s.nextTeamUpdateError
+		s.nextTeamUpdateError = nil
+		return nil, err
+	}
+
+	team := s.teams[req.Msg.GetTeamId()]
+	if team == nil {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("team not found"))
+	}
+	team.Name = req.Msg.GetName()
+	team.UpdatedAt = timestampForTest(accessControlUpdatedAt)
+	if s.nextTeamUpdateEmpty {
+		s.nextTeamUpdateEmpty = false
+		return connect.NewResponse(&v1.UpdateTeamResponse{}), nil
+	}
+	return connect.NewResponse(&v1.UpdateTeamResponse{Team: cloneTeam(team)}), nil
+}
+
+func (s *fakeGroupService) DeleteTeam(ctx context.Context, req *connect.Request[v1.DeleteTeamRequest]) (*connect.Response[v1.DeleteTeamResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.teamDeleteCallCount++
+
+	if s.nextTeamDeleteError != nil {
+		err := s.nextTeamDeleteError
+		s.nextTeamDeleteError = nil
+		if connect.CodeOf(err) == connect.CodeNotFound {
+			delete(s.teams, req.Msg.GetTeamId())
+			s.deletedTeams[req.Msg.GetTeamId()] = true
+		}
+		return nil, err
+	}
+	delete(s.teams, req.Msg.GetTeamId())
+	s.deletedTeams[req.Msg.GetTeamId()] = true
+	return connect.NewResponse(&v1.DeleteTeamResponse{}), nil
 }
 
 func (s *fakeGroupService) CreateMembership(ctx context.Context, req *connect.Request[v1.CreateMembershipRequest]) (*connect.Response[v1.CreateMembershipResponse], error) {
@@ -543,6 +1092,67 @@ func (s *fakeGroupService) groupDeleted(id string) bool {
 	return s.deletedGroups[id]
 }
 
+func (s *fakeGroupService) deleteTeam(id string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	delete(s.teams, id)
+	s.deletedTeams[id] = true
+}
+
+func (s *fakeGroupService) teamDeleted() bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.deletedTeams[accessControlTeamID]
+}
+
+func (s *fakeGroupService) teamMutationCalls() (int, int) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.teamCreateCallCount, s.teamDeleteCallCount
+}
+
+func (s *fakeGroupService) setNextTeamDeleteError(err error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.nextTeamDeleteError = err
+}
+
+func (s *fakeGroupService) setNextTeamCreateEmpty() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.nextTeamCreateEmpty = true
+}
+
+func (s *fakeGroupService) setNextTeamCreateError(err error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.nextTeamCreateError = err
+}
+
+func (s *fakeGroupService) setNextTeamGetError(err error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.nextTeamGetError = err
+}
+
+func (s *fakeGroupService) setNextTeamGetEmpty() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.nextTeamGetEmpty = true
+}
+
+func (s *fakeGroupService) setNextTeamUpdateEmpty() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.nextTeamUpdateEmpty = true
+}
+
+func (s *fakeGroupService) setNextTeamUpdateError(err error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.nextTeamUpdateError = err
+}
+
 func (s *fakeGroupService) deleteMembership(id string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -624,6 +1234,10 @@ func containsResourceRole(values []v1.ResourceRole, value v1.ResourceRole) bool 
 
 func cloneGroup(group *v1.Group) *v1.Group {
 	return proto.CloneOf(group)
+}
+
+func cloneTeam(team *v1.Team) *v1.Team {
+	return proto.CloneOf(team)
 }
 
 func cloneMembership(member *v1.GroupMembership) *v1.GroupMembership {

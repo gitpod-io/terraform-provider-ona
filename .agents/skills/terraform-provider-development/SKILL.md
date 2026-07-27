@@ -41,7 +41,8 @@ Load the relevant reference before editing provider behavior. Use:
 5. Align schema, model structs, Terraform field names, validators, plan modifiers, diagnostics, and import state behavior.
 6. Add tests near the changed behavior.
 7. Update examples and docs sources when users need new Terraform configuration.
-8. Run generation and verification commands that match the change.
+8. Add every new managed resource to `dev/local-devloop`. Include a safe representative configuration, any input variable needed to avoid hard-coded environment-specific values, a useful output such as its ID, and the resource address in `dev/local-devloop/README.md`.
+9. Run generation and verification commands that match the change.
 
 ## Terraform Query
 
@@ -123,7 +124,7 @@ Do not commit `.bin/`, `terraformrc`, Terraform state, or real tokens.
 
 ## Done Criteria
 
-A provider change is done when it has correct lifecycle behavior, tests for changed behavior, generated docs/examples when needed, no unintended generated diff, and a clear note about whether acceptance tests were run.
+A provider change is done when it has correct lifecycle behavior, tests for changed behavior, generated docs/examples when needed, every new managed resource is exercised by `dev/local-devloop` and listed in its README, there is no unintended generated diff, and the result clearly notes whether acceptance tests were run.
 
 ## When Stuck
 

@@ -22,6 +22,10 @@ resource "ona_group" "devloop" {
   description = "Group created by the Terraform provider local dev loop."
 }
 
+resource "ona_team" "devloop" {
+  name = var.team_name
+}
+
 resource "ona_group_membership" "devloop" {
   group_id           = ona_group.devloop.id
   service_account_id = ona_service_account.devloop.id
