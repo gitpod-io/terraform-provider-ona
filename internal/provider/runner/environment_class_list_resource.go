@@ -24,7 +24,14 @@ func NewEnvironmentClassListResource() list.ListResource {
 
 type environmentClassListModel struct {
 	RunnerIDs types.List `tfsdk:"runner_ids"`
+	Providers types.List `tfsdk:"providers"`
 	Enabled   types.Bool `tfsdk:"enabled"`
+}
+
+type environmentClassListFilter struct {
+	RunnerIDs []string
+	Providers []v1.RunnerProvider
+	Enabled   *bool
 }
 
 func (r *EnvironmentClassResource) ListResourceConfigSchema(ctx context.Context, req list.ListResourceSchemaRequest, resp *list.ListResourceSchemaResponse) {
@@ -40,6 +47,11 @@ func (r *EnvironmentClassResource) ListResourceConfigSchema(ctx context.Context,
 				ElementType:         types.StringType,
 				MarkdownDescription: "Runner IDs to include.",
 			},
+			"providers": listschema.ListAttribute{
+				Optional:            true,
+				ElementType:         types.StringType,
+				MarkdownDescription: "Runner providers to include. Supported values are `aws_ec2` and `gcp`.",
+			},
 		},
 	}
 }
@@ -51,18 +63,9 @@ func (r *EnvironmentClassResource) List(ctx context.Context, req list.ListReques
 			return
 		}
 
-		var config environmentClassListModel
-		diags := req.Config.Get(ctx, &config)
-		if !listutil.PushDiagnostics(push, diags) {
+		filter, ok := newEnvironmentClassListFilter(ctx, req, push)
+		if !ok {
 			return
-		}
-		runnerIDs, diags := listutil.StringList(ctx, config.RunnerIDs)
-		if !listutil.PushDiagnostics(push, diags) {
-			return
-		}
-		var enabled *bool
-		if !config.Enabled.IsNull() && !config.Enabled.IsUnknown() {
-			enabled = ptr(config.Enabled.ValueBool())
 		}
 
 		var token string
@@ -71,12 +74,9 @@ func (r *EnvironmentClassResource) List(ctx context.Context, req list.ListReques
 			result, err := r.client.RunnerConfigurationService().ListEnvironmentClasses(ctx, connect.NewRequest(&v1.ListEnvironmentClassesRequest{
 				Pagination: &v1.PaginationRequest{PageSize: listutil.PageSize(req.Limit, emitted), Token: token},
 				Filter: &v1.ListEnvironmentClassesRequest_Filter{
-					RunnerIds: runnerIDs,
-					Enabled:   enabled,
-					RunnerProviders: []v1.RunnerProvider{
-						v1.RunnerProvider_RUNNER_PROVIDER_AWS_EC2,
-						v1.RunnerProvider_RUNNER_PROVIDER_GCP,
-					},
+					RunnerIds:       filter.RunnerIDs,
+					Enabled:         filter.Enabled,
+					RunnerProviders: filter.Providers,
 				},
 			}))
 			if err != nil {
@@ -115,4 +115,41 @@ func (r *EnvironmentClassResource) List(ctx context.Context, req list.ListReques
 			}
 		}
 	}
+}
+
+func newEnvironmentClassListFilter(ctx context.Context, req list.ListRequest, push func(list.ListResult) bool) (environmentClassListFilter, bool) {
+	var config environmentClassListModel
+	diags := req.Config.Get(ctx, &config)
+	if !listutil.PushDiagnostics(push, diags) {
+		return environmentClassListFilter{}, false
+	}
+
+	runnerIDs, diags := listutil.StringList(ctx, config.RunnerIDs)
+	if !listutil.PushDiagnostics(push, diags) {
+		return environmentClassListFilter{}, false
+	}
+
+	providerNames, diags := listutil.StringList(ctx, config.Providers)
+	if !listutil.PushDiagnostics(push, diags) {
+		return environmentClassListFilter{}, false
+	}
+	providers, err := runnerProvidersFromNames(providerNames)
+	if err != nil {
+		push(listutil.Error("Invalid Environment Class Provider", err))
+		return environmentClassListFilter{}, false
+	}
+	if len(providers) == 0 {
+		providers = importableRunnerProviders()
+	}
+
+	var enabled *bool
+	if !config.Enabled.IsNull() && !config.Enabled.IsUnknown() {
+		enabled = ptr(config.Enabled.ValueBool())
+	}
+
+	return environmentClassListFilter{
+		RunnerIDs: runnerIDs,
+		Providers: providers,
+		Enabled:   enabled,
+	}, true
 }

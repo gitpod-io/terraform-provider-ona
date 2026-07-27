@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"sort"
 	"strings"
 	"testing"
@@ -25,11 +26,7 @@ func TestAccEnvironmentClassQuery(t *testing.T) {
 		Config: environmentClassQueryConfig(""),
 		QueryResultChecks: []querycheck.QueryResultCheck{
 			expectEnvironmentClassQueryResults{
-				Expected: []environmentClassQueryResult{
-					expectedLargeEnvironmentClassQueryResult(),
-					expectedSmallEnvironmentClassQueryResult(),
-					expectedDisabledEnvironmentClassQueryResult(),
-				},
+				Expected: expectedSupportedEnvironmentClassQueryResults(),
 			},
 		},
 	}))
@@ -56,6 +53,21 @@ func TestAccEnvironmentClassQueryFilters(t *testing.T) {
 			Expected: []environmentClassQueryResult{},
 		},
 		{
+			Name:   "aws_ec2_provider",
+			Config: `providers = ["aws_ec2"]`,
+			Expected: []environmentClassQueryResult{
+				expectedLargeEnvironmentClassQueryResult(),
+			},
+		},
+		{
+			Name:   "gcp_provider",
+			Config: `providers = ["gcp"]`,
+			Expected: []environmentClassQueryResult{
+				expectedSmallEnvironmentClassQueryResult(),
+				expectedDisabledEnvironmentClassQueryResult(),
+			},
+		},
+		{
 			Name:   "enabled_environment_classes",
 			Config: "enabled = true",
 			Expected: []environmentClassQueryResult{
@@ -68,6 +80,16 @@ func TestAccEnvironmentClassQueryFilters(t *testing.T) {
 			Config: "enabled = false",
 			Expected: []environmentClassQueryResult{
 				expectedDisabledEnvironmentClassQueryResult(),
+			},
+		},
+		{
+			Name: "combined_provider_and_enabled_filters",
+			Config: `
+providers = ["gcp"]
+enabled   = true
+`,
+			Expected: []environmentClassQueryResult{
+				expectedSmallEnvironmentClassQueryResult(),
 			},
 		},
 	}
@@ -88,6 +110,19 @@ func TestAccEnvironmentClassQueryFilters(t *testing.T) {
 			}))
 		})
 	}
+}
+
+func TestAccEnvironmentClassQueryRejectsInvalidProvider(t *testing.T) {
+	server := newEnvironmentClassQueryAPIServer(t)
+	t.Cleanup(server.Close)
+
+	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+		Query: true,
+		Config: environmentClassQueryConfig(`
+providers = ["managed"]
+`),
+		ExpectError: regexp.MustCompile("Invalid Environment Class Provider"),
+	}))
 }
 
 func newEnvironmentClassQueryAPIServer(t *testing.T) *runnerConfigurationAPIServer {
@@ -159,6 +194,14 @@ func indentEnvironmentClassQueryConfig(config string) string {
 		lines[i] = "    " + strings.TrimSpace(lines[i])
 	}
 	return strings.Join(lines, "\n")
+}
+
+func expectedSupportedEnvironmentClassQueryResults() []environmentClassQueryResult {
+	return []environmentClassQueryResult{
+		expectedLargeEnvironmentClassQueryResult(),
+		expectedSmallEnvironmentClassQueryResult(),
+		expectedDisabledEnvironmentClassQueryResult(),
+	}
 }
 
 func expectedLargeEnvironmentClassQueryResult() environmentClassQueryResult {
