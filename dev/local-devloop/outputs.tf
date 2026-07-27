@@ -23,6 +23,11 @@ output "managed_group_id" {
   value       = ona_group.devloop.id
 }
 
+output "managed_team_id" {
+  description = "ID of the team managed by this module."
+  value       = ona_team.devloop.id
+}
+
 output "managed_group_membership_id" {
   description = "ID of the group membership managed by this module."
   value       = ona_group_membership.devloop.id

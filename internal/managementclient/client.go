@@ -111,6 +111,7 @@ func New(baseURL string, opts ...Option) (*ManagementPlane, error) {
 		SecurityService:              v1connect.NewSecurityServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		ServiceAccountService:        v1connect.NewServiceAccountServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		SessionService:               v1connect.NewSessionServiceClient(o.httpClient, o.baseURL, clientOpts...),
+		TeamService:                  v1connect.NewTeamServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		UserService:                  v1connect.NewUserServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		WebhookService:               v1connect.NewWebhookServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		WorkflowService:              v1connect.NewWorkflowServiceClient(o.httpClient, o.baseURL, clientOpts...),
@@ -144,6 +145,7 @@ type Services struct {
 	SecurityService              v1connect.SecurityServiceClient
 	ServiceAccountService        v1connect.ServiceAccountServiceClient
 	SessionService               v1connect.SessionServiceClient
+	TeamService                  v1connect.TeamServiceClient
 	UserService                  v1connect.UserServiceClient
 	WebhookService               v1connect.WebhookServiceClient
 	WorkflowService              v1connect.WorkflowServiceClient
@@ -177,6 +179,7 @@ func NewWithServices(services Services) *ManagementPlane {
 		securityService:              services.SecurityService,
 		serviceAccountService:        services.ServiceAccountService,
 		sessionService:               services.SessionService,
+		teamService:                  services.TeamService,
 		userService:                  services.UserService,
 		webhookService:               services.WebhookService,
 		workflowService:              services.WorkflowService,
@@ -210,6 +213,7 @@ type ManagementPlane struct {
 	securityService              v1connect.SecurityServiceClient
 	serviceAccountService        v1connect.ServiceAccountServiceClient
 	sessionService               v1connect.SessionServiceClient
+	teamService                  v1connect.TeamServiceClient
 	userService                  v1connect.UserServiceClient
 	webhookService               v1connect.WebhookServiceClient
 	workflowService              v1connect.WorkflowServiceClient
@@ -317,6 +321,10 @@ func (g *ManagementPlane) ServiceAccountService() v1connect.ServiceAccountServic
 
 func (g *ManagementPlane) SessionService() v1connect.SessionServiceClient {
 	return g.sessionService
+}
+
+func (g *ManagementPlane) TeamService() v1connect.TeamServiceClient {
+	return g.teamService
 }
 
 func (g *ManagementPlane) UserService() v1connect.UserServiceClient {

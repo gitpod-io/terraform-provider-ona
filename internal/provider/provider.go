@@ -151,6 +151,7 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		serviceaccount.NewResource,
 		accesscontrol.NewGroupResource,
 		accesscontrol.NewGroupMembershipResource,
+		accesscontrol.NewTeamResource,
 		accesscontrol.NewOrganizationRoleAssignmentResource,
 		webhook.NewResource,
 		integration.NewResource,

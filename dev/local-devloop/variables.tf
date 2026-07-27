@@ -35,6 +35,12 @@ variable "group_name" {
   default     = "Terraform Provider Dev Loop"
 }
 
+variable "team_name" {
+  type        = string
+  description = "Name for the team managed by this local development module."
+  default     = "Terraform Provider Dev Loop"
+}
+
 variable "webhook_secret_version" {
   type        = string
   description = "User-managed webhook secret rotation marker. Change this value to rotate the secret and refresh the local test file."

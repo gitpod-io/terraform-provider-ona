@@ -6,6 +6,7 @@ and data sources:
 - `ona_runner.devloop`
 - `ona_service_account.devloop`
 - `ona_group.devloop`
+- `ona_team.devloop`
 - `ona_group_membership.devloop`
 - `ona_organization_role_assignment.devloop`
 - `ona_environment_class.devloop`
@@ -58,9 +59,9 @@ terraform -chdir=dev/local-devloop apply -auto-approve -input=false
 ```
 
 The apply output includes `cloudformation_template_url` for AWS EC2 runners,
-`managed_service_account_id` for the managed service account, the managed warm
-pool and integration IDs, and the number of visible integration definitions.
-Runner registration tokens are consumed through
+`managed_service_account_id` and `managed_team_id`, the managed warm pool and
+integration IDs, and the number of visible integration definitions. Runner
+registration tokens are consumed through
 `ephemeral.ona_runner_token` during apply, so they are not written as normal
 Terraform outputs or stored in state.
 
