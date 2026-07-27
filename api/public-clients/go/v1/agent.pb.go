@@ -286,6 +286,8 @@ const (
 	LLMDisabledCapability_LLM_DISABLED_CAPABILITY_SERVER_SIDE_TOOL_SEARCH LLMDisabledCapability = 3
 	// Disables native Codex goal mode.
 	LLMDisabledCapability_LLM_DISABLED_CAPABILITY_GOAL_MODE LLMDisabledCapability = 4
+	// Disables Codex's Responses Lite request shape for provider compatibility.
+	LLMDisabledCapability_LLM_DISABLED_CAPABILITY_RESPONSES_LITE_UNSUPPORTED LLMDisabledCapability = 5
 )
 
 // Enum value maps for LLMDisabledCapability.
@@ -296,13 +298,15 @@ var (
 		2: "LLM_DISABLED_CAPABILITY_FAST_SERVICE_TIER",
 		3: "LLM_DISABLED_CAPABILITY_SERVER_SIDE_TOOL_SEARCH",
 		4: "LLM_DISABLED_CAPABILITY_GOAL_MODE",
+		5: "LLM_DISABLED_CAPABILITY_RESPONSES_LITE_UNSUPPORTED",
 	}
 	LLMDisabledCapability_value = map[string]int32{
-		"LLM_DISABLED_CAPABILITY_UNSPECIFIED":             0,
-		"LLM_DISABLED_CAPABILITY_WEB_SEARCH":              1,
-		"LLM_DISABLED_CAPABILITY_FAST_SERVICE_TIER":       2,
-		"LLM_DISABLED_CAPABILITY_SERVER_SIDE_TOOL_SEARCH": 3,
-		"LLM_DISABLED_CAPABILITY_GOAL_MODE":               4,
+		"LLM_DISABLED_CAPABILITY_UNSPECIFIED":                0,
+		"LLM_DISABLED_CAPABILITY_WEB_SEARCH":                 1,
+		"LLM_DISABLED_CAPABILITY_FAST_SERVICE_TIER":          2,
+		"LLM_DISABLED_CAPABILITY_SERVER_SIDE_TOOL_SEARCH":    3,
+		"LLM_DISABLED_CAPABILITY_GOAL_MODE":                  4,
+		"LLM_DISABLED_CAPABILITY_RESPONSES_LITE_UNSUPPORTED": 5,
 	}
 )
 
@@ -11230,12 +11234,12 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x0fimproved_prompt\x18\x01 \x01(\tR\x0eimprovedPrompt\"\x95\x01\n" +
 	"\x1bCreateLLMAccessTokenRequest\x12B\n" +
 	"\x0frequired_models\x18\x01 \x03(\x0e2\x19.gitpod.v1.SupportedModelR\x0erequiredModels\x12,\n" +
-	"\x12agent_execution_id\x18\x03 \x01(\tR\x10agentExecutionIdJ\x04\b\x02\x10\x03\"\x84\x02\n" +
+	"\x12agent_execution_id\x18\x03 \x01(\tR\x10agentExecutionIdJ\x04\b\x02\x10\x03\"\x9e\x02\n" +
 	"\x1cCreateLLMAccessTokenResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12\x17\n" +
 	"\allm_url\x18\x02 \x01(\tR\x06llmUrl\x12I\n" +
 	"\"is_server_side_tool_search_enabled\x18\x03 \x01(\bR\x1disServerSideToolSearchEnabled\x12]\n" +
-	"\x15disabled_capabilities\x18\x04 \x03(\x0e2 .gitpod.v1.LLMDisabledCapabilityB\x06ʫ\x1e\x02\b\x01R\x14disabledCapabilities\"`\n" +
+	"\x15disabled_capabilities\x18\x04 \x03(\x0e2 .gitpod.v1.LLMDisabledCapabilityB\x06ʫ\x1e\x02\b\x01R\x14disabledCapabilitiesJ\x04\b\x05\x10\x06R\x12llm_integration_id\"`\n" +
 	"\x0eMCPIntegration\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x10\n" +
@@ -11371,13 +11375,14 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"!CODEX_REASONING_EFFORT_EXTRA_HIGH\x10\x04*S\n" +
 	"\x10CodexServiceTier\x12\"\n" +
 	"\x1eCODEX_SERVICE_TIER_UNSPECIFIED\x10\x00\x12\x1b\n" +
-	"\x17CODEX_SERVICE_TIER_FAST\x10\x01*\xf3\x01\n" +
+	"\x17CODEX_SERVICE_TIER_FAST\x10\x01*\xab\x02\n" +
 	"\x15LLMDisabledCapability\x12'\n" +
 	"#LLM_DISABLED_CAPABILITY_UNSPECIFIED\x10\x00\x12&\n" +
 	"\"LLM_DISABLED_CAPABILITY_WEB_SEARCH\x10\x01\x12-\n" +
 	")LLM_DISABLED_CAPABILITY_FAST_SERVICE_TIER\x10\x02\x123\n" +
 	"/LLM_DISABLED_CAPABILITY_SERVER_SIDE_TOOL_SEARCH\x10\x03\x12%\n" +
-	"!LLM_DISABLED_CAPABILITY_GOAL_MODE\x10\x04*\xbe\x02\n" +
+	"!LLM_DISABLED_CAPABILITY_GOAL_MODE\x10\x04\x126\n" +
+	"2LLM_DISABLED_CAPABILITY_RESPONSES_LITE_UNSUPPORTED\x10\x05*\xbe\x02\n" +
 	"\x1bAgentExecutionFailureReason\x12.\n" +
 	"*AGENT_EXECUTION_FAILURE_REASON_UNSPECIFIED\x10\x00\x12.\n" +
 	"*AGENT_EXECUTION_FAILURE_REASON_ENVIRONMENT\x10\x01\x12*\n" +

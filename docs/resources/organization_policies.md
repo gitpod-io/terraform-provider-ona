@@ -13,6 +13,8 @@ For product context, see [Organization policies](https://ona.com/docs/ona/organi
 
 The provider resolves the organization from its authenticated token. Configure at most one `ona_organization_policies` resource for that organization, and combine the policy arguments you need in that resource.
 
+Set `agent_policy.codex_model_states` with exact Codex model enum names and `allowed` or `disabled` values. Models omitted from the map, including models added later, are allowed. Omit `codex_model_states` to leave the remote model policy unmanaged, or set it to `{}` to clear all model overrides.
+
 Deleting the Terraform resource reapplies the server-defined policy configuration captured before Terraform first managed the organization. Terraform removes the resource from state only after Ona accepts that reset.
 
 ## Example Usage
@@ -31,6 +33,10 @@ resource "ona_organization_policies" "current" {
     conversation_sharing_policy   = "organization"
     max_subagents_per_environment = 5
     allowed_agent_ids             = []
+    codex_model_states = {
+      CODEX_OPEN_AI_MODEL_GPT_5_5     = "disabled"
+      CODEX_OPEN_AI_MODEL_GPT_5_6_SOL = "allowed"
+    }
   }
 }
 ```
@@ -71,6 +77,7 @@ resource "ona_organization_policies" "current" {
 Optional:
 
 - `allowed_agent_ids` (Set of String) Agent IDs users may select. Empty means all agents are allowed.
+- `codex_model_states` (Map of String) Codex model availability keyed by the exact `CodexOpenAIModel` enum name. Values must be `allowed` or `disabled`. Omit the map to leave the remote Codex model policy unmanaged; use an empty map to clear all explicit overrides. A missing model key is treated as allowed, and future or unlisted models are allowed by default.
 - `command_deny_list` (Set of String) Commands agents are not allowed to execute. Omit to leave the deny list unmanaged.
 - `conversation_sharing_policy` (String) Conversation sharing policy. Supported values are `disabled` and `organization`.
 - `max_subagents_per_environment` (Number) Maximum non-terminal sub-agents per environment. Valid range is 0-10.

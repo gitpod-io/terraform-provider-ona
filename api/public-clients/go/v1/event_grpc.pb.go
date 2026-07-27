@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	EventService_WatchEvents_FullMethodName   = "/gitpod.v1.EventService/WatchEvents"
 	EventService_ListAuditLogs_FullMethodName = "/gitpod.v1.EventService/ListAuditLogs"
+	EventService_GetAuditLog_FullMethodName   = "/gitpod.v1.EventService/GetAuditLog"
 )
 
 // EventServiceClient is the client API for EventService service.
@@ -79,6 +80,20 @@ type EventServiceClient interface {
 	//	  pageSize: 20
 	//	```
 	ListAuditLogs(ctx context.Context, in *ListAuditLogsRequest, opts ...grpc.CallOption) (*ListAuditLogsResponse, error)
+	// Gets one audit-log entry, including any typed details stored for it.
+	//
+	// Use this method to:
+	// - Inspect the details of a specific audit-log entry
+	// - Retrieve the evidence associated with a Veto Exec audit event
+	//
+	// ### Examples
+	//
+	// - Get an audit-log entry:
+	//
+	//	```yaml
+	//	auditLogEntryId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+	//	```
+	GetAuditLog(ctx context.Context, in *GetAuditLogRequest, opts ...grpc.CallOption) (*GetAuditLogResponse, error)
 }
 
 type eventServiceClient struct {
@@ -112,6 +127,16 @@ func (c *eventServiceClient) ListAuditLogs(ctx context.Context, in *ListAuditLog
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListAuditLogsResponse)
 	err := c.cc.Invoke(ctx, EventService_ListAuditLogs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *eventServiceClient) GetAuditLog(ctx context.Context, in *GetAuditLogRequest, opts ...grpc.CallOption) (*GetAuditLogResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAuditLogResponse)
+	err := c.cc.Invoke(ctx, EventService_GetAuditLog_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -174,6 +199,20 @@ type EventServiceServer interface {
 	//	  pageSize: 20
 	//	```
 	ListAuditLogs(context.Context, *ListAuditLogsRequest) (*ListAuditLogsResponse, error)
+	// Gets one audit-log entry, including any typed details stored for it.
+	//
+	// Use this method to:
+	// - Inspect the details of a specific audit-log entry
+	// - Retrieve the evidence associated with a Veto Exec audit event
+	//
+	// ### Examples
+	//
+	// - Get an audit-log entry:
+	//
+	//	```yaml
+	//	auditLogEntryId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+	//	```
+	GetAuditLog(context.Context, *GetAuditLogRequest) (*GetAuditLogResponse, error)
 	mustEmbedUnimplementedEventServiceServer()
 }
 
@@ -189,6 +228,9 @@ func (UnimplementedEventServiceServer) WatchEvents(*WatchEventsRequest, grpc.Ser
 }
 func (UnimplementedEventServiceServer) ListAuditLogs(context.Context, *ListAuditLogsRequest) (*ListAuditLogsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListAuditLogs not implemented")
+}
+func (UnimplementedEventServiceServer) GetAuditLog(context.Context, *GetAuditLogRequest) (*GetAuditLogResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAuditLog not implemented")
 }
 func (UnimplementedEventServiceServer) mustEmbedUnimplementedEventServiceServer() {}
 func (UnimplementedEventServiceServer) testEmbeddedByValue()                      {}
@@ -240,6 +282,24 @@ func _EventService_ListAuditLogs_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EventService_GetAuditLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAuditLogRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EventServiceServer).GetAuditLog(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EventService_GetAuditLog_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EventServiceServer).GetAuditLog(ctx, req.(*GetAuditLogRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EventService_ServiceDesc is the grpc.ServiceDesc for EventService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -250,6 +310,10 @@ var EventService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListAuditLogs",
 			Handler:    _EventService_ListAuditLogs_Handler,
+		},
+		{
+			MethodName: "GetAuditLog",
+			Handler:    _EventService_GetAuditLog_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

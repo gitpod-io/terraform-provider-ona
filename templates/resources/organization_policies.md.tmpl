@@ -13,6 +13,8 @@ For product context, see [Organization policies](https://ona.com/docs/ona/organi
 
 The provider resolves the organization from its authenticated token. Configure at most one `ona_organization_policies` resource for that organization, and combine the policy arguments you need in that resource.
 
+Set `agent_policy.codex_model_states` with exact Codex model enum names and `allowed` or `disabled` values. Models omitted from the map, including models added later, are allowed. Omit `codex_model_states` to leave the remote model policy unmanaged, or set it to `{}` to clear all model overrides.
+
 Deleting the Terraform resource reapplies the server-defined policy configuration captured before Terraform first managed the organization. Terraform removes the resource from state only after Ona accepts that reset.
 
 {{ if .HasExamples -}}

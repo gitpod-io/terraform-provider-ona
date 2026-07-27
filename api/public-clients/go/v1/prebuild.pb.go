@@ -10,6 +10,7 @@ import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
 	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
+	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -2233,7 +2234,7 @@ var File_gitpod_v1_prebuild_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_prebuild_proto_rawDesc = "" +
 	"\n" +
-	"\x18gitpod/v1/prebuild.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xfc\x01\n" +
+	"\x18gitpod/v1/prebuild.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xfc\x01\n" +
 	"\x15CreatePrebuildRequest\x12:\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tB\x1b\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
@@ -2387,37 +2388,41 @@ const file_gitpod_v1_prebuild_proto_rawDesc = "" +
 	"\fwarm_pool_id\x18\x01 \x01(\tB\x1d\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x0e\n" +
 	"\fwarm_pool.idR\n" +
 	"warmPoolId\"\x18\n" +
-	"\x16DeleteWarmPoolResponse\"\xe7\x01\n" +
-	"\bWarmPool\x12*\n" +
-	"\x02id\x18\x01 \x01(\tB\x1a\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x0e\n" +
-	"\fwarm_pool.idR\x02id\x12?\n" +
-	"\bmetadata\x18\x02 \x01(\v2\x1b.gitpod.v1.WarmPoolMetadataB\x06\xbaH\x03\xc8\x01\x01R\bmetadata\x123\n" +
-	"\x04spec\x18\x03 \x01(\v2\x17.gitpod.v1.WarmPoolSpecB\x06\xbaH\x03\xc8\x01\x01R\x04spec\x129\n" +
-	"\x06status\x18\x04 \x01(\v2\x19.gitpod.v1.WarmPoolStatusB\x06\xbaH\x03\xc8\x01\x01R\x06status\"\xa5\x03\n" +
-	"\x10WarmPoolMetadata\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x127\n" +
+	"\x16DeleteWarmPoolResponse\"\xf9\x01\n" +
+	"\bWarmPool\x12.\n" +
+	"\x02id\x18\x01 \x01(\tB\x1e\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x0e\n" +
+	"\fwarm_pool.idګ\x1e\x00R\x02id\x12C\n" +
+	"\bmetadata\x18\x02 \x01(\v2\x1b.gitpod.v1.WarmPoolMetadataB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\bmetadata\x127\n" +
+	"\x04spec\x18\x03 \x01(\v2\x17.gitpod.v1.WarmPoolSpecB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x04spec\x129\n" +
+	"\x06status\x18\x04 \x01(\v2\x19.gitpod.v1.WarmPoolStatusB\x06\xbaH\x03\xc8\x01\x01R\x06status:\x04ҫ\x1e\x00\"\xbd\x03\n" +
+	"\x10WarmPoolMetadata\x12J\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB!\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
+	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12;\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
+	"project_id\x18\x02 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
 	"\n" +
-	"project.idR\tprojectId\x12T\n" +
-	"\x14environment_class_id\x18\x03 \x01(\tB\"\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x16\n" +
-	"\x14environment_class.idR\x12environmentClassId\x124\n" +
-	"\trunner_id\x18\x04 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12A\n" +
+	"project.idګ\x1e\x00R\tprojectId\x12X\n" +
+	"\x14environment_class_id\x18\x03 \x01(\tB&\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x16\n" +
+	"\x14environment_class.idګ\x1e\x00R\x12environmentClassId\x128\n" +
+	"\trunner_id\x18\x04 \x01(\tB\x1b\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
+	"\trunner.idګ\x1e\x00R\brunnerId\x12E\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\tcreatedAt\x12A\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\tcreatedAt\x12E\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\tupdatedAt\"\xf1\x02\n" +
+	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\n" +
+	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\tupdatedAt\"\xfd\x02\n" +
 	"\fWarmPoolSpec\x12!\n" +
 	"\fspec_version\x18\x01 \x01(\x04R\vspecVersion\x121\n" +
-	"\fdesired_size\x18\x02 \x01(\x05B\x0e\xbaH\t\xd8\x01\x01\x1a\x04\x18\x14(\x01\x18\x01R\vdesiredSize\x12B\n" +
-	"\vsnapshot_id\x18\x03 \x01(\tB\x1c\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vsnapshot.idH\x00R\n" +
+	"\fdesired_size\x18\x02 \x01(\x05B\x0e\xbaH\t\xd8\x01\x01\x1a\x04\x18\x14(\x01\x18\x01R\vdesiredSize\x12F\n" +
+	"\vsnapshot_id\x18\x03 \x01(\tB \xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
+	"\vsnapshot.idګ\x1e\x00H\x00R\n" +
 	"snapshotId\x88\x01\x01\x12G\n" +
-	"\rdesired_phase\x18\x04 \x01(\x0e2\x18.gitpod.v1.WarmPoolPhaseB\b\xbaH\x05\x82\x01\x02\x10\x01R\fdesiredPhase\x12)\n" +
-	"\bmin_size\x18\x05 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x14(\x00H\x01R\aminSize\x88\x01\x01\x12)\n" +
-	"\bmax_size\x18\x06 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x14(\x01H\x02R\amaxSize\x88\x01\x01B\x0e\n" +
+	"\rdesired_phase\x18\x04 \x01(\x0e2\x18.gitpod.v1.WarmPoolPhaseB\b\xbaH\x05\x82\x01\x02\x10\x01R\fdesiredPhase\x12-\n" +
+	"\bmin_size\x18\x05 \x01(\x05B\r\xbaH\x06\x1a\x04\x18\x14(\x00ګ\x1e\x00H\x01R\aminSize\x88\x01\x01\x12-\n" +
+	"\bmax_size\x18\x06 \x01(\x05B\r\xbaH\x06\x1a\x04\x18\x14(\x01ګ\x1e\x00H\x02R\amaxSize\x88\x01\x01B\x0e\n" +
 	"\f_snapshot_idB\v\n" +
 	"\t_min_sizeB\v\n" +
 	"\t_max_size\"\x9a\x02\n" +

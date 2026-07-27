@@ -48,14 +48,13 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccPolicyConfig(server.URL, "baseline", "24h"),
+				Config: testAccPolicyConfig(server.URL, "baseline", "24h", "organization"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "id", "policy-1"),
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "organization_id", "org-1"),
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "name", "baseline"),
-					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.ports.default_effect", "allow"),
-					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.ports.rule.0.range_from", "22"),
-					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.files.default_actions.#", "2"),
+					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.ports.max_admission_level", "organization"),
+					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.executables.rule.0.path", "/usr/bin/nc"),
 					resource.TestCheckResourceAttr("data.ona_security_policies.all", "policies.#", "1"),
 					resource.TestCheckResourceAttr("data.ona_security_policies.all", "policies.0.id", "policy-1"),
 					resource.TestCheckResourceAttr("ona_organization_policies.test", "id", "org-1"),
@@ -67,7 +66,7 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccPolicyConfig(server.URL, "baseline", "24h"),
+				Config: testAccPolicyConfig(server.URL, "baseline", "24h", "organization"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectEmptyPlan(),
@@ -84,6 +83,7 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
+					"agent_policy.codex_model_states",
 					"archive_environments_after",
 					"delete_archived_environments_after",
 					"maximum_environment_lifetime",
@@ -91,7 +91,7 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 				},
 			},
 			{
-				Config: testAccPolicyConfig(server.URL, "baseline-updated", "48h"),
+				Config: testAccPolicyConfig(server.URL, "baseline-updated", "48h", "creator_only"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("ona_security_policy.baseline", plancheck.ResourceActionUpdate),
@@ -100,8 +100,53 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 				},
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_security_policy.baseline", "name", "baseline-updated"),
+					resource.TestCheckResourceAttr("ona_security_policy.baseline", "spec.ports.max_admission_level", "creator_only"),
 					resource.TestCheckResourceAttr("ona_organization_policies.test", "archive_environments_after", "48h"),
 				),
+			},
+		},
+	})
+}
+
+func TestAccSecurityPolicyRejectsInvalidAdmissionLevelAtPlan(t *testing.T) {
+	t.Parallel()
+
+	server := newPolicyAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{{
+			Config:      testAccSecurityPolicyOnlyConfig(server.URL, "public"),
+			PlanOnly:    true,
+			ExpectError: regexp.MustCompile(`Invalid Port Admission Level`),
+		}},
+	})
+}
+
+func TestAccSecurityPolicyOmittedPortsHasNoCap(t *testing.T) {
+	t.Parallel()
+
+	server := newPolicyAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccSecurityPolicyOnlyConfig(server.URL, ""),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckNoResourceAttr("ona_security_policy.test", "spec.ports"),
+					resource.TestCheckResourceAttr("ona_security_policy.test", "spec.executables.default_effect", "allow"),
+				),
+			},
+			{
+				Config: testAccSecurityPolicyOnlyConfig(server.URL, ""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
 			},
 		},
 	})
@@ -126,6 +171,125 @@ func TestAccPolicyResourcesRejectInvalidAgentPolicyAtPlan(t *testing.T) {
 				Config:      testAccInvalidAgentPolicyConfig(server.URL, `max_subagents_per_environment = 11`),
 				PlanOnly:    true,
 				ExpectError: regexp.MustCompile(`Invalid Max Subagents`),
+			},
+			{
+				Config:      testAccInvalidAgentPolicyConfig(server.URL, `codex_model_states = { CODEX_OPEN_AI_MODEL_UNSPECIFIED = "disabled" }`),
+				PlanOnly:    true,
+				ExpectError: regexp.MustCompile(`Invalid Codex Model`),
+			},
+			{
+				Config:      testAccInvalidAgentPolicyConfig(server.URL, `codex_model_states = { CODEX_OPEN_AI_MODEL_GPT_5_5 = "unspecified" }`),
+				PlanOnly:    true,
+				ExpectError: regexp.MustCompile(`Invalid Codex Model State`),
+			},
+		},
+	})
+}
+
+func TestAccPolicyResourcesCodexModelPolicyLifecycle(t *testing.T) {
+	t.Parallel()
+
+	server := newPolicyAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(_ *terraform.State) error {
+			if diff := server.organization.defaultsDiff(); diff != "" {
+				return fmt.Errorf("organization policies were not restored to their server-defined defaults: %s", diff)
+			}
+			if server.organization.sentLegacyCodexModels() {
+				return errors.New("provider populated deprecated allowed_codex_models in an update request")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCodexModelPolicyConfig(server.URL, `{
+      CODEX_OPEN_AI_MODEL_GPT_5_5     = "allowed"
+      CODEX_OPEN_AI_MODEL_GPT_5_6_SOL = "disabled"
+    }`),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_organization_policies.test", "agent_policy.codex_model_states.%", "2"),
+					resource.TestCheckResourceAttr("ona_organization_policies.test", "agent_policy.codex_model_states.CODEX_OPEN_AI_MODEL_GPT_5_5", "allowed"),
+					resource.TestCheckResourceAttr("ona_organization_policies.test", "agent_policy.codex_model_states.CODEX_OPEN_AI_MODEL_GPT_5_6_SOL", "disabled"),
+				),
+			},
+			{
+				Config: testAccCodexModelPolicyConfig(server.URL, `{
+      CODEX_OPEN_AI_MODEL_GPT_5_5     = "allowed"
+      CODEX_OPEN_AI_MODEL_GPT_5_6_SOL = "disabled"
+    }`),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
+			},
+			{
+				PreConfig: func() {
+					server.organization.setCodexModelPolicy(&v1.CodexModelPolicy{ModelStates: map[string]v1.CodexModelPolicyState{
+						"CODEX_OPEN_AI_MODEL_GPT_5_5": v1.CodexModelPolicyState_CODEX_MODEL_POLICY_STATE_DISABLED,
+					}})
+				},
+				Config: testAccCodexModelPolicyConfig(server.URL, `{
+      CODEX_OPEN_AI_MODEL_GPT_5_5     = "allowed"
+      CODEX_OPEN_AI_MODEL_GPT_5_6_SOL = "disabled"
+    }`),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectResourceAction("ona_organization_policies.test", plancheck.ResourceActionUpdate)},
+				},
+			},
+			{
+				Config: testAccCodexModelPolicyConfig(server.URL, `{}`),
+				Check:  resource.TestCheckResourceAttr("ona_organization_policies.test", "agent_policy.codex_model_states.%", "0"),
+			},
+			{
+				Config: testAccCodexModelPolicyConfig(server.URL, `{}`),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
+			},
+			{
+				PreConfig: func() {
+					server.organization.setCodexModelPolicy(&v1.CodexModelPolicy{ModelStates: map[string]v1.CodexModelPolicyState{
+						"CODEX_OPEN_AI_MODEL_GPT_5_6_TERRA": v1.CodexModelPolicyState_CODEX_MODEL_POLICY_STATE_DISABLED,
+					}})
+				},
+				Config: testAccCodexModelPolicyUnmanagedConfig(server.URL, false),
+				Check:  resource.TestCheckNoResourceAttr("ona_organization_policies.test", "agent_policy.codex_model_states"),
+			},
+			{
+				Config: testAccCodexModelPolicyUnmanagedConfig(server.URL, true),
+				Check:  resource.TestCheckNoResourceAttr("ona_organization_policies.test", "agent_policy.codex_model_states"),
+			},
+		},
+	})
+}
+
+func TestAccPolicyResourcesCodexModelPolicyImport(t *testing.T) {
+	t.Parallel()
+
+	server := newPolicyAPIServer(t)
+	t.Cleanup(server.Close)
+	server.organization.setCodexModelPolicy(&v1.CodexModelPolicy{ModelStates: map[string]v1.CodexModelPolicyState{
+		"CODEX_OPEN_AI_MODEL_GPT_5_6_LUNA": v1.CodexModelPolicyState_CODEX_MODEL_POLICY_STATE_DISABLED,
+	}})
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:             testAccMinimalPolicyConfig(server.URL),
+				ResourceName:       "ona_organization_policies.test",
+				ImportState:        true,
+				ImportStateId:      "current",
+				ImportStatePersist: true,
+				Check: resource.TestCheckResourceAttr(
+					"ona_organization_policies.test",
+					"agent_policy.codex_model_states.CODEX_OPEN_AI_MODEL_GPT_5_6_LUNA",
+					"disabled",
+				),
 			},
 		},
 	})
@@ -162,7 +326,7 @@ func TestAccPolicyResourcesOmittedSettingsRemainUnmanaged(t *testing.T) {
 	})
 }
 
-func testAccPolicyConfig(host string, policyName string, archiveAfter string) string {
+func testAccPolicyConfig(host string, policyName string, archiveAfter string, maxAdmissionLevel string) string {
 	return fmt.Sprintf(`
 provider "ona" {
   host  = %[1]q
@@ -175,13 +339,7 @@ resource "ona_security_policy" "baseline" {
 
   spec {
     ports {
-      default_effect = "allow"
-
-      rule {
-        range_from = 22
-        range_to   = 22
-        effect     = "block"
-      }
+      max_admission_level = %[4]q
     }
 
     executables {
@@ -190,36 +348,6 @@ resource "ona_security_policy" "baseline" {
       rule {
         path   = "/usr/bin/nc"
         effect = "audit"
-      }
-    }
-
-    files {
-      default_effect  = "allow"
-      default_actions = ["read", "write"]
-
-      rule {
-        path    = "/etc/shadow"
-        actions = ["read"]
-        effect  = "block"
-      }
-    }
-
-    block_devices {
-      default_effect = "block"
-    }
-
-    data {
-      default_effect = "allow"
-
-      rule {
-        source {
-          file     = "/workspace/secrets.env"
-          selector = "10:20"
-        }
-        destination {
-          host = "example.com"
-        }
-        effect = "block"
       }
     }
   }
@@ -266,7 +394,37 @@ resource "ona_organization_policies" "test" {
     allowed_agent_ids             = ["ona"]
   }
 }
-`, host, policyName, archiveAfter)
+`, host, policyName, archiveAfter, maxAdmissionLevel)
+}
+
+func testAccSecurityPolicyOnlyConfig(host string, maxAdmissionLevel string) string {
+	portsBlock := ""
+	if maxAdmissionLevel != "" {
+		portsBlock = fmt.Sprintf(`
+    ports {
+      max_admission_level = %q
+    }
+`, maxAdmissionLevel)
+	}
+
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_security_policy" "test" {
+  organization_id = "org-1"
+  name            = "test"
+
+  spec {
+%[2]s
+    executables {
+      default_effect = "allow"
+    }
+  }
+}
+`, host, portsBlock)
 }
 
 func testAccMinimalPolicyConfig(host string) string {
@@ -279,6 +437,37 @@ provider "ona" {
 resource "ona_organization_policies" "test" {
 }
 `, host)
+}
+
+func testAccCodexModelPolicyConfig(host string, modelStates string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_organization_policies" "test" {
+  agent_policy = {
+    mcp_disabled       = true
+    codex_model_states = %[2]s
+  }
+}
+`, host, modelStates)
+}
+
+func testAccCodexModelPolicyUnmanagedConfig(host string, mcpDisabled bool) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_organization_policies" "test" {
+  agent_policy = {
+    mcp_disabled = %[2]t
+  }
+}
+`, host, mcpDisabled)
 }
 
 func testAccInvalidAgentPolicyConfig(host string, agentPolicyBody string) string {
@@ -447,6 +636,7 @@ type fakeOrganizationService struct {
 	mu       sync.Mutex
 	policies *v1.OrganizationPolicies
 	defaults *v1.OrganizationPolicies
+	updates  []*v1.UpdateOrganizationPoliciesRequest
 }
 
 func (s *fakeOrganizationService) GetAuthenticatedIdentity(ctx context.Context, req *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error) {
@@ -483,6 +673,9 @@ func (s *fakeOrganizationService) UpdateOrganizationPolicies(ctx context.Context
 
 	if req.Msg.GetOrganizationId() != s.policies.GetOrganizationId() {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("organization policies not found"))
+	}
+	if update, ok := proto.Clone(req.Msg).(*v1.UpdateOrganizationPoliciesRequest); ok {
+		s.updates = append(s.updates, update)
 	}
 	if req.Msg.MaximumEnvironmentTimeout != nil {
 		s.policies.MaximumEnvironmentTimeout = req.Msg.MaximumEnvironmentTimeout
@@ -559,6 +752,25 @@ func (s *fakeOrganizationService) defaultsDiff() string {
 	return fmt.Sprintf("want %s, got %s", defaults, actual)
 }
 
+func (s *fakeOrganizationService) setCodexModelPolicy(policy *v1.CodexModelPolicy) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	s.policies.AgentPolicy.CodexModelPolicy = cloneCodexModelPolicy(policy)
+}
+
+func (s *fakeOrganizationService) sentLegacyCodexModels() bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	for _, update := range s.updates {
+		if len(update.GetAgentPolicy().GetAllowedCodexModels()) > 0 { //nolint:staticcheck // Negative compatibility assertion for the deprecated API field.
+			return true
+		}
+	}
+	return false
+}
+
 func newTestOrganizationPolicies(organizationID string) *v1.OrganizationPolicies {
 	return &v1.OrganizationPolicies{
 		OrganizationId:                    organizationID,
@@ -578,6 +790,9 @@ func newTestOrganizationPolicies(organizationID string) *v1.OrganizationPolicies
 		},
 		AgentPolicy: &v1.AgentPolicy{
 			CommandDenyList: []string{"server-default-command"},
+			CodexModelPolicy: &v1.CodexModelPolicy{ModelStates: map[string]v1.CodexModelPolicyState{
+				"CODEX_OPEN_AI_MODEL_GPT_5_4": v1.CodexModelPolicyState_CODEX_MODEL_POLICY_STATE_DISABLED,
+			}},
 		},
 		ArchiveEnvironmentsAfter: durationpb.New(24 * time.Hour),
 	}
@@ -603,9 +818,32 @@ func applyAgentPolicyUpdate(policy *v1.AgentPolicy, update *v1.UpdateOrganizatio
 		policy.MaxSubagentsPerEnvironment = update.GetMaxSubagentsPerEnvironment()
 	}
 	policy.AllowedAgentIds = append([]string(nil), update.AllowedAgentIds...)
-	policy.AllowedCodexModels = append([]v1.CodexOpenAIModel(nil), update.AllowedCodexModels...) //nolint:staticcheck // Existing Terraform schema still maps the legacy allowlist.
+	if update.CodexModelPolicy != nil {
+		policy.CodexModelPolicy = canonicalCodexModelPolicy(update.CodexModelPolicy)
+	}
 	policy.AllowedCodexReasoningEfforts = append([]v1.CodexReasoningEffort(nil), update.AllowedCodexReasoningEfforts...)
 	policy.AllowedCodexServiceTiers = append([]v1.CodexServiceTier(nil), update.AllowedCodexServiceTiers...)
+}
+
+func canonicalCodexModelPolicy(policy *v1.CodexModelPolicy) *v1.CodexModelPolicy {
+	result := &v1.CodexModelPolicy{ModelStates: map[string]v1.CodexModelPolicyState{}}
+	for model, state := range policy.GetModelStates() {
+		if state == v1.CodexModelPolicyState_CODEX_MODEL_POLICY_STATE_DISABLED {
+			result.ModelStates[model] = state
+		}
+	}
+	return result
+}
+
+func cloneCodexModelPolicy(policy *v1.CodexModelPolicy) *v1.CodexModelPolicy {
+	if policy == nil {
+		return nil
+	}
+	cloned, ok := proto.Clone(policy).(*v1.CodexModelPolicy)
+	if !ok {
+		return nil
+	}
+	return cloned
 }
 
 func cloneSecurityPolicy(policy *v1.SecurityPolicy) *v1.SecurityPolicy {

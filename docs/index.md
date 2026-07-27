@@ -6,7 +6,7 @@ description: |-
 
 # Ona Provider
 
-The Ona provider manages Ona infrastructure and organization configuration from Terraform. It is intended for platform, infrastructure, and security teams that want Ona projects, runners, access controls, policy settings, secrets, and automation integrations to be reviewed, versioned, and applied through Terraform.
+The Ona provider manages Ona organization configuration from Terraform. It is intended for platform, identity, and security teams that want Ona projects, runners, access controls, policy settings, secrets, and automation integrations to be reviewed, versioned, and applied through Terraform.
 
 The provider is currently a beta release. The repository version is `0.2.0-beta.2`, and the release process publishes beta artifacts from SemVer prerelease versions.
 

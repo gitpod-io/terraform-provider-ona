@@ -73,6 +73,7 @@ type AgentPolicyModel struct {
 	ConversationSharingPolicy  types.String `tfsdk:"conversation_sharing_policy"`
 	MaxSubagentsPerEnvironment types.Int32  `tfsdk:"max_subagents_per_environment"`
 	AllowedAgentIDs            types.Set    `tfsdk:"allowed_agent_ids"`
+	CodexModelStates           types.Map    `tfsdk:"codex_model_states"`
 }
 
 const (
@@ -208,6 +209,13 @@ func (r *PoliciesResource) Schema(ctx context.Context, req resource.SchemaReques
 						Optional:            true,
 						ElementType:         types.StringType,
 						MarkdownDescription: "Agent IDs users may select. Empty means all agents are allowed.",
+					},
+					"codex_model_states": resourceschema.MapAttribute{
+						Optional:    true,
+						ElementType: types.StringType,
+						MarkdownDescription: "Codex model availability keyed by the exact `CodexOpenAIModel` enum name. Values must be `allowed` or `disabled`. " +
+							"Omit the map to leave the remote Codex model policy unmanaged; use an empty map to clear all explicit overrides. " +
+							"A missing model key is treated as allowed, and future or unlisted models are allowed by default.",
 					},
 				},
 			},
@@ -535,6 +543,7 @@ func managedPoliciesSnapshot(policies *v1.OrganizationPolicies) *v1.Organization
 			ConversationSharingPolicy:  policy.GetConversationSharingPolicy(),
 			MaxSubagentsPerEnvironment: policy.GetMaxSubagentsPerEnvironment(),
 			AllowedAgentIds:            append([]string(nil), policy.GetAllowedAgentIds()...),
+			CodexModelPolicy:           cloneCodexModelPolicy(policy.GetCodexModelPolicy()),
 		}
 	}
 	return &v1.OrganizationPolicies{
@@ -600,7 +609,7 @@ func restorePoliciesRequest(organizationID string, baseline *v1.OrganizationPoli
 			ConversationSharingPolicy:    ptr(baselineAgentPolicy.GetConversationSharingPolicy()),
 			MaxSubagentsPerEnvironment:   ptr(baselineAgentPolicy.GetMaxSubagentsPerEnvironment()),
 			AllowedAgentIds:              append([]string(nil), baselineAgentPolicy.GetAllowedAgentIds()...),
-			AllowedCodexModels:           append([]v1.CodexOpenAIModel(nil), currentAgentPolicy.GetAllowedCodexModels()...), //nolint:staticcheck // Existing Terraform schema still maps the legacy allowlist.
+			CodexModelPolicy:             codexModelPolicyForRestore(baselineAgentPolicy.GetCodexModelPolicy()),
 			AllowedCodexReasoningEfforts: append([]v1.CodexReasoningEffort(nil), currentAgentPolicy.GetAllowedCodexReasoningEfforts()...),
 			AllowedCodexServiceTiers:     append([]v1.CodexServiceTier(nil), currentAgentPolicy.GetAllowedCodexServiceTiers()...),
 		},
@@ -701,6 +710,13 @@ func validateAgentPolicyConfig(ctx context.Context, cfg tfsdk.Config, diags *dia
 	diags.Append(cfg.GetAttribute(ctx, maxSubagentsPath, &maxSubagents)...)
 	if !diags.HasError() && !maxSubagents.IsNull() && !maxSubagents.IsUnknown() {
 		validateMaxSubagents(maxSubagentsPath, maxSubagents.ValueInt32(), diags)
+	}
+
+	var codexModelStates types.Map
+	codexModelStatesPath := path.Root("agent_policy").AtName("codex_model_states")
+	diags.Append(cfg.GetAttribute(ctx, codexModelStatesPath, &codexModelStates)...)
+	if !diags.HasError() {
+		validateCodexModelStates(codexModelStatesPath, codexModelStates, diags)
 	}
 }
 

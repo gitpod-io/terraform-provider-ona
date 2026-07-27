@@ -24,6 +24,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// ReportExecEventRequest contains a Veto Exec event reported by an environment.
 type ReportExecEventRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// environment_id is the environment where the event occurred.
@@ -154,9 +155,7 @@ func (*ReportExecEventResponse) Descriptor() ([]byte, []int) {
 	return file_gitpod_v1_agent_security_proto_rawDescGZIP(), []int{1}
 }
 
-// Process describes the process that triggered a security event.
-// This message is specific to event reporting (ingest path).
-// List/Get RPCs may use a separate process representation.
+// Process describes process metadata for a security event.
 //
 // PID fields use int32 to match the kernel's pid_t (signed int).
 // Linux PID max is 4,194,304 (2^22), well within int32 range.
@@ -172,9 +171,6 @@ type Process struct {
 	// name is the process name (comm).
 	// 2x kernel TASK_COMM_LEN=16
 	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	// cmdline is the full command line.
-	// The real hard limit the kernel enforces per argument during execve(). MAX_ARG_STRLEN = 131072 defined in include/uapi/linux/binfmts.h as PAGE_SIZE * 32.
-	Cmdline string `protobuf:"bytes,4,opt,name=cmdline,proto3" json:"cmdline,omitempty"`
 	// started_at is when the process started.
 	StartedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
 	// ppid is the parent process ID.
@@ -238,13 +234,6 @@ func (x *Process) GetName() string {
 	return ""
 }
 
-func (x *Process) GetCmdline() string {
-	if x != nil {
-		return x.Cmdline
-	}
-	return ""
-}
-
 func (x *Process) GetStartedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.StartedAt
@@ -289,12 +278,11 @@ const file_gitpod_v1_agent_security_proto_rawDesc = "" +
 	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\x06action\x124\n" +
 	"\aprocess\x18\x05 \x01(\v2\x12.gitpod.v1.ProcessB\x06\xbaH\x03\xc8\x01\x01R\aprocess\x12@\n" +
 	"\ttimestamp\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\ttimestamp\"\x19\n" +
-	"\x17ReportExecEventResponse\"\xe4\x01\n" +
+	"\x17ReportExecEventResponse\"\xbf\x01\n" +
 	"\aProcess\x12\x10\n" +
 	"\x03pid\x18\x01 \x01(\x05R\x03pid\x12\x10\n" +
 	"\x03tid\x18\x02 \x01(\x05R\x03tid\x12\x1b\n" +
-	"\x04name\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18 R\x04name\x12#\n" +
-	"\acmdline\x18\x04 \x01(\tB\t\xbaH\x06r\x04\x18\x80\x80\bR\acmdline\x129\n" +
+	"\x04name\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18 R\x04name\x129\n" +
 	"\n" +
 	"started_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tstartedAt\x12\x12\n" +
 	"\x04ppid\x18\x06 \x01(\x05R\x04ppid\x12\x12\n" +
