@@ -23,6 +23,11 @@ output "managed_group_id" {
   value       = ona_group.devloop.id
 }
 
+output "managed_team_id" {
+  description = "ID of the team managed by this module."
+  value       = ona_team.devloop.id
+}
+
 output "managed_group_membership_id" {
   description = "ID of the group membership managed by this module."
   value       = ona_group_membership.devloop.id
@@ -45,7 +50,7 @@ output "managed_user_ai_budget_ids" {
 }
 
 output "managed_team_ai_budget_ids" {
-  description = "Mode-specific team AI budget allocation IDs when AI budget and team testing are enabled. Both modes may share one API ID."
+  description = "Mode-specific team AI budget allocation IDs when AI budget testing is enabled. Both modes may share one API ID."
   value = {
     credits = try(ona_team_ai_budget.credits[0].id, null)
     byok    = try(ona_team_ai_budget.byok[0].id, null)

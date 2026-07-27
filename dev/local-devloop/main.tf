@@ -22,6 +22,10 @@ resource "ona_group" "devloop" {
   description = "Group created by the Terraform provider local dev loop."
 }
 
+resource "ona_team" "devloop" {
+  name = var.team_name
+}
+
 resource "ona_group_membership" "devloop" {
   group_id           = ona_group.devloop.id
   service_account_id = ona_service_account.devloop.id
@@ -70,17 +74,17 @@ resource "ona_user_ai_budget" "service_account_byok_exemption" {
 }
 
 resource "ona_team_ai_budget" "credits" {
-  count = var.enable_ai_budgets && var.ai_budget_team_id != null ? 1 : 0
+  count = var.enable_ai_budgets ? 1 : 0
 
-  team_id       = var.ai_budget_team_id
+  team_id       = ona_team.devloop.id
   mode          = "credits"
   credit_budget = var.team_credit_budget
 }
 
 resource "ona_team_ai_budget" "byok" {
-  count = var.enable_ai_budgets && var.ai_budget_team_id != null ? 1 : 0
+  count = var.enable_ai_budgets ? 1 : 0
 
-  team_id                = var.ai_budget_team_id
+  team_id                = ona_team.devloop.id
   mode                   = "byok"
   cost_budget_microunits = var.team_cost_budget_microunits
   cost_budget_currency   = "usd"

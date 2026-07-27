@@ -41,11 +41,10 @@ variable "enable_ai_budgets" {
   default     = false
 }
 
-variable "ai_budget_team_id" {
+variable "team_name" {
   type        = string
-  description = "Existing team UUID used for mode-specific AI budget resources. Leave null to skip team budgets."
-  default     = null
-  nullable    = true
+  description = "Name for the team managed by this local development module."
+  default     = "Terraform Provider Dev Loop"
 }
 
 variable "organization_monthly_credit_limit" {

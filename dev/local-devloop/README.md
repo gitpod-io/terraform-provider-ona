@@ -6,6 +6,7 @@ and data sources:
 - `ona_runner.devloop`
 - `ona_service_account.devloop`
 - `ona_group.devloop`
+- `ona_team.devloop`
 - `ona_group_membership.devloop`
 - `ona_organization_role_assignment.devloop`
 - `ona_organization_ai_budget.credits`
@@ -64,9 +65,9 @@ terraform -chdir=dev/local-devloop apply -auto-approve -input=false
 ```
 
 The apply output includes `cloudformation_template_url` for AWS EC2 runners,
-`managed_service_account_id` for the managed service account, the managed warm
-pool and integration IDs, and the number of visible integration definitions.
-Runner registration tokens are consumed through
+`managed_service_account_id` and `managed_team_id`, the managed warm pool and
+integration IDs, and the number of visible integration definitions. Runner
+registration tokens are consumed through
 `ephemeral.ona_runner_token` during apply, so they are not written as normal
 Terraform outputs or stored in state.
 
@@ -74,26 +75,16 @@ The integration uses the visible built-in definition for `linear.app`, so the
 dev loop does not require or persist an OAuth client secret.
 
 AI budget resources are opt-in because they require an enterprise organization,
-suitable Billing permissions, and change organization billing policy. Enable
-the organization and service-account cases with:
+suitable Billing permissions, and change organization billing policy. Enabling
+them exercises organization, service-account, and team budgets, including
+separate credit and BYOK resources against the shared `ona_team.devloop`
+allocation:
 
 ```shell
 ONA_TOKEN=... \
 TF_CLI_CONFIG_FILE="${PWD}/terraformrc" \
 terraform -chdir=dev/local-devloop apply \
   -var='enable_ai_budgets=true' \
-  -auto-approve -input=false
-```
-
-To also exercise separate credit and BYOK resources against one shared team
-allocation, provide an existing team UUID:
-
-```shell
-ONA_TOKEN=... \
-TF_CLI_CONFIG_FILE="${PWD}/terraformrc" \
-terraform -chdir=dev/local-devloop apply \
-  -var='enable_ai_budgets=true' \
-  -var='ai_budget_team_id=<team-id>' \
   -auto-approve -input=false
 ```
 
