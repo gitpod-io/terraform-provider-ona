@@ -583,7 +583,7 @@ const file_gitpod_v1_editor_proto_rawDesc = "" +
 	"\tGetEditor\x12\x1b.gitpod.v1.GetEditorRequest\x1a\x1c.gitpod.v1.GetEditorResponse\"\x11\xb2\xab\x1e\n" +
 	"\x12\bretrieve\x90\x02\x01\x12n\n" +
 	"\x10ResolveEditorURL\x12\".gitpod.v1.ResolveEditorURLRequest\x1a#.gitpod.v1.ResolveEditorURLResponse\"\x11\xb2\xab\x1e\r\x12\vresolve_url\x1a\r\xaa\xab\x1e\t\n" +
-	"\aeditorsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\aeditorsB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_editor_proto_rawDescOnce sync.Once

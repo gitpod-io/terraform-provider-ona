@@ -11049,7 +11049,7 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x1aUpdateTeamCreditAllocation\x12,.gitpod.v1.UpdateTeamCreditAllocationRequest\x1a-.gitpod.v1.UpdateTeamCreditAllocationResponse\"\x00\x12{\n" +
 	"\x1aDeleteTeamCreditAllocation\x12,.gitpod.v1.DeleteTeamCreditAllocationRequest\x1a-.gitpod.v1.DeleteTeamCreditAllocationResponse\"\x00\x12{\n" +
 	"\x1aSetOrganizationCreditGrant\x12,.gitpod.v1.SetOrganizationCreditGrantRequest\x1a-.gitpod.v1.SetOrganizationCreditGrantResponse\"\x00\x1a\r\xaa\xab\x1e\t\n" +
-	"\abillingB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\abillingB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_billing_proto_rawDescOnce sync.Once

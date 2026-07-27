@@ -11428,7 +11428,7 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\fCreatePrompt\x12\x1e.gitpod.v1.CreatePromptRequest\x1a\x1f.gitpod.v1.CreatePromptResponse\"\x13\xb2\xab\x1e\x0f\x12\rcreate_prompt\x12d\n" +
 	"\fUpdatePrompt\x12\x1e.gitpod.v1.UpdatePromptRequest\x1a\x1f.gitpod.v1.UpdatePromptResponse\"\x13\xb2\xab\x1e\x0f\x12\rupdate_prompt\x12d\n" +
 	"\fDeletePrompt\x12\x1e.gitpod.v1.DeletePromptRequest\x1a\x1f.gitpod.v1.DeletePromptResponse\"\x13\xb2\xab\x1e\x0f\x12\rdelete_prompt\x1a\f\xaa\xab\x1e\b\n" +
-	"\x06agentsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x06agentsB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_agent_proto_rawDescOnce sync.Once

@@ -223,7 +223,7 @@ const file_gitpod_v1_environment_logs_proto_rawDesc = "" +
 	"\x1fLOG_SECTION_OUTCOME_UNSPECIFIED\x10\x00\x12\x1f\n" +
 	"\x1bLOG_SECTION_OUTCOME_SUCCESS\x10\x01\x12\x1f\n" +
 	"\x1bLOG_SECTION_OUTCOME_FAILURE\x10\x02\x12!\n" +
-	"\x1dLOG_SECTION_OUTCOME_CANCELLED\x10\x03B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x1dLOG_SECTION_OUTCOME_CANCELLED\x10\x03B;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_environment_logs_proto_rawDescOnce sync.Once

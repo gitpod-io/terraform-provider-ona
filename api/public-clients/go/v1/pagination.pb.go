@@ -314,7 +314,7 @@ const file_gitpod_v1_pagination_proto_rawDesc = "" +
 	"\tSortOrder\x12\x1a\n" +
 	"\x16SORT_ORDER_UNSPECIFIED\x10\x00\x12\x12\n" +
 	"\x0eSORT_ORDER_ASC\x10\x01\x12\x13\n" +
-	"\x0fSORT_ORDER_DESC\x10\x02B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x0fSORT_ORDER_DESC\x10\x02B;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_pagination_proto_rawDescOnce sync.Once

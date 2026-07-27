@@ -1359,7 +1359,7 @@ const file_gitpod_v1_insights_proto_rawDesc = "" +
 	"\x18GetProjectInsightsStatus\x12*.gitpod.v1.GetProjectInsightsStatusRequest\x1a+.gitpod.v1.GetProjectInsightsStatusResponse\"\x03\x90\x02\x01\x12f\n" +
 	"\x13ReportInsightsBatch\x12%.gitpod.v1.ReportInsightsBatchRequest\x1a&.gitpod.v1.ReportInsightsBatchResponse\"\x00\x12]\n" +
 	"\x10ReportAgentTrace\x12\".gitpod.v1.ReportAgentTraceRequest\x1a#.gitpod.v1.ReportAgentTraceResponse\"\x00\x12f\n" +
-	"\x12GetInsightsSummary\x12$.gitpod.v1.GetInsightsSummaryRequest\x1a%.gitpod.v1.GetInsightsSummaryResponse\"\x03\x90\x02\x01B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x12GetInsightsSummary\x12$.gitpod.v1.GetInsightsSummaryRequest\x1a%.gitpod.v1.GetInsightsSummaryResponse\"\x03\x90\x02\x01B;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_insights_proto_rawDescOnce sync.Once

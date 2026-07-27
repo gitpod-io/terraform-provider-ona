@@ -1604,7 +1604,7 @@ const file_gitpod_v1_webhook_proto_rawDesc = "" +
 	"\rDeleteWebhook\x12\x1f.gitpod.v1.DeleteWebhookRequest\x1a .gitpod.v1.DeleteWebhookResponse\"\x00\x12`\n" +
 	"\x10GetWebhookSecret\x12\".gitpod.v1.GetWebhookSecretRequest\x1a#.gitpod.v1.GetWebhookSecretResponse\"\x03\x90\x02\x01\x12f\n" +
 	"\x13RotateWebhookSecret\x12%.gitpod.v1.RotateWebhookSecretRequest\x1a&.gitpod.v1.RotateWebhookSecretResponse\"\x00\x12l\n" +
-	"\x14ListWebhookWorkflows\x12&.gitpod.v1.ListWebhookWorkflowsRequest\x1a'.gitpod.v1.ListWebhookWorkflowsResponse\"\x03\x90\x02\x01B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x14ListWebhookWorkflows\x12&.gitpod.v1.ListWebhookWorkflowsRequest\x1a'.gitpod.v1.ListWebhookWorkflowsResponse\"\x03\x90\x02\x01B;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_webhook_proto_rawDescOnce sync.Once

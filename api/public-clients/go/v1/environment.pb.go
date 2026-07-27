@@ -7153,7 +7153,7 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\x15MarkEnvironmentActive\x12'.gitpod.v1.MarkEnvironmentActiveRequest\x1a(.gitpod.v1.MarkEnvironmentActiveResponse\"\x11\xb2\xab\x1e\r\x12\vmark_active\x12x\n" +
 	"\x14UnarchiveEnvironment\x12&.gitpod.v1.UnarchiveEnvironmentRequest\x1a'.gitpod.v1.UnarchiveEnvironmentResponse\"\x0f\xb2\xab\x1e\v\x12\tunarchive\x12c\n" +
 	"\x12ArchiveEnvironment\x12$.gitpod.v1.ArchiveEnvironmentRequest\x1a%.gitpod.v1.ArchiveEnvironmentResponse\"\x00\x1a\x12\xaa\xab\x1e\x0e\n" +
-	"\fenvironmentsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\fenvironmentsB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_environment_proto_rawDescOnce sync.Once

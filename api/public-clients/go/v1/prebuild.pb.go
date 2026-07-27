@@ -2470,7 +2470,7 @@ const file_gitpod_v1_prebuild_proto_rawDesc = "" +
 	"\rListWarmPools\x12\x1f.gitpod.v1.ListWarmPoolsRequest\x1a .gitpod.v1.ListWarmPoolsResponse\"\x18\xb2\xab\x1e\x11\x12\x0flist_warm_pools\x90\x02\x01\x12m\n" +
 	"\x0eUpdateWarmPool\x12 .gitpod.v1.UpdateWarmPoolRequest\x1a!.gitpod.v1.UpdateWarmPoolResponse\"\x16\xb2\xab\x1e\x12\x12\x10update_warm_pool\x12m\n" +
 	"\x0eDeleteWarmPool\x12 .gitpod.v1.DeleteWarmPoolRequest\x1a!.gitpod.v1.DeleteWarmPoolResponse\"\x16\xb2\xab\x1e\x12\x12\x10delete_warm_pool\x1a\x0f\xaa\xab\x1e\v\n" +
-	"\tprebuildsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\tprebuildsB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_prebuild_proto_rawDescOnce sync.Once

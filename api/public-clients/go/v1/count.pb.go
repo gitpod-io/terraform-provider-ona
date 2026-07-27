@@ -191,7 +191,7 @@ const file_gitpod_v1_count_proto_rawDesc = "" +
 	"\x15CountResponseRelation\x12'\n" +
 	"#COUNT_RESPONSE_RELATION_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aCOUNT_RESPONSE_RELATION_EQ\x10\x01\x12\x1f\n" +
-	"\x1bCOUNT_RESPONSE_RELATION_GTE\x10\x02B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x1bCOUNT_RESPONSE_RELATION_GTE\x10\x02B;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_count_proto_rawDescOnce sync.Once

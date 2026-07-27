@@ -1457,7 +1457,7 @@ const file_gitpod_v1_session_proto_rawDesc = "" +
 	"\x12AddSessionResource\x12$.gitpod.v1.AddSessionResourceRequest\x1a%.gitpod.v1.AddSessionResourceResponse\"\x00\x12l\n" +
 	"\x15RemoveSessionResource\x12'.gitpod.v1.RemoveSessionResourceRequest\x1a(.gitpod.v1.RemoveSessionResourceResponse\"\x00\x12l\n" +
 	"\x15UpdateSessionResource\x12'.gitpod.v1.UpdateSessionResourceRequest\x1a(.gitpod.v1.UpdateSessionResourceResponse\"\x00\x12i\n" +
-	"\x14ListSessionResources\x12&.gitpod.v1.ListSessionResourcesRequest\x1a'.gitpod.v1.ListSessionResourcesResponse\"\x00B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x14ListSessionResources\x12&.gitpod.v1.ListSessionResourcesRequest\x1a'.gitpod.v1.ListSessionResourcesResponse\"\x00B;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_session_proto_rawDescOnce sync.Once

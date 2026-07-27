@@ -289,7 +289,7 @@ const file_gitpod_v1_agent_security_proto_rawDesc = "" +
 	"\x04pgid\x18\a \x01(\x05R\x04pgid\x12\x10\n" +
 	"\x03sid\x18\b \x01(\x05R\x03sid2r\n" +
 	"\x14AgentSecurityService\x12Z\n" +
-	"\x0fReportExecEvent\x12!.gitpod.v1.ReportExecEventRequest\x1a\".gitpod.v1.ReportExecEventResponse\"\x00B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x0fReportExecEvent\x12!.gitpod.v1.ReportExecEventRequest\x1a\".gitpod.v1.ReportExecEventResponse\"\x00B;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_agent_security_proto_rawDescOnce sync.Once

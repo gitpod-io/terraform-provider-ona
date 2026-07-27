@@ -517,7 +517,7 @@ const file_gitpod_v1_identity_proto_rawDesc = "" +
 	"\x18GetAuthenticatedIdentity\x12*.gitpod.v1.GetAuthenticatedIdentityRequest\x1a+.gitpod.v1.GetAuthenticatedIdentityResponse\"#\xb2\xab\x1e\x1c\x12\x1aget-authenticated-identity\x90\x02\x01\x12h\n" +
 	"\rExchangeToken\x12\x1f.gitpod.v1.ExchangeTokenRequest\x1a .gitpod.v1.ExchangeTokenResponse\"\x14\xb2\xab\x1e\x10\x12\x0eexchange-token\x1a\x0e\xaa\xab\x1e\n" +
 	"\n" +
-	"\bidentityB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\bidentityB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_identity_proto_rawDescOnce sync.Once

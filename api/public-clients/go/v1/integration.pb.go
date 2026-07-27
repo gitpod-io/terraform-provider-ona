@@ -3058,7 +3058,7 @@ const file_gitpod_v1_integration_proto_rawDesc = "" +
 	"\x10ListIntegrations\x12\".gitpod.v1.ListIntegrationsRequest\x1a#.gitpod.v1.ListIntegrationsResponse\"\x03\x90\x02\x01\x12i\n" +
 	"\x13ValidateIntegration\x12%.gitpod.v1.ValidateIntegrationRequest\x1a&.gitpod.v1.ValidateIntegrationResponse\"\x03\x90\x02\x01\x12l\n" +
 	"\x15StartCodexDeviceLogin\x12'.gitpod.v1.StartCodexDeviceLoginRequest\x1a(.gitpod.v1.StartCodexDeviceLoginResponse\"\x00\x12u\n" +
-	"\x18CompleteCodexDeviceLogin\x12*.gitpod.v1.CompleteCodexDeviceLoginRequest\x1a+.gitpod.v1.CompleteCodexDeviceLoginResponse\"\x00B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x18CompleteCodexDeviceLogin\x12*.gitpod.v1.CompleteCodexDeviceLoginRequest\x1a+.gitpod.v1.CompleteCodexDeviceLoginResponse\"\x00B;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_integration_proto_rawDescOnce sync.Once
