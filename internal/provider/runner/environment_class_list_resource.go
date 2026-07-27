@@ -84,6 +84,7 @@ func (r *EnvironmentClassResource) List(ctx context.Context, req list.ListReques
 				Filter: &v1.ListEnvironmentClassesRequest_Filter{
 					RunnerIds:       filter.RunnerIDs,
 					Enabled:         filter.Enabled,
+					RunnerKinds:     []v1.RunnerKind{v1.RunnerKind_RUNNER_KIND_REMOTE},
 					RunnerProviders: filter.Providers,
 				},
 			}))

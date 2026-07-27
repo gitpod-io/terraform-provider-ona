@@ -924,6 +924,7 @@ func newRunnerConfigurationAPIServer(t *testing.T) *runnerConfigurationAPIServer
 		llmCreateRequests:               map[string]*v1.CreateLLMIntegrationRequest{},
 		llmUpdateRequests:               map[string][]*v1.UpdateLLMIntegrationRequest{},
 		environmentClasses:              map[string]*v1.EnvironmentClass{},
+		environmentClassRunnerKinds:     map[string]v1.RunnerKind{},
 		environmentClassRunnerProviders: map[string]v1.RunnerProvider{},
 	}
 	runnerService := &fakeRunnerService{runners: map[string]*v1.Runner{}}
@@ -960,6 +961,8 @@ type fakeRunnerConfigurationService struct {
 	llmAPIKeyUpdates                map[string][]string
 	llmCreateErr                    error
 	environmentClasses              map[string]*v1.EnvironmentClass
+	lastEnvironmentClassListKinds   []v1.RunnerKind
+	environmentClassRunnerKinds     map[string]v1.RunnerKind
 	environmentClassRunnerProviders map[string]v1.RunnerProvider
 }
 
@@ -1200,6 +1203,7 @@ func (s *fakeRunnerConfigurationService) GetEnvironmentClass(ctx context.Context
 func (s *fakeRunnerConfigurationService) ListEnvironmentClasses(ctx context.Context, req *connect.Request[v1.ListEnvironmentClassesRequest]) (*connect.Response[v1.ListEnvironmentClassesResponse], error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	s.lastEnvironmentClassListKinds = append([]v1.RunnerKind(nil), req.Msg.GetFilter().GetRunnerKinds()...)
 
 	runnerIDs := map[string]struct{}{}
 	for _, id := range req.Msg.GetFilter().GetRunnerIds() {
@@ -1208,6 +1212,10 @@ func (s *fakeRunnerConfigurationService) ListEnvironmentClasses(ctx context.Cont
 	runnerProviders := map[v1.RunnerProvider]struct{}{}
 	for _, provider := range req.Msg.GetFilter().GetRunnerProviders() {
 		runnerProviders[provider] = struct{}{}
+	}
+	runnerKinds := map[v1.RunnerKind]struct{}{}
+	for _, kind := range req.Msg.GetFilter().GetRunnerKinds() {
+		runnerKinds[kind] = struct{}{}
 	}
 
 	var classes []*v1.EnvironmentClass
@@ -1222,6 +1230,11 @@ func (s *fakeRunnerConfigurationService) ListEnvironmentClasses(ctx context.Cont
 				continue
 			}
 		}
+		if kind, ok := s.environmentClassRunnerKinds[class.GetRunnerId()]; ok && len(runnerKinds) > 0 {
+			if _, ok := runnerKinds[kind]; !ok {
+				continue
+			}
+		}
 		if enabled := req.Msg.GetFilter().Enabled; enabled != nil && class.GetEnabled() != *enabled {
 			continue
 		}
@@ -1229,6 +1242,12 @@ func (s *fakeRunnerConfigurationService) ListEnvironmentClasses(ctx context.Cont
 	}
 	sort.Slice(classes, func(i, j int) bool { return classes[i].GetId() < classes[j].GetId() })
 	return connect.NewResponse(&v1.ListEnvironmentClassesResponse{EnvironmentClasses: classes}), nil
+}
+
+func (s *fakeRunnerConfigurationService) environmentClassListRunnerKinds() []v1.RunnerKind {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return append([]v1.RunnerKind(nil), s.lastEnvironmentClassListKinds...)
 }
 
 func (s *fakeRunnerConfigurationService) UpdateEnvironmentClass(ctx context.Context, req *connect.Request[v1.UpdateEnvironmentClassRequest]) (*connect.Response[v1.UpdateEnvironmentClassResponse], error) {

@@ -53,6 +53,11 @@ func TestAccEnvironmentClassQueryFilters(t *testing.T) {
 			Expected: []environmentClassQueryResult{},
 		},
 		{
+			Name:     "local_configuration_runner",
+			Config:   `runner_ids = ["runner-4"]`,
+			Expected: []environmentClassQueryResult{},
+		},
+		{
 			Name:   "aws_ec2_provider",
 			Config: `providers = ["aws_ec2"]`,
 			Expected: []environmentClassQueryResult{
@@ -108,6 +113,13 @@ enabled   = true
 					expectEnvironmentClassQueryResults{Expected: tc.Expected},
 				},
 			}))
+
+			if diff := cmp.Diff(
+				[]v1.RunnerKind{v1.RunnerKind_RUNNER_KIND_REMOTE},
+				server.service.environmentClassListRunnerKinds(),
+			); diff != "" {
+				t.Errorf("environment class list runner kinds mismatch (-want +got):\n%s", diff)
+			}
 		})
 	}
 }
@@ -198,6 +210,10 @@ func newEnvironmentClassQueryAPIServer(t *testing.T) *runnerConfigurationAPIServ
 	managedRunner := newTestRunner("runner-3", "Managed Runner")
 	managedRunner.Provider = v1.RunnerProvider_RUNNER_PROVIDER_MANAGED
 	server.runnerService.runners["runner-3"] = managedRunner
+	localConfigurationRunner := newTestRunner("runner-4", "Local Configuration Runner")
+	localConfigurationRunner.Kind = v1.RunnerKind_RUNNER_KIND_LOCAL_CONFIGURATION
+	localConfigurationRunner.Provider = v1.RunnerProvider_RUNNER_PROVIDER_UNSPECIFIED
+	server.runnerService.runners["runner-4"] = localConfigurationRunner
 
 	server.service.environmentClasses["class-1"] = &v1.EnvironmentClass{
 		Id:            "class-1",
@@ -229,9 +245,21 @@ func newEnvironmentClassQueryAPIServer(t *testing.T) *runnerConfigurationAPIServ
 		Description: "Disabled test environment class",
 		Enabled:     false,
 	}
+	server.service.environmentClasses["class-5"] = &v1.EnvironmentClass{
+		Id:          "class-5",
+		RunnerId:    "runner-4",
+		DisplayName: "Local",
+		Description: "Unsupported local configuration runner environment class",
+		Enabled:     true,
+	}
 	server.service.environmentClassRunnerProviders["runner-1"] = v1.RunnerProvider_RUNNER_PROVIDER_AWS_EC2
 	server.service.environmentClassRunnerProviders["runner-2"] = v1.RunnerProvider_RUNNER_PROVIDER_GCP
 	server.service.environmentClassRunnerProviders["runner-3"] = v1.RunnerProvider_RUNNER_PROVIDER_MANAGED
+	server.service.environmentClassRunnerProviders["runner-4"] = v1.RunnerProvider_RUNNER_PROVIDER_UNSPECIFIED
+	server.service.environmentClassRunnerKinds["runner-1"] = v1.RunnerKind_RUNNER_KIND_REMOTE
+	server.service.environmentClassRunnerKinds["runner-2"] = v1.RunnerKind_RUNNER_KIND_REMOTE
+	server.service.environmentClassRunnerKinds["runner-3"] = v1.RunnerKind_RUNNER_KIND_REMOTE
+	server.service.environmentClassRunnerKinds["runner-4"] = v1.RunnerKind_RUNNER_KIND_LOCAL_CONFIGURATION
 	return server
 }
 
