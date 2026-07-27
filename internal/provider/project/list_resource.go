@@ -4,16 +4,19 @@
 package project
 
 import (
-	"connectrpc.com/connect"
 	"context"
 	"fmt"
+	"regexp"
+	"sort"
+	"strings"
+
+	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/list"
 	listschema "github.com/hashicorp/terraform-plugin-framework/list/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"sort"
 )
 
 var _ list.ListResource = &Resource{}
@@ -53,6 +56,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 		}
 		var token string
 		var emitted int64
+		displayNames := newProjectDisplayNames()
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.ProjectService().ListProjects(ctx, connect.NewRequest(&v1.ListProjectsRequest{Pagination: &v1.PaginationRequest{PageSize: listutil.PageSize(req.Limit, emitted), Token: token}, Filter: &v1.ListProjectsRequest_Filter{Search: data.Search.ValueString(), ProjectIds: ids, SpecRemoteUris: urls}, Sort: &v1.Sort{Field: "id"}}))
 			if err != nil {
@@ -74,10 +78,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 					return
 				}
 				item := req.NewListResult(ctx)
-				item.DisplayName = remote.GetMetadata().GetName()
-				if item.DisplayName == "" {
-					item.DisplayName = remote.GetId()
-				}
+				item.DisplayName = displayNames.forProject(remote)
 				item.Diagnostics.Append(item.Identity.Set(ctx, IdentityModel{ID: types.StringValue(remote.GetId())})...)
 				if req.IncludeResource && !item.Diagnostics.HasError() {
 					item.Diagnostics.Append(item.Resource.Set(ctx, &model)...)
@@ -101,4 +102,48 @@ func isUnsupportedProjectRepository(diags diag.Diagnostics) bool {
 	}
 	_, ok := diags[0].(unsupportedProjectRepositoryDiagnostic)
 	return ok
+}
+
+type projectDisplayNames struct {
+	used map[string]struct{}
+}
+
+func newProjectDisplayNames() projectDisplayNames {
+	return projectDisplayNames{used: map[string]struct{}{}}
+}
+
+func (n projectDisplayNames) forProject(project *v1.Project) string {
+	preferred := project.GetId()
+	if project.GetMetadata() != nil {
+		preferred = project.GetMetadata().GetName()
+	}
+	base := projectDisplayNameLabel(preferred)
+	if base == "" {
+		id := project.GetId()
+		base = "r_" + strings.ReplaceAll(id[:min(len(id), 8)], "-", "_")
+	}
+
+	candidate := base
+	for i := 2; ; i++ {
+		if _, ok := n.used[candidate]; !ok {
+			n.used[candidate] = struct{}{}
+			return candidate
+		}
+		candidate = fmt.Sprintf("%s_%d", base, i)
+	}
+}
+
+var projectDisplayNameInvalidChars = regexp.MustCompile(`[^a-z0-9_]+`)
+
+func projectDisplayNameLabel(value string) string {
+	value = strings.ToLower(strings.TrimSpace(value))
+	value = projectDisplayNameInvalidChars.ReplaceAllString(value, "_")
+	value = strings.Trim(value, "_")
+	if value == "" {
+		return ""
+	}
+	if value[0] >= '0' && value[0] <= '9' {
+		value = "r_" + value
+	}
+	return value
 }

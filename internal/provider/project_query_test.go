@@ -60,7 +60,7 @@ func TestAccProjectQuery(t *testing.T) {
 	}
 	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{Query: true, Config: projectQueryConfig(), QueryResultChecks: []querycheck.QueryResultCheck{
 		querycheck.ExpectLength("ona_project.all", 1), querycheck.ExpectIdentity("ona_project.all", map[string]knownvalue.Check{"id": knownvalue.StringExact("project-1")}),
-		querycheck.ExpectResourceKnownValues("ona_project.all", queryfilter.ByDisplayName(knownvalue.StringExact("Example")), []querycheck.KnownValueCheck{{Path: tfjsonpath.New("id"), KnownValue: knownvalue.StringExact("project-1")}, {Path: tfjsonpath.New("name"), KnownValue: knownvalue.StringExact("Example")}, {Path: tfjsonpath.New("repository_clone_url"), KnownValue: knownvalue.StringExact("https://github.com/ona/example.git")}, {Path: tfjsonpath.New("branch"), KnownValue: knownvalue.StringExact("main")}}),
+		querycheck.ExpectResourceKnownValues("ona_project.all", queryfilter.ByDisplayName(knownvalue.StringExact("example")), []querycheck.KnownValueCheck{{Path: tfjsonpath.New("id"), KnownValue: knownvalue.StringExact("project-1")}, {Path: tfjsonpath.New("name"), KnownValue: knownvalue.StringExact("Example")}, {Path: tfjsonpath.New("repository_clone_url"), KnownValue: knownvalue.StringExact("https://github.com/ona/example.git")}, {Path: tfjsonpath.New("branch"), KnownValue: knownvalue.StringExact("main")}}),
 	}}))
 }
 func projectQueryConfig() string {
