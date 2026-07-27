@@ -35,10 +35,46 @@ variable "group_name" {
   default     = "Terraform Provider Dev Loop"
 }
 
+variable "enable_ai_budgets" {
+  type        = bool
+  description = "Whether to exercise enterprise AI budget resources. Enabling this changes organization billing policy and requires suitable Billing permissions."
+  default     = false
+}
+
 variable "team_name" {
   type        = string
   description = "Name for the team managed by this local development module."
   default     = "Terraform Provider Dev Loop"
+}
+
+variable "organization_monthly_credit_limit" {
+  type        = number
+  description = "Whole-credit organization default used by the AI budget dev loop."
+  default     = 5000
+}
+
+variable "organization_monthly_cost_limit_microunits" {
+  type        = number
+  description = "Organization BYOK default in currency microunits used by the AI budget dev loop."
+  default     = 100000000
+}
+
+variable "service_account_monthly_credit_limit" {
+  type        = number
+  description = "Whole-credit direct override for the devloop service account."
+  default     = 750
+}
+
+variable "team_credit_budget" {
+  type        = number
+  description = "Whole-credit soft budget applied to the configured devloop team."
+  default     = 1500
+}
+
+variable "team_cost_budget_microunits" {
+  type        = number
+  description = "BYOK soft budget in currency microunits applied to the configured devloop team."
+  default     = 50000000
 }
 
 variable "webhook_secret_version" {

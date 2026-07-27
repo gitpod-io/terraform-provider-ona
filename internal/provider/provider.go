@@ -9,6 +9,7 @@ import (
 
 	onaclient "github.com/gitpod-io/terraform-provider-ona/internal/client"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/accesscontrol"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/billing"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/integration"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/organization"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/project"
@@ -132,6 +133,9 @@ func (p *OnaProvider) Configure(ctx context.Context, req provider.ConfigureReque
 
 func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		billing.NewOrganizationAIBudgetResource,
+		billing.NewUserAIBudgetResource,
+		billing.NewTeamAIBudgetResource,
 		runner.NewResource,
 		runner.NewSCMIntegrationResource,
 		runner.NewLLMIntegrationResource,
