@@ -4,14 +4,16 @@ RELEASE_SNAPSHOT_VERSION ?= 0.0.0-SNAPSHOT
 GO_MODULE_DIRS := $(shell git ls-files --cached -- '*go.mod' | \
 	awk '!/(^|\/)(\.git|\.tmp|\.cache|cache|vendor|node_modules)(\/|$$)/' | \
 	sed -e 's#/go.mod$$##' -e 's#^go.mod$$#.#' | sort)
+# The standard test and build targets cover the root module.
+SECONDARY_GO_MODULE_DIRS := $(filter-out .,$(GO_MODULE_DIRS))
 
 default: fmt lint install generate
 
 define run-in-go-modules
 	@set -eu; \
-	for module in $(GO_MODULE_DIRS); do \
-		echo "==> $(1) ($$module)"; \
-		(cd "$$module" && export GOWORK=off && $(2)); \
+	for module in $(1); do \
+		echo "==> $(2) ($$module)"; \
+		(cd "$$module" && export GOWORK=off && $(3)); \
 	done
 endef
 
@@ -19,7 +21,7 @@ build:
 	go build -v ./...
 
 install-dependencies:
-	$(call run-in-go-modules,download dependencies,go mod download)
+	$(call run-in-go-modules,$(GO_MODULE_DIRS),download dependencies,go mod download)
 
 install: build
 	go install -v ./...
@@ -51,10 +53,10 @@ test-unit:
 test-acc:
 	TF_ACC=1 go test -v -cover -timeout 120m ./...
 
-check-go-modules:
-	$(call run-in-go-modules,check Go module,go mod download && packages="$$(go list ./...)" && (go test ./... || [ -z "$$packages" ]) && if [ -n "$$packages" ]; then go build ./...; fi)
+check-secondary-go-modules:
+	$(call run-in-go-modules,$(SECONDARY_GO_MODULE_DIRS),check secondary Go module,packages="$$(go list ./...)" && (go test ./... || [ -z "$$packages" ]) && if [ -n "$$packages" ]; then go build ./...; fi)
 
 release-snapshot:
 	VERSION=$(RELEASE_SNAPSHOT_VERSION) ./scripts/build-release-artifacts.sh
 
-.PHONY: fmt fmt-go fmt-terraform lint lint-go lint-sh test test-unit test-acc check-go-modules build install-dependencies install generate release-snapshot
+.PHONY: fmt fmt-go fmt-terraform lint lint-go lint-sh test test-unit test-acc check-secondary-go-modules build install-dependencies install generate release-snapshot

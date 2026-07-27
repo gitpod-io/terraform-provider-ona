@@ -120,8 +120,8 @@ jobs:
       - name: Build provider
         run: make build
 
-      - name: Check all Go modules
-        run: make check-go-modules
+      - name: Check secondary Go modules
+        run: make check-secondary-go-modules
 
   release-snapshot:
     name: Build release snapshot
