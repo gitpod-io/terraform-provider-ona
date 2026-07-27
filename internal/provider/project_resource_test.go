@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 	"sync"
 	"testing"
 	"time"
@@ -20,8 +21,183 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/durationpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
+
+func TestAccProjectDataSource(t *testing.T) {
+	t.Parallel()
+
+	server := newProjectAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.put(testProjectDataSourceProject("project-lookup"))
+	server.insights.setEnabled("project-lookup", true)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccProjectDataSourceConfig(server.URL, "project-lookup"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("data.ona_project.test", "id", "project-lookup"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "project_id", "project-lookup"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "name", "Acme API"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "repository_clone_url", "https://github.com/acme/api.git"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "branch", "main"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "insights_enabled", "true"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "devcontainer_file_path", ".devcontainer/devcontainer.json"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "automations_file_path", ".ona/automations.yaml"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "created_at", "2026-07-07T12:00:00Z"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "creator.id", "user-1"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "creator.principal", "user"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "environment_class.#", "2"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "environment_class.0.local_runner", "true"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "environment_class.0.order", "0"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "environment_class.1.environment_class_id", "class-1"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "environment_class.1.order", "1"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "prebuild_configuration.#", "1"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "prebuild_configuration.0.enabled", "true"),
+					resource.TestCheckTypeSetElemAttr("data.ona_project.test", "prebuild_configuration.0.environment_class_ids.*", "class-1"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "prebuild_configuration.0.timeout", "30m0s"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "prebuild_configuration.0.daily_schedule.0.hour_utc", "3"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "prebuild_configuration.0.executor.0.id", "service-account-1"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "prebuild_configuration.0.executor.0.principal", "service_account"),
+					resource.TestCheckResourceAttr("data.ona_project.test", "prebuild_configuration.0.enable_jetbrains_warmup", "true"),
+				),
+			},
+			{
+				PreConfig: func() {
+					server.insights.setEnabled("project-lookup", false)
+				},
+				Config: testAccProjectDataSourceConfig(server.URL, "project-lookup"),
+				Check:  resource.TestCheckResourceAttr("data.ona_project.test", "insights_enabled", "false"),
+			},
+		},
+	})
+}
+
+func TestAccProjectDataSourceDiagnostics(t *testing.T) {
+	t.Parallel()
+
+	server := newProjectAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.put(testProjectDataSourceProject("project-lookup"))
+	server.insights.setEnabled("project-lookup", true)
+	server.service.put(&v1.Project{
+		Id:       "project-unsupported",
+		Metadata: &v1.ProjectMetadata{Name: "Unsupported"},
+	})
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccProjectDataSourceConfig(server.URL, ""),
+				ExpectError: regexp.MustCompile("Missing Ona Project ID"),
+			},
+			{
+				Config:      testAccProjectDataSourceConfig(server.URL, "project-missing"),
+				ExpectError: regexp.MustCompile("Ona Project Not Found or Not Visible"),
+			},
+			{
+				PreConfig: func() {
+					server.service.setGetBehavior(connect.NewError(connect.CodeInternal, errors.New("get failed")), false)
+				},
+				Config:      testAccProjectDataSourceConfig(server.URL, "project-lookup"),
+				ExpectError: regexp.MustCompile("Unable to Read Ona Project"),
+			},
+			{
+				PreConfig: func() {
+					server.service.setGetBehavior(nil, true)
+				},
+				Config:      testAccProjectDataSourceConfig(server.URL, "project-lookup"),
+				ExpectError: regexp.MustCompile("empty project response"),
+			},
+			{
+				PreConfig: func() {
+					server.service.setGetBehavior(nil, false)
+				},
+				Config:      testAccProjectDataSourceConfig(server.URL, "project-unsupported"),
+				ExpectError: regexp.MustCompile("Unsupported Ona Project Repository"),
+			},
+			{
+				PreConfig: func() {
+					server.insights.setGetError(connect.NewError(connect.CodeInternal, errors.New("insights failed")))
+				},
+				Config:      testAccProjectDataSourceConfig(server.URL, "project-lookup"),
+				ExpectError: regexp.MustCompile("Unable to Read Ona Project Insights"),
+			},
+		},
+	})
+}
+
+func testAccProjectDataSourceConfig(host string, projectID string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+data "ona_project" "test" {
+  project_id = %[2]q
+}
+`, host, projectID)
+}
+
+func testProjectDataSourceProject(id string) *v1.Project {
+	return &v1.Project{
+		Id: id,
+		Metadata: &v1.ProjectMetadata{
+			OrganizationId: "org-1",
+			Name:           "Acme API",
+			Creator: &v1.Subject{
+				Id:        "user-1",
+				Principal: v1.Principal_PRINCIPAL_USER,
+			},
+			CreatedAt: timestamppb.New(time.Date(2026, 7, 7, 12, 0, 0, 0, time.UTC)),
+		},
+		Initializer: &v1.EnvironmentInitializer{
+			Specs: []*v1.EnvironmentInitializer_Spec{{
+				Spec: &v1.EnvironmentInitializer_Spec_Git{
+					Git: &v1.GitInitializer{
+						RemoteUri:   "https://github.com/acme/api.git",
+						TargetMode:  v1.GitInitializer_CLONE_TARGET_MODE_REMOTE_BRANCH,
+						CloneTarget: "main",
+					},
+				},
+			}},
+		},
+		DevcontainerFilePath: ".devcontainer/devcontainer.json",
+		AutomationsFilePath:  ".ona/automations.yaml",
+		EnvironmentClasses: []*v1.ProjectEnvironmentClass{
+			{
+				EnvironmentClass: &v1.ProjectEnvironmentClass_EnvironmentClassId{EnvironmentClassId: "class-1"},
+				Order:            1,
+			},
+			{
+				EnvironmentClass: &v1.ProjectEnvironmentClass_LocalRunner{LocalRunner: true},
+				Order:            0,
+			},
+		},
+		PrebuildConfiguration: &v1.ProjectPrebuildConfiguration{
+			Enabled:             true,
+			EnvironmentClassIds: []string{"class-1"},
+			Timeout:             durationpb.New(30 * time.Minute),
+			Trigger: &v1.PrebuildTrigger{
+				Trigger: &v1.PrebuildTrigger_DailySchedule_{
+					DailySchedule: &v1.PrebuildTrigger_DailySchedule{HourUtc: 3},
+				},
+			},
+			Executor: &v1.Subject{
+				Id:        "service-account-1",
+				Principal: v1.Principal_PRINCIPAL_SERVICE_ACCOUNT,
+			},
+			EnableJetbrainsWarmup: true,
+		},
+	}
+}
 
 func TestAccProjectResourceLifecycle(t *testing.T) {
 	t.Parallel()
@@ -203,6 +379,8 @@ type fakeProjectService struct {
 	projects map[string]*v1.Project
 	deletes  []string
 	now      time.Time
+	getErr   error
+	emptyGet bool
 }
 
 func (s *fakeProjectService) CreateProject(ctx context.Context, req *connect.Request[v1.CreateProjectRequest]) (*connect.Response[v1.CreateProjectResponse], error) {
@@ -235,11 +413,30 @@ func (s *fakeProjectService) GetProject(ctx context.Context, req *connect.Reques
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	if s.getErr != nil {
+		return nil, s.getErr
+	}
+	if s.emptyGet {
+		return connect.NewResponse(&v1.GetProjectResponse{}), nil
+	}
 	project := s.projects[req.Msg.GetProjectId()]
 	if project == nil {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("project not found"))
 	}
 	return connect.NewResponse(&v1.GetProjectResponse{Project: cloneProject(project)}), nil
+}
+
+func (s *fakeProjectService) put(project *v1.Project) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.projects[project.GetId()] = cloneProject(project)
+}
+
+func (s *fakeProjectService) setGetBehavior(err error, empty bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.getErr = err
+	s.emptyGet = empty
 }
 
 func (s *fakeProjectService) UpdateProject(ctx context.Context, req *connect.Request[v1.UpdateProjectRequest]) (*connect.Response[v1.UpdateProjectResponse], error) {
@@ -363,6 +560,7 @@ type fakeInsightsService struct {
 	enabled      map[string]bool
 	enableCalls  map[string]int
 	disableCalls map[string]int
+	getErr       error
 }
 
 func (s *fakeInsightsService) EnableProjectInsights(ctx context.Context, req *connect.Request[v1.EnableProjectInsightsRequest]) (*connect.Response[v1.EnableProjectInsightsResponse], error) {
@@ -392,9 +590,24 @@ func (s *fakeInsightsService) GetProjectInsightsStatus(ctx context.Context, req 
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	if s.getErr != nil {
+		return nil, s.getErr
+	}
 	enabled, ok := s.enabled[req.Msg.GetProjectId()]
 	if !ok {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("project not found"))
 	}
 	return connect.NewResponse(&v1.GetProjectInsightsStatusResponse{Enabled: enabled}), nil
+}
+
+func (s *fakeInsightsService) setEnabled(projectID string, enabled bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.enabled[projectID] = enabled
+}
+
+func (s *fakeInsightsService) setGetError(err error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.getErr = err
 }
