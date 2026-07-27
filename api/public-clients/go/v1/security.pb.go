@@ -1046,7 +1046,7 @@ const file_gitpod_v1_security_proto_rawDesc = "" +
 	"\x14ListSecurityPolicies\x12&.gitpod.v1.ListSecurityPoliciesRequest\x1a'.gitpod.v1.ListSecurityPoliciesResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x12u\n" +
 	"\x14UpdateSecurityPolicy\x12&.gitpod.v1.UpdateSecurityPolicyRequest\x1a'.gitpod.v1.UpdateSecurityPolicyResponse\"\f\xb2\xab\x1e\b\x12\x06update\x12u\n" +
 	"\x14DeleteSecurityPolicy\x12&.gitpod.v1.DeleteSecurityPolicyRequest\x1a'.gitpod.v1.DeleteSecurityPolicyResponse\"\f\xb2\xab\x1e\b\x12\x06delete\x1a\x17\xaa\xab\x1e\x13\n" +
-	"\x11security_policiesB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x11security_policiesB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_security_proto_rawDescOnce sync.Once

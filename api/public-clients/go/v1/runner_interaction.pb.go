@@ -8771,7 +8771,7 @@ const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	"%UpdateRunnerEnvironmentSnapshotStatus\x127.gitpod.v1.UpdateRunnerEnvironmentSnapshotStatusRequest\x1a8.gitpod.v1.UpdateRunnerEnvironmentSnapshotStatusResponse\"\x00\x12c\n" +
 	"\x11GetRunnerWarmPool\x12#.gitpod.v1.GetRunnerWarmPoolRequest\x1a$.gitpod.v1.GetRunnerWarmPoolResponse\"\x03\x90\x02\x01\x12i\n" +
 	"\x13ListRunnerWarmPools\x12%.gitpod.v1.ListRunnerWarmPoolsRequest\x1a&.gitpod.v1.ListRunnerWarmPoolsResponse\"\x03\x90\x02\x01\x12{\n" +
-	"\x1aUpdateRunnerWarmPoolStatus\x12,.gitpod.v1.UpdateRunnerWarmPoolStatusRequest\x1a-.gitpod.v1.UpdateRunnerWarmPoolStatusResponse\"\x00B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x1aUpdateRunnerWarmPoolStatus\x12,.gitpod.v1.UpdateRunnerWarmPoolStatusRequest\x1a-.gitpod.v1.UpdateRunnerWarmPoolStatusResponse\"\x00B;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_runner_interaction_proto_rawDescOnce sync.Once

@@ -4094,7 +4094,7 @@ const file_gitpod_v1_usage_proto_rawDesc = "" +
 	"\x17GetAgentTraceTimeSeries\x12).gitpod.v1.GetAgentTraceTimeSeriesRequest\x1a*.gitpod.v1.GetAgentTraceTimeSeriesResponse\"$\xb2\xab\x1e\x1d\x12\x1bget_agent_trace_time_series\x90\x02\x01\x12h\n" +
 	"\fGetPrSummary\x12\x1e.gitpod.v1.GetPrSummaryRequest\x1a\x1f.gitpod.v1.GetPrSummaryResponse\"\x17\xb2\xab\x1e\x10\x12\x0eget_pr_summary\x90\x02\x01\x12u\n" +
 	"\x0fGetPrTimeSeries\x12!.gitpod.v1.GetPrTimeSeriesRequest\x1a\".gitpod.v1.GetPrTimeSeriesResponse\"\x1b\xb2\xab\x1e\x14\x12\x12get_pr_time_series\x90\x02\x01\x1a\v\xaa\xab\x1e\a\n" +
-	"\x05usageB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x05usageB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_usage_proto_rawDescOnce sync.Once

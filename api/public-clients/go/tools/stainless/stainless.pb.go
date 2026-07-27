@@ -316,7 +316,7 @@ const file_gitpod_tools_v1_stainless_proto_rawDesc = "" +
 	"\x10stainless_method\x12\x1e.google.protobuf.MethodOptions\x18\xb6\xe5\x03 \x01(\v2 .gitpod.tools.v1.StainlessMethodR\x0fstainlessMethod:k\n" +
 	"\x0fstainless_model\x12\x1f.google.protobuf.MessageOptions\x18\xb7\xe5\x03 \x01(\v2\x1f.gitpod.tools.v1.StainlessModelR\x0estainlessModel:f\n" +
 	"\x0estainless_enum\x12\x1c.google.protobuf.EnumOptions\x18\xb8\xe5\x03 \x01(\v2\x1f.gitpod.tools.v1.StainlessModelR\rstainlessEnum:i\n" +
-	"\x0fstainless_field\x12\x1d.google.protobuf.FieldOptions\x18\xb9\xe5\x03 \x01(\v2\x1f.gitpod.tools.v1.StainlessFieldR\x0estainlessFieldBCZAgithub.com/gitpod-io/gitpod-next/api/go/tools/stainless;stainlessb\x06proto3"
+	"\x0fstainless_field\x12\x1d.google.protobuf.FieldOptions\x18\xb9\xe5\x03 \x01(\v2\x1f.gitpod.tools.v1.StainlessFieldR\x0estainlessFieldBRZPgithub.com/gitpod-io/gitpod-next/api/public-clients/go/tools/stainless;stainlessb\x06proto3"
 
 var (
 	file_gitpod_tools_v1_stainless_proto_rawDescOnce sync.Once

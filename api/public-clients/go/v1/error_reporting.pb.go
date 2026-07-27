@@ -967,7 +967,7 @@ const file_gitpod_v1_error_reporting_proto_rawDesc = "" +
 	"\x11ERROR_LEVEL_FATAL\x10\x052\x83\x01\n" +
 	"\rErrorsService\x12d\n" +
 	"\fReportErrors\x12\x1e.gitpod.v1.ReportErrorsRequest\x1a\x1f.gitpod.v1.ReportErrorsResponse\"\x13\xb2\xab\x1e\x0f\x12\rreport_errors\x1a\f\xaa\xab\x1e\b\n" +
-	"\x06errorsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x06errorsB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_error_reporting_proto_rawDescOnce sync.Once

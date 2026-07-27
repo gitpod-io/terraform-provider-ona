@@ -1119,7 +1119,7 @@ const file_gitpod_v1_team_proto_rawDesc = "" +
 	"DeleteTeam\x12\x1c.gitpod.v1.DeleteTeamRequest\x1a\x1d.gitpod.v1.DeleteTeamResponse\"\x00\x12T\n" +
 	"\rAddTeamMember\x12\x1f.gitpod.v1.AddTeamMemberRequest\x1a .gitpod.v1.AddTeamMemberResponse\"\x00\x12]\n" +
 	"\x10RemoveTeamMember\x12\".gitpod.v1.RemoveTeamMemberRequest\x1a#.gitpod.v1.RemoveTeamMemberResponse\"\x00\x12]\n" +
-	"\x0fListTeamMembers\x12!.gitpod.v1.ListTeamMembersRequest\x1a\".gitpod.v1.ListTeamMembersResponse\"\x03\x90\x02\x01B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x0fListTeamMembers\x12!.gitpod.v1.ListTeamMembersRequest\x1a\".gitpod.v1.ListTeamMembersResponse\"\x03\x90\x02\x01B;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_team_proto_rawDescOnce sync.Once

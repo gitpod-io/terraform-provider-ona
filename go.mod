@@ -21,19 +21,21 @@ require (
 require (
 	dario.cat/mergo v1.0.2 // indirect
 	github.com/go-test/deep v1.0.9 // indirect
+	github.com/kr/text v0.2.0 // indirect
 	github.com/skeema/knownhosts v1.3.2 // indirect
 	github.com/stretchr/testify v1.11.1 // indirect
 )
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20260709200747-435963d16310.1
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20260709200747-435963d16310.1 // indirect
 	github.com/ProtonMail/go-crypto v1.4.1 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/cloudflare/circl v1.6.4 // indirect
 	github.com/fatih/color v1.18.0 // indirect
+	github.com/gitpod-io/terraform-provider-ona/api/public-clients/go v0.0.0
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/google/gnostic v0.7.1
+	github.com/google/gnostic v0.7.1 // indirect
 	github.com/google/gnostic-models v0.7.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-checkpoint v0.5.0 // indirect
@@ -69,7 +71,6 @@ require (
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
-	go.opentelemetry.io/otel v1.43.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.52.0 // indirect
 	golang.org/x/mod v0.35.0 // indirect
@@ -80,5 +81,7 @@ require (
 	golang.org/x/tools v0.44.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260713224248-f5fc221cf8c4 // indirect
-	google.golang.org/grpc v1.80.0
+	google.golang.org/grpc v1.80.0 // indirect
 )
+
+replace github.com/gitpod-io/terraform-provider-ona/api/public-clients/go => ./api/public-clients/go

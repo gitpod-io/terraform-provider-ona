@@ -207,7 +207,7 @@ const file_gitpod_v1_gateway_proto_rawDesc = "" +
 	"\x0eGatewayService\x12^\n" +
 	"\fListGateways\x12\x1e.gitpod.v1.ListGatewaysRequest\x1a\x1f.gitpod.v1.ListGatewaysResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x1a\x0e\xaa\xab\x1e\n" +
 	"\n" +
-	"\bgatewaysB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\bgatewaysB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_gateway_proto_rawDescOnce sync.Once

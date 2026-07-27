@@ -2610,7 +2610,7 @@ const file_gitpod_v1_group_proto_rawDesc = "" +
 	"\rgroups.shares\x12\x06create\x12\x9c\x01\n" +
 	"\x1cUnshareResourceWithPrincipal\x12..gitpod.v1.UnshareResourceWithPrincipalRequest\x1a/.gitpod.v1.UnshareResourceWithPrincipalResponse\"\x1b\xb2\xab\x1e\x17\n" +
 	"\rgroups.shares\x12\x06delete\x1a\f\xaa\xab\x1e\b\n" +
-	"\x06groupsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x06groupsB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_group_proto_rawDescOnce sync.Once

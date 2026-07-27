@@ -97,7 +97,7 @@ const file_gitpod_tools_v1_logfields_proto_rawDesc = "" +
 	"\x1fgitpod/tools/v1/logfields.proto\x12\x0fgitpod.tools.v1\x1a google/protobuf/descriptor.proto\"\x1e\n" +
 	"\bLogField\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name:V\n" +
-	"\blogfield\x12\x1d.google.protobuf.FieldOptions\x18\xb4\xe5\x03 \x01(\v2\x19.gitpod.tools.v1.LogFieldR\blogfieldBCZAgithub.com/gitpod-io/gitpod-next/api/go/tools/logfields;logfieldsb\x06proto3"
+	"\blogfield\x12\x1d.google.protobuf.FieldOptions\x18\xb4\xe5\x03 \x01(\v2\x19.gitpod.tools.v1.LogFieldR\blogfieldBRZPgithub.com/gitpod-io/gitpod-next/api/public-clients/go/tools/logfields;logfieldsb\x06proto3"
 
 var (
 	file_gitpod_tools_v1_logfields_proto_rawDescOnce sync.Once

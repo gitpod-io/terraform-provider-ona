@@ -275,7 +275,7 @@ const file_gitpod_tools_v1_terraform_proto_rawDesc = "" +
 	"\x1dTERRAFORM_FIELD_MODE_REQUIRED\x10\x03\x12*\n" +
 	"&TERRAFORM_FIELD_MODE_COMPUTED_OPTIONAL\x10\x04:t\n" +
 	"\x12terraform_resource\x12\x1f.google.protobuf.MessageOptions\x18\xba\xe5\x03 \x01(\v2\".gitpod.tools.v1.TerraformResourceR\x11terraformResource:i\n" +
-	"\x0fterraform_field\x12\x1d.google.protobuf.FieldOptions\x18\xbb\xe5\x03 \x01(\v2\x1f.gitpod.tools.v1.TerraformFieldR\x0eterraformFieldBCZAgithub.com/gitpod-io/gitpod-next/api/go/tools/terraform;terraformb\x06proto3"
+	"\x0fterraform_field\x12\x1d.google.protobuf.FieldOptions\x18\xbb\xe5\x03 \x01(\v2\x1f.gitpod.tools.v1.TerraformFieldR\x0eterraformFieldBRZPgithub.com/gitpod-io/gitpod-next/api/public-clients/go/tools/terraform;terraformb\x06proto3"
 
 var (
 	file_gitpod_tools_v1_terraform_proto_rawDescOnce sync.Once

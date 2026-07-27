@@ -1298,7 +1298,7 @@ const file_gitpod_v1_secret_proto_rawDesc = "" +
 	"\vListSecrets\x12\x1d.gitpod.v1.ListSecretsRequest\x1a\x1e.gitpod.v1.ListSecretsResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x12]\n" +
 	"\fDeleteSecret\x12\x1e.gitpod.v1.DeleteSecretRequest\x1a\x1f.gitpod.v1.DeleteSecretResponse\"\f\xb2\xab\x1e\b\x12\x06delete\x12i\n" +
 	"\x0eGetSecretValue\x12 .gitpod.v1.GetSecretValueRequest\x1a!.gitpod.v1.GetSecretValueResponse\"\x12\xb2\xab\x1e\v\x12\tget_value\x90\x02\x01\x1a\r\xaa\xab\x1e\t\n" +
-	"\asecretsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\asecretsB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_secret_proto_rawDescOnce sync.Once

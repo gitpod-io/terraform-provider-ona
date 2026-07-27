@@ -254,7 +254,7 @@ const file_gitpod_v1_workflow_error_proto_rawDesc = "" +
 	"\x11WorkflowErrorCode\x12#\n" +
 	"\x1fWORKFLOW_ERROR_CODE_UNSPECIFIED\x10\x00\x12*\n" +
 	"%WORKFLOW_ERROR_CODE_ENVIRONMENT_ERROR\x10\xe8\a\x12$\n" +
-	"\x1fWORKFLOW_ERROR_CODE_AGENT_ERROR\x10\xd0\x0fB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x1fWORKFLOW_ERROR_CODE_AGENT_ERROR\x10\xd0\x0fB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_workflow_error_proto_rawDescOnce sync.Once

@@ -1570,7 +1570,7 @@ const file_gitpod_v1_account_proto_rawDesc = "" +
 	"\x0eUnblockAccount\x12 .gitpod.v1.UnblockAccountRequest\x1a!.gitpod.v1.UnblockAccountResponse\"\x00\x12l\n" +
 	"\x14GetChatIdentityToken\x12&.gitpod.v1.GetChatIdentityTokenRequest\x1a'.gitpod.v1.GetChatIdentityTokenResponse\"\x03\x90\x02\x01\x1a\x0e\xaa\xab\x1e\n" +
 	"\n" +
-	"\baccountsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\baccountsB;Z9github.com/gitpod-io/gitpod-next/api/public-clients/go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_account_proto_rawDescOnce sync.Once
