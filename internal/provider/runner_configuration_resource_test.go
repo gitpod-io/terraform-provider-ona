@@ -909,7 +909,8 @@ resource "echo" "test" {}
 
 type runnerConfigurationAPIServer struct {
 	*httptest.Server
-	service *fakeRunnerConfigurationService
+	service       *fakeRunnerConfigurationService
+	runnerService *fakeRunnerService
 }
 
 func newRunnerConfigurationAPIServer(t *testing.T) *runnerConfigurationAPIServer {
@@ -925,11 +926,18 @@ func newRunnerConfigurationAPIServer(t *testing.T) *runnerConfigurationAPIServer
 		environmentClasses:              map[string]*v1.EnvironmentClass{},
 		environmentClassRunnerProviders: map[string]v1.RunnerProvider{},
 	}
-	_, handler := v1connect.NewRunnerConfigurationServiceHandler(service)
-	server := httptest.NewServer(http.StripPrefix("/api", handler))
+	runnerService := &fakeRunnerService{runners: map[string]*v1.Runner{}}
+
+	runnerConfigurationPath, runnerConfigurationHandler := v1connect.NewRunnerConfigurationServiceHandler(service)
+	runnerPath, runnerHandler := v1connect.NewRunnerServiceHandler(runnerService)
+	mux := http.NewServeMux()
+	mux.Handle("/api"+runnerConfigurationPath, http.StripPrefix("/api", runnerConfigurationHandler))
+	mux.Handle("/api"+runnerPath, http.StripPrefix("/api", runnerHandler))
+	server := httptest.NewServer(mux)
 	return &runnerConfigurationAPIServer{
-		Server:  server,
-		service: service,
+		Server:        server,
+		service:       service,
+		runnerService: runnerService,
 	}
 }
 

@@ -6,7 +6,9 @@ package runner
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"sort"
+	"strings"
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
@@ -67,9 +69,15 @@ func (r *EnvironmentClassResource) List(ctx context.Context, req list.ListReques
 		if !ok {
 			return
 		}
+		runnerNames, err := r.environmentClassRunnerNames(ctx, filter.Providers)
+		if err != nil {
+			push(listutil.Error("Unable to List Ona Runners", err))
+			return
+		}
 
 		var token string
 		var emitted int64
+		displayNames := newEnvironmentClassDisplayNames()
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.RunnerConfigurationService().ListEnvironmentClasses(ctx, connect.NewRequest(&v1.ListEnvironmentClassesRequest{
 				Pagination: &v1.PaginationRequest{PageSize: listutil.PageSize(req.Limit, emitted), Token: token},
@@ -91,10 +99,7 @@ func (r *EnvironmentClassResource) List(ctx context.Context, req list.ListReques
 					return
 				}
 				item := req.NewListResult(ctx)
-				item.DisplayName = class.GetDisplayName()
-				if item.DisplayName == "" {
-					item.DisplayName = class.GetId()
-				}
+				item.DisplayName = displayNames.forClass(class, runnerNames)
 				item.Diagnostics.Append(item.Identity.Set(ctx, EnvironmentClassIdentityModel{ID: types.StringValue(class.GetId())})...)
 				if req.IncludeResource && !item.Diagnostics.HasError() {
 					var model EnvironmentClassModel
@@ -113,6 +118,34 @@ func (r *EnvironmentClassResource) List(ctx context.Context, req list.ListReques
 			if token == "" {
 				return
 			}
+		}
+	}
+}
+
+func (r *EnvironmentClassResource) environmentClassRunnerNames(ctx context.Context, providers []v1.RunnerProvider) (map[string]string, error) {
+	result := map[string]string{}
+	var token string
+	for {
+		resp, err := r.client.RunnerService().ListRunners(ctx, connect.NewRequest(&v1.ListRunnersRequest{
+			Pagination: &v1.PaginationRequest{PageSize: listutil.DefaultPageSize, Token: token},
+			Filter: &v1.ListRunnersRequest_Filter{
+				Kinds:     []v1.RunnerKind{v1.RunnerKind_RUNNER_KIND_REMOTE},
+				Providers: providers,
+			},
+		}))
+		if err != nil {
+			return nil, fmt.Errorf("list runners: %w", err)
+		}
+		for _, runner := range resp.Msg.GetRunners() {
+			if !importableRunner(runner) || runner.GetRunnerId() == "" {
+				continue
+			}
+			result[runner.GetRunnerId()] = runner.GetName()
+		}
+
+		token = resp.Msg.GetPagination().GetNextToken()
+		if token == "" {
+			return result, nil
 		}
 	}
 }
@@ -152,4 +185,58 @@ func newEnvironmentClassListFilter(ctx context.Context, req list.ListRequest, pu
 		Providers: providers,
 		Enabled:   enabled,
 	}, true
+}
+
+type environmentClassDisplayNames struct {
+	used map[string]struct{}
+}
+
+func newEnvironmentClassDisplayNames() environmentClassDisplayNames {
+	return environmentClassDisplayNames{used: map[string]struct{}{}}
+}
+
+func (n environmentClassDisplayNames) forClass(class *v1.EnvironmentClass, runnerNames map[string]string) string {
+	base := environmentClassDisplayNameLabel(environmentClassPreferredDisplayName(class, runnerNames))
+	if base == "" {
+		base = environmentClassDisplayNameLabel(class.GetId())
+	}
+	if base == "" {
+		base = "environment_class"
+	}
+
+	candidate := base
+	for i := 2; ; i++ {
+		if _, ok := n.used[candidate]; !ok {
+			n.used[candidate] = struct{}{}
+			return candidate
+		}
+		candidate = fmt.Sprintf("%s_%d", base, i)
+	}
+}
+
+func environmentClassPreferredDisplayName(class *v1.EnvironmentClass, runnerNames map[string]string) string {
+	runnerName := strings.TrimSpace(runnerNames[class.GetRunnerId()])
+	displayName := strings.TrimSpace(class.GetDisplayName())
+	if runnerName == "" {
+		return displayName
+	}
+	if displayName == "" {
+		return runnerName
+	}
+	return runnerName + "_" + displayName
+}
+
+var environmentClassDisplayNameInvalidChars = regexp.MustCompile(`[^a-z0-9_]+`)
+
+func environmentClassDisplayNameLabel(value string) string {
+	value = strings.ToLower(strings.TrimSpace(value))
+	value = environmentClassDisplayNameInvalidChars.ReplaceAllString(value, "_")
+	value = strings.Trim(value, "_")
+	if value == "" {
+		return ""
+	}
+	if value[0] >= '0' && value[0] <= '9' {
+		value = "r_" + value
+	}
+	return value
 }

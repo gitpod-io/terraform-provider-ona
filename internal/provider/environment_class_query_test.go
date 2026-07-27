@@ -125,10 +125,80 @@ providers = ["managed"]
 	}))
 }
 
+func TestAccEnvironmentClassQueryDeduplicatesDisplayNames(t *testing.T) {
+	server := newRunnerConfigurationAPIServer(t)
+	t.Cleanup(server.Close)
+
+	server.runnerService.runners["runner-1"] = newTestRunner("runner-1", "AWS Runner")
+	server.service.environmentClasses["class-1"] = &v1.EnvironmentClass{
+		Id:          "class-1",
+		RunnerId:    "runner-1",
+		DisplayName: "Large",
+		Enabled:     true,
+	}
+	server.service.environmentClasses["class-2"] = &v1.EnvironmentClass{
+		Id:          "class-2",
+		RunnerId:    "runner-1",
+		DisplayName: "Large",
+		Enabled:     true,
+	}
+	server.service.environmentClassRunnerProviders["runner-1"] = v1.RunnerProvider_RUNNER_PROVIDER_AWS_EC2
+
+	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+		Query:  true,
+		Config: environmentClassQueryConfig(""),
+		QueryResultChecks: []querycheck.QueryResultCheck{
+			expectEnvironmentClassQueryResults{
+				Expected: []environmentClassQueryResult{
+					{
+						Address:       "list.ona_environment_class.all",
+						DisplayName:   "aws_runner_large",
+						IdentityID:    "class-1",
+						ResourceID:    "class-1",
+						RunnerID:      "runner-1",
+						Configuration: map[string]any{},
+						Enabled:       true,
+					},
+					{
+						Address:       "list.ona_environment_class.all",
+						DisplayName:   "aws_runner_large_2",
+						IdentityID:    "class-2",
+						ResourceID:    "class-2",
+						RunnerID:      "runner-1",
+						Configuration: map[string]any{},
+						Enabled:       true,
+					},
+				},
+			},
+		},
+	}))
+}
+
+func TestAccEnvironmentClassQueryReportsRunnerListError(t *testing.T) {
+	server := newEnvironmentClassQueryAPIServer(t)
+	t.Cleanup(server.Close)
+
+	server.runnerService.listErr = fmt.Errorf("runner list failed")
+
+	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+		Query:       true,
+		Config:      environmentClassQueryConfig(""),
+		ExpectError: regexp.MustCompile("Unable to List Ona Runners"),
+	}))
+}
+
 func newEnvironmentClassQueryAPIServer(t *testing.T) *runnerConfigurationAPIServer {
 	t.Helper()
 
 	server := newRunnerConfigurationAPIServer(t)
+	server.runnerService.runners["runner-1"] = newTestRunner("runner-1", "AWS Runner")
+	gcpRunner := newTestRunner("runner-2", "GCP Runner")
+	gcpRunner.Provider = v1.RunnerProvider_RUNNER_PROVIDER_GCP
+	server.runnerService.runners["runner-2"] = gcpRunner
+	managedRunner := newTestRunner("runner-3", "Managed Runner")
+	managedRunner.Provider = v1.RunnerProvider_RUNNER_PROVIDER_MANAGED
+	server.runnerService.runners["runner-3"] = managedRunner
+
 	server.service.environmentClasses["class-1"] = &v1.EnvironmentClass{
 		Id:            "class-1",
 		RunnerId:      "runner-1",
@@ -207,7 +277,7 @@ func expectedSupportedEnvironmentClassQueryResults() []environmentClassQueryResu
 func expectedLargeEnvironmentClassQueryResult() environmentClassQueryResult {
 	return environmentClassQueryResult{
 		Address:       "list.ona_environment_class.all",
-		DisplayName:   "Large",
+		DisplayName:   "aws_runner_large",
 		IdentityID:    "class-1",
 		ResourceID:    "class-1",
 		RunnerID:      "runner-1",
@@ -220,7 +290,7 @@ func expectedLargeEnvironmentClassQueryResult() environmentClassQueryResult {
 func expectedSmallEnvironmentClassQueryResult() environmentClassQueryResult {
 	return environmentClassQueryResult{
 		Address:       "list.ona_environment_class.all",
-		DisplayName:   "Small",
+		DisplayName:   "gcp_runner_small",
 		IdentityID:    "class-2",
 		ResourceID:    "class-2",
 		RunnerID:      "runner-2",
@@ -233,7 +303,7 @@ func expectedSmallEnvironmentClassQueryResult() environmentClassQueryResult {
 func expectedDisabledEnvironmentClassQueryResult() environmentClassQueryResult {
 	return environmentClassQueryResult{
 		Address:       "list.ona_environment_class.all",
-		DisplayName:   "Disabled",
+		DisplayName:   "gcp_runner_disabled",
 		IdentityID:    "class-4",
 		ResourceID:    "class-4",
 		RunnerID:      "runner-2",
