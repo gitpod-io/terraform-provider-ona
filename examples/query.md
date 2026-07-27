@@ -2,6 +2,8 @@
 
 Terraform Query discovers existing Ona resources through provider list resources. Use it to inspect importable resources and generate the `resource` and identity-based `import` blocks needed to bring them under Terraform management.
 
+Treat Query as a bootstrap step: Terraform's [bulk import workflow](https://developer.hashicorp.com/terraform/language/import/bulk) generates `resource` and `import` blocks that you copy into your configuration before applying. Generated resource labels may reflect current Ona display names; review and rename them before using the generated HCL as your managed Terraform configuration.
+
 The query example requires Terraform 1.14 or later.
 
 ## Runner Query
