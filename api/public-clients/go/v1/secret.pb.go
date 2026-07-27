@@ -8,9 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -1196,92 +1193,80 @@ var File_gitpod_v1_secret_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_secret_proto_rawDesc = "" +
 	"\n" +
-	"\x16gitpod/v1/secret.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xac\x05\n" +
-	"\x13CreateSecretRequest\x125\n" +
-	"\x04name\x18\x01 \x01(\tB!\xbaH\x1ar\x18\x10\x03\x18\x7f2\x12^[0-9a-zA-Z_]{3,}$ګ\x1e\x00R\x04name\x121\n" +
+	"\x16gitpod/v1/secret.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xf2\x04\n" +
+	"\x13CreateSecretRequest\x121\n" +
+	"\x04name\x18\x01 \x01(\tB\x1d\xbaH\x1ar\x18\x10\x03\x18\x7f2\x12^[0-9a-zA-Z_]{3,}$R\x04name\x12!\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x12\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.id\x18\x01R\tprojectId\x12$\n" +
-	"\x05value\x18\x03 \x01(\tB\x0e\xbaH\ar\x05\x10\x00\x18\x80Pګ\x1e\x00R\x05value\x120\n" +
-	"\x06source\x18\r \x01(\v2\x18.gitpod.v1.Secret.SourceR\x06source\x12\x88\x01\n" +
-	"\tfile_path\x18\a \x01(\tBi\xbaHb\xba\x01_\n" +
-	"\rabsolute_path\x123value must be an absolute path (e.g. /path/to/file)\x1a\x19this.matches('^/[^/].*$')ګ\x1e\x00H\x00R\bfilePath\x129\n" +
-	"\x14environment_variable\x18\b \x01(\bB\x04ګ\x1e\x00H\x00R\x13environmentVariable\x12R\n" +
-	"\"container_registry_basic_auth_host\x18\t \x01(\tB\x04ګ\x1e\x00H\x00R\x1econtainerRegistryBasicAuthHost\x12!\n" +
-	"\bapi_only\x18\v \x01(\bB\x04ګ\x1e\x00H\x00R\aapiOnly\x12R\n" +
-	"\x10credential_proxy\x18\f \x01(\v2!.gitpod.v1.Secret.CredentialProxyB\x04ګ\x1e\x00R\x0fcredentialProxy\x122\n" +
+	"project_id\x18\x02 \x01(\tB\x02\x18\x01R\tprojectId\x12 \n" +
+	"\x05value\x18\x03 \x01(\tB\n" +
+	"\xbaH\ar\x05\x10\x00\x18\x80PR\x05value\x120\n" +
+	"\x06source\x18\r \x01(\v2\x18.gitpod.v1.Secret.SourceR\x06source\x12\x84\x01\n" +
+	"\tfile_path\x18\a \x01(\tBe\xbaHb\xba\x01_\n" +
+	"\rabsolute_path\x123value must be an absolute path (e.g. /path/to/file)\x1a\x19this.matches('^/[^/].*$')H\x00R\bfilePath\x123\n" +
+	"\x14environment_variable\x18\b \x01(\bH\x00R\x13environmentVariable\x12L\n" +
+	"\"container_registry_basic_auth_host\x18\t \x01(\tH\x00R\x1econtainerRegistryBasicAuthHost\x12\x1b\n" +
+	"\bapi_only\x18\v \x01(\bH\x00R\aapiOnly\x12L\n" +
+	"\x10credential_proxy\x18\f \x01(\v2!.gitpod.v1.Secret.CredentialProxyR\x0fcredentialProxy\x12,\n" +
 	"\x05scope\x18\n" +
-	" \x01(\v2\x16.gitpod.v1.SecretScopeB\x04ګ\x1e\x00R\x05scopeB\x0e\n" +
+	" \x01(\v2\x16.gitpod.v1.SecretScopeR\x05scopeB\x0e\n" +
 	"\x05mount\x12\x05\xbaH\x02\b\x01\"A\n" +
 	"\x14CreateSecretResponse\x12)\n" +
-	"\x06secret\x18\x01 \x01(\v2\x11.gitpod.v1.SecretR\x06secret\"v\n" +
-	"\x18UpdateSecretValueRequest\x124\n" +
-	"\tsecret_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\tsecret.idR\bsecretId\x12$\n" +
-	"\x05value\x18\x02 \x01(\tB\x0e\xbaH\ar\x05\x10\x01\x18\x80Pګ\x1e\x00R\x05value\"\x1b\n" +
-	"\x19UpdateSecretValueResponse\"\x97\x02\n" +
+	"\x06secret\x18\x01 \x01(\v2\x11.gitpod.v1.SecretR\x06secret\"c\n" +
+	"\x18UpdateSecretValueRequest\x12%\n" +
+	"\tsecret_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\bsecretId\x12 \n" +
+	"\x05value\x18\x02 \x01(\tB\n" +
+	"\xbaH\ar\x05\x10\x01\x18\x80PR\x05value\"\x1b\n" +
+	"\x19UpdateSecretValueResponse\"\xfe\x01\n" +
 	"\x12ListSecretsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12<\n" +
-	"\x06filter\x18\x02 \x01(\v2$.gitpod.v1.ListSecretsRequest.FilterR\x06filter\x1a\x84\x01\n" +
-	"\x06Filter\x12L\n" +
-	"\vproject_ids\x18\x01 \x03(\tB+\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12filter.project_ids\x18\x01R\n" +
+	"\x06filter\x18\x02 \x01(\v2$.gitpod.v1.ListSecretsRequest.FilterR\x06filter\x1al\n" +
+	"\x06Filter\x124\n" +
+	"\vproject_ids\x18\x01 \x03(\tB\x13\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\x18\x01R\n" +
 	"projectIds\x12,\n" +
 	"\x05scope\x18\x02 \x01(\v2\x16.gitpod.v1.SecretScopeR\x05scope\"\x81\x01\n" +
 	"\x13ListSecretsResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12+\n" +
-	"\asecrets\x18\x02 \x03(\v2\x11.gitpod.v1.SecretR\asecrets\"K\n" +
-	"\x13DeleteSecretRequest\x124\n" +
-	"\tsecret_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\tsecret.idR\bsecretId\"\x16\n" +
-	"\x14DeleteSecretResponse\"M\n" +
-	"\x15GetSecretValueRequest\x124\n" +
-	"\tsecret_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\tsecret.idR\bsecretId\".\n" +
+	"\asecrets\x18\x02 \x03(\v2\x11.gitpod.v1.SecretR\asecrets\"<\n" +
+	"\x13DeleteSecretRequest\x12%\n" +
+	"\tsecret_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\bsecretId\"\x16\n" +
+	"\x14DeleteSecretResponse\">\n" +
+	"\x15GetSecretValueRequest\x12%\n" +
+	"\tsecret_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\bsecretId\".\n" +
 	"\x16GetSecretValueResponse\x12\x14\n" +
-	"\x05value\x18\x01 \x01(\tR\x05value\"\xaf\x02\n" +
-	"\vSecretScope\x12=\n" +
+	"\x05value\x18\x01 \x01(\tR\x05value\"\xd5\x01\n" +
+	"\vSecretScope\x12)\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
+	"project_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\tprojectId\x12#\n" +
+	"\auser_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\x06userId\x123\n" +
+	"\x0forganization_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\x0eorganizationId\x128\n" +
+	"\x12service_account_id\x18\x04 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\x10serviceAccountIdB\a\n" +
+	"\x05scope\"\xc9\t\n" +
+	"\x06Secret\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12)\n" +
 	"\n" +
-	"project.idګ\x1e\x00H\x00R\tprojectId\x124\n" +
-	"\auser_id\x18\x02 \x01(\tB\x19\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idګ\x1e\x00H\x00R\x06userId\x12L\n" +
-	"\x0forganization_id\x18\x03 \x01(\tB!\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idګ\x1e\x00H\x00R\x0eorganizationId\x12T\n" +
-	"\x12service_account_id\x18\x04 \x01(\tB$\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12service_account.idګ\x1e\x00H\x00R\x10serviceAccountIdB\a\n" +
-	"\x05scope\"\xb8\n" +
+	"project_id\x18\x03 \x01(\tB\n" +
+	"\xbaH\x05r\x03\xb0\x01\x01\x18\x01R\tprojectId\x129\n" +
 	"\n" +
-	"\x06Secret\x12+\n" +
-	"\x02id\x18\x01 \x01(\tB\x1b\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\tsecret.idګ\x1e\x00R\x02id\x12\x18\n" +
-	"\x04name\x18\x02 \x01(\tB\x04ګ\x1e\x00R\x04name\x129\n" +
+	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"project_id\x18\x03 \x01(\tB\x1a\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.id\x18\x01R\tprojectId\x12?\n" +
-	"\n" +
-	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tcreatedAt\x12?\n" +
-	"\n" +
-	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tupdatedAt\x122\n" +
-	"\acreator\x18\x06 \x01(\v2\x12.gitpod.v1.SubjectB\x04ګ\x1e\x00R\acreator\x12#\n" +
-	"\tfile_path\x18\a \x01(\tB\x04ګ\x1e\x00H\x00R\bfilePath\x129\n" +
-	"\x14environment_variable\x18\b \x01(\bB\x04ګ\x1e\x00H\x00R\x13environmentVariable\x12Z\n" +
-	"\"container_registry_basic_auth_host\x18\t \x01(\tB\f\xbaH\x05r\x03\x88\x01\x01ګ\x1e\x00H\x00R\x1econtainerRegistryBasicAuthHost\x12!\n" +
-	"\bapi_only\x18\v \x01(\bB\x04ګ\x1e\x00H\x00R\aapiOnly\x122\n" +
+	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12,\n" +
+	"\acreator\x18\x06 \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x12\x1d\n" +
+	"\tfile_path\x18\a \x01(\tH\x00R\bfilePath\x123\n" +
+	"\x14environment_variable\x18\b \x01(\bH\x00R\x13environmentVariable\x12V\n" +
+	"\"container_registry_basic_auth_host\x18\t \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01H\x00R\x1econtainerRegistryBasicAuthHost\x12\x1b\n" +
+	"\bapi_only\x18\v \x01(\bH\x00R\aapiOnly\x12,\n" +
 	"\x05scope\x18\n" +
-	" \x01(\v2\x16.gitpod.v1.SecretScopeB\x04ګ\x1e\x00R\x05scope\x12R\n" +
-	"\x10credential_proxy\x18\f \x01(\v2!.gitpod.v1.Secret.CredentialProxyB\x04ګ\x1e\x00R\x0fcredentialProxy\x120\n" +
-	"\x06source\x18\r \x01(\v2\x18.gitpod.v1.Secret.SourceR\x06source\x1aX\n" +
-	"\x0fCredentialProxy\x12'\n" +
-	"\ftarget_hosts\x18\x01 \x03(\tB\x04ګ\x1e\x00R\vtargetHosts\x12\x1c\n" +
-	"\x06header\x18\x02 \x01(\tB\x04ګ\x1e\x00R\x06header\x1a\xec\x03\n" +
+	" \x01(\v2\x16.gitpod.v1.SecretScopeR\x05scope\x12L\n" +
+	"\x10credential_proxy\x18\f \x01(\v2!.gitpod.v1.Secret.CredentialProxyR\x0fcredentialProxy\x120\n" +
+	"\x06source\x18\r \x01(\v2\x18.gitpod.v1.Secret.SourceR\x06source\x1aL\n" +
+	"\x0fCredentialProxy\x12!\n" +
+	"\ftarget_hosts\x18\x01 \x03(\tR\vtargetHosts\x12\x16\n" +
+	"\x06header\x18\x02 \x01(\tR\x06header\x1a\xec\x03\n" +
 	"\x06Source\x12\x1c\n" +
 	"\bverbatim\x18\x01 \x01(\bH\x00R\bverbatim\x12C\n" +
 	"\n" +
@@ -1290,15 +1275,14 @@ const file_gitpod_v1_secret_proto_rawDesc = "" +
 	"\x04host\x18\x01 \x01(\tB\xa4\x02\xbaH\xa0\x02\xba\x01\x98\x02\n" +
 	"\x11host_or_host_port\x128host must be a hostname or IP address with optional port\x1a\xc8\x01this.matches(\"^([A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?[.])*[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(:([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?$\")r\x02\x10\x01R\x04host\x12,\n" +
 	"\rprovider_name\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\fproviderNameB\a\n" +
-	"\x05value:\x04ҫ\x1e\x00B\x0e\n" +
-	"\x05mount\x12\x05\xbaH\x02\b\x012\x98\x04\n" +
-	"\rSecretService\x12]\n" +
-	"\fCreateSecret\x12\x1e.gitpod.v1.CreateSecretRequest\x1a\x1f.gitpod.v1.CreateSecretResponse\"\f\xb2\xab\x1e\b\x12\x06create\x12r\n" +
-	"\x11UpdateSecretValue\x12#.gitpod.v1.UpdateSecretValueRequest\x1a$.gitpod.v1.UpdateSecretValueResponse\"\x12\xb2\xab\x1e\x0e\x12\fupdate_value\x12[\n" +
-	"\vListSecrets\x12\x1d.gitpod.v1.ListSecretsRequest\x1a\x1e.gitpod.v1.ListSecretsResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x12]\n" +
-	"\fDeleteSecret\x12\x1e.gitpod.v1.DeleteSecretRequest\x1a\x1f.gitpod.v1.DeleteSecretResponse\"\f\xb2\xab\x1e\b\x12\x06delete\x12i\n" +
-	"\x0eGetSecretValue\x12 .gitpod.v1.GetSecretValueRequest\x1a!.gitpod.v1.GetSecretValueResponse\"\x12\xb2\xab\x1e\v\x12\tget_value\x90\x02\x01\x1a\r\xaa\xab\x1e\t\n" +
-	"\asecretsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x05valueB\x0e\n" +
+	"\x05mount\x12\x05\xbaH\x02\b\x012\xc6\x03\n" +
+	"\rSecretService\x12Q\n" +
+	"\fCreateSecret\x12\x1e.gitpod.v1.CreateSecretRequest\x1a\x1f.gitpod.v1.CreateSecretResponse\"\x00\x12`\n" +
+	"\x11UpdateSecretValue\x12#.gitpod.v1.UpdateSecretValueRequest\x1a$.gitpod.v1.UpdateSecretValueResponse\"\x00\x12Q\n" +
+	"\vListSecrets\x12\x1d.gitpod.v1.ListSecretsRequest\x1a\x1e.gitpod.v1.ListSecretsResponse\"\x03\x90\x02\x01\x12Q\n" +
+	"\fDeleteSecret\x12\x1e.gitpod.v1.DeleteSecretRequest\x1a\x1f.gitpod.v1.DeleteSecretResponse\"\x00\x12Z\n" +
+	"\x0eGetSecretValue\x12 .gitpod.v1.GetSecretValueRequest\x1a!.gitpod.v1.GetSecretValueResponse\"\x03\x90\x02\x01B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_secret_proto_rawDescOnce sync.Once

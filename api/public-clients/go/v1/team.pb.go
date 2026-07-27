@@ -8,7 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -1021,44 +1020,36 @@ var File_gitpod_v1_team_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_team_proto_rawDesc = "" +
 	"\n" +
-	"\x14gitpod/v1/team.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x15gitpod/v1/count.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xf7\x02\n" +
-	"\x04Team\x12%\n" +
-	"\x02id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x02id\x12F\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\x1d\n" +
+	"\x14gitpod/v1/team.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x15gitpod/v1/count.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc8\x02\n" +
+	"\x04Team\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x121\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12\x1d\n" +
 	"\x04name\x18\x03 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18PR\x04name\x129\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
 	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12!\n" +
-	"\fmember_count\x18\x06 \x01(\x05R\vmemberCount\x129\n" +
+	"\fmember_count\x18\x06 \x01(\x05R\vmemberCount\x12,\n" +
 	"\n" +
-	"creator_id\x18\a \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idH\x00R\tcreatorId\x88\x01\x01B\r\n" +
-	"\v_creator_id\"\x8c\x02\n" +
+	"creator_id\x18\a \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\tcreatorId\x88\x01\x01B\r\n" +
+	"\v_creator_id\"\xda\x01\n" +
 	"\n" +
-	"TeamMember\x120\n" +
-	"\x02id\x18\x01 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12team_membership.idR\x02id\x12.\n" +
-	"\ateam_id\x18\x02 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\x12.\n" +
-	"\auser_id\x18\x03 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\x129\n" +
+	"TeamMember\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12!\n" +
+	"\ateam_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06teamId\x12!\n" +
+	"\auser_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06userId\x129\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\x12\n" +
 	"\x04name\x18\x05 \x01(\tR\x04name\x12\x1d\n" +
 	"\n" +
-	"avatar_url\x18\x06 \x01(\tR\tavatarUrl\"z\n" +
-	"\x11CreateTeamRequest\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\x1d\n" +
+	"avatar_url\x18\x06 \x01(\tR\tavatarUrl\"e\n" +
+	"\x11CreateTeamRequest\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12\x1d\n" +
 	"\x04name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18PR\x04name\"9\n" +
 	"\x12CreateTeamResponse\x12#\n" +
-	"\x04team\x18\x01 \x01(\v2\x0f.gitpod.v1.TeamR\x04team\"@\n" +
-	"\x0eGetTeamRequest\x12.\n" +
-	"\ateam_id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"6\n" +
+	"\x04team\x18\x01 \x01(\v2\x0f.gitpod.v1.TeamR\x04team\"3\n" +
+	"\x0eGetTeamRequest\x12!\n" +
+	"\ateam_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06teamId\"6\n" +
 	"\x0fGetTeamResponse\x12#\n" +
 	"\x04team\x18\x01 \x01(\v2\x0f.gitpod.v1.TeamR\x04team\"\xb8\x01\n" +
 	"\x10ListTeamsRequest\x12<\n" +
@@ -1072,35 +1063,29 @@ const file_gitpod_v1_team_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12%\n" +
-	"\x05teams\x18\x02 \x03(\v2\x0f.gitpod.v1.TeamR\x05teams\"p\n" +
-	"\x11UpdateTeamRequest\x12.\n" +
-	"\ateam_id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\x12\"\n" +
+	"\x05teams\x18\x02 \x03(\v2\x0f.gitpod.v1.TeamR\x05teams\"c\n" +
+	"\x11UpdateTeamRequest\x12!\n" +
+	"\ateam_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06teamId\x12\"\n" +
 	"\x04name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18PH\x00R\x04name\x88\x01\x01B\a\n" +
 	"\x05_name\"9\n" +
 	"\x12UpdateTeamResponse\x12#\n" +
-	"\x04team\x18\x01 \x01(\v2\x0f.gitpod.v1.TeamR\x04team\"C\n" +
-	"\x11DeleteTeamRequest\x12.\n" +
-	"\ateam_id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"\x14\n" +
-	"\x12DeleteTeamResponse\"v\n" +
-	"\x14AddTeamMemberRequest\x12.\n" +
-	"\ateam_id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\x12.\n" +
-	"\auser_id\x18\x02 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\"F\n" +
+	"\x04team\x18\x01 \x01(\v2\x0f.gitpod.v1.TeamR\x04team\"6\n" +
+	"\x11DeleteTeamRequest\x12!\n" +
+	"\ateam_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06teamId\"\x14\n" +
+	"\x12DeleteTeamResponse\"\\\n" +
+	"\x14AddTeamMemberRequest\x12!\n" +
+	"\ateam_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06teamId\x12!\n" +
+	"\auser_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06userId\"F\n" +
 	"\x15AddTeamMemberResponse\x12-\n" +
-	"\x06member\x18\x01 \x01(\v2\x15.gitpod.v1.TeamMemberR\x06member\"a\n" +
-	"\x17RemoveTeamMemberRequest\x12F\n" +
-	"\x0eteam_member_id\x18\x01 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12team_membership.idR\fteamMemberId\"\x1a\n" +
-	"\x18RemoveTeamMemberResponse\"\xb5\x01\n" +
+	"\x06member\x18\x01 \x01(\v2\x15.gitpod.v1.TeamMemberR\x06member\"I\n" +
+	"\x17RemoveTeamMemberRequest\x12.\n" +
+	"\x0eteam_member_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\fteamMemberId\"\x1a\n" +
+	"\x18RemoveTeamMemberResponse\"\xa8\x01\n" +
 	"\x16ListTeamMembersRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x12.\n" +
-	"\ateam_id\x18\x02 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\x12-\n" +
+	"pagination\x12!\n" +
+	"\ateam_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06teamId\x12-\n" +
 	"\x05count\x18\x03 \x01(\v2\x17.gitpod.v1.CountRequestR\x05count\"\xb9\x01\n" +
 	"\x17ListTeamMembersResponse\x12=\n" +
 	"\n" +
@@ -1119,7 +1104,7 @@ const file_gitpod_v1_team_proto_rawDesc = "" +
 	"DeleteTeam\x12\x1c.gitpod.v1.DeleteTeamRequest\x1a\x1d.gitpod.v1.DeleteTeamResponse\"\x00\x12T\n" +
 	"\rAddTeamMember\x12\x1f.gitpod.v1.AddTeamMemberRequest\x1a .gitpod.v1.AddTeamMemberResponse\"\x00\x12]\n" +
 	"\x10RemoveTeamMember\x12\".gitpod.v1.RemoveTeamMemberRequest\x1a#.gitpod.v1.RemoveTeamMemberResponse\"\x00\x12]\n" +
-	"\x0fListTeamMembers\x12!.gitpod.v1.ListTeamMembersRequest\x1a\".gitpod.v1.ListTeamMembersResponse\"\x03\x90\x02\x01B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x0fListTeamMembers\x12!.gitpod.v1.ListTeamMembersRequest\x1a\".gitpod.v1.ListTeamMembersResponse\"\x03\x90\x02\x01B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_team_proto_rawDescOnce sync.Once
