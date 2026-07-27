@@ -38,7 +38,7 @@ type environmentClassListFilter struct {
 
 func (r *EnvironmentClassResource) ListResourceConfigSchema(ctx context.Context, req list.ListResourceSchemaRequest, resp *list.ListResourceSchemaResponse) {
 	resp.Schema = listschema.Schema{
-		MarkdownDescription: "Lists Ona runner environment classes.",
+		MarkdownDescription: "Lists environment classes for AWS EC2 and GCP runners. Environment classes for Ona-hosted (managed/cloud) runners are excluded.",
 		Attributes: map[string]listschema.Attribute{
 			"enabled": listschema.BoolAttribute{
 				Optional:            true,

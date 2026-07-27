@@ -3,12 +3,12 @@
 page_title: "ona_environment_class List Resource - ona"
 subcategory: ""
 description: |-
-  Lists Ona runner environment classes.
+  Lists environment classes for AWS EC2 and GCP runners. Environment classes for Ona-hosted (managed/cloud) runners are excluded.
 ---
 
 # ona_environment_class (List Resource)
 
-Lists Ona runner environment classes.
+Lists environment classes for AWS EC2 and GCP runners. Environment classes for Ona-hosted (managed/cloud) runners are excluded.
 
 ## Example Usage
 
