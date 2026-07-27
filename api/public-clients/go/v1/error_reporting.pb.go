@@ -8,8 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -842,7 +840,7 @@ var File_gitpod_v1_error_reporting_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_error_reporting_proto_rawDesc = "" +
 	"\n" +
-	"\x1fgitpod/v1/error_reporting.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xcb\x03\n" +
+	"\x1fgitpod/v1/error_reporting.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xcb\x03\n" +
 	"\n" +
 	"StackFrame\x12$\n" +
 	"\bfunction\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\xe8\aR\bfunction\x12$\n" +
@@ -904,19 +902,14 @@ const file_gitpod_v1_error_reporting_proto_rawDesc = "" +
 	"\x04data\x18\x06 \x03(\v2\x1f.gitpod.v1.Breadcrumb.DataEntryB\x17\xbaH\x14\x9a\x01\x11\x10\x14\"\x06r\x04\x10\x01\x18d*\x05r\x03\x18\xe8\aR\x04data\x1a7\n" +
 	"\tDataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe3\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x97\n" +
 	"\n" +
 	"\n" +
-	"ErrorEvent\x12A\n" +
-	"\bevent_id\x18\x01 \x01(\tB&\xbaH\x15r\x132\x0e^[a-f0-9]{32}$\x98\x01 \xa2\xab\x1e\n" +
-	"\n" +
-	"\bevent.idR\aeventId\x12O\n" +
-	"\ttimestamp\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\x15\xa2\xab\x1e\x11\n" +
-	"\x0fevent.timestampR\ttimestamp\x129\n" +
-	"\bplatform\x18\x03 \x01(\tB\x1d\xbaH\x06r\x04\x10\x01\x18d\xa2\xab\x1e\x10\n" +
-	"\x0eevent.platformR\bplatform\x12>\n" +
-	"\x05level\x18\x04 \x01(\x0e2\x15.gitpod.v1.ErrorLevelB\x11\xa2\xab\x1e\r\n" +
-	"\vevent.levelR\x05level\x12 \n" +
+	"ErrorEvent\x123\n" +
+	"\bevent_id\x18\x01 \x01(\tB\x18\xbaH\x15r\x132\x0e^[a-f0-9]{32}$\x98\x01 R\aeventId\x128\n" +
+	"\ttimestamp\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\x12%\n" +
+	"\bplatform\x18\x03 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18dR\bplatform\x12+\n" +
+	"\x05level\x18\x04 \x01(\x0e2\x15.gitpod.v1.ErrorLevelR\x05level\x12 \n" +
 	"\x06logger\x18\x05 \x01(\tB\b\xbaH\x05r\x03\x18\xc8\x01R\x06logger\x12*\n" +
 	"\vtransaction\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\xc8\x01R\vtransaction\x12)\n" +
 	"\vserver_name\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xc8\x01R\n" +
@@ -964,10 +957,9 @@ const file_gitpod_v1_error_reporting_proto_rawDesc = "" +
 	"\x10ERROR_LEVEL_INFO\x10\x02\x12\x17\n" +
 	"\x13ERROR_LEVEL_WARNING\x10\x03\x12\x15\n" +
 	"\x11ERROR_LEVEL_ERROR\x10\x04\x12\x15\n" +
-	"\x11ERROR_LEVEL_FATAL\x10\x052\x83\x01\n" +
-	"\rErrorsService\x12d\n" +
-	"\fReportErrors\x12\x1e.gitpod.v1.ReportErrorsRequest\x1a\x1f.gitpod.v1.ReportErrorsResponse\"\x13\xb2\xab\x1e\x0f\x12\rreport_errors\x1a\f\xaa\xab\x1e\b\n" +
-	"\x06errorsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x11ERROR_LEVEL_FATAL\x10\x052b\n" +
+	"\rErrorsService\x12Q\n" +
+	"\fReportErrors\x12\x1e.gitpod.v1.ReportErrorsRequest\x1a\x1f.gitpod.v1.ReportErrorsResponse\"\x00B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_error_reporting_proto_rawDescOnce sync.Once

@@ -8,7 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -617,10 +616,9 @@ var File_gitpod_v1_ona_intelligence_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_ona_intelligence_proto_rawDesc = "" +
 	"\n" +
-	" gitpod/v1/ona_intelligence.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa0\x02\n" +
-	")CreateOrganizationLLMConfigurationRequest\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12&\n" +
+	" gitpod/v1/ona_intelligence.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x8b\x02\n" +
+	")CreateOrganizationLLMConfigurationRequest\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12&\n" +
 	"\aapi_key\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x04H\x00R\x06apiKey\x88\x01\x01\x124\n" +
 	"\bprovider\x18\x03 \x01(\tB\x18\xbaH\x15r\x13R\tanthropicR\x06openaiR\bprovider\x120\n" +
 	"\fendpoint_url\x18\x04 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01H\x01R\vendpointUrl\x88\x01\x01B\n" +
@@ -628,10 +626,9 @@ const file_gitpod_v1_ona_intelligence_proto_rawDesc = "" +
 	"\b_api_keyB\x0f\n" +
 	"\r_endpoint_url\"{\n" +
 	"*CreateOrganizationLLMConfigurationResponse\x12M\n" +
-	"\rconfiguration\x18\x01 \x01(\v2'.gitpod.v1.OrganizationLLMConfigurationR\rconfiguration\"\xa0\x02\n" +
-	")UpdateOrganizationLLMConfigurationRequest\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12&\n" +
+	"\rconfiguration\x18\x01 \x01(\v2'.gitpod.v1.OrganizationLLMConfigurationR\rconfiguration\"\x8b\x02\n" +
+	")UpdateOrganizationLLMConfigurationRequest\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12&\n" +
 	"\aapi_key\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x04H\x00R\x06apiKey\x88\x01\x01\x124\n" +
 	"\bprovider\x18\x03 \x01(\tB\x18\xbaH\x15r\x13R\tanthropicR\x06openaiR\bprovider\x120\n" +
 	"\fendpoint_url\x18\x04 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01H\x01R\vendpointUrl\x88\x01\x01B\n" +
@@ -639,19 +636,17 @@ const file_gitpod_v1_ona_intelligence_proto_rawDesc = "" +
 	"\b_api_keyB\x0f\n" +
 	"\r_endpoint_url\"{\n" +
 	"*UpdateOrganizationLLMConfigurationResponse\x12M\n" +
-	"\rconfiguration\x18\x01 \x01(\v2'.gitpod.v1.OrganizationLLMConfigurationR\rconfiguration\"\xa6\x01\n" +
-	"&GetOrganizationLLMConfigurationRequest\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x124\n" +
+	"\rconfiguration\x18\x01 \x01(\v2'.gitpod.v1.OrganizationLLMConfigurationR\rconfiguration\"\x91\x01\n" +
+	"&GetOrganizationLLMConfigurationRequest\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x124\n" +
 	"\bprovider\x18\x02 \x01(\tB\x18\xbaH\x15r\x13R\tanthropicR\x06openaiR\bprovider\"x\n" +
 	"'GetOrganizationLLMConfigurationResponse\x12M\n" +
 	"\rconfiguration\x18\x01 \x01(\v2'.gitpod.v1.OrganizationLLMConfigurationR\rconfiguration\"*\n" +
 	"(ListOrganizationLLMConfigurationsRequest\"|\n" +
 	")ListOrganizationLLMConfigurationsResponse\x12O\n" +
-	"\x0econfigurations\x18\x01 \x03(\v2'.gitpod.v1.OrganizationLLMConfigurationR\x0econfigurations\"\xa9\x01\n" +
-	")DeleteOrganizationLLMConfigurationRequest\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x124\n" +
+	"\x0econfigurations\x18\x01 \x03(\v2'.gitpod.v1.OrganizationLLMConfigurationR\x0econfigurations\"\x94\x01\n" +
+	")DeleteOrganizationLLMConfigurationRequest\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x124\n" +
 	"\bprovider\x18\x02 \x01(\tB\x18\xbaH\x15r\x13R\tanthropicR\x06openaiR\bprovider\",\n" +
 	"*DeleteOrganizationLLMConfigurationResponse\"\xd9\x01\n" +
 	"\x1cOrganizationLLMConfiguration\x12'\n" +
@@ -666,7 +661,7 @@ const file_gitpod_v1_ona_intelligence_proto_rawDesc = "" +
 	"\"UpdateOrganizationLLMConfiguration\x124.gitpod.v1.UpdateOrganizationLLMConfigurationRequest\x1a5.gitpod.v1.UpdateOrganizationLLMConfigurationResponse\"\x00\x12\x8d\x01\n" +
 	"\x1fGetOrganizationLLMConfiguration\x121.gitpod.v1.GetOrganizationLLMConfigurationRequest\x1a2.gitpod.v1.GetOrganizationLLMConfigurationResponse\"\x03\x90\x02\x01\x12\x93\x01\n" +
 	"!ListOrganizationLLMConfigurations\x123.gitpod.v1.ListOrganizationLLMConfigurationsRequest\x1a4.gitpod.v1.ListOrganizationLLMConfigurationsResponse\"\x03\x90\x02\x01\x12\x93\x01\n" +
-	"\"DeleteOrganizationLLMConfiguration\x124.gitpod.v1.DeleteOrganizationLLMConfigurationRequest\x1a5.gitpod.v1.DeleteOrganizationLLMConfigurationResponse\"\x00B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\"DeleteOrganizationLLMConfiguration\x124.gitpod.v1.DeleteOrganizationLLMConfigurationRequest\x1a5.gitpod.v1.DeleteOrganizationLLMConfigurationResponse\"\x00B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_ona_intelligence_proto_rawDescOnce sync.Once
