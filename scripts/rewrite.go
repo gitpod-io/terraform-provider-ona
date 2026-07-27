@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
@@ -12,7 +13,7 @@ import (
 	"github.com/zclconf/go-cty/cty"
 )
 
-func rewriteGeneratedConfig(path string, inv inventory) error {
+func rewriteGeneratedConfig(path string) error {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return fmt.Errorf("read generated config: %w", err)
@@ -21,13 +22,111 @@ func rewriteGeneratedConfig(path string, inv inventory) error {
 	if diags.HasErrors() {
 		return fmt.Errorf("parse generated config: %s", diags.Error())
 	}
-	refs := referenceMap(inv)
-	count := rewriteBody(file.Body(), refs)
-	logStepf("rewrote %d generated attributes to references", count)
+	refs, err := identityReferenceMap(file.Body())
+	if err != nil {
+		return err
+	}
+
+	count := 0
+	for _, block := range file.Body().Blocks() {
+		if block.Type() == "resource" {
+			count += rewriteBody(block.Body(), refs)
+		}
+	}
+	logStepf("derived %d unambiguous resource identities and rewrote %d attributes", len(refs), count)
 	if err := os.WriteFile(path, file.Bytes(), 0644); err != nil {
 		return fmt.Errorf("write rewritten config: %w", err)
 	}
 	return nil
+}
+
+func identityReferenceMap(body *hclwrite.Body) (map[string]hcl.Traversal, error) {
+	candidates := map[string][]hcl.Traversal{}
+	for _, block := range body.Blocks() {
+		if block.Type() != "import" {
+			continue
+		}
+		attributes := block.Body().Attributes()
+		toAttribute, hasTo := attributes["to"]
+		identityAttribute, hasIdentity := attributes["identity"]
+		if !hasTo || !hasIdentity {
+			continue
+		}
+
+		toExpression, parseDiags := hclsyntax.ParseExpression(toAttribute.Expr().BuildTokens(nil).Bytes(), "", hcl.Pos{Line: 1, Column: 1})
+		if parseDiags.HasErrors() {
+			return nil, fmt.Errorf("parse generated import destination: %s", parseDiags.Error())
+		}
+		toTraversal, traversalDiags := hcl.AbsTraversalForExpr(toExpression)
+		if traversalDiags.HasErrors() {
+			return nil, fmt.Errorf("read generated import destination: %s", traversalDiags.Error())
+		}
+
+		identityExpression, parseDiags := hclsyntax.ParseExpression(identityAttribute.Expr().BuildTokens(nil).Bytes(), "", hcl.Pos{Line: 1, Column: 1})
+		if parseDiags.HasErrors() {
+			return nil, fmt.Errorf("parse generated import identity: %s", parseDiags.Error())
+		}
+		identity, valueDiags := identityExpression.Value(nil)
+		if valueDiags.HasErrors() {
+			return nil, fmt.Errorf("read generated import identity: %s", valueDiags.Error())
+		}
+		identityAttributeName, id, ok := singleStringIdentity(identity)
+		if !ok {
+			continue
+		}
+		if !identityMatchesResourceType(toTraversal.RootName(), identityAttributeName) {
+			continue
+		}
+
+		toTraversal = append(toTraversal, hcl.TraverseAttr{Name: "id"})
+		candidates[id] = append(candidates[id], toTraversal)
+	}
+
+	result := map[string]hcl.Traversal{}
+	for id, traversals := range candidates {
+		if len(traversals) == 1 {
+			result[id] = traversals[0]
+		}
+	}
+	return result, nil
+}
+
+func singleStringIdentity(identity cty.Value) (string, string, bool) {
+	identityType := identity.Type()
+	if !identity.IsKnown() || identity.IsNull() || (!identityType.IsObjectType() && !identityType.IsMapType()) {
+		return "", "", false
+	}
+
+	var attributeName string
+	var result string
+	nonNullValues := 0
+	for iterator := identity.ElementIterator(); iterator.Next(); {
+		key, value := iterator.Element()
+		if !value.IsKnown() {
+			return "", "", false
+		}
+		if value.IsNull() {
+			continue
+		}
+		nonNullValues++
+		if value.Type() != cty.String {
+			return "", "", false
+		}
+		attributeName = key.AsString()
+		result = value.AsString()
+	}
+	if nonNullValues != 1 || result == "" {
+		return "", "", false
+	}
+	return attributeName, result, true
+}
+
+func identityMatchesResourceType(resourceType, identityAttributeName string) bool {
+	if identityAttributeName == "id" {
+		return true
+	}
+	resourceName := strings.TrimPrefix(resourceType, "ona_")
+	return resourceName != resourceType && identityAttributeName == resourceName+"_id"
 }
 
 func splitGeneratedConfig(path, dir string) ([]string, error) {
@@ -61,7 +160,7 @@ func splitGeneratedConfig(path, dir string) ([]string, error) {
 		if err := os.WriteFile(target, grouped[name], 0644); err != nil {
 			return nil, fmt.Errorf("write %s: %w", target, err)
 		}
-		logStepf("wrote %s with %d resource blocks", target, counts[name])
+		logStepf("wrote %s with %d blocks", target, counts[name])
 		paths = append(paths, target)
 	}
 	if err := os.WriteFile(filepath.Join(dir, "generated.rewritten.tf.txt"), data, 0644); err != nil {
@@ -74,10 +173,14 @@ func splitGeneratedConfig(path, dir string) ([]string, error) {
 }
 
 func outputFileForBlock(block *hclwrite.Block) string {
+	if block.Type() == "import" {
+		return "imports.tf"
+	}
 	if block.Type() != "resource" || len(block.Labels()) == 0 {
 		return "generated_misc.tf"
 	}
-	switch block.Labels()[0] {
+	resourceType := block.Labels()[0]
+	switch resourceType {
 	case "ona_automation":
 		return "automations.tf"
 	case "ona_environment_class":
@@ -94,23 +197,11 @@ func outputFileForBlock(block *hclwrite.Block) string {
 		return "security_policies.tf"
 	case "ona_team":
 		return "teams.tf"
-	default:
-		return "generated_misc.tf"
 	}
-}
-
-func referenceMap(inv inventory) map[string]hcl.Traversal {
-	result := map[string]hcl.Traversal{}
-	for _, r := range inv.Resources {
-		if r.UUID == "" || r.SkipReason != "" || r.Type == "ona_organization_policies" {
-			continue
-		}
-		traversal, diags := hclsyntax.ParseTraversalAbs([]byte(r.Address+".id"), "", hcl.Pos{Line: 1, Column: 1})
-		if !diags.HasErrors() {
-			result[r.UUID] = traversal
-		}
+	if strings.HasPrefix(resourceType, "ona_") {
+		return strings.TrimPrefix(resourceType, "ona_") + ".tf"
 	}
-	return result
+	return "generated_misc.tf"
 }
 
 func rewriteBody(body *hclwrite.Body, refs map[string]hcl.Traversal) int {
@@ -150,8 +241,8 @@ func rewrittenAttributeTokens(attr *hclwrite.Attribute, refs map[string]hcl.Trav
 	}
 	var elems []hclwrite.Tokens
 	changed := false
-	for it := value.ElementIterator(); it.Next(); {
-		_, item := it.Element()
+	for iterator := value.ElementIterator(); iterator.Next(); {
+		_, item := iterator.Element()
 		if item.Type() == cty.String {
 			if ref, ok := refs[item.AsString()]; ok {
 				elems = append(elems, hclwrite.TokensForTraversal(ref))

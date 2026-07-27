@@ -39,9 +39,6 @@ func prepareTerraformProvider(cfg config) ([]string, error) {
 	if err := os.WriteFile(terraformRC, []byte(contents), 0644); err != nil {
 		return nil, fmt.Errorf("write terraformrc: %w", err)
 	}
-	if err := writeTerraformWrapper(cfg.workdir); err != nil {
-		return nil, err
-	}
 
 	env := os.Environ()
 	env = append(env,
@@ -50,27 +47,6 @@ func prepareTerraformProvider(cfg config) ([]string, error) {
 		"ONA_HOST="+cfg.host,
 	)
 	return env, nil
-}
-
-func writeTerraformWrapper(dir string) error {
-	path := filepath.Join(dir, "terraform.sh")
-	contents := `#!/usr/bin/env sh
-set -eu
-
-script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-export TF_CLI_CONFIG_FILE="$script_dir/terraformrc"
-
-if [ -z "${ONA_TOKEN:-}" ]; then
-  echo "missing ONA_TOKEN" >&2
-  exit 1
-fi
-
-exec "${TERRAFORM:-terraform}" -chdir="$script_dir" "$@"
-`
-	if err := os.WriteFile(path, []byte(contents), 0755); err != nil {
-		return fmt.Errorf("write terraform wrapper: %w", err)
-	}
-	return nil
 }
 
 func validatePlan(cfg config, env []string) error {
@@ -124,9 +100,8 @@ type terraformPlan struct {
 }
 
 type terraformResourceChange struct {
-	Address   string           `json:"address"`
-	Importing *json.RawMessage `json:"importing"`
-	Change    struct {
+	Address string `json:"address"`
+	Change  struct {
 		Actions []string `json:"actions"`
 	} `json:"change"`
 }
@@ -138,7 +113,7 @@ func safePlanChange(change terraformResourceChange) bool {
 	if len(change.Change.Actions) == 1 && change.Change.Actions[0] == "no-op" {
 		return true
 	}
-	return change.Importing != nil && len(change.Change.Actions) == 1 && change.Change.Actions[0] == "no-op"
+	return false
 }
 
 func runTerraform(cfg config, env []string, args ...string) error {

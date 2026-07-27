@@ -72,3 +72,5 @@ terraform plan
 ```
 
 The first plan should show imports without remote mutations. `terraform apply` imports the resources into state, and the final plan should be empty. Write-only values such as SCM OAuth client secrets are not recoverable from Ona and are omitted from generated configuration.
+
+For multi-resource queries, the optional [Query post-processing helper](import.md) can rewrite identity literals to Terraform references, split generated blocks by resource type, and reject plans containing remote mutations.

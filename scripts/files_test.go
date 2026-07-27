@@ -8,23 +8,19 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func TestPrepareWorkdirRemovesGeneratedTerraformState(t *testing.T) {
+func TestPrepareWorkdirRemovesGeneratedFiles(t *testing.T) {
 	t.Parallel()
 
 	dir := t.TempDir()
 	files := map[string]string{
-		"import-map.json":          "{}",
-		"mapping.json":             "{}",
-		"inventory.json":           "{}",
-		"projects.tf":              "resource",
-		"generated.raw.tf.txt":     "raw",
-		"terraformrc":              "rc",
-		"terraform.sh":             "wrapper",
-		"terraform.tfstate":        "state",
-		"terraform.tfstate.backup": "backup",
-		".terraform.lock.hcl":      "lock",
-		"validation.tfplan":        "plan",
-		"plan":                     "saved plan",
+		"projects.tf":          "resource",
+		"generated.raw.tf.txt": "raw",
+		"terraformrc":          "rc",
+		"terraform.sh":         "wrapper",
+		".terraform.lock.hcl":  "lock",
+		"validation.tfplan":    "plan",
+		"plan":                 "saved plan",
+		"query.tfquery.hcl":    "list",
 	}
 	for name, contents := range files {
 		if err := os.WriteFile(filepath.Join(dir, name), []byte(contents), 0644); err != nil {
@@ -37,15 +33,12 @@ func TestPrepareWorkdirRemovesGeneratedTerraformState(t *testing.T) {
 	if err := os.Mkdir(filepath.Join(dir, "keepdir"), 0755); err != nil {
 		t.Fatalf("create keepdir: %v", err)
 	}
-	if err := os.WriteFile(filepath.Join(dir, "keepdir", "notes.txt"), []byte("keep"), 0644); err != nil {
-		t.Fatalf("write keepdir fixture: %v", err)
-	}
 
-	var got struct {
-		Err       string
-		Files     []string
-		BinExists bool
+	type Expectation struct {
+		Files []string
+		Err   string
 	}
+	var got Expectation
 	if err := prepareWorkdir(dir); err != nil {
 		got.Err = err.Error()
 	} else if entries, err := os.ReadDir(dir); err != nil {
@@ -54,83 +47,97 @@ func TestPrepareWorkdirRemovesGeneratedTerraformState(t *testing.T) {
 		for _, entry := range entries {
 			got.Files = append(got.Files, entry.Name())
 		}
-		_, err := os.Stat(filepath.Join(dir, ".bin"))
-		got.BinExists = err == nil
 	}
 
-	expected := struct {
-		Err       string
-		Files     []string
-		BinExists bool
-	}{
-		Files:     []string{".bin", "import-map.json", "keepdir"},
-		BinExists: true,
-	}
+	expected := Expectation{Files: []string{".bin", "keepdir", "query.tfquery.hcl"}}
 	if diff := cmp.Diff(expected, got); diff != "" {
 		t.Errorf("prepareWorkdir() mismatch (-want +got):\n%s", diff)
 	}
 }
 
-func TestWriteImportBlocksSkipsUnsupportedProviderTypes(t *testing.T) {
+func TestPrepareWorkdirRefusesTerraformState(t *testing.T) {
 	t.Parallel()
-
-	type Expectation struct {
-		Result string
-		Err    string
-	}
 
 	tests := []struct {
 		Name      string
-		Inventory inventory
-		Expected  Expectation
+		StateFile string
 	}{
-		{
-			Name: "writes_only_registered_provider_resources",
-			Inventory: inventory{
-				Resources: []inventoryResource{
-					{Type: "ona_project", Address: "ona_project.next", ImportID: "project-1", Name: "next"},
-					{Type: "ona_runner", Address: "ona_runner.frankfurt", ImportID: "runner-1", Name: "frankfurt"},
-					{Type: "ona_environment_class", Address: "ona_environment_class.large", ImportID: "class-1", Name: "large"},
-				},
-			},
-			Expected: Expectation{
-				Result: `import {
-  to = ona_project.next
-  id = "project-1"
-}
-
-import {
-  to = ona_runner.frankfurt
-  id = "runner-1"
-}
-
-import {
-  to = ona_environment_class.large
-  id = "class-1"
-}
-
-`,
-			},
-		},
+		{Name: "current_state", StateFile: "terraform.tfstate"},
+		{Name: "backup_state", StateFile: "terraform.tfstate.backup"},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
 
-			path := filepath.Join(t.TempDir(), "imports.tf")
-			var got Expectation
-			if err := writeImportBlocks(path, tc.Inventory); err != nil {
-				got.Err = err.Error()
-			} else if data, err := os.ReadFile(path); err != nil {
-				got.Err = err.Error()
-			} else {
-				got.Result = string(data)
+			dir := t.TempDir()
+			if err := os.WriteFile(filepath.Join(dir, tc.StateFile), []byte("state"), 0644); err != nil {
+				t.Fatalf("write state fixture: %v", err)
+			}
+			generatedPath := filepath.Join(dir, "projects.tf")
+			if err := os.WriteFile(generatedPath, []byte("resource"), 0644); err != nil {
+				t.Fatalf("write generated fixture: %v", err)
 			}
 
-			if diff := cmp.Diff(tc.Expected, got); diff != "" {
-				t.Errorf("writeImportBlocks() mismatch (-want +got):\n%s", diff)
+			type Expectation struct {
+				Err              string
+				GeneratedRemains bool
+				BinExists        bool
+			}
+			var got Expectation
+			if err := prepareWorkdir(dir); err != nil {
+				got.Err = err.Error()
+			}
+			_, err := os.Stat(generatedPath)
+			got.GeneratedRemains = err == nil
+			_, err = os.Stat(filepath.Join(dir, ".bin"))
+			got.BinExists = err == nil
+
+			expected := Expectation{
+				Err:              "refusing to clean " + dir + " because it contains Terraform state; use a disposable staging directory",
+				GeneratedRemains: true,
+			}
+			if diff := cmp.Diff(expected, got); diff != "" {
+				t.Errorf("prepareWorkdir() mismatch (-want +got):\n%s", diff)
 			}
 		})
+	}
+}
+
+func TestWriteTerraformScaffoldRequiresQueryCompatibleTerraform(t *testing.T) {
+	t.Parallel()
+
+	dir := t.TempDir()
+	type Expectation struct {
+		Versions string
+		Provider string
+		Err      string
+	}
+	var got Expectation
+	if err := writeTerraformScaffold(dir); err != nil {
+		got.Err = err.Error()
+	} else if versions, err := os.ReadFile(filepath.Join(dir, "versions.tf")); err != nil {
+		got.Err = err.Error()
+	} else if provider, err := os.ReadFile(filepath.Join(dir, "provider.tf")); err != nil {
+		got.Err = err.Error()
+	} else {
+		got.Versions = string(versions)
+		got.Provider = string(provider)
+	}
+
+	expected := Expectation{
+		Versions: `terraform {
+  required_version = ">= 1.14.0"
+  required_providers {
+    ona = {
+      source = "registry.terraform.io/gitpod-io/ona"
+    }
+  }
+}
+`,
+		Provider: "provider \"ona\" {}\n",
+	}
+	if diff := cmp.Diff(expected, got); diff != "" {
+		t.Errorf("writeTerraformScaffold() mismatch (-want +got):\n%s", diff)
 	}
 }

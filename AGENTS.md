@@ -12,7 +12,7 @@ build without private monorepo modules.
 - `internal/api/go/**`: copied/generated API subset. Do not hand-edit for lint-only or style changes.
 - `docs/**`: generated Terraform provider documentation.
 - `examples/**`: Terraform examples consumed by docs generation.
-- `scripts/**`: import helper and release-related tooling.
+- `scripts/**`: Terraform Query post-processing and release-related tooling.
 - `dev/local-devloop/**`: local Terraform dev loop.
 - `tools/**`: separate Go module used by Terraform documentation generation tooling.
 

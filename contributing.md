@@ -45,7 +45,7 @@ make install-dependencies
 | `examples/` | Terraform examples used to generate provider documentation |
 | `docs/` | Generated Terraform Registry documentation |
 | `templates/` | Source templates used by documentation generation |
-| `scripts/` | Import, validation, and release tooling |
+| `scripts/` | Terraform Query post-processing, validation, and release tooling |
 | `dev/local-devloop/` | Local Terraform configuration for exercising a development build |
 | `tools/` | Separate Go module containing documentation generation tools |
 
