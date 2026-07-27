@@ -34,31 +34,6 @@ list "ona_runner" "all" {
 
 Set `include_resource = true` when you want Terraform to generate resource configuration. Without it, Terraform can list identities and display names, but it does not have full resource values to emit as HCL.
 
-## SCM Integration Query
-
-Use `ona_scm_integration` to discover existing runner SCM integrations without retrieving OAuth or personal access token secret values:
-
-```shell
-export ONA_TOKEN="<service-account-or-personal-access-token>"
-export ONA_HOST="${ONA_HOST:-https://app.gitpod.io}"
-
-./examples/resources/ona_scm_integration/query.sh
-```
-
-The default query lists every SCM integration visible to the configured provider. Add a `config` block to filter by `runner_ids`, `scm_providers`, `hosts`, or `auth_modes`:
-
-```hcl
-list "ona_scm_integration" "github" {
-  provider         = ona
-  include_resource = true
-
-  config {
-    scm_providers = ["github"]
-    auth_modes    = ["oauth"]
-  }
-}
-```
-
 ## Output
 
 `terraform query -generate-config-out=generated.tf` writes `resource` blocks and identity-based `import` blocks for the discovered resources. It does not modify Terraform state.
