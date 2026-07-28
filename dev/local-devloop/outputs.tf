@@ -18,6 +18,11 @@ output "managed_service_account_id" {
   value       = ona_service_account.devloop.id
 }
 
+output "managed_git_authentication_id" {
+  description = "ID of the optional Git authentication managed by this module."
+  value       = try(ona_git_authentication.devloop[0].id, null)
+}
+
 output "managed_group_id" {
   description = "ID of the group managed by this module."
   value       = ona_group.devloop.id

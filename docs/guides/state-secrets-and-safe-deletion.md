@@ -21,6 +21,7 @@ Write-only arguments are sent to Ona and are not stored in Terraform plan or sta
 
 - `ona_secret.value`
 - `ona_scm_integration.oauth_client_secret`
+- `ona_git_authentication.personal_access_token`
 - `ona_runner_llm_integration.api_key`
 - `ona_sso_configuration.client_secret`
 
@@ -38,6 +39,7 @@ Write-only arguments cannot produce diffs by themselves because Terraform does n
 
 - `value_version` for `ona_secret.value`
 - `oauth_client_secret_version` for `ona_scm_integration.oauth_client_secret`
+- `personal_access_token_version` for `ona_git_authentication.personal_access_token`
 - `api_key_version` for `ona_runner_llm_integration.api_key`
 - `client_secret_version` for `ona_sso_configuration.client_secret`
 - `secret_version` for `ona_webhook`, which rotates the generated signing secret

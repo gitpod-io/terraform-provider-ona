@@ -65,7 +65,7 @@ func (r *SCMIntegrationResource) Metadata(ctx context.Context, req resource.Meta
 
 func (r *SCMIntegrationResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = resourceschema.Schema{
-		MarkdownDescription: "Ona runner SCM integration. Use this to configure how a runner authenticates to source control systems for projects assigned to that runner.",
+		MarkdownDescription: "Ona runner SCM integration. Use this to configure how a runner authenticates to source control systems for projects assigned to that runner. For `pat` mode, use `ona_git_authentication` to associate a service account and personal access token with the integration.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
 				Computed:            true,

@@ -917,15 +917,18 @@ func newRunnerConfigurationAPIServer(t *testing.T) *runnerConfigurationAPIServer
 	t.Helper()
 
 	service := &fakeRunnerConfigurationService{
-		scmIntegrations:                 map[string]*v1.SCMIntegration{},
-		scmCreateRequests:               map[string]*v1.CreateSCMIntegrationRequest{},
-		scmUpdateRequests:               map[string][]*v1.UpdateSCMIntegrationRequest{},
-		llmIntegrations:                 map[string]*v1.LLMIntegration{},
-		llmCreateRequests:               map[string]*v1.CreateLLMIntegrationRequest{},
-		llmUpdateRequests:               map[string][]*v1.UpdateLLMIntegrationRequest{},
-		environmentClasses:              map[string]*v1.EnvironmentClass{},
-		environmentClassRunnerKinds:     map[string]v1.RunnerKind{},
-		environmentClassRunnerProviders: map[string]v1.RunnerProvider{},
+		hostAuthenticationTokens:         map[string]*v1.HostAuthenticationToken{},
+		hostAuthenticationCreateRequests: map[string]*v1.CreateHostAuthenticationTokenRequest{},
+		hostAuthenticationUpdateRequests: map[string][]*v1.UpdateHostAuthenticationTokenRequest{},
+		scmIntegrations:                  map[string]*v1.SCMIntegration{},
+		scmCreateRequests:                map[string]*v1.CreateSCMIntegrationRequest{},
+		scmUpdateRequests:                map[string][]*v1.UpdateSCMIntegrationRequest{},
+		llmIntegrations:                  map[string]*v1.LLMIntegration{},
+		llmCreateRequests:                map[string]*v1.CreateLLMIntegrationRequest{},
+		llmUpdateRequests:                map[string][]*v1.UpdateLLMIntegrationRequest{},
+		environmentClasses:               map[string]*v1.EnvironmentClass{},
+		environmentClassRunnerKinds:      map[string]v1.RunnerKind{},
+		environmentClassRunnerProviders:  map[string]v1.RunnerProvider{},
 	}
 	runnerService := &fakeRunnerService{runners: map[string]*v1.Runner{}}
 
@@ -945,25 +948,111 @@ func newRunnerConfigurationAPIServer(t *testing.T) *runnerConfigurationAPIServer
 type fakeRunnerConfigurationService struct {
 	v1connect.UnimplementedRunnerConfigurationServiceHandler
 
-	mu                              sync.Mutex
-	scmIntegrations                 map[string]*v1.SCMIntegration
-	scmCreateRequests               map[string]*v1.CreateSCMIntegrationRequest
-	scmUpdateRequests               map[string][]*v1.UpdateSCMIntegrationRequest
-	scmDeletes                      []string
-	scmSecretUpdates                map[string][]string
-	scmCreateErr                    error
-	scmUpdateErr                    error
-	llmIntegrations                 map[string]*v1.LLMIntegration
-	llmCreateRequests               map[string]*v1.CreateLLMIntegrationRequest
-	llmUpdateRequests               map[string][]*v1.UpdateLLMIntegrationRequest
-	llmDeletes                      map[string]bool
-	llmDeleteForce                  map[string]bool
-	llmAPIKeyUpdates                map[string][]string
-	llmCreateErr                    error
-	environmentClasses              map[string]*v1.EnvironmentClass
-	lastEnvironmentClassListKinds   []v1.RunnerKind
-	environmentClassRunnerKinds     map[string]v1.RunnerKind
-	environmentClassRunnerProviders map[string]v1.RunnerProvider
+	mu                               sync.Mutex
+	hostAuthenticationTokens         map[string]*v1.HostAuthenticationToken
+	hostAuthenticationCreateRequests map[string]*v1.CreateHostAuthenticationTokenRequest
+	hostAuthenticationUpdateRequests map[string][]*v1.UpdateHostAuthenticationTokenRequest
+	hostAuthenticationDeletes        []string
+	hostAuthenticationPATUpdates     map[string][]string
+	scmIntegrations                  map[string]*v1.SCMIntegration
+	scmCreateRequests                map[string]*v1.CreateSCMIntegrationRequest
+	scmUpdateRequests                map[string][]*v1.UpdateSCMIntegrationRequest
+	scmDeletes                       []string
+	scmSecretUpdates                 map[string][]string
+	scmCreateErr                     error
+	scmUpdateErr                     error
+	llmIntegrations                  map[string]*v1.LLMIntegration
+	llmCreateRequests                map[string]*v1.CreateLLMIntegrationRequest
+	llmUpdateRequests                map[string][]*v1.UpdateLLMIntegrationRequest
+	llmDeletes                       map[string]bool
+	llmDeleteForce                   map[string]bool
+	llmAPIKeyUpdates                 map[string][]string
+	llmCreateErr                     error
+	environmentClasses               map[string]*v1.EnvironmentClass
+	lastEnvironmentClassListKinds    []v1.RunnerKind
+	environmentClassRunnerKinds      map[string]v1.RunnerKind
+	environmentClassRunnerProviders  map[string]v1.RunnerProvider
+}
+
+func (s *fakeRunnerConfigurationService) CreateHostAuthenticationToken(ctx context.Context, req *connect.Request[v1.CreateHostAuthenticationTokenRequest]) (*connect.Response[v1.CreateHostAuthenticationTokenResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	for _, existing := range s.hostAuthenticationTokens {
+		if existing.GetRunnerId() == req.Msg.GetRunnerId() && existing.GetHost() == req.Msg.GetHost() && existing.GetSubject().GetId() == req.Msg.GetSubject().GetId() {
+			return nil, connect.NewError(connect.CodeAlreadyExists, errors.New("host authentication token already exists"))
+		}
+	}
+	id := fmt.Sprintf("git-auth-%d", len(s.hostAuthenticationTokens)+1)
+	token := &v1.HostAuthenticationToken{
+		Id:            id,
+		RunnerId:      req.Msg.GetRunnerId(),
+		Host:          req.Msg.GetHost(),
+		Source:        req.Msg.GetSource(),
+		ExpiresAt:     req.Msg.GetExpiresAt(),
+		IntegrationId: req.Msg.GetIntegrationId(),
+		Scopes:        append([]string(nil), req.Msg.GetScopes()...),
+		Subject:       cloneRunnerConfigurationSubject(req.Msg.GetSubject()),
+	}
+	s.hostAuthenticationTokens[id] = token
+	s.hostAuthenticationCreateRequests[id] = cloneCreateHostAuthenticationTokenRequest(req.Msg)
+	s.recordHostAuthenticationPATUpdate(id, req.Msg.GetToken())
+	return connect.NewResponse(&v1.CreateHostAuthenticationTokenResponse{Token: cloneHostAuthenticationToken(token)}), nil
+}
+
+func (s *fakeRunnerConfigurationService) GetHostAuthenticationToken(ctx context.Context, req *connect.Request[v1.GetHostAuthenticationTokenRequest]) (*connect.Response[v1.GetHostAuthenticationTokenResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	token := s.hostAuthenticationTokens[req.Msg.GetId()]
+	if token == nil {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("host authentication token not found"))
+	}
+	return connect.NewResponse(&v1.GetHostAuthenticationTokenResponse{Token: cloneHostAuthenticationToken(token)}), nil
+}
+
+func (s *fakeRunnerConfigurationService) ListHostAuthenticationTokens(ctx context.Context, req *connect.Request[v1.ListHostAuthenticationTokensRequest]) (*connect.Response[v1.ListHostAuthenticationTokensResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	var tokens []*v1.HostAuthenticationToken
+	for _, token := range s.hostAuthenticationTokens {
+		if runnerID := req.Msg.GetFilter().GetRunnerId(); runnerID != "" && token.GetRunnerId() != runnerID {
+			continue
+		}
+		if subjectID := req.Msg.GetFilter().GetSubjectId(); subjectID != "" && token.GetSubject().GetId() != subjectID {
+			continue
+		}
+		tokens = append(tokens, cloneHostAuthenticationToken(token))
+	}
+	sort.Slice(tokens, func(i, j int) bool { return tokens[i].GetId() < tokens[j].GetId() })
+	return connect.NewResponse(&v1.ListHostAuthenticationTokensResponse{Tokens: tokens, Pagination: &v1.PaginationResponse{}}), nil
+}
+
+func (s *fakeRunnerConfigurationService) UpdateHostAuthenticationToken(ctx context.Context, req *connect.Request[v1.UpdateHostAuthenticationTokenRequest]) (*connect.Response[v1.UpdateHostAuthenticationTokenResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.hostAuthenticationTokens[req.Msg.GetId()] == nil {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("host authentication token not found"))
+	}
+	s.hostAuthenticationUpdateRequests[req.Msg.GetId()] = append(s.hostAuthenticationUpdateRequests[req.Msg.GetId()], cloneUpdateHostAuthenticationTokenRequest(req.Msg))
+	if req.Msg.Token != nil {
+		s.recordHostAuthenticationPATUpdate(req.Msg.GetId(), req.Msg.GetToken())
+	}
+	return connect.NewResponse(&v1.UpdateHostAuthenticationTokenResponse{}), nil
+}
+
+func (s *fakeRunnerConfigurationService) DeleteHostAuthenticationToken(ctx context.Context, req *connect.Request[v1.DeleteHostAuthenticationTokenRequest]) (*connect.Response[v1.DeleteHostAuthenticationTokenResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.hostAuthenticationTokens[req.Msg.GetId()] == nil {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("host authentication token not found"))
+	}
+	delete(s.hostAuthenticationTokens, req.Msg.GetId())
+	s.hostAuthenticationDeletes = append(s.hostAuthenticationDeletes, req.Msg.GetId())
+	return connect.NewResponse(&v1.DeleteHostAuthenticationTokenResponse{}), nil
 }
 
 func (s *fakeRunnerConfigurationService) CreateSCMIntegration(ctx context.Context, req *connect.Request[v1.CreateSCMIntegrationRequest]) (*connect.Response[v1.CreateSCMIntegrationResponse], error) {
@@ -1282,6 +1371,44 @@ func (s *fakeRunnerConfigurationService) scmDeleted(id string) bool {
 	return false
 }
 
+func (s *fakeRunnerConfigurationService) hostAuthenticationDeleted(id string) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	for _, deleted := range s.hostAuthenticationDeletes {
+		if deleted == id {
+			return true
+		}
+	}
+	return false
+}
+
+func (s *fakeRunnerConfigurationService) hostAuthenticationPATUpdated(id string, pat string) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	for _, updated := range s.hostAuthenticationPATUpdates[id] {
+		if updated == pat {
+			return true
+		}
+	}
+	return false
+}
+
+func (s *fakeRunnerConfigurationService) hostAuthenticationCreateRequest(id string) *v1.CreateHostAuthenticationTokenRequest {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	return cloneCreateHostAuthenticationTokenRequest(s.hostAuthenticationCreateRequests[id])
+}
+
+func (s *fakeRunnerConfigurationService) hostAuthenticationCreateCount() int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	return len(s.hostAuthenticationCreateRequests)
+}
+
 func (s *fakeRunnerConfigurationService) scmSecretUpdated(id string, secret string) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -1394,6 +1521,13 @@ func (s *fakeRunnerConfigurationService) recordSCMSecretUpdate(id string, secret
 	s.scmSecretUpdates[id] = append(s.scmSecretUpdates[id], secret)
 }
 
+func (s *fakeRunnerConfigurationService) recordHostAuthenticationPATUpdate(id string, pat string) {
+	if s.hostAuthenticationPATUpdates == nil {
+		s.hostAuthenticationPATUpdates = map[string][]string{}
+	}
+	s.hostAuthenticationPATUpdates[id] = append(s.hostAuthenticationPATUpdates[id], pat)
+}
+
 func (s *fakeRunnerConfigurationService) recordLLMAPIKeyUpdate(id string, apiKey string) {
 	if s.llmAPIKeyUpdates == nil {
 		s.llmAPIKeyUpdates = map[string][]string{}
@@ -1403,6 +1537,50 @@ func (s *fakeRunnerConfigurationService) recordLLMAPIKeyUpdate(id string, apiKey
 
 func cloneSCMIntegration(integration *v1.SCMIntegration) *v1.SCMIntegration {
 	cloned, ok := proto.Clone(integration).(*v1.SCMIntegration)
+	if !ok {
+		return nil
+	}
+	return cloned
+}
+
+func cloneHostAuthenticationToken(token *v1.HostAuthenticationToken) *v1.HostAuthenticationToken {
+	if token == nil {
+		return nil
+	}
+	cloned, ok := proto.Clone(token).(*v1.HostAuthenticationToken)
+	if !ok {
+		return nil
+	}
+	return cloned
+}
+
+func cloneRunnerConfigurationSubject(subject *v1.Subject) *v1.Subject {
+	if subject == nil {
+		return nil
+	}
+	cloned, ok := proto.Clone(subject).(*v1.Subject)
+	if !ok {
+		return nil
+	}
+	return cloned
+}
+
+func cloneCreateHostAuthenticationTokenRequest(request *v1.CreateHostAuthenticationTokenRequest) *v1.CreateHostAuthenticationTokenRequest {
+	if request == nil {
+		return nil
+	}
+	cloned, ok := proto.Clone(request).(*v1.CreateHostAuthenticationTokenRequest)
+	if !ok {
+		return nil
+	}
+	return cloned
+}
+
+func cloneUpdateHostAuthenticationTokenRequest(request *v1.UpdateHostAuthenticationTokenRequest) *v1.UpdateHostAuthenticationTokenRequest {
+	if request == nil {
+		return nil
+	}
+	cloned, ok := proto.Clone(request).(*v1.UpdateHostAuthenticationTokenRequest)
 	if !ok {
 		return nil
 	}

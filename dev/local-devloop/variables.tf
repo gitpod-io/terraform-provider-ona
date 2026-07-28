@@ -29,6 +29,26 @@ variable "service_account_valid_until" {
   default     = "2099-01-01T00:00:00Z"
 }
 
+variable "enable_git_authentication" {
+  type        = bool
+  description = "Whether to associate the dev-loop service account with the GitHub PAT SCM integration."
+  default     = false
+}
+
+variable "git_personal_access_token" {
+  type        = string
+  description = "GitHub personal access token sent to Ona when Git authentication is enabled."
+  sensitive   = true
+  ephemeral   = true
+  default     = null
+}
+
+variable "git_personal_access_token_version" {
+  type        = string
+  description = "User-managed rotation marker for the GitHub personal access token."
+  default     = "v1"
+}
+
 variable "group_name" {
   type        = string
   description = "Name for the group managed by this local development module."

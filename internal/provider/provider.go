@@ -10,6 +10,7 @@ import (
 	onaclient "github.com/gitpod-io/terraform-provider-ona/internal/client"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/accesscontrol"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/billing"
+	gitauthentication "github.com/gitpod-io/terraform-provider-ona/internal/provider/git_authentication"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/integration"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/organization"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/project"
@@ -140,6 +141,7 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		billing.NewOrganizationAIBudgetResource,
 		billing.NewTeamAIBudgetResource,
 		billing.NewUserAIBudgetResource,
+		gitauthentication.NewResource,
 		integration.NewResource,
 		organization.NewAnnouncementBannerResource,
 		organization.NewCustomDomainResource,
@@ -175,6 +177,7 @@ func (p *OnaProvider) EphemeralResources(ctx context.Context) []func() ephemeral
 // registered by the provider. Resource-specific PRs add constructors here.
 func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResource {
 	return []func() list.ListResource{
+		gitauthentication.NewListResource,
 		organization.NewCustomDomainListResource,
 		organization.NewOIDCConfigListResource,
 		organization.NewSCIMConfigurationListResource,

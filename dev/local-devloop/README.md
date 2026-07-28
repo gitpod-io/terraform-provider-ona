@@ -20,6 +20,7 @@ and data sources:
 - `ona_webhook.devloop`
 - `ona_warm_pool.devloop`
 - `ona_scm_integration.github_oauth`
+- `ona_git_authentication.devloop` (opt-in)
 - `ona_scm_integration.gitlab_pat`
 - `ona_scm_integration.azuredevops_entra`
 - `ona_scm_integration.azuredevops_server`
@@ -73,6 +74,22 @@ Terraform outputs or stored in state.
 
 The integration uses the visible built-in definition for `linear.app`, so the
 dev loop does not require or persist an OAuth client secret.
+
+Service-account Git authentication is opt-in because it requires a real SCM
+personal access token. Supply the token through an ephemeral input; Terraform
+sends it to Ona through the resource's write-only argument and does not store
+it in plan or state. Change `git_personal_access_token_version` whenever the
+stored token changes:
+
+```shell
+ONA_TOKEN=... \
+TF_VAR_git_personal_access_token=... \
+TF_CLI_CONFIG_FILE="${PWD}/terraformrc" \
+terraform -chdir=dev/local-devloop apply \
+  -var='enable_git_authentication=true' \
+  -var='git_personal_access_token_version=v2' \
+  -auto-approve -input=false
+```
 
 AI budget resources are opt-in because they require an enterprise organization,
 suitable Billing permissions, and change organization billing policy. Enabling
