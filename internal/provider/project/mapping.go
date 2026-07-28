@@ -343,12 +343,19 @@ func projectModelFromProto(ctx context.Context, project *v1.Project) (ProjectMod
 	return data, diags
 }
 
+// repositoryFields is returned only after both values have been validated as
+// non-empty. Unsupported initializer shapes return an error diagnostic instead.
 type repositoryFields struct {
 	CloneURL types.String
 	Branch   types.String
 }
 
+// unsupportedProjectRepositoryDiagnostic is an error-severity marker. Managed
+// resource operations surface it as an error, while project list discovery can
+// recognize this concrete type and intentionally exclude unsupported projects.
 type unsupportedProjectRepositoryDiagnostic struct{}
+
+var _ diag.Diagnostic = unsupportedProjectRepositoryDiagnostic{}
 
 func (unsupportedProjectRepositoryDiagnostic) Severity() diag.Severity {
 	return diag.SeverityError
