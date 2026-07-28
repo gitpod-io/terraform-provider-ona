@@ -8,9 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -478,18 +475,15 @@ var File_gitpod_v1_identity_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_identity_proto_rawDesc = "" +
 	"\n" +
-	"\x18gitpod/v1/identity.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\"n\n" +
+	"\x18gitpod/v1/identity.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\"n\n" +
 	"\x11GetIDTokenRequest\x12$\n" +
 	"\baudience\x18\x01 \x03(\tB\b\xbaH\x05\x92\x01\x02\b\x01R\baudience\x123\n" +
 	"\aversion\x18\x02 \x01(\x0e2\x19.gitpod.v1.IDTokenVersionR\aversion\"*\n" +
 	"\x12GetIDTokenResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\"\x93\x01\n" +
-	"\aSubject\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"subject.idګ\x1e\x00R\x02id\x12W\n" +
-	"\tprincipal\x18\x02 \x01(\x0e2\x14.gitpod.v1.PrincipalB#\xbaH\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\x13\n" +
-	"\x11subject.principalګ\x1e\x00R\tprincipal\"!\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\"d\n" +
+	"\aSubject\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\x02id\x12<\n" +
+	"\tprincipal\x18\x02 \x01(\x0e2\x14.gitpod.v1.PrincipalB\b\xbaH\x05\x82\x01\x02\x10\x01R\tprincipal\"!\n" +
 	"\x1fGetAuthenticatedIdentityRequest\"\xa6\x01\n" +
 	" GetAuthenticatedIdentityResponse\x12,\n" +
 	"\asubject\x18\x01 \x01(\v2\x12.gitpod.v1.SubjectR\asubject\x12'\n" +
@@ -510,14 +504,12 @@ const file_gitpod_v1_identity_proto_rawDesc = "" +
 	"\x10PRINCIPAL_RUNNER\x10\x03\x12\x19\n" +
 	"\x15PRINCIPAL_ENVIRONMENT\x10\x04\x12\x1d\n" +
 	"\x19PRINCIPAL_SERVICE_ACCOUNT\x10\x05\x12\x1c\n" +
-	"\x18PRINCIPAL_RUNNER_MANAGER\x10\x06\"\x04\b\a\x10\a*\x19PRINCIPAL_AGENT_EXECUTION2\x85\x03\n" +
-	"\x0fIdentityService\x12]\n" +
+	"\x18PRINCIPAL_RUNNER_MANAGER\x10\x06\"\x04\b\a\x10\a*\x19PRINCIPAL_AGENT_EXECUTION2\xae\x02\n" +
+	"\x0fIdentityService\x12K\n" +
 	"\n" +
-	"GetIDToken\x12\x1c.gitpod.v1.GetIDTokenRequest\x1a\x1d.gitpod.v1.GetIDTokenResponse\"\x12\xb2\xab\x1e\x0e\x12\fget-id-token\x12\x98\x01\n" +
-	"\x18GetAuthenticatedIdentity\x12*.gitpod.v1.GetAuthenticatedIdentityRequest\x1a+.gitpod.v1.GetAuthenticatedIdentityResponse\"#\xb2\xab\x1e\x1c\x12\x1aget-authenticated-identity\x90\x02\x01\x12h\n" +
-	"\rExchangeToken\x12\x1f.gitpod.v1.ExchangeTokenRequest\x1a .gitpod.v1.ExchangeTokenResponse\"\x14\xb2\xab\x1e\x10\x12\x0eexchange-token\x1a\x0e\xaa\xab\x1e\n" +
-	"\n" +
-	"\bidentityB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"GetIDToken\x12\x1c.gitpod.v1.GetIDTokenRequest\x1a\x1d.gitpod.v1.GetIDTokenResponse\"\x00\x12x\n" +
+	"\x18GetAuthenticatedIdentity\x12*.gitpod.v1.GetAuthenticatedIdentityRequest\x1a+.gitpod.v1.GetAuthenticatedIdentityResponse\"\x03\x90\x02\x01\x12T\n" +
+	"\rExchangeToken\x12\x1f.gitpod.v1.ExchangeTokenRequest\x1a .gitpod.v1.ExchangeTokenResponse\"\x00B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_identity_proto_rawDescOnce sync.Once
