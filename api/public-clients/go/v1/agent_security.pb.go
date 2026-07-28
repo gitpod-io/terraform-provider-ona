@@ -8,7 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -266,10 +265,9 @@ var File_gitpod_v1_agent_security_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_agent_security_proto_rawDesc = "" +
 	"\n" +
-	"\x1egitpod/v1/agent_security.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xea\x02\n" +
-	"\x16ReportExecEventRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x12(\n" +
+	"\x1egitpod/v1/agent_security.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd6\x02\n" +
+	"\x16ReportExecEventRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x12(\n" +
 	"\n" +
 	"executable\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02R\n" +
 	"executable\x12$\n" +
@@ -289,7 +287,7 @@ const file_gitpod_v1_agent_security_proto_rawDesc = "" +
 	"\x04pgid\x18\a \x01(\x05R\x04pgid\x12\x10\n" +
 	"\x03sid\x18\b \x01(\x05R\x03sid2r\n" +
 	"\x14AgentSecurityService\x12Z\n" +
-	"\x0fReportExecEvent\x12!.gitpod.v1.ReportExecEventRequest\x1a\".gitpod.v1.ReportExecEventResponse\"\x00B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x0fReportExecEvent\x12!.gitpod.v1.ReportExecEventRequest\x1a\".gitpod.v1.ReportExecEventResponse\"\x00B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_agent_security_proto_rawDescOnce sync.Once
