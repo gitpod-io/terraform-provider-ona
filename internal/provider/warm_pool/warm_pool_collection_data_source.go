@@ -37,20 +37,7 @@ func (d *WarmPoolCollectionDataSource) Schema(ctx context.Context, req datasourc
 }
 
 func (d *WarmPoolCollectionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	d.client = data.Client
+	d.client = providerdata.DataSourceClient(req.ProviderData, d.client, &resp.Diagnostics)
 }
 
 func (d *WarmPoolCollectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -60,11 +47,7 @@ func (d *WarmPoolCollectionDataSource) Read(ctx context.Context, req datasource.
 		return
 	}
 
-	if d.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before reading ona_warm_pools data sources.",
-		)
+	if !providerdata.RequireDataSourceClient(d.client, &resp.Diagnostics, "ona_warm_pools") {
 		return
 	}
 

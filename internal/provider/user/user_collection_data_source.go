@@ -10,6 +10,8 @@ import (
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -22,7 +24,7 @@ func NewUserCollectionDataSource() datasource.DataSource {
 }
 
 type UserCollectionDataSource struct {
-	clientHolder
+	client *managementclient.ManagementPlane
 }
 
 func (d *UserCollectionDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -34,7 +36,7 @@ func (d *UserCollectionDataSource) Schema(_ context.Context, _ datasource.Schema
 }
 
 func (d *UserCollectionDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	d.configure(req, resp)
+	d.client = providerdata.DataSourceClient(req.ProviderData, d.client, &resp.Diagnostics)
 }
 
 func (d *UserCollectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -43,7 +45,7 @@ func (d *UserCollectionDataSource) Read(ctx context.Context, req datasource.Read
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !d.requireClient(&resp.Diagnostics, "ona_users") {
+	if !providerdata.RequireDataSourceClient(d.client, &resp.Diagnostics, "ona_users") {
 		return
 	}
 
@@ -51,7 +53,7 @@ func (d *UserCollectionDataSource) Read(ctx context.Context, req datasource.Read
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	organizationID, err := d.authenticatedOrganizationID(ctx)
+	organizationID, err := authenticatedOrganizationID(ctx, d.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "resolving the organization for the Ona users data source", err)
 		return

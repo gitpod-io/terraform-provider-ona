@@ -13,6 +13,7 @@ import (
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -125,20 +126,7 @@ func (r *SCMIntegrationResource) Schema(ctx context.Context, req resource.Schema
 }
 
 func (r *SCMIntegrationResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = data.Client
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *SCMIntegrationResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -168,11 +156,7 @@ func (r *SCMIntegrationResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before creating ona_scm_integration resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_scm_integration") {
 		return
 	}
 
@@ -221,11 +205,7 @@ func (r *SCMIntegrationResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before reading ona_scm_integration resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_scm_integration") {
 		return
 	}
 
@@ -278,11 +258,7 @@ func (r *SCMIntegrationResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before updating ona_scm_integration resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", "ona_scm_integration") {
 		return
 	}
 
@@ -324,11 +300,7 @@ func (r *SCMIntegrationResource) Delete(ctx context.Context, req resource.Delete
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before deleting ona_scm_integration resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_scm_integration") {
 		return
 	}
 
@@ -366,10 +338,10 @@ func createSCMIntegrationRequest(data SCMIntegrationModel, secret types.String) 
 	var diags diag.Diagnostics
 
 	validateSCMIntegrationModel(data, &diags)
-	if isOAuthSCMIntegration(data) && !isKnownString(secret) {
+	if isOAuthSCMIntegration(data) && !tfvalue.IsKnownString(secret) {
 		diags.AddAttributeError(path.Root("oauth_client_secret"), "Missing OAuth Client Secret", "Set oauth_client_secret when auth_mode is \"oauth\".")
 	}
-	if isPATSCMIntegration(data) && isKnownString(secret) {
+	if isPATSCMIntegration(data) && tfvalue.IsKnownString(secret) {
 		diags.AddAttributeError(path.Root("oauth_client_secret"), "Unexpected OAuth Client Secret", "Do not set oauth_client_secret when auth_mode is \"pat\".")
 	}
 	if diags.HasError() {
@@ -386,10 +358,10 @@ func createSCMIntegrationRequest(data SCMIntegrationModel, secret types.String) 
 		req.OauthClientId = ptr(data.OAuthClientID.ValueString())
 		req.OauthPlaintextClientSecret = ptr(secret.ValueString())
 	}
-	if isOAuthSCMIntegration(data) && isKnownString(data.IssuerURL) {
+	if isOAuthSCMIntegration(data) && tfvalue.IsKnownString(data.IssuerURL) {
 		req.IssuerUrl = ptr(data.IssuerURL.ValueString())
 	}
-	if isKnownString(data.VirtualDirectory) {
+	if tfvalue.IsKnownString(data.VirtualDirectory) {
 		req.VirtualDirectory = ptr(data.VirtualDirectory.ValueString())
 	}
 	return req, diags
@@ -398,7 +370,7 @@ func createSCMIntegrationRequest(data SCMIntegrationModel, secret types.String) 
 func updateSCMIntegrationRequest(data SCMIntegrationModel, prior SCMIntegrationModel, secret types.String) (*v1.UpdateSCMIntegrationRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	validateSCMIntegrationModel(data, &diags)
-	if isPATSCMIntegration(data) && isKnownString(secret) {
+	if isPATSCMIntegration(data) && tfvalue.IsKnownString(secret) {
 		diags.AddAttributeError(path.Root("oauth_client_secret"), "Unexpected OAuth Client Secret", "Do not set oauth_client_secret when auth_mode is \"pat\".")
 	}
 	if diags.HasError() {
@@ -408,26 +380,26 @@ func updateSCMIntegrationRequest(data SCMIntegrationModel, prior SCMIntegrationM
 	req := &v1.UpdateSCMIntegrationRequest{
 		Id: data.ID.ValueString(),
 	}
-	if isKnownString(data.AuthMode) {
+	if tfvalue.IsKnownString(data.AuthMode) {
 		req.Pat = ptr(isPATSCMIntegration(data))
 	}
-	if isOAuthSCMIntegration(data) && isKnownString(data.OAuthClientID) {
+	if isOAuthSCMIntegration(data) && tfvalue.IsKnownString(data.OAuthClientID) {
 		req.OauthClientId = ptr(data.OAuthClientID.ValueString())
 	} else if isPATSCMIntegration(data) || data.OAuthClientID.IsNull() && !prior.OAuthClientID.IsNull() {
 		req.OauthClientId = ptr("")
 	}
-	if isOAuthSCMIntegration(data) && isKnownString(data.IssuerURL) {
+	if isOAuthSCMIntegration(data) && tfvalue.IsKnownString(data.IssuerURL) {
 		req.IssuerUrl = ptr(data.IssuerURL.ValueString())
 	} else if !isPATSCMIntegration(data) && data.IssuerURL.IsNull() && !prior.IssuerURL.IsNull() {
 		req.IssuerUrl = ptr("")
 	}
-	if isKnownString(data.VirtualDirectory) {
+	if tfvalue.IsKnownString(data.VirtualDirectory) {
 		req.VirtualDirectory = ptr(data.VirtualDirectory.ValueString())
 	} else if data.VirtualDirectory.IsNull() && !prior.VirtualDirectory.IsNull() {
 		req.VirtualDirectory = ptr("")
 	}
 	if oauthSecretRequiredForUpdate(data, prior) {
-		if !isKnownString(secret) {
+		if !tfvalue.IsKnownString(secret) {
 			diags.AddAttributeError(path.Root("oauth_client_secret"), "Missing OAuth Client Secret", "Set oauth_client_secret when enabling OAuth, changing oauth_client_id, or changing oauth_client_secret_version.")
 			return nil, diags
 		}
@@ -443,8 +415,8 @@ func populateSCMIntegrationModel(data *SCMIntegrationModel, integration *v1.SCMI
 	data.Host = types.StringValue(integration.GetHost())
 	if oauth := integration.GetOauth(); oauth != nil {
 		data.AuthMode = types.StringValue(scmAuthModeOAuth)
-		data.OAuthClientID = stringOptionalValue(oauth.GetClientId())
-		data.IssuerURL = stringOptionalValue(oauth.GetIssuerUrl())
+		data.OAuthClientID = tfvalue.OptionalStringValue(oauth.GetClientId())
+		data.IssuerURL = tfvalue.OptionalStringValue(oauth.GetIssuerUrl())
 	} else {
 		data.AuthMode = types.StringNull()
 		data.OAuthClientID = types.StringNull()
@@ -455,19 +427,19 @@ func populateSCMIntegrationModel(data *SCMIntegrationModel, integration *v1.SCMI
 	}
 	data.OAuthClientSecret = types.StringNull()
 	data.OAuthClientSecretVersion = types.StringNull()
-	data.VirtualDirectory = stringOptionalValue(integration.GetVirtualDirectory())
+	data.VirtualDirectory = tfvalue.OptionalStringValue(integration.GetVirtualDirectory())
 }
 
 func preserveSCMIntegrationPlannedInputs(data *SCMIntegrationModel, planned SCMIntegrationModel) {
-	data.RunnerID = preserveString(data.RunnerID, planned.RunnerID)
-	data.SCMID = preserveString(data.SCMID, planned.SCMID)
-	data.Host = preserveString(data.Host, planned.Host)
-	data.AuthMode = preserveString(data.AuthMode, planned.AuthMode)
-	data.OAuthClientID = preserveString(data.OAuthClientID, planned.OAuthClientID)
+	data.RunnerID = tfvalue.PreserveString(data.RunnerID, planned.RunnerID)
+	data.SCMID = tfvalue.PreserveString(data.SCMID, planned.SCMID)
+	data.Host = tfvalue.PreserveString(data.Host, planned.Host)
+	data.AuthMode = tfvalue.PreserveString(data.AuthMode, planned.AuthMode)
+	data.OAuthClientID = tfvalue.PreserveString(data.OAuthClientID, planned.OAuthClientID)
 	data.OAuthClientSecret = types.StringNull()
-	data.OAuthClientSecretVersion = preserveString(data.OAuthClientSecretVersion, planned.OAuthClientSecretVersion)
-	data.IssuerURL = preserveString(data.IssuerURL, planned.IssuerURL)
-	data.VirtualDirectory = preserveString(data.VirtualDirectory, planned.VirtualDirectory)
+	data.OAuthClientSecretVersion = tfvalue.PreserveString(data.OAuthClientSecretVersion, planned.OAuthClientSecretVersion)
+	data.IssuerURL = tfvalue.PreserveString(data.IssuerURL, planned.IssuerURL)
+	data.VirtualDirectory = tfvalue.PreserveString(data.VirtualDirectory, planned.VirtualDirectory)
 }
 
 func readOAuthClientSecret(ctx context.Context, cfg tfsdk.Config, diags *diag.Diagnostics) types.String {
@@ -495,16 +467,8 @@ func isRunnerPublicKeyMissingError(err error) bool {
 	return connect.CodeOf(err) == connect.CodeFailedPrecondition && strings.Contains(err.Error(), "runner does not have a public key")
 }
 
-func isKnownString(value types.String) bool {
-	return !value.IsNull() && !value.IsUnknown() && value.ValueString() != ""
-}
-
-func isKnownBool(value types.Bool) bool {
-	return !value.IsNull() && !value.IsUnknown()
-}
-
 func validateSCMIntegrationModel(data SCMIntegrationModel, diags *diag.Diagnostics) {
-	if !isKnownString(data.AuthMode) {
+	if !tfvalue.IsKnownString(data.AuthMode) {
 		return
 	}
 
@@ -518,45 +482,45 @@ func validateSCMIntegrationModel(data SCMIntegrationModel, diags *diag.Diagnosti
 		diags.AddAttributeError(path.Root("auth_mode"), "Invalid SCM Authentication Mode", "Supported values are \"oauth\" and \"pat\".")
 	}
 
-	if !isKnownString(data.SCMID) {
+	if !tfvalue.IsKnownString(data.SCMID) {
 		return
 	}
 	switch data.SCMID.ValueString() {
 	case scmIDAzureDevOpsEntra:
-		if authMode == scmAuthModeOAuth && !isKnownString(data.IssuerURL) {
+		if authMode == scmAuthModeOAuth && !tfvalue.IsKnownString(data.IssuerURL) {
 			diags.AddAttributeError(path.Root("issuer_url"), "Missing Azure DevOps Entra Issuer URL", "Set issuer_url when kind is \"azuredevops_entra\".")
 		}
-		if isKnownString(data.VirtualDirectory) {
+		if tfvalue.IsKnownString(data.VirtualDirectory) {
 			diags.AddAttributeError(path.Root("virtual_directory"), "Unexpected Virtual Directory", "virtual_directory is only supported when kind is \"azuredevops_server\".")
 		}
 	case scmIDAzureDevOpsServer:
 		if authMode != scmAuthModePAT {
 			diags.AddAttributeError(path.Root("auth_mode"), "Invalid Azure DevOps Server Authentication Mode", "Azure DevOps Server SCM integrations currently require auth_mode=\"pat\".")
 		}
-		if !isKnownString(data.VirtualDirectory) {
+		if !tfvalue.IsKnownString(data.VirtualDirectory) {
 			diags.AddAttributeError(path.Root("virtual_directory"), "Missing Azure DevOps Server Virtual Directory", "Set virtual_directory when kind is \"azuredevops_server\".")
 		}
-		if isKnownString(data.IssuerURL) {
+		if tfvalue.IsKnownString(data.IssuerURL) {
 			diags.AddAttributeError(path.Root("issuer_url"), "Unexpected Issuer URL", "issuer_url is only accepted when kind is \"azuredevops_entra\".")
 		}
 	default:
-		if isKnownString(data.IssuerURL) {
+		if tfvalue.IsKnownString(data.IssuerURL) {
 			diags.AddAttributeError(path.Root("issuer_url"), "Unexpected Issuer URL", "issuer_url is only accepted when kind is \"azuredevops_entra\".")
 		}
-		if isKnownString(data.VirtualDirectory) {
+		if tfvalue.IsKnownString(data.VirtualDirectory) {
 			diags.AddAttributeError(path.Root("virtual_directory"), "Unexpected Virtual Directory", "virtual_directory is only supported when kind is \"azuredevops_server\".")
 		}
 	}
 }
 
 func validateOAuthSCMIntegration(data SCMIntegrationModel, diags *diag.Diagnostics) {
-	if !isKnownString(data.OAuthClientID) {
+	if !tfvalue.IsKnownString(data.OAuthClientID) {
 		diags.AddAttributeError(path.Root("oauth_client_id"), "Missing OAuth Client ID", "Set oauth_client_id when auth_mode is \"oauth\".")
 	}
 }
 
 func validatePATSCMIntegration(data SCMIntegrationModel, diags *diag.Diagnostics) {
-	if isKnownString(data.OAuthClientID) {
+	if tfvalue.IsKnownString(data.OAuthClientID) {
 		diags.AddAttributeError(path.Root("oauth_client_id"), "Unexpected OAuth Client ID", "Do not set oauth_client_id when auth_mode is \"pat\".")
 	}
 	if !data.OAuthClientSecretVersion.IsNull() && !data.OAuthClientSecretVersion.IsUnknown() {

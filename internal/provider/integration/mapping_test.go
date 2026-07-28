@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -194,8 +195,8 @@ func testAuthObject(t *testing.T, dynamic bool, clientID, version string) types.
 		"auth_url":              types.StringNull(),
 		"token_url":             types.StringNull(),
 		"scopes":                types.SetNull(types.StringType),
-		"client_id":             optionalStringValue(clientID),
-		"client_secret_version": optionalStringValue(version),
+		"client_id":             tfvalue.OptionalStringValue(clientID),
+		"client_secret_version": tfvalue.OptionalStringValue(version),
 		"redirect_url":          types.StringNull(),
 		"dynamic_registration":  types.BoolValue(dynamic),
 		"auth_params":           types.MapNull(types.StringType),
@@ -216,7 +217,7 @@ func testCredentialsObject(t *testing.T, oauthClientSecret string) types.Object 
 	t.Helper()
 	var diags diag.Diagnostics
 	value := objectValue(credentialsAttributeTypes, map[string]attr.Value{
-		"oauth_client_secret":        optionalStringValue(oauthClientSecret),
+		"oauth_client_secret":        tfvalue.OptionalStringValue(oauthClientSecret),
 		"proprietary_client_secret":  types.StringNull(),
 		"proprietary_webhook_secret": types.StringNull(),
 		"proprietary_private_key":    types.StringNull(),

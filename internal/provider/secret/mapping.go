@@ -7,14 +7,13 @@ import (
 	"context"
 	"sort"
 	"strings"
-	"time"
 
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type resolvedScope struct {
@@ -27,7 +26,7 @@ type resolvedScope struct {
 func createSecretRequest(ctx context.Context, data Model, value types.String, scope resolvedScope) (*v1.CreateSecretRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	validateModel(ctx, data, true, &diags)
-	if !isKnownString(value) {
+	if !tfvalue.IsKnownString(value) {
 		diags.AddAttributeError(pathRoot("value"), "Missing Secret Value", "Set value when creating an ona_secret resource.")
 	}
 	if diags.HasError() {
@@ -49,13 +48,13 @@ func createSecretRequest(ctx context.Context, data Model, value types.String, sc
 
 func setSecretCreateMount(req *v1.CreateSecretRequest, data Model) {
 	switch {
-	case isKnownBool(data.EnvironmentVariable) && data.EnvironmentVariable.ValueBool():
+	case tfvalue.IsKnownBool(data.EnvironmentVariable) && data.EnvironmentVariable.ValueBool():
 		req.Mount = &v1.CreateSecretRequest_EnvironmentVariable{EnvironmentVariable: true}
-	case isKnownString(data.FilePath):
+	case tfvalue.IsKnownString(data.FilePath):
 		req.Mount = &v1.CreateSecretRequest_FilePath{FilePath: data.FilePath.ValueString()}
-	case isKnownString(data.ContainerRegistryBasicAuthHost):
+	case tfvalue.IsKnownString(data.ContainerRegistryBasicAuthHost):
 		req.Mount = &v1.CreateSecretRequest_ContainerRegistryBasicAuthHost{ContainerRegistryBasicAuthHost: data.ContainerRegistryBasicAuthHost.ValueString()}
-	case isKnownBool(data.APIOnly) && data.APIOnly.ValueBool():
+	case tfvalue.IsKnownBool(data.APIOnly) && data.APIOnly.ValueBool():
 		req.Mount = &v1.CreateSecretRequest_ApiOnly{ApiOnly: true}
 	}
 }
@@ -69,7 +68,7 @@ func secretScopeFromModel(data Model, organizationID types.String) (*v1.SecretSc
 
 	switch data.Scope.ValueString() {
 	case scopeOrganization:
-		if !isKnownString(organizationID) {
+		if !tfvalue.IsKnownString(organizationID) {
 			diags.AddError("Missing Organization ID", "The provider could not infer an organization ID from the authenticated identity.")
 			return nil, diags
 		}
@@ -125,7 +124,7 @@ func normalizedTargetHosts(ctx context.Context, value types.Set, diags *diag.Dia
 func populateModelFromSecret(ctx context.Context, data *Model, secret *v1.Secret, diags *diag.Diagnostics) {
 	data.ID = types.StringValue(secret.GetId())
 	data.Name = types.StringValue(secret.GetName())
-	data.CreatedAt = timestampValue(secret.GetCreatedAt())
+	data.CreatedAt = tfvalue.TimestampRFC3339Value(secret.GetCreatedAt())
 	data.Creator = subjectObjectFromProto(secret.GetCreator(), diags)
 	data.Value = types.StringNull()
 	populateScopeFromProto(data, secret.GetScope())
@@ -143,13 +142,13 @@ func populateScopeFromProto(data *Model, scope *v1.SecretScope) {
 		data.Scope = types.StringValue(scopeOrganization)
 	case *v1.SecretScope_ProjectId:
 		data.Scope = types.StringValue(scopeProject)
-		data.ProjectID = stringOptionalValue(scope.GetProjectId())
+		data.ProjectID = tfvalue.OptionalStringValue(scope.GetProjectId())
 	case *v1.SecretScope_UserId:
 		data.Scope = types.StringValue(scopeUser)
-		data.UserID = stringOptionalValue(scope.GetUserId())
+		data.UserID = tfvalue.OptionalStringValue(scope.GetUserId())
 	case *v1.SecretScope_ServiceAccountId:
 		data.Scope = types.StringValue(scopeServiceAccount)
-		data.ServiceAccountID = stringOptionalValue(scope.GetServiceAccountId())
+		data.ServiceAccountID = tfvalue.OptionalStringValue(scope.GetServiceAccountId())
 	}
 }
 
@@ -163,9 +162,9 @@ func populateMountFromProto(data *Model, secret *v1.Secret) {
 	case *v1.Secret_EnvironmentVariable:
 		data.EnvironmentVariable = types.BoolValue(secret.GetEnvironmentVariable())
 	case *v1.Secret_FilePath:
-		data.FilePath = stringOptionalValue(secret.GetFilePath())
+		data.FilePath = tfvalue.OptionalStringValue(secret.GetFilePath())
 	case *v1.Secret_ContainerRegistryBasicAuthHost:
-		data.ContainerRegistryBasicAuthHost = stringOptionalValue(secret.GetContainerRegistryBasicAuthHost())
+		data.ContainerRegistryBasicAuthHost = tfvalue.OptionalStringValue(secret.GetContainerRegistryBasicAuthHost())
 	case *v1.Secret_ApiOnly:
 		data.APIOnly = types.BoolValue(secret.GetApiOnly())
 	}
@@ -183,22 +182,22 @@ func populateCredentialProxyFromProto(ctx context.Context, data *Model, proxy *v
 	}
 	data.CredentialProxy = []CredentialProxyModel{{
 		TargetHosts: targetHosts,
-		Header:      stringOptionalValue(proxy.GetHeader()),
+		Header:      tfvalue.OptionalStringValue(proxy.GetHeader()),
 	}}
 }
 
 func preservePlannedInputs(data *Model, planned Model) {
-	data.Scope = preserveString(data.Scope, planned.Scope)
-	data.ProjectID = preserveString(data.ProjectID, planned.ProjectID)
-	data.UserID = preserveString(data.UserID, planned.UserID)
-	data.ServiceAccountID = preserveString(data.ServiceAccountID, planned.ServiceAccountID)
-	data.Name = preserveString(data.Name, planned.Name)
+	data.Scope = tfvalue.PreserveString(data.Scope, planned.Scope)
+	data.ProjectID = tfvalue.PreserveString(data.ProjectID, planned.ProjectID)
+	data.UserID = tfvalue.PreserveString(data.UserID, planned.UserID)
+	data.ServiceAccountID = tfvalue.PreserveString(data.ServiceAccountID, planned.ServiceAccountID)
+	data.Name = tfvalue.PreserveString(data.Name, planned.Name)
 	data.Value = types.StringNull()
-	data.ValueVersion = preserveString(data.ValueVersion, planned.ValueVersion)
-	data.EnvironmentVariable = preserveBool(data.EnvironmentVariable, planned.EnvironmentVariable)
-	data.FilePath = preserveString(data.FilePath, planned.FilePath)
-	data.ContainerRegistryBasicAuthHost = preserveString(data.ContainerRegistryBasicAuthHost, planned.ContainerRegistryBasicAuthHost)
-	data.APIOnly = preserveBool(data.APIOnly, planned.APIOnly)
+	data.ValueVersion = tfvalue.PreserveString(data.ValueVersion, planned.ValueVersion)
+	data.EnvironmentVariable = tfvalue.PreserveBool(data.EnvironmentVariable, planned.EnvironmentVariable)
+	data.FilePath = tfvalue.PreserveString(data.FilePath, planned.FilePath)
+	data.ContainerRegistryBasicAuthHost = tfvalue.PreserveString(data.ContainerRegistryBasicAuthHost, planned.ContainerRegistryBasicAuthHost)
+	data.APIOnly = tfvalue.PreserveBool(data.APIOnly, planned.APIOnly)
 	if len(planned.CredentialProxy) > 0 {
 		data.CredentialProxy = planned.CredentialProxy
 	}
@@ -216,8 +215,8 @@ func subjectObjectFromProto(subject *v1.Subject, diags *diag.Diagnostics) types.
 	result, objectDiags := types.ObjectValue(
 		subjectObjectAttributeTypes,
 		map[string]attr.Value{
-			"id":        stringOptionalValue(subject.GetId()),
-			"principal": stringOptionalValue(principalToString(subject.GetPrincipal())),
+			"id":        tfvalue.OptionalStringValue(subject.GetId()),
+			"principal": tfvalue.OptionalStringValue(principalToString(subject.GetPrincipal())),
 		},
 	)
 	diags.Append(objectDiags...)
@@ -241,34 +240,6 @@ func principalToString(principal v1.Principal) string {
 	default:
 		return ""
 	}
-}
-
-func timestampValue(ts *timestamppb.Timestamp) types.String {
-	if ts == nil || !ts.IsValid() {
-		return types.StringNull()
-	}
-	return types.StringValue(ts.AsTime().UTC().Format(time.RFC3339))
-}
-
-func stringOptionalValue(value string) types.String {
-	if value == "" {
-		return types.StringNull()
-	}
-	return types.StringValue(value)
-}
-
-func preserveString(current types.String, planned types.String) types.String {
-	if !planned.IsNull() && !planned.IsUnknown() {
-		return planned
-	}
-	return current
-}
-
-func preserveBool(current types.Bool, planned types.Bool) types.Bool {
-	if !planned.IsNull() && !planned.IsUnknown() {
-		return planned
-	}
-	return current
 }
 
 func pathRoot(name string) path.Path {

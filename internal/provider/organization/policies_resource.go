@@ -10,6 +10,8 @@ import (
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -33,7 +35,7 @@ func NewPoliciesResource() resource.Resource {
 }
 
 type PoliciesResource struct {
-	clientHolder
+	client *managementclient.ManagementPlane
 }
 
 type PoliciesModel struct {
@@ -240,7 +242,7 @@ func durationAttribute(description string) resourceschema.StringAttribute {
 }
 
 func (r *PoliciesResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	r.configure(req, resp)
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *PoliciesResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -254,10 +256,10 @@ func (r *PoliciesResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	if !r.requireClient(&resp.Diagnostics, "creating", "ona_organization_policies") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_organization_policies") {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
 		return
@@ -308,10 +310,10 @@ func (r *PoliciesResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	if !r.requireClient(&resp.Diagnostics, "reading", "ona_organization_policies") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_organization_policies") {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
 		return
@@ -349,10 +351,10 @@ func (r *PoliciesResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	if !r.requireClient(&resp.Diagnostics, "updating", "ona_organization_policies") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", "ona_organization_policies") {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
 		return
@@ -407,10 +409,10 @@ func (r *PoliciesResource) Delete(ctx context.Context, req resource.DeleteReques
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "deleting", "ona_organization_policies") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_organization_policies") {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
 		return
@@ -436,10 +438,10 @@ func (r *PoliciesResource) Delete(ctx context.Context, req resource.DeleteReques
 }
 
 func (r *PoliciesResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	if !r.requireClient(&resp.Diagnostics, "importing", "ona_organization_policies") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "importing", "ona_organization_policies") {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
 		return

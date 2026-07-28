@@ -4,17 +4,9 @@
 package billing
 
 import (
-	"context"
 	"fmt"
-	"strings"
 
-	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
-	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
-	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -25,51 +17,6 @@ const (
 	maxWholeCreditBudget int64 = 9_223_372_036_854
 )
 
-type clientHolder struct {
-	client *managementclient.ManagementPlane
-}
-
-func (h *clientHolder) configure(req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-	h.client = data.Client
-}
-
-func (h *clientHolder) requireClient(diags *diag.Diagnostics, action, resourceType string) bool {
-	if h.client != nil {
-		return true
-	}
-	diags.AddError(
-		"Ona API Client Is Not Configured",
-		fmt.Sprintf("Set the provider token argument or ONA_TOKEN before %s %s resources.", action, resourceType),
-	)
-	return false
-}
-
-func (h *clientHolder) authenticatedOrganizationID(ctx context.Context) (string, error) {
-	result, err := h.client.IdentityService().GetAuthenticatedIdentity(ctx, connect.NewRequest(&v1.GetAuthenticatedIdentityRequest{}))
-	if err != nil {
-		return "", fmt.Errorf("get authenticated identity: %w", err)
-	}
-	if result == nil || result.Msg == nil {
-		return "", fmt.Errorf("get authenticated identity: API returned an empty response")
-	}
-	organizationID := result.Msg.GetOrganizationId()
-	if organizationID == "" {
-		return "", fmt.Errorf("authenticated identity did not include an organization ID")
-	}
-	return organizationID, nil
-}
-
 func guardOrganizationScope(diags *diag.Diagnostics, stateID types.String, authenticatedID, resourceType string) bool {
 	if stateID.IsNull() || stateID.IsUnknown() || stateID.ValueString() == "" || stateID.ValueString() == authenticatedID {
 		return true
@@ -79,24 +26,4 @@ func guardOrganizationScope(diags *diag.Diagnostics, stateID types.String, authe
 		fmt.Sprintf("%s state belongs to organization %q, but the configured Ona token is authenticated for organization %q.", resourceType, stateID.ValueString(), authenticatedID),
 	)
 	return false
-}
-
-func splitImportID(id string, count int, expected string) ([]string, diag.Diagnostics) {
-	var diags diag.Diagnostics
-	parts := strings.Split(id, "/")
-	if len(parts) != count {
-		diags.AddError("Invalid Import ID", "Expected import ID format: "+expected+".")
-		return nil, diags
-	}
-	for _, part := range parts {
-		if strings.TrimSpace(part) == "" {
-			diags.AddError("Invalid Import ID", "Expected import ID format: "+expected+".")
-			return nil, diags
-		}
-	}
-	return parts, diags
-}
-
-func setImportString(ctx context.Context, resp *resource.ImportStateResponse, name, value string) {
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root(name), types.StringValue(value))...)
 }

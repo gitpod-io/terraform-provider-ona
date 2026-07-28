@@ -11,6 +11,9 @@ import (
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -30,7 +33,7 @@ func NewOrganizationRoleAssignmentResource() resource.Resource {
 }
 
 type OrganizationRoleAssignmentResource struct {
-	clientHolder
+	client *managementclient.ManagementPlane
 }
 
 type OrganizationRoleAssignmentModel struct {
@@ -93,7 +96,7 @@ func (r *OrganizationRoleAssignmentResource) Schema(ctx context.Context, req res
 }
 
 func (r *OrganizationRoleAssignmentResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	r.configure(req, resp)
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *OrganizationRoleAssignmentResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -111,11 +114,11 @@ func (r *OrganizationRoleAssignmentResource) Create(ctx context.Context, req res
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "creating", "ona_organization_role_assignment") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_organization_role_assignment") {
 		return
 	}
 
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
 		return
@@ -152,11 +155,11 @@ func (r *OrganizationRoleAssignmentResource) Read(ctx context.Context, req resou
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "reading", "ona_organization_role_assignment") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_organization_role_assignment") {
 		return
 	}
 
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
 		return
@@ -187,7 +190,7 @@ func (r *OrganizationRoleAssignmentResource) Delete(ctx context.Context, req res
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "deleting", "ona_organization_role_assignment") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_organization_role_assignment") {
 		return
 	}
 	if data.ID.IsNull() || data.ID.IsUnknown() || data.ID.ValueString() == "" {
@@ -215,8 +218,8 @@ func (r *OrganizationRoleAssignmentResource) ImportState(ctx context.Context, re
 		addInvalidRoleDiagnostic(path.Root("role"), parts[1], &resp.Diagnostics)
 		return
 	}
-	setImportString(ctx, resp, "group_id", parts[0])
-	setImportString(ctx, resp, "role", parts[1])
+	tfvalue.SetImportString(ctx, resp, "group_id", parts[0])
+	tfvalue.SetImportString(ctx, resp, "role", parts[1])
 }
 
 func (r *OrganizationRoleAssignmentResource) findAssignment(ctx context.Context, groupID string, organizationID string, role string) (*v1.RoleAssignment, error) {

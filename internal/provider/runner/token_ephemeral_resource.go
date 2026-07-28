@@ -5,7 +5,6 @@ package runner
 
 import (
 	"context"
-	"fmt"
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
@@ -56,20 +55,10 @@ func (r *TokenEphemeralResource) Schema(ctx context.Context, req ephemeral.Schem
 }
 
 func (r *TokenEphemeralResource) Configure(ctx context.Context, req ephemeral.ConfigureRequest, resp *ephemeral.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
+	data := providerdata.EphemeralResourceData(req.ProviderData, nil, &resp.Diagnostics)
+	if data != nil {
+		r.client = data.Client
 	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Ephemeral Resource Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = data.Client
 }
 
 func (r *TokenEphemeralResource) Open(ctx context.Context, req ephemeral.OpenRequest, resp *ephemeral.OpenResponse) {
@@ -79,11 +68,7 @@ func (r *TokenEphemeralResource) Open(ctx context.Context, req ephemeral.OpenReq
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before opening ona_runner_token ephemeral resources.",
-		)
+	if !providerdata.RequireEphemeralResourceClient(r.client, &resp.Diagnostics, "ona_runner_token") {
 		return
 	}
 

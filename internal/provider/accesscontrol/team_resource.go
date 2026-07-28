@@ -9,6 +9,9 @@ import (
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -28,7 +31,7 @@ func NewTeamResource() resource.Resource {
 }
 
 type TeamResource struct {
-	clientHolder
+	client *managementclient.ManagementPlane
 }
 
 type TeamModel struct {
@@ -71,7 +74,7 @@ func (r *TeamResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 }
 
 func (r *TeamResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	r.configure(req, resp)
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *TeamResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -80,11 +83,11 @@ func (r *TeamResource) Create(ctx context.Context, req resource.CreateRequest, r
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "creating", "ona_team") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_team") {
 		return
 	}
 
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
 		return
@@ -131,7 +134,7 @@ func (r *TeamResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "reading", "ona_team") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_team") {
 		return
 	}
 	if data.ID.IsNull() || data.ID.IsUnknown() || data.ID.ValueString() == "" {
@@ -160,7 +163,7 @@ func (r *TeamResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "updating", "ona_team") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", "ona_team") {
 		return
 	}
 
@@ -190,7 +193,7 @@ func (r *TeamResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "deleting", "ona_team") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_team") {
 		return
 	}
 	if data.ID.IsNull() || data.ID.IsUnknown() || data.ID.ValueString() == "" {
@@ -232,5 +235,5 @@ func populateTeamModel(data *TeamModel, team *v1.Team) {
 }
 
 func preserveTeamPlannedInputs(data *TeamModel, planned TeamModel) {
-	data.Name = preserveKnownString(data.Name, planned.Name)
+	data.Name = tfvalue.PreserveString(data.Name, planned.Name)
 }

@@ -5,6 +5,7 @@ package organization
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"connectrpc.com/connect"
@@ -14,43 +15,40 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-type identityServiceClient struct {
-	v1connect.IdentityServiceClient
-	getAuthenticatedIdentity func(context.Context, *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error)
-}
-
-func (c identityServiceClient) GetAuthenticatedIdentity(ctx context.Context, req *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error) {
-	return c.getAuthenticatedIdentity(ctx, req)
-}
-
-func TestAuthenticatedOrganizationID(t *testing.T) {
+func TestAuthenticatedOrganizationForClient(t *testing.T) {
 	t.Parallel()
 
 	type Expectation struct {
-		OrganizationID string
-		Err            string
+		Organization authenticatedOrganization
+		Err          string
+		Calls        int
 	}
-
 	tests := []struct {
-		Name             string
-		IdentityResponse *v1.GetAuthenticatedIdentityResponse
-		Expected         Expectation
+		Name     string
+		Response *connect.Response[v1.GetAuthenticatedIdentityResponse]
+		Err      error
+		Expected Expectation
 	}{
 		{
-			Name: "returns_organization_id",
-			IdentityResponse: &v1.GetAuthenticatedIdentityResponse{
-				OrganizationId: "org-1",
-			},
+			Name: "returns_organization_and_principal",
+			Response: connect.NewResponse(&v1.GetAuthenticatedIdentityResponse{
+				OrganizationId: "organization-id",
+				Subject:        &v1.Subject{Principal: v1.Principal_PRINCIPAL_USER},
+			}),
 			Expected: Expectation{
-				OrganizationID: "org-1",
+				Organization: authenticatedOrganization{ID: "organization-id", Principal: v1.Principal_PRINCIPAL_USER},
+				Calls:        1,
 			},
 		},
 		{
-			Name:             "rejects_identity_without_organization",
-			IdentityResponse: &v1.GetAuthenticatedIdentityResponse{},
-			Expected: Expectation{
-				Err: "authenticated identity did not include an organization ID",
-			},
+			Name:     "propagates_api_error",
+			Err:      connect.NewError(connect.CodeUnauthenticated, errors.New("bad token")),
+			Expected: Expectation{Err: "get authenticated identity: unauthenticated: bad token", Calls: 1},
+		},
+		{
+			Name:     "rejects_missing_organization_id",
+			Response: connect.NewResponse(&v1.GetAuthenticatedIdentityResponse{}),
+			Expected: Expectation{Err: "authenticated identity did not include an organization ID", Calls: 1},
 		},
 	}
 
@@ -58,25 +56,31 @@ func TestAuthenticatedOrganizationID(t *testing.T) {
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
 
-			client := managementclient.NewWithServices(managementclient.Services{
-				IdentityService: identityServiceClient{
-					getAuthenticatedIdentity: func(context.Context, *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error) {
-						return connect.NewResponse(tc.IdentityResponse), nil
-					},
-				},
-			})
-
+			service := &organizationIdentityService{response: tc.Response, err: tc.Err}
+			client := managementclient.NewWithServices(managementclient.Services{IdentityService: service})
 			var got Expectation
-			organizationID, err := (&clientHolder{client: client}).authenticatedOrganizationID(t.Context())
+			organization, err := authenticatedOrganizationForClient(t.Context(), client)
 			if err != nil {
 				got.Err = err.Error()
 			} else {
-				got.OrganizationID = organizationID
+				got.Organization = organization
 			}
-
+			got.Calls = service.calls
 			if diff := cmp.Diff(tc.Expected, got); diff != "" {
-				t.Errorf("authenticatedOrganizationID() mismatch (-want +got):\n%s", diff)
+				t.Errorf("authenticatedOrganizationForClient() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
+}
+
+type organizationIdentityService struct {
+	v1connect.IdentityServiceClient
+	response *connect.Response[v1.GetAuthenticatedIdentityResponse]
+	err      error
+	calls    int
+}
+
+func (s *organizationIdentityService) GetAuthenticatedIdentity(context.Context, *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error) {
+	s.calls++
+	return s.response, s.err
 }

@@ -99,20 +99,7 @@ func (d *PolicyCollectionDataSource) Schema(ctx context.Context, req datasource.
 }
 
 func (d *PolicyCollectionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	d.client = data.Client
+	d.client = providerdata.DataSourceClient(req.ProviderData, d.client, &resp.Diagnostics)
 }
 
 func (d *PolicyCollectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -122,11 +109,7 @@ func (d *PolicyCollectionDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	if d.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before reading ona_security_policies data sources.",
-		)
+	if !providerdata.RequireDataSourceClient(d.client, &resp.Diagnostics, "ona_security_policies") {
 		return
 	}
 

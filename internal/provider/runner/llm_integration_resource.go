@@ -14,6 +14,7 @@ import (
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -55,20 +56,7 @@ func (r *LLMIntegrationResource) Schema(ctx context.Context, req resource.Schema
 }
 
 func (r *LLMIntegrationResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = data.Client
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *LLMIntegrationResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -97,11 +85,7 @@ func (r *LLMIntegrationResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before creating ona_runner_llm_integration resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_runner_llm_integration") {
 		return
 	}
 
@@ -146,11 +130,7 @@ func (r *LLMIntegrationResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before reading ona_runner_llm_integration resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_runner_llm_integration") {
 		return
 	}
 
@@ -199,11 +179,7 @@ func (r *LLMIntegrationResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before updating ona_runner_llm_integration resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", "ona_runner_llm_integration") {
 		return
 	}
 
@@ -241,11 +217,7 @@ func (r *LLMIntegrationResource) Delete(ctx context.Context, req resource.Delete
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before deleting ona_runner_llm_integration resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_runner_llm_integration") {
 		return
 	}
 
@@ -283,7 +255,7 @@ func createLLMIntegrationRequest(ctx context.Context, data LLMIntegrationModel, 
 	var diags diag.Diagnostics
 	models, modelDiags := supportedModelsFromSet(ctx, data.Models, path.Root("models"))
 	diags.Append(modelDiags...)
-	if !isKnownString(apiKey) {
+	if !tfvalue.IsKnownString(apiKey) {
 		diags.AddAttributeError(path.Root("api_key"), "Missing LLM API Key", "Set api_key when creating an Ona runner LLM integration.")
 	}
 	if diags.HasError() {
@@ -295,7 +267,7 @@ func createLLMIntegrationRequest(ctx context.Context, data LLMIntegrationModel, 
 		Models:   models,
 		ApiKey:   apiKey.ValueString(),
 	}
-	if isKnownString(data.Endpoint) {
+	if tfvalue.IsKnownString(data.Endpoint) {
 		req.Endpoint = data.Endpoint.ValueString()
 	}
 	if isKnownInt64(data.MaxTokens) {
@@ -312,7 +284,7 @@ func updateLLMIntegrationRequest(ctx context.Context, data LLMIntegrationModel, 
 
 	if stringValueChanged(data.Endpoint, prior.Endpoint) {
 		req.Endpoint = ptr("")
-		if isKnownString(data.Endpoint) {
+		if tfvalue.IsKnownString(data.Endpoint) {
 			req.Endpoint = ptr(data.Endpoint.ValueString())
 		}
 	}
@@ -330,7 +302,7 @@ func updateLLMIntegrationRequest(ctx context.Context, data LLMIntegrationModel, 
 		req.MaxTokens = ptr(uint64(data.MaxTokens.ValueInt64()))
 	}
 
-	if boolValueChanged(data.Enabled, prior.Enabled) && isKnownBool(data.Enabled) {
+	if boolValueChanged(data.Enabled, prior.Enabled) && tfvalue.IsKnownBool(data.Enabled) {
 		phase := v1.LLMIntegrationPhase_LLM_INTEGRATION_PHASE_AVAILABLE
 		if !data.Enabled.ValueBool() {
 			phase = v1.LLMIntegrationPhase_LLM_INTEGRATION_PHASE_DISABLED
@@ -339,7 +311,7 @@ func updateLLMIntegrationRequest(ctx context.Context, data LLMIntegrationModel, 
 	}
 
 	if secretVersionChanged(data.APIKeyVersion, prior.APIKeyVersion) {
-		if !isKnownString(apiKey) {
+		if !tfvalue.IsKnownString(apiKey) {
 			diags.AddAttributeError(path.Root("api_key"), "Missing LLM API Key", "Set api_key when changing api_key_version.")
 			return nil, diags
 		}
@@ -360,25 +332,25 @@ func populateLLMIntegrationModel(ctx context.Context, data *LLMIntegrationModel,
 	data.ID = types.StringValue(integration.GetId())
 	data.RunnerID = types.StringValue(integration.GetRunnerId())
 	data.Models = models
-	data.Endpoint = stringOptionalValue(integration.GetEndpoint())
+	data.Endpoint = tfvalue.OptionalStringValue(integration.GetEndpoint())
 	data.APIKey = types.StringNull()
 	data.APIKeyVersion = types.StringNull()
 	data.MaxTokens = types.Int64Value(int64(integration.GetMaxTokens()))
-	data.LLMProvider = stringValue(llmProviderToString(integration.GetProvider()))
+	data.LLMProvider = tfvalue.OptionalStringValue(llmProviderToString(integration.GetProvider()))
 	data.Enabled = types.BoolValue(integration.GetPhase() != v1.LLMIntegrationPhase_LLM_INTEGRATION_PHASE_DISABLED)
 	return diags
 }
 
 func preserveLLMIntegrationPlannedInputs(data *LLMIntegrationModel, planned LLMIntegrationModel) {
-	data.RunnerID = preserveString(data.RunnerID, planned.RunnerID)
+	data.RunnerID = tfvalue.PreserveString(data.RunnerID, planned.RunnerID)
 	if !planned.Models.IsNull() && !planned.Models.IsUnknown() {
 		data.Models = planned.Models
 	}
-	data.Endpoint = preserveString(data.Endpoint, planned.Endpoint)
+	data.Endpoint = tfvalue.PreserveString(data.Endpoint, planned.Endpoint)
 	data.APIKey = types.StringNull()
-	data.APIKeyVersion = preserveString(data.APIKeyVersion, planned.APIKeyVersion)
+	data.APIKeyVersion = tfvalue.PreserveString(data.APIKeyVersion, planned.APIKeyVersion)
 	data.MaxTokens = preserveInt64(data.MaxTokens, planned.MaxTokens)
-	data.Enabled = preserveBool(data.Enabled, planned.Enabled)
+	data.Enabled = tfvalue.PreserveBool(data.Enabled, planned.Enabled)
 }
 
 func readLLMIntegrationAPIKey(ctx context.Context, cfg tfsdk.Config, diags *diag.Diagnostics) types.String {
