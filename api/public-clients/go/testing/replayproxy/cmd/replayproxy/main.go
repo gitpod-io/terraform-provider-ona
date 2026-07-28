@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/gitpod-io/gitpod-next/api/public-clients/go/testing/replayproxy"
+	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/testing/replayproxy"
 )
 
 func main() {
