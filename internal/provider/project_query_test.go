@@ -77,6 +77,29 @@ func TestAccProjectQueryReturnsRemoteInsightsStatus(t *testing.T) {
 	}
 }
 
+func TestAccProjectQueryReturnsDisabledInsightsStatus(t *testing.T) {
+	server := newProjectAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.projects["project-1"] = exampleQueryableProject()
+	server.insights.enabled["project-1"] = false
+
+	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+		Query:  true,
+		Config: projectQueryConfig(),
+		QueryResultChecks: []querycheck.QueryResultCheck{
+			querycheck.ExpectResourceKnownValues(
+				"ona_project.all",
+				queryfilter.ByDisplayName(knownvalue.StringExact("example")),
+				[]querycheck.KnownValueCheck{{Path: tfjsonpath.New("insights_enabled"), KnownValue: knownvalue.Bool(false)}},
+			),
+		},
+	}))
+
+	if got := server.insights.getCallCount("project-1"); got != 1 {
+		t.Fatalf("expected one project Insights status request, got %d", got)
+	}
+}
+
 func TestAccProjectQueryExcludesMissingEnvironmentClasses(t *testing.T) {
 	server := newProjectAPIServer(t)
 	t.Cleanup(server.Close)

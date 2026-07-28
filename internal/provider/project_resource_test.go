@@ -175,6 +175,7 @@ func newProjectAPIServer(t *testing.T) *projectAPIServer {
 		enabled:      make(map[string]bool),
 		enableCalls:  make(map[string]int),
 		disableCalls: make(map[string]int),
+		getCalls:     make(map[string]int),
 	}
 	projectPath, projectHandler := v1connect.NewProjectServiceHandler(service)
 	insightsPath, insightsHandler := v1connect.NewInsightsServiceHandler(insights)
@@ -364,6 +365,7 @@ type fakeInsightsService struct {
 	enabled      map[string]bool
 	enableCalls  map[string]int
 	disableCalls map[string]int
+	getCalls     map[string]int
 	getErr       error
 }
 
@@ -394,12 +396,20 @@ func (s *fakeInsightsService) GetProjectInsightsStatus(ctx context.Context, req 
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	projectID := req.Msg.GetProjectId()
+	s.getCalls[projectID]++
 	if s.getErr != nil {
 		return nil, s.getErr
 	}
-	enabled, ok := s.enabled[req.Msg.GetProjectId()]
+	enabled, ok := s.enabled[projectID]
 	if !ok {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("project not found"))
 	}
 	return connect.NewResponse(&v1.GetProjectInsightsStatusResponse{Enabled: enabled}), nil
+}
+
+func (s *fakeInsightsService) getCallCount(projectID string) int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.getCalls[projectID]
 }
