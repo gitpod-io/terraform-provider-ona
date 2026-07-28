@@ -364,6 +364,7 @@ type fakeInsightsService struct {
 	enabled      map[string]bool
 	enableCalls  map[string]int
 	disableCalls map[string]int
+	getErr       error
 }
 
 func (s *fakeInsightsService) EnableProjectInsights(ctx context.Context, req *connect.Request[v1.EnableProjectInsightsRequest]) (*connect.Response[v1.EnableProjectInsightsResponse], error) {
@@ -393,6 +394,9 @@ func (s *fakeInsightsService) GetProjectInsightsStatus(ctx context.Context, req 
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	if s.getErr != nil {
+		return nil, s.getErr
+	}
 	enabled, ok := s.enabled[req.Msg.GetProjectId()]
 	if !ok {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("project not found"))

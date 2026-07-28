@@ -71,10 +71,18 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 					push(list.ListResult{Diagnostics: mappingDiags})
 					return
 				}
+				if len(model.EnvironmentClasses) == 0 {
+					continue
+				}
 				item := req.NewListResult(ctx)
 				item.DisplayName = displayNames.forProject(remote)
 				item.Diagnostics.Append(item.Identity.Set(ctx, IdentityModel{ID: types.StringValue(remote.GetId())})...)
 				if req.IncludeResource && !item.Diagnostics.HasError() {
+					model.InsightsEnabled, err = r.insightsEnabled(ctx, remote.GetId())
+					if err != nil {
+						push(listutil.Error("Unable to Read Ona Project Insights", fmt.Errorf("read project %q Insights status: %w", remote.GetId(), err)))
+						return
+					}
 					item.Diagnostics.Append(item.Resource.Set(ctx, &model)...)
 				}
 				if !push(item) || item.Diagnostics.HasError() {
