@@ -3,12 +3,12 @@
 page_title: "ona_project List Resource - ona"
 subcategory: ""
 description: |-
-  Lists Terraform-compatible Ona projects.
+  Lists Ona projects that can be managed by Terraform. Projects must use a Git repository initializer with a non-empty clone URL and branch, and must have at least one environment class; other projects are excluded.
 ---
 
 # ona_project (List Resource)
 
-Lists Terraform-compatible Ona projects.
+Lists Ona projects that can be managed by Terraform. Projects must use a Git repository initializer with a non-empty clone URL and branch, and must have at least one environment class; other projects are excluded.
 
 ## Example Usage
 

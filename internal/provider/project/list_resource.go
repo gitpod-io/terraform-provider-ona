@@ -29,7 +29,7 @@ type listModel struct {
 }
 
 func (r *Resource) ListResourceConfigSchema(ctx context.Context, req list.ListResourceSchemaRequest, resp *list.ListResourceSchemaResponse) {
-	resp.Schema = listschema.Schema{MarkdownDescription: "Lists Terraform-compatible Ona projects.", Attributes: map[string]listschema.Attribute{
+	resp.Schema = listschema.Schema{MarkdownDescription: "Lists Ona projects that can be managed by Terraform. Projects must use a Git repository initializer with a non-empty clone URL and branch, and must have at least one environment class; other projects are excluded.", Attributes: map[string]listschema.Attribute{
 		"search":                listschema.StringAttribute{Optional: true, MarkdownDescription: "Optional case-insensitive search across project names, project IDs, and repository names. Set this to a free-text value inside the list block's `config` block; the provider passes the value to the Ona Projects API."},
 		"repository_clone_urls": listschema.ListAttribute{Optional: true, ElementType: types.StringType, MarkdownDescription: "Exact repository clone URLs to include."},
 	}}
@@ -52,7 +52,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 		var emitted int64
 		displayNames := newProjectDisplayNames()
 		for listutil.HasCapacity(req.Limit, emitted) {
-			result, err := r.client.ProjectService().ListProjects(ctx, connect.NewRequest(&v1.ListProjectsRequest{Pagination: &v1.PaginationRequest{PageSize: listutil.PageSize(req.Limit, emitted), Token: token}, Filter: &v1.ListProjectsRequest_Filter{Search: data.Search.ValueString(), SpecRemoteUris: urls}, Sort: &v1.Sort{Field: "id"}}))
+			result, err := r.client.ProjectService().ListProjects(ctx, connect.NewRequest(&v1.ListProjectsRequest{Pagination: &v1.PaginationRequest{PageSize: listutil.PageSize(req.Limit, emitted), Token: token}, Filter: &v1.ListProjectsRequest_Filter{Search: data.Search.ValueString(), SpecRemoteUris: urls}, Sort: &v1.Sort{Field: "id", Order: v1.SortOrder_SORT_ORDER_ASC}}))
 			if err != nil {
 				push(listutil.Error("Unable to List Ona Projects", fmt.Errorf("list projects: %w", err)))
 				return
@@ -63,16 +63,27 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 				if !listutil.HasCapacity(req.Limit, emitted) {
 					return
 				}
-				model, mappingDiags := projectModelFromProto(ctx, remote)
-				if isUnsupportedProjectRepository(mappingDiags) {
+				_, repositoryDiags := repositoryFromInitializer(remote.GetInitializer())
+				if isUnsupportedProjectRepository(repositoryDiags) {
 					continue
 				}
+				if repositoryDiags.HasError() {
+					push(list.ListResult{Diagnostics: repositoryDiags})
+					return
+				}
+				environmentClasses, err := r.listProjectEnvironmentClasses(ctx, remote.GetId())
+				if err != nil {
+					push(listutil.Error("Unable to List Ona Project Environment Classes", fmt.Errorf("list environment classes for project %q: %w", remote.GetId(), err)))
+					return
+				}
+				if len(environmentClasses) == 0 {
+					continue
+				}
+				remote.EnvironmentClasses = environmentClasses
+				model, mappingDiags := projectModelFromProto(ctx, remote)
 				if mappingDiags.HasError() {
 					push(list.ListResult{Diagnostics: mappingDiags})
 					return
-				}
-				if len(model.EnvironmentClasses) == 0 {
-					continue
 				}
 				item := req.NewListResult(ctx)
 				item.DisplayName = displayNames.forProject(remote)
@@ -94,6 +105,25 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 			if token == "" {
 				return
 			}
+		}
+	}
+}
+
+func (r *Resource) listProjectEnvironmentClasses(ctx context.Context, projectID string) ([]*v1.ProjectEnvironmentClass, error) {
+	var classes []*v1.ProjectEnvironmentClass
+	var token string
+	for {
+		result, err := r.client.ProjectService().ListProjectEnvironmentClasses(ctx, connect.NewRequest(&v1.ListProjectEnvironmentClassesRequest{
+			Pagination: &v1.PaginationRequest{PageSize: listutil.DefaultPageSize, Token: token},
+			ProjectId:  projectID,
+		}))
+		if err != nil {
+			return nil, fmt.Errorf("list project environment classes: %w", err)
+		}
+		classes = append(classes, result.Msg.GetProjectEnvironmentClasses()...)
+		token = result.Msg.GetPagination().GetNextToken()
+		if token == "" {
+			return classes, nil
 		}
 	}
 }
@@ -128,11 +158,12 @@ func (n projectDisplayNames) forProject(project *v1.Project) string {
 	candidate := base
 	for i := 2; ; i++ {
 		if _, ok := n.used[candidate]; !ok {
-			n.used[candidate] = struct{}{}
-			return candidate
+			break
 		}
 		candidate = fmt.Sprintf("%s_%d", base, i)
 	}
+	n.used[candidate] = struct{}{}
+	return candidate
 }
 
 var projectDisplayNameInvalidChars = regexp.MustCompile(`[^a-z0-9_]+`)
