@@ -340,14 +340,7 @@ func (r *Resource) setInsightsEnabled(ctx context.Context, projectID string, ena
 }
 
 func (r *Resource) insightsEnabled(ctx context.Context, projectID string) (types.Bool, error) {
-	result, err := r.client.InsightsService().GetProjectInsightsStatus(ctx, connect.NewRequest(&v1.GetProjectInsightsStatusRequest{ProjectId: projectID}))
-	if err != nil {
-		if connect.CodeOf(err) == connect.CodeNotFound {
-			return types.BoolValue(false), nil
-		}
-		return types.BoolNull(), fmt.Errorf("get project insights status: %w", err)
-	}
-	return types.BoolValue(result.Msg.GetEnabled()), nil
+	return projectInsightsEnabled(ctx, r.client, projectID)
 }
 
 func populateProjectModel(ctx context.Context, data *ProjectModel, project *v1.Project) diag.Diagnostics {

@@ -188,6 +188,7 @@ func pathRoot(name string) path.Path {
 
 func (p *OnaProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
+		project.NewProjectDataSource,
 		runner.NewSingularDataSource,
 		runner.NewCollectionDataSource,
 		warmpool.NewWarmPoolDataSource,
