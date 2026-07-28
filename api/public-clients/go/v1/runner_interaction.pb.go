@@ -8,7 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	anypb "google.golang.org/protobuf/types/known/anypb"
@@ -8071,31 +8070,27 @@ var File_gitpod_v1_runner_interaction_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	"\n" +
-	"\"gitpod/v1/runner_interaction.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x15gitpod/v1/agent.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x1bgitpod/v1/integration.proto\x1a\x15gitpod/v1/model.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x18gitpod/v1/prebuild.proto\x1a\x16gitpod/v1/runner.proto\x1a$gitpod/v1/runner_configuration.proto\x1a\x19google/protobuf/any.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x85\x01\n" +
+	"\"gitpod/v1/runner_interaction.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x15gitpod/v1/agent.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x1bgitpod/v1/integration.proto\x1a\x15gitpod/v1/model.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x18gitpod/v1/prebuild.proto\x1a\x16gitpod/v1/runner.proto\x1a$gitpod/v1/runner_configuration.proto\x1a\x19google/protobuf/any.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x85\x01\n" +
 	"\rSignupRequest\x12&\n" +
 	"\n" +
 	"public_key\x18\x01 \x01(\fB\a\xbaH\x04z\x02h R\tpublicKey\x12L\n" +
-	"\x13environment_classes\x18\x02 \x03(\v2\x1b.gitpod.v1.EnvironmentClassR\x12environmentClasses\"F\n" +
-	"\x0eSignupResponse\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\"O\n" +
-	"\x17MarkRunnerActiveRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\"\x1a\n" +
-	"\x18MarkRunnerActiveResponse\"\xc4\x02\n" +
+	"\x13environment_classes\x18\x02 \x03(\v2\x1b.gitpod.v1.EnvironmentClassR\x12environmentClasses\"7\n" +
+	"\x0eSignupResponse\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\"@\n" +
+	"\x17MarkRunnerActiveRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\"\x1a\n" +
+	"\x18MarkRunnerActiveResponse\"\xb5\x02\n" +
 	"\x1dListRunnerEnvironmentsRequest\x12@\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestB\x02\x18\x01R\n" +
-	"pagination\x124\n" +
-	"\trunner_id\x18\x02 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x126\n" +
+	"pagination\x12%\n" +
+	"\trunner_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x126\n" +
 	"\x0fenvironment_ids\x18\x03 \x03(\tB\r\xbaH\n" +
 	"\x92\x01\a\"\x05r\x03\xb0\x01\x01R\x0eenvironmentIds\x12+\n" +
 	"\tshard_ids\x18\x04 \x03(\x05B\x0e\xbaH\v\x92\x01\b\"\x06\x1a\x04\x18?(\x00R\bshardIds\x12F\n" +
-	"\x0ebig_pagination\x18\x05 \x01(\v2\x1f.gitpod.v1.BigPaginationRequestR\rbigPagination\"\xce\x04\n" +
-	"\x11RunnerEnvironment\x12,\n" +
-	"\x02id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\x02id\x12:\n" +
+	"\x0ebig_pagination\x18\x05 \x01(\v2\x1f.gitpod.v1.BigPaginationRequestR\rbigPagination\"\xba\x04\n" +
+	"\x11RunnerEnvironment\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12:\n" +
 	"\bmetadata\x18\x02 \x01(\v2\x1e.gitpod.v1.EnvironmentMetadataR\bmetadata\x12.\n" +
 	"\x04spec\x18\x03 \x01(\v2\x1a.gitpod.v1.EnvironmentSpecR\x04spec\x128\n" +
 	"\x18environment_access_token\x18\x04 \x01(\tR\x16environmentAccessToken\x12M\n" +
@@ -8119,24 +8114,19 @@ const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12@\n" +
-	"\fenvironments\x18\x02 \x03(\v2\x1c.gitpod.v1.RunnerEnvironmentR\fenvironments\"\x98\x01\n" +
-	"\x1bGetRunnerEnvironmentRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12C\n" +
-	"\x0eenvironment_id\x18\x02 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\"^\n" +
+	"\fenvironments\x18\x02 \x03(\v2\x1c.gitpod.v1.RunnerEnvironmentR\fenvironments\"u\n" +
+	"\x1bGetRunnerEnvironmentRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12/\n" +
+	"\x0eenvironment_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\"^\n" +
 	"\x1cGetRunnerEnvironmentResponse\x12>\n" +
-	"\venvironment\x18\x01 \x01(\v2\x1c.gitpod.v1.RunnerEnvironmentR\venvironment\"\xd7\x01\n" +
-	"$UpdateRunnerEnvironmentStatusRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12C\n" +
-	"\x0eenvironment_id\x18\x02 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x124\n" +
+	"\venvironment\x18\x01 \x01(\v2\x1c.gitpod.v1.RunnerEnvironmentR\venvironment\"\xb4\x01\n" +
+	"$UpdateRunnerEnvironmentStatusRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12/\n" +
+	"\x0eenvironment_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x124\n" +
 	"\x06status\x18\x03 \x01(\v2\x1c.gitpod.v1.EnvironmentStatusR\x06status\"'\n" +
-	"%UpdateRunnerEnvironmentStatusResponse\"\x9b\x05\n" +
-	"\x19UpdateRunnerStatusRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12\x1d\n" +
+	"%UpdateRunnerEnvironmentStatusResponse\"\x8c\x05\n" +
+	"\x19UpdateRunnerStatusRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12\x1d\n" +
 	"\aversion\x18\x02 \x01(\tH\x00R\aversion\x88\x01\x01\x12*\n" +
 	"\x0esystem_details\x18\x04 \x01(\tH\x01R\rsystemDetails\x88\x01\x01\x12&\n" +
 	"\alog_url\x18\x05 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01H\x02R\x06logUrl\x88\x01\x01\x124\n" +
@@ -8158,15 +8148,13 @@ const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	"\n" +
 	"\b_llm_urlB\x15\n" +
 	"\x13_support_bundle_url\"\x1c\n" +
-	"\x1aUpdateRunnerStatusResponse\"\xa9\x01\n" +
-	"&UpdateRunnerConfigurationSchemaRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12I\n" +
+	"\x1aUpdateRunnerStatusResponse\"\x9a\x01\n" +
+	"&UpdateRunnerConfigurationSchemaRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12I\n" +
 	"\rconfig_schema\x18\x02 \x01(\v2$.gitpod.v1.RunnerConfigurationSchemaR\fconfigSchema\")\n" +
-	"'UpdateRunnerConfigurationSchemaResponse\"\xd2\x01\n" +
-	"&GetHostAuthenticationTokenValueRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12+\n" +
+	"'UpdateRunnerConfigurationSchemaResponse\"\xc3\x01\n" +
+	"&GetHostAuthenticationTokenValueRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12+\n" +
 	"\fprincipal_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\vprincipalId\x12\x12\n" +
 	"\x04host\x18\x03 \x01(\tR\x04host\x12\"\n" +
 	"\n" +
@@ -8182,47 +8170,40 @@ const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	"\x10external_user_id\x18\x06 \x01(\tH\x00R\x0eexternalUserId\x88\x01\x01\x124\n" +
 	"\x0eintegration_id\x18\a \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x01R\rintegrationId\x88\x01\x01B\x13\n" +
 	"\x11_external_user_idB\x11\n" +
-	"\x0f_integration_id\"\xdb\x02\n" +
+	"\x0f_integration_id\"\xaa\x02\n" +
 	"#ListRunnerEnvironmentClassesRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x124\n" +
-	"\trunner_id\x18\x02 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12M\n" +
-	"\x06filter\x18\x03 \x01(\v25.gitpod.v1.ListRunnerEnvironmentClassesRequest.FilterR\x06filter\x1aq\n" +
-	"\x06Filter\x12g\n" +
-	"\x15environment_class_ids\x18\x01 \x03(\tB3\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1e\n" +
-	"\x1cfilter.environment_class_idsR\x13environmentClassIds\"\xb3\x01\n" +
+	"pagination\x12%\n" +
+	"\trunner_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12M\n" +
+	"\x06filter\x18\x03 \x01(\v25.gitpod.v1.ListRunnerEnvironmentClassesRequest.FilterR\x06filter\x1aO\n" +
+	"\x06Filter\x12E\n" +
+	"\x15environment_class_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\x13environmentClassIds\"\xb3\x01\n" +
 	"$ListRunnerEnvironmentClassesResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12L\n" +
-	"\x13environment_classes\x18\x02 \x03(\v2\x1b.gitpod.v1.EnvironmentClassR\x12environmentClasses\"\xcf\x02\n" +
+	"\x13environment_classes\x18\x02 \x03(\v2\x1b.gitpod.v1.EnvironmentClassR\x12environmentClasses\"\xa0\x02\n" +
 	" ListRunnerSCMIntegrationsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x124\n" +
-	"\trunner_id\x18\x02 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12J\n" +
-	"\x06filter\x18\x03 \x01(\v22.gitpod.v1.ListRunnerSCMIntegrationsRequest.FilterR\x06filter\x1ak\n" +
-	"\x06Filter\x12a\n" +
-	"\x13scm_integration_ids\x18\x01 \x03(\tB1\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1c\n" +
-	"\x1afilter.scm_integration_idsR\x11scmIntegrationIds\"\xa8\x01\n" +
+	"pagination\x12%\n" +
+	"\trunner_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12J\n" +
+	"\x06filter\x18\x03 \x01(\v22.gitpod.v1.ListRunnerSCMIntegrationsRequest.FilterR\x06filter\x1aK\n" +
+	"\x06Filter\x12A\n" +
+	"\x13scm_integration_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\x11scmIntegrationIds\"\xa8\x01\n" +
 	"!ListRunnerSCMIntegrationsResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12D\n" +
-	"\x10scm_integrations\x18\x02 \x03(\v2\x19.gitpod.v1.SCMIntegrationR\x0fscmIntegrations\"\x96\x01\n" +
-	"\x14WatchRequestsRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12+\n" +
+	"\x10scm_integrations\x18\x02 \x03(\v2\x19.gitpod.v1.SCMIntegrationR\x0fscmIntegrations\"\x87\x01\n" +
+	"\x14WatchRequestsRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12+\n" +
 	"\tshard_ids\x18\x02 \x03(\x05B\x0e\xbaH\v\x92\x01\b\"\x06\x1a\x04\x18?(\x00R\bshardIds\x12\x1b\n" +
-	"\tworker_id\x18\x03 \x01(\tR\bworkerId\"\xed\x11\n" +
-	"\x15WatchRequestsResponse\x127\n" +
+	"\tworker_id\x18\x03 \x01(\tR\bworkerId\"\xdd\x11\n" +
+	"\x15WatchRequestsResponse\x12'\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"request.idR\trequestId\x12W\n" +
+	"request_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\trequestId\x12W\n" +
 	"\rtrace_context\x18\x02 \x03(\v22.gitpod.v1.WatchRequestsResponse.TraceContextEntryR\ftraceContext\x12j\n" +
 	"\x1devent_environment_spec_change\x18\n" +
 	" \x01(\v2%.gitpod.v1.EventEnvironmentSpecChangeH\x00R\x1aeventEnvironmentSpecChange\x12p\n" +
@@ -8247,14 +8228,11 @@ const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	"\x11TraceContextEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\t\n" +
-	"\arequest\"\x9f\r\n" +
-	"\x13SendResponseRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x127\n" +
+	"\arequest\"\x80\r\n" +
+	"\x13SendResponseRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12'\n" +
 	"\n" +
-	"request_id\x18\x02 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"request.idR\trequestId\x12@\n" +
+	"request_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\trequestId\x12@\n" +
 	"\x05error\x18\x05 \x01(\v2(.gitpod.v1.SendResponseRequest.CallErrorH\x00R\x05error\x12T\n" +
 	"\x12call_parse_context\x182 \x01(\v2$.gitpod.v1.CallParseContext.ResponseH\x00R\x10callParseContext\x12;\n" +
 	"\tcall_ping\x183 \x01(\v2\x1c.gitpod.v1.CallPing.ResponseH\x00R\bcallPing\x12\x80\x01\n" +
@@ -8284,36 +8262,28 @@ const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	"\x1aERROR_CODE_UNAUTHENTICATED\x10\x10B\n" +
 	"\n" +
 	"\bresponse\"\x16\n" +
-	"\x14SendResponseResponse\"a\n" +
-	"\x1aEventEnvironmentSpecChange\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\"c\n" +
-	"\x1cEventEnvironmentMarkedActive\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\"j\n" +
-	"\x19EventSCMIntegrationChange\x12M\n" +
-	"\x12scm_integration_id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11scmintegration.idR\x10scmIntegrationId\"k\n" +
-	"\x19EventLLMIntegrationChange\x12N\n" +
-	"\x12llm_integration_id\x18\x01 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12llm_integration.idR\x10llmIntegrationId\"]\n" +
-	"\x16EventIntegrationChange\x12C\n" +
-	"\x0eintegration_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eintegration.idR\rintegrationId\"U\n" +
-	"\x17EventSnapshotSpecChange\x12:\n" +
-	"\vsnapshot_id\x18\x01 \x01(\tB\x19\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vsnapshot.idR\n" +
-	"snapshotId\"W\n" +
-	"\x17EventWarmPoolSpecChange\x12<\n" +
-	"\fwarm_pool_id\x18\x01 \x01(\tB\x1a\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x0e\n" +
-	"\fwarm_pool.idR\n" +
+	"\x14SendResponseResponse\"M\n" +
+	"\x1aEventEnvironmentSpecChange\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\"O\n" +
+	"\x1cEventEnvironmentMarkedActive\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\"S\n" +
+	"\x19EventSCMIntegrationChange\x126\n" +
+	"\x12scm_integration_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10scmIntegrationId\"S\n" +
+	"\x19EventLLMIntegrationChange\x126\n" +
+	"\x12llm_integration_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10llmIntegrationId\"I\n" +
+	"\x16EventIntegrationChange\x12/\n" +
+	"\x0eintegration_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\rintegrationId\"D\n" +
+	"\x17EventSnapshotSpecChange\x12)\n" +
+	"\vsnapshot_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
+	"snapshotId\"E\n" +
+	"\x17EventWarmPoolSpecChange\x12*\n" +
+	"\fwarm_pool_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"warmPoolId\"f\n" +
 	"#EventHostAuthenticationTokenDeleted\x12\x12\n" +
 	"\x04host\x18\x01 \x01(\tR\x04host\x12+\n" +
-	"\fprincipal_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\vprincipalId\"o\n" +
-	"\x1dEventAgentExecutionSpecChange\x12N\n" +
-	"\x12agent_execution_id\x18\x01 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12agent_execution.idR\x10agentExecutionId\" \n" +
+	"\fprincipal_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\vprincipalId\"W\n" +
+	"\x1dEventAgentExecutionSpecChange\x126\n" +
+	"\x12agent_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\" \n" +
 	"\x1eEventRunnerConfigurationChange\"\xa5\x01\n" +
 	"\x10CallParseContext\x1aM\n" +
 	"\aRequest\x12\x1f\n" +
@@ -8395,10 +8365,9 @@ const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	"\bagent_id\x18\x01 \x01(\tR\aagentId\x12\x16\n" +
 	"\x06prompt\x18\x02 \x01(\tR\x06prompt\x1a3\n" +
 	"\bResponse\x12'\n" +
-	"\x0fimproved_prompt\x18\x01 \x01(\tR\x0eimprovedPrompt\"\xb2\x01\n" +
-	"\x17GetLatestVersionRequest\x127\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x1a\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12'\n" +
+	"\x0fimproved_prompt\x18\x01 \x01(\tR\x0eimprovedPrompt\"\xa3\x01\n" +
+	"\x17GetLatestVersionRequest\x12(\n" +
+	"\trunner_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\brunnerId\x12'\n" +
 	"\x0fcurrent_version\x18\x02 \x01(\tR\x0ecurrentVersion\x125\n" +
 	"\x16infrastructure_version\x18\x03 \x01(\tR\x15infrastructureVersion\"\xb1\n" +
 	"\n" +
@@ -8438,10 +8407,9 @@ const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	"\x0fterraform_files\x18\x03 \x03(\tR\x0eterraformFiles\x12!\n" +
 	"\fdownload_url\x18\x04 \x01(\tR\vdownloadUrlB\n" +
 	"\n" +
-	"\bmanifest\"U\n" +
-	"\x1dGetRunnerConfigurationRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\"\x96\x02\n" +
+	"\bmanifest\"F\n" +
+	"\x1dGetRunnerConfigurationRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\"\x96\x02\n" +
 	"\x1aRunnerMetricsConfiguration\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12-\n" +
@@ -8461,13 +8429,12 @@ const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	" devcontainer_image_cache_enabled\x18\x06 \x01(\bR\x1ddevcontainerImageCacheEnabled\x12<\n" +
 	"\rupdate_window\x18\a \x01(\v2\x17.gitpod.v1.UpdateWindowR\fupdateWindow\x12=\n" +
 	"\x1bencrypted_honeycomb_api_key\x18\b \x01(\fR\x18encryptedHoneycombApiKey\x121\n" +
-	"\x14continuous_profiling\x18\t \x01(\bR\x13continuousProfiling\"\xc3\x04\n" +
+	"\x14continuous_profiling\x18\t \x01(\bR\x13continuousProfiling\"\xb4\x04\n" +
 	" ListRunnerAgentExecutionsRequest\x12@\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestB\x02\x18\x01R\n" +
-	"pagination\x124\n" +
-	"\trunner_id\x18\x02 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12J\n" +
+	"pagination\x12%\n" +
+	"\trunner_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12J\n" +
 	"\x06filter\x18\x03 \x01(\v22.gitpod.v1.ListRunnerAgentExecutionsRequest.FilterR\x06filter\x12]\n" +
 	"\x0etoken_presence\x18\x04 \x01(\x0e2,.gitpod.v1.RunnerAgentExecutionTokenPresenceB\b\xbaH\x05\x82\x01\x02\x10\x01R\rtokenPresence\x12F\n" +
 	"\x0ebig_pagination\x18\x05 \x01(\v2\x1f.gitpod.v1.BigPaginationRequestR\rbigPagination\x1a\xb3\x01\n" +
@@ -8485,65 +8452,53 @@ const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12J\n" +
-	"\x10agent_executions\x18\x02 \x03(\v2\x1f.gitpod.v1.RunnerAgentExecutionR\x0fagentExecutions\"\x85\x02\n" +
-	"\x1eGetRunnerAgentExecutionRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12N\n" +
-	"\x12agent_execution_id\x18\x02 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12agent_execution.idR\x10agentExecutionId\x12]\n" +
+	"\x10agent_executions\x18\x02 \x03(\v2\x1f.gitpod.v1.RunnerAgentExecutionR\x0fagentExecutions\"\xde\x01\n" +
+	"\x1eGetRunnerAgentExecutionRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x126\n" +
+	"\x12agent_execution_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\x12]\n" +
 	"\x0etoken_presence\x18\x03 \x01(\x0e2,.gitpod.v1.RunnerAgentExecutionTokenPresenceB\b\xbaH\x05\x82\x01\x02\x10\x01R\rtokenPresence\"k\n" +
 	"\x1fGetRunnerAgentExecutionResponse\x12H\n" +
-	"\x0fagent_execution\x18\x01 \x01(\v2\x1f.gitpod.v1.RunnerAgentExecutionR\x0eagentExecution\"\xad\x01\n" +
-	"%CreateAgentExecutionActorTokenRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12N\n" +
-	"\x12agent_execution_id\x18\x02 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12agent_execution.idR\x10agentExecutionId\"^\n" +
+	"\x0fagent_execution\x18\x01 \x01(\v2\x1f.gitpod.v1.RunnerAgentExecutionR\x0eagentExecution\"\x86\x01\n" +
+	"%CreateAgentExecutionActorTokenRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x126\n" +
+	"\x12agent_execution_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\"^\n" +
 	"&CreateAgentExecutionActorTokenResponse\x124\n" +
-	"\x12actor_access_token\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x10actorAccessToken\"\xbc\x02\n" +
-	"!UpdateRunnerAgentExecutionRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12N\n" +
-	"\x12agent_execution_id\x18\x02 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12agent_execution.idR\x10agentExecutionId\x12\x17\n" +
+	"\x12actor_access_token\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x10actorAccessToken\"\x95\x02\n" +
+	"!UpdateRunnerAgentExecutionRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x126\n" +
+	"\x12agent_execution_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\x12\x17\n" +
 	"\x04name\x18\x03 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
 	"\vdescription\x18\x04 \x01(\tH\x01R\vdescription\x88\x01\x01\x128\n" +
 	"\x06status\x18\x05 \x01(\v2 .gitpod.v1.AgentExecution.StatusR\x06statusB\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_description\"$\n" +
-	"\"UpdateRunnerAgentExecutionResponse\"\xa6\x01\n" +
-	"\x1eGetRunnerLLMIntegrationRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12N\n" +
-	"\x12llm_integration_id\x18\x02 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12llm_integration.idR\x10llmIntegrationId\"e\n" +
+	"\"UpdateRunnerAgentExecutionResponse\"\x7f\n" +
+	"\x1eGetRunnerLLMIntegrationRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x126\n" +
+	"\x12llm_integration_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10llmIntegrationId\"e\n" +
 	"\x1fGetRunnerLLMIntegrationResponse\x12B\n" +
-	"\x0fllm_integration\x18\x01 \x01(\v2\x19.gitpod.v1.LLMIntegrationR\x0ellmIntegration\"\xe2\x02\n" +
+	"\x0fllm_integration\x18\x01 \x01(\v2\x19.gitpod.v1.LLMIntegrationR\x0ellmIntegration\"\xb6\x02\n" +
 	" ListRunnerLLMIntegrationsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x124\n" +
-	"\trunner_id\x18\x02 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12J\n" +
-	"\x06filter\x18\x03 \x01(\v22.gitpod.v1.ListRunnerLLMIntegrationsRequest.FilterR\x06filter\x1a~\n" +
-	"\x06Filter\x12t\n" +
-	"\x10supported_models\x18\x01 \x03(\x0e2\x19.gitpod.v1.SupportedModelB.\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\x19\n" +
-	"\x17filter.supported_modelsR\x0fsupportedModels\"\xa8\x01\n" +
+	"pagination\x12%\n" +
+	"\trunner_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12J\n" +
+	"\x06filter\x18\x03 \x01(\v22.gitpod.v1.ListRunnerLLMIntegrationsRequest.FilterR\x06filter\x1aa\n" +
+	"\x06Filter\x12W\n" +
+	"\x10supported_models\x18\x01 \x03(\x0e2\x19.gitpod.v1.SupportedModelB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01R\x0fsupportedModels\"\xa8\x01\n" +
 	"!ListRunnerLLMIntegrationsResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12D\n" +
-	"\x10llm_integrations\x18\x02 \x03(\v2\x19.gitpod.v1.LLMIntegrationR\x0fllmIntegrations\"\xbe\x02\n" +
+	"\x10llm_integrations\x18\x02 \x03(\v2\x19.gitpod.v1.LLMIntegrationR\x0fllmIntegrations\"\x93\x02\n" +
 	"\x1dListRunnerIntegrationsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x124\n" +
-	"\trunner_id\x18\x02 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12G\n" +
-	"\x06filter\x18\x03 \x01(\v2/.gitpod.v1.ListRunnerIntegrationsRequest.FilterR\x06filter\x1a`\n" +
-	"\x06Filter\x12V\n" +
-	"\x0fintegration_ids\x18\x01 \x03(\tB-\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x18\n" +
-	"\x16filter.integration_idsR\x0eintegrationIds\"\x9b\x01\n" +
+	"pagination\x12%\n" +
+	"\trunner_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12G\n" +
+	"\x06filter\x18\x03 \x01(\v2/.gitpod.v1.ListRunnerIntegrationsRequest.FilterR\x06filter\x1aD\n" +
+	"\x06Filter\x12:\n" +
+	"\x0fintegration_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\x0eintegrationIds\"\x9b\x01\n" +
 	"\x1eListRunnerIntegrationsResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
@@ -8558,21 +8513,17 @@ const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x122\n" +
-	"\arunners\x18\x02 \x03(\v2\x18.gitpod.v1.ManagedRunnerR\arunners\"O\n" +
-	"\x17GetManagedRunnerRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\"L\n" +
+	"\arunners\x18\x02 \x03(\v2\x18.gitpod.v1.ManagedRunnerR\arunners\"@\n" +
+	"\x17GetManagedRunnerRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\"L\n" +
 	"\x18GetManagedRunnerResponse\x120\n" +
-	"\x06runner\x18\x01 \x01(\v2\x18.gitpod.v1.ManagedRunnerR\x06runner\"\x8d\x01\n" +
-	"\rManagedRunner\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12F\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\x1c\n" +
-	"\x1aWatchManagedRunnersRequest\"\xb8\x02\n" +
-	"\x1bWatchManagedRunnersResponse\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12Y\n" +
+	"\x06runner\x18\x01 \x01(\v2\x18.gitpod.v1.ManagedRunnerR\x06runner\"i\n" +
+	"\rManagedRunner\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x121\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\"\x1c\n" +
+	"\x1aWatchManagedRunnersRequest\"\xa9\x02\n" +
+	"\x1bWatchManagedRunnersResponse\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12Y\n" +
 	"\n" +
 	"event_type\x18\x02 \x01(\x0e20.gitpod.v1.WatchManagedRunnersResponse.EventTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\teventType\"\x87\x01\n" +
 	"\tEventType\x12\x1a\n" +
@@ -8580,16 +8531,13 @@ const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	"\x12EVENT_TYPE_CREATED\x10\x01\x12\x16\n" +
 	"\x12EVENT_TYPE_DELETED\x10\x02\x12\x19\n" +
 	"\x15EVENT_TYPE_HIBERNATED\x10\x03\x12\x13\n" +
-	"\x0fEVENT_TYPE_WAKE\x10\x04\"\xb5\x03\n" +
+	"\x0fEVENT_TYPE_WAKE\x10\x04\"\xf4\x02\n" +
 	"\x15ReportLLMUsageRequest\x12'\n" +
-	"\x0fidempotency_key\x18\x01 \x01(\tR\x0eidempotencyKey\x124\n" +
-	"\trunner_id\x18\x02 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12L\n" +
-	"\x0fsupported_model\x18\x03 \x01(\x0e2\x19.gitpod.v1.SupportedModelB\b\xbaH\x05\x82\x01\x02\x10\x01R\x0esupportedModel\x12N\n" +
-	"\x12llm_integration_id\x18\x04 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12llm_integration.idR\x10llmIntegrationId\x12F\n" +
-	"\x12agent_execution_id\x18\t \x01(\tB\x18\xa2\xab\x1e\x14\n" +
-	"\x12agent_execution.idR\x10agentExecutionId\x12)\n" +
+	"\x0fidempotency_key\x18\x01 \x01(\tR\x0eidempotencyKey\x12%\n" +
+	"\trunner_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12L\n" +
+	"\x0fsupported_model\x18\x03 \x01(\x0e2\x19.gitpod.v1.SupportedModelB\b\xbaH\x05\x82\x01\x02\x10\x01R\x0esupportedModel\x126\n" +
+	"\x12llm_integration_id\x18\x04 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10llmIntegrationId\x12,\n" +
+	"\x12agent_execution_id\x18\t \x01(\tR\x10agentExecutionId\x12)\n" +
 	"\x05usage\x18\n" +
 	" \x01(\v2\x13.gitpod.v1.LLMUsageR\x05usage\x12\x14\n" +
 	"\x05model\x18\v \x01(\tR\x05modelJ\x04\b\x05\x10\x06J\x04\b\x06\x10\aJ\x04\b\a\x10\bJ\x04\b\b\x10\t\"\xfd\x02\n" +
@@ -8602,39 +8550,31 @@ const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	"\x19ephemeral_5m_input_tokens\x18\x06 \x01(\x04R\x16ephemeral5mInputTokens\x12!\n" +
 	"\fcontext_tier\x18\a \x01(\tR\vcontextTier\x12!\n" +
 	"\fservice_tier\x18\b \x01(\tR\vserviceTier\"\x18\n" +
-	"\x16ReportLLMUsageResponse\"\x92\x01\n" +
-	"\x1aReportRunnerMetricsRequest\x127\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x1a\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12;\n" +
+	"\x16ReportLLMUsageResponse\"\x83\x01\n" +
+	"\x1aReportRunnerMetricsRequest\x12(\n" +
+	"\trunner_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\brunnerId\x12;\n" +
 	"\x12compressed_metrics\x18\x02 \x01(\fB\f\xbaH\t\xc8\x01\x01z\x04\x18\x80\x80 R\x11compressedMetrics\"\x1d\n" +
-	"\x1bReportRunnerMetricsResponse\"\\\n" +
-	"!CreateTelemetryIngestTokenRequest\x127\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x1a\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\"u\n" +
+	"\x1bReportRunnerMetricsResponse\"M\n" +
+	"!CreateTelemetryIngestTokenRequest\x12(\n" +
+	"\trunner_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\brunnerId\"u\n" +
 	"\"CreateTelemetryIngestTokenResponse\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x129\n" +
 	"\n" +
-	"expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"\x8a\x02\n" +
-	"\x19RunnerEnvironmentSnapshot\x12!\n" +
-	"\x02id\x18\x01 \x01(\tB\x11\xa2\xab\x1e\r\n" +
-	"\vsnapshot.idR\x02id\x12H\n" +
+	"expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"\xf7\x01\n" +
+	"\x19RunnerEnvironmentSnapshot\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12H\n" +
 	"\bmetadata\x18\x02 \x01(\v2,.gitpod.v1.RunnerEnvironmentSnapshotMetadataR\bmetadata\x12<\n" +
 	"\x04spec\x18\x03 \x01(\v2(.gitpod.v1.RunnerEnvironmentSnapshotSpecR\x04spec\x12B\n" +
-	"\x06status\x18\x04 \x01(\v2*.gitpod.v1.RunnerEnvironmentSnapshotStatusR\x06status\"\x88\x04\n" +
-	"!RunnerEnvironmentSnapshotMetadata\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12C\n" +
-	"\x0eenvironment_id\x18\x02 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x12M\n" +
-	"\x10environment_spec\x18\x03 \x01(\v2\x1a.gitpod.v1.EnvironmentSpecB\x06\xbaH\x03\xc8\x01\x01R\x0fenvironmentSpec\x124\n" +
-	"\trunner_id\x18\x04 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x129\n" +
+	"\x06status\x18\x04 \x01(\v2*.gitpod.v1.RunnerEnvironmentSnapshotStatusR\x06status\"\xc0\x03\n" +
+	"!RunnerEnvironmentSnapshotMetadata\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12/\n" +
+	"\x0eenvironment_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x12M\n" +
+	"\x10environment_spec\x18\x03 \x01(\v2\x1a.gitpod.v1.EnvironmentSpecB\x06\xbaH\x03\xc8\x01\x01R\x0fenvironmentSpec\x12%\n" +
+	"\trunner_id\x18\x04 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x129\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12?\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12/\n" +
 	"\n" +
-	"project_id\x18\x06 \x01(\tB\x1b\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idH\x00R\tprojectId\x88\x01\x01\x12F\n" +
+	"project_id\x18\x06 \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01H\x00R\tprojectId\x88\x01\x01\x12F\n" +
 	"\x04kind\x18\a \x01(\x0e2(.gitpod.v1.RunnerEnvironmentSnapshotKindB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04kindB\r\n" +
 	"\v_project_id\"\xa3\x02\n" +
 	"\x1dRunnerEnvironmentSnapshotSpec\x12e\n" +
@@ -8655,55 +8595,46 @@ const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	"\x10ProviderSnapshot\x120\n" +
 	"\x14provider_snapshot_id\x18\x01 \x01(\tR\x12providerSnapshotId\x12-\n" +
 	"\rprovider_name\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\fproviderName\x12 \n" +
-	"\x06region\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x06region\"\x9d\x01\n" +
-	"#GetRunnerEnvironmentSnapshotRequest\x127\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x1a\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12=\n" +
-	"\vsnapshot_id\x18\x02 \x01(\tB\x1c\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vsnapshot.idR\n" +
+	"\x06region\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x06region\"}\n" +
+	"#GetRunnerEnvironmentSnapshotRequest\x12(\n" +
+	"\trunner_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\brunnerId\x12,\n" +
+	"\vsnapshot_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\n" +
 	"snapshotId\"p\n" +
 	"$GetRunnerEnvironmentSnapshotResponse\x12H\n" +
-	"\bsnapshot\x18\x01 \x01(\v2$.gitpod.v1.RunnerEnvironmentSnapshotB\x06\xbaH\x03\xc8\x01\x01R\bsnapshot\"\x87\x04\n" +
+	"\bsnapshot\x18\x01 \x01(\v2$.gitpod.v1.RunnerEnvironmentSnapshotB\x06\xbaH\x03\xc8\x01\x01R\bsnapshot\"\xdf\x03\n" +
 	"%ListRunnerEnvironmentSnapshotsRequest\x12@\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestB\x02\x18\x01R\n" +
-	"pagination\x124\n" +
-	"\trunner_id\x18\x02 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12O\n" +
+	"pagination\x12%\n" +
+	"\trunner_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12O\n" +
 	"\x06filter\x18\x03 \x01(\v27.gitpod.v1.ListRunnerEnvironmentSnapshotsRequest.FilterR\x06filter\x12F\n" +
-	"\x0ebig_pagination\x18\x04 \x01(\v2\x1f.gitpod.v1.BigPaginationRequestR\rbigPagination\x1a\xcc\x01\n" +
-	"\x06Filter\x12M\n" +
-	"\fsnapshot_ids\x18\x01 \x03(\tB*\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x15\n" +
-	"\x13filter.snapshot_idsR\vsnapshotIds\x12+\n" +
+	"\x0ebig_pagination\x18\x04 \x01(\v2\x1f.gitpod.v1.BigPaginationRequestR\rbigPagination\x1a\xb3\x01\n" +
+	"\x06Filter\x124\n" +
+	"\fsnapshot_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\vsnapshotIds\x12+\n" +
 	"\tshard_ids\x18\x02 \x03(\x05B\x0e\xbaH\v\x92\x01\b\"\x06\x1a\x04\x18?(\x00R\bshardIds\x12F\n" +
 	"\x04kind\x18\x03 \x01(\x0e2(.gitpod.v1.RunnerEnvironmentSnapshotKindB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04kind\"\xab\x01\n" +
 	"&ListRunnerEnvironmentSnapshotsResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12B\n" +
-	"\tsnapshots\x18\x02 \x03(\v2$.gitpod.v1.RunnerEnvironmentSnapshotR\tsnapshots\"\xea\x01\n" +
-	",UpdateRunnerEnvironmentSnapshotStatusRequest\x127\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x1a\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12=\n" +
-	"\vsnapshot_id\x18\x02 \x01(\tB\x1c\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vsnapshot.idR\n" +
+	"\tsnapshots\x18\x02 \x03(\v2$.gitpod.v1.RunnerEnvironmentSnapshotR\tsnapshots\"\xca\x01\n" +
+	",UpdateRunnerEnvironmentSnapshotStatusRequest\x12(\n" +
+	"\trunner_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\brunnerId\x12,\n" +
+	"\vsnapshot_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\n" +
 	"snapshotId\x12B\n" +
 	"\x06status\x18\x03 \x01(\v2*.gitpod.v1.RunnerEnvironmentSnapshotStatusR\x06status\"/\n" +
-	"-UpdateRunnerEnvironmentSnapshotStatusResponse\"\x94\x01\n" +
-	"\x18GetRunnerWarmPoolRequest\x127\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x1a\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12?\n" +
-	"\fwarm_pool_id\x18\x02 \x01(\tB\x1d\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x0e\n" +
-	"\fwarm_pool.idR\n" +
+	"-UpdateRunnerEnvironmentSnapshotStatusResponse\"s\n" +
+	"\x18GetRunnerWarmPoolRequest\x12(\n" +
+	"\trunner_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\brunnerId\x12-\n" +
+	"\fwarm_pool_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\n" +
 	"warmPoolId\"U\n" +
 	"\x19GetRunnerWarmPoolResponse\x128\n" +
-	"\twarm_pool\x18\x01 \x01(\v2\x13.gitpod.v1.WarmPoolB\x06\xbaH\x03\xc8\x01\x01R\bwarmPool\"\x8c\x02\n" +
+	"\twarm_pool\x18\x01 \x01(\v2\x13.gitpod.v1.WarmPoolB\x06\xbaH\x03\xc8\x01\x01R\bwarmPool\"\xfd\x01\n" +
 	"\x1aListRunnerWarmPoolsRequest\x12@\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestB\x02\x18\x01R\n" +
-	"pagination\x127\n" +
-	"\trunner_id\x18\x02 \x01(\tB\x1a\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12+\n" +
+	"pagination\x12(\n" +
+	"\trunner_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\brunnerId\x12+\n" +
 	"\tshard_ids\x18\x03 \x03(\x05B\x0e\xbaH\v\x92\x01\b\"\x06\x1a\x04\x18?(\x00R\bshardIds\x12F\n" +
 	"\x0ebig_pagination\x18\x04 \x01(\v2\x1f.gitpod.v1.BigPaginationRequestR\rbigPagination\"\x90\x01\n" +
 	"\x1bListRunnerWarmPoolsResponse\x12=\n" +
@@ -8711,12 +8642,10 @@ const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x122\n" +
 	"\n" +
-	"warm_pools\x18\x02 \x03(\v2\x13.gitpod.v1.WarmPoolR\twarmPools\"\xd8\x01\n" +
-	"!UpdateRunnerWarmPoolStatusRequest\x127\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x1a\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12?\n" +
-	"\fwarm_pool_id\x18\x02 \x01(\tB\x1d\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x0e\n" +
-	"\fwarm_pool.idR\n" +
+	"warm_pools\x18\x02 \x03(\v2\x13.gitpod.v1.WarmPoolR\twarmPools\"\xb7\x01\n" +
+	"!UpdateRunnerWarmPoolStatusRequest\x12(\n" +
+	"\trunner_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\brunnerId\x12-\n" +
+	"\fwarm_pool_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\n" +
 	"warmPoolId\x129\n" +
 	"\x06status\x18\x03 \x01(\v2\x19.gitpod.v1.WarmPoolStatusB\x06\xbaH\x03\xc8\x01\x01R\x06status\"$\n" +
 	"\"UpdateRunnerWarmPoolStatusResponse*\xbd\x01\n" +
@@ -8771,7 +8700,7 @@ const file_gitpod_v1_runner_interaction_proto_rawDesc = "" +
 	"%UpdateRunnerEnvironmentSnapshotStatus\x127.gitpod.v1.UpdateRunnerEnvironmentSnapshotStatusRequest\x1a8.gitpod.v1.UpdateRunnerEnvironmentSnapshotStatusResponse\"\x00\x12c\n" +
 	"\x11GetRunnerWarmPool\x12#.gitpod.v1.GetRunnerWarmPoolRequest\x1a$.gitpod.v1.GetRunnerWarmPoolResponse\"\x03\x90\x02\x01\x12i\n" +
 	"\x13ListRunnerWarmPools\x12%.gitpod.v1.ListRunnerWarmPoolsRequest\x1a&.gitpod.v1.ListRunnerWarmPoolsResponse\"\x03\x90\x02\x01\x12{\n" +
-	"\x1aUpdateRunnerWarmPoolStatus\x12,.gitpod.v1.UpdateRunnerWarmPoolStatusRequest\x1a-.gitpod.v1.UpdateRunnerWarmPoolStatusResponse\"\x00B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x1aUpdateRunnerWarmPoolStatus\x12,.gitpod.v1.UpdateRunnerWarmPoolStatusRequest\x1a-.gitpod.v1.UpdateRunnerWarmPoolStatusResponse\"\x00B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_runner_interaction_proto_rawDescOnce sync.Once
