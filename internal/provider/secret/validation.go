@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -35,7 +36,7 @@ func validateModel(ctx context.Context, data Model, requireKnown bool, diags *di
 }
 
 func validateName(data Model, diags *diag.Diagnostics) {
-	if !isKnownString(data.Name) {
+	if !tfvalue.IsKnownString(data.Name) {
 		return
 	}
 	name := data.Name.ValueString()
@@ -59,9 +60,9 @@ func validateScope(data Model, requireKnown bool, diags *diag.Diagnostics) {
 	validateUUIDAttribute(data.UserID, path.Root("user_id"), diags)
 	validateUUIDAttribute(data.ServiceAccountID, path.Root("service_account_id"), diags)
 
-	hasProjectID := isKnownString(data.ProjectID)
-	hasUserID := isKnownString(data.UserID)
-	hasServiceAccountID := isKnownString(data.ServiceAccountID)
+	hasProjectID := tfvalue.IsKnownString(data.ProjectID)
+	hasUserID := tfvalue.IsKnownString(data.UserID)
+	hasServiceAccountID := tfvalue.IsKnownString(data.ServiceAccountID)
 
 	switch data.Scope.ValueString() {
 	case scopeOrganization:
@@ -102,7 +103,7 @@ func validateMount(data Model, requireKnown bool, diags *diag.Diagnostics) {
 	switch {
 	case data.EnvironmentVariable.IsUnknown():
 		unknowns++
-	case isKnownBool(data.EnvironmentVariable):
+	case tfvalue.IsKnownBool(data.EnvironmentVariable):
 		if !data.EnvironmentVariable.ValueBool() {
 			diags.AddAttributeError(path.Root("environment_variable"), "Invalid Secret Mount", "environment_variable can only be set to true.")
 		} else {
@@ -114,7 +115,7 @@ func validateMount(data Model, requireKnown bool, diags *diag.Diagnostics) {
 	switch {
 	case data.FilePath.IsUnknown():
 		unknowns++
-	case isKnownString(data.FilePath):
+	case tfvalue.IsKnownString(data.FilePath):
 		mounts++
 		if !validAbsoluteFilePath(data.FilePath.ValueString()) {
 			diags.AddAttributeError(path.Root("file_path"), "Invalid Secret File Path", "file_path must be an absolute path such as /path/to/file.")
@@ -124,14 +125,14 @@ func validateMount(data Model, requireKnown bool, diags *diag.Diagnostics) {
 	switch {
 	case data.ContainerRegistryBasicAuthHost.IsUnknown():
 		unknowns++
-	case isKnownString(data.ContainerRegistryBasicAuthHost):
+	case tfvalue.IsKnownString(data.ContainerRegistryBasicAuthHost):
 		mounts++
 	}
 
 	switch {
 	case data.APIOnly.IsUnknown():
 		unknowns++
-	case isKnownBool(data.APIOnly):
+	case tfvalue.IsKnownBool(data.APIOnly):
 		if !data.APIOnly.ValueBool() {
 			diags.AddAttributeError(path.Root("api_only"), "Invalid Secret Mount", "api_only can only be set to true.")
 		} else {
@@ -149,7 +150,7 @@ func validateMount(data Model, requireKnown bool, diags *diag.Diagnostics) {
 }
 
 func validateEnvironmentVariableName(data Model, diags *diag.Diagnostics) {
-	if !isKnownString(data.Name) {
+	if !tfvalue.IsKnownString(data.Name) {
 		return
 	}
 	if _, ok := prohibitedEnvironmentVariableNames[strings.ToUpper(data.Name.ValueString())]; ok {
@@ -184,7 +185,7 @@ func validateCredentialProxy(ctx context.Context, data Model, requireKnown bool,
 }
 
 func validateUUIDAttribute(value types.String, attrPath path.Path, diags *diag.Diagnostics) {
-	if !isKnownString(value) {
+	if !tfvalue.IsKnownString(value) {
 		return
 	}
 	if !uuidPattern.MatchString(value.ValueString()) {
@@ -194,14 +195,6 @@ func validateUUIDAttribute(value types.String, attrPath path.Path, diags *diag.D
 
 func validAbsoluteFilePath(value string) bool {
 	return strings.HasPrefix(value, "/") && len(value) > 1 && !strings.HasPrefix(value, "//")
-}
-
-func isKnownString(value types.String) bool {
-	return !value.IsNull() && !value.IsUnknown() && value.ValueString() != ""
-}
-
-func isKnownBool(value types.Bool) bool {
-	return !value.IsNull() && !value.IsUnknown()
 }
 
 func stringValueChanged(current types.String, prior types.String) bool {

@@ -4,6 +4,7 @@
 package integration
 
 import (
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	datasourceschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	resourceschema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
@@ -16,8 +17,8 @@ func resourceSchema() resourceschema.Schema {
 	return resourceschema.Schema{
 		MarkdownDescription: "Ona organization integration. Use a definition ID from `ona_integration_definitions` for a built-in integration, or omit it to configure a custom MCP integration. Integration writes require organization integration permissions. Removing this resource deletes the remote integration.",
 		Attributes: map[string]resourceschema.Attribute{
-			"id":              stableComputedString("Integration ID. Use this value as the Terraform import ID."),
-			"organization_id": stableComputedString("Organization ID that owns the integration."),
+			"id":              tfvalue.StableComputedString("Integration ID. Use this value as the Terraform import ID."),
+			"organization_id": tfvalue.StableComputedString("Organization ID that owns the integration."),
 			"integration_definition_id": resourceschema.StringAttribute{
 				Optional:            true,
 				MarkdownDescription: "Global integration definition ID. Omit this value for a custom MCP integration. Changing it replaces the integration.",
@@ -68,7 +69,7 @@ func resourceSchema() resourceschema.Schema {
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"icon_url": stableComputedString("Integration icon URL resolved from the selected definition, when present."),
+			"icon_url": tfvalue.StableComputedString("Integration icon URL resolved from the selected definition, when present."),
 			"categories": resourceschema.SetAttribute{
 				Optional:            true,
 				Computed:            true,
@@ -79,9 +80,9 @@ func resourceSchema() resourceschema.Schema {
 				Computed:            true,
 				MarkdownDescription: "Provider-side app installation associated with this integration, when known.",
 				Attributes: map[string]resourceschema.Attribute{
-					"id":           stableComputedString("Provider-assigned installation ID."),
-					"account_name": stableComputedString("Provider account or organization name."),
-					"account_type": stableComputedString("Provider account type."),
+					"id":           tfvalue.StableComputedString("Provider-assigned installation ID."),
+					"account_name": tfvalue.StableComputedString("Provider account or organization name."),
+					"account_type": tfvalue.StableComputedString("Provider account type."),
 				},
 			},
 		},
@@ -237,11 +238,11 @@ func definitionsDataSourceSchema() datasourceschema.Schema {
 
 func definitionDataSourceAttributes() map[string]datasourceschema.Attribute {
 	return map[string]datasourceschema.Attribute{
-		"id":           computedDataSourceString("Integration definition ID."),
-		"name":         computedDataSourceString("Integration definition name."),
-		"description":  computedDataSourceString("Integration definition description."),
-		"icon_url":     computedDataSourceString("Integration definition icon URL."),
-		"host":         computedDataSourceString("Integration host."),
+		"id":           tfvalue.ComputedDataSourceString("Integration definition ID."),
+		"name":         tfvalue.ComputedDataSourceString("Integration definition name."),
+		"description":  tfvalue.ComputedDataSourceString("Integration definition description."),
+		"icon_url":     tfvalue.ComputedDataSourceString("Integration definition icon URL."),
+		"host":         tfvalue.ComputedDataSourceString("Integration host."),
 		"experimental": computedDataSourceBool("Whether the definition is experimental."),
 		"categories": datasourceschema.SetAttribute{
 			Computed:            true,
@@ -261,7 +262,7 @@ func dataSourceCapabilitiesAttribute() datasourceschema.SingleNestedAttribute {
 			"mcp": datasourceschema.SingleNestedAttribute{
 				Computed: true,
 				Attributes: map[string]datasourceschema.Attribute{
-					"url": computedDataSourceString("Remote MCP server URL."),
+					"url": tfvalue.ComputedDataSourceString("Remote MCP server URL."),
 				},
 			},
 			"context_parsing":    markerDataSourceAttribute("Whether context parsing is supported."),
@@ -270,8 +271,8 @@ func dataSourceCapabilitiesAttribute() datasourceschema.SingleNestedAttribute {
 			"agent_client": datasourceschema.SingleNestedAttribute{
 				Computed: true,
 				Attributes: map[string]datasourceschema.Attribute{
-					"severity_threshold": computedDataSourceString("Minimum incident severity."),
-					"default_project_id": computedDataSourceString("Default Ona project ID."),
+					"severity_threshold": tfvalue.ComputedDataSourceString("Minimum incident severity."),
+					"default_project_id": tfvalue.ComputedDataSourceString("Default Ona project ID."),
 				},
 			},
 			"scm_pr_events": markerDataSourceAttribute("Whether SCM pull-request events are supported."),
@@ -297,11 +298,11 @@ func dataSourceAuthAttribute() datasourceschema.SingleNestedAttribute {
 			"oauth": datasourceschema.SingleNestedAttribute{
 				Computed: true,
 				Attributes: map[string]datasourceschema.Attribute{
-					"auth_url":             computedDataSourceString("OAuth authorization endpoint URL."),
-					"token_url":            computedDataSourceString("OAuth token endpoint URL."),
+					"auth_url":             tfvalue.ComputedDataSourceString("OAuth authorization endpoint URL."),
+					"token_url":            tfvalue.ComputedDataSourceString("OAuth token endpoint URL."),
 					"scopes":               computedDataSourceStringSet("OAuth scopes."),
-					"client_id":            computedDataSourceString("OAuth client ID."),
-					"redirect_url":         computedDataSourceString("OAuth redirect URL."),
+					"client_id":            tfvalue.ComputedDataSourceString("OAuth client ID."),
+					"redirect_url":         tfvalue.ComputedDataSourceString("OAuth redirect URL."),
 					"dynamic_registration": computedDataSourceBool("Whether dynamic client registration is enabled."),
 					"auth_params":          computedDataSourceStringMap("Additional OAuth authorization parameters."),
 				},
@@ -309,24 +310,14 @@ func dataSourceAuthAttribute() datasourceschema.SingleNestedAttribute {
 			"proprietary_app": datasourceschema.SingleNestedAttribute{
 				Computed: true,
 				Attributes: map[string]datasourceschema.Attribute{
-					"client_id":   computedDataSourceString("Provider application client ID."),
+					"client_id":   tfvalue.ComputedDataSourceString("Provider application client ID."),
 					"auth_params": computedDataSourceStringMap("Additional provider authorization parameters."),
 					"app_scopes":  computedDataSourceStringSet("Provider application scopes."),
-					"token_url":   computedDataSourceString("Provider application token endpoint URL."),
-					"app_id":      computedDataSourceString("Provider-assigned application ID."),
-					"app_slug":    computedDataSourceString("Provider-assigned application slug."),
+					"token_url":   tfvalue.ComputedDataSourceString("Provider application token endpoint URL."),
+					"app_id":      tfvalue.ComputedDataSourceString("Provider-assigned application ID."),
+					"app_slug":    tfvalue.ComputedDataSourceString("Provider-assigned application slug."),
 				},
 			},
-		},
-	}
-}
-
-func stableComputedString(description string) resourceschema.StringAttribute {
-	return resourceschema.StringAttribute{
-		Computed:            true,
-		MarkdownDescription: description,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.UseStateForUnknown(),
 		},
 	}
 }
@@ -354,10 +345,6 @@ func optionalComputedResourceStringSet(description string) resourceschema.SetAtt
 
 func optionalComputedResourceStringMap(description string) resourceschema.MapAttribute {
 	return resourceschema.MapAttribute{Optional: true, Computed: true, ElementType: types.StringType, MarkdownDescription: description}
-}
-
-func computedDataSourceString(description string) datasourceschema.StringAttribute {
-	return datasourceschema.StringAttribute{Computed: true, MarkdownDescription: description}
 }
 
 func computedDataSourceBool(description string) datasourceschema.BoolAttribute {

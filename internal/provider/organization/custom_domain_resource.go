@@ -109,20 +109,7 @@ func (r *CustomDomainResource) Schema(ctx context.Context, req resource.SchemaRe
 }
 
 func (r *CustomDomainResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = data.Client
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *CustomDomainResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -136,11 +123,11 @@ func (r *CustomDomainResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	if !r.requireClient(&resp.Diagnostics, "creating") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_custom_domain") {
 		return
 	}
 
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "getting the authenticated organization for ona_custom_domain", err)
 		return
@@ -191,11 +178,11 @@ func (r *CustomDomainResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
-	if !r.requireClient(&resp.Diagnostics, "reading") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_custom_domain") {
 		return
 	}
 
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "getting the authenticated organization for ona_custom_domain", err)
 		return
@@ -231,11 +218,11 @@ func (r *CustomDomainResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	if !r.requireClient(&resp.Diagnostics, "updating") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", "ona_custom_domain") {
 		return
 	}
 
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "getting the authenticated organization for ona_custom_domain", err)
 		return
@@ -278,11 +265,11 @@ func (r *CustomDomainResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
-	if !r.requireClient(&resp.Diagnostics, "deleting") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_custom_domain") {
 		return
 	}
 
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "getting the authenticated organization for ona_custom_domain", err)
 		return
@@ -308,11 +295,11 @@ func (r *CustomDomainResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *CustomDomainResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	if !r.requireClient(&resp.Diagnostics, "importing") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "importing", "ona_custom_domain") {
 		return
 	}
 
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "getting the authenticated organization for ona_custom_domain", err)
 		return
@@ -336,29 +323,6 @@ func (r *CustomDomainResource) ImportState(ctx context.Context, req resource.Imp
 		return
 	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *CustomDomainResource) requireClient(diags *diag.Diagnostics, action string) bool {
-	if r.client != nil {
-		return true
-	}
-	diags.AddError(
-		"Ona API Client Is Not Configured",
-		fmt.Sprintf("Set the provider token argument or ONA_TOKEN before %s ona_custom_domain resources.", action),
-	)
-	return false
-}
-
-func (r *CustomDomainResource) authenticatedOrganizationID(ctx context.Context) (string, error) {
-	result, err := r.client.IdentityService().GetAuthenticatedIdentity(ctx, connect.NewRequest(&v1.GetAuthenticatedIdentityRequest{}))
-	if err != nil {
-		return "", fmt.Errorf("get authenticated identity: %w", err)
-	}
-	organizationID := result.Msg.GetOrganizationId()
-	if organizationID == "" {
-		return "", fmt.Errorf("authenticated identity did not include an organization ID")
-	}
-	return organizationID, nil
 }
 
 func (r *CustomDomainResource) getCustomDomain(ctx context.Context, organizationID string) (*v1.CustomDomain, error) {

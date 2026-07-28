@@ -76,20 +76,7 @@ func (r *TokenEphemeralResource) Schema(ctx context.Context, req ephemeral.Schem
 }
 
 func (r *TokenEphemeralResource) Configure(ctx context.Context, req ephemeral.ConfigureRequest, resp *ephemeral.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Ephemeral Resource Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.data = data
+	r.data = providerdata.EphemeralResourceData(req.ProviderData, r.data, &resp.Diagnostics)
 }
 
 func (r *TokenEphemeralResource) ValidateConfig(ctx context.Context, req ephemeral.ValidateConfigRequest, resp *ephemeral.ValidateConfigResponse) {
@@ -108,11 +95,11 @@ func (r *TokenEphemeralResource) Open(ctx context.Context, req ephemeral.OpenReq
 		return
 	}
 
-	if r.data == nil || r.data.Client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before opening ona_service_account_token ephemeral resources.",
-		)
+	var client *managementclient.ManagementPlane
+	if r.data != nil {
+		client = r.data.Client
+	}
+	if !providerdata.RequireEphemeralResourceClient(client, &resp.Diagnostics, "ona_service_account_token") {
 		return
 	}
 	if r.data.APIBaseURL == "" {

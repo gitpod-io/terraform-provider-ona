@@ -101,20 +101,7 @@ func (r *PolicyResource) Schema(ctx context.Context, req resource.SchemaRequest,
 }
 
 func (r *PolicyResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = data.Client
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *PolicyResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -132,7 +119,7 @@ func (r *PolicyResource) Create(ctx context.Context, req resource.CreateRequest,
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "creating", "ona_runner_policy") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_runner_policy") {
 		return
 	}
 
@@ -178,7 +165,7 @@ func (r *PolicyResource) Read(ctx context.Context, req resource.ReadRequest, res
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "reading", "ona_runner_policy") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_runner_policy") {
 		return
 	}
 
@@ -216,7 +203,7 @@ func (r *PolicyResource) Delete(ctx context.Context, req resource.DeleteRequest,
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "deleting", "ona_runner_policy") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_runner_policy") {
 		return
 	}
 
@@ -248,17 +235,6 @@ func (r *PolicyResource) ImportState(ctx context.Context, req resource.ImportSta
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("runner_id"), types.StringValue(parts[0]))...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("group_id"), types.StringValue(parts[1]))...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("role"), types.StringValue(runnerPolicyRoleUser))...)
-}
-
-func (r *PolicyResource) requireClient(resp *diag.Diagnostics, action string, resourceType string) bool {
-	if r.client != nil {
-		return true
-	}
-	resp.AddError(
-		"Ona API Client Is Not Configured",
-		fmt.Sprintf("Set the provider token argument or ONA_TOKEN before %s %s resources.", action, resourceType),
-	)
-	return false
 }
 
 func (r *PolicyResource) findRunnerPolicy(ctx context.Context, runnerID string, groupID string) (*v1.RunnerPolicy, error) {

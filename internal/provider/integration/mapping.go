@@ -9,6 +9,7 @@ import (
 	"sort"
 
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -46,7 +47,7 @@ func updateIntegrationRequest(ctx context.Context, plan Model, state Model, conf
 	var diags diag.Diagnostics
 	req := &v1.UpdateIntegrationRequest{Id: plan.ID.ValueString()}
 
-	if !plan.Enabled.Equal(state.Enabled) && isKnownBool(plan.Enabled) {
+	if !plan.Enabled.Equal(state.Enabled) && tfvalue.IsKnownBool(plan.Enabled) {
 		enabled := plan.Enabled.ValueBool()
 		req.Enabled = &enabled
 	}
@@ -107,28 +108,28 @@ func populateModel(ctx context.Context, data *Model, integration *v1.Integration
 
 	data.ID = stringValue(integration.GetId())
 	data.OrganizationID = stringValue(integration.GetOrganizationId())
-	data.IntegrationDefinitionID = optionalStringValue(integration.GetIntegrationDefinitionId())
-	data.RunnerID = optionalStringValue(integration.GetRunnerId())
+	data.IntegrationDefinitionID = tfvalue.OptionalStringValue(integration.GetIntegrationDefinitionId())
+	data.RunnerID = tfvalue.OptionalStringValue(integration.GetRunnerId())
 	data.Enabled = types.BoolValue(integration.GetEnabled())
 	data.Capabilities = capabilities
 	data.Auth = auth
 	data.Credentials = types.ObjectNull(credentialsAttributeTypes)
-	data.Host = optionalStringValue(integration.GetHost())
-	data.Name = optionalStringValue(integration.GetName())
-	data.Description = optionalStringValue(integration.GetDescription())
-	data.IconURL = optionalStringValue(integration.GetIconUrl())
+	data.Host = tfvalue.OptionalStringValue(integration.GetHost())
+	data.Name = tfvalue.OptionalStringValue(integration.GetName())
+	data.Description = tfvalue.OptionalStringValue(integration.GetDescription())
+	data.IconURL = tfvalue.OptionalStringValue(integration.GetIconUrl())
 	data.Categories = categories
 	data.ExternalInstallation = externalInstallation
 	return diags
 }
 
 func preservePlannedInputs(data *Model, planned Model) {
-	data.IntegrationDefinitionID = preserveKnownString(data.IntegrationDefinitionID, planned.IntegrationDefinitionID)
-	data.RunnerID = preserveKnownString(data.RunnerID, planned.RunnerID)
-	data.Enabled = preserveKnownBool(data.Enabled, planned.Enabled)
-	data.Host = preserveKnownString(data.Host, planned.Host)
-	data.Name = preserveKnownString(data.Name, planned.Name)
-	data.Description = preserveKnownString(data.Description, planned.Description)
+	data.IntegrationDefinitionID = tfvalue.PreserveString(data.IntegrationDefinitionID, planned.IntegrationDefinitionID)
+	data.RunnerID = tfvalue.PreserveString(data.RunnerID, planned.RunnerID)
+	data.Enabled = tfvalue.PreserveBool(data.Enabled, planned.Enabled)
+	data.Host = tfvalue.PreserveString(data.Host, planned.Host)
+	data.Name = tfvalue.PreserveString(data.Name, planned.Name)
+	data.Description = tfvalue.PreserveString(data.Description, planned.Description)
 	if !planned.Categories.IsNull() && !planned.Categories.IsUnknown() {
 		data.Categories = planned.Categories
 	}
@@ -154,9 +155,9 @@ func definitionModelFromAPI(ctx context.Context, definition *v1.IntegrationDefin
 	return DefinitionModel{
 		ID:           stringValue(definition.GetId()),
 		Name:         stringValue(definition.GetName()),
-		Description:  optionalStringValue(definition.GetDescription()),
-		IconURL:      optionalStringValue(definition.GetIconUrl()),
-		Host:         optionalStringValue(definition.GetHost()),
+		Description:  tfvalue.OptionalStringValue(definition.GetDescription()),
+		IconURL:      tfvalue.OptionalStringValue(definition.GetIconUrl()),
+		Host:         tfvalue.OptionalStringValue(definition.GetHost()),
 		Experimental: types.BoolValue(definition.GetExperimental()),
 		Categories:   categories,
 		Capabilities: capabilities,
@@ -219,7 +220,7 @@ func capabilitiesObjectFromAPI(capabilities *v1.IntegrationCapabilities) (types.
 		"scm_pr_events":      types.ObjectNull(emptyObjectAttributeTypes),
 	}
 	if mcp := capabilities.GetMcp(); mcp != nil {
-		values["mcp"] = objectValue(mcpAttributeTypes, map[string]attr.Value{"url": optionalStringValue(mcp.GetUrl())}, &diags)
+		values["mcp"] = objectValue(mcpAttributeTypes, map[string]attr.Value{"url": tfvalue.OptionalStringValue(mcp.GetUrl())}, &diags)
 	}
 	if capabilities.GetContextParsing() != nil {
 		values["context_parsing"] = emptyObjectValue(&diags)
@@ -232,8 +233,8 @@ func capabilitiesObjectFromAPI(capabilities *v1.IntegrationCapabilities) (types.
 	}
 	if agent := capabilities.GetAgentClient(); agent != nil {
 		values["agent_client"] = objectValue(agentClientAttributeTypes, map[string]attr.Value{
-			"severity_threshold": optionalStringValue(agent.GetSeverityThreshold()),
-			"default_project_id": optionalStringValue(agent.GetDefaultProjectId()),
+			"severity_threshold": tfvalue.OptionalStringValue(agent.GetSeverityThreshold()),
+			"default_project_id": tfvalue.OptionalStringValue(agent.GetDefaultProjectId()),
 		}, &diags)
 	}
 	if capabilities.GetScmPrEvents() != nil {
@@ -319,27 +320,27 @@ func authResourceObjectFromAPI(ctx context.Context, auth *v1.IntegrationAuthenti
 		scopes := stringSetValue(ctx, oauth.GetScopes(), &diags)
 		authParams := stringMapValue(ctx, oauth.GetAuthParams(), &diags)
 		values["oauth"] = objectValue(oauthResourceAttributeTypes, map[string]attr.Value{
-			"auth_url":              optionalStringValue(oauth.GetAuthUrl()),
-			"token_url":             optionalStringValue(oauth.GetTokenUrl()),
+			"auth_url":              tfvalue.OptionalStringValue(oauth.GetAuthUrl()),
+			"token_url":             tfvalue.OptionalStringValue(oauth.GetTokenUrl()),
 			"scopes":                scopes,
-			"client_id":             optionalStringValue(oauth.GetClientId()),
+			"client_id":             tfvalue.OptionalStringValue(oauth.GetClientId()),
 			"client_secret_version": priorOAuth.ClientSecretVersion,
-			"redirect_url":          optionalStringValue(oauth.GetRedirectUrl()),
+			"redirect_url":          tfvalue.OptionalStringValue(oauth.GetRedirectUrl()),
 			"dynamic_registration":  types.BoolValue(oauth.GetDynamicRegistration()),
 			"auth_params":           authParams,
 		}, &diags)
 	}
 	if app := auth.GetProprietaryApp(); app != nil {
 		values["proprietary_app"] = objectValue(proprietaryAppResourceAttributeTypes, map[string]attr.Value{
-			"client_id":              optionalStringValue(app.GetClientId()),
+			"client_id":              tfvalue.OptionalStringValue(app.GetClientId()),
 			"client_secret_version":  priorApp.ClientSecretVersion,
 			"webhook_secret_version": priorApp.WebhookSecretVersion,
 			"auth_params":            stringMapValue(ctx, app.GetAuthParams(), &diags),
 			"app_scopes":             stringSetValue(ctx, app.GetAppScopes(), &diags),
-			"token_url":              optionalStringValue(app.GetTokenUrl()),
-			"app_id":                 optionalStringValue(app.GetAppId()),
+			"token_url":              tfvalue.OptionalStringValue(app.GetTokenUrl()),
+			"app_id":                 tfvalue.OptionalStringValue(app.GetAppId()),
 			"private_key_version":    priorApp.PrivateKeyVersion,
-			"app_slug":               optionalStringValue(app.GetAppSlug()),
+			"app_slug":               tfvalue.OptionalStringValue(app.GetAppSlug()),
 			"api_key_version":        priorApp.APIKeyVersion,
 		}, &diags)
 	}
@@ -362,23 +363,23 @@ func authDataSourceObjectFromAPI(ctx context.Context, auth *v1.IntegrationAuthen
 	}
 	if oauth := auth.GetOauth(); oauth != nil {
 		values["oauth"] = objectValue(oauthDataSourceAttributeTypes, map[string]attr.Value{
-			"auth_url":             optionalStringValue(oauth.GetAuthUrl()),
-			"token_url":            optionalStringValue(oauth.GetTokenUrl()),
+			"auth_url":             tfvalue.OptionalStringValue(oauth.GetAuthUrl()),
+			"token_url":            tfvalue.OptionalStringValue(oauth.GetTokenUrl()),
 			"scopes":               stringSetValue(ctx, oauth.GetScopes(), &diags),
-			"client_id":            optionalStringValue(oauth.GetClientId()),
-			"redirect_url":         optionalStringValue(oauth.GetRedirectUrl()),
+			"client_id":            tfvalue.OptionalStringValue(oauth.GetClientId()),
+			"redirect_url":         tfvalue.OptionalStringValue(oauth.GetRedirectUrl()),
 			"dynamic_registration": types.BoolValue(oauth.GetDynamicRegistration()),
 			"auth_params":          stringMapValue(ctx, oauth.GetAuthParams(), &diags),
 		}, &diags)
 	}
 	if app := auth.GetProprietaryApp(); app != nil {
 		values["proprietary_app"] = objectValue(proprietaryAppDataSourceAttributeTypes, map[string]attr.Value{
-			"client_id":   optionalStringValue(app.GetClientId()),
+			"client_id":   tfvalue.OptionalStringValue(app.GetClientId()),
 			"auth_params": stringMapValue(ctx, app.GetAuthParams(), &diags),
 			"app_scopes":  stringSetValue(ctx, app.GetAppScopes(), &diags),
-			"token_url":   optionalStringValue(app.GetTokenUrl()),
-			"app_id":      optionalStringValue(app.GetAppId()),
-			"app_slug":    optionalStringValue(app.GetAppSlug()),
+			"token_url":   tfvalue.OptionalStringValue(app.GetTokenUrl()),
+			"app_id":      tfvalue.OptionalStringValue(app.GetAppId()),
+			"app_slug":    tfvalue.OptionalStringValue(app.GetAppSlug()),
 		}, &diags)
 	}
 	return objectValue(authDataSourceAttributeTypes, values, &diags), diags
@@ -390,9 +391,9 @@ func externalInstallationObjectFromAPI(_ context.Context, installation *v1.Integ
 		return types.ObjectNull(externalInstallationAttributeTypes), diags
 	}
 	return objectValue(externalInstallationAttributeTypes, map[string]attr.Value{
-		"id":           optionalStringValue(installation.GetId()),
-		"account_name": optionalStringValue(installation.GetAccountName()),
-		"account_type": optionalStringValue(installation.GetAccountType()),
+		"id":           tfvalue.OptionalStringValue(installation.GetId()),
+		"account_name": tfvalue.OptionalStringValue(installation.GetAccountName()),
+		"account_type": tfvalue.OptionalStringValue(installation.GetAccountType()),
 	}, &diags), diags
 }
 
@@ -498,10 +499,10 @@ func validateAuthUpdateSecrets(ctx context.Context, plan types.Object, state typ
 		return
 	}
 
-	if !isKnownString(credentials.OAuthClientSecret) {
+	if !tfvalue.IsKnownString(credentials.OAuthClientSecret) {
 		if versionChanged(planOAuth.ClientSecretVersion, stateOAuth.ClientSecretVersion) {
 			diags.AddAttributeError(path.Root("credentials").AtName("oauth_client_secret"), "Missing OAuth Client Secret", "Set credentials.oauth_client_secret when changing auth.oauth.client_secret_version.")
-		} else if isKnownString(planOAuth.ClientSecretVersion) {
+		} else if tfvalue.IsKnownString(planOAuth.ClientSecretVersion) {
 			diags.AddAttributeError(path.Root("credentials").AtName("oauth_client_secret"), "Missing OAuth Client Secret", "Resupply credentials.oauth_client_secret when updating OAuth configuration with a non-null client_secret_version so the backend does not clear the stored secret.")
 		}
 	}
@@ -517,7 +518,7 @@ func validateAuthUpdateSecrets(ctx context.Context, plan types.Object, state typ
 		{planApp.APIKeyVersion, stateApp.APIKeyVersion, credentials.ProprietaryAPIKey, "proprietary_api_key"},
 	}
 	for _, check := range secretVersionChecks {
-		if versionChanged(check.planned, check.prior) && !isKnownString(check.secret) {
+		if versionChanged(check.planned, check.prior) && !tfvalue.IsKnownString(check.secret) {
 			diags.AddAttributeError(path.Root("credentials").AtName(check.name), "Missing Proprietary App Credential", fmt.Sprintf("Set credentials.%s when changing its version marker.", check.name))
 		}
 	}
@@ -602,22 +603,14 @@ func presentObject(value types.Object) bool {
 }
 
 func knownString(value types.String) string {
-	if !isKnownString(value) {
+	if !tfvalue.IsKnownString(value) {
 		return ""
 	}
 	return value.ValueString()
 }
 
 func knownBool(value types.Bool) bool {
-	return isKnownBool(value) && value.ValueBool()
-}
-
-func isKnownString(value types.String) bool {
-	return !value.IsNull() && !value.IsUnknown() && value.ValueString() != ""
-}
-
-func isKnownBool(value types.Bool) bool {
-	return !value.IsNull() && !value.IsUnknown()
+	return tfvalue.IsKnownBool(value) && value.ValueBool()
 }
 
 func stringValue(value string) types.String {
@@ -625,24 +618,6 @@ func stringValue(value string) types.String {
 		return types.StringNull()
 	}
 	return types.StringValue(value)
-}
-
-func optionalStringValue(value string) types.String {
-	return stringValue(value)
-}
-
-func preserveKnownString(observed types.String, planned types.String) types.String {
-	if !planned.IsNull() && !planned.IsUnknown() {
-		return planned
-	}
-	return observed
-}
-
-func preserveKnownBool(observed types.Bool, planned types.Bool) types.Bool {
-	if !planned.IsNull() && !planned.IsUnknown() {
-		return planned
-	}
-	return observed
 }
 
 func versionChanged(planned types.String, prior types.String) bool {

@@ -9,7 +9,10 @@ import (
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -25,7 +28,9 @@ var _ resource.ResourceWithValidateConfig = &TeamAIBudgetResource{}
 
 func NewTeamAIBudgetResource() resource.Resource { return &TeamAIBudgetResource{} }
 
-type TeamAIBudgetResource struct{ clientHolder }
+type TeamAIBudgetResource struct {
+	client *managementclient.ManagementPlane
+}
 
 func (r *TeamAIBudgetResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_team_ai_budget"
@@ -36,7 +41,7 @@ func (r *TeamAIBudgetResource) Schema(_ context.Context, _ resource.SchemaReques
 }
 
 func (r *TeamAIBudgetResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	r.configure(req, resp)
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *TeamAIBudgetResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -55,10 +60,10 @@ func (r *TeamAIBudgetResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	validateTeamBudget(data, true, &resp.Diagnostics)
-	if resp.Diagnostics.HasError() || !r.requireClient(&resp.Diagnostics, "creating", teamAIBudgetResourceType) {
+	if resp.Diagnostics.HasError() || !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", teamAIBudgetResourceType) {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "resolving the authenticated organization", err)
 		return
@@ -114,10 +119,10 @@ func (r *TeamAIBudgetResource) Create(ctx context.Context, req resource.CreateRe
 func (r *TeamAIBudgetResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data TeamAIBudgetModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-	if resp.Diagnostics.HasError() || !r.requireClient(&resp.Diagnostics, "reading", teamAIBudgetResourceType) {
+	if resp.Diagnostics.HasError() || !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", teamAIBudgetResourceType) {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "resolving the authenticated organization", err)
 		return
@@ -139,10 +144,10 @@ func (r *TeamAIBudgetResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	validateTeamBudget(data, true, &resp.Diagnostics)
-	if resp.Diagnostics.HasError() || !r.requireClient(&resp.Diagnostics, "updating", teamAIBudgetResourceType) {
+	if resp.Diagnostics.HasError() || !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", teamAIBudgetResourceType) {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "resolving the authenticated organization", err)
 		return
@@ -166,10 +171,10 @@ func (r *TeamAIBudgetResource) Update(ctx context.Context, req resource.UpdateRe
 func (r *TeamAIBudgetResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data TeamAIBudgetModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-	if resp.Diagnostics.HasError() || !r.requireClient(&resp.Diagnostics, "deleting", teamAIBudgetResourceType) {
+	if resp.Diagnostics.HasError() || !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", teamAIBudgetResourceType) {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "resolving the authenticated organization", err)
 		return
@@ -206,15 +211,15 @@ func (r *TeamAIBudgetResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *TeamAIBudgetResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	if !r.requireClient(&resp.Diagnostics, "importing", teamAIBudgetResourceType) {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "importing", teamAIBudgetResourceType) {
 		return
 	}
-	parts, diags := splitImportID(req.ID, 3, "organization_id/team_id/mode")
+	parts, diags := tfvalue.SplitImportID(req.ID, 3, "organization_id/team_id/mode")
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "resolving the authenticated organization", err)
 		return
@@ -230,9 +235,9 @@ func (r *TeamAIBudgetResource) ImportState(ctx context.Context, req resource.Imp
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	setImportString(ctx, resp, "organization_id", parts[0])
-	setImportString(ctx, resp, "team_id", parts[1])
-	setImportString(ctx, resp, "mode", parts[2])
+	tfvalue.SetImportString(ctx, resp, "organization_id", parts[0])
+	tfvalue.SetImportString(ctx, resp, "team_id", parts[1])
+	tfvalue.SetImportString(ctx, resp, "mode", parts[2])
 }
 
 func (r *TeamAIBudgetResource) getTeamAllocation(ctx context.Context, organizationID, teamID string) (*v1.TeamCreditAllocationInfo, error) {

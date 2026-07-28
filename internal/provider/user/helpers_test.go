@@ -60,10 +60,8 @@ func TestAuthenticatedOrganizationID(t *testing.T) {
 			api := managementclient.NewWithServices(managementclient.Services{
 				IdentityService: fakeIdentityService{response: tc.Response, err: tc.Err},
 			})
-			holder := clientHolder{client: api}
-
 			var got Expectation
-			organizationID, err := holder.authenticatedOrganizationID(t.Context())
+			organizationID, err := authenticatedOrganizationID(t.Context(), api)
 			if err != nil {
 				got.Err = err.Error()
 			} else {

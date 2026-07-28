@@ -232,20 +232,3 @@ func TestBudgetValidation(t *testing.T) {
 		})
 	}
 }
-
-func TestSplitImportID(t *testing.T) {
-	t.Parallel()
-
-	got, diags := splitImportID("org/team/credits", 3, "organization_id/team_id/mode")
-	if diags.HasError() {
-		t.Fatalf("splitImportID() diagnostics = %v", diags)
-	}
-	if diff := cmp.Diff([]string{"org", "team", "credits"}, got); diff != "" {
-		t.Fatalf("parts mismatch (-want +got):\n%s", diff)
-	}
-	for _, invalid := range []string{"org/team", "org//credits", "org/team/credits/extra"} {
-		if _, gotDiags := splitImportID(invalid, 3, "organization_id/team_id/mode"); !gotDiags.HasError() {
-			t.Fatalf("splitImportID(%q) accepted invalid ID", invalid)
-		}
-	}
-}

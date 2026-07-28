@@ -11,6 +11,8 @@ import (
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -35,7 +37,7 @@ func NewAnnouncementBannerResource() resource.Resource {
 }
 
 type AnnouncementBannerResource struct {
-	clientHolder
+	client *managementclient.ManagementPlane
 }
 
 type AnnouncementBannerModel struct {
@@ -74,7 +76,7 @@ func (r *AnnouncementBannerResource) Schema(ctx context.Context, req resource.Sc
 }
 
 func (r *AnnouncementBannerResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	r.configure(req, resp)
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *AnnouncementBannerResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -87,11 +89,11 @@ func (r *AnnouncementBannerResource) Create(ctx context.Context, req resource.Cr
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "creating", announcementBannerResourceType) {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", announcementBannerResourceType) {
 		return
 	}
 
-	authenticated, err := r.authenticatedOrganization(ctx)
+	authenticated, err := authenticatedOrganizationForClient(ctx, r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
 		return
@@ -124,11 +126,11 @@ func (r *AnnouncementBannerResource) Read(ctx context.Context, req resource.Read
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "reading", announcementBannerResourceType) {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", announcementBannerResourceType) {
 		return
 	}
 
-	authenticated, err := r.authenticatedOrganization(ctx)
+	authenticated, err := authenticatedOrganizationForClient(ctx, r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
 		return
@@ -164,11 +166,11 @@ func (r *AnnouncementBannerResource) Update(ctx context.Context, req resource.Up
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "updating", announcementBannerResourceType) {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", announcementBannerResourceType) {
 		return
 	}
 
-	authenticated, err := r.authenticatedOrganization(ctx)
+	authenticated, err := authenticatedOrganizationForClient(ctx, r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
 		return
@@ -198,11 +200,11 @@ func (r *AnnouncementBannerResource) Delete(ctx context.Context, req resource.De
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "deleting", announcementBannerResourceType) {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", announcementBannerResourceType) {
 		return
 	}
 
-	authenticated, err := r.authenticatedOrganization(ctx)
+	authenticated, err := authenticatedOrganizationForClient(ctx, r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
 		return
@@ -219,11 +221,11 @@ func (r *AnnouncementBannerResource) Delete(ctx context.Context, req resource.De
 }
 
 func (r *AnnouncementBannerResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	if !r.requireClient(&resp.Diagnostics, "importing", announcementBannerResourceType) {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "importing", announcementBannerResourceType) {
 		return
 	}
 
-	authenticated, err := r.authenticatedOrganization(ctx)
+	authenticated, err := authenticatedOrganizationForClient(ctx, r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
 		return

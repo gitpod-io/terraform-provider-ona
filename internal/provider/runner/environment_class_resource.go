@@ -13,6 +13,7 @@ import (
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -100,20 +101,7 @@ func (r *EnvironmentClassResource) Schema(ctx context.Context, req resource.Sche
 }
 
 func (r *EnvironmentClassResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = data.Client
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *EnvironmentClassResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -123,11 +111,7 @@ func (r *EnvironmentClassResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before creating ona_environment_class resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_environment_class") {
 		return
 	}
 
@@ -153,7 +137,7 @@ func (r *EnvironmentClassResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	if isKnownBool(data.Enabled) && !data.Enabled.ValueBool() {
+	if tfvalue.IsKnownBool(data.Enabled) && !data.Enabled.ValueBool() {
 		_, err := r.client.RunnerConfigurationService().UpdateEnvironmentClass(ctx, connect.NewRequest(&v1.UpdateEnvironmentClassRequest{
 			EnvironmentClassId: result.Msg.GetId(),
 			Enabled:            ptr(false),
@@ -195,11 +179,7 @@ func (r *EnvironmentClassResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before reading ona_environment_class resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_environment_class") {
 		return
 	}
 
@@ -238,11 +218,7 @@ func (r *EnvironmentClassResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before updating ona_environment_class resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", "ona_environment_class") {
 		return
 	}
 
@@ -282,11 +258,7 @@ func (r *EnvironmentClassResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before deleting ona_environment_class resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_environment_class") {
 		return
 	}
 
@@ -343,13 +315,13 @@ func updateEnvironmentClassRequest(data EnvironmentClassModel) *v1.UpdateEnviron
 	req := &v1.UpdateEnvironmentClassRequest{
 		EnvironmentClassId: data.ID.ValueString(),
 	}
-	if isKnownString(data.DisplayName) {
+	if tfvalue.IsKnownString(data.DisplayName) {
 		req.DisplayName = ptr(data.DisplayName.ValueString())
 	}
 	if !data.Description.IsUnknown() && !data.Description.IsNull() {
 		req.Description = ptr(data.Description.ValueString())
 	}
-	if isKnownBool(data.Enabled) {
+	if tfvalue.IsKnownBool(data.Enabled) {
 		req.Enabled = ptr(data.Enabled.ValueBool())
 	}
 	return req
@@ -373,13 +345,13 @@ func populateEnvironmentClassModel(ctx context.Context, data *EnvironmentClassMo
 }
 
 func preserveEnvironmentClassPlannedInputs(data *EnvironmentClassModel, planned EnvironmentClassModel) {
-	data.RunnerID = preserveString(data.RunnerID, planned.RunnerID)
-	data.DisplayName = preserveString(data.DisplayName, planned.DisplayName)
-	data.Description = preserveString(data.Description, planned.Description)
+	data.RunnerID = tfvalue.PreserveString(data.RunnerID, planned.RunnerID)
+	data.DisplayName = tfvalue.PreserveString(data.DisplayName, planned.DisplayName)
+	data.Description = tfvalue.PreserveString(data.Description, planned.Description)
 	if !planned.Configuration.IsNull() && !planned.Configuration.IsUnknown() {
 		data.Configuration = planned.Configuration
 	}
-	data.Enabled = preserveBool(data.Enabled, planned.Enabled)
+	data.Enabled = tfvalue.PreserveBool(data.Enabled, planned.Enabled)
 }
 
 func fieldValuesFromMap(ctx context.Context, value types.Map, p path.Path) ([]*v1.FieldValue, diag.Diagnostics) {

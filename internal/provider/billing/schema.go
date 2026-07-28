@@ -4,21 +4,12 @@
 package billing
 
 import (
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	resourceschema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
-
-func stableComputedString(description string) resourceschema.StringAttribute {
-	return resourceschema.StringAttribute{
-		Computed:            true,
-		MarkdownDescription: description,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.UseStateForUnknown(),
-		},
-	}
-}
 
 func identityString(description string) resourceschema.StringAttribute {
 	return resourceschema.StringAttribute{
@@ -34,8 +25,8 @@ func organizationAIBudgetSchema() resourceschema.Schema {
 	return resourceschema.Schema{
 		MarkdownDescription: "Mode-specific monthly Ona AI budget default for the organization associated with the configured provider token. This feature requires an enterprise organization and suitable Billing permissions.",
 		Attributes: map[string]resourceschema.Attribute{
-			"id":              stableComputedString("Billing policy ID."),
-			"organization_id": stableComputedString("Organization ID resolved from the configured provider token."),
+			"id":              tfvalue.StableComputedString("Billing policy ID."),
+			"organization_id": tfvalue.StableComputedString("Organization ID resolved from the configured provider token."),
 			"mode":            identityString("Budget mode: `credits` or `byok`. Changing this value replaces the resource."),
 			"monthly_credit_limit": resourceschema.Int64Attribute{
 				Optional:            true,
@@ -49,7 +40,7 @@ func organizationAIBudgetSchema() resourceschema.Schema {
 				Optional:            true,
 				MarkdownDescription: "Currency for a BYOK cost limit: `usd`, `eur`, or `gbp`.",
 			},
-			"created_at": stableComputedString("Policy creation time in RFC 3339 format."),
+			"created_at": tfvalue.StableComputedString("Policy creation time in RFC 3339 format."),
 		},
 	}
 }
@@ -58,8 +49,8 @@ func userAIBudgetSchema() resourceschema.Schema {
 	return resourceschema.Schema{
 		MarkdownDescription: "Explicit mode-specific monthly Ona AI budget override for an organization user or service account. Inherited organization defaults are not treated as managed overrides. This feature requires an enterprise organization and suitable Billing permissions.",
 		Attributes: map[string]resourceschema.Attribute{
-			"id":              stableComputedString("Billing policy ID."),
-			"organization_id": stableComputedString("Organization ID resolved from the configured provider token."),
+			"id":              tfvalue.StableComputedString("Billing policy ID."),
+			"organization_id": tfvalue.StableComputedString("Organization ID resolved from the configured provider token."),
 			"user_id":         identityString("Organization user or service-account UUID receiving the override. Changing this value replaces the resource."),
 			"mode":            identityString("Budget mode: `credits` or `byok`. Changing this value replaces the resource."),
 			"monthly_credit_limit": resourceschema.Int64Attribute{
@@ -80,7 +71,7 @@ func userAIBudgetSchema() resourceschema.Schema {
 				Default:             booldefault.StaticBool(false),
 				MarkdownDescription: "Whether this identity is exempt from the selected organization default. Do not configure limit or currency fields when true.",
 			},
-			"created_at": stableComputedString("Policy creation time in RFC 3339 format."),
+			"created_at": tfvalue.StableComputedString("Policy creation time in RFC 3339 format."),
 		},
 	}
 }
@@ -89,8 +80,8 @@ func teamAIBudgetSchema() resourceschema.Schema {
 	return resourceschema.Schema{
 		MarkdownDescription: "Mode-specific soft Ona AI budget for a team. Team budgets support reporting and alerts but are not enforced at usage time, and total team budgets may exceed the organization grant. Separate `credits` and `byok` instances for one team preserve each other. This feature requires an enterprise organization and suitable Billing permissions.",
 		Attributes: map[string]resourceschema.Attribute{
-			"id":              stableComputedString("Shared team allocation ID."),
-			"organization_id": stableComputedString("Organization ID resolved from the configured provider token."),
+			"id":              tfvalue.StableComputedString("Shared team allocation ID."),
+			"organization_id": tfvalue.StableComputedString("Organization ID resolved from the configured provider token."),
 			"team_id":         identityString("Team UUID receiving the budget. Changing this value replaces the resource."),
 			"mode":            identityString("Budget mode: `credits` or `byok`. Changing this value replaces the resource."),
 			"credit_budget": resourceschema.Int64Attribute{
@@ -105,7 +96,7 @@ func teamAIBudgetSchema() resourceschema.Schema {
 				Optional:            true,
 				MarkdownDescription: "Currency for a BYOK team budget: `usd`, `eur`, or `gbp`.",
 			},
-			"created_at": stableComputedString("Shared allocation creation time in RFC 3339 format."),
+			"created_at": tfvalue.StableComputedString("Shared allocation creation time in RFC 3339 format."),
 		},
 	}
 }

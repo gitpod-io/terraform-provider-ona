@@ -12,6 +12,7 @@ import (
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -41,20 +42,7 @@ func (r *Resource) Schema(ctx context.Context, req resource.SchemaRequest, resp 
 }
 
 func (r *Resource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = data.Client
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *Resource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -87,7 +75,7 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 		return
 	}
 
-	if !r.requireClient(&resp.Diagnostics, "creating") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_secret") {
 		return
 	}
 
@@ -138,7 +126,7 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 		return
 	}
 
-	if !r.requireClient(&resp.Diagnostics, "reading") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_secret") {
 		return
 	}
 	if data.ID.ValueString() == "" {
@@ -185,7 +173,7 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 		return
 	}
 
-	if !r.requireClient(&resp.Diagnostics, "updating") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", "ona_secret") {
 		return
 	}
 
@@ -199,7 +187,7 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 		if resp.Diagnostics.HasError() {
 			return
 		}
-		if !isKnownString(value) {
+		if !tfvalue.IsKnownString(value) {
 			resp.Diagnostics.AddAttributeError(path.Root("value"), "Missing Secret Value", "Set value when changing value_version.")
 			return
 		}
@@ -238,7 +226,7 @@ func (r *Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp 
 		return
 	}
 
-	if !r.requireClient(&resp.Diagnostics, "deleting") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_secret") {
 		return
 	}
 	if data.ID.ValueString() == "" {
@@ -275,17 +263,6 @@ func (r *Resource) ImportState(ctx context.Context, req resource.ImportStateRequ
 	}
 }
 
-func (r *Resource) requireClient(diags *diag.Diagnostics, action string) bool {
-	if r.client != nil {
-		return true
-	}
-	diags.AddError(
-		"Ona API Client Is Not Configured",
-		fmt.Sprintf("Set the provider token argument or ONA_TOKEN before %s ona_secret resources.", action),
-	)
-	return false
-}
-
 func (r *Resource) resolveScope(ctx context.Context, data *Model, diags *diag.Diagnostics) resolvedScope {
 	validateScope(*data, true, diags)
 	if diags.HasError() {
@@ -304,7 +281,7 @@ func (r *Resource) resolveScope(ctx context.Context, data *Model, diags *diag.Di
 	organizationID := types.StringValue(identity.GetOrganizationId())
 
 	if data.Scope.ValueString() == scopeUser {
-		if !isKnownString(data.UserID) {
+		if !tfvalue.IsKnownString(data.UserID) {
 			if identity.GetSubject().GetPrincipal() != v1.Principal_PRINCIPAL_USER || identity.GetSubject().GetId() == "" {
 				diags.AddAttributeError(path.Root("user_id"), "Missing User ID", "Set user_id when scope is \"user\" unless the provider is authenticated as a user.")
 				return resolvedScope{}

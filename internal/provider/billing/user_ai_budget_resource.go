@@ -8,7 +8,10 @@ import (
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -24,7 +27,9 @@ var _ resource.ResourceWithValidateConfig = &UserAIBudgetResource{}
 
 func NewUserAIBudgetResource() resource.Resource { return &UserAIBudgetResource{} }
 
-type UserAIBudgetResource struct{ clientHolder }
+type UserAIBudgetResource struct {
+	client *managementclient.ManagementPlane
+}
 
 func (r *UserAIBudgetResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_user_ai_budget"
@@ -35,7 +40,7 @@ func (r *UserAIBudgetResource) Schema(_ context.Context, _ resource.SchemaReques
 }
 
 func (r *UserAIBudgetResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	r.configure(req, resp)
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *UserAIBudgetResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -54,10 +59,10 @@ func (r *UserAIBudgetResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	validateUserBudget(data, true, &resp.Diagnostics)
-	if resp.Diagnostics.HasError() || !r.requireClient(&resp.Diagnostics, "creating", userAIBudgetResourceType) {
+	if resp.Diagnostics.HasError() || !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", userAIBudgetResourceType) {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "resolving the authenticated organization", err)
 		return
@@ -94,10 +99,10 @@ func (r *UserAIBudgetResource) Create(ctx context.Context, req resource.CreateRe
 func (r *UserAIBudgetResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data UserAIBudgetModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-	if resp.Diagnostics.HasError() || !r.requireClient(&resp.Diagnostics, "reading", userAIBudgetResourceType) {
+	if resp.Diagnostics.HasError() || !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", userAIBudgetResourceType) {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "resolving the authenticated organization", err)
 		return
@@ -119,10 +124,10 @@ func (r *UserAIBudgetResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	validateUserBudget(data, true, &resp.Diagnostics)
-	if resp.Diagnostics.HasError() || !r.requireClient(&resp.Diagnostics, "updating", userAIBudgetResourceType) {
+	if resp.Diagnostics.HasError() || !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", userAIBudgetResourceType) {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "resolving the authenticated organization", err)
 		return
@@ -146,10 +151,10 @@ func (r *UserAIBudgetResource) Update(ctx context.Context, req resource.UpdateRe
 func (r *UserAIBudgetResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data UserAIBudgetModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-	if resp.Diagnostics.HasError() || !r.requireClient(&resp.Diagnostics, "deleting", userAIBudgetResourceType) {
+	if resp.Diagnostics.HasError() || !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", userAIBudgetResourceType) {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "resolving the authenticated organization", err)
 		return
@@ -172,15 +177,15 @@ func (r *UserAIBudgetResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *UserAIBudgetResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	if !r.requireClient(&resp.Diagnostics, "importing", userAIBudgetResourceType) {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "importing", userAIBudgetResourceType) {
 		return
 	}
-	parts, diags := splitImportID(req.ID, 3, "organization_id/user_id/mode")
+	parts, diags := tfvalue.SplitImportID(req.ID, 3, "organization_id/user_id/mode")
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "resolving the authenticated organization", err)
 		return
@@ -199,9 +204,9 @@ func (r *UserAIBudgetResource) ImportState(ctx context.Context, req resource.Imp
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	setImportString(ctx, resp, "organization_id", parts[0])
-	setImportString(ctx, resp, "user_id", parts[1])
-	setImportString(ctx, resp, "mode", parts[2])
+	tfvalue.SetImportString(ctx, resp, "organization_id", parts[0])
+	tfvalue.SetImportString(ctx, resp, "user_id", parts[1])
+	tfvalue.SetImportString(ctx, resp, "mode", parts[2])
 }
 
 func (r *UserAIBudgetResource) refresh(ctx context.Context, data *UserAIBudgetModel, organizationID string, diags *diag.Diagnostics, remove func()) {

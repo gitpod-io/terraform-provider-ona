@@ -8,6 +8,7 @@ import (
 	"time"
 
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
@@ -71,11 +72,11 @@ func populateSCIMConfigurationModel(data *SCIMConfigurationModel, scim *v1.SCIMC
 }
 
 func preserveSCIMConfigurationPlannedInputs(data *SCIMConfigurationModel, planned SCIMConfigurationModel) {
-	data.SSOConfigurationID = preserveString(data.SSOConfigurationID, planned.SSOConfigurationID)
-	data.Name = preserveString(data.Name, planned.Name)
-	data.Enabled = preserveBool(data.Enabled, planned.Enabled)
-	data.AllowUnverifiedEmailAccountLinking = preserveBool(data.AllowUnverifiedEmailAccountLinking, planned.AllowUnverifiedEmailAccountLinking)
-	data.TokenExpiresIn = preserveString(data.TokenExpiresIn, planned.TokenExpiresIn)
+	data.SSOConfigurationID = tfvalue.PreserveString(data.SSOConfigurationID, planned.SSOConfigurationID)
+	data.Name = tfvalue.PreserveString(data.Name, planned.Name)
+	data.Enabled = tfvalue.PreserveBool(data.Enabled, planned.Enabled)
+	data.AllowUnverifiedEmailAccountLinking = tfvalue.PreserveBool(data.AllowUnverifiedEmailAccountLinking, planned.AllowUnverifiedEmailAccountLinking)
+	data.TokenExpiresIn = tfvalue.PreserveString(data.TokenExpiresIn, planned.TokenExpiresIn)
 }
 
 func validateSCIMConfigurationConfig(ctx context.Context, cfg tfsdk.Config, diags *diag.Diagnostics) {
