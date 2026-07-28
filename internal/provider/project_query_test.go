@@ -9,21 +9,37 @@ import (
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/google/go-cmp/cmp"
 	testresource "github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/querycheck"
 	"github.com/hashicorp/terraform-plugin-testing/querycheck/queryfilter"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+	"google.golang.org/protobuf/testing/protocmp"
 )
 
 func (s *fakeProjectService) ListProjects(ctx context.Context, req *connect.Request[v1.ListProjectsRequest]) (*connect.Response[v1.ListProjectsResponse], error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	filter := &v1.ListProjectsRequest_Filter{}
+	if req.Msg.GetFilter() != nil {
+		filter = req.Msg.GetFilter()
+	}
+	s.listFilters = append(s.listFilters, filter)
 	var projects []*v1.Project
 	for _, project := range s.projects {
 		projects = append(projects, cloneProject(project))
 	}
 	return connect.NewResponse(&v1.ListProjectsResponse{Projects: projects}), nil
+}
+
+func (s *fakeProjectService) lastListFilter() *v1.ListProjectsRequest_Filter {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if len(s.listFilters) == 0 {
+		return nil
+	}
+	return s.listFilters[len(s.listFilters)-1]
 }
 
 func TestAccProjectQuery(t *testing.T) {
@@ -62,12 +78,19 @@ func TestAccProjectQuery(t *testing.T) {
 		querycheck.ExpectLength("ona_project.all", 1), querycheck.ExpectIdentity("ona_project.all", map[string]knownvalue.Check{"id": knownvalue.StringExact("project-1")}),
 		querycheck.ExpectResourceKnownValues("ona_project.all", queryfilter.ByDisplayName(knownvalue.StringExact("example")), []querycheck.KnownValueCheck{{Path: tfjsonpath.New("id"), KnownValue: knownvalue.StringExact("project-1")}, {Path: tfjsonpath.New("name"), KnownValue: knownvalue.StringExact("Example")}, {Path: tfjsonpath.New("repository_clone_url"), KnownValue: knownvalue.StringExact("https://github.com/ona/example.git")}, {Path: tfjsonpath.New("branch"), KnownValue: knownvalue.StringExact("main")}}),
 	}}))
+	if diff := cmp.Diff(&v1.ListProjectsRequest_Filter{Search: "example"}, server.service.lastListFilter(), protocmp.Transform()); diff != "" {
+		t.Errorf("project list filter mismatch (-want +got):\n%s", diff)
+	}
 }
 func projectQueryConfig() string {
 	return `
 list "ona_project" "all" {
   provider         = ona
   include_resource = true
+
+  config {
+    search = "example"
+  }
 }
 `
 }

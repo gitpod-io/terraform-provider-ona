@@ -199,10 +199,11 @@ func newProjectAPIServer(t *testing.T) *projectAPIServer {
 type fakeProjectService struct {
 	v1connect.UnimplementedProjectServiceHandler
 
-	mu       sync.Mutex
-	projects map[string]*v1.Project
-	deletes  []string
-	now      time.Time
+	mu          sync.Mutex
+	projects    map[string]*v1.Project
+	deletes     []string
+	listFilters []*v1.ListProjectsRequest_Filter
+	now         time.Time
 }
 
 func (s *fakeProjectService) CreateProject(ctx context.Context, req *connect.Request[v1.CreateProjectRequest]) (*connect.Response[v1.CreateProjectResponse], error) {

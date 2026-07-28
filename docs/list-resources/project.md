@@ -16,6 +16,10 @@ Lists Terraform-compatible Ona projects.
 list "ona_project" "all" {
   provider         = ona
   include_resource = true
+
+  config {
+    search = "acme"
+  }
 }
 ```
 
@@ -24,6 +28,5 @@ list "ona_project" "all" {
 
 ### Optional
 
-- `project_ids` (List of String) Project IDs to include.
 - `repository_clone_urls` (List of String) Exact repository clone URLs to include.
-- `search` (String) Search project names, IDs, and repositories.
+- `search` (String) Optional case-insensitive search across project names, project IDs, and repository names. Set this to a free-text value inside the list block's `config` block; the provider passes the value to the Ona Projects API.
