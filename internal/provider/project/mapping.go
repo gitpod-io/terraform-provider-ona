@@ -343,9 +343,35 @@ func projectModelFromProto(ctx context.Context, project *v1.Project) (ProjectMod
 	return data, diags
 }
 
+// repositoryFields is returned only after both values have been validated as
+// non-empty. Unsupported initializer shapes return an error diagnostic instead.
 type repositoryFields struct {
 	CloneURL types.String
 	Branch   types.String
+}
+
+// unsupportedProjectRepositoryDiagnostic is an error-severity marker. Managed
+// resource operations surface it as an error, while project list discovery can
+// recognize this concrete type and intentionally exclude unsupported projects.
+type unsupportedProjectRepositoryDiagnostic struct{}
+
+var _ diag.Diagnostic = unsupportedProjectRepositoryDiagnostic{}
+
+func (unsupportedProjectRepositoryDiagnostic) Severity() diag.Severity {
+	return diag.SeverityError
+}
+
+func (unsupportedProjectRepositoryDiagnostic) Summary() string {
+	return "Unsupported Ona Project Repository"
+}
+
+func (unsupportedProjectRepositoryDiagnostic) Detail() string {
+	return "Project must have a Git repository clone URL and branch to be managed by Terraform."
+}
+
+func (unsupportedProjectRepositoryDiagnostic) Equal(other diag.Diagnostic) bool {
+	_, ok := other.(unsupportedProjectRepositoryDiagnostic)
+	return ok
 }
 
 func repositoryFromInitializer(initializer *v1.EnvironmentInitializer) (repositoryFields, diag.Diagnostics) {
@@ -356,10 +382,7 @@ func repositoryFromInitializer(initializer *v1.EnvironmentInitializer) (reposito
 			continue
 		}
 		if git.GetRemoteUri() == "" || git.GetCloneTarget() == "" {
-			diags.AddError(
-				"Unsupported Ona Project Repository",
-				"Project must have a Git repository clone URL and branch to be managed by Terraform.",
-			)
+			diags.Append(unsupportedProjectRepositoryDiagnostic{})
 			return repositoryFields{}, diags
 		}
 		return repositoryFields{
@@ -367,10 +390,7 @@ func repositoryFromInitializer(initializer *v1.EnvironmentInitializer) (reposito
 			Branch:   types.StringValue(git.GetCloneTarget()),
 		}, diags
 	}
-	diags.AddError(
-		"Unsupported Ona Project Repository",
-		"Project must have a Git repository clone URL and branch to be managed by Terraform.",
-	)
+	diags.Append(unsupportedProjectRepositoryDiagnostic{})
 	return repositoryFields{}, diags
 }
 

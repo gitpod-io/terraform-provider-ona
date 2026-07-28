@@ -27,6 +27,7 @@ import (
 
 var _ resource.Resource = &EnvironmentClassResource{}
 var _ resource.ResourceWithConfigure = &EnvironmentClassResource{}
+var _ resource.ResourceWithIdentity = &EnvironmentClassResource{}
 var _ resource.ResourceWithImportState = &EnvironmentClassResource{}
 
 const defaultEnvironmentClassDescription = "Environment class managed by Terraform."
@@ -143,6 +144,10 @@ func (r *EnvironmentClassResource) Create(ctx context.Context, req resource.Crea
 	}
 
 	data.ID = types.StringValue(result.Msg.GetId())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, EnvironmentClassIdentityModel{ID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -219,6 +224,10 @@ func (r *EnvironmentClassResource) Read(ctx context.Context, req resource.ReadRe
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, EnvironmentClassIdentityModel{ID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -256,6 +265,10 @@ func (r *EnvironmentClassResource) Update(ctx context.Context, req resource.Upda
 	planned := data
 	resp.Diagnostics.Append(populateEnvironmentClassModel(ctx, &data, class)...)
 	preserveEnvironmentClassPlannedInputs(&data, planned)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, EnvironmentClassIdentityModel{ID: data.ID})...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -297,7 +310,7 @@ func (r *EnvironmentClassResource) Delete(ctx context.Context, req resource.Dele
 }
 
 func (r *EnvironmentClassResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("id"), req, resp)
 }
 
 func (r *EnvironmentClassResource) getEnvironmentClass(ctx context.Context, id string) (*v1.EnvironmentClass, error) {

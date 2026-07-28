@@ -489,6 +489,20 @@ func TestAccEnvironmentClassResourceLifecycle(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
+				ResourceName:    "ona_environment_class.test",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportStateCheck: func(states []*terraform.InstanceState) error {
+					if len(states) != 1 {
+						return fmt.Errorf("expected one imported environment class state, got %d", len(states))
+					}
+					if states[0].ID != "class-1" || states[0].Attributes["runner_id"] != "runner-1" {
+						return fmt.Errorf("structured identity imported unexpected environment class state: %#v", states[0].Attributes)
+					}
+					return nil
+				},
+			},
+			{
 				Config: testAccEnvironmentClassConfig(server.URL, "Large Updated", "100", false),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
@@ -895,48 +909,61 @@ resource "echo" "test" {}
 
 type runnerConfigurationAPIServer struct {
 	*httptest.Server
-	service *fakeRunnerConfigurationService
+	service       *fakeRunnerConfigurationService
+	runnerService *fakeRunnerService
 }
 
 func newRunnerConfigurationAPIServer(t *testing.T) *runnerConfigurationAPIServer {
 	t.Helper()
 
 	service := &fakeRunnerConfigurationService{
-		scmIntegrations:    map[string]*v1.SCMIntegration{},
-		scmCreateRequests:  map[string]*v1.CreateSCMIntegrationRequest{},
-		scmUpdateRequests:  map[string][]*v1.UpdateSCMIntegrationRequest{},
-		llmIntegrations:    map[string]*v1.LLMIntegration{},
-		llmCreateRequests:  map[string]*v1.CreateLLMIntegrationRequest{},
-		llmUpdateRequests:  map[string][]*v1.UpdateLLMIntegrationRequest{},
-		environmentClasses: map[string]*v1.EnvironmentClass{},
+		scmIntegrations:                 map[string]*v1.SCMIntegration{},
+		scmCreateRequests:               map[string]*v1.CreateSCMIntegrationRequest{},
+		scmUpdateRequests:               map[string][]*v1.UpdateSCMIntegrationRequest{},
+		llmIntegrations:                 map[string]*v1.LLMIntegration{},
+		llmCreateRequests:               map[string]*v1.CreateLLMIntegrationRequest{},
+		llmUpdateRequests:               map[string][]*v1.UpdateLLMIntegrationRequest{},
+		environmentClasses:              map[string]*v1.EnvironmentClass{},
+		environmentClassRunnerKinds:     map[string]v1.RunnerKind{},
+		environmentClassRunnerProviders: map[string]v1.RunnerProvider{},
 	}
-	_, handler := v1connect.NewRunnerConfigurationServiceHandler(service)
-	server := httptest.NewServer(http.StripPrefix("/api", handler))
+	runnerService := &fakeRunnerService{runners: map[string]*v1.Runner{}}
+
+	runnerConfigurationPath, runnerConfigurationHandler := v1connect.NewRunnerConfigurationServiceHandler(service)
+	runnerPath, runnerHandler := v1connect.NewRunnerServiceHandler(runnerService)
+	mux := http.NewServeMux()
+	mux.Handle("/api"+runnerConfigurationPath, http.StripPrefix("/api", runnerConfigurationHandler))
+	mux.Handle("/api"+runnerPath, http.StripPrefix("/api", runnerHandler))
+	server := httptest.NewServer(mux)
 	return &runnerConfigurationAPIServer{
-		Server:  server,
-		service: service,
+		Server:        server,
+		service:       service,
+		runnerService: runnerService,
 	}
 }
 
 type fakeRunnerConfigurationService struct {
 	v1connect.UnimplementedRunnerConfigurationServiceHandler
 
-	mu                 sync.Mutex
-	scmIntegrations    map[string]*v1.SCMIntegration
-	scmCreateRequests  map[string]*v1.CreateSCMIntegrationRequest
-	scmUpdateRequests  map[string][]*v1.UpdateSCMIntegrationRequest
-	scmDeletes         []string
-	scmSecretUpdates   map[string][]string
-	scmCreateErr       error
-	scmUpdateErr       error
-	llmIntegrations    map[string]*v1.LLMIntegration
-	llmCreateRequests  map[string]*v1.CreateLLMIntegrationRequest
-	llmUpdateRequests  map[string][]*v1.UpdateLLMIntegrationRequest
-	llmDeletes         map[string]bool
-	llmDeleteForce     map[string]bool
-	llmAPIKeyUpdates   map[string][]string
-	llmCreateErr       error
-	environmentClasses map[string]*v1.EnvironmentClass
+	mu                              sync.Mutex
+	scmIntegrations                 map[string]*v1.SCMIntegration
+	scmCreateRequests               map[string]*v1.CreateSCMIntegrationRequest
+	scmUpdateRequests               map[string][]*v1.UpdateSCMIntegrationRequest
+	scmDeletes                      []string
+	scmSecretUpdates                map[string][]string
+	scmCreateErr                    error
+	scmUpdateErr                    error
+	llmIntegrations                 map[string]*v1.LLMIntegration
+	llmCreateRequests               map[string]*v1.CreateLLMIntegrationRequest
+	llmUpdateRequests               map[string][]*v1.UpdateLLMIntegrationRequest
+	llmDeletes                      map[string]bool
+	llmDeleteForce                  map[string]bool
+	llmAPIKeyUpdates                map[string][]string
+	llmCreateErr                    error
+	environmentClasses              map[string]*v1.EnvironmentClass
+	lastEnvironmentClassListKinds   []v1.RunnerKind
+	environmentClassRunnerKinds     map[string]v1.RunnerKind
+	environmentClassRunnerProviders map[string]v1.RunnerProvider
 }
 
 func (s *fakeRunnerConfigurationService) CreateSCMIntegration(ctx context.Context, req *connect.Request[v1.CreateSCMIntegrationRequest]) (*connect.Response[v1.CreateSCMIntegrationResponse], error) {
@@ -1171,6 +1198,56 @@ func (s *fakeRunnerConfigurationService) GetEnvironmentClass(ctx context.Context
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("environment class not found"))
 	}
 	return connect.NewResponse(&v1.GetEnvironmentClassResponse{EnvironmentClass: cloneEnvironmentClass(class)}), nil
+}
+
+func (s *fakeRunnerConfigurationService) ListEnvironmentClasses(ctx context.Context, req *connect.Request[v1.ListEnvironmentClassesRequest]) (*connect.Response[v1.ListEnvironmentClassesResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.lastEnvironmentClassListKinds = append([]v1.RunnerKind(nil), req.Msg.GetFilter().GetRunnerKinds()...)
+
+	runnerIDs := map[string]struct{}{}
+	for _, id := range req.Msg.GetFilter().GetRunnerIds() {
+		runnerIDs[id] = struct{}{}
+	}
+	runnerProviders := map[v1.RunnerProvider]struct{}{}
+	for _, provider := range req.Msg.GetFilter().GetRunnerProviders() {
+		runnerProviders[provider] = struct{}{}
+	}
+	runnerKinds := map[v1.RunnerKind]struct{}{}
+	for _, kind := range req.Msg.GetFilter().GetRunnerKinds() {
+		runnerKinds[kind] = struct{}{}
+	}
+
+	var classes []*v1.EnvironmentClass
+	for _, class := range s.environmentClasses {
+		if len(runnerIDs) > 0 {
+			if _, ok := runnerIDs[class.GetRunnerId()]; !ok {
+				continue
+			}
+		}
+		if provider, ok := s.environmentClassRunnerProviders[class.GetRunnerId()]; ok && len(runnerProviders) > 0 {
+			if _, ok := runnerProviders[provider]; !ok {
+				continue
+			}
+		}
+		if kind, ok := s.environmentClassRunnerKinds[class.GetRunnerId()]; ok && len(runnerKinds) > 0 {
+			if _, ok := runnerKinds[kind]; !ok {
+				continue
+			}
+		}
+		if enabled := req.Msg.GetFilter().Enabled; enabled != nil && class.GetEnabled() != *enabled {
+			continue
+		}
+		classes = append(classes, cloneEnvironmentClass(class))
+	}
+	sort.Slice(classes, func(i, j int) bool { return classes[i].GetId() < classes[j].GetId() })
+	return connect.NewResponse(&v1.ListEnvironmentClassesResponse{EnvironmentClasses: classes}), nil
+}
+
+func (s *fakeRunnerConfigurationService) environmentClassListRunnerKinds() []v1.RunnerKind {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return append([]v1.RunnerKind(nil), s.lastEnvironmentClassListKinds...)
 }
 
 func (s *fakeRunnerConfigurationService) UpdateEnvironmentClass(ctx context.Context, req *connect.Request[v1.UpdateEnvironmentClassRequest]) (*connect.Response[v1.UpdateEnvironmentClassResponse], error) {

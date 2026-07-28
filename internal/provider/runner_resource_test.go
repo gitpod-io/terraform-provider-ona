@@ -488,6 +488,7 @@ type fakeRunnerService struct {
 
 	mu            sync.Mutex
 	runners       map[string]*v1.Runner
+	listErr       error
 	policies      map[string]*v1.RunnerPolicy
 	deletes       []string
 	policyDeletes []string
@@ -537,6 +538,10 @@ func (s *fakeRunnerService) GetRunner(ctx context.Context, req *connect.Request[
 func (s *fakeRunnerService) ListRunners(ctx context.Context, req *connect.Request[v1.ListRunnersRequest]) (*connect.Response[v1.ListRunnersResponse], error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+
+	if s.listErr != nil {
+		return nil, s.listErr
+	}
 
 	runners := make([]*v1.Runner, 0, len(s.runners))
 	for _, runner := range s.runners {

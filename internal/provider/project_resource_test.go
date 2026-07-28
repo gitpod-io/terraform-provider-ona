@@ -246,6 +246,20 @@ func TestAccProjectResourceLifecycle(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
+				ResourceName:    "ona_project.api",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportStateCheck: func(states []*terraform.InstanceState) error {
+					if len(states) != 1 {
+						return fmt.Errorf("expected one imported project state, got %d", len(states))
+					}
+					if states[0].ID != "project-1" || states[0].Attributes["id"] != "project-1" {
+						return fmt.Errorf("structured identity imported unexpected project state: %#v", states[0].Attributes)
+					}
+					return nil
+				},
+			},
+			{
 				Config: testAccProjectResourceConfigWithPrebuild(server.URL, true),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_project.api", "name", "acme-api-updated"),
@@ -351,6 +365,7 @@ func newProjectAPIServer(t *testing.T) *projectAPIServer {
 		enabled:      make(map[string]bool),
 		enableCalls:  make(map[string]int),
 		disableCalls: make(map[string]int),
+		getCalls:     make(map[string]int),
 	}
 	projectPath, projectHandler := v1connect.NewProjectServiceHandler(service)
 	insightsPath, insightsHandler := v1connect.NewInsightsServiceHandler(insights)
@@ -375,12 +390,17 @@ func newProjectAPIServer(t *testing.T) *projectAPIServer {
 type fakeProjectService struct {
 	v1connect.UnimplementedProjectServiceHandler
 
-	mu       sync.Mutex
-	projects map[string]*v1.Project
-	deletes  []string
-	now      time.Time
-	getErr   error
-	emptyGet bool
+	mu                            sync.Mutex
+	projects                      map[string]*v1.Project
+	deletes                       []string
+	listRequests                  []*v1.ListProjectsRequest
+	listErr                       error
+	environmentClassListRequests  []*v1.ListProjectEnvironmentClassesRequest
+	environmentClassListErr       error
+	environmentClassPageSizeLimit int32
+	now                           time.Time
+	getErr                        error
+	emptyGet                      bool
 }
 
 func (s *fakeProjectService) CreateProject(ctx context.Context, req *connect.Request[v1.CreateProjectRequest]) (*connect.Response[v1.CreateProjectResponse], error) {
@@ -560,6 +580,7 @@ type fakeInsightsService struct {
 	enabled      map[string]bool
 	enableCalls  map[string]int
 	disableCalls map[string]int
+	getCalls     map[string]int
 	getErr       error
 }
 
@@ -590,10 +611,12 @@ func (s *fakeInsightsService) GetProjectInsightsStatus(ctx context.Context, req 
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	projectID := req.Msg.GetProjectId()
+	s.getCalls[projectID]++
 	if s.getErr != nil {
 		return nil, s.getErr
 	}
-	enabled, ok := s.enabled[req.Msg.GetProjectId()]
+	enabled, ok := s.enabled[projectID]
 	if !ok {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("project not found"))
 	}
@@ -610,4 +633,10 @@ func (s *fakeInsightsService) setGetError(err error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.getErr = err
+}
+
+func (s *fakeInsightsService) getCallCount(projectID string) int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.getCalls[projectID]
 }
