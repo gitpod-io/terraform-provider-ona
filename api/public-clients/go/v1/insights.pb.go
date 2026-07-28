@@ -8,8 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -1238,7 +1236,7 @@ var File_gitpod_v1_insights_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_insights_proto_rawDesc = "" +
 	"\n" +
-	"\x18gitpod/v1/insights.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x15gitpod/v1/model.proto\x1a\x15gitpod/v1/usage.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x9e\x03\n" +
+	"\x18gitpod/v1/insights.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x15gitpod/v1/model.proto\x1a\x15gitpod/v1/usage.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x9e\x03\n" +
 	"\x12CommitCoAuthorStat\x12*\n" +
 	"\vcommit_hash\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18@R\n" +
 	"commitHash\x12C\n" +
@@ -1253,12 +1251,10 @@ const file_gitpod_v1_insights_proto_rawDesc = "" +
 	"\xbaH\ar\x05\x10\x01\x18\x80\x01R\n" +
 	"authorHash\x12+\n" +
 	"\fraw_coauthor\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xc0\x02R\vrawCoauthor\x12,\n" +
-	"\rauthor_scm_id\x18\b \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02R\vauthorScmId\"[\n" +
-	"\x1cEnableProjectInsightsRequest\x12;\n" +
+	"\rauthor_scm_id\x18\b \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02R\vauthorScmId\"G\n" +
+	"\x1cEnableProjectInsightsRequest\x12'\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idګ\x1e\x00R\tprojectId\"\x1f\n" +
+	"project_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tprojectId\"\x1f\n" +
 	"\x1dEnableProjectInsightsResponse\"\x94\x03\n" +
 	"\x13InsightsHealthIssue\x12C\n" +
 	"\bcategory\x18\x01 \x01(\x0e2'.gitpod.v1.InsightsHealthIssue.CategoryR\bcategory\x12\x1d\n" +
@@ -1273,32 +1269,24 @@ const file_gitpod_v1_insights_proto_rawDesc = "" +
 	"\bCategory\x12\x18\n" +
 	"\x14CATEGORY_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15CATEGORY_PREREQUISITE\x10\x01\x12\x14\n" +
-	"\x10CATEGORY_RUNTIME\x10\x02\"\\\n" +
-	"\x1dDisableProjectInsightsRequest\x12;\n" +
+	"\x10CATEGORY_RUNTIME\x10\x02\"H\n" +
+	"\x1dDisableProjectInsightsRequest\x12'\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
+	"project_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tprojectId\" \n" +
+	"\x1eDisableProjectInsightsResponse\"J\n" +
+	"\x1fGetProjectInsightsStatusRequest\x12'\n" +
 	"\n" +
-	"project.idګ\x1e\x00R\tprojectId\" \n" +
-	"\x1eDisableProjectInsightsResponse\"^\n" +
-	"\x1fGetProjectInsightsStatusRequest\x12;\n" +
-	"\n" +
-	"project_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idګ\x1e\x00R\tprojectId\"\x99\x02\n" +
-	" GetProjectInsightsStatusResponse\x12\x1e\n" +
-	"\aenabled\x18\x01 \x01(\bB\x04ګ\x1e\x00R\aenabled\x12:\n" +
+	"project_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tprojectId\"\x93\x02\n" +
+	" GetProjectInsightsStatusResponse\x12\x18\n" +
+	"\aenabled\x18\x01 \x01(\bR\aenabled\x12:\n" +
 	"\vlast_ran_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tlastRanAt\x12G\n" +
 	"\x0finsights_health\x18\x03 \x03(\v2\x1e.gitpod.v1.InsightsHealthIssueR\x0einsightsHealth\x12P\n" +
-	"\x16data_collected_through\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x14dataCollectedThrough\"\x9a\x03\n" +
-	"\x17ReportAgentTraceRequest\x127\n" +
+	"\x16data_collected_through\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x14dataCollectedThrough\"\xdf\x02\n" +
+	"\x17ReportAgentTraceRequest\x12'\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12C\n" +
-	"\x0eenvironment_id\x18\x02 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x12M\n" +
-	"\x12agent_execution_id\x18\x03 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11agentExecution.idR\x10agentExecutionId\x12(\n" +
+	"project_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tprojectId\x12/\n" +
+	"\x0eenvironment_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x126\n" +
+	"\x12agent_execution_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\x12(\n" +
 	"\vlines_added\x18\x04 \x01(\x03B\a\xbaH\x04\"\x02(\x00R\n" +
 	"linesAdded\x12,\n" +
 	"\rlines_removed\x18\x05 \x01(\x03B\a\xbaH\x04\"\x02(\x00R\flinesRemoved\x12/\n" +
@@ -1318,12 +1306,10 @@ const file_gitpod_v1_insights_proto_rawDesc = "" +
 	"\xbaH\ar\x05\x10\x01\x18\x80\x02R\ftargetBranch\x12E\n" +
 	"\fscm_provider\x18\b \x01(\x0e2\x16.gitpod.v1.ScmProviderB\n" +
 	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\vscmProvider\x12,\n" +
-	"\rauthor_scm_id\x18\t \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02R\vauthorScmId\"\xb8\x03\n" +
-	"\x1aReportInsightsBatchRequest\x127\n" +
+	"\rauthor_scm_id\x18\t \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02R\vauthorScmId\"\xa8\x03\n" +
+	"\x1aReportInsightsBatchRequest\x12'\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12O\n" +
+	"project_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tprojectId\x12O\n" +
 	"\x0ecoauthor_stats\x18\x02 \x03(\v2\x1d.gitpod.v1.CommitCoAuthorStatB\t\xbaH\x06\x92\x01\x03\x10\x90NR\rcoauthorStats\x12@\n" +
 	"\bpr_stats\x18\x03 \x03(\v2\x1a.gitpod.v1.PullRequestStatB\t\xbaH\x06\x92\x01\x03\x10\x90NR\aprStats\x12G\n" +
 	"\x11collected_through\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x10collectedThrough\x12K\n" +
@@ -1333,10 +1319,9 @@ const file_gitpod_v1_insights_proto_rawDesc = "" +
 	"\x17coauthor_inserted_count\x18\x01 \x01(\x03R\x15coauthorInsertedCount\x124\n" +
 	"\x16coauthor_updated_count\x18\x02 \x01(\x03R\x14coauthorUpdatedCount\x12*\n" +
 	"\x11pr_inserted_count\x18\x03 \x01(\x03R\x0fprInsertedCount\x12(\n" +
-	"\x10pr_updated_count\x18\x04 \x01(\x03R\x0eprUpdatedCount\"c\n" +
-	"\x19GetInsightsSummaryRequest\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\x80\x01\n" +
+	"\x10pr_updated_count\x18\x04 \x01(\x03R\x0eprUpdatedCount\"N\n" +
+	"\x19GetInsightsSummaryRequest\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\"\x80\x01\n" +
 	"\x1aGetInsightsSummaryResponse\x122\n" +
 	"\x15enabled_project_count\x18\x01 \x01(\x03R\x13enabledProjectCount\x12.\n" +
 	"\x13total_project_count\x18\x02 \x01(\x03R\x11totalProjectCount*y\n" +
@@ -1359,7 +1344,7 @@ const file_gitpod_v1_insights_proto_rawDesc = "" +
 	"\x18GetProjectInsightsStatus\x12*.gitpod.v1.GetProjectInsightsStatusRequest\x1a+.gitpod.v1.GetProjectInsightsStatusResponse\"\x03\x90\x02\x01\x12f\n" +
 	"\x13ReportInsightsBatch\x12%.gitpod.v1.ReportInsightsBatchRequest\x1a&.gitpod.v1.ReportInsightsBatchResponse\"\x00\x12]\n" +
 	"\x10ReportAgentTrace\x12\".gitpod.v1.ReportAgentTraceRequest\x1a#.gitpod.v1.ReportAgentTraceResponse\"\x00\x12f\n" +
-	"\x12GetInsightsSummary\x12$.gitpod.v1.GetInsightsSummaryRequest\x1a%.gitpod.v1.GetInsightsSummaryResponse\"\x03\x90\x02\x01B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x12GetInsightsSummary\x12$.gitpod.v1.GetInsightsSummaryRequest\x1a%.gitpod.v1.GetInsightsSummaryResponse\"\x03\x90\x02\x01B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_insights_proto_rawDescOnce sync.Once

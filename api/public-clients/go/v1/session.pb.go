@@ -8,7 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -1312,7 +1311,7 @@ var File_gitpod_v1_session_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_session_proto_rawDesc = "" +
 	"\n" +
-	"\x17gitpod/v1/session.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1agitpod/v1/pagination.proto\"\xff\x01\n" +
+	"\x17gitpod/v1/session.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1agitpod/v1/pagination.proto\"\xff\x01\n" +
 	"\aSession\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -1336,12 +1335,10 @@ const file_gitpod_v1_session_proto_rawDesc = "" +
 	"\x05_nameB\x0e\n" +
 	"\f_description\"E\n" +
 	"\x15CreateSessionResponse\x12,\n" +
-	"\asession\x18\x01 \x01(\v2\x12.gitpod.v1.SessionR\asession\"L\n" +
-	"\x11GetSessionRequest\x127\n" +
+	"\asession\x18\x01 \x01(\v2\x12.gitpod.v1.SessionR\asession\"<\n" +
+	"\x11GetSessionRequest\x12'\n" +
 	"\n" +
-	"session_id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"session.idR\tsessionId\"B\n" +
+	"session_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tsessionId\"B\n" +
 	"\x12GetSessionResponse\x12,\n" +
 	"\asession\x18\x01 \x01(\v2\x12.gitpod.v1.SessionR\asession\"\x91\x01\n" +
 	"\x13ListSessionsRequest\x12<\n" +
@@ -1354,12 +1351,10 @@ const file_gitpod_v1_session_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12.\n" +
-	"\bsessions\x18\x02 \x03(\v2\x12.gitpod.v1.SessionR\bsessions\"\xe3\x02\n" +
-	"\x14UpdateSessionRequest\x127\n" +
+	"\bsessions\x18\x02 \x03(\v2\x12.gitpod.v1.SessionR\bsessions\"\xd3\x02\n" +
+	"\x14UpdateSessionRequest\x12'\n" +
 	"\n" +
-	"session_id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"session.idR\tsessionId\x12\x17\n" +
+	"session_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tsessionId\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
 	"\vdescription\x18\x03 \x01(\tH\x01R\vdescription\x88\x01\x01\x122\n" +
 	"\x05phase\x18\x04 \x01(\x0e2\x17.gitpod.v1.SessionPhaseH\x02R\x05phase\x88\x01\x01\x12W\n" +
@@ -1369,39 +1364,31 @@ const file_gitpod_v1_session_proto_rawDesc = "" +
 	"\x06_phaseB\"\n" +
 	" _orchestrator_agent_execution_id\"E\n" +
 	"\x15UpdateSessionResponse\x12,\n" +
-	"\asession\x18\x01 \x01(\v2\x12.gitpod.v1.SessionR\asession\"e\n" +
-	"\x14DeleteSessionRequest\x127\n" +
+	"\asession\x18\x01 \x01(\v2\x12.gitpod.v1.SessionR\asession\"U\n" +
+	"\x14DeleteSessionRequest\x12'\n" +
 	"\n" +
-	"session_id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"session.idR\tsessionId\x12\x14\n" +
+	"session_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tsessionId\x12\x14\n" +
 	"\x05force\x18\x02 \x01(\bR\x05force\"\x17\n" +
-	"\x15DeleteSessionResponse\"\x92\x02\n" +
-	"\x19AddSessionResourceRequest\x127\n" +
+	"\x15DeleteSessionResponse\"\x82\x02\n" +
+	"\x19AddSessionResourceRequest\x12'\n" +
 	"\n" +
-	"session_id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"session.idR\tsessionId\x122\n" +
+	"session_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tsessionId\x122\n" +
 	"\x04kind\x18\x02 \x01(\x0e2\x1e.gitpod.v1.SessionResourceKindR\x04kind\x122\n" +
 	"\x04role\x18\x03 \x01(\x0e2\x1e.gitpod.v1.SessionResourceRoleR\x04role\x12\x10\n" +
 	"\x03url\x18\x06 \x01(\tR\x03url\x12\x14\n" +
 	"\x05title\x18\a \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\b \x01(\tR\vdescriptionJ\x04\b\x04\x10\x05J\x04\b\x05\x10\x06\"T\n" +
 	"\x1aAddSessionResourceResponse\x126\n" +
-	"\bresource\x18\x01 \x01(\v2\x1a.gitpod.v1.SessionResourceR\bresource\"\x82\x01\n" +
-	"\x1cRemoveSessionResourceRequest\x127\n" +
+	"\bresource\x18\x01 \x01(\v2\x1a.gitpod.v1.SessionResourceR\bresource\"r\n" +
+	"\x1cRemoveSessionResourceRequest\x12'\n" +
 	"\n" +
-	"session_id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"session.idR\tsessionId\x12)\n" +
+	"session_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tsessionId\x12)\n" +
 	"\vresource_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"resourceId\"\x1f\n" +
-	"\x1dRemoveSessionResourceResponse\"\xa0\x02\n" +
-	"\x1cUpdateSessionResourceRequest\x127\n" +
+	"\x1dRemoveSessionResourceResponse\"\x90\x02\n" +
+	"\x1cUpdateSessionResourceRequest\x12'\n" +
 	"\n" +
-	"session_id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"session.idR\tsessionId\x12)\n" +
+	"session_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tsessionId\x12)\n" +
 	"\vresource_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"resourceId\x127\n" +
 	"\x04role\x18\x03 \x01(\x0e2\x1e.gitpod.v1.SessionResourceRoleH\x00R\x04role\x88\x01\x01\x12\x19\n" +
@@ -1411,12 +1398,10 @@ const file_gitpod_v1_session_proto_rawDesc = "" +
 	"\x06_titleB\x0e\n" +
 	"\f_description\"W\n" +
 	"\x1dUpdateSessionResourceResponse\x126\n" +
-	"\bresource\x18\x01 \x01(\v2\x1a.gitpod.v1.SessionResourceR\bresource\"\xd6\x01\n" +
-	"\x1bListSessionResourcesRequest\x127\n" +
+	"\bresource\x18\x01 \x01(\v2\x1a.gitpod.v1.SessionResourceR\bresource\"\xc6\x01\n" +
+	"\x1bListSessionResourcesRequest\x12'\n" +
 	"\n" +
-	"session_id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"session.idR\tsessionId\x127\n" +
+	"session_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tsessionId\x127\n" +
 	"\x04kind\x18\x02 \x01(\x0e2\x1e.gitpod.v1.SessionResourceKindH\x00R\x04kind\x88\x01\x01\x12<\n" +
 	"\n" +
 	"pagination\x18\x03 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
@@ -1457,7 +1442,7 @@ const file_gitpod_v1_session_proto_rawDesc = "" +
 	"\x12AddSessionResource\x12$.gitpod.v1.AddSessionResourceRequest\x1a%.gitpod.v1.AddSessionResourceResponse\"\x00\x12l\n" +
 	"\x15RemoveSessionResource\x12'.gitpod.v1.RemoveSessionResourceRequest\x1a(.gitpod.v1.RemoveSessionResourceResponse\"\x00\x12l\n" +
 	"\x15UpdateSessionResource\x12'.gitpod.v1.UpdateSessionResourceRequest\x1a(.gitpod.v1.UpdateSessionResourceResponse\"\x00\x12i\n" +
-	"\x14ListSessionResources\x12&.gitpod.v1.ListSessionResourcesRequest\x1a'.gitpod.v1.ListSessionResourcesResponse\"\x00B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x14ListSessionResources\x12&.gitpod.v1.ListSessionResourcesRequest\x1a'.gitpod.v1.ListSessionResourcesResponse\"\x00B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_session_proto_rawDescOnce sync.Once
