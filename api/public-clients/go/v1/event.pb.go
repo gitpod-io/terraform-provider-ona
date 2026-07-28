@@ -8,8 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -1033,7 +1031,7 @@ var File_gitpod_v1_event_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_event_proto_rawDesc = "" +
 	"\n" +
-	"\x15gitpod/v1/event.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1egitpod/v1/agent_security.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa3\x03\n" +
+	"\x15gitpod/v1/event.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1egitpod/v1/agent_security.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa3\x03\n" +
 	"\x12WatchEventsRequest\x12$\n" +
 	"\forganization\x18\x01 \x01(\bH\x00R\forganization\x12'\n" +
 	"\x0eenvironment_id\x18\x02 \x01(\tH\x00R\renvironmentId\x12n\n" +
@@ -1049,27 +1047,21 @@ const file_gitpod_v1_event_proto_rawDesc = "" +
 	"\toperation\x18\x01 \x01(\x0e2\x1c.gitpod.v1.ResourceOperationR\toperation\x12<\n" +
 	"\rresource_type\x18\x02 \x01(\x0e2\x17.gitpod.v1.ResourceTypeR\fresourceType\x12)\n" +
 	"\vresource_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
-	"resourceId\"\xcc\x05\n" +
+	"resourceId\"\xc3\x04\n" +
 	"\x14ListAuditLogsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12>\n" +
 	"\x06filter\x18\x02 \x01(\v2&.gitpod.v1.ListAuditLogsRequest.FilterR\x06filter\x12#\n" +
-	"\x04sort\x18\x03 \x01(\v2\x0f.gitpod.v1.SortR\x04sort\x1a\x90\x04\n" +
-	"\x06Filter\x12D\n" +
-	"\tactor_ids\x18\x01 \x03(\tB'\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x12\n" +
-	"\x10filter.actor_idsR\bactorIds\x12o\n" +
-	"\x10actor_principals\x18\x02 \x03(\x0e2\x14.gitpod.v1.PrincipalB.\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\x19\n" +
-	"\x17filter.actor_principalsR\x0factorPrincipals\x12J\n" +
-	"\vsubject_ids\x18\x03 \x03(\tB)\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12filter.subject_idsR\n" +
-	"subjectIds\x12i\n" +
-	"\rsubject_types\x18\x04 \x03(\x0e2\x17.gitpod.v1.ResourceTypeB+\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\x16\n" +
-	"\x14filter.subject_typesR\fsubjectTypes\x12F\n" +
-	"\x04from\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x11\xa2\xab\x1e\r\n" +
-	"\vfilter.fromH\x00R\x04from\x88\x01\x01\x12@\n" +
-	"\x02to\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x0f\xa2\xab\x1e\v\n" +
-	"\tfilter.toH\x01R\x02to\x88\x01\x01B\a\n" +
+	"\x04sort\x18\x03 \x01(\v2\x0f.gitpod.v1.SortR\x04sort\x1a\x87\x03\n" +
+	"\x06Filter\x12.\n" +
+	"\tactor_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\bactorIds\x12R\n" +
+	"\x10actor_principals\x18\x02 \x03(\x0e2\x14.gitpod.v1.PrincipalB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01R\x0factorPrincipals\x122\n" +
+	"\vsubject_ids\x18\x03 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\n" +
+	"subjectIds\x12O\n" +
+	"\rsubject_types\x18\x04 \x03(\x0e2\x17.gitpod.v1.ResourceTypeB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01R\fsubjectTypes\x123\n" +
+	"\x04from\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\x04from\x88\x01\x01\x12/\n" +
+	"\x02to\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\x02to\x88\x01\x01B\a\n" +
 	"\x05_fromB\x05\n" +
 	"\x03_to\"\xfc\x03\n" +
 	"\x15ListAuditLogsResponse\x12H\n" +
@@ -1087,10 +1079,9 @@ const file_gitpod_v1_event_proto_rawDesc = "" +
 	"\x06action\x18\x06 \x01(\tR\x06action\x129\n" +
 	"\n" +
 	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x120\n" +
-	"\x04kind\x18\b \x01(\x0e2\x1c.gitpod.v1.AuditLogEntryKindR\x04kind\"f\n" +
-	"\x12GetAuditLogRequest\x12P\n" +
-	"\x12audit_log_entry_id\x18\x01 \x01(\tB#\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12audit_log_entry.idR\x0fauditLogEntryId\"\x9e\x01\n" +
+	"\x04kind\x18\b \x01(\x0e2\x1c.gitpod.v1.AuditLogEntryKindR\x04kind\"N\n" +
+	"\x12GetAuditLogRequest\x128\n" +
+	"\x12audit_log_entry_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0fauditLogEntryId\"\x9e\x01\n" +
 	"\x13GetAuditLogResponse\x12L\n" +
 	"\x05entry\x18\x01 \x01(\v2..gitpod.v1.ListAuditLogsResponse.AuditLogEntryB\x06\xbaH\x03\xc8\x01\x01R\x05entry\x129\n" +
 	"\adetails\x18\x02 \x01(\v2\x1f.gitpod.v1.AuditLogEntryDetailsR\adetails\"j\n" +
@@ -1161,13 +1152,11 @@ const file_gitpod_v1_event_proto_rawDesc = "" +
 	"\x1aRESOURCE_TYPE_NOTIFICATION\x101\x12!\n" +
 	"\x1dRESOURCE_TYPE_SECURITY_POLICY\x102\x12\x1f\n" +
 	"\x1bRESOURCE_TYPE_BASE_SNAPSHOT\x103\x12&\n" +
-	"\"RESOURCE_TYPE_BASE_SNAPSHOT_CONFIG\x1042\xbd\x02\n" +
-	"\fEventService\x12[\n" +
-	"\vWatchEvents\x12\x1d.gitpod.v1.WatchEventsRequest\x1a\x1e.gitpod.v1.WatchEventsResponse\"\v\xb2\xab\x1e\a\x12\x05watch0\x01\x12a\n" +
-	"\rListAuditLogs\x12\x1f.gitpod.v1.ListAuditLogsRequest\x1a .gitpod.v1.ListAuditLogsResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x12_\n" +
-	"\vGetAuditLog\x12\x1d.gitpod.v1.GetAuditLogRequest\x1a\x1e.gitpod.v1.GetAuditLogResponse\"\x11\xb2\xab\x1e\n" +
-	"\x12\bretrieve\x90\x02\x01\x1a\f\xaa\xab\x1e\b\n" +
-	"\x06eventsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\"RESOURCE_TYPE_BASE_SNAPSHOT_CONFIG\x1042\x8c\x02\n" +
+	"\fEventService\x12P\n" +
+	"\vWatchEvents\x12\x1d.gitpod.v1.WatchEventsRequest\x1a\x1e.gitpod.v1.WatchEventsResponse\"\x000\x01\x12W\n" +
+	"\rListAuditLogs\x12\x1f.gitpod.v1.ListAuditLogsRequest\x1a .gitpod.v1.ListAuditLogsResponse\"\x03\x90\x02\x01\x12Q\n" +
+	"\vGetAuditLog\x12\x1d.gitpod.v1.GetAuditLogRequest\x1a\x1e.gitpod.v1.GetAuditLogResponse\"\x03\x90\x02\x01B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_event_proto_rawDescOnce sync.Once
