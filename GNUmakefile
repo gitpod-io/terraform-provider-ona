@@ -4,7 +4,7 @@ RELEASE_SNAPSHOT_VERSION ?= 0.0.0-SNAPSHOT
 GO_MODULE_DIRS := $(shell git ls-files --cached -- '*go.mod' | \
 	awk '!/(^|\/)(\.git|\.tmp|\.cache|cache|vendor|node_modules)(\/|$$)/' | \
 	sed -e 's#/go.mod$$##' -e 's#^go.mod$$#.#' | sort)
-# The standard test and build targets cover the root module.
+# Remove "." (the root module) because the standard test and build targets cover it.
 SECONDARY_GO_MODULE_DIRS := $(filter-out .,$(GO_MODULE_DIRS))
 
 default: fmt lint install generate
