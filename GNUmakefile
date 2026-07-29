@@ -32,7 +32,7 @@ fmt-go:
 	gofmt -s -w -e .
 
 fmt-terraform:
-	terraform fmt -recursive examples/ dev/local-devloop/
+	terraform fmt -recursive examples/ dev/local-devloop/ dev/local-importloop/
 
 lint: lint-go lint-sh
 
