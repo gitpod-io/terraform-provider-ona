@@ -26,4 +26,8 @@ list "ona_warm_pool" "all" {
 list "ona_secret" "all" {
   provider         = ona
   include_resource = true
+
+  config {
+    scope = "organization"
+  }
 }
