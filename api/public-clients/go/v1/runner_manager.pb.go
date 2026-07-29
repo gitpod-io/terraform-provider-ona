@@ -8,7 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -1649,10 +1648,9 @@ var File_gitpod_v1_runner_manager_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_runner_manager_proto_rawDesc = "" +
 	"\n" +
-	"\x1egitpod/v1/runner_manager.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x18gitpod/v1/identity.proto\x1a\x15gitpod/v1/model.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x16gitpod/v1/runner.proto\x1a$gitpod/v1/runner_configuration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xaa\x04\n" +
-	"\rRunnerManager\x12C\n" +
-	"\x11runner_manager_id\x18\x01 \x01(\tB\x17\xa2\xab\x1e\x13\n" +
-	"\x11runner_manager.idR\x0frunnerManagerId\x129\n" +
+	"\x1egitpod/v1/runner_manager.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x18gitpod/v1/identity.proto\x1a\x15gitpod/v1/model.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x16gitpod/v1/runner.proto\x1a$gitpod/v1/runner_configuration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x91\x04\n" +
+	"\rRunnerManager\x12*\n" +
+	"\x11runner_manager_id\x18\x01 \x01(\tR\x0frunnerManagerId\x129\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
@@ -1687,21 +1685,18 @@ const file_gitpod_v1_runner_manager_proto_rawDesc = "" +
 	"\tlog_level\x18\x03 \x01(\x0e2\x13.gitpod.v1.LogLevelR\blogLevel\x12[\n" +
 	"\x19llm_integration_templates\x18\x04 \x03(\v2\x1f.gitpod.v1.StaticLLMIntegrationR\x17llmIntegrationTemplates\x12O\n" +
 	"\x0frelease_channel\x18\x05 \x01(\x0e2&.gitpod.v1.RunnerManagerReleaseChannelR\x0ereleaseChannel\x122\n" +
-	"\x15collect_debug_profile\x18\x06 \x01(\bR\x13collectDebugProfile\"\xee\x01\n" +
-	"\x14StaticSCMIntegration\x12,\n" +
-	"\x06scm_id\x18\x01 \x01(\tB\x15\xbaH\x06r\x04\x10\x01\x18\x7f\xa2\xab\x1e\b\n" +
-	"\x06scm.idR\x05scmId\x12\x12\n" +
+	"\x15collect_debug_profile\x18\x06 \x01(\bR\x13collectDebugProfile\"\xe2\x01\n" +
+	"\x14StaticSCMIntegration\x12 \n" +
+	"\x06scm_id\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18\x7fR\x05scmId\x12\x12\n" +
 	"\x04host\x18\x02 \x01(\tR\x04host\x12:\n" +
 	"\x05oauth\x18\x03 \x01(\v2$.gitpod.v1.SCMIntegrationOAuthConfigR\x05oauth\x12\x10\n" +
 	"\x03pat\x18\x04 \x01(\bR\x03pat\x120\n" +
 	"\x11virtual_directory\x18\x05 \x01(\tH\x00R\x10virtualDirectory\x88\x01\x01B\x14\n" +
-	"\x12_virtual_directory\"\xc7\x02\n" +
-	"\x14StaticLLMIntegration\x12$\n" +
-	"\x02id\x18\x01 \x01(\tB\x14\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\b\n" +
-	"\x06llm.idR\x02id\x12Q\n" +
-	"\x06models\x18\x02 \x03(\x0e2\x19.gitpod.v1.SupportedModelB\x1e\xbaH\n" +
-	"\x92\x01\a\"\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\r\n" +
-	"\vmodel.namesR\x06models\x12\x1a\n" +
+	"\x12_virtual_directory\"\xaa\x02\n" +
+	"\x14StaticLLMIntegration\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12@\n" +
+	"\x06models\x18\x02 \x03(\x0e2\x19.gitpod.v1.SupportedModelB\r\xbaH\n" +
+	"\x92\x01\a\"\x05\x82\x01\x02\x10\x01R\x06models\x12\x1a\n" +
 	"\bendpoint\x18\x03 \x01(\tR\bendpoint\x12*\n" +
 	"\x11encrypted_api_key\x18\x04 \x01(\fR\x0fencryptedApiKey\x12\x1d\n" +
 	"\n" +
@@ -1711,10 +1706,9 @@ const file_gitpod_v1_runner_manager_proto_rawDesc = "" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12\x1a\n" +
 	"\busername\x18\x03 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x04 \x01(\tR\bpassword\"\xf7\r\n" +
-	"\x1aUpdateRunnerManagerRequest\x12K\n" +
-	"\x11runner_manager_id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11runner_manager.idR\x0frunnerManagerId\x12\"\n" +
+	"\bpassword\x18\x04 \x01(\tR\bpassword\"\xe0\r\n" +
+	"\x1aUpdateRunnerManagerRequest\x124\n" +
+	"\x11runner_manager_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0frunnerManagerId\x12\"\n" +
 	"\x04name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18\x7fH\x00R\x04name\x88\x01\x01\x12&\n" +
 	"\x06region\x18\x03 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18\x7fH\x01R\x06region\x88\x01\x01\x12C\n" +
 	"\x04spec\x18\x05 \x01(\v2*.gitpod.v1.UpdateRunnerManagerRequest.SpecH\x02R\x04spec\x88\x01\x01\x1a\xae\b\n" +
@@ -1755,10 +1749,9 @@ const file_gitpod_v1_runner_manager_proto_rawDesc = "" +
 	"\x05_nameB\t\n" +
 	"\a_regionB\a\n" +
 	"\x05_spec\"\x1d\n" +
-	"\x1bUpdateRunnerManagerResponse\"i\n" +
-	"\x1aDeleteRunnerManagerRequest\x12K\n" +
-	"\x11runner_manager_id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11runner_manager.idR\x0frunnerManagerId\"\x1d\n" +
+	"\x1bUpdateRunnerManagerResponse\"R\n" +
+	"\x1aDeleteRunnerManagerRequest\x124\n" +
+	"\x11runner_manager_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0frunnerManagerId\"\x1d\n" +
 	"\x1bDeleteRunnerManagerResponse\"Y\n" +
 	"\x19ListRunnerManagersRequest\x12<\n" +
 	"\n" +
@@ -1777,10 +1770,9 @@ const file_gitpod_v1_runner_manager_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12J\n" +
-	"\x0frunner_managers\x18\x02 \x03(\v2!.gitpod.v1.AvailableRunnerManagerR\x0erunnerManagers\"\x89\x01\n" +
-	"\x16AvailableRunnerManager\x12C\n" +
-	"\x11runner_manager_id\x18\x01 \x01(\tB\x17\xa2\xab\x1e\x13\n" +
-	"\x11runner_manager.idR\x0frunnerManagerId\x12\x12\n" +
+	"\x0frunner_managers\x18\x02 \x03(\v2!.gitpod.v1.AvailableRunnerManagerR\x0erunnerManagers\"p\n" +
+	"\x16AvailableRunnerManager\x12*\n" +
+	"\x11runner_manager_id\x18\x01 \x01(\tR\x0frunnerManagerId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
 	"\x06region\x18\x03 \x01(\tR\x06region*\xa1\x01\n" +
 	"\x12RunnerManagerPhase\x12$\n" +
@@ -1798,7 +1790,7 @@ const file_gitpod_v1_runner_manager_proto_rawDesc = "" +
 	"\x13UpdateRunnerManager\x12%.gitpod.v1.UpdateRunnerManagerRequest\x1a&.gitpod.v1.UpdateRunnerManagerResponse\"\x00\x12f\n" +
 	"\x13DeleteRunnerManager\x12%.gitpod.v1.DeleteRunnerManagerRequest\x1a&.gitpod.v1.DeleteRunnerManagerResponse\"\x00\x12c\n" +
 	"\x12ListRunnerManagers\x12$.gitpod.v1.ListRunnerManagersRequest\x1a%.gitpod.v1.ListRunnerManagersResponse\"\x00\x12~\n" +
-	"\x1bListAvailableRunnerManagers\x12-.gitpod.v1.ListAvailableRunnerManagersRequest\x1a..gitpod.v1.ListAvailableRunnerManagersResponse\"\x00B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x1bListAvailableRunnerManagers\x12-.gitpod.v1.ListAvailableRunnerManagersRequest\x1a..gitpod.v1.ListAvailableRunnerManagersResponse\"\x00B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_runner_manager_proto_rawDescOnce sync.Once
