@@ -8,8 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
 	_ "github.com/google/gnostic/openapiv3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -4685,7 +4683,7 @@ var File_gitpod_v1_environment_automation_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\n" +
-	"&gitpod/v1/environment_automation.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe3\x02\n" +
+	"&gitpod/v1/environment_automation.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe3\x02\n" +
 	"\x0fServiceMetadata\x12;\n" +
 	"\treference\x18\x01 \x01(\tB\x1d\xbaH\x1ar\x182\x16^[a-zA-Z0-9_-]{1,128}$R\treference\x12\x1b\n" +
 	"\x04name\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x04name\x12 \n" +
@@ -4716,56 +4714,44 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\x06output\x18\x06 \x03(\v2$.gitpod.v1.ServiceStatus.OutputEntryB\x18\xbaH\x15\x9a\x01\x12\"\ar\x05\x10\x01\x18\x80\x01*\ar\x05\x10\x00\x18\x80 R\x06output\x1a9\n" +
 	"\vOutputEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xa9\x02\n" +
-	"\aService\x12(\n" +
-	"\x02id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"service.idR\x02id\x12C\n" +
-	"\x0eenvironment_id\x18\x02 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x126\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x85\x02\n" +
+	"\aService\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12/\n" +
+	"\x0eenvironment_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x126\n" +
 	"\bmetadata\x18\x03 \x01(\v2\x1a.gitpod.v1.ServiceMetadataR\bmetadata\x12*\n" +
 	"\x04spec\x18\x04 \x01(\v2\x16.gitpod.v1.ServiceSpecR\x04spec\x120\n" +
-	"\x06status\x18\x05 \x01(\v2\x18.gitpod.v1.ServiceStatusR\x06status:\x19\xbaG\x16\xba\x01\x02id\xba\x01\x0eenvironment_id\"\xbf\x01\n" +
-	"\x14CreateServiceRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x126\n" +
+	"\x06status\x18\x05 \x01(\v2\x18.gitpod.v1.ServiceStatusR\x06status:\x19\xbaG\x16\xba\x01\x02id\xba\x01\x0eenvironment_id\"\xab\x01\n" +
+	"\x14CreateServiceRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x126\n" +
 	"\bmetadata\x18\x02 \x01(\v2\x1a.gitpod.v1.ServiceMetadataR\bmetadata\x12*\n" +
 	"\x04spec\x18\x03 \x01(\v2\x16.gitpod.v1.ServiceSpecR\x04spec\"M\n" +
 	"\x15CreateServiceResponse\x124\n" +
-	"\aservice\x18\x01 \x01(\v2\x12.gitpod.v1.ServiceB\x06\xbaH\x03\xc8\x01\x01R\aservice\"=\n" +
-	"\x11GetServiceRequest\x12(\n" +
-	"\x02id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"service.idR\x02id\"J\n" +
+	"\aservice\x18\x01 \x01(\v2\x12.gitpod.v1.ServiceB\x06\xbaH\x03\xc8\x01\x01R\aservice\"-\n" +
+	"\x11GetServiceRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"J\n" +
 	"\x12GetServiceResponse\x124\n" +
-	"\aservice\x18\x01 \x01(\v2\x12.gitpod.v1.ServiceB\x06\xbaH\x03\xc8\x01\x01R\aservice\"\xdd\x03\n" +
+	"\aservice\x18\x01 \x01(\v2\x12.gitpod.v1.ServiceB\x06\xbaH\x03\xc8\x01\x01R\aservice\"\x80\x03\n" +
 	"\x13ListServicesRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12=\n" +
-	"\x06filter\x18\x02 \x01(\v2%.gitpod.v1.ListServicesRequest.FilterR\x06filter\x1a\xc8\x02\n" +
-	"\x06Filter\x12V\n" +
-	"\x0fenvironment_ids\x18\x01 \x03(\tB-\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x18\n" +
-	"\x16filter.environment_idsR\x0eenvironmentIds\x12G\n" +
+	"\x06filter\x18\x02 \x01(\v2%.gitpod.v1.ListServicesRequest.FilterR\x06filter\x1a\xeb\x01\n" +
+	"\x06Filter\x12:\n" +
+	"\x0fenvironment_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\x0eenvironmentIds\x120\n" +
 	"\n" +
-	"references\x18\x02 \x03(\tB'\xbaH\r\x92\x01\n" +
-	"\b\x00\x10\x19\"\x04r\x02\x10\x01\xa2\xab\x1e\x13\n" +
-	"\x11filter.referencesR\n" +
-	"references\x12J\n" +
-	"\vservice_ids\x18\x03 \x03(\tB)\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12filter.service_idsR\n" +
-	"serviceIds\x12Q\n" +
-	"\x05roles\x18\x04 \x03(\x0e2\x16.gitpod.v1.ServiceRoleB#\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\x0e\n" +
-	"\ffilter.rolesR\x05roles\"\x85\x01\n" +
+	"references\x18\x02 \x03(\tB\x10\xbaH\r\x92\x01\n" +
+	"\b\x00\x10\x19\"\x04r\x02\x10\x01R\n" +
+	"references\x122\n" +
+	"\vservice_ids\x18\x03 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\n" +
+	"serviceIds\x12?\n" +
+	"\x05roles\x18\x04 \x03(\x0e2\x16.gitpod.v1.ServiceRoleB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01R\x05roles\"\x85\x01\n" +
 	"\x14ListServicesResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12.\n" +
-	"\bservices\x18\x02 \x03(\v2\x12.gitpod.v1.ServiceR\bservices\"\xc8\v\n" +
-	"\x14UpdateServiceRequest\x12(\n" +
-	"\x02id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"service.idR\x02id\x12K\n" +
+	"\bservices\x18\x02 \x03(\v2\x12.gitpod.v1.ServiceR\bservices\"\xb0\v\n" +
+	"\x14UpdateServiceRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12K\n" +
 	"\bmetadata\x18\x02 \x01(\v2/.gitpod.v1.UpdateServiceRequest.ServiceMetadataR\bmetadata\x12?\n" +
 	"\x04spec\x18\x03 \x01(\v2+.gitpod.v1.UpdateServiceRequest.ServiceSpecR\x04spec\x12E\n" +
 	"\x06status\x18\x04 \x01(\v2-.gitpod.v1.UpdateServiceRequest.ServiceStatusR\x06status\x1aQ\n" +
@@ -4779,16 +4765,16 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\x0f\n" +
 	"\r_triggered_byB\a\n" +
-	"\x05_role\x1a\xbc\x03\n" +
+	"\x05_role\x1a\xb4\x03\n" +
 	"\vServiceSpec\x12U\n" +
 	"\bcommands\x18\x01 \x01(\v24.gitpod.v1.UpdateServiceRequest.ServiceSpec.CommandsH\x00R\bcommands\x88\x01\x01\x12/\n" +
 	"\aruns_on\x18\x02 \x01(\v2\x11.gitpod.v1.RunsOnH\x01R\x06runsOn\x88\x01\x01\x124\n" +
 	"\x03env\x18\x03 \x03(\v2\".gitpod.v1.EnvironmentVariableItemR\x03env\x12V\n" +
-	"\x11readiness_timeout\x18\x04 \x01(\v2\x19.google.protobuf.DurationB\x0e\xbaH\v\xaa\x01\b\"\x04\b\x80\xa3\x052\x00R\x10readinessTimeout\x1a~\n" +
+	"\x11readiness_timeout\x18\x04 \x01(\v2\x19.google.protobuf.DurationB\x0e\xbaH\v\xaa\x01\b\"\x04\b\x80\xa3\x052\x00R\x10readinessTimeout\x1av\n" +
 	"\bCommands\x12\x19\n" +
 	"\x05start\x18\x01 \x01(\tH\x00R\x05start\x88\x01\x01\x12\x19\n" +
 	"\x05ready\x18\x02 \x01(\tH\x01R\x05ready\x88\x01\x01\x12\x17\n" +
-	"\x04stop\x18\x03 \x01(\tH\x02R\x04stop\x88\x01\x01:\x06\xba\xab\x1e\x02\x18\x01B\b\n" +
+	"\x04stop\x18\x03 \x01(\tH\x02R\x04stop\x88\x01\x01B\b\n" +
 	"\x06_startB\b\n" +
 	"\x06_readyB\a\n" +
 	"\x05_stopB\v\n" +
@@ -4810,26 +4796,19 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\b_log_urlB\n" +
 	"\n" +
 	"\b_session\"\x17\n" +
-	"\x15UpdateServiceResponse\"V\n" +
-	"\x14DeleteServiceRequest\x12(\n" +
-	"\x02id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"service.idR\x02id\x12\x14\n" +
+	"\x15UpdateServiceResponse\"F\n" +
+	"\x14DeleteServiceRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12\x14\n" +
 	"\x05force\x18\x02 \x01(\bR\x05force\"\x17\n" +
-	"\x15DeleteServiceResponse\"?\n" +
-	"\x13StartServiceRequest\x12(\n" +
-	"\x02id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"service.idR\x02id\"\x16\n" +
-	"\x14StartServiceResponse\">\n" +
-	"\x12StopServiceRequest\x12(\n" +
-	"\x02id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"service.idR\x02id\"\x15\n" +
-	"\x13StopServiceResponse\"\xaa\x01\n" +
-	"\x1cUpsertAutomationsFileRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x12E\n" +
+	"\x15DeleteServiceResponse\"/\n" +
+	"\x13StartServiceRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\x16\n" +
+	"\x14StartServiceResponse\".\n" +
+	"\x12StopServiceRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\x15\n" +
+	"\x13StopServiceResponse\"\x96\x01\n" +
+	"\x1cUpsertAutomationsFileRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x12E\n" +
 	"\x10automations_file\x18\x02 \x01(\v2\x1a.gitpod.v1.AutomationsFileR\x0fautomationsFile\"y\n" +
 	"\x1dUpsertAutomationsFileResponse\x12.\n" +
 	"\x13updated_service_ids\x18\x01 \x03(\tR\x11updatedServiceIds\x12(\n" +
@@ -4862,45 +4841,39 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\n" +
 	"TasksEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x125\n" +
-	"\x05value\x18\x02 \x01(\v2\x1f.gitpod.v1.AutomationsFile.TaskR\x05value:\x028\x01\"\xe4\x01\n" +
-	"\x11CreateTaskRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x123\n" +
+	"\x05value\x18\x02 \x01(\v2\x1f.gitpod.v1.AutomationsFile.TaskR\x05value:\x028\x01\"\xd0\x01\n" +
+	"\x11CreateTaskRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x123\n" +
 	"\bmetadata\x18\x02 \x01(\v2\x17.gitpod.v1.TaskMetadataR\bmetadata\x12'\n" +
 	"\x04spec\x18\x03 \x01(\v2\x13.gitpod.v1.TaskSpecR\x04spec\x12,\n" +
 	"\n" +
 	"depends_on\x18\x04 \x03(\tB\r\xbaH\n" +
 	"\x92\x01\a\"\x05r\x03\xb0\x01\x01R\tdependsOn\"A\n" +
 	"\x12CreateTaskResponse\x12+\n" +
-	"\x04task\x18\x01 \x01(\v2\x0f.gitpod.v1.TaskB\x06\xbaH\x03\xc8\x01\x01R\x04task\"7\n" +
-	"\x0eGetTaskRequest\x12%\n" +
-	"\x02id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\atask.idR\x02id\">\n" +
+	"\x04task\x18\x01 \x01(\v2\x0f.gitpod.v1.TaskB\x06\xbaH\x03\xc8\x01\x01R\x04task\"*\n" +
+	"\x0eGetTaskRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\">\n" +
 	"\x0fGetTaskResponse\x12+\n" +
-	"\x04task\x18\x01 \x01(\v2\x0f.gitpod.v1.TaskB\x06\xbaH\x03\xc8\x01\x01R\x04task\"\xfb\x02\n" +
+	"\x04task\x18\x01 \x01(\v2\x0f.gitpod.v1.TaskB\x06\xbaH\x03\xc8\x01\x01R\x04task\"\xb3\x02\n" +
 	"\x10ListTasksRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12:\n" +
-	"\x06filter\x18\x02 \x01(\v2\".gitpod.v1.ListTasksRequest.FilterR\x06filter\x1a\xec\x01\n" +
-	"\x06Filter\x12V\n" +
-	"\x0fenvironment_ids\x18\x01 \x03(\tB-\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x18\n" +
-	"\x16filter.environment_idsR\x0eenvironmentIds\x12G\n" +
+	"\x06filter\x18\x02 \x01(\v2\".gitpod.v1.ListTasksRequest.FilterR\x06filter\x1a\xa4\x01\n" +
+	"\x06Filter\x12:\n" +
+	"\x0fenvironment_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\x0eenvironmentIds\x120\n" +
 	"\n" +
-	"references\x18\x02 \x03(\tB'\xbaH\r\x92\x01\n" +
-	"\b\x00\x10\x19\"\x04r\x02\x10\x01\xa2\xab\x1e\x13\n" +
-	"\x11filter.referencesR\n" +
-	"references\x12A\n" +
-	"\btask_ids\x18\x03 \x03(\tB&\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0ffilter.task_idsR\ataskIds\"y\n" +
+	"references\x18\x02 \x03(\tB\x10\xbaH\r\x92\x01\n" +
+	"\b\x00\x10\x19\"\x04r\x02\x10\x01R\n" +
+	"references\x12,\n" +
+	"\btask_ids\x18\x03 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\ataskIds\"y\n" +
 	"\x11ListTasksResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12%\n" +
-	"\x05tasks\x18\x02 \x03(\v2\x0f.gitpod.v1.TaskR\x05tasks\"\xa9\x06\n" +
-	"\x11UpdateTaskRequest\x12%\n" +
-	"\x02id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\atask.idR\x02id\x12E\n" +
+	"\x05tasks\x18\x02 \x03(\v2\x0f.gitpod.v1.TaskR\x05tasks\"\x9c\x06\n" +
+	"\x11UpdateTaskRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12E\n" +
 	"\bmetadata\x18\x02 \x01(\v2).gitpod.v1.UpdateTaskRequest.TaskMetadataR\bmetadata\x129\n" +
 	"\x04spec\x18\x03 \x01(\v2%.gitpod.v1.UpdateTaskRequest.TaskSpecR\x04spec\x12,\n" +
 	"\n" +
@@ -4925,54 +4898,47 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\n" +
 	"\b_runs_onB\x1c\n" +
 	"\x1a_prebuild_requires_success\"\x14\n" +
-	"\x12UpdateTaskResponse\":\n" +
-	"\x11DeleteTaskRequest\x12%\n" +
-	"\x02id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\atask.idR\x02id\"\x14\n" +
-	"\x12DeleteTaskResponse\"9\n" +
-	"\x10StartTaskRequest\x12%\n" +
-	"\x02id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\atask.idR\x02id\"\\\n" +
+	"\x12UpdateTaskResponse\"-\n" +
+	"\x11DeleteTaskRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\x14\n" +
+	"\x12DeleteTaskResponse\",\n" +
+	"\x10StartTaskRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\\\n" +
 	"\x11StartTaskResponse\x12G\n" +
-	"\x0etask_execution\x18\x01 \x01(\v2\x18.gitpod.v1.TaskExecutionB\x06\xbaH\x03\xc8\x01\x01R\rtaskExecution\"\xeb\x03\n" +
+	"\x0etask_execution\x18\x01 \x01(\v2\x18.gitpod.v1.TaskExecutionB\x06\xbaH\x03\xc8\x01\x01R\rtaskExecution\"\x8b\x03\n" +
 	"\x19ListTaskExecutionsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12C\n" +
-	"\x06filter\x18\x02 \x01(\v2+.gitpod.v1.ListTaskExecutionsRequest.FilterR\x06filter\x1a\xca\x02\n" +
-	"\x06Filter\x12A\n" +
-	"\btask_ids\x18\x01 \x03(\tB&\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0ffilter.task_idsR\ataskIds\x12O\n" +
-	"\x0ftask_references\x18\x02 \x03(\tB&\xbaH\a\x92\x01\x04\b\x00\x10\x19\xa2\xab\x1e\x18\n" +
-	"\x16filter.task_referencesR\x0etaskReferences\x12V\n" +
-	"\x0fenvironment_ids\x18\x03 \x03(\tB-\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x18\n" +
-	"\x16filter.environment_idsR\x0eenvironmentIds\x12T\n" +
-	"\x06phases\x18\x04 \x03(\x0e2\x1d.gitpod.v1.TaskExecutionPhaseB\x1d\xbaH\a\x92\x01\x04\b\x00\x10\x19\xa2\xab\x1e\x0f\n" +
-	"\rfilter.phasesR\x06phases\"\x9e\x01\n" +
+	"\x06filter\x18\x02 \x01(\v2+.gitpod.v1.ListTaskExecutionsRequest.FilterR\x06filter\x1a\xea\x01\n" +
+	"\x06Filter\x12,\n" +
+	"\btask_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\ataskIds\x123\n" +
+	"\x0ftask_references\x18\x02 \x03(\tB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\x19R\x0etaskReferences\x12:\n" +
+	"\x0fenvironment_ids\x18\x03 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\x0eenvironmentIds\x12A\n" +
+	"\x06phases\x18\x04 \x03(\x0e2\x1d.gitpod.v1.TaskExecutionPhaseB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\x19R\x06phases\"\x9e\x01\n" +
 	"\x1aListTaskExecutionsResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12A\n" +
-	"\x0ftask_executions\x18\x02 \x03(\v2\x18.gitpod.v1.TaskExecutionR\x0etaskExecutions\"J\n" +
-	"\x17GetTaskExecutionRequest\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11task_execution.idR\x02id\"c\n" +
+	"\x0ftask_executions\x18\x02 \x03(\v2\x18.gitpod.v1.TaskExecutionR\x0etaskExecutions\"3\n" +
+	"\x17GetTaskExecutionRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"c\n" +
 	"\x18GetTaskExecutionResponse\x12G\n" +
-	"\x0etask_execution\x18\x01 \x01(\v2\x18.gitpod.v1.TaskExecutionB\x06\xbaH\x03\xc8\x01\x01R\rtaskExecution\"K\n" +
-	"\x18StopTaskExecutionRequest\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11task_execution.idR\x02id\"\x1b\n" +
-	"\x19StopTaskExecutionResponse\"\xfa\x01\n" +
-	" UpdateTaskExecutionStatusRequest\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11task_execution.idR\x02id\x129\n" +
+	"\x0etask_execution\x18\x01 \x01(\v2\x18.gitpod.v1.TaskExecutionB\x06\xbaH\x03\xc8\x01\x01R\rtaskExecution\"4\n" +
+	"\x18StopTaskExecutionRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\x1b\n" +
+	"\x19StopTaskExecutionResponse\"\xe3\x01\n" +
+	" UpdateTaskExecutionStatusRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x129\n" +
 	"\x05steps\x18\x02 \x03(\v2#.gitpod.v1.TaskExecutionStatus.StepR\x05steps\x12,\n" +
 	"\x0ffailure_message\x18\x03 \x01(\tH\x00R\x0efailureMessage\x88\x01\x01\x12\x1c\n" +
 	"\alog_url\x18\x04 \x01(\tH\x01R\x06logUrl\x88\x01\x01B\x12\n" +
 	"\x10_failure_messageB\n" +
 	"\n" +
 	"\b_log_url\"#\n" +
-	"!UpdateTaskExecutionStatusResponse\"\xc3\x02\n" +
+	"!UpdateTaskExecutionStatusResponse\"\xb4\x02\n" +
 	"\fTaskMetadata\x12;\n" +
 	"\treference\x18\x01 \x01(\tB\x1d\xbaH\x1ar\x182\x16^[a-zA-Z0-9_-]{1,128}$R\treference\x12\x1b\n" +
 	"\x04name\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x04name\x12 \n" +
@@ -4980,25 +4946,20 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12,\n" +
 	"\acreator\x18\x05 \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x12?\n" +
-	"\ftriggered_by\x18\x06 \x03(\v2\x1c.gitpod.v1.AutomationTriggerR\vtriggeredBy:\r\xba\xab\x1e\t\n" +
-	"\a$shared\"\xd1\x01\n" +
+	"\ftriggered_by\x18\x06 \x03(\v2\x1c.gitpod.v1.AutomationTriggerR\vtriggeredBy\"\xc2\x01\n" +
 	"\bTaskSpec\x12\x18\n" +
 	"\acommand\x18\x01 \x01(\tR\acommand\x12*\n" +
 	"\aruns_on\x18\x02 \x01(\v2\x11.gitpod.v1.RunsOnR\x06runsOn\x124\n" +
 	"\x03env\x18\x03 \x03(\v2\".gitpod.v1.EnvironmentVariableItemR\x03env\x12:\n" +
-	"\x19prebuild_requires_success\x18\x04 \x01(\bR\x17prebuildRequiresSuccess:\r\xba\xab\x1e\t\n" +
-	"\a$shared\"\xa6\x02\n" +
-	"\x04Task\x12%\n" +
-	"\x02id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\atask.idR\x02id\x12C\n" +
-	"\x0eenvironment_id\x18\x02 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x123\n" +
+	"\x19prebuild_requires_success\x18\x04 \x01(\bR\x17prebuildRequiresSuccess\"\xf8\x01\n" +
+	"\x04Task\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12/\n" +
+	"\x0eenvironment_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x123\n" +
 	"\bmetadata\x18\x03 \x01(\v2\x17.gitpod.v1.TaskMetadataR\bmetadata\x12'\n" +
 	"\x04spec\x18\x04 \x01(\v2\x13.gitpod.v1.TaskSpecR\x04spec\x12,\n" +
 	"\n" +
 	"depends_on\x18\x05 \x03(\tB\r\xbaH\n" +
-	"\x92\x01\a\"\x05r\x03\xb0\x01\x01R\tdependsOn:&\xbaG\x16\xba\x01\x02id\xba\x01\x0eenvironment_id\xba\xab\x1e\t\n" +
-	"\a$shared\"\xe3\x01\n" +
+	"\x92\x01\a\"\x05r\x03\xb0\x01\x01R\tdependsOn:\x19\xbaG\x16\xba\x01\x02id\xba\x01\x0eenvironment_id\"\xe3\x01\n" +
 	"\x06RunsOn\x122\n" +
 	"\x06docker\x18\n" +
 	" \x01(\v2\x18.gitpod.v1.RunsOn.DockerH\x00R\x06docker\x125\n" +
@@ -5019,18 +4980,15 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"secret_ref\x18\x01 \x01(\v2\x14.gitpod.v1.SecretRefH\x00R\tsecretRefB\b\n" +
 	"\x06source\"%\n" +
 	"\tSecretRef\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\xf2\x01\n" +
-	"\rTaskExecution\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11task_execution.idR\x02id\x12<\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\xdb\x01\n" +
+	"\rTaskExecution\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12<\n" +
 	"\bmetadata\x18\x02 \x01(\v2 .gitpod.v1.TaskExecutionMetadataR\bmetadata\x120\n" +
 	"\x04spec\x18\x03 \x01(\v2\x1c.gitpod.v1.TaskExecutionSpecR\x04spec\x126\n" +
-	"\x06status\x18\x04 \x01(\v2\x1e.gitpod.v1.TaskExecutionStatusR\x06status:\b\xbaG\x05\xba\x01\x02id\"\x8e\x03\n" +
-	"\x15TaskExecutionMetadata\x12.\n" +
-	"\atask_id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\atask.idR\x06taskId\x12C\n" +
-	"\x0eenvironment_id\x18\x02 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x129\n" +
+	"\x06status\x18\x04 \x01(\v2\x1e.gitpod.v1.TaskExecutionStatusR\x06status:\b\xbaG\x05\xba\x01\x02id\"\xed\x02\n" +
+	"\x15TaskExecutionMetadata\x12!\n" +
+	"\atask_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06taskId\x12/\n" +
+	"\x0eenvironment_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x129\n" +
 	"\n" +
 	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12,\n" +
 	"\acreator\x18\x04 \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x12\x1d\n" +
@@ -5100,47 +5058,30 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\x1cTASK_EXECUTION_PHASE_RUNNING\x10\x02\x12\"\n" +
 	"\x1eTASK_EXECUTION_PHASE_SUCCEEDED\x10\x03\x12\x1f\n" +
 	"\x1bTASK_EXECUTION_PHASE_FAILED\x10\x04\x12 \n" +
-	"\x1cTASK_EXECUTION_PHASE_STOPPED\x10\x052\xe5\x12\n" +
-	"\x1cEnvironmentAutomationService\x12\x83\x01\n" +
-	"\rCreateService\x12\x1f.gitpod.v1.CreateServiceRequest\x1a .gitpod.v1.CreateServiceResponse\"/\xb2\xab\x1e+\n" +
-	"!environments.automations.services\x12\x06create\x12\x7f\n" +
+	"\x1cTASK_EXECUTION_PHASE_STOPPED\x10\x052\xc2\f\n" +
+	"\x1cEnvironmentAutomationService\x12T\n" +
+	"\rCreateService\x12\x1f.gitpod.v1.CreateServiceRequest\x1a .gitpod.v1.CreateServiceResponse\"\x00\x12N\n" +
 	"\n" +
-	"GetService\x12\x1c.gitpod.v1.GetServiceRequest\x1a\x1d.gitpod.v1.GetServiceResponse\"4\xb2\xab\x1e-\n" +
-	"!environments.automations.services\x12\bretrieve\x90\x02\x01\x12\x81\x01\n" +
-	"\fListServices\x12\x1e.gitpod.v1.ListServicesRequest\x1a\x1f.gitpod.v1.ListServicesResponse\"0\xb2\xab\x1e)\n" +
-	"!environments.automations.services\x12\x04list\x90\x02\x01\x12\x83\x01\n" +
-	"\rUpdateService\x12\x1f.gitpod.v1.UpdateServiceRequest\x1a .gitpod.v1.UpdateServiceResponse\"/\xb2\xab\x1e+\n" +
-	"!environments.automations.services\x12\x06update\x12\x83\x01\n" +
-	"\rDeleteService\x12\x1f.gitpod.v1.DeleteServiceRequest\x1a .gitpod.v1.DeleteServiceResponse\"/\xb2\xab\x1e+\n" +
-	"!environments.automations.services\x12\x06delete\x12\x7f\n" +
-	"\fStartService\x12\x1e.gitpod.v1.StartServiceRequest\x1a\x1f.gitpod.v1.StartServiceResponse\".\xb2\xab\x1e*\n" +
-	"!environments.automations.services\x12\x05start\x12{\n" +
-	"\vStopService\x12\x1d.gitpod.v1.StopServiceRequest\x1a\x1e.gitpod.v1.StopServiceResponse\"-\xb2\xab\x1e)\n" +
-	"!environments.automations.services\x12\x04stop\x12x\n" +
-	"\x15UpsertAutomationsFile\x12'.gitpod.v1.UpsertAutomationsFileRequest\x1a(.gitpod.v1.UpsertAutomationsFileResponse\"\f\xb2\xab\x1e\b\x12\x06upsert\x12w\n" +
+	"GetService\x12\x1c.gitpod.v1.GetServiceRequest\x1a\x1d.gitpod.v1.GetServiceResponse\"\x03\x90\x02\x01\x12T\n" +
+	"\fListServices\x12\x1e.gitpod.v1.ListServicesRequest\x1a\x1f.gitpod.v1.ListServicesResponse\"\x03\x90\x02\x01\x12T\n" +
+	"\rUpdateService\x12\x1f.gitpod.v1.UpdateServiceRequest\x1a .gitpod.v1.UpdateServiceResponse\"\x00\x12T\n" +
+	"\rDeleteService\x12\x1f.gitpod.v1.DeleteServiceRequest\x1a .gitpod.v1.DeleteServiceResponse\"\x00\x12Q\n" +
+	"\fStartService\x12\x1e.gitpod.v1.StartServiceRequest\x1a\x1f.gitpod.v1.StartServiceResponse\"\x00\x12N\n" +
+	"\vStopService\x12\x1d.gitpod.v1.StopServiceRequest\x1a\x1e.gitpod.v1.StopServiceResponse\"\x00\x12l\n" +
+	"\x15UpsertAutomationsFile\x12'.gitpod.v1.UpsertAutomationsFileRequest\x1a(.gitpod.v1.UpsertAutomationsFileResponse\"\x00\x12K\n" +
 	"\n" +
-	"CreateTask\x12\x1c.gitpod.v1.CreateTaskRequest\x1a\x1d.gitpod.v1.CreateTaskResponse\",\xb2\xab\x1e(\n" +
-	"\x1eenvironments.automations.tasks\x12\x06create\x12s\n" +
-	"\aGetTask\x12\x19.gitpod.v1.GetTaskRequest\x1a\x1a.gitpod.v1.GetTaskResponse\"1\xb2\xab\x1e*\n" +
-	"\x1eenvironments.automations.tasks\x12\bretrieve\x90\x02\x01\x12u\n" +
-	"\tListTasks\x12\x1b.gitpod.v1.ListTasksRequest\x1a\x1c.gitpod.v1.ListTasksResponse\"-\xb2\xab\x1e&\n" +
-	"\x1eenvironments.automations.tasks\x12\x04list\x90\x02\x01\x12w\n" +
+	"CreateTask\x12\x1c.gitpod.v1.CreateTaskRequest\x1a\x1d.gitpod.v1.CreateTaskResponse\"\x00\x12E\n" +
+	"\aGetTask\x12\x19.gitpod.v1.GetTaskRequest\x1a\x1a.gitpod.v1.GetTaskResponse\"\x03\x90\x02\x01\x12K\n" +
+	"\tListTasks\x12\x1b.gitpod.v1.ListTasksRequest\x1a\x1c.gitpod.v1.ListTasksResponse\"\x03\x90\x02\x01\x12K\n" +
 	"\n" +
-	"UpdateTask\x12\x1c.gitpod.v1.UpdateTaskRequest\x1a\x1d.gitpod.v1.UpdateTaskResponse\",\xb2\xab\x1e(\n" +
-	"\x1eenvironments.automations.tasks\x12\x06update\x12w\n" +
+	"UpdateTask\x12\x1c.gitpod.v1.UpdateTaskRequest\x1a\x1d.gitpod.v1.UpdateTaskResponse\"\x00\x12K\n" +
 	"\n" +
-	"DeleteTask\x12\x1c.gitpod.v1.DeleteTaskRequest\x1a\x1d.gitpod.v1.DeleteTaskResponse\",\xb2\xab\x1e(\n" +
-	"\x1eenvironments.automations.tasks\x12\x06delete\x12s\n" +
-	"\tStartTask\x12\x1b.gitpod.v1.StartTaskRequest\x1a\x1c.gitpod.v1.StartTaskResponse\"+\xb2\xab\x1e'\n" +
-	"\x1eenvironments.automations.tasks\x12\x05start\x12\x9b\x01\n" +
-	"\x12ListTaskExecutions\x12$.gitpod.v1.ListTaskExecutionsRequest\x1a%.gitpod.v1.ListTaskExecutionsResponse\"8\xb2\xab\x1e1\n" +
-	")environments.automations.tasks.executions\x12\x04list\x90\x02\x01\x12\x99\x01\n" +
-	"\x10GetTaskExecution\x12\".gitpod.v1.GetTaskExecutionRequest\x1a#.gitpod.v1.GetTaskExecutionResponse\"<\xb2\xab\x1e5\n" +
-	")environments.automations.tasks.executions\x12\bretrieve\x90\x02\x01\x12\x95\x01\n" +
-	"\x11StopTaskExecution\x12#.gitpod.v1.StopTaskExecutionRequest\x1a$.gitpod.v1.StopTaskExecutionResponse\"5\xb2\xab\x1e1\n" +
-	")environments.automations.tasks.executions\x12\x04stop\x12x\n" +
-	"\x19UpdateTaskExecutionStatus\x12+.gitpod.v1.UpdateTaskExecutionStatusRequest\x1a,.gitpod.v1.UpdateTaskExecutionStatusResponse\"\x00\x1a\x1e\xaa\xab\x1e\x1a\n" +
-	"\x18environments.automationsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"DeleteTask\x12\x1c.gitpod.v1.DeleteTaskRequest\x1a\x1d.gitpod.v1.DeleteTaskResponse\"\x00\x12H\n" +
+	"\tStartTask\x12\x1b.gitpod.v1.StartTaskRequest\x1a\x1c.gitpod.v1.StartTaskResponse\"\x00\x12f\n" +
+	"\x12ListTaskExecutions\x12$.gitpod.v1.ListTaskExecutionsRequest\x1a%.gitpod.v1.ListTaskExecutionsResponse\"\x03\x90\x02\x01\x12`\n" +
+	"\x10GetTaskExecution\x12\".gitpod.v1.GetTaskExecutionRequest\x1a#.gitpod.v1.GetTaskExecutionResponse\"\x03\x90\x02\x01\x12`\n" +
+	"\x11StopTaskExecution\x12#.gitpod.v1.StopTaskExecutionRequest\x1a$.gitpod.v1.StopTaskExecutionResponse\"\x00\x12x\n" +
+	"\x19UpdateTaskExecutionStatus\x12+.gitpod.v1.UpdateTaskExecutionStatusRequest\x1a,.gitpod.v1.UpdateTaskExecutionStatusResponse\"\x00B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_environment_automation_proto_rawDescOnce sync.Once
