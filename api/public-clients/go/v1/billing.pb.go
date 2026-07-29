@@ -8,8 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -10096,16 +10094,14 @@ var File_gitpod_v1_billing_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\n" +
-	"\x17gitpod/v1/billing.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x15gitpod/v1/usage.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe8\x01\n" +
-	"\rBillingRecord\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11billing_record.idR\x02id\x12<\n" +
+	"\x17gitpod/v1/billing.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x15gitpod/v1/usage.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd1\x01\n" +
+	"\rBillingRecord\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12<\n" +
 	"\bmetadata\x18\x02 \x01(\v2 .gitpod.v1.BillingRecordMetadataR\bmetadata\x120\n" +
 	"\x04spec\x18\x03 \x01(\v2\x1c.gitpod.v1.BillingRecordSpecR\x04spec\x126\n" +
-	"\x06status\x18\x04 \x01(\v2\x1e.gitpod.v1.BillingRecordStatusR\x06status\"\x8e\x02\n" +
-	"\x15BillingRecordMetadata\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x127\n" +
+	"\x06status\x18\x04 \x01(\v2\x1e.gitpod.v1.BillingRecordStatusR\x06status\"\xf9\x01\n" +
+	"\x15BillingRecordMetadata\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x127\n" +
 	"\x05realm\x18\x02 \x01(\x0e2\x17.gitpod.v1.BillingRealmB\b\xbaH\x05\x82\x01\x02\x10\x01R\x05realm\x129\n" +
 	"\n" +
 	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
@@ -10133,23 +10129,20 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x1fPaymentMethodVerificationStatus\x12k\n" +
 	"\x18card_verification_status\x18\x01 \x01(\x0e2'.gitpod.v1.CreditCardVerificationStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\x16cardVerificationStatus\x12 \n" +
 	"\x05error\x18\x02 \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x01\x18\x80\bR\x05error\"f\n" +
-	"\x17GetBillingRecordRequest\x12K\n" +
-	"\x11billing_record_id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11billing_record.idR\x0fbillingRecordId\"[\n" +
+	"\xbaH\ar\x05\x10\x01\x18\x80\bR\x05error\"O\n" +
+	"\x17GetBillingRecordRequest\x124\n" +
+	"\x11billing_record_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0fbillingRecordId\"[\n" +
 	"\x18GetBillingRecordResponse\x12?\n" +
-	"\x0ebilling_record\x18\x01 \x01(\v2\x18.gitpod.v1.BillingRecordR\rbillingRecord\"\x80\x02\n" +
-	"\x1aUpdateBillingRecordRequest\x12N\n" +
-	"\x11billing_record_id\x18\x01 \x01(\tB\"\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11billing_record.idR\x0fbillingRecordId\x12=\n" +
+	"\x0ebilling_record\x18\x01 \x01(\v2\x18.gitpod.v1.BillingRecordR\rbillingRecord\"\xe9\x01\n" +
+	"\x1aUpdateBillingRecordRequest\x127\n" +
+	"\x11billing_record_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0fbillingRecordId\x12=\n" +
 	"\x04kind\x18\x02 \x01(\x0e2\x1a.gitpod.v1.BillingPlanKindB\b\xbaH\x05\x82\x01\x02\x10\x01H\x00R\x04kind\x88\x01\x01\x125\n" +
 	"\x10amount_cents_usd\x18\x03 \x01(\x03B\x06\xbaH\x03\xc8\x01\x01H\x01R\x0eamountCentsUsd\x88\x01\x01B\a\n" +
 	"\x05_kindB\x13\n" +
 	"\x11_amount_cents_usd\"\x1d\n" +
-	"\x1bUpdateBillingRecordResponse\"\x97\x02\n" +
-	"\x13SetupBillingRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12>\n" +
+	"\x1bUpdateBillingRecordResponse\"\x82\x02\n" +
+	"\x13SetupBillingRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12>\n" +
 	"\famount_cents\x18\x02 \x01(\x03B\x16\xbaH\x13\"\x110\xd0\x0f0\x88'0\x90N0\xa0\x9c\x010І\x03H\x00R\vamountCents\x88\x01\x01\x12$\n" +
 	"\vcoupon_code\x18\x03 \x01(\tH\x01R\n" +
 	"couponCode\x88\x01\x01\x12 \n" +
@@ -10160,12 +10153,11 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"_intent_id\"\xa8\x01\n" +
 	"\x14SetupBillingResponse\x12C\n" +
 	"\x1asetup_intent_client_secret\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x17setupIntentClientSecret\x12K\n" +
-	"\x1ecustomer_session_client_secret\x18\x02 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x1bcustomerSessionClientSecret\"\x87\x03\n" +
-	"\x1bCompleteBillingSetupRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12N\n" +
-	"\x0fsetup_intent_id\x18\x02 \x01(\tB&\xbaH\a\xc8\x01\x01r\x02\x10\x01\xa2\xab\x1e\x18\n" +
-	"\x16stripe.setup_intent_idR\rsetupIntentId\x12S\n" +
+	"\x1ecustomer_session_client_secret\x18\x02 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x1bcustomerSessionClientSecret\"\xd6\x02\n" +
+	"\x1bCompleteBillingSetupRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x122\n" +
+	"\x0fsetup_intent_id\x18\x02 \x01(\tB\n" +
+	"\xbaH\a\xc8\x01\x01r\x02\x10\x01R\rsetupIntentId\x12S\n" +
 	"\tsubscribe\x18\x03 \x01(\v20.gitpod.v1.CompleteBillingSetupRequest.SubscribeH\x00R\tsubscribe\x88\x01\x01\x1aj\n" +
 	"\tSubscribe\x12<\n" +
 	"\famount_cents\x18\x01 \x01(\x03B\x19\xbaH\x16\xc8\x01\x01\"\x110\xd0\x0f0\x88'0\x90N0\xa0\x9c\x010І\x03R\vamountCents\x12\x1f\n" +
@@ -10179,10 +10171,9 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\rtrial_granted\x18\x02 \x01(\bR\ftrialGranted\x120\n" +
 	"\x14trial_amount_credits\x18\x03 \x01(\x01R\x12trialAmountCredits\x12D\n" +
 	"\x10trial_expires_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x0etrialExpiresAt\x12;\n" +
-	"\fsubscription\x18\x05 \x01(\v2\x17.gitpod.v1.SubscriptionR\fsubscription\"b\n" +
-	"\x15GetBillingInfoRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\xf0\x05\n" +
+	"\fsubscription\x18\x05 \x01(\v2\x17.gitpod.v1.SubscriptionR\fsubscription\"M\n" +
+	"\x15GetBillingInfoRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"\xf0\x05\n" +
 	"\x16GetBillingInfoResponse\x12#\n" +
 	"\rtotal_credits\x18\x01 \x01(\x01R\ftotalCredits\x12+\n" +
 	"\x11available_credits\x18\x02 \x01(\x01R\x10availableCredits\x12!\n" +
@@ -10195,10 +10186,9 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x13auto_topup_settings\x18\f \x01(\v2\x1c.gitpod.v1.AutoTopupSettingsR\x11autoTopupSettings\x12G\n" +
 	"\x12last_auto_topup_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\x0flastAutoTopupAt\x128\n" +
 	"\x18monthly_commitment_cents\x18\x0e \x01(\x03R\x16monthlyCommitmentCents\x12!\n" +
-	"\fcredit_grant\x18\x10 \x01(\x03R\vcreditGrantJ\x04\b\x04\x10\x05J\x04\b\x0f\x10\x10R\x13customer_portal_urlR\x1arecovery_credit_granted_at\"d\n" +
-	"\x17ReconcileBillingRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\x1a\n" +
+	"\fcredit_grant\x18\x10 \x01(\x03R\vcreditGrantJ\x04\b\x04\x10\x05J\x04\b\x0f\x10\x10R\x13customer_portal_urlR\x1arecovery_credit_granted_at\"O\n" +
+	"\x17ReconcileBillingRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"\x1a\n" +
 	"\x18ReconcileBillingResponse\"w\n" +
 	"\x17TopupPaymentFailureInfo\x127\n" +
 	"\tfailed_at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\bfailedAt\x12#\n" +
@@ -10207,10 +10197,9 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x05state\x18\x01 \x01(\x0e2\x1e.gitpod.v1.PaymentFailureStateR\x05state\x12K\n" +
 	"\x14grace_period_ends_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x11gracePeriodEndsAt\x127\n" +
 	"\tfailed_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\bfailedAt\x12%\n" +
-	"\x0efailure_reason\x18\x04 \x01(\tR\rfailureReason\"\x97\x02\n" +
-	"\x19CreateSubscriptionRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12P\n" +
+	"\x0efailure_reason\x18\x04 \x01(\tR\rfailureReason\"\x82\x02\n" +
+	"\x19CreateSubscriptionRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12P\n" +
 	"\x11subscription_type\x18\x02 \x01(\x0e2\x1b.gitpod.v1.SubscriptionTypeB\x06\xbaH\x03\xc8\x01\x01R\x10subscriptionType\x12<\n" +
 	"\famount_cents\x18\x03 \x01(\x03B\x19\xbaH\x16\xc8\x01\x01\"\x110\xd0\x0f0\x88'0\x90N0\xa0\x9c\x010І\x03R\vamountCents\x12\x1f\n" +
 	"\vcoupon_code\x18\x04 \x01(\tR\n" +
@@ -10221,16 +10210,14 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x01 \x01(\tB\n" +
 	"\xbaH\a\xc8\x01\x01r\x02\x10\x01R\x0eorganizationId\x12P\n" +
 	"\x11subscription_type\x18\x02 \x01(\x0e2\x1b.gitpod.v1.SubscriptionTypeB\x06\xbaH\x03\xc8\x01\x01R\x10subscriptionType\"\x1c\n" +
-	"\x1aCancelSubscriptionResponse\"\xab\x01\n" +
-	"\x19UpdateSubscriptionRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12C\n" +
+	"\x1aCancelSubscriptionResponse\"\x96\x01\n" +
+	"\x19UpdateSubscriptionRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12C\n" +
 	"\x10new_amount_cents\x18\x02 \x01(\x03B\x19\xbaH\x16\xc8\x01\x01\"\x110\xd0\x0f0\x88'0\x90N0\xa0\x9c\x010І\x03R\x0enewAmountCents\"Y\n" +
 	"\x1aUpdateSubscriptionResponse\x12;\n" +
-	"\fsubscription\x18\x01 \x01(\v2\x17.gitpod.v1.SubscriptionR\fsubscription\"e\n" +
-	"\x18ListSubscriptionsRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\x86\x03\n" +
+	"\fsubscription\x18\x01 \x01(\v2\x17.gitpod.v1.SubscriptionR\fsubscription\"P\n" +
+	"\x18ListSubscriptionsRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"\x86\x03\n" +
 	"\fSubscription\x12\x1f\n" +
 	"\vcontract_id\x18\x01 \x01(\tR\n" +
 	"contractId\x12'\n" +
@@ -10241,48 +10228,39 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\fcancelled_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\vcancelledAt\x123\n" +
 	"\aends_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\x06endsAt\"Z\n" +
 	"\x19ListSubscriptionsResponse\x12=\n" +
-	"\rsubscriptions\x18\x01 \x03(\v2\x17.gitpod.v1.SubscriptionR\rsubscriptions\"\x9a\x01\n" +
-	"\x13GrantCreditsRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x128\n" +
+	"\rsubscriptions\x18\x01 \x03(\v2\x17.gitpod.v1.SubscriptionR\rsubscriptions\"\x85\x01\n" +
+	"\x13GrantCreditsRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x128\n" +
 	"\x0ecredits_amount\x18\x02 \x01(\x01B\x11\xbaH\x0e\xc8\x01\x01\x12\t)\x00\x00\x00\x00\x00\x00D@R\rcreditsAmount\"\x16\n" +
-	"\x14GrantCreditsResponse\"k\n" +
-	"\x1eGetStripePublishableKeyRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"R\n" +
+	"\x14GrantCreditsResponse\"V\n" +
+	"\x1eGetStripePublishableKeyRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"R\n" +
 	"\x1fGetStripePublishableKeyResponse\x12/\n" +
-	"\x0fpublishable_key\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x0epublishableKey\"\xb2\x01\n" +
-	"\x16SetBillingRealmRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12M\n" +
-	"\x05realm\x18\x02 \x01(\x0e2\x17.gitpod.v1.BillingRealmB\x1e\xbaH\b\xc8\x01\x01\x82\x01\x02\x10\x01\xa2\xab\x1e\x0f\n" +
-	"\rbilling.realmR\x05realm\"\x19\n" +
-	"\x17SetBillingRealmResponse\"\xae\x02\n" +
-	"\x1dCreateCardVerificationRequest\x128\n" +
-	"\x05email\x18\x01 \x01(\tB\"\xbaH\f\xc8\x01\x01r\a\x10\x01\x18\xff\x01`\x01\xa2\xab\x1e\x0f\n" +
-	"\raccount.emailR\x05email\x12K\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idH\x00R\x0eorganizationId\x88\x01\x01\x12%\n" +
+	"\x0fpublishable_key\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x0epublishableKey\"\x8a\x01\n" +
+	"\x16SetBillingRealmRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12:\n" +
+	"\x05realm\x18\x02 \x01(\x0e2\x17.gitpod.v1.BillingRealmB\v\xbaH\b\xc8\x01\x01\x82\x01\x02\x10\x01R\x05realm\"\x19\n" +
+	"\x17SetBillingRealmResponse\"\x86\x02\n" +
+	"\x1dCreateCardVerificationRequest\x12%\n" +
+	"\x05email\x18\x01 \x01(\tB\x0f\xbaH\f\xc8\x01\x01r\a\x10\x01\x18\xff\x01`\x01R\x05email\x126\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\x0eorganizationId\x88\x01\x01\x12%\n" +
 	"\x06reason\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\x80\bH\x01R\x06reason\x88\x01\x01\x12/\n" +
 	"\ffree_credits\x18\x04 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x02R\vfreeCredits\x88\x01\x01B\x12\n" +
 	"\x10_organization_idB\t\n" +
 	"\a_reasonB\x0f\n" +
 	"\r_free_credits\" \n" +
-	"\x1eCreateCardVerificationResponse\"\xd9\x01\n" +
-	"\x0fSetTaxIDRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12;\n" +
-	"\vtax_id_type\x18\x02 \x01(\tB\x1b\xbaH\a\xc8\x01\x01r\x02\x10\x01\xa2\xab\x1e\r\n" +
-	"\vtax.id_typeR\ttaxIdType\x12>\n" +
-	"\ftax_id_value\x18\x03 \x01(\tB\x1c\xbaH\a\xc8\x01\x01r\x02\x10\x01\xa2\xab\x1e\x0e\n" +
-	"\ftax.id_valueR\n" +
+	"\x1eCreateCardVerificationResponse\"\xa1\x01\n" +
+	"\x0fSetTaxIDRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12*\n" +
+	"\vtax_id_type\x18\x02 \x01(\tB\n" +
+	"\xbaH\a\xc8\x01\x01r\x02\x10\x01R\ttaxIdType\x12,\n" +
+	"\ftax_id_value\x18\x03 \x01(\tB\n" +
+	"\xbaH\a\xc8\x01\x01r\x02\x10\x01R\n" +
 	"taxIdValue\"\x12\n" +
-	"\x10SetTaxIDResponse\"\xf5\x03\n" +
-	"\x06Coupon\x12'\n" +
-	"\x02id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\tcoupon.idR\x02id\x12%\n" +
-	"\x04code\x18\x02 \x01(\tB\x11\xa2\xab\x1e\r\n" +
-	"\vcoupon.codeR\x04code\x12/\n" +
+	"\x10SetTaxIDResponse\"\xd3\x03\n" +
+	"\x06Coupon\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12\x12\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\x12/\n" +
 	"\x06config\x18\x03 \x01(\v2\x17.gitpod.v1.CouponConfigR\x06config\x12\"\n" +
 	"\bmax_uses\x18\x04 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\amaxUses\x125\n" +
 	"\x10max_uses_per_org\x18\x05 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x00R\rmaxUsesPerOrg\x88\x01\x01\x12>\n" +
@@ -10295,10 +10273,9 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\x13\n" +
 	"\x11_max_uses_per_orgB\r\n" +
 	"\v_expires_atB\x0e\n" +
-	"\f_description\"\xfc\x02\n" +
-	"\x13CreateCouponRequest\x121\n" +
-	"\x04code\x18\x01 \x01(\tB\x1d\xbaH\t\xc8\x01\x01r\x04\x10\x03\x182\xa2\xab\x1e\r\n" +
-	"\vcoupon.codeR\x04code\x12/\n" +
+	"\f_description\"\xeb\x02\n" +
+	"\x13CreateCouponRequest\x12 \n" +
+	"\x04code\x18\x01 \x01(\tB\f\xbaH\t\xc8\x01\x01r\x04\x10\x03\x182R\x04code\x12/\n" +
 	"\x06config\x18\x02 \x01(\v2\x17.gitpod.v1.CouponConfigR\x06config\x12%\n" +
 	"\bmax_uses\x18\x03 \x01(\x05B\n" +
 	"\xbaH\a\xc8\x01\x01\x1a\x02 \x00R\amaxUses\x125\n" +
@@ -10318,18 +10295,16 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x0f_percentage_offB\x12\n" +
 	"\x10_duration_months\"A\n" +
 	"\x14CreateCouponResponse\x12)\n" +
-	"\x06coupon\x18\x01 \x01(\v2\x11.gitpod.v1.CouponR\x06coupon\"\xcc\x03\n" +
+	"\x06coupon\x18\x01 \x01(\v2\x11.gitpod.v1.CouponR\x06coupon\"\xa2\x03\n" +
 	"\x12ListCouponsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12<\n" +
-	"\x06filter\x18\x02 \x01(\v2$.gitpod.v1.ListCouponsRequest.FilterR\x06filter\x1a\xb9\x02\n" +
-	"\x06Filter\x12G\n" +
+	"\x06filter\x18\x02 \x01(\v2$.gitpod.v1.ListCouponsRequest.FilterR\x06filter\x1a\x8f\x02\n" +
+	"\x06Filter\x120\n" +
 	"\n" +
-	"coupon_ids\x18\x01 \x03(\tB(\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11filter.coupon_idsR\tcouponIds\x12*\n" +
-	"\x04code\x18\x04 \x01(\tB\x11\xa2\xab\x1e\r\n" +
-	"\vfilter.codeH\x00R\x04code\x88\x01\x01\x12F\n" +
+	"coupon_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\tcouponIds\x12\x17\n" +
+	"\x04code\x18\x04 \x01(\tH\x00R\x04code\x88\x01\x01\x12F\n" +
 	"\x0eexpires_before\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\rexpiresBefore\x88\x01\x01\x12D\n" +
 	"\rexpires_after\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x02R\fexpiresAfter\x88\x01\x01B\a\n" +
 	"\x05_codeB\x11\n" +
@@ -10339,13 +10314,11 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12+\n" +
-	"\acoupons\x18\x02 \x03(\v2\x11.gitpod.v1.CouponR\acoupons\"\x9d\x01\n" +
-	"\x10GetCouponRequest\x12>\n" +
-	"\vcoupon_code\x18\x01 \x01(\tB\x1d\xbaH\t\xc8\x01\x01r\x04\x10\x03\x182\xa2\xab\x1e\r\n" +
-	"\vcoupon.codeR\n" +
-	"couponCode\x12I\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\">\n" +
+	"\acoupons\x18\x02 \x03(\v2\x11.gitpod.v1.CouponR\acoupons\"w\n" +
+	"\x10GetCouponRequest\x12-\n" +
+	"\vcoupon_code\x18\x01 \x01(\tB\f\xbaH\t\xc8\x01\x01r\x04\x10\x03\x182R\n" +
+	"couponCode\x124\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\">\n" +
 	"\x11GetCouponResponse\x12)\n" +
 	"\x06coupon\x18\x01 \x01(\v2\x11.gitpod.v1.CouponR\x06coupon\"\xf8\x01\n" +
 	"\x0eBillingAddress\x12#\n" +
@@ -10357,27 +10330,23 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\vpostal_code\x18\x05 \x01(\tB\f\xbaH\t\xc8\x01\x01r\x04\x10\x01\x18\x14R\n" +
 	"postalCode\x121\n" +
 	"\acountry\x18\x06 \x01(\tB\x17\xbaH\x14\xc8\x01\x01r\x0f2\n" +
-	"^[A-Z]{2}$\x98\x01\x02R\acountry\"\xc5\x01\n" +
-	"\x18SetBillingAddressRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12!\n" +
+	"^[A-Z]{2}$\x98\x01\x02R\acountry\"\xb0\x01\n" +
+	"\x18SetBillingAddressRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12!\n" +
 	"\x04name\x18\x02 \x01(\tB\r\xbaH\n" +
 	"\xc8\x01\x01r\x05\x10\x01\x18\xff\x01R\x04name\x12;\n" +
 	"\aaddress\x18\x03 \x01(\v2\x19.gitpod.v1.BillingAddressB\x06\xbaH\x03\xc8\x01\x01R\aaddress\"\x1b\n" +
-	"\x19SetBillingAddressResponse\"f\n" +
-	"\x19GetStripePortalUrlRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"C\n" +
+	"\x19SetBillingAddressResponse\"Q\n" +
+	"\x19GetStripePortalUrlRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"C\n" +
 	"\x1aGetStripePortalUrlResponse\x12%\n" +
 	"\n" +
-	"portal_url\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\tportalUrl\"e\n" +
-	"\x18ClearTopupFailureRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\x1b\n" +
-	"\x19ClearTopupFailureResponse\"\xa7\x01\n" +
-	"%GetCreditConsumptionTimeSeriesRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x123\n" +
+	"portal_url\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\tportalUrl\"P\n" +
+	"\x18ClearTopupFailureRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"\x1b\n" +
+	"\x19ClearTopupFailureResponse\"\x92\x01\n" +
+	"%GetCreditConsumptionTimeSeriesRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x123\n" +
 	"\n" +
 	"date_range\x18\x03 \x01(\v2\x14.gitpod.v1.DateRangeR\tdateRange\"j\n" +
 	"&GetCreditConsumptionTimeSeriesResponse\x12@\n" +
@@ -10393,14 +10362,12 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\bKIND_LLM\x10\x03\"X\n" +
 	"\x14CreditUsageDataPoint\x12.\n" +
 	"\x04time\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x04time\x12\x10\n" +
-	"\x03ocu\x18\x02 \x01(\x01R\x03ocu\"\xe6\x02\n" +
-	"\x1dSetupEnterpriseBillingRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\x18\n" +
+	"\x03ocu\x18\x02 \x01(\x01R\x03ocu\"\xb6\x02\n" +
+	"\x1dSetupEnterpriseBillingRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12\x18\n" +
 	"\asandbox\x18\x02 \x01(\bR\asandbox\x12.\n" +
-	"\x13set_enterprise_tier\x18\x03 \x01(\bR\x11setEnterpriseTier\x12=\n" +
-	"\x05email\x18\x04 \x01(\tB\"\xbaH\x04r\x02`\x01\xa2\xab\x1e\x17\n" +
-	"\x15stripe.customer_emailH\x00R\x05email\x88\x01\x01\x12O\n" +
+	"\x13set_enterprise_tier\x18\x03 \x01(\bR\x11setEnterpriseTier\x12\"\n" +
+	"\x05email\x18\x04 \x01(\tB\a\xbaH\x04r\x02`\x01H\x00R\x05email\x88\x01\x01\x12O\n" +
 	"\x13contract_start_date\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\x11contractStartDate\x88\x01\x01B\b\n" +
 	"\x06_emailB\x16\n" +
 	"\x14_contract_start_date\"V\n" +
@@ -10409,25 +10376,22 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x11AutoTopupSettings\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12%\n" +
 	"\x0eamount_credits\x18\x02 \x01(\x01R\ramountCredits\x12(\n" +
-	"\x10max_daily_topups\x18\x03 \x01(\x05R\x0emaxDailyTopups\"\xad\x01\n" +
-	"\x1eUpdateAutoTopupSettingsRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12@\n" +
+	"\x10max_daily_topups\x18\x03 \x01(\x05R\x0emaxDailyTopups\"\x98\x01\n" +
+	"\x1eUpdateAutoTopupSettingsRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12@\n" +
 	"\bsettings\x18\x02 \x01(\v2\x1c.gitpod.v1.AutoTopupSettingsB\x06\xbaH\x03\xc8\x01\x01R\bsettings\"[\n" +
 	"\x1fUpdateAutoTopupSettingsResponse\x128\n" +
-	"\bsettings\x18\x01 \x01(\v2\x1c.gitpod.v1.AutoTopupSettingsR\bsettings\"h\n" +
-	"\x1bGetAutoTopupSettingsRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"X\n" +
+	"\bsettings\x18\x01 \x01(\v2\x1c.gitpod.v1.AutoTopupSettingsR\bsettings\"S\n" +
+	"\x1bGetAutoTopupSettingsRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"X\n" +
 	"\x1cGetAutoTopupSettingsResponse\x128\n" +
 	"\bsettings\x18\x01 \x01(\v2\x1c.gitpod.v1.AutoTopupSettingsR\bsettings\"X\n" +
 	"\x17CreditUsageReportFilter\x121\n" +
 	"\asubject\x18\x01 \x01(\v2\x12.gitpod.v1.SubjectH\x00R\asubject\x88\x01\x01B\n" +
 	"\n" +
-	"\b_subject\"\xfd\x01\n" +
-	"\x1bGetCreditUsageReportRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12;\n" +
+	"\b_subject\"\xe8\x01\n" +
+	"\x1bGetCreditUsageReportRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12;\n" +
 	"\n" +
 	"date_range\x18\x02 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x1a\n" +
 	"\btimezone\x18\x03 \x01(\tR\btimezone\x12:\n" +
@@ -10469,10 +10433,9 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x19AgentExecutionCreditUsage\x12,\n" +
 	"\x12agent_execution_id\x18\x01 \x01(\tR\x10agentExecutionId\x12!\n" +
 	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12.\n" +
-	"\x05usage\x18\x03 \x03(\v2\x18.gitpod.v1.CreditsByTypeR\x05usage\"\xe5\x01\n" +
-	"\x1bGetCreditUsageExportRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12;\n" +
+	"\x05usage\x18\x03 \x03(\v2\x18.gitpod.v1.CreditsByTypeR\x05usage\"\xd0\x01\n" +
+	"\x1bGetCreditUsageExportRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12;\n" +
 	"\n" +
 	"date_range\x18\x02 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12>\n" +
 	"\bgroup_by\x18\x03 \x01(\x0e2#.gitpod.v1.CreditUsageExportGroupByR\agroupBy\"A\n" +
@@ -10508,10 +10471,9 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x05usage\x18\x02 \x01(\v2\x1c.gitpod.v1.EnterpriseAIUsageR\x05usage\x12V\n" +
 	"\x13usage_by_token_type\x18\x03 \x03(\v2'.gitpod.v1.EnterpriseAIUsageByTokenTypeR\x10usageByTokenType\x12C\n" +
 	"\x0eunpriced_usage\x18\x04 \x01(\v2\x1c.gitpod.v1.EnterpriseAIUsageR\runpricedUsage\x12g\n" +
-	"\x1cunpriced_usage_by_token_type\x18\x05 \x03(\v2'.gitpod.v1.EnterpriseAIUsageByTokenTypeR\x18unpricedUsageByTokenType\"\xb2\x02\n" +
-	"\x15TeamEnterpriseAIUsage\x12.\n" +
-	"\ateam_id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\x12!\n" +
+	"\x1cunpriced_usage_by_token_type\x18\x05 \x03(\v2'.gitpod.v1.EnterpriseAIUsageByTokenTypeR\x18unpricedUsageByTokenType\"\xa5\x02\n" +
+	"\x15TeamEnterpriseAIUsage\x12!\n" +
+	"\ateam_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06teamId\x12!\n" +
 	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x122\n" +
 	"\x05usage\x18\x03 \x01(\v2\x1c.gitpod.v1.EnterpriseAIUsageR\x05usage\x12:\n" +
 	"\x06budget\x18\x04 \x01(\v2\".gitpod.v1.EnterpriseAIUsageBudgetR\x06budget\x12V\n" +
@@ -10542,10 +10504,9 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"user_usage\x18\x04 \x03(\v2 .gitpod.v1.UserEnterpriseAIUsageR\tuserUsage\x12?\n" +
 	"\n" +
 	"team_usage\x18\x05 \x03(\v2 .gitpod.v1.TeamEnterpriseAIUsageR\tteamUsage\x12I\n" +
-	"\x0eusage_by_model\x18\x06 \x03(\v2#.gitpod.v1.EnterpriseAIUsageByModelR\fusageByModel\"\xd1\x01\n" +
-	"\"GetEnterpriseAIUsageSummaryRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12;\n" +
+	"\x0eusage_by_model\x18\x06 \x03(\v2#.gitpod.v1.EnterpriseAIUsageByModelR\fusageByModel\"\xbc\x01\n" +
+	"\"GetEnterpriseAIUsageSummaryRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12;\n" +
 	"\n" +
 	"date_range\x18\x02 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12#\n" +
 	"\btimezone\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18@R\btimezone\"\xa1\x02\n" +
@@ -10553,13 +10514,12 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\rcalculated_at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\fcalculatedAt\x122\n" +
 	"\x05usage\x18\x02 \x01(\v2\x1c.gitpod.v1.EnterpriseAIUsageR\x05usage\x12:\n" +
 	"\x06budget\x18\x03 \x01(\v2\".gitpod.v1.EnterpriseAIUsageBudgetR\x06budget\x12I\n" +
-	"\x0eusage_by_model\x18\x04 \x03(\v2#.gitpod.v1.EnterpriseAIUsageByModelR\fusageByModel\"\x8f\x03\n" +
+	"\x0eusage_by_model\x18\x04 \x03(\v2#.gitpod.v1.EnterpriseAIUsageByModelR\fusageByModel\"\xfa\x02\n" +
 	" ListEnterpriseAITeamUsageRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x12I\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12;\n" +
+	"pagination\x124\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12;\n" +
 	"\n" +
 	"date_range\x18\x03 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12#\n" +
 	"\btimezone\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18@R\btimezone\x12J\n" +
@@ -10572,13 +10532,12 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"pagination\x12?\n" +
 	"\n" +
 	"team_usage\x18\x02 \x03(\v2 .gitpod.v1.TeamEnterpriseAIUsageR\tteamUsage\x12?\n" +
-	"\rcalculated_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\fcalculatedAt\"\xf9\x05\n" +
+	"\rcalculated_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\fcalculatedAt\"\xe4\x05\n" +
 	" ListEnterpriseAIUserUsageRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x12I\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12;\n" +
+	"pagination\x124\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12;\n" +
 	"\n" +
 	"date_range\x18\x03 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12#\n" +
 	"\btimezone\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18@R\btimezone\x12D\n" +
@@ -10605,10 +10564,9 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"user_usage\x18\x02 \x03(\v2\x1e.gitpod.v1.UserCostBudgetUsageR\tuserUsage\x12\x1f\n" +
 	"\vtotal_count\x18\x03 \x01(\x05R\n" +
 	"totalCount\x12?\n" +
-	"\rcalculated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\fcalculatedAt\"\x9a\x02\n" +
-	"%GetEnterpriseAIUsageTimeSeriesRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12;\n" +
+	"\rcalculated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\fcalculatedAt\"\x85\x02\n" +
+	"%GetEnterpriseAIUsageTimeSeriesRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12;\n" +
 	"\n" +
 	"date_range\x18\x02 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12#\n" +
 	"\btimezone\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18@R\btimezone\x12D\n" +
@@ -10660,17 +10618,14 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\fpayload_json\x18\x06 \x01(\tR\vpayloadJson\x12\x16\n" +
 	"\x06status\x18\a \x01(\tR\x06status\x12'\n" +
 	"\x0fidempotency_key\x18\b \x01(\tR\x0eidempotencyKey\x12\x18\n" +
-	"\amessage\x18\t \x01(\tR\amessage\"l\n" +
-	"\x1fGetEnterpriseBillingInfoRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"T\n" +
+	"\amessage\x18\t \x01(\tR\amessage\"W\n" +
+	"\x1fGetEnterpriseBillingInfoRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"T\n" +
 	" GetEnterpriseBillingInfoResponse\x120\n" +
-	"\x14credit_usage_enabled\x18\x01 \x01(\bR\x12creditUsageEnabled\"\xe0\x03\n" +
-	"\x10BYOKRateCardRate\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11byok_rate_card.idR\x02id\x12F\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\x14\n" +
+	"\x14credit_usage_enabled\x18\x01 \x01(\bR\x12creditUsageEnabled\"\xb4\x03\n" +
+	"\x10BYOKRateCardRate\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x121\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12\x14\n" +
 	"\x05model\x18\x03 \x01(\tR\x05model\x12?\n" +
 	"\n" +
 	"token_type\x18\x04 \x01(\x0e2 .gitpod.v1.BYOKRateCardTokenTypeR\ttokenType\x12J\n" +
@@ -10678,16 +10633,14 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\bcurrency\x18\x06 \x01(\x0e2\x1a.gitpod.v1.BillingCurrencyR\bcurrency\x12=\n" +
 	"\feffective_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\veffectiveAt\x129\n" +
 	"\n" +
-	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x9a\x01\n" +
-	"\x1cListBYOKRateCardRatesRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12/\n" +
+	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x85\x01\n" +
+	"\x1cListBYOKRateCardRatesRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12/\n" +
 	"\x05as_of\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x04asOf\"R\n" +
 	"\x1dListBYOKRateCardRatesResponse\x121\n" +
-	"\x05rates\x18\x01 \x03(\v2\x1b.gitpod.v1.BYOKRateCardRateR\x05rates\"\xb6\x03\n" +
-	"\x1aSetBYOKRateCardRateRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12#\n" +
+	"\x05rates\x18\x01 \x03(\v2\x1b.gitpod.v1.BYOKRateCardRateR\x05rates\"\xa1\x03\n" +
+	"\x1aSetBYOKRateCardRateRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12#\n" +
 	"\x05model\x18\x02 \x01(\tB\r\xbaH\n" +
 	"\xc8\x01\x01r\x05\x10\x01\x18\xff\x01R\x05model\x12L\n" +
 	"\n" +
@@ -10697,15 +10650,12 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\bcurrency\x18\x05 \x01(\x0e2\x1a.gitpod.v1.BillingCurrencyB\v\xbaH\b\xc8\x01\x01\x82\x01\x02\x10\x01R\bcurrency\x12=\n" +
 	"\feffective_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\veffectiveAt\"N\n" +
 	"\x1bSetBYOKRateCardRateResponse\x12/\n" +
-	"\x04rate\x18\x01 \x01(\v2\x1b.gitpod.v1.BYOKRateCardRateR\x04rate\"\xca\x05\n" +
-	"\x1cEnterpriseAIUserBudgetPolicy\x12A\n" +
-	"\x02id\x18\x01 \x01(\tB1\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e%\n" +
-	"#enterprise_ai_user_budget_policy.idR\x02id\x12F\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12C\n" +
-	"\x04mode\x18\x03 \x01(\x0e2%.gitpod.v1.EnterpriseAIUserBudgetModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04mode\x123\n" +
-	"\auser_id\x18\x04 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idH\x00R\x06userId\x88\x01\x01\x12>\n" +
+	"\x04rate\x18\x01 \x01(\v2\x1b.gitpod.v1.BYOKRateCardRateR\x04rate\"\xff\x04\n" +
+	"\x1cEnterpriseAIUserBudgetPolicy\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x121\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12C\n" +
+	"\x04mode\x18\x03 \x01(\x0e2%.gitpod.v1.EnterpriseAIUserBudgetModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04mode\x12&\n" +
+	"\auser_id\x18\x04 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\x06userId\x88\x01\x01\x12>\n" +
 	"\x14monthly_credit_limit\x18\x05 \x01(\x03B\a\xbaH\x04\"\x02(\x00H\x01R\x12monthlyCreditLimit\x88\x01\x01\x12O\n" +
 	"\x1dmonthly_cost_limit_microunits\x18\x06 \x01(\x03B\a\xbaH\x04\"\x02(\x00H\x02R\x1amonthlyCostLimitMicrounits\x88\x01\x01\x12@\n" +
 	"\bcurrency\x18\a \x01(\x0e2\x1a.gitpod.v1.BillingCurrencyB\b\xbaH\x05\x82\x01\x02\x10\x01R\bcurrency\x12\x15\n" +
@@ -10721,13 +10671,12 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x1e_monthly_cost_limit_microunits\"\xb9\x01\n" +
 	"%EffectiveEnterpriseAIUserBudgetPolicy\x12O\n" +
 	"\x06source\x18\x01 \x01(\x0e2-.gitpod.v1.EnterpriseAIUserBudgetPolicySourceB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06source\x12?\n" +
-	"\x06policy\x18\x02 \x01(\v2'.gitpod.v1.EnterpriseAIUserBudgetPolicyR\x06policy\"\xfe\x01\n" +
+	"\x06policy\x18\x02 \x01(\v2'.gitpod.v1.EnterpriseAIUserBudgetPolicyR\x06policy\"\xe9\x01\n" +
 	")ListEnterpriseAIUserBudgetPoliciesRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x12I\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12H\n" +
+	"pagination\x124\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12H\n" +
 	"\x04mode\x18\x03 \x01(\x0e2%.gitpod.v1.EnterpriseAIUserBudgetModeB\r\xbaH\n" +
 	"\xc8\x01\x01\x82\x01\x04\x10\x01 \x00R\x04mode\"\x93\x02\n" +
 	"*ListEnterpriseAIUserBudgetPoliciesResponse\x12X\n" +
@@ -10735,26 +10684,22 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\ruser_policies\x18\x02 \x03(\v2'.gitpod.v1.EnterpriseAIUserBudgetPolicyR\fuserPolicies\x12=\n" +
 	"\n" +
 	"pagination\x18\x03 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
-	"pagination\"\xfe\x01\n" +
-	"&GetEnterpriseAIUserBudgetPolicyRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12H\n" +
+	"pagination\"\xdc\x01\n" +
+	"&GetEnterpriseAIUserBudgetPolicyRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12H\n" +
 	"\x04mode\x18\x02 \x01(\x0e2%.gitpod.v1.EnterpriseAIUserBudgetModeB\r\xbaH\n" +
-	"\xc8\x01\x01\x82\x01\x04\x10\x01 \x00R\x04mode\x123\n" +
-	"\auser_id\x18\x03 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idH\x00R\x06userId\x88\x01\x01B\n" +
+	"\xc8\x01\x01\x82\x01\x04\x10\x01 \x00R\x04mode\x12&\n" +
+	"\auser_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\x06userId\x88\x01\x01B\n" +
 	"\n" +
 	"\b_user_id\"\xc7\x01\n" +
 	"'GetEnterpriseAIUserBudgetPolicyResponse\x12?\n" +
 	"\x06policy\x18\x01 \x01(\v2'.gitpod.v1.EnterpriseAIUserBudgetPolicyR\x06policy\x12[\n" +
-	"\x10effective_policy\x18\x02 \x01(\v20.gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicyR\x0feffectivePolicy\"\xa3\x04\n" +
-	"&SetEnterpriseAIUserBudgetPolicyRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12H\n" +
+	"\x10effective_policy\x18\x02 \x01(\v20.gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicyR\x0feffectivePolicy\"\x81\x04\n" +
+	"&SetEnterpriseAIUserBudgetPolicyRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12H\n" +
 	"\x04mode\x18\x02 \x01(\x0e2%.gitpod.v1.EnterpriseAIUserBudgetModeB\r\xbaH\n" +
-	"\xc8\x01\x01\x82\x01\x04\x10\x01 \x00R\x04mode\x123\n" +
-	"\auser_id\x18\x03 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idH\x00R\x06userId\x88\x01\x01\x12>\n" +
+	"\xc8\x01\x01\x82\x01\x04\x10\x01 \x00R\x04mode\x12&\n" +
+	"\auser_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\x06userId\x88\x01\x01\x12>\n" +
 	"\x14monthly_credit_limit\x18\x04 \x01(\x03B\a\xbaH\x04\"\x02(\x00H\x01R\x12monthlyCreditLimit\x88\x01\x01\x12O\n" +
 	"\x1dmonthly_cost_limit_microunits\x18\x05 \x01(\x03B\a\xbaH\x04\"\x02(\x00H\x02R\x1amonthlyCostLimitMicrounits\x88\x01\x01\x12@\n" +
 	"\bcurrency\x18\x06 \x01(\x0e2\x1a.gitpod.v1.BillingCurrencyB\b\xbaH\x05\x82\x01\x02\x10\x01R\bcurrency\x12\x15\n" +
@@ -10764,20 +10709,17 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x15_monthly_credit_limitB \n" +
 	"\x1e_monthly_cost_limit_microunits\"j\n" +
 	"'SetEnterpriseAIUserBudgetPolicyResponse\x12?\n" +
-	"\x06policy\x18\x01 \x01(\v2'.gitpod.v1.EnterpriseAIUserBudgetPolicyR\x06policy\"\x81\x02\n" +
-	")DeleteEnterpriseAIUserBudgetPolicyRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12H\n" +
+	"\x06policy\x18\x01 \x01(\v2'.gitpod.v1.EnterpriseAIUserBudgetPolicyR\x06policy\"\xdf\x01\n" +
+	")DeleteEnterpriseAIUserBudgetPolicyRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12H\n" +
 	"\x04mode\x18\x02 \x01(\x0e2%.gitpod.v1.EnterpriseAIUserBudgetModeB\r\xbaH\n" +
-	"\xc8\x01\x01\x82\x01\x04\x10\x01 \x00R\x04mode\x123\n" +
-	"\auser_id\x18\x03 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idH\x00R\x06userId\x88\x01\x01B\n" +
+	"\xc8\x01\x01\x82\x01\x04\x10\x01 \x00R\x04mode\x12&\n" +
+	"\auser_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\x06userId\x88\x01\x01B\n" +
 	"\n" +
 	"\b_user_id\",\n" +
-	"*DeleteEnterpriseAIUserBudgetPolicyResponse\"\xac\x01\n" +
-	"\x1fGetCumulativeCreditUsageRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x124\n" +
+	"*DeleteEnterpriseAIUserBudgetPolicyResponse\"\x97\x01\n" +
+	"\x1fGetCumulativeCreditUsageRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x124\n" +
 	"\x05as_of\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\x04asOf\x88\x01\x01B\b\n" +
 	"\x06_as_of\"\xef\x02\n" +
 	" GetCumulativeCreditUsageResponse\x12=\n" +
@@ -10810,13 +10752,12 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x12is_service_account\x18\t \x01(\bR\x10isServiceAccount\x12I\n" +
 	"\x0eusage_by_model\x18\n" +
 	" \x03(\v2#.gitpod.v1.EnterpriseAIUsageByModelR\fusageByModelB\x10\n" +
-	"\x0e_credit_budget\"\xcf\x04\n" +
+	"\x0e_credit_budget\"\xba\x04\n" +
 	"$ListEnterpriseUserCreditUsageRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x12I\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x124\n" +
+	"pagination\x124\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x124\n" +
 	"\x05as_of\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\x04asOf\x88\x01\x01\x12H\n" +
 	"\x04sort\x18\x04 \x01(\v24.gitpod.v1.ListEnterpriseUserCreditUsageRequest.SortR\x04sort\x1a\x83\x01\n" +
 	"\x04Sort\x12O\n" +
@@ -10836,14 +10777,11 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"pagination\x18\x02 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12\x1f\n" +
 	"\vtotal_count\x18\x03 \x01(\x05R\n" +
-	"totalCount\"\x8a\x04\n" +
-	"\x18TeamCreditAllocationInfo\x127\n" +
-	"\x02id\x18\x01 \x01(\tB'\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1b\n" +
-	"\x19team_credit_allocation.idR\x02id\x12.\n" +
-	"\ateam_id\x18\x02 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\x12F\n" +
-	"\x0forganization_id\x18\x03 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12#\n" +
+	"totalCount\"\xc9\x03\n" +
+	"\x18TeamCreditAllocationInfo\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12!\n" +
+	"\ateam_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06teamId\x121\n" +
+	"\x0forganization_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12#\n" +
 	"\rcredit_budget\x18\x04 \x01(\x03R\fcreditBudget\x129\n" +
 	"\n" +
 	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
@@ -10851,12 +10789,10 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x129\n" +
 	"\x16cost_budget_microunits\x18\a \x01(\x03H\x00R\x14costBudgetMicrounits\x88\x01\x01\x12L\n" +
 	"\x14cost_budget_currency\x18\b \x01(\x0e2\x1a.gitpod.v1.BillingCurrencyR\x12costBudgetCurrencyB\x19\n" +
-	"\x17_cost_budget_microunits\"\x86\x03\n" +
-	"!CreateTeamCreditAllocationRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x121\n" +
-	"\ateam_id\x18\x02 \x01(\tB\x18\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\x12,\n" +
+	"\x17_cost_budget_microunits\"\xe4\x02\n" +
+	"!CreateTeamCreditAllocationRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12$\n" +
+	"\ateam_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x06teamId\x12,\n" +
 	"\rcredit_budget\x18\x03 \x01(\x03B\a\xbaH\x04\"\x02(\x00R\fcreditBudget\x12B\n" +
 	"\x16cost_budget_microunits\x18\x04 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\x14costBudgetMicrounits\x88\x01\x01\x12V\n" +
 	"\x14cost_budget_currency\x18\x05 \x01(\x0e2\x1a.gitpod.v1.BillingCurrencyB\b\xbaH\x05\x82\x01\x02\x10\x01R\x12costBudgetCurrencyB\x19\n" +
@@ -10864,21 +10800,17 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\"CreateTeamCreditAllocationResponse\x12C\n" +
 	"\n" +
 	"allocation\x18\x01 \x01(\v2#.gitpod.v1.TeamCreditAllocationInfoR\n" +
-	"allocation\"\x9e\x01\n" +
-	"\x1eGetTeamCreditAllocationRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x121\n" +
-	"\ateam_id\x18\x02 \x01(\tB\x18\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"f\n" +
+	"allocation\"|\n" +
+	"\x1eGetTeamCreditAllocationRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12$\n" +
+	"\ateam_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x06teamId\"f\n" +
 	"\x1fGetTeamCreditAllocationResponse\x12C\n" +
 	"\n" +
 	"allocation\x18\x01 \x01(\v2#.gitpod.v1.TeamCreditAllocationInfoR\n" +
-	"allocation\"\xe8\x03\n" +
-	"!UpdateTeamCreditAllocationRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x121\n" +
-	"\ateam_id\x18\x02 \x01(\tB\x18\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\x12,\n" +
+	"allocation\"\xc6\x03\n" +
+	"!UpdateTeamCreditAllocationRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12$\n" +
+	"\ateam_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x06teamId\x12,\n" +
 	"\rcredit_budget\x18\x03 \x01(\x03B\a\xbaH\x04\"\x02(\x00R\fcreditBudget\x12B\n" +
 	"\x16cost_budget_microunits\x18\x04 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\x14costBudgetMicrounits\x88\x01\x01\x12V\n" +
 	"\x14cost_budget_currency\x18\x05 \x01(\x0e2\x1a.gitpod.v1.BillingCurrencyB\b\xbaH\x05\x82\x01\x02\x10\x01R\x12costBudgetCurrency\x12*\n" +
@@ -10888,16 +10820,13 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\"UpdateTeamCreditAllocationResponse\x12C\n" +
 	"\n" +
 	"allocation\x18\x01 \x01(\v2#.gitpod.v1.TeamCreditAllocationInfoR\n" +
-	"allocation\"\xa1\x01\n" +
-	"!DeleteTeamCreditAllocationRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x121\n" +
-	"\ateam_id\x18\x02 \x01(\tB\x18\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"$\n" +
-	"\"DeleteTeamCreditAllocationResponse\"\x9d\x01\n" +
-	"!SetOrganizationCreditGrantRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12-\n" +
+	"allocation\"\x7f\n" +
+	"!DeleteTeamCreditAllocationRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12$\n" +
+	"\ateam_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x06teamId\"$\n" +
+	"\"DeleteTeamCreditAllocationResponse\"\x88\x01\n" +
+	"!SetOrganizationCreditGrantRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12-\n" +
 	"\fcredit_grant\x18\x02 \x01(\x03B\n" +
 	"\xbaH\a\xc8\x01\x01\"\x02(\x00R\vcreditGrant\"$\n" +
 	"\"SetOrganizationCreditGrantResponse\"\x81\x02\n" +
@@ -10999,7 +10928,7 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"3ENTERPRISE_AI_USER_BUDGET_POLICY_SOURCE_UNSPECIFIED\x10\x00\x120\n" +
 	",ENTERPRISE_AI_USER_BUDGET_POLICY_SOURCE_NONE\x10\x01\x128\n" +
 	"4ENTERPRISE_AI_USER_BUDGET_POLICY_SOURCE_ORGANIZATION\x10\x02\x120\n" +
-	",ENTERPRISE_AI_USER_BUDGET_POLICY_SOURCE_USER\x10\x032\xab,\n" +
+	",ENTERPRISE_AI_USER_BUDGET_POLICY_SOURCE_USER\x10\x032\x81*\n" +
 	"\x0eBillingService\x12Q\n" +
 	"\fSetupBilling\x12\x1e.gitpod.v1.SetupBillingRequest\x1a\x1f.gitpod.v1.SetupBillingResponse\"\x00\x12i\n" +
 	"\x14CompleteBillingSetup\x12&.gitpod.v1.CompleteBillingSetupRequest\x1a'.gitpod.v1.CompleteBillingSetupResponse\"\x00\x12W\n" +
@@ -11025,13 +10954,13 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x1eGetCreditConsumptionTimeSeries\x120.gitpod.v1.GetCreditConsumptionTimeSeriesRequest\x1a1.gitpod.v1.GetCreditConsumptionTimeSeriesResponse\"\x03\x90\x02\x01\x12r\n" +
 	"\x16SetupEnterpriseBilling\x12(.gitpod.v1.SetupEnterpriseBillingRequest\x1a).gitpod.v1.SetupEnterpriseBillingResponse\"\x03\x90\x02\x02\x12r\n" +
 	"\x17UpdateAutoTopupSettings\x12).gitpod.v1.UpdateAutoTopupSettingsRequest\x1a*.gitpod.v1.UpdateAutoTopupSettingsResponse\"\x00\x12l\n" +
-	"\x14GetAutoTopupSettings\x12&.gitpod.v1.GetAutoTopupSettingsRequest\x1a'.gitpod.v1.GetAutoTopupSettingsResponse\"\x03\x90\x02\x01\x12\x89\x01\n" +
-	"\x14GetCreditUsageReport\x12&.gitpod.v1.GetCreditUsageReportRequest\x1a'.gitpod.v1.GetCreditUsageReportResponse\" \xb2\xab\x1e\x19\x12\x17get_credit_usage_report\x90\x02\x01\x12\x89\x01\n" +
-	"\x14GetCreditUsageExport\x12&.gitpod.v1.GetCreditUsageExportRequest\x1a'.gitpod.v1.GetCreditUsageExportResponse\" \xb2\xab\x1e\x19\x12\x17get_credit_usage_export\x90\x02\x01\x12\xa6\x01\n" +
-	"\x1bGetEnterpriseAIUsageSummary\x12-.gitpod.v1.GetEnterpriseAIUsageSummaryRequest\x1a..gitpod.v1.GetEnterpriseAIUsageSummaryResponse\"(\xb2\xab\x1e!\x12\x1fget_enterprise_ai_usage_summary\x90\x02\x01\x12\x9e\x01\n" +
-	"\x19ListEnterpriseAITeamUsage\x12+.gitpod.v1.ListEnterpriseAITeamUsageRequest\x1a,.gitpod.v1.ListEnterpriseAITeamUsageResponse\"&\xb2\xab\x1e\x1f\x12\x1dlist_enterprise_ai_team_usage\x90\x02\x01\x12\x9e\x01\n" +
-	"\x19ListEnterpriseAIUserUsage\x12+.gitpod.v1.ListEnterpriseAIUserUsageRequest\x1a,.gitpod.v1.ListEnterpriseAIUserUsageResponse\"&\xb2\xab\x1e\x1f\x12\x1dlist_enterprise_ai_user_usage\x90\x02\x01\x12\xb3\x01\n" +
-	"\x1eGetEnterpriseAIUsageTimeSeries\x120.gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest\x1a1.gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse\",\xb2\xab\x1e%\x12#get_enterprise_ai_usage_time_series\x90\x02\x01\x12c\n" +
+	"\x14GetAutoTopupSettings\x12&.gitpod.v1.GetAutoTopupSettingsRequest\x1a'.gitpod.v1.GetAutoTopupSettingsResponse\"\x03\x90\x02\x01\x12l\n" +
+	"\x14GetCreditUsageReport\x12&.gitpod.v1.GetCreditUsageReportRequest\x1a'.gitpod.v1.GetCreditUsageReportResponse\"\x03\x90\x02\x01\x12l\n" +
+	"\x14GetCreditUsageExport\x12&.gitpod.v1.GetCreditUsageExportRequest\x1a'.gitpod.v1.GetCreditUsageExportResponse\"\x03\x90\x02\x01\x12\x81\x01\n" +
+	"\x1bGetEnterpriseAIUsageSummary\x12-.gitpod.v1.GetEnterpriseAIUsageSummaryRequest\x1a..gitpod.v1.GetEnterpriseAIUsageSummaryResponse\"\x03\x90\x02\x01\x12{\n" +
+	"\x19ListEnterpriseAITeamUsage\x12+.gitpod.v1.ListEnterpriseAITeamUsageRequest\x1a,.gitpod.v1.ListEnterpriseAITeamUsageResponse\"\x03\x90\x02\x01\x12{\n" +
+	"\x19ListEnterpriseAIUserUsage\x12+.gitpod.v1.ListEnterpriseAIUserUsageRequest\x1a,.gitpod.v1.ListEnterpriseAIUserUsageResponse\"\x03\x90\x02\x01\x12\x8a\x01\n" +
+	"\x1eGetEnterpriseAIUsageTimeSeries\x120.gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest\x1a1.gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse\"\x03\x90\x02\x01\x12c\n" +
 	"\x12CorrectUsageEvents\x12$.gitpod.v1.CorrectUsageEventsRequest\x1a%.gitpod.v1.CorrectUsageEventsResponse\"\x00\x12`\n" +
 	"\x11InsertUsageEvents\x12#.gitpod.v1.InsertUsageEventsRequest\x1a$.gitpod.v1.InsertUsageEventsResponse\"\x00\x12\x84\x01\n" +
 	"\x1dCorrectEnvironmentUsageEvents\x12/.gitpod.v1.CorrectEnvironmentUsageEventsRequest\x1a0.gitpod.v1.CorrectEnvironmentUsageEventsResponse\"\x00\x12x\n" +
@@ -11041,15 +10970,14 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\"ListEnterpriseAIUserBudgetPolicies\x124.gitpod.v1.ListEnterpriseAIUserBudgetPoliciesRequest\x1a5.gitpod.v1.ListEnterpriseAIUserBudgetPoliciesResponse\"\x03\x90\x02\x01\x12\x8d\x01\n" +
 	"\x1fGetEnterpriseAIUserBudgetPolicy\x121.gitpod.v1.GetEnterpriseAIUserBudgetPolicyRequest\x1a2.gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse\"\x03\x90\x02\x01\x12\x8a\x01\n" +
 	"\x1fSetEnterpriseAIUserBudgetPolicy\x121.gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest\x1a2.gitpod.v1.SetEnterpriseAIUserBudgetPolicyResponse\"\x00\x12\x93\x01\n" +
-	"\"DeleteEnterpriseAIUserBudgetPolicy\x124.gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest\x1a5.gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyResponse\"\x00\x12\x99\x01\n" +
-	"\x18GetCumulativeCreditUsage\x12*.gitpod.v1.GetCumulativeCreditUsageRequest\x1a+.gitpod.v1.GetCumulativeCreditUsageResponse\"$\xb2\xab\x1e\x1d\x12\x1bget_cumulative_credit_usage\x90\x02\x01\x12\xae\x01\n" +
-	"\x1dListEnterpriseUserCreditUsage\x12/.gitpod.v1.ListEnterpriseUserCreditUsageRequest\x1a0.gitpod.v1.ListEnterpriseUserCreditUsageResponse\"*\xb2\xab\x1e#\x12!list_enterprise_user_credit_usage\x90\x02\x01\x12{\n" +
+	"\"DeleteEnterpriseAIUserBudgetPolicy\x124.gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest\x1a5.gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyResponse\"\x00\x12x\n" +
+	"\x18GetCumulativeCreditUsage\x12*.gitpod.v1.GetCumulativeCreditUsageRequest\x1a+.gitpod.v1.GetCumulativeCreditUsageResponse\"\x03\x90\x02\x01\x12\x87\x01\n" +
+	"\x1dListEnterpriseUserCreditUsage\x12/.gitpod.v1.ListEnterpriseUserCreditUsageRequest\x1a0.gitpod.v1.ListEnterpriseUserCreditUsageResponse\"\x03\x90\x02\x01\x12{\n" +
 	"\x1aCreateTeamCreditAllocation\x12,.gitpod.v1.CreateTeamCreditAllocationRequest\x1a-.gitpod.v1.CreateTeamCreditAllocationResponse\"\x00\x12u\n" +
 	"\x17GetTeamCreditAllocation\x12).gitpod.v1.GetTeamCreditAllocationRequest\x1a*.gitpod.v1.GetTeamCreditAllocationResponse\"\x03\x90\x02\x01\x12{\n" +
 	"\x1aUpdateTeamCreditAllocation\x12,.gitpod.v1.UpdateTeamCreditAllocationRequest\x1a-.gitpod.v1.UpdateTeamCreditAllocationResponse\"\x00\x12{\n" +
 	"\x1aDeleteTeamCreditAllocation\x12,.gitpod.v1.DeleteTeamCreditAllocationRequest\x1a-.gitpod.v1.DeleteTeamCreditAllocationResponse\"\x00\x12{\n" +
-	"\x1aSetOrganizationCreditGrant\x12,.gitpod.v1.SetOrganizationCreditGrantRequest\x1a-.gitpod.v1.SetOrganizationCreditGrantResponse\"\x00\x1a\r\xaa\xab\x1e\t\n" +
-	"\abillingB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x1aSetOrganizationCreditGrant\x12,.gitpod.v1.SetOrganizationCreditGrantRequest\x1a-.gitpod.v1.SetOrganizationCreditGrantResponse\"\x00B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_billing_proto_rawDescOnce sync.Once
