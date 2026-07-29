@@ -6,6 +6,7 @@ It covers:
 
 - `ona_runner`
 - `ona_scm_integration`
+- `ona_git_authentication`
 - `ona_environment_class`
 - `ona_custom_domain`
 - `ona_sso_configuration`
@@ -26,6 +27,10 @@ configuration creates runners, SCM integrations, an environment class, a
 project, and a warm pool. The import loop can also discover other matching
 objects in the organization, so review the generated configuration before
 applying it.
+
+Git authentication is opt-in in the local development loop. Enable its
+`ona_git_authentication.devloop` resource and supply the ephemeral personal
+access token when you need a repeatable Git-authentication import fixture.
 
 ## Prepare the Local Provider
 

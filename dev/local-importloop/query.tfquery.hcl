@@ -8,6 +8,11 @@ list "ona_scm_integration" "all" {
   include_resource = true
 }
 
+list "ona_git_authentication" "all" {
+  provider         = ona
+  include_resource = true
+}
+
 list "ona_environment_class" "all" {
   provider         = ona
   include_resource = true
