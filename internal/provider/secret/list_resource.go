@@ -11,6 +11,7 @@ import (
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/list"
 	listschema "github.com/hashicorp/terraform-plugin-framework/list/schema"
@@ -52,7 +53,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 		data := Model{Scope: config.Scope, ProjectID: config.ProjectID, UserID: config.UserID, ServiceAccountID: config.ServiceAccountID}
 		var resolveDiags diag.Diagnostics
 		var resolved resolvedScope
-		if config.Scope.ValueString() == scopeOrganization && isKnownString(config.OrganizationID) {
+		if config.Scope.ValueString() == scopeOrganization && tfvalue.IsKnownString(config.OrganizationID) {
 			resolved.Scope = &v1.SecretScope{Scope: &v1.SecretScope_OrganizationId{OrganizationId: config.OrganizationID.ValueString()}}
 		} else {
 			resolved = r.resolveScope(ctx, &data, &resolveDiags)

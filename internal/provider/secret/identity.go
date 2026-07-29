@@ -6,6 +6,7 @@ package secret
 import (
 	"context"
 
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -42,7 +43,7 @@ func identityFromModel(data Model, organizationID string) IdentityModel {
 	}
 	switch data.Scope.ValueString() {
 	case scopeOrganization:
-		identity.OrganizationID = stringOptionalValue(organizationID)
+		identity.OrganizationID = tfvalue.OptionalStringValue(organizationID)
 	case scopeProject:
 		identity.ProjectID = data.ProjectID
 	case scopeUser:

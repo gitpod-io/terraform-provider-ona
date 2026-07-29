@@ -259,24 +259,24 @@ func (r *Resource) ImportState(ctx context.Context, req resource.ImportStateRequ
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("scope"), identity.Scope)...)
 		switch identity.Scope.ValueString() {
 		case scopeOrganization:
-			if !isKnownString(identity.OrganizationID) {
+			if !tfvalue.IsKnownString(identity.OrganizationID) {
 				resp.Diagnostics.AddError("Invalid Secret Identity", "organization_id is required for organization scope.")
 				return
 			}
 		case scopeProject:
-			if !isKnownString(identity.ProjectID) {
+			if !tfvalue.IsKnownString(identity.ProjectID) {
 				resp.Diagnostics.AddError("Invalid Secret Identity", "project_id is required for project scope.")
 				return
 			}
 			resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("project_id"), identity.ProjectID)...)
 		case scopeUser:
-			if !isKnownString(identity.UserID) {
+			if !tfvalue.IsKnownString(identity.UserID) {
 				resp.Diagnostics.AddError("Invalid Secret Identity", "user_id is required for user scope.")
 				return
 			}
 			resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("user_id"), identity.UserID)...)
 		case scopeServiceAccount:
-			if !isKnownString(identity.ServiceAccountID) {
+			if !tfvalue.IsKnownString(identity.ServiceAccountID) {
 				resp.Diagnostics.AddError("Invalid Secret Identity", "service_account_id is required for service_account scope.")
 				return
 			}
