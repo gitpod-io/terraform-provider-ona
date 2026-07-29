@@ -143,18 +143,22 @@ test "$(terraform -chdir=dev/local-devloop output -raw managed_git_authenticatio
 ```
 
 The PAT is an ephemeral variable passed to a write-only resource argument, so
-Terraform does not store it in plan or state. Keep the same variable values
-while destroying the focused test resources so Terraform retains the intended
-dependency ordering:
+Terraform does not store it in plan or state. To remove only the Git
+authentication association while leaving shared dev-loop dependencies intact,
+keep the same variable values and target its resource instance:
 
 ```shell
 terraform -chdir=dev/local-devloop destroy \
+  -target="${GIT_AUTH_TARGET}" \
   -var='enable_git_authentication=true' \
   -var="git_personal_access_token_version=${GIT_AUTH_VERSION}" \
   -auto-approve -input=false
 
 unset ONA_TOKEN TF_VAR_git_personal_access_token GIT_AUTH_TARGET GIT_AUTH_VERSION
 ```
+
+Use the full cleanup command at the end of this README only when every resource
+in the dev-loop state should be destroyed.
 
 AI budget resources are opt-in because they require an enterprise organization,
 suitable Billing permissions, and change organization billing policy. Enabling
