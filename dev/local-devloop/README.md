@@ -75,20 +75,85 @@ Terraform outputs or stored in state.
 The integration uses the visible built-in definition for `linear.app`, so the
 dev loop does not require or persist an OAuth client secret.
 
+## Test service-account Git authentication
+
 Service-account Git authentication is opt-in because it requires a real SCM
-personal access token. Supply the token through an ephemeral input; Terraform
-sends it to Ona through the resource's write-only argument and does not store
-it in plan or state. Change `git_personal_access_token_version` whenever the
-stored token changes:
+personal access token. Use Terraform 1.11 or later. The Ona API token must be
+able to manage the runner, service account, and SCM integration used by the dev
+loop. The GitHub PAT must have the repository access that the service account
+will use.
+
+Read both credentials without placing them in shell history, and configure the
+local provider override created above:
 
 ```shell
-ONA_TOKEN=... \
-TF_VAR_git_personal_access_token=... \
-TF_CLI_CONFIG_FILE="${PWD}/terraformrc" \
+read -rsp 'Ona API token: ' ONA_TOKEN && echo
+export ONA_TOKEN
+
+read -rsp 'GitHub personal access token: ' TF_VAR_git_personal_access_token && echo
+export TF_VAR_git_personal_access_token
+
+export TF_CLI_CONFIG_FILE="${PWD}/terraformrc"
+export GIT_AUTH_TARGET='ona_git_authentication.devloop[0]'
+export GIT_AUTH_VERSION='v1'
+```
+
+Apply only the Git authentication and its runner, service-account, and SCM
+integration dependencies:
+
+```shell
 terraform -chdir=dev/local-devloop apply \
+  -target="${GIT_AUTH_TARGET}" \
   -var='enable_git_authentication=true' \
-  -var='git_personal_access_token_version=v2' \
+  -var="git_personal_access_token_version=${GIT_AUTH_VERSION}" \
   -auto-approve -input=false
+```
+
+Record the created authentication ID, inspect its state, and run the same plan
+again. The state must not contain a `personal_access_token` value, and the plan
+should report no changes:
+
+```shell
+GIT_AUTH_ID="$(terraform -chdir=dev/local-devloop output -raw managed_git_authentication_id)"
+terraform -chdir=dev/local-devloop state show "${GIT_AUTH_TARGET}"
+
+terraform -chdir=dev/local-devloop plan \
+  -target="${GIT_AUTH_TARGET}" \
+  -var='enable_git_authentication=true' \
+  -var="git_personal_access_token_version=${GIT_AUTH_VERSION}" \
+  -input=false
+```
+
+To test in-place PAT rotation, read the replacement PAT, change the non-secret
+version marker, and apply again. The final command must succeed, proving that
+the authentication ID did not change:
+
+```shell
+read -rsp 'Replacement GitHub personal access token: ' TF_VAR_git_personal_access_token && echo
+export TF_VAR_git_personal_access_token
+export GIT_AUTH_VERSION='v2'
+
+terraform -chdir=dev/local-devloop apply \
+  -target="${GIT_AUTH_TARGET}" \
+  -var='enable_git_authentication=true' \
+  -var="git_personal_access_token_version=${GIT_AUTH_VERSION}" \
+  -auto-approve -input=false
+
+test "$(terraform -chdir=dev/local-devloop output -raw managed_git_authentication_id)" = "${GIT_AUTH_ID}"
+```
+
+The PAT is an ephemeral variable passed to a write-only resource argument, so
+Terraform does not store it in plan or state. Keep the same variable values
+while destroying the focused test resources so Terraform retains the intended
+dependency ordering:
+
+```shell
+terraform -chdir=dev/local-devloop destroy \
+  -var='enable_git_authentication=true' \
+  -var="git_personal_access_token_version=${GIT_AUTH_VERSION}" \
+  -auto-approve -input=false
+
+unset ONA_TOKEN TF_VAR_git_personal_access_token GIT_AUTH_TARGET GIT_AUTH_VERSION
 ```
 
 AI budget resources are opt-in because they require an enterprise organization,
