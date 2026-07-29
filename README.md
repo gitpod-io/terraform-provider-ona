@@ -139,9 +139,9 @@ make build
 ```
 
 `make test` runs the unit and acceptance test suites. Run it, `make test-acc`,
-or the [local Terraform development loop](dev/local-devloop/README.md) only when
-you are authorized to perform credentialed operations and have the required Ona
-credentials.
+the [local Terraform development loop](dev/local-devloop/README.md), or the
+[local import loop](dev/local-importloop/README.md) only when you are authorized
+to perform credentialed operations and have the required Ona credentials.
 
 Never commit tokens, private keys, Terraform state or saved plans, local
 provider override files, or release signing material.

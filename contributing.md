@@ -47,6 +47,7 @@ make install-dependencies
 | `templates/` | Source templates used by documentation generation |
 | `scripts/` | Import, validation, and release tooling |
 | `dev/local-devloop/` | Local Terraform configuration for exercising a development build |
+| `dev/local-importloop/` | Local Terraform Query configuration for exercising all supported bulk imports |
 | `tools/` | Separate Go module containing documentation generation tools |
 
 ## Making local changes
@@ -95,10 +96,11 @@ make test
 ```
 
 Treat acceptance tests and live Terraform plans as credentialed operations.
-Run `make test-acc` or the configuration under `dev/local-devloop/` only when
-the change requires it, you have been explicitly authorized, and the required
-Ona credentials are available. Never commit tokens, private keys, Terraform
-state, provider override files, or release signing material.
+Run `make test-acc` or the configurations under `dev/local-devloop/` and
+`dev/local-importloop/` only when the change requires it, you have been
+explicitly authorized, and the required Ona credentials are available. Never
+commit tokens, private keys, Terraform state, provider override files, or
+release signing material.
 
 ## License
 
