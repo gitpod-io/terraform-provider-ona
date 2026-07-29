@@ -1,8 +1,10 @@
 RELEASE_SNAPSHOT_VERSION ?= 0.0.0-SNAPSHOT
 
 # Discover only checked-in modules, excluding scratch and dependency cache trees.
+# api/public-clients/go is copied output; the provider validates the packages it uses through the root module.
 GO_MODULE_DIRS := $(shell git ls-files --cached -- '*go.mod' | \
 	awk '!/(^|\/)(\.git|\.tmp|\.cache|cache|vendor|node_modules)(\/|$$)/' | \
+	awk '$$0 != "api/public-clients/go/go.mod"' | \
 	sed -e 's#/go.mod$$##' -e 's#^go.mod$$#.#' | sort)
 # Remove "." (the root module) because the standard test and build targets cover it.
 SECONDARY_GO_MODULE_DIRS := $(filter-out .,$(GO_MODULE_DIRS))
