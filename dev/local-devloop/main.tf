@@ -208,7 +208,7 @@ data "ona_warm_pools" "devloop" {
   environment_class_ids = [ona_environment_class.devloop.id]
 }
 
-resource "ona_scm_integration" "github_oauth" {
+resource "ona_scm_integration" "github_pat" {
   runner_id = ona_runner.devloop.runner_id
 
   kind = "github"
@@ -221,7 +221,7 @@ resource "ona_git_authentication" "devloop" {
   count = var.enable_git_authentication ? 1 : 0
 
   service_account_id            = ona_service_account.devloop.id
-  scm_integration_id            = ona_scm_integration.github_oauth.id
+  scm_integration_id            = ona_scm_integration.github_pat.id
   personal_access_token         = var.git_personal_access_token
   personal_access_token_version = var.git_personal_access_token_version
 }

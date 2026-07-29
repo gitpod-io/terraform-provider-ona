@@ -958,6 +958,8 @@ type fakeRunnerConfigurationService struct {
 	hostAuthenticationGetCounts        map[string]int
 	hostAuthenticationGetMisses        map[string]int
 	hostAuthenticationPostUpdateMisses map[string]int
+	hostAuthenticationListRequests     []*v1.ListHostAuthenticationTokensRequest
+	hostAuthenticationPageSizeLimit    int32
 	hostAuthenticationDeletes          []string
 	hostAuthenticationPATUpdates       map[string][]string
 	scmIntegrations                    map[string]*v1.SCMIntegration
@@ -998,12 +1000,12 @@ func (s *fakeRunnerConfigurationService) CreateHostAuthenticationToken(ctx conte
 		ExpiresAt:     req.Msg.GetExpiresAt(),
 		IntegrationId: req.Msg.GetIntegrationId(),
 		Scopes:        append([]string(nil), req.Msg.GetScopes()...),
-		Subject:       cloneRunnerConfigurationSubject(req.Msg.GetSubject()),
+		Subject:       proto.CloneOf(req.Msg.GetSubject()),
 	}
 	s.hostAuthenticationTokens[id] = token
-	s.hostAuthenticationCreateRequests[id] = cloneCreateHostAuthenticationTokenRequest(req.Msg)
+	s.hostAuthenticationCreateRequests[id] = proto.CloneOf(req.Msg)
 	s.recordHostAuthenticationPATUpdate(id, req.Msg.GetToken())
-	return connect.NewResponse(&v1.CreateHostAuthenticationTokenResponse{Token: cloneHostAuthenticationToken(token)}), nil
+	return connect.NewResponse(&v1.CreateHostAuthenticationTokenResponse{Token: proto.CloneOf(token)}), nil
 }
 
 func (s *fakeRunnerConfigurationService) GetHostAuthenticationToken(ctx context.Context, req *connect.Request[v1.GetHostAuthenticationTokenRequest]) (*connect.Response[v1.GetHostAuthenticationTokenResponse], error) {
@@ -1019,13 +1021,14 @@ func (s *fakeRunnerConfigurationService) GetHostAuthenticationToken(ctx context.
 	if token == nil {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("host authentication token not found"))
 	}
-	return connect.NewResponse(&v1.GetHostAuthenticationTokenResponse{Token: cloneHostAuthenticationToken(token)}), nil
+	return connect.NewResponse(&v1.GetHostAuthenticationTokenResponse{Token: proto.CloneOf(token)}), nil
 }
 
 func (s *fakeRunnerConfigurationService) ListHostAuthenticationTokens(ctx context.Context, req *connect.Request[v1.ListHostAuthenticationTokensRequest]) (*connect.Response[v1.ListHostAuthenticationTokensResponse], error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	s.hostAuthenticationListRequests = append(s.hostAuthenticationListRequests, proto.CloneOf(req.Msg))
 	var tokens []*v1.HostAuthenticationToken
 	for _, token := range s.hostAuthenticationTokens {
 		if runnerID := req.Msg.GetFilter().GetRunnerId(); runnerID != "" && token.GetRunnerId() != runnerID {
@@ -1034,10 +1037,14 @@ func (s *fakeRunnerConfigurationService) ListHostAuthenticationTokens(ctx contex
 		if subjectID := req.Msg.GetFilter().GetSubjectId(); subjectID != "" && token.GetSubject().GetId() != subjectID {
 			continue
 		}
-		tokens = append(tokens, cloneHostAuthenticationToken(token))
+		tokens = append(tokens, proto.CloneOf(token))
 	}
 	sort.Slice(tokens, func(i, j int) bool { return tokens[i].GetId() < tokens[j].GetId() })
-	return connect.NewResponse(&v1.ListHostAuthenticationTokensResponse{Tokens: tokens, Pagination: &v1.PaginationResponse{}}), nil
+	start, end, nextToken, err := fakePage(req.Msg.GetPagination(), len(tokens), s.hostAuthenticationPageSizeLimit)
+	if err != nil {
+		return nil, err
+	}
+	return connect.NewResponse(&v1.ListHostAuthenticationTokensResponse{Tokens: tokens[start:end], Pagination: &v1.PaginationResponse{NextToken: nextToken}}), nil
 }
 
 func (s *fakeRunnerConfigurationService) UpdateHostAuthenticationToken(ctx context.Context, req *connect.Request[v1.UpdateHostAuthenticationTokenRequest]) (*connect.Response[v1.UpdateHostAuthenticationTokenResponse], error) {
@@ -1047,7 +1054,7 @@ func (s *fakeRunnerConfigurationService) UpdateHostAuthenticationToken(ctx conte
 	if s.hostAuthenticationTokens[req.Msg.GetId()] == nil {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("host authentication token not found"))
 	}
-	s.hostAuthenticationUpdateRequests[req.Msg.GetId()] = append(s.hostAuthenticationUpdateRequests[req.Msg.GetId()], cloneUpdateHostAuthenticationTokenRequest(req.Msg))
+	s.hostAuthenticationUpdateRequests[req.Msg.GetId()] = append(s.hostAuthenticationUpdateRequests[req.Msg.GetId()], proto.CloneOf(req.Msg))
 	if req.Msg.Token != nil {
 		s.recordHostAuthenticationPATUpdate(req.Msg.GetId(), req.Msg.GetToken())
 	}
@@ -1096,7 +1103,7 @@ func (s *fakeRunnerConfigurationService) CreateSCMIntegration(ctx context.Contex
 	if req.Msg.OauthPlaintextClientSecret != nil {
 		s.recordSCMSecretUpdate(id, req.Msg.GetOauthPlaintextClientSecret())
 	}
-	s.scmCreateRequests[id] = cloneCreateSCMIntegrationRequest(req.Msg)
+	s.scmCreateRequests[id] = proto.CloneOf(req.Msg)
 	s.scmIntegrations[id] = integration
 	return connect.NewResponse(&v1.CreateSCMIntegrationResponse{Id: id}), nil
 }
@@ -1109,7 +1116,7 @@ func (s *fakeRunnerConfigurationService) GetSCMIntegration(ctx context.Context, 
 	if integration == nil {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("SCM integration not found"))
 	}
-	return connect.NewResponse(&v1.GetSCMIntegrationResponse{Integration: cloneSCMIntegration(integration)}), nil
+	return connect.NewResponse(&v1.GetSCMIntegrationResponse{Integration: proto.CloneOf(integration)}), nil
 }
 
 func (s *fakeRunnerConfigurationService) ListSCMIntegrations(ctx context.Context, req *connect.Request[v1.ListSCMIntegrationsRequest]) (*connect.Response[v1.ListSCMIntegrationsResponse], error) {
@@ -1128,7 +1135,7 @@ func (s *fakeRunnerConfigurationService) ListSCMIntegrations(ctx context.Context
 				continue
 			}
 		}
-		integrations = append(integrations, cloneSCMIntegration(integration))
+		integrations = append(integrations, proto.CloneOf(integration))
 	}
 	sort.Slice(integrations, func(i, j int) bool {
 		return integrations[i].GetId() < integrations[j].GetId()
@@ -1148,7 +1155,7 @@ func (s *fakeRunnerConfigurationService) UpdateSCMIntegration(ctx context.Contex
 	if integration == nil {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("SCM integration not found"))
 	}
-	s.scmUpdateRequests[req.Msg.GetId()] = append(s.scmUpdateRequests[req.Msg.GetId()], cloneUpdateSCMIntegrationRequest(req.Msg))
+	s.scmUpdateRequests[req.Msg.GetId()] = append(s.scmUpdateRequests[req.Msg.GetId()], proto.CloneOf(req.Msg))
 	if req.Msg.Pat != nil {
 		integration.Pat = req.Msg.GetPat()
 	}
@@ -1210,7 +1217,7 @@ func (s *fakeRunnerConfigurationService) CreateLLMIntegration(ctx context.Contex
 	if req.Msg.GetApiKey() != "" {
 		s.recordLLMAPIKeyUpdate(id, req.Msg.GetApiKey())
 	}
-	s.llmCreateRequests[id] = cloneCreateLLMIntegrationRequest(req.Msg)
+	s.llmCreateRequests[id] = proto.CloneOf(req.Msg)
 	s.llmIntegrations[id] = integration
 	return connect.NewResponse(&v1.CreateLLMIntegrationResponse{Id: id}), nil
 }
@@ -1223,7 +1230,7 @@ func (s *fakeRunnerConfigurationService) GetLLMIntegration(ctx context.Context, 
 	if integration == nil {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("LLM integration not found"))
 	}
-	return connect.NewResponse(&v1.GetLLMIntegrationResponse{Integration: cloneLLMIntegration(integration)}), nil
+	return connect.NewResponse(&v1.GetLLMIntegrationResponse{Integration: proto.CloneOf(integration)}), nil
 }
 
 func (s *fakeRunnerConfigurationService) UpdateLLMIntegration(ctx context.Context, req *connect.Request[v1.UpdateLLMIntegrationRequest]) (*connect.Response[v1.UpdateLLMIntegrationResponse], error) {
@@ -1234,7 +1241,7 @@ func (s *fakeRunnerConfigurationService) UpdateLLMIntegration(ctx context.Contex
 	if integration == nil {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("LLM integration not found"))
 	}
-	s.llmUpdateRequests[req.Msg.GetId()] = append(s.llmUpdateRequests[req.Msg.GetId()], cloneUpdateLLMIntegrationRequest(req.Msg))
+	s.llmUpdateRequests[req.Msg.GetId()] = append(s.llmUpdateRequests[req.Msg.GetId()], proto.CloneOf(req.Msg))
 	if req.Msg.Endpoint != nil {
 		integration.Endpoint = req.Msg.GetEndpoint()
 	}
@@ -1301,7 +1308,7 @@ func (s *fakeRunnerConfigurationService) GetEnvironmentClass(ctx context.Context
 	if class == nil {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("environment class not found"))
 	}
-	return connect.NewResponse(&v1.GetEnvironmentClassResponse{EnvironmentClass: cloneEnvironmentClass(class)}), nil
+	return connect.NewResponse(&v1.GetEnvironmentClassResponse{EnvironmentClass: proto.CloneOf(class)}), nil
 }
 
 func (s *fakeRunnerConfigurationService) ListEnvironmentClasses(ctx context.Context, req *connect.Request[v1.ListEnvironmentClassesRequest]) (*connect.Response[v1.ListEnvironmentClassesResponse], error) {
@@ -1342,7 +1349,7 @@ func (s *fakeRunnerConfigurationService) ListEnvironmentClasses(ctx context.Cont
 		if enabled := req.Msg.GetFilter().Enabled; enabled != nil && class.GetEnabled() != *enabled {
 			continue
 		}
-		classes = append(classes, cloneEnvironmentClass(class))
+		classes = append(classes, proto.CloneOf(class))
 	}
 	sort.Slice(classes, func(i, j int) bool { return classes[i].GetId() < classes[j].GetId() })
 	return connect.NewResponse(&v1.ListEnvironmentClassesResponse{EnvironmentClasses: classes}), nil
@@ -1414,7 +1421,18 @@ func (s *fakeRunnerConfigurationService) hostAuthenticationCreateRequest(id stri
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	return cloneCreateHostAuthenticationTokenRequest(s.hostAuthenticationCreateRequests[id])
+	return proto.CloneOf(s.hostAuthenticationCreateRequests[id])
+}
+
+func (s *fakeRunnerConfigurationService) hostAuthenticationListRequestsSnapshot() []*v1.ListHostAuthenticationTokensRequest {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	requests := make([]*v1.ListHostAuthenticationTokensRequest, 0, len(s.hostAuthenticationListRequests))
+	for _, request := range s.hostAuthenticationListRequests {
+		requests = append(requests, proto.CloneOf(request))
+	}
+	return requests
 }
 
 func (s *fakeRunnerConfigurationService) hostAuthenticationCreateCount() int {
@@ -1562,106 +1580,6 @@ func (s *fakeRunnerConfigurationService) recordLLMAPIKeyUpdate(id string, apiKey
 		s.llmAPIKeyUpdates = map[string][]string{}
 	}
 	s.llmAPIKeyUpdates[id] = append(s.llmAPIKeyUpdates[id], apiKey)
-}
-
-func cloneSCMIntegration(integration *v1.SCMIntegration) *v1.SCMIntegration {
-	cloned, ok := proto.Clone(integration).(*v1.SCMIntegration)
-	if !ok {
-		return nil
-	}
-	return cloned
-}
-
-func cloneHostAuthenticationToken(token *v1.HostAuthenticationToken) *v1.HostAuthenticationToken {
-	if token == nil {
-		return nil
-	}
-	cloned, ok := proto.Clone(token).(*v1.HostAuthenticationToken)
-	if !ok {
-		return nil
-	}
-	return cloned
-}
-
-func cloneRunnerConfigurationSubject(subject *v1.Subject) *v1.Subject {
-	if subject == nil {
-		return nil
-	}
-	cloned, ok := proto.Clone(subject).(*v1.Subject)
-	if !ok {
-		return nil
-	}
-	return cloned
-}
-
-func cloneCreateHostAuthenticationTokenRequest(request *v1.CreateHostAuthenticationTokenRequest) *v1.CreateHostAuthenticationTokenRequest {
-	if request == nil {
-		return nil
-	}
-	cloned, ok := proto.Clone(request).(*v1.CreateHostAuthenticationTokenRequest)
-	if !ok {
-		return nil
-	}
-	return cloned
-}
-
-func cloneUpdateHostAuthenticationTokenRequest(request *v1.UpdateHostAuthenticationTokenRequest) *v1.UpdateHostAuthenticationTokenRequest {
-	if request == nil {
-		return nil
-	}
-	cloned, ok := proto.Clone(request).(*v1.UpdateHostAuthenticationTokenRequest)
-	if !ok {
-		return nil
-	}
-	return cloned
-}
-
-func cloneLLMIntegration(integration *v1.LLMIntegration) *v1.LLMIntegration {
-	cloned, ok := proto.Clone(integration).(*v1.LLMIntegration)
-	if !ok {
-		return nil
-	}
-	return cloned
-}
-
-func cloneCreateSCMIntegrationRequest(request *v1.CreateSCMIntegrationRequest) *v1.CreateSCMIntegrationRequest {
-	cloned, ok := proto.Clone(request).(*v1.CreateSCMIntegrationRequest)
-	if !ok {
-		return nil
-	}
-	return cloned
-}
-
-func cloneCreateLLMIntegrationRequest(request *v1.CreateLLMIntegrationRequest) *v1.CreateLLMIntegrationRequest {
-	cloned, ok := proto.Clone(request).(*v1.CreateLLMIntegrationRequest)
-	if !ok {
-		return nil
-	}
-	return cloned
-}
-
-func cloneUpdateSCMIntegrationRequest(request *v1.UpdateSCMIntegrationRequest) *v1.UpdateSCMIntegrationRequest {
-	cloned, ok := proto.Clone(request).(*v1.UpdateSCMIntegrationRequest)
-	if !ok {
-		return nil
-	}
-	return cloned
-}
-
-func cloneUpdateLLMIntegrationRequest(request *v1.UpdateLLMIntegrationRequest) *v1.UpdateLLMIntegrationRequest {
-	cloned, ok := proto.Clone(request).(*v1.UpdateLLMIntegrationRequest)
-	if !ok {
-		return nil
-	}
-	return cloned
-}
-
-func cloneEnvironmentClass(class *v1.EnvironmentClass) *v1.EnvironmentClass {
-	cloned, ok := proto.Clone(class).(*v1.EnvironmentClass)
-	if !ok {
-		return nil
-	}
-	return cloned
 }
 
 func cloneFieldValues(values []*v1.FieldValue) []*v1.FieldValue {

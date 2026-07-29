@@ -2,12 +2,12 @@
 page_title: "ona_service_account Resource - ona"
 subcategory: "Identity and Access"
 description: |-
-  Ona service account for non-human API access. Issue tokens with the ona_service_account_token ephemeral resource, and configure source-control access with ona_git_authentication.
+  Ona service account for non-human API access. Issue tokens with the ona_service_account_token ephemeral resource and use them only for supported service-account-token workflows. Link a source-control personal access token to the service account with ona_git_authentication.
 ---
 
 # ona_service_account (Resource)
 
-Ona service account for non-human API access. Issue tokens with the `ona_service_account_token` ephemeral resource, and configure source-control access with `ona_git_authentication`.
+Ona service account for non-human API access. Issue tokens with the `ona_service_account_token` ephemeral resource and use them only for supported service-account-token workflows. Link a source-control personal access token to the service account with `ona_git_authentication`.
 
 For product context, see [Service accounts](https://ona.com/docs/ona/organizations/service-accounts), [Manage groups](https://ona.com/docs/ona/organizations/groups), and [Organization roles](https://ona.com/docs/ona/organizations/organization-roles).
 

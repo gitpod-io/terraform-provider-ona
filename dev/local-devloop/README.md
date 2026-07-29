@@ -19,7 +19,7 @@ and data sources:
 - `ona_project.devloop`
 - `ona_webhook.devloop`
 - `ona_warm_pool.devloop`
-- `ona_scm_integration.github_oauth`
+- `ona_scm_integration.github_pat`
 - `ona_git_authentication.devloop` (opt-in)
 - `ona_scm_integration.gitlab_pat`
 - `ona_scm_integration.azuredevops_entra`

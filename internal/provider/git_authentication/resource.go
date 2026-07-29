@@ -134,8 +134,8 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !knownString(pat) {
-		resp.Diagnostics.AddAttributeError(path.Root("personal_access_token"), "Missing Personal Access Token", "Set personal_access_token when creating ona_git_authentication resources.")
+	resp.Diagnostics.Append(validateCreateInput(data, pat)...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 	if !r.requireClient(&resp.Diagnostics, "creating") {
@@ -152,11 +152,7 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 		return
 	}
 
-	createReq, requestDiags := createHostAuthenticationTokenRequest(data, integration, pat)
-	resp.Diagnostics.Append(requestDiags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
+	createReq := createHostAuthenticationTokenRequest(data, integration, pat)
 	result, err := r.client.RunnerConfigurationService().CreateHostAuthenticationToken(ctx, connect.NewRequest(createReq))
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Create Ona Git Authentication", "creating the service-account Git authentication", err)
@@ -442,7 +438,7 @@ func knownString(value types.String) bool {
 	return !value.IsNull() && !value.IsUnknown() && value.ValueString() != ""
 }
 
-func createHostAuthenticationTokenRequest(data Model, integration *v1.SCMIntegration, pat types.String) (*v1.CreateHostAuthenticationTokenRequest, diag.Diagnostics) {
+func validateCreateInput(data Model, pat types.String) diag.Diagnostics {
 	var diags diag.Diagnostics
 	if !knownString(data.ServiceAccountID) {
 		diags.AddAttributeError(path.Root("service_account_id"), "Missing Service Account ID", "Set service_account_id to a known, non-empty Ona service account ID.")
@@ -450,10 +446,10 @@ func createHostAuthenticationTokenRequest(data Model, integration *v1.SCMIntegra
 	if !knownString(pat) {
 		diags.AddAttributeError(path.Root("personal_access_token"), "Missing Personal Access Token", "Set personal_access_token when creating ona_git_authentication resources.")
 	}
-	diags.Append(validateSCMIntegration(integration, data.SCMIntegrationID.ValueString())...)
-	if diags.HasError() {
-		return nil, diags
-	}
+	return diags
+}
+
+func createHostAuthenticationTokenRequest(data Model, integration *v1.SCMIntegration, pat types.String) *v1.CreateHostAuthenticationTokenRequest {
 	return &v1.CreateHostAuthenticationTokenRequest{
 		RunnerId:      integration.GetRunnerId(),
 		Host:          integration.GetHost(),
@@ -464,7 +460,7 @@ func createHostAuthenticationTokenRequest(data Model, integration *v1.SCMIntegra
 			Id:        data.ServiceAccountID.ValueString(),
 			Principal: v1.Principal_PRINCIPAL_SERVICE_ACCOUNT,
 		},
-	}, diags
+	}
 }
 
 func secretVersionChanged(current types.String, prior types.String) bool {

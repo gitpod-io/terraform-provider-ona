@@ -59,54 +59,58 @@ func TestSchemaRestrictsSubjectAndProtectsPAT(t *testing.T) {
 func TestCreateHostAuthenticationTokenRequest(t *testing.T) {
 	t.Parallel()
 
+	model := Model{
+		ServiceAccountID: types.StringValue("service-account-1"),
+		SCMIntegrationID: types.StringValue("scm-1"),
+	}
+	integration := &v1.SCMIntegration{Id: "scm-1", RunnerId: "runner-1", Host: "github.com", Pat: true}
+	pat := types.StringValue("secret-pat")
+	want := &v1.CreateHostAuthenticationTokenRequest{
+		RunnerId:      "runner-1",
+		Host:          "github.com",
+		Token:         "secret-pat",
+		Source:        v1.HostAuthenticationTokenSource_HOST_AUTHENTICATION_TOKEN_SOURCE_PAT,
+		IntegrationId: "scm-1",
+		Subject:       &v1.Subject{Id: "service-account-1", Principal: v1.Principal_PRINCIPAL_SERVICE_ACCOUNT},
+	}
+
+	got := createHostAuthenticationTokenRequest(model, integration, pat)
+	if diff := cmp.Diff(want, got, protocmp.Transform()); diff != "" {
+		t.Errorf("createHostAuthenticationTokenRequest() mismatch (-want +got):\n%s", diff)
+	}
+}
+
+func TestValidateCreateInput(t *testing.T) {
+	t.Parallel()
+
 	type Expectation struct {
-		Request *v1.CreateHostAuthenticationTokenRequest
-		Err     string
+		Err string
 	}
 	tests := []struct {
-		Name        string
-		Model       Model
-		Integration *v1.SCMIntegration
-		PAT         types.String
-		Expected    Expectation
+		Name     string
+		Model    Model
+		PAT      types.String
+		Expected Expectation
 	}{
 		{
-			Name: "maps_service_account_pat",
+			Name: "accepts_service_account_and_pat",
 			Model: Model{
 				ServiceAccountID: types.StringValue("service-account-1"),
 				SCMIntegrationID: types.StringValue("scm-1"),
 			},
-			Integration: &v1.SCMIntegration{Id: "scm-1", RunnerId: "runner-1", Host: "github.com", Pat: true},
-			PAT:         types.StringValue("secret-pat"),
-			Expected: Expectation{Request: &v1.CreateHostAuthenticationTokenRequest{
-				RunnerId:      "runner-1",
-				Host:          "github.com",
-				Token:         "secret-pat",
-				Source:        v1.HostAuthenticationTokenSource_HOST_AUTHENTICATION_TOKEN_SOURCE_PAT,
-				IntegrationId: "scm-1",
-				Subject:       &v1.Subject{Id: "service-account-1", Principal: v1.Principal_PRINCIPAL_SERVICE_ACCOUNT},
-			}},
+			PAT: types.StringValue("secret-pat"),
 		},
 		{
-			Name:        "rejects_missing_service_account",
-			Model:       Model{ServiceAccountID: types.StringNull(), SCMIntegrationID: types.StringValue("scm-1")},
-			Integration: &v1.SCMIntegration{Id: "scm-1", RunnerId: "runner-1", Host: "github.com", Pat: true},
-			PAT:         types.StringValue("secret-pat"),
-			Expected:    Expectation{Err: "Missing Service Account ID"},
+			Name:     "rejects_missing_service_account",
+			Model:    Model{ServiceAccountID: types.StringNull(), SCMIntegrationID: types.StringValue("scm-1")},
+			PAT:      types.StringValue("secret-pat"),
+			Expected: Expectation{Err: "Missing Service Account ID"},
 		},
 		{
-			Name:        "rejects_non_pat_integration",
-			Model:       Model{ServiceAccountID: types.StringValue("service-account-1"), SCMIntegrationID: types.StringValue("scm-1")},
-			Integration: &v1.SCMIntegration{Id: "scm-1", RunnerId: "runner-1", Host: "github.com"},
-			PAT:         types.StringValue("secret-pat"),
-			Expected:    Expectation{Err: "SCM Integration Does Not Support PAT Authentication"},
-		},
-		{
-			Name:        "rejects_unknown_pat",
-			Model:       Model{ServiceAccountID: types.StringValue("service-account-1"), SCMIntegrationID: types.StringValue("scm-1")},
-			Integration: &v1.SCMIntegration{Id: "scm-1", RunnerId: "runner-1", Host: "github.com", Pat: true},
-			PAT:         types.StringUnknown(),
-			Expected:    Expectation{Err: "Missing Personal Access Token"},
+			Name:     "rejects_unknown_pat",
+			Model:    Model{ServiceAccountID: types.StringValue("service-account-1"), SCMIntegrationID: types.StringValue("scm-1")},
+			PAT:      types.StringUnknown(),
+			Expected: Expectation{Err: "Missing Personal Access Token"},
 		},
 	}
 
@@ -114,14 +118,12 @@ func TestCreateHostAuthenticationTokenRequest(t *testing.T) {
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
 			var got Expectation
-			request, diags := createHostAuthenticationTokenRequest(tc.Model, tc.Integration, tc.PAT)
+			diags := validateCreateInput(tc.Model, tc.PAT)
 			if diags.HasError() {
 				got.Err = diags[0].Summary()
-			} else {
-				got.Request = request
 			}
-			if diff := cmp.Diff(tc.Expected, got, protocmp.Transform()); diff != "" {
-				t.Errorf("createHostAuthenticationTokenRequest() mismatch (-want +got):\n%s", diff)
+			if diff := cmp.Diff(tc.Expected, got); diff != "" {
+				t.Errorf("validateCreateInput() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}

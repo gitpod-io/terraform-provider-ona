@@ -54,7 +54,7 @@ func (r *Resource) Metadata(ctx context.Context, req resource.MetadataRequest, r
 
 func (r *Resource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = resourceschema.Schema{
-		MarkdownDescription: "Ona service account for non-human API access. Issue tokens with the `ona_service_account_token` ephemeral resource, and configure source-control access with `ona_git_authentication`.",
+		MarkdownDescription: "Ona service account for non-human API access. Issue tokens with the `ona_service_account_token` ephemeral resource and use them only for supported service-account-token workflows. Link a source-control personal access token to the service account with `ona_git_authentication`.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": resourceschema.StringAttribute{
 				Computed:            true,
