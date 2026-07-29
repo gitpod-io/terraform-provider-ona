@@ -917,18 +917,21 @@ func newRunnerConfigurationAPIServer(t *testing.T) *runnerConfigurationAPIServer
 	t.Helper()
 
 	service := &fakeRunnerConfigurationService{
-		hostAuthenticationTokens:         map[string]*v1.HostAuthenticationToken{},
-		hostAuthenticationCreateRequests: map[string]*v1.CreateHostAuthenticationTokenRequest{},
-		hostAuthenticationUpdateRequests: map[string][]*v1.UpdateHostAuthenticationTokenRequest{},
-		scmIntegrations:                  map[string]*v1.SCMIntegration{},
-		scmCreateRequests:                map[string]*v1.CreateSCMIntegrationRequest{},
-		scmUpdateRequests:                map[string][]*v1.UpdateSCMIntegrationRequest{},
-		llmIntegrations:                  map[string]*v1.LLMIntegration{},
-		llmCreateRequests:                map[string]*v1.CreateLLMIntegrationRequest{},
-		llmUpdateRequests:                map[string][]*v1.UpdateLLMIntegrationRequest{},
-		environmentClasses:               map[string]*v1.EnvironmentClass{},
-		environmentClassRunnerKinds:      map[string]v1.RunnerKind{},
-		environmentClassRunnerProviders:  map[string]v1.RunnerProvider{},
+		hostAuthenticationTokens:           map[string]*v1.HostAuthenticationToken{},
+		hostAuthenticationCreateRequests:   map[string]*v1.CreateHostAuthenticationTokenRequest{},
+		hostAuthenticationUpdateRequests:   map[string][]*v1.UpdateHostAuthenticationTokenRequest{},
+		hostAuthenticationGetCounts:        map[string]int{},
+		hostAuthenticationGetMisses:        map[string]int{},
+		hostAuthenticationPostUpdateMisses: map[string]int{},
+		scmIntegrations:                    map[string]*v1.SCMIntegration{},
+		scmCreateRequests:                  map[string]*v1.CreateSCMIntegrationRequest{},
+		scmUpdateRequests:                  map[string][]*v1.UpdateSCMIntegrationRequest{},
+		llmIntegrations:                    map[string]*v1.LLMIntegration{},
+		llmCreateRequests:                  map[string]*v1.CreateLLMIntegrationRequest{},
+		llmUpdateRequests:                  map[string][]*v1.UpdateLLMIntegrationRequest{},
+		environmentClasses:                 map[string]*v1.EnvironmentClass{},
+		environmentClassRunnerKinds:        map[string]v1.RunnerKind{},
+		environmentClassRunnerProviders:    map[string]v1.RunnerProvider{},
 	}
 	runnerService := &fakeRunnerService{runners: map[string]*v1.Runner{}}
 
@@ -948,30 +951,33 @@ func newRunnerConfigurationAPIServer(t *testing.T) *runnerConfigurationAPIServer
 type fakeRunnerConfigurationService struct {
 	v1connect.UnimplementedRunnerConfigurationServiceHandler
 
-	mu                               sync.Mutex
-	hostAuthenticationTokens         map[string]*v1.HostAuthenticationToken
-	hostAuthenticationCreateRequests map[string]*v1.CreateHostAuthenticationTokenRequest
-	hostAuthenticationUpdateRequests map[string][]*v1.UpdateHostAuthenticationTokenRequest
-	hostAuthenticationDeletes        []string
-	hostAuthenticationPATUpdates     map[string][]string
-	scmIntegrations                  map[string]*v1.SCMIntegration
-	scmCreateRequests                map[string]*v1.CreateSCMIntegrationRequest
-	scmUpdateRequests                map[string][]*v1.UpdateSCMIntegrationRequest
-	scmDeletes                       []string
-	scmSecretUpdates                 map[string][]string
-	scmCreateErr                     error
-	scmUpdateErr                     error
-	llmIntegrations                  map[string]*v1.LLMIntegration
-	llmCreateRequests                map[string]*v1.CreateLLMIntegrationRequest
-	llmUpdateRequests                map[string][]*v1.UpdateLLMIntegrationRequest
-	llmDeletes                       map[string]bool
-	llmDeleteForce                   map[string]bool
-	llmAPIKeyUpdates                 map[string][]string
-	llmCreateErr                     error
-	environmentClasses               map[string]*v1.EnvironmentClass
-	lastEnvironmentClassListKinds    []v1.RunnerKind
-	environmentClassRunnerKinds      map[string]v1.RunnerKind
-	environmentClassRunnerProviders  map[string]v1.RunnerProvider
+	mu                                 sync.Mutex
+	hostAuthenticationTokens           map[string]*v1.HostAuthenticationToken
+	hostAuthenticationCreateRequests   map[string]*v1.CreateHostAuthenticationTokenRequest
+	hostAuthenticationUpdateRequests   map[string][]*v1.UpdateHostAuthenticationTokenRequest
+	hostAuthenticationGetCounts        map[string]int
+	hostAuthenticationGetMisses        map[string]int
+	hostAuthenticationPostUpdateMisses map[string]int
+	hostAuthenticationDeletes          []string
+	hostAuthenticationPATUpdates       map[string][]string
+	scmIntegrations                    map[string]*v1.SCMIntegration
+	scmCreateRequests                  map[string]*v1.CreateSCMIntegrationRequest
+	scmUpdateRequests                  map[string][]*v1.UpdateSCMIntegrationRequest
+	scmDeletes                         []string
+	scmSecretUpdates                   map[string][]string
+	scmCreateErr                       error
+	scmUpdateErr                       error
+	llmIntegrations                    map[string]*v1.LLMIntegration
+	llmCreateRequests                  map[string]*v1.CreateLLMIntegrationRequest
+	llmUpdateRequests                  map[string][]*v1.UpdateLLMIntegrationRequest
+	llmDeletes                         map[string]bool
+	llmDeleteForce                     map[string]bool
+	llmAPIKeyUpdates                   map[string][]string
+	llmCreateErr                       error
+	environmentClasses                 map[string]*v1.EnvironmentClass
+	lastEnvironmentClassListKinds      []v1.RunnerKind
+	environmentClassRunnerKinds        map[string]v1.RunnerKind
+	environmentClassRunnerProviders    map[string]v1.RunnerProvider
 }
 
 func (s *fakeRunnerConfigurationService) CreateHostAuthenticationToken(ctx context.Context, req *connect.Request[v1.CreateHostAuthenticationTokenRequest]) (*connect.Response[v1.CreateHostAuthenticationTokenResponse], error) {
@@ -1004,6 +1010,11 @@ func (s *fakeRunnerConfigurationService) GetHostAuthenticationToken(ctx context.
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	s.hostAuthenticationGetCounts[req.Msg.GetId()]++
+	if s.hostAuthenticationGetMisses[req.Msg.GetId()] > 0 {
+		s.hostAuthenticationGetMisses[req.Msg.GetId()]--
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("host authentication token is not visible on the read replica"))
+	}
 	token := s.hostAuthenticationTokens[req.Msg.GetId()]
 	if token == nil {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("host authentication token not found"))
@@ -1039,6 +1050,10 @@ func (s *fakeRunnerConfigurationService) UpdateHostAuthenticationToken(ctx conte
 	s.hostAuthenticationUpdateRequests[req.Msg.GetId()] = append(s.hostAuthenticationUpdateRequests[req.Msg.GetId()], cloneUpdateHostAuthenticationTokenRequest(req.Msg))
 	if req.Msg.Token != nil {
 		s.recordHostAuthenticationPATUpdate(req.Msg.GetId(), req.Msg.GetToken())
+	}
+	if misses := s.hostAuthenticationPostUpdateMisses[req.Msg.GetId()]; misses > 0 {
+		s.hostAuthenticationGetMisses[req.Msg.GetId()] = misses
+		delete(s.hostAuthenticationPostUpdateMisses, req.Msg.GetId())
 	}
 	return connect.NewResponse(&v1.UpdateHostAuthenticationTokenResponse{}), nil
 }
@@ -1407,6 +1422,20 @@ func (s *fakeRunnerConfigurationService) hostAuthenticationCreateCount() int {
 	defer s.mu.Unlock()
 
 	return len(s.hostAuthenticationCreateRequests)
+}
+
+func (s *fakeRunnerConfigurationService) hostAuthenticationGetCount(id string) int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	return s.hostAuthenticationGetCounts[id]
+}
+
+func (s *fakeRunnerConfigurationService) setHostAuthenticationPostUpdateMisses(id string, misses int) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	s.hostAuthenticationPostUpdateMisses[id] = misses
 }
 
 func (s *fakeRunnerConfigurationService) scmSecretUpdated(id string, secret string) bool {

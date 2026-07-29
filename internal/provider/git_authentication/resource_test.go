@@ -4,7 +4,10 @@
 package gitauthentication
 
 import (
+	"context"
+	"errors"
 	"testing"
+	"time"
 
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/google/go-cmp/cmp"
@@ -147,6 +150,88 @@ func TestSecretVersionChanged(t *testing.T) {
 			t.Parallel()
 			if diff := cmp.Diff(tc.Expected, secretVersionChanged(tc.Current, tc.Prior)); diff != "" {
 				t.Errorf("secretVersionChanged() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestGetHostAuthenticationTokenAfterWrite(t *testing.T) {
+	t.Parallel()
+
+	type Input struct {
+		Results   []*v1.HostAuthenticationToken
+		GetErrAt  int
+		WaitErrAt int
+	}
+	type Expectation struct {
+		TokenID string
+		Err     string
+		Calls   int
+		Waits   []time.Duration
+	}
+	tests := []struct {
+		Name     string
+		Input    Input
+		Expected Expectation
+	}{
+		{
+			Name:     "returns_immediate_read",
+			Input:    Input{Results: []*v1.HostAuthenticationToken{{Id: "git-auth-1"}}},
+			Expected: Expectation{TokenID: "git-auth-1", Calls: 1},
+		},
+		{
+			Name:     "retries_not_found_until_visible",
+			Input:    Input{Results: []*v1.HostAuthenticationToken{nil, nil, {Id: "git-auth-1"}}},
+			Expected: Expectation{TokenID: "git-auth-1", Calls: 3, Waits: []time.Duration{100 * time.Millisecond, 200 * time.Millisecond}},
+		},
+		{
+			Name:     "returns_nil_after_bounded_attempts",
+			Input:    Input{},
+			Expected: Expectation{Calls: 4, Waits: []time.Duration{100 * time.Millisecond, 200 * time.Millisecond, 400 * time.Millisecond}},
+		},
+		{
+			Name:     "returns_get_error_without_retry",
+			Input:    Input{GetErrAt: 1},
+			Expected: Expectation{Err: "get failed", Calls: 1},
+		},
+		{
+			Name:     "returns_wait_error",
+			Input:    Input{WaitErrAt: 1},
+			Expected: Expectation{Err: "wait before retrying host authentication token read: wait failed", Calls: 1, Waits: []time.Duration{100 * time.Millisecond}},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			var got Expectation
+			get := func(_ context.Context, _ string) (*v1.HostAuthenticationToken, error) {
+				got.Calls++
+				if tc.Input.GetErrAt == got.Calls {
+					return nil, errors.New("get failed")
+				}
+				if got.Calls <= len(tc.Input.Results) {
+					return tc.Input.Results[got.Calls-1], nil
+				}
+				return nil, nil
+			}
+			wait := func(_ context.Context, delay time.Duration) error {
+				got.Waits = append(got.Waits, delay)
+				if tc.Input.WaitErrAt == len(got.Waits) {
+					return errors.New("wait failed")
+				}
+				return nil
+			}
+
+			token, err := getHostAuthenticationTokenAfterWrite(t.Context(), "git-auth-1", get, wait)
+			if err != nil {
+				got.Err = err.Error()
+			} else if token != nil {
+				got.TokenID = token.GetId()
+			}
+			if diff := cmp.Diff(tc.Expected, got); diff != "" {
+				t.Errorf("getHostAuthenticationTokenAfterWrite() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}

@@ -54,6 +54,9 @@ func TestAccGitAuthenticationResourceLifecycle(t *testing.T) {
 						if !server.service.hostAuthenticationPATUpdated("git-auth-1", "pat-1") {
 							return errors.New("create request did not submit the PAT")
 						}
+						if got := server.service.hostAuthenticationGetCount("git-auth-1"); got != 0 {
+							return fmt.Errorf("Create performed %d host authentication readbacks, want 0", got)
+						}
 						return nil
 					},
 				),
@@ -84,6 +87,9 @@ func TestAccGitAuthenticationResourceLifecycle(t *testing.T) {
 			},
 			{
 				Config: testAccGitAuthenticationConfig(server.URL, "scm-1", "pat-2", "v2"),
+				PreConfig: func() {
+					server.service.setHostAuthenticationPostUpdateMisses("git-auth-1", 1)
+				},
 				ConfigPlanChecks: resource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{
 					plancheck.ExpectResourceAction("ona_git_authentication.test", plancheck.ResourceActionUpdate),
 				}},
@@ -102,6 +108,54 @@ func TestAccGitAuthenticationResourceLifecycle(t *testing.T) {
 				ConfigPlanChecks: resource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{
 					plancheck.ExpectResourceAction("ona_git_authentication.test", plancheck.ResourceActionReplace),
 				}},
+			},
+		},
+	})
+}
+
+func TestAccGitAuthenticationRotationRetainsStateAfterReplicaMiss(t *testing.T) {
+	t.Parallel()
+
+	server := newRunnerConfigurationAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.scmIntegrations["scm-1"] = &v1.SCMIntegration{Id: "scm-1", RunnerId: "runner-1", ScmId: "github", Host: "github.com", Pat: true}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.hostAuthenticationDeleted("git-auth-1") {
+				return errors.New("git-auth-1 was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccGitAuthenticationConfig(server.URL, "scm-1", "pat-1", "v1"),
+				Check:  resource.TestCheckResourceAttr("ona_git_authentication.test", "personal_access_token_version", "v1"),
+			},
+			{
+				PreConfig: func() {
+					server.service.setHostAuthenticationPostUpdateMisses("git-auth-1", 4)
+				},
+				Config:      testAccGitAuthenticationConfig(server.URL, "scm-1", "pat-2", "v2"),
+				ExpectError: regexp.MustCompile(`Terraform retained the\s+prior state`),
+			},
+			{
+				Config: testAccGitAuthenticationConfig(server.URL, "scm-1", "pat-2", "v2"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{
+					plancheck.ExpectResourceAction("ona_git_authentication.test", plancheck.ResourceActionUpdate),
+				}},
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_git_authentication.test", "id", "git-auth-1"),
+					resource.TestCheckResourceAttr("ona_git_authentication.test", "personal_access_token_version", "v2"),
+					func(state *terraform.State) error {
+						if got := server.service.hostAuthenticationCreateCount(); got != 1 {
+							return fmt.Errorf("created %d Git authentications after rotation readback failure, want 1", got)
+						}
+						return nil
+					},
+				),
 			},
 		},
 	})

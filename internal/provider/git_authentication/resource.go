@@ -183,20 +183,11 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 		return
 	}
 
-	remote, err := r.getHostAuthenticationToken(ctx, created.GetId())
-	if err != nil {
-		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Created Ona Git Authentication", "reading the created service-account Git authentication", err)
-		return
-	}
-	if remote == nil {
-		resp.State.RemoveResource(ctx)
-		return
-	}
-	resp.Diagnostics.Append(validateHostAuthenticationToken(remote, integration, data.ServiceAccountID.ValueString(), data.SCMIntegrationID.ValueString())...)
+	resp.Diagnostics.Append(validateHostAuthenticationToken(created, integration, data.ServiceAccountID.ValueString(), data.SCMIntegrationID.ValueString())...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	data = modelFromRemote(ctx, remote, data.PersonalAccessTokenVersion, &resp.Diagnostics)
+	data = modelFromRemote(ctx, created, data.PersonalAccessTokenVersion, &resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -278,7 +269,8 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 		return
 	}
 
-	if secretVersionChanged(data.PersonalAccessTokenVersion, prior.PersonalAccessTokenVersion) {
+	rotated := secretVersionChanged(data.PersonalAccessTokenVersion, prior.PersonalAccessTokenVersion)
+	if rotated {
 		if !knownString(pat) {
 			resp.Diagnostics.AddAttributeError(path.Root("personal_access_token"), "Missing Personal Access Token", "Set personal_access_token when changing personal_access_token_version.")
 			return
@@ -290,14 +282,33 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 			providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Git Authentication", "rotating the service-account Git authentication", err)
 			return
 		}
+		resp.Diagnostics.Append(resp.Identity.Set(ctx, IdentityModel{ID: prior.ID})...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		resp.Diagnostics.Append(resp.State.Set(ctx, &prior)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
 	}
 
-	remote, err = r.getHostAuthenticationToken(ctx, prior.ID.ValueString())
+	if rotated {
+		remote, err = getHostAuthenticationTokenAfterWrite(ctx, prior.ID.ValueString(), r.getHostAuthenticationToken, waitForRetry)
+	} else {
+		remote, err = r.getHostAuthenticationToken(ctx, prior.ID.ValueString())
+	}
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Read Updated Ona Git Authentication", "reading the updated service-account Git authentication", err)
 		return
 	}
 	if remote == nil {
+		if rotated {
+			resp.Diagnostics.AddError(
+				"Unable to Read Updated Ona Git Authentication",
+				fmt.Sprintf("Ona accepted the personal access token rotation, but Git authentication %q was not visible after %d read attempts. Terraform retained the prior state so it does not lose track of the remote authentication. Retry the apply after the Ona read replica has synchronized.", prior.ID.ValueString(), postWriteReadMaxAttempts),
+			)
+			return
+		}
 		resp.State.RemoveResource(ctx)
 		return
 	}
@@ -358,6 +369,43 @@ func (r *Resource) getHostAuthenticationToken(ctx context.Context, id string) (*
 		return nil, fmt.Errorf("get host authentication token: %w", err)
 	}
 	return result.Msg.GetToken(), nil
+}
+
+const (
+	postWriteReadMaxAttempts  = 4
+	postWriteReadInitialDelay = 100 * time.Millisecond
+)
+
+type hostAuthenticationTokenGetter func(context.Context, string) (*v1.HostAuthenticationToken, error)
+type retryWaiter func(context.Context, time.Duration) error
+
+func getHostAuthenticationTokenAfterWrite(ctx context.Context, id string, get hostAuthenticationTokenGetter, wait retryWaiter) (*v1.HostAuthenticationToken, error) {
+	delay := postWriteReadInitialDelay
+	for attempt := 0; attempt < postWriteReadMaxAttempts; attempt++ {
+		token, err := get(ctx, id)
+		if err != nil || token != nil {
+			return token, err
+		}
+		if attempt == postWriteReadMaxAttempts-1 {
+			return nil, nil
+		}
+		if err := wait(ctx, delay); err != nil {
+			return nil, fmt.Errorf("wait before retrying host authentication token read: %w", err)
+		}
+		delay *= 2
+	}
+	return nil, nil
+}
+
+func waitForRetry(ctx context.Context, delay time.Duration) error {
+	timer := time.NewTimer(delay)
+	defer timer.Stop()
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-timer.C:
+		return nil
+	}
 }
 
 func (r *Resource) getSCMIntegration(ctx context.Context, id string) (*v1.SCMIntegration, error) {
