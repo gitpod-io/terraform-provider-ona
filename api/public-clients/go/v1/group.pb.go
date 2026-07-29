@@ -8,9 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -2331,18 +2328,18 @@ var File_gitpod_v1_group_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_group_proto_rawDesc = "" +
 	"\n" +
-	"\x15gitpod/v1/group.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x15gitpod/v1/event.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xfd\x04\n" +
+	"\x15gitpod/v1/group.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x15gitpod/v1/event.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xf4\x04\n" +
 	"\x11ListGroupsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12;\n" +
-	"\x06filter\x18\x02 \x01(\v2#.gitpod.v1.ListGroupsRequest.FilterR\x06filter\x1a\xec\x03\n" +
+	"\x06filter\x18\x02 \x01(\v2#.gitpod.v1.ListGroupsRequest.FilterR\x06filter\x1a\xe3\x03\n" +
 	"\x06Filter\x12 \n" +
 	"\x06search\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02R\x06search\x12,\n" +
 	"\tgroup_ids\x18\x02 \x03(\tB\x0f\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01R\bgroupIds\x12*\n" +
 	"\x0esystem_managed\x18\x03 \x01(\bH\x00R\rsystemManaged\x88\x01\x01\x12&\n" +
-	"\fdirect_share\x18\x04 \x01(\bH\x01R\vdirectShare\x88\x01\x01\x12\x86\x01\n" +
-	"\x1cexclude_assigned_to_resource\x18\x05 \x01(\v2=.gitpod.v1.ListGroupsRequest.Filter.ExcludeAssignedToResourceB\x06ʫ\x1e\x02\b\x01R\x19excludeAssignedToResource\x1a\x90\x01\n" +
+	"\fdirect_share\x18\x04 \x01(\bH\x01R\vdirectShare\x88\x01\x01\x12~\n" +
+	"\x1cexclude_assigned_to_resource\x18\x05 \x01(\v2=.gitpod.v1.ListGroupsRequest.Filter.ExcludeAssignedToResourceR\x19excludeAssignedToResource\x1a\x90\x01\n" +
 	"\x19ExcludeAssignedToResource\x12H\n" +
 	"\rresource_type\x18\x01 \x01(\x0e2\x17.gitpod.v1.ResourceTypeB\n" +
 	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\fresourceType\x12)\n" +
@@ -2354,102 +2351,76 @@ const file_gitpod_v1_group_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12(\n" +
-	"\x06groups\x18\x02 \x03(\v2\x10.gitpod.v1.GroupR\x06groups\"\xd9\x03\n" +
-	"\x05Group\x12*\n" +
-	"\x02id\x18\x01 \x01(\tB\x1a\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
+	"\x06groups\x18\x02 \x03(\v2\x10.gitpod.v1.GroupR\x06groups\"\x82\x03\n" +
+	"\x05Group\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x121\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12\x1d\n" +
+	"\x04name\x18\x03 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18PR\x04name\x12%\n" +
+	"\x0esystem_managed\x18\x04 \x01(\bR\rsystemManaged\x129\n" +
 	"\n" +
-	"\bgroup.idګ\x1e\x00R\x02id\x12J\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB!\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12!\n" +
-	"\x04name\x18\x03 \x01(\tB\r\xbaH\x06r\x04\x10\x03\x18Pګ\x1e\x00R\x04name\x12+\n" +
-	"\x0esystem_managed\x18\x04 \x01(\bB\x04ګ\x1e\x00R\rsystemManaged\x12?\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tcreatedAt\x12?\n" +
+	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12*\n" +
+	"\vdescription\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\vdescription\x12!\n" +
+	"\fmember_count\x18\b \x01(\x05R\vmemberCount\x12!\n" +
+	"\fdirect_share\x18\t \x01(\bR\vdirectShare\"\xb1\x01\n" +
+	"\x0fGroupMembership\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12,\n" +
+	"\asubject\x18\x02 \x01(\v2\x12.gitpod.v1.SubjectR\asubject\x12#\n" +
+	"\bgroup_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\agroupId\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tupdatedAt\x12.\n" +
-	"\vdescription\x18\a \x01(\tB\f\xbaH\x05r\x03\x18\xff\x01ګ\x1e\x00R\vdescription\x12'\n" +
-	"\fmember_count\x18\b \x01(\x05B\x04ګ\x1e\x00R\vmemberCount\x12'\n" +
-	"\fdirect_share\x18\t \x01(\bB\x04ګ\x1e\x00R\vdirectShare:\x04ҫ\x1e\x00\"\xf2\x01\n" +
-	"\x0fGroupMembership\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x0f\n" +
-	"\rmembership.idګ\x1e\x00R\x02id\x122\n" +
-	"\asubject\x18\x02 \x01(\v2\x12.gitpod.v1.SubjectB\x04ګ\x1e\x00R\asubject\x125\n" +
-	"\bgroup_id\x18\x03 \x01(\tB\x1a\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
-	"\n" +
-	"\bgroup.idګ\x1e\x00R\agroupId\x12\x18\n" +
-	"\x04name\x18\x04 \x01(\tB\x04ګ\x1e\x00R\x04name\x12#\n" +
-	"\n" +
-	"avatar_url\x18\x05 \x01(\tB\x04ګ\x1e\x00R\tavatarUrl:\x04ҫ\x1e\x00\"\xec\x03\n" +
-	"\x0eRoleAssignment\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x0f\n" +
-	"\rassignment.idګ\x1e\x00R\x02id\x125\n" +
-	"\bgroup_id\x18\x02 \x01(\tB\x1a\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
-	"\n" +
-	"\bgroup.idګ\x1e\x00R\agroupId\x12J\n" +
-	"\x0forganization_id\x18\x03 \x01(\tB!\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12-\n" +
-	"\vresource_id\x18\x04 \x01(\tB\f\xbaH\x05r\x03\xb0\x01\x01ګ\x1e\x00R\n" +
-	"resourceId\x12B\n" +
-	"\rresource_type\x18\x05 \x01(\x0e2\x17.gitpod.v1.ResourceTypeB\x04ګ\x1e\x00R\fresourceType\x12B\n" +
-	"\rresource_role\x18\x06 \x01(\x0e2\x17.gitpod.v1.ResourceRoleB\x04ګ\x1e\x00R\fresourceRole\x12O\n" +
-	"\x15derived_from_org_role\x18\a \x01(\x0e2\x17.gitpod.v1.ResourceRoleH\x00R\x12derivedFromOrgRole\x88\x01\x01:\x04ҫ\x1e\x00B\x18\n" +
-	"\x16_derived_from_org_role\"\xa7\x01\n" +
-	"\x12CreateGroupRequest\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\x1d\n" +
+	"avatar_url\x18\x05 \x01(\tR\tavatarUrl\"\x94\x03\n" +
+	"\x0eRoleAssignment\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12#\n" +
+	"\bgroup_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\agroupId\x121\n" +
+	"\x0forganization_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12)\n" +
+	"\vresource_id\x18\x04 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
+	"resourceId\x12<\n" +
+	"\rresource_type\x18\x05 \x01(\x0e2\x17.gitpod.v1.ResourceTypeR\fresourceType\x12<\n" +
+	"\rresource_role\x18\x06 \x01(\x0e2\x17.gitpod.v1.ResourceRoleR\fresourceRole\x12O\n" +
+	"\x15derived_from_org_role\x18\a \x01(\x0e2\x17.gitpod.v1.ResourceRoleH\x00R\x12derivedFromOrgRole\x88\x01\x01B\x18\n" +
+	"\x16_derived_from_org_role\"\x92\x01\n" +
+	"\x12CreateGroupRequest\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12\x1d\n" +
 	"\x04name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18PR\x04name\x12*\n" +
 	"\vdescription\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\vdescription\"=\n" +
 	"\x13CreateGroupResponse\x12&\n" +
-	"\x05group\x18\x01 \x01(\v2\x10.gitpod.v1.GroupR\x05group\"\x92\x01\n" +
-	"\x0fGetGroupRequest\x12+\n" +
-	"\bgroup_id\x18\x01 \x01(\tB\x10\xa2\xab\x1e\n" +
-	"\n" +
-	"\bgroup.id\x18\x01R\agroupId\x12(\n" +
-	"\x02id\x18\x02 \x01(\tB\x16\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
-	"\n" +
-	"\bgroup.idH\x00R\x02id\x12\x1f\n" +
+	"\x05group\x18\x01 \x01(\v2\x10.gitpod.v1.GroupR\x05group\"v\n" +
+	"\x0fGetGroupRequest\x12\x1d\n" +
+	"\bgroup_id\x18\x01 \x01(\tB\x02\x18\x01R\agroupId\x12\x1a\n" +
+	"\x02id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\x02id\x12\x1f\n" +
 	"\x04name\x18\x03 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18PH\x00R\x04nameB\a\n" +
 	"\x05group\":\n" +
 	"\x10GetGroupResponse\x12&\n" +
-	"\x05group\x18\x01 \x01(\v2\x10.gitpod.v1.GroupR\x05group\"\x92\x01\n" +
-	"\x12UpdateGroupRequest\x121\n" +
-	"\bgroup_id\x18\x01 \x01(\tB\x16\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
-	"\n" +
-	"\bgroup.idR\agroupId\x12\x1d\n" +
+	"\x05group\x18\x01 \x01(\v2\x10.gitpod.v1.GroupR\x05group\"\x84\x01\n" +
+	"\x12UpdateGroupRequest\x12#\n" +
+	"\bgroup_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\agroupId\x12\x1d\n" +
 	"\x04name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18PR\x04name\x12*\n" +
 	"\vdescription\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\vdescription\"=\n" +
 	"\x13UpdateGroupResponse\x12&\n" +
-	"\x05group\x18\x01 \x01(\v2\x10.gitpod.v1.GroupR\x05group\"G\n" +
-	"\x12DeleteGroupRequest\x121\n" +
-	"\bgroup_id\x18\x01 \x01(\tB\x16\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
-	"\n" +
-	"\bgroup.idR\agroupId\"\x15\n" +
-	"\x13DeleteGroupResponse\"z\n" +
-	"\x17CreateMembershipRequest\x121\n" +
-	"\bgroup_id\x18\x01 \x01(\tB\x16\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
-	"\n" +
-	"\bgroup.idR\agroupId\x12,\n" +
+	"\x05group\x18\x01 \x01(\v2\x10.gitpod.v1.GroupR\x05group\"9\n" +
+	"\x12DeleteGroupRequest\x12#\n" +
+	"\bgroup_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\agroupId\"\x15\n" +
+	"\x13DeleteGroupResponse\"l\n" +
+	"\x17CreateMembershipRequest\x12#\n" +
+	"\bgroup_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\agroupId\x12,\n" +
 	"\asubject\x18\x02 \x01(\v2\x12.gitpod.v1.SubjectR\asubject\"N\n" +
 	"\x18CreateMembershipResponse\x122\n" +
-	"\x06member\x18\x01 \x01(\v2\x1a.gitpod.v1.GroupMembershipR\x06member\"[\n" +
-	"\x17DeleteMembershipRequest\x12@\n" +
-	"\rmembership_id\x18\x01 \x01(\tB\x1b\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x0f\n" +
-	"\rmembership.idR\fmembershipId\"\x1a\n" +
-	"\x18DeleteMembershipResponse\"\x7f\n" +
-	"\x14GetMembershipRequest\x121\n" +
-	"\bgroup_id\x18\x01 \x01(\tB\x16\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
-	"\n" +
-	"\bgroup.idR\agroupId\x124\n" +
+	"\x06member\x18\x01 \x01(\v2\x1a.gitpod.v1.GroupMembershipR\x06member\"H\n" +
+	"\x17DeleteMembershipRequest\x12-\n" +
+	"\rmembership_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\fmembershipId\"\x1a\n" +
+	"\x18DeleteMembershipResponse\"q\n" +
+	"\x14GetMembershipRequest\x12#\n" +
+	"\bgroup_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\agroupId\x124\n" +
 	"\asubject\x18\x02 \x01(\v2\x12.gitpod.v1.SubjectB\x06\xbaH\x03\xc8\x01\x01R\asubject\"K\n" +
 	"\x15GetMembershipResponse\x122\n" +
-	"\x06member\x18\x01 \x01(\v2\x1a.gitpod.v1.GroupMembershipR\x06member\"\xf7\x01\n" +
+	"\x06member\x18\x01 \x01(\v2\x1a.gitpod.v1.GroupMembershipR\x06member\"\xe9\x01\n" +
 	"\x16ListMembershipsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x121\n" +
-	"\bgroup_id\x18\x02 \x01(\tB\x16\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
-	"\n" +
-	"\bgroup.idR\agroupId\x12@\n" +
+	"pagination\x12#\n" +
+	"\bgroup_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\agroupId\x12@\n" +
 	"\x06filter\x18\x03 \x01(\v2(.gitpod.v1.ListMembershipsRequest.FilterR\x06filter\x1a*\n" +
 	"\x06Filter\x12 \n" +
 	"\x06search\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02R\x06search\"\x8e\x01\n" +
@@ -2457,11 +2428,9 @@ const file_gitpod_v1_group_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x124\n" +
-	"\amembers\x18\x02 \x03(\v2\x1a.gitpod.v1.GroupMembershipR\amembers\"\xf7\x01\n" +
-	"\x1bCreateRoleAssignmentRequest\x121\n" +
-	"\bgroup_id\x18\x01 \x01(\tB\x16\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\n" +
-	"\n" +
-	"\bgroup.idR\agroupId\x12<\n" +
+	"\amembers\x18\x02 \x03(\v2\x1a.gitpod.v1.GroupMembershipR\amembers\"\xe9\x01\n" +
+	"\x1bCreateRoleAssignmentRequest\x12#\n" +
+	"\bgroup_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\agroupId\x12<\n" +
 	"\rresource_type\x18\x02 \x01(\x0e2\x17.gitpod.v1.ResourceTypeR\fresourceType\x12)\n" +
 	"\vresource_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"resourceId\x12<\n" +
@@ -2487,32 +2456,27 @@ const file_gitpod_v1_group_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12;\n" +
-	"\vassignments\x18\x02 \x03(\v2\x19.gitpod.v1.RoleAssignmentR\vassignments\"_\n" +
-	"\x1bDeleteRoleAssignmentRequest\x12@\n" +
-	"\rassignment_id\x18\x01 \x01(\tB\x1b\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x0f\n" +
-	"\rassignment.idR\fassignmentId\"\x1e\n" +
-	"\x1cDeleteRoleAssignmentResponse\"\xe3\x02\n" +
+	"\vassignments\x18\x02 \x03(\v2\x19.gitpod.v1.RoleAssignmentR\vassignments\"L\n" +
+	"\x1bDeleteRoleAssignmentRequest\x12-\n" +
+	"\rassignment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\fassignmentId\"\x1e\n" +
+	"\x1cDeleteRoleAssignmentResponse\"\xc0\x02\n" +
 	"!ShareResourceWithPrincipalRequest\x12H\n" +
 	"\rresource_type\x18\x01 \x01(\x0e2\x17.gitpod.v1.ResourceTypeB\n" +
-	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\fresourceType\x12:\n" +
-	"\vresource_id\x18\x02 \x01(\tB\x19\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vresource.idR\n" +
+	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\fresourceType\x12)\n" +
+	"\vresource_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"resourceId\x12@\n" +
-	"\tprincipal\x18\x03 \x01(\x0e2\x14.gitpod.v1.PrincipalB\f\xbaH\t\x82\x01\x06\x10\x01\x18\x02\x18\x05R\tprincipal\x12=\n" +
-	"\fprincipal_id\x18\x04 \x01(\tB\x1a\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x0e\n" +
-	"\fprincipal.idR\vprincipalId\x127\n" +
+	"\tprincipal\x18\x03 \x01(\x0e2\x14.gitpod.v1.PrincipalB\f\xbaH\t\x82\x01\x06\x10\x01\x18\x02\x18\x05R\tprincipal\x12+\n" +
+	"\fprincipal_id\x18\x04 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\vprincipalId\x127\n" +
 	"\x04role\x18\x05 \x01(\x0e2\x17.gitpod.v1.ResourceRoleB\n" +
 	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\x04role\"$\n" +
-	"\"ShareResourceWithPrincipalResponse\"\xac\x02\n" +
+	"\"ShareResourceWithPrincipalResponse\"\x89\x02\n" +
 	"#UnshareResourceWithPrincipalRequest\x12H\n" +
 	"\rresource_type\x18\x01 \x01(\x0e2\x17.gitpod.v1.ResourceTypeB\n" +
-	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\fresourceType\x12:\n" +
-	"\vresource_id\x18\x02 \x01(\tB\x19\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vresource.idR\n" +
+	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\fresourceType\x12)\n" +
+	"\vresource_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"resourceId\x12@\n" +
-	"\tprincipal\x18\x03 \x01(\x0e2\x14.gitpod.v1.PrincipalB\f\xbaH\t\x82\x01\x06\x10\x01\x18\x02\x18\x05R\tprincipal\x12=\n" +
-	"\fprincipal_id\x18\x04 \x01(\tB\x1a\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x0e\n" +
-	"\fprincipal.idR\vprincipalId\"&\n" +
+	"\tprincipal\x18\x03 \x01(\x0e2\x14.gitpod.v1.PrincipalB\f\xbaH\t\x82\x01\x06\x10\x01\x18\x02\x18\x05R\tprincipal\x12+\n" +
+	"\fprincipal_id\x18\x04 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\vprincipalId\"&\n" +
 	"$UnshareResourceWithPrincipalResponse*\xbd\x14\n" +
 	"\fResourceRole\x12\x1d\n" +
 	"\x19RESOURCE_ROLE_UNSPECIFIED\x10\x00\x12\x1b\n" +
@@ -2583,34 +2547,24 @@ const file_gitpod_v1_group_proto_rawDesc = "" +
 	"\x18RESOURCE_ROLE_TEAM_ADMIN\x10>\x12\x1d\n" +
 	"\x19RESOURCE_ROLE_TEAM_VIEWER\x10?\x12'\n" +
 	"#RESOURCE_ROLE_SECURITY_POLICY_ADMIN\x10F\x12(\n" +
-	"$RESOURCE_ROLE_SECURITY_POLICY_VIEWER\x10G\"\x04\b\"\x10\"\"\x04\b9\x109\"\x04\b:\x10:\"\x04\b;\x10;*&RESOURCE_ROLE_AGENT_EXECUTION_IDENTITY2\xc1\r\n" +
-	"\fGroupService\x12Z\n" +
-	"\vCreateGroup\x12\x1d.gitpod.v1.CreateGroupRequest\x1a\x1e.gitpod.v1.CreateGroupResponse\"\f\xb2\xab\x1e\b\x12\x06create\x12V\n" +
-	"\bGetGroup\x12\x1a.gitpod.v1.GetGroupRequest\x1a\x1b.gitpod.v1.GetGroupResponse\"\x11\xb2\xab\x1e\n" +
-	"\x12\bretrieve\x90\x02\x01\x12X\n" +
+	"$RESOURCE_ROLE_SECURITY_POLICY_VIEWER\x10G\"\x04\b\"\x10\"\"\x04\b9\x109\"\x04\b:\x10:\"\x04\b;\x10;*&RESOURCE_ROLE_AGENT_EXECUTION_IDENTITY2\xd0\n" +
 	"\n" +
-	"ListGroups\x12\x1c.gitpod.v1.ListGroupsRequest\x1a\x1d.gitpod.v1.ListGroupsResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x12Z\n" +
-	"\vUpdateGroup\x12\x1d.gitpod.v1.UpdateGroupRequest\x1a\x1e.gitpod.v1.UpdateGroupResponse\"\f\xb2\xab\x1e\b\x12\x06update\x12Z\n" +
-	"\vDeleteGroup\x12\x1d.gitpod.v1.DeleteGroupRequest\x1a\x1e.gitpod.v1.DeleteGroupResponse\"\f\xb2\xab\x1e\b\x12\x06delete\x12}\n" +
-	"\x10CreateMembership\x12\".gitpod.v1.CreateMembershipRequest\x1a#.gitpod.v1.CreateMembershipResponse\" \xb2\xab\x1e\x1c\n" +
-	"\x12groups.memberships\x12\x06create\x12}\n" +
-	"\x10DeleteMembership\x12\".gitpod.v1.DeleteMembershipRequest\x1a#.gitpod.v1.DeleteMembershipResponse\" \xb2\xab\x1e\x1c\n" +
-	"\x12groups.memberships\x12\x06delete\x12y\n" +
-	"\rGetMembership\x12\x1f.gitpod.v1.GetMembershipRequest\x1a .gitpod.v1.GetMembershipResponse\"%\xb2\xab\x1e\x1e\n" +
-	"\x12groups.memberships\x12\bretrieve\x90\x02\x01\x12{\n" +
-	"\x0fListMemberships\x12!.gitpod.v1.ListMembershipsRequest\x1a\".gitpod.v1.ListMembershipsResponse\"!\xb2\xab\x1e\x1a\n" +
-	"\x12groups.memberships\x12\x04list\x90\x02\x01\x12\x8e\x01\n" +
-	"\x14CreateRoleAssignment\x12&.gitpod.v1.CreateRoleAssignmentRequest\x1a'.gitpod.v1.CreateRoleAssignmentResponse\"%\xb2\xab\x1e!\n" +
-	"\x17groups.role_assignments\x12\x06create\x12\x8c\x01\n" +
-	"\x13ListRoleAssignments\x12%.gitpod.v1.ListRoleAssignmentsRequest\x1a&.gitpod.v1.ListRoleAssignmentsResponse\"&\xb2\xab\x1e\x1f\n" +
-	"\x17groups.role_assignments\x12\x04list\x90\x02\x01\x12\x8e\x01\n" +
-	"\x14DeleteRoleAssignment\x12&.gitpod.v1.DeleteRoleAssignmentRequest\x1a'.gitpod.v1.DeleteRoleAssignmentResponse\"%\xb2\xab\x1e!\n" +
-	"\x17groups.role_assignments\x12\x06delete\x12\x96\x01\n" +
-	"\x1aShareResourceWithPrincipal\x12,.gitpod.v1.ShareResourceWithPrincipalRequest\x1a-.gitpod.v1.ShareResourceWithPrincipalResponse\"\x1b\xb2\xab\x1e\x17\n" +
-	"\rgroups.shares\x12\x06create\x12\x9c\x01\n" +
-	"\x1cUnshareResourceWithPrincipal\x12..gitpod.v1.UnshareResourceWithPrincipalRequest\x1a/.gitpod.v1.UnshareResourceWithPrincipalResponse\"\x1b\xb2\xab\x1e\x17\n" +
-	"\rgroups.shares\x12\x06delete\x1a\f\xaa\xab\x1e\b\n" +
-	"\x06groupsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\fGroupService\x12N\n" +
+	"\vCreateGroup\x12\x1d.gitpod.v1.CreateGroupRequest\x1a\x1e.gitpod.v1.CreateGroupResponse\"\x00\x12H\n" +
+	"\bGetGroup\x12\x1a.gitpod.v1.GetGroupRequest\x1a\x1b.gitpod.v1.GetGroupResponse\"\x03\x90\x02\x01\x12N\n" +
+	"\n" +
+	"ListGroups\x12\x1c.gitpod.v1.ListGroupsRequest\x1a\x1d.gitpod.v1.ListGroupsResponse\"\x03\x90\x02\x01\x12N\n" +
+	"\vUpdateGroup\x12\x1d.gitpod.v1.UpdateGroupRequest\x1a\x1e.gitpod.v1.UpdateGroupResponse\"\x00\x12N\n" +
+	"\vDeleteGroup\x12\x1d.gitpod.v1.DeleteGroupRequest\x1a\x1e.gitpod.v1.DeleteGroupResponse\"\x00\x12]\n" +
+	"\x10CreateMembership\x12\".gitpod.v1.CreateMembershipRequest\x1a#.gitpod.v1.CreateMembershipResponse\"\x00\x12]\n" +
+	"\x10DeleteMembership\x12\".gitpod.v1.DeleteMembershipRequest\x1a#.gitpod.v1.DeleteMembershipResponse\"\x00\x12W\n" +
+	"\rGetMembership\x12\x1f.gitpod.v1.GetMembershipRequest\x1a .gitpod.v1.GetMembershipResponse\"\x03\x90\x02\x01\x12]\n" +
+	"\x0fListMemberships\x12!.gitpod.v1.ListMembershipsRequest\x1a\".gitpod.v1.ListMembershipsResponse\"\x03\x90\x02\x01\x12i\n" +
+	"\x14CreateRoleAssignment\x12&.gitpod.v1.CreateRoleAssignmentRequest\x1a'.gitpod.v1.CreateRoleAssignmentResponse\"\x00\x12i\n" +
+	"\x13ListRoleAssignments\x12%.gitpod.v1.ListRoleAssignmentsRequest\x1a&.gitpod.v1.ListRoleAssignmentsResponse\"\x03\x90\x02\x01\x12i\n" +
+	"\x14DeleteRoleAssignment\x12&.gitpod.v1.DeleteRoleAssignmentRequest\x1a'.gitpod.v1.DeleteRoleAssignmentResponse\"\x00\x12{\n" +
+	"\x1aShareResourceWithPrincipal\x12,.gitpod.v1.ShareResourceWithPrincipalRequest\x1a-.gitpod.v1.ShareResourceWithPrincipalResponse\"\x00\x12\x81\x01\n" +
+	"\x1cUnshareResourceWithPrincipal\x12..gitpod.v1.UnshareResourceWithPrincipalRequest\x1a/.gitpod.v1.UnshareResourceWithPrincipalResponse\"\x00B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_group_proto_rawDescOnce sync.Once
