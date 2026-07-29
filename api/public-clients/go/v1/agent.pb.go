@@ -8,8 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -10549,7 +10547,7 @@ var File_gitpod_v1_agent_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\n" +
-	"\x15gitpod/v1/agent.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a&gitpod/v1/environment_automation.proto\x1a\x18gitpod/v1/identity.proto\x1a\x15gitpod/v1/model.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x88\x04\n" +
+	"\x15gitpod/v1/agent.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a&gitpod/v1/environment_automation.proto\x1a\x18gitpod/v1/identity.proto\x1a\x15gitpod/v1/model.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x80\x04\n" +
 	"\vPullRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x1f\n" +
@@ -10562,9 +10560,9 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"repository\x18\a \x01(\v2!.gitpod.v1.PullRequest.RepositoryR\n" +
 	"repository\x12\x14\n" +
 	"\x05draft\x18\b \x01(\bR\x05draft\x122\n" +
-	"\x05state\x18\t \x01(\x0e2\x1c.gitpod.v1.PullRequest.StateR\x05state\x12!\n" +
+	"\x05state\x18\t \x01(\x0e2\x1c.gitpod.v1.PullRequest.StateR\x05state\x12\x19\n" +
 	"\bhead_sha\x18\n" +
-	" \x01(\tB\x06ʫ\x1e\x02\b\x01R\aheadSha\x1ag\n" +
+	" \x01(\tR\aheadSha\x1ag\n" +
 	"\n" +
 	"Repository\x12\x1b\n" +
 	"\tclone_url\x18\x01 \x01(\tR\bcloneUrl\x12\x12\n" +
@@ -10618,7 +10616,7 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x03url\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01R\x03url\x12:\n" +
 	"\x14environment_class_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x12environmentClassIdB\t\n" +
 	"\acontextB\x0f\n" +
-	"\r_pull_request\"\x89\x05\n" +
+	"\r_pull_request\"\xf9\x04\n" +
 	"\x11StartAgentRequest\x12&\n" +
 	"\bagent_id\x18\x01 \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\aagentId\x12>\n" +
 	"\fcode_context\x18\x02 \x01(\v2\x1b.gitpod.v1.AgentCodeContextR\vcodeContext\x12\x1b\n" +
@@ -10628,42 +10626,38 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\trunner_id\x18\x06 \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\brunnerId\x12O\n" +
 	"\vannotations\x18\a \x03(\v2-.gitpod.v1.StartAgentRequest.AnnotationsEntryR\vannotations\x12*\n" +
 	"\n" +
-	"session_id\x18\b \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\tsessionId\x12G\n" +
-	"\x0ecodex_settings\x18\t \x01(\v2\x18.gitpod.v1.CodexSettingsB\x06ʫ\x1e\x02\b\x01R\rcodexSettings\x12A\n" +
+	"session_id\x18\b \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\tsessionId\x12?\n" +
+	"\x0ecodex_settings\x18\t \x01(\v2\x18.gitpod.v1.CodexSettingsR\rcodexSettings\x129\n" +
 	"\fturn_options\x18\n" +
-	" \x01(\v2\x16.gitpod.v1.TurnOptionsB\x06ʫ\x1e\x02\b\x01R\vturnOptions\x1a>\n" +
+	" \x01(\v2\x16.gitpod.v1.TurnOptionsR\vturnOptions\x1a>\n" +
 	"\x10AnnotationsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x15\n" +
 	"\x13_workflow_action_id\"L\n" +
 	"\x12StartAgentResponse\x126\n" +
-	"\x12agent_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\"\xe2\a\n" +
+	"\x12agent_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\"\x9c\x06\n" +
 	"\x1aListAgentExecutionsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12D\n" +
-	"\x06filter\x18\x02 \x01(\v2,.gitpod.v1.ListAgentExecutionsRequest.FilterR\x06filter\x1a\xbf\x06\n" +
-	"\x06Filter\x12=\n" +
-	"\tagent_ids\x18\x01 \x03(\tB \xbaH\a\x92\x01\x04\b\x00\x10\x19\xa2\xab\x1e\x12\n" +
-	"\x10filter.agents_idR\bagentIds\x12J\n" +
-	"\vproject_ids\x18\x02 \x03(\tB)\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12filter.project_idsR\n" +
-	"projectIds\x12O\n" +
-	"\x0fenvironment_ids\x18\x03 \x03(\tB&\xbaH\a\x92\x01\x04\b\x00\x10\x19\xa2\xab\x1e\x18\n" +
-	"\x16filter.environment_idsR\x0eenvironmentIds\x12C\n" +
-	"\vcreator_ids\x18\x04 \x03(\tB\"\xbaH\a\x92\x01\x04\b\x00\x10\x19\xa2\xab\x1e\x14\n" +
-	"\x12filter.creator_idsR\n" +
-	"creatorIds\x12j\n" +
-	"\rstatus_phases\x18\x05 \x03(\x0e2\x1f.gitpod.v1.AgentExecution.PhaseB$\xbaH\a\x92\x01\x04\b\x00\x10\x19\xa2\xab\x1e\x16\n" +
-	"\x14filter.status_phasesR\fstatusPhases\x12X\n" +
-	"\x05roles\x18\x06 \x03(\x0e2\x1d.gitpod.v1.AgentExecutionRoleB#\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\x0e\n" +
-	"\ffilter.rolesR\x05roles\x12_\n" +
-	"\vannotations\x18\a \x03(\v2=.gitpod.v1.ListAgentExecutionsRequest.Filter.AnnotationsEntryR\vannotations\x12J\n" +
-	"\vsession_ids\x18\b \x03(\tB)\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12filter.session_idsR\n" +
-	"sessionIds\x12a\n" +
-	"\x13agent_execution_ids\x18\t \x03(\tB1\xbaH\x0e\x92\x01\v\b\x00\x10d\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1c\n" +
-	"\x1afilter.agent_execution_idsR\x11agentExecutionIds\x1a>\n" +
+	"\x06filter\x18\x02 \x01(\v2,.gitpod.v1.ListAgentExecutionsRequest.FilterR\x06filter\x1a\xf9\x04\n" +
+	"\x06Filter\x12'\n" +
+	"\tagent_ids\x18\x01 \x03(\tB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\x19R\bagentIds\x122\n" +
+	"\vproject_ids\x18\x02 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\n" +
+	"projectIds\x123\n" +
+	"\x0fenvironment_ids\x18\x03 \x03(\tB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\x19R\x0eenvironmentIds\x12+\n" +
+	"\vcreator_ids\x18\x04 \x03(\tB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\x19R\n" +
+	"creatorIds\x12P\n" +
+	"\rstatus_phases\x18\x05 \x03(\x0e2\x1f.gitpod.v1.AgentExecution.PhaseB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\x19R\fstatusPhases\x12F\n" +
+	"\x05roles\x18\x06 \x03(\x0e2\x1d.gitpod.v1.AgentExecutionRoleB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01R\x05roles\x12_\n" +
+	"\vannotations\x18\a \x03(\v2=.gitpod.v1.ListAgentExecutionsRequest.Filter.AnnotationsEntryR\vannotations\x122\n" +
+	"\vsession_ids\x18\b \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\n" +
+	"sessionIds\x12A\n" +
+	"\x13agent_execution_ids\x18\t \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10d\"\x05r\x03\xb0\x01\x01R\x11agentExecutionIds\x1a>\n" +
 	"\x10AnnotationsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xa2\x01\n" +
@@ -10678,13 +10672,12 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x0fagent_execution\x18\x01 \x01(\v2\x19.gitpod.v1.AgentExecutionR\x0eagentExecution\"U\n" +
 	"\x1bDeleteAgentExecutionRequest\x126\n" +
 	"\x12agent_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\"\x1e\n" +
-	"\x1cDeleteAgentExecutionResponse\"\xef3\n" +
-	"\x0eAgentExecution\x12(\n" +
-	"\x02id\x18\x01 \x01(\tB\x18\xa2\xab\x1e\x14\n" +
-	"\x12agent_execution.idR\x02id\x12>\n" +
+	"\x1cDeleteAgentExecutionResponse\"\x853\n" +
+	"\x0eAgentExecution\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12>\n" +
 	"\bmetadata\x18\x02 \x01(\v2\".gitpod.v1.AgentExecution.MetadataR\bmetadata\x122\n" +
 	"\x04spec\x18\x03 \x01(\v2\x1e.gitpod.v1.AgentExecution.SpecR\x04spec\x128\n" +
-	"\x06status\x18\x04 \x01(\v2 .gitpod.v1.AgentExecution.StatusR\x06status\x1a\xac\x04\n" +
+	"\x06status\x18\x04 \x01(\v2 .gitpod.v1.AgentExecution.StatusR\x06status\x1a\xa4\x04\n" +
 	"\bMetadata\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12,\n" +
@@ -10695,25 +10688,25 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x121\n" +
 	"\x04role\x18\x06 \x01(\x0e2\x1d.gitpod.v1.AgentExecutionRoleR\x04role\x12>\n" +
 	"\x12workflow_action_id\x18\a \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01H\x00R\x10workflowActionId\x88\x01\x01\x12U\n" +
-	"\vannotations\x18\b \x03(\v23.gitpod.v1.AgentExecution.Metadata.AnnotationsEntryR\vannotations\x12%\n" +
+	"\vannotations\x18\b \x03(\v23.gitpod.v1.AgentExecution.Metadata.AnnotationsEntryR\vannotations\x12\x1d\n" +
 	"\n" +
-	"session_id\x18\t \x01(\tB\x06ʫ\x1e\x02\b\x01R\tsessionId\x1a>\n" +
+	"session_id\x18\t \x01(\tR\tsessionId\x1a>\n" +
 	"\x10AnnotationsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x15\n" +
-	"\x13_workflow_action_id\x1a\x8a\x04\n" +
+	"\x13_workflow_action_id\x1a\x82\x04\n" +
 	"\x04Spec\x12!\n" +
 	"\fspec_version\x18\x01 \x01(\x04R\vspecVersion\x12\x18\n" +
 	"\asession\x18\x02 \x01(\tR\asession\x12D\n" +
 	"\rdesired_phase\x18\x03 \x01(\x0e2\x1f.gitpod.v1.AgentExecution.PhaseR\fdesiredPhase\x12#\n" +
 	"\bagent_id\x18\x04 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\aagentId\x12>\n" +
 	"\fcode_context\x18\x05 \x01(\v2\x1b.gitpod.v1.AgentCodeContextR\vcodeContext\x12=\n" +
-	"\x06limits\x18\x06 \x01(\v2%.gitpod.v1.AgentExecution.Spec.LimitsR\x06limits\x12G\n" +
-	"\x0ecodex_settings\x18\t \x01(\v2\x18.gitpod.v1.CodexSettingsB\x06ʫ\x1e\x02\b\x01R\rcodexSettings\x1a\x85\x01\n" +
+	"\x06limits\x18\x06 \x01(\v2%.gitpod.v1.AgentExecution.Spec.LimitsR\x06limits\x12?\n" +
+	"\x0ecodex_settings\x18\t \x01(\v2\x18.gitpod.v1.CodexSettingsR\rcodexSettings\x1a\x85\x01\n" +
 	"\x06Limits\x12%\n" +
 	"\x0emax_iterations\x18\x01 \x01(\x03R\rmaxIterations\x12*\n" +
 	"\x11max_output_tokens\x18\x02 \x01(\x03R\x0fmaxOutputTokens\x12(\n" +
-	"\x10max_input_tokens\x18\x03 \x01(\x03R\x0emaxInputTokensJ\x04\b\a\x10\bJ\x04\b\b\x10\t\x1a\xc5\x1f\n" +
+	"\x10max_input_tokens\x18\x03 \x01(\x03R\x0emaxInputTokensJ\x04\b\a\x10\bJ\x04\b\b\x10\t\x1a\x85\x1f\n" +
 	"\x06Status\x12%\n" +
 	"\x0estatus_version\x18\x01 \x01(\x04R\rstatusVersion\x12\x18\n" +
 	"\asession\x18\x02 \x01(\tR\asession\x125\n" +
@@ -10723,9 +10716,9 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x0efailure_reason\x18\x06 \x01(\x0e2&.gitpod.v1.AgentExecutionFailureReasonR\rfailureReason\x12)\n" +
 	"\x10conversation_url\x18\n" +
 	" \x01(\tR\x0fconversationUrl\x12%\n" +
-	"\x0etranscript_url\x18\v \x01(\tR\rtranscriptUrl\x124\n" +
-	"\x12support_bundle_url\x18\f \x01(\tB\x06ʫ\x1e\x02\b\x01R\x10supportBundleUrl\x12f\n" +
-	"\x11conversation_urls\x18\r \x01(\v21.gitpod.v1.AgentExecution.Status.ConversationURLsB\x06ʫ\x1e\x02\b\x01R\x10conversationUrls\x12\x1e\n" +
+	"\x0etranscript_url\x18\v \x01(\tR\rtranscriptUrl\x12,\n" +
+	"\x12support_bundle_url\x18\f \x01(\tR\x10supportBundleUrl\x12^\n" +
+	"\x11conversation_urls\x18\r \x01(\v21.gitpod.v1.AgentExecution.Status.ConversationURLsR\x10conversationUrls\x12\x1e\n" +
 	"\n" +
 	"iterations\x18\x14 \x01(\x03R\n" +
 	"iterations\x12*\n" +
@@ -10733,23 +10726,23 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x12output_tokens_used\x18\x16 \x01(\x03R\x10outputTokensUsed\x122\n" +
 	"\x15context_window_length\x18\x17 \x01(\x03R\x13contextWindowLength\x12=\n" +
 	"\x1bcached_creation_tokens_used\x18\x18 \x01(\x03R\x18cachedCreationTokensUsed\x127\n" +
-	"\x18cached_input_tokens_used\x18\x19 \x01(\x03R\x15cachedInputTokensUsed\x128\n" +
-	"\x14context_window_limit\x18\x1a \x01(\x03B\x06ʫ\x1e\x02\b\x01R\x12contextWindowLimit\x12\x1c\n" +
+	"\x18cached_input_tokens_used\x18\x19 \x01(\x03R\x15cachedInputTokensUsed\x120\n" +
+	"\x14context_window_limit\x18\x1a \x01(\x03R\x12contextWindowLimit\x12\x1c\n" +
 	"\tjudgement\x18\x1e \x01(\tR\tjudgement\x12^\n" +
 	"\x11current_operation\x18( \x01(\v21.gitpod.v1.AgentExecution.Status.CurrentOperationR\x10currentOperation\x12^\n" +
 	"\x11used_environments\x182 \x03(\v21.gitpod.v1.AgentExecution.Status.EnvironmentUsageR\x10usedEnvironments\x12)\n" +
 	"\x10current_activity\x18< \x01(\tR\x0fcurrentActivity\x12X\n" +
 	"\aoutputs\x18F \x03(\v2-.gitpod.v1.AgentExecution.Status.OutputsEntryB\x0f\xbaH\f\x9a\x01\t\"\ar\x05\x10\x01\x18\x80\x01R\aoutputs\x12B\n" +
-	"\x0fsupported_model\x18P \x01(\x0e2\x19.gitpod.v1.SupportedModelR\x0esupportedModel\x12c\n" +
-	"\x10llm_capabilities\x18Q \x01(\v20.gitpod.v1.AgentExecution.Status.LLMCapabilitiesB\x06ʫ\x1e\x02\b\x01R\x0fllmCapabilities\x12(\n" +
+	"\x0fsupported_model\x18P \x01(\x0e2\x19.gitpod.v1.SupportedModelR\x0esupportedModel\x12[\n" +
+	"\x10llm_capabilities\x18Q \x01(\v20.gitpod.v1.AgentExecution.Status.LLMCapabilitiesR\x0fllmCapabilities\x12(\n" +
 	"\x04mode\x18Z \x01(\x0e2\x14.gitpod.v1.AgentModeR\x04mode\x12o\n" +
-	"\x18mcp_integration_statuses\x18d \x03(\v25.gitpod.v1.AgentExecution.Status.MCPIntegrationStatusR\x16mcpIntegrationStatuses\x12P\n" +
-	"\fwaiting_info\x18n \x01(\v2%.gitpod.v1.AgentExecution.WaitingInfoB\x06ʫ\x1e\x02\b\x01R\vwaitingInfo\x12(\n" +
-	"\vterminal_id\x18\x82\x01 \x01(\tB\x06ʫ\x1e\x02\b\x01R\n" +
+	"\x18mcp_integration_statuses\x18d \x03(\v25.gitpod.v1.AgentExecution.Status.MCPIntegrationStatusR\x16mcpIntegrationStatuses\x12H\n" +
+	"\fwaiting_info\x18n \x01(\v2%.gitpod.v1.AgentExecution.WaitingInfoR\vwaitingInfo\x12 \n" +
+	"\vterminal_id\x18\x82\x01 \x01(\tR\n" +
 	"terminalId\x12:\n" +
-	"\x04goal\x18\x8c\x01 \x01(\v2%.gitpod.v1.AgentExecution.Status.GoalR\x04goal\x12H\n" +
-	"\x0ecodex_settings\x18\x96\x01 \x01(\v2\x18.gitpod.v1.CodexSettingsB\x06ʫ\x1e\x02\b\x01R\rcodexSettings\x12P\n" +
-	"\tsubagents\x18\xa0\x01 \x03(\v2).gitpod.v1.AgentExecution.Status.SubagentB\x06ʫ\x1e\x02\b\x01R\tsubagents\x1aK\n" +
+	"\x04goal\x18\x8c\x01 \x01(\v2%.gitpod.v1.AgentExecution.Status.GoalR\x04goal\x12@\n" +
+	"\x0ecodex_settings\x18\x96\x01 \x01(\v2\x18.gitpod.v1.CodexSettingsR\rcodexSettings\x12H\n" +
+	"\tsubagents\x18\xa0\x01 \x03(\v2).gitpod.v1.AgentExecution.Status.SubagentR\tsubagents\x1aK\n" +
 	"\aToolUse\x12$\n" +
 	"\ttool_name\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\btoolName\x12\x1a\n" +
 	"\bcomplete\x18\x02 \x01(\bR\bcomplete\x1a!\n" +
@@ -10875,15 +10868,15 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x06Action\x12\x1d\n" +
 	"\x05title\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x05title\x12\x1f\n" +
 	"\x06prompt\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x06prompt\x12\x18\n" +
-	"\avariant\x18\x03 \x01(\tR\avariant\"\x98#\n" +
+	"\avariant\x18\x03 \x01(\tR\avariant\"\x88#\n" +
 	"\x12AgentResponseBlock\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x129\n" +
 	"\x05phase\x18\x02 \x01(\x0e2#.gitpod.v1.AgentResponseBlock.PhaseR\x05phase\x12Z\n" +
 	"\x0fuser_input_seen\x18\b \x01(\v20.gitpod.v1.AgentResponseBlock.UserInputBlockSeenH\x00R\ruserInputSeen\x12:\n" +
 	"\n" +
-	"user_input\x18\t \x01(\v2\x19.gitpod.v1.UserInputBlockH\x00R\tuserInput\x12k\n" +
-	"\x12user_input_deleted\x18\v \x01(\v23.gitpod.v1.AgentResponseBlock.UserInputBlockDeletedB\x06ʫ\x1e\x02\b\x01H\x00R\x10userInputDeleted\x12v\n" +
-	"\x18user_input_queue_updated\x18\f \x01(\v23.gitpod.v1.AgentResponseBlock.UserInputQueueUpdatedB\x06ʫ\x1e\x02\b\x01H\x00R\x15userInputQueueUpdated\x12>\n" +
+	"user_input\x18\t \x01(\v2\x19.gitpod.v1.UserInputBlockH\x00R\tuserInput\x12c\n" +
+	"\x12user_input_deleted\x18\v \x01(\v23.gitpod.v1.AgentResponseBlock.UserInputBlockDeletedH\x00R\x10userInputDeleted\x12n\n" +
+	"\x18user_input_queue_updated\x18\f \x01(\v23.gitpod.v1.AgentResponseBlock.UserInputQueueUpdatedH\x00R\x15userInputQueueUpdated\x12>\n" +
 	"\x04text\x18\n" +
 	" \x01(\v2(.gitpod.v1.AgentResponseBlock.TextOutputH\x00R\x04text\x12T\n" +
 	"\x0eaction_started\x18\x14 \x01(\v2+.gitpod.v1.AgentResponseBlock.ActionStartedH\x00R\ractionStarted\x12Z\n" +
@@ -11002,7 +10995,7 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\fPHASE_UPDATE\x10\x01\x12\x13\n" +
 	"\x0fPHASE_COMPLETED\x10\x02\x12\x0f\n" +
 	"\vPHASE_DELTA\x10\x03B\x0f\n" +
-	"\x06output\x12\x05\xbaH\x02\b\x01\"\xbc\x05\n" +
+	"\x06output\x12\x05\xbaH\x02\b\x01\"\xac\x05\n" +
 	"\x0eUserInputBlock\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12=\n" +
 	"\x04text\x18\x14 \x01(\v2#.gitpod.v1.UserInputBlock.TextInputB\x02\x18\x01H\x00R\x04text\x12@\n" +
@@ -11010,29 +11003,29 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x06inputs\x18\x1e \x03(\v2\x1f.gitpod.v1.UserInputBlock.InputB\b\xbaH\x05\x92\x01\x02\x10\n" +
 	"R\x06inputs\x129\n" +
 	"\n" +
-	"created_at\x18d \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12@\n" +
-	"\bmetadata\x18x \x01(\v2\x1c.gitpod.v1.UserInputMetadataB\x06ʫ\x1e\x02\b\x01R\bmetadata\x1a.\n" +
+	"created_at\x18d \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x128\n" +
+	"\bmetadata\x18x \x01(\v2\x1c.gitpod.v1.UserInputMetadataR\bmetadata\x1a.\n" +
 	"\tTextInput\x12!\n" +
-	"\acontent\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\acontent\x1a\x8c\x01\n" +
+	"\acontent\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\acontent\x1a\x84\x01\n" +
 	"\n" +
 	"ImageInput\x12 \n" +
 	"\x04data\x18\x01 \x01(\fB\f\xbaH\tz\a\x10\x01\x18\x80\x80\x80\x02R\x04data\x129\n" +
 	"\tmime_type\x18\x02 \x01(\tB\x1c\xbaH\x19r\x17R\timage/pngR\n" +
-	"image/jpegR\bmimeType\x12!\n" +
-	"\bdata_ref\x18\x03 \x01(\tB\x06ʫ\x1e\x02\b\x01R\adataRef\x1a\x90\x01\n" +
+	"image/jpegR\bmimeType\x12\x19\n" +
+	"\bdata_ref\x18\x03 \x01(\tR\adataRef\x1a\x90\x01\n" +
 	"\x05Input\x129\n" +
 	"\x04text\x18\x14 \x01(\v2#.gitpod.v1.UserInputBlock.TextInputH\x00R\x04text\x12<\n" +
 	"\x05image\x18\x15 \x01(\v2$.gitpod.v1.UserInputBlock.ImageInputH\x00R\x05imageB\x0e\n" +
 	"\x05input\x12\x05\xbaH\x02\b\x01B\a\n" +
-	"\x05input\"g\n" +
+	"\x05input\"a\n" +
 	"\x11UserInputMetadata\x12\x16\n" +
-	"\x06source\x18\x01 \x01(\tR\x06source\x12:\n" +
-	"\x05modes\x18\x02 \x03(\x0e2\x14.gitpod.v1.AgentModeB\x0e\xbaH\x05\x92\x01\x02\x10\x04ʫ\x1e\x02\b\x01R\x05modes\"\xcd\x02\n" +
+	"\x06source\x18\x01 \x01(\tR\x06source\x124\n" +
+	"\x05modes\x18\x02 \x03(\x0e2\x14.gitpod.v1.AgentModeB\b\xbaH\x05\x92\x01\x02\x10\x04R\x05modes\"\xbd\x02\n" +
 	"\fAgentMessage\x120\n" +
 	"\x04type\x18\x01 \x01(\x0e2\x1c.gitpod.v1.AgentMessage.TypeR\x04type\x12\x18\n" +
-	"\apayload\x18\x02 \x01(\tR\apayload\x128\n" +
-	"\x04role\x18\x03 \x01(\x0e2\x1c.gitpod.v1.AgentMessage.RoleB\x06ʫ\x1e\x02\b\x01R\x04role\x126\n" +
-	"\x13sender_execution_id\x18\x04 \x01(\tB\x06ʫ\x1e\x02\b\x01R\x11senderExecutionId\"@\n" +
+	"\apayload\x18\x02 \x01(\tR\apayload\x120\n" +
+	"\x04role\x18\x03 \x01(\x0e2\x1c.gitpod.v1.AgentMessage.RoleR\x04role\x12.\n" +
+	"\x13sender_execution_id\x18\x04 \x01(\tR\x11senderExecutionId\"@\n" +
 	"\x04Type\x12\x14\n" +
 	"\x10TYPE_UNSPECIFIED\x10\x00\x12\x0f\n" +
 	"\vTYPE_UPDATE\x10\x01\x12\x11\n" +
@@ -11077,74 +11070,51 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\n" +
 	"session_id\x18\x03 \x01(\tR\tsessionId\x12'\n" +
 	"\x0ffailure_message\x18\x04 \x03(\tR\x0efailureMessageB\t\n" +
-	"\apayload\"\xea\x03\n" +
+	"\apayload\"\xd2\x03\n" +
 	"\x1bSendToAgentExecutionRequest\x126\n" +
 	"\x12agent_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\x12:\n" +
 	"\n" +
 	"user_input\x18\x02 \x01(\v2\x19.gitpod.v1.UserInputBlockH\x00R\tuserInput\x12>\n" +
 	"\ragent_message\x18\x03 \x01(\v2\x17.gitpod.v1.AgentMessageH\x00R\fagentMessage\x125\n" +
 	"\n" +
-	"wake_event\x18\x04 \x01(\v2\x14.gitpod.v1.WakeEventH\x00R\twakeEvent\x12K\n" +
-	"\rcontrol_input\x18\x06 \x01(\v2\x1c.gitpod.v1.AgentControlInputB\x06ʫ\x1e\x02\b\x01H\x00R\fcontrolInput\x12G\n" +
-	"\x0ecodex_settings\x18\x05 \x01(\v2\x18.gitpod.v1.CodexSettingsB\x06ʫ\x1e\x02\b\x01R\rcodexSettings\x12A\n" +
-	"\fturn_options\x18\a \x01(\v2\x16.gitpod.v1.TurnOptionsB\x06ʫ\x1e\x02\b\x01R\vturnOptionsB\a\n" +
+	"wake_event\x18\x04 \x01(\v2\x14.gitpod.v1.WakeEventH\x00R\twakeEvent\x12C\n" +
+	"\rcontrol_input\x18\x06 \x01(\v2\x1c.gitpod.v1.AgentControlInputH\x00R\fcontrolInput\x12?\n" +
+	"\x0ecodex_settings\x18\x05 \x01(\v2\x18.gitpod.v1.CodexSettingsR\rcodexSettings\x129\n" +
+	"\fturn_options\x18\a \x01(\v2\x16.gitpod.v1.TurnOptionsR\vturnOptionsB\a\n" +
 	"\x05input\"\x1e\n" +
-	"\x1cSendToAgentExecutionResponse\"S\n" +
+	"\x1cSendToAgentExecutionResponse\"C\n" +
 	"\vTurnOptions\x124\n" +
-	"\x05modes\x18\x01 \x03(\x0e2\x14.gitpod.v1.AgentModeB\b\xbaH\x05\x92\x01\x02\x10\x04R\x05modes:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01\"\x8d\v\n" +
+	"\x05modes\x18\x01 \x03(\x0e2\x14.gitpod.v1.AgentModeB\b\xbaH\x05\x92\x01\x02\x10\x04R\x05modes\"\xdc\t\n" +
 	"\x11AgentControlInput\x12@\n" +
 	"\acompact\x18\x01 \x01(\v2$.gitpod.v1.AgentControlInput.CompactH\x00R\acompact\x127\n" +
 	"\x04goal\x18\x02 \x01(\v2!.gitpod.v1.AgentControlInput.GoalH\x00R\x04goal\x12f\n" +
 	"\x15delete_queued_message\x18\x03 \x01(\v20.gitpod.v1.AgentControlInput.DeleteQueuedMessageH\x00R\x13deleteQueuedMessage\x12c\n" +
 	"\x14steer_queued_message\x18\x04 \x01(\v2/.gitpod.v1.AgentControlInput.SteerQueuedMessageH\x00R\x12steerQueuedMessage\x12`\n" +
-	"\x13move_queued_message\x18\x05 \x01(\v2..gitpod.v1.AgentControlInput.MoveQueuedMessageH\x00R\x11moveQueuedMessage\x1a\x19\n" +
-	"\aCompact:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01\x1aR\n" +
+	"\x13move_queued_message\x18\x05 \x01(\v2..gitpod.v1.AgentControlInput.MoveQueuedMessageH\x00R\x11moveQueuedMessage\x1a\t\n" +
+	"\aCompact\x1aB\n" +
 	"\x13DeleteQueuedMessage\x12+\n" +
-	"\ruser_input_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vuserInputId:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01\x1a\xec\x04\n" +
+	"\ruser_input_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vuserInputId\x1a\x8c\x04\n" +
 	"\x04Goal\x12?\n" +
 	"\x05pause\x18\x01 \x01(\v2'.gitpod.v1.AgentControlInput.Goal.PauseH\x00R\x05pause\x12B\n" +
 	"\x06resume\x18\x02 \x01(\v2(.gitpod.v1.AgentControlInput.Goal.ResumeH\x00R\x06resume\x12H\n" +
 	"\bcomplete\x18\x03 \x01(\v2*.gitpod.v1.AgentControlInput.Goal.CompleteH\x00R\bcomplete\x12?\n" +
 	"\x05clear\x18\x04 \x01(\v2'.gitpod.v1.AgentControlInput.Goal.ClearH\x00R\x05clear\x129\n" +
-	"\x03set\x18\x05 \x01(\v2%.gitpod.v1.AgentControlInput.Goal.SetH\x00R\x03set\x1a\x17\n" +
-	"\x05Pause:\x0e\xba\xab\x1e\n" +
+	"\x03set\x18\x05 \x01(\v2%.gitpod.v1.AgentControlInput.Goal.SetH\x00R\x03set\x1a\a\n" +
+	"\x05Pause\x1a\b\n" +
+	"\x06Resume\x1a\n" +
 	"\n" +
-	"\x06agents\x18\x01\x1a\x18\n" +
-	"\x06Resume:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01\x1a\x1a\n" +
-	"\bComplete:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01\x1a\x17\n" +
-	"\x05Clear:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01\x1a\x96\x01\n" +
+	"\bComplete\x1a\a\n" +
+	"\x05Clear\x1a\x86\x01\n" +
 	"\x03Set\x12%\n" +
 	"\tobjective\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\tobjective\x12M\n" +
-	"\x06status\x18\x02 \x01(\x0e20.gitpod.v1.AgentExecution.Status.Goal.GoalStatusH\x00R\x06status\x88\x01\x01:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01B\t\n" +
-	"\a_status:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01B\b\n" +
-	"\x06action\x1aQ\n" +
+	"\x06status\x18\x02 \x01(\x0e20.gitpod.v1.AgentExecution.Status.Goal.GoalStatusH\x00R\x06status\x88\x01\x01B\t\n" +
+	"\a_statusB\b\n" +
+	"\x06action\x1aA\n" +
 	"\x12SteerQueuedMessage\x12+\n" +
-	"\ruser_input_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vuserInputId:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01\x1a\x81\x01\n" +
+	"\ruser_input_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vuserInputId\x1aq\n" +
 	"\x11MoveQueuedMessage\x12+\n" +
 	"\ruser_input_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vuserInputId\x12/\n" +
-	"\x14before_user_input_id\x18\x02 \x01(\tR\x11beforeUserInputId:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01B\t\n" +
+	"\x14before_user_input_id\x18\x02 \x01(\tR\x11beforeUserInputIdB\t\n" +
 	"\acontrol\"f\n" +
 	"\x1cPromptValidationErrorDetails\x12!\n" +
 	"\fcleaned_text\x18\x01 \x01(\tR\vcleanedText\x12#\n" +
@@ -11218,14 +11188,14 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12B\n" +
 	"\x05value\x18\x02 \x01(\v2,.gitpod.v1.AgentExecution.Status.OutputValueR\x05value:\x028\x01\"i\n" +
 	"#ReportAgentExecutionOutputsResponse\x12B\n" +
-	"\x0fagent_execution\x18\x01 \x01(\v2\x19.gitpod.v1.AgentExecutionR\x0eagentExecution\"\x8b\x03\n" +
+	"\x0fagent_execution\x18\x01 \x01(\v2\x19.gitpod.v1.AgentExecutionR\x0eagentExecution\"\x83\x03\n" +
 	"\x1fEmitAgentSessionActivityRequest\x126\n" +
 	"\x12agent_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\x12B\n" +
 	"\x19external_agent_session_id\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x16externalAgentSessionId\x12D\n" +
 	"\x0eresponse_block\x18\x03 \x01(\v2\x1d.gitpod.v1.AgentResponseBlockR\rresponseBlock\x128\n" +
 	"\x06status\x18\x04 \x01(\v2 .gitpod.v1.AgentExecution.StatusR\x06status\x12L\n" +
-	"\x13next_steps_proposal\x18\x05 \x01(\v2\x1c.gitpod.v1.NextStepsProposalR\x11nextStepsProposal\x12\x1e\n" +
-	"\x06cursor\x18\x06 \x01(\tB\x06ʫ\x1e\x02\b\x01R\x06cursor\"\"\n" +
+	"\x13next_steps_proposal\x18\x05 \x01(\v2\x1c.gitpod.v1.NextStepsProposalR\x11nextStepsProposal\x12\x16\n" +
+	"\x06cursor\x18\x06 \x01(\tR\x06cursor\"\"\n" +
 	" EmitAgentSessionActivityResponse\"[\n" +
 	"\x1cImprovePromptForAgentRequest\x12#\n" +
 	"\bagent_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\aagentId\x12\x16\n" +
@@ -11234,12 +11204,12 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x0fimproved_prompt\x18\x01 \x01(\tR\x0eimprovedPrompt\"\x95\x01\n" +
 	"\x1bCreateLLMAccessTokenRequest\x12B\n" +
 	"\x0frequired_models\x18\x01 \x03(\x0e2\x19.gitpod.v1.SupportedModelR\x0erequiredModels\x12,\n" +
-	"\x12agent_execution_id\x18\x03 \x01(\tR\x10agentExecutionIdJ\x04\b\x02\x10\x03\"\x9e\x02\n" +
+	"\x12agent_execution_id\x18\x03 \x01(\tR\x10agentExecutionIdJ\x04\b\x02\x10\x03\"\x96\x02\n" +
 	"\x1cCreateLLMAccessTokenResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12\x17\n" +
 	"\allm_url\x18\x02 \x01(\tR\x06llmUrl\x12I\n" +
-	"\"is_server_side_tool_search_enabled\x18\x03 \x01(\bR\x1disServerSideToolSearchEnabled\x12]\n" +
-	"\x15disabled_capabilities\x18\x04 \x03(\x0e2 .gitpod.v1.LLMDisabledCapabilityB\x06ʫ\x1e\x02\b\x01R\x14disabledCapabilitiesJ\x04\b\x05\x10\x06R\x12llm_integration_id\"`\n" +
+	"\"is_server_side_tool_search_enabled\x18\x03 \x01(\bR\x1disServerSideToolSearchEnabled\x12U\n" +
+	"\x15disabled_capabilities\x18\x04 \x03(\x0e2 .gitpod.v1.LLMDisabledCapabilityR\x14disabledCapabilitiesJ\x04\b\x05\x10\x06R\x12llm_integration_id\"`\n" +
 	"\x0eMCPIntegration\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x10\n" +
@@ -11260,10 +11230,9 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x06Prompt\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x125\n" +
 	"\bmetadata\x18\x02 \x01(\v2\x19.gitpod.v1.PromptMetadataR\bmetadata\x12)\n" +
-	"\x04spec\x18\x03 \x01(\v2\x15.gitpod.v1.PromptSpecR\x04spec\"\xb2\x02\n" +
-	"\x0ePromptMetadata\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\x12\n" +
+	"\x04spec\x18\x03 \x01(\v2\x15.gitpod.v1.PromptSpecR\x04spec\"\x9d\x02\n" +
+	"\x0ePromptMetadata\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12,\n" +
 	"\acreator\x18\x04 \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x129\n" +
@@ -11400,35 +11369,34 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x12\x1f\n" +
 	"\x1bMCP_INTEGRATION_PHASE_READY\x10\x14\x12 \n" +
 	"\x1cMCP_INTEGRATION_PHASE_FAILED\x10\x1e\x12%\n" +
-	"!MCP_INTEGRATION_PHASE_UNAVAILABLE\x10(2\xbf\x14\n" +
+	"!MCP_INTEGRATION_PHASE_UNAVAILABLE\x10(2\xa4\x12\n" +
 	"\fAgentService\x12K\n" +
 	"\n" +
 	"ListAgents\x12\x1c.gitpod.v1.ListAgentsRequest\x1a\x1d.gitpod.v1.ListAgentsResponse\"\x00\x12E\n" +
 	"\bGetAgent\x12\x1a.gitpod.v1.GetAgentRequest\x1a\x1b.gitpod.v1.GetAgentResponse\"\x00\x12N\n" +
 	"\vCreateAgent\x12\x1d.gitpod.v1.CreateAgentRequest\x1a\x1e.gitpod.v1.CreateAgentResponse\"\x00\x12N\n" +
 	"\vUpdateAgent\x12\x1d.gitpod.v1.UpdateAgentRequest\x1a\x1e.gitpod.v1.UpdateAgentResponse\"\x00\x12N\n" +
-	"\vDeleteAgent\x12\x1d.gitpod.v1.DeleteAgentRequest\x1a\x1e.gitpod.v1.DeleteAgentResponse\"\x00\x12`\n" +
+	"\vDeleteAgent\x12\x1d.gitpod.v1.DeleteAgentRequest\x1a\x1e.gitpod.v1.DeleteAgentResponse\"\x00\x12K\n" +
 	"\n" +
-	"StartAgent\x12\x1c.gitpod.v1.StartAgentRequest\x1a\x1d.gitpod.v1.StartAgentResponse\"\x15\xb2\xab\x1e\x11\x12\x0fstart_execution\x12{\n" +
-	"\x13ListAgentExecutions\x12%.gitpod.v1.ListAgentExecutionsRequest\x1a&.gitpod.v1.ListAgentExecutionsResponse\"\x15\xb2\xab\x1e\x11\x12\x0flist_executions\x12x\n" +
-	"\x11GetAgentExecution\x12#.gitpod.v1.GetAgentExecutionRequest\x1a$.gitpod.v1.GetAgentExecutionResponse\"\x18\xb2\xab\x1e\x14\x12\x12retrieve_execution\x12\x7f\n" +
-	"\x14DeleteAgentExecution\x12&.gitpod.v1.DeleteAgentExecutionRequest\x1a'.gitpod.v1.DeleteAgentExecutionResponse\"\x16\xb2\xab\x1e\x12\x12\x10delete_execution\x12\x80\x01\n" +
-	"\x14SendToAgentExecution\x12&.gitpod.v1.SendToAgentExecutionRequest\x1a'.gitpod.v1.SendToAgentExecutionResponse\"\x17\xb2\xab\x1e\x13\x12\x11send_to_execution\x12\xc5\x01\n" +
-	"%CreateAgentExecutionConversationToken\x127.gitpod.v1.CreateAgentExecutionConversationTokenRequest\x1a8.gitpod.v1.CreateAgentExecutionConversationTokenResponse\")\xb2\xab\x1e%\x12#create_execution_conversation_token\x12w\n" +
-	"\x12StopAgentExecution\x12$.gitpod.v1.StopAgentExecutionRequest\x1a%.gitpod.v1.StopAgentExecutionResponse\"\x14\xb2\xab\x1e\x10\x12\x0estop_execution\x12i\n" +
+	"StartAgent\x12\x1c.gitpod.v1.StartAgentRequest\x1a\x1d.gitpod.v1.StartAgentResponse\"\x00\x12f\n" +
+	"\x13ListAgentExecutions\x12%.gitpod.v1.ListAgentExecutionsRequest\x1a&.gitpod.v1.ListAgentExecutionsResponse\"\x00\x12`\n" +
+	"\x11GetAgentExecution\x12#.gitpod.v1.GetAgentExecutionRequest\x1a$.gitpod.v1.GetAgentExecutionResponse\"\x00\x12i\n" +
+	"\x14DeleteAgentExecution\x12&.gitpod.v1.DeleteAgentExecutionRequest\x1a'.gitpod.v1.DeleteAgentExecutionResponse\"\x00\x12i\n" +
+	"\x14SendToAgentExecution\x12&.gitpod.v1.SendToAgentExecutionRequest\x1a'.gitpod.v1.SendToAgentExecutionResponse\"\x00\x12\x9c\x01\n" +
+	"%CreateAgentExecutionConversationToken\x127.gitpod.v1.CreateAgentExecutionConversationTokenRequest\x1a8.gitpod.v1.CreateAgentExecutionConversationTokenResponse\"\x00\x12c\n" +
+	"\x12StopAgentExecution\x12$.gitpod.v1.StopAgentExecutionRequest\x1a%.gitpod.v1.StopAgentExecutionResponse\"\x00\x12i\n" +
 	"\x14UpdateAgentExecution\x12&.gitpod.v1.UpdateAgentExecutionRequest\x1a'.gitpod.v1.UpdateAgentExecutionResponse\"\x00\x12~\n" +
 	"\x1bReportAgentExecutionOutputs\x12-.gitpod.v1.ReportAgentExecutionOutputsRequest\x1a..gitpod.v1.ReportAgentExecutionOutputsResponse\"\x00\x12u\n" +
 	"\x18EmitAgentSessionActivity\x12*.gitpod.v1.EmitAgentSessionActivityRequest\x1a+.gitpod.v1.EmitAgentSessionActivityResponse\"\x00\x12l\n" +
 	"\x15ImprovePromptForAgent\x12'.gitpod.v1.ImprovePromptForAgentRequest\x1a(.gitpod.v1.ImprovePromptForAgentResponse\"\x00\x12i\n" +
 	"\x14CreateLLMAccessToken\x12&.gitpod.v1.CreateLLMAccessTokenRequest\x1a'.gitpod.v1.CreateLLMAccessTokenResponse\"\x00\x12f\n" +
 	"\x13ListMCPIntegrations\x12%.gitpod.v1.ListMCPIntegrationsRequest\x1a&.gitpod.v1.ListMCPIntegrationsResponse\"\x00\x12i\n" +
-	"\x14CreateMCPAccessToken\x12&.gitpod.v1.CreateMCPAccessTokenRequest\x1a'.gitpod.v1.CreateMCPAccessTokenResponse\"\x00\x12`\n" +
-	"\vListPrompts\x12\x1d.gitpod.v1.ListPromptsRequest\x1a\x1e.gitpod.v1.ListPromptsResponse\"\x12\xb2\xab\x1e\x0e\x12\flist_prompts\x12]\n" +
-	"\tGetPrompt\x12\x1b.gitpod.v1.GetPromptRequest\x1a\x1c.gitpod.v1.GetPromptResponse\"\x15\xb2\xab\x1e\x11\x12\x0fretrieve_prompt\x12d\n" +
-	"\fCreatePrompt\x12\x1e.gitpod.v1.CreatePromptRequest\x1a\x1f.gitpod.v1.CreatePromptResponse\"\x13\xb2\xab\x1e\x0f\x12\rcreate_prompt\x12d\n" +
-	"\fUpdatePrompt\x12\x1e.gitpod.v1.UpdatePromptRequest\x1a\x1f.gitpod.v1.UpdatePromptResponse\"\x13\xb2\xab\x1e\x0f\x12\rupdate_prompt\x12d\n" +
-	"\fDeletePrompt\x12\x1e.gitpod.v1.DeletePromptRequest\x1a\x1f.gitpod.v1.DeletePromptResponse\"\x13\xb2\xab\x1e\x0f\x12\rdelete_prompt\x1a\f\xaa\xab\x1e\b\n" +
-	"\x06agentsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x14CreateMCPAccessToken\x12&.gitpod.v1.CreateMCPAccessTokenRequest\x1a'.gitpod.v1.CreateMCPAccessTokenResponse\"\x00\x12N\n" +
+	"\vListPrompts\x12\x1d.gitpod.v1.ListPromptsRequest\x1a\x1e.gitpod.v1.ListPromptsResponse\"\x00\x12H\n" +
+	"\tGetPrompt\x12\x1b.gitpod.v1.GetPromptRequest\x1a\x1c.gitpod.v1.GetPromptResponse\"\x00\x12Q\n" +
+	"\fCreatePrompt\x12\x1e.gitpod.v1.CreatePromptRequest\x1a\x1f.gitpod.v1.CreatePromptResponse\"\x00\x12Q\n" +
+	"\fUpdatePrompt\x12\x1e.gitpod.v1.UpdatePromptRequest\x1a\x1f.gitpod.v1.UpdatePromptResponse\"\x00\x12Q\n" +
+	"\fDeletePrompt\x12\x1e.gitpod.v1.DeletePromptRequest\x1a\x1f.gitpod.v1.DeletePromptResponse\"\x00B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_agent_proto_rawDescOnce sync.Once
