@@ -9,6 +9,7 @@ It covers:
 - `ona_environment_class`
 - `ona_project`
 - `ona_warm_pool`
+- `ona_secret`
 
 The example only generates imports for objects that already exist and can be
 represented by the provider. To exercise the complete workflow, use an Ona
