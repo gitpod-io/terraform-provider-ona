@@ -7,6 +7,7 @@ It covers:
 - `ona_runner`
 - `ona_scm_integration`
 - `ona_environment_class`
+- `ona_sso_configuration`
 - `ona_project`
 - `ona_warm_pool`
 - `ona_secret`
