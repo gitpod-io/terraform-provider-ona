@@ -33,19 +33,6 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// AgentServiceListAgentsProcedure is the fully-qualified name of the AgentService's ListAgents RPC.
-	AgentServiceListAgentsProcedure = "/gitpod.v1.AgentService/ListAgents"
-	// AgentServiceGetAgentProcedure is the fully-qualified name of the AgentService's GetAgent RPC.
-	AgentServiceGetAgentProcedure = "/gitpod.v1.AgentService/GetAgent"
-	// AgentServiceCreateAgentProcedure is the fully-qualified name of the AgentService's CreateAgent
-	// RPC.
-	AgentServiceCreateAgentProcedure = "/gitpod.v1.AgentService/CreateAgent"
-	// AgentServiceUpdateAgentProcedure is the fully-qualified name of the AgentService's UpdateAgent
-	// RPC.
-	AgentServiceUpdateAgentProcedure = "/gitpod.v1.AgentService/UpdateAgent"
-	// AgentServiceDeleteAgentProcedure is the fully-qualified name of the AgentService's DeleteAgent
-	// RPC.
-	AgentServiceDeleteAgentProcedure = "/gitpod.v1.AgentService/DeleteAgent"
 	// AgentServiceStartAgentProcedure is the fully-qualified name of the AgentService's StartAgent RPC.
 	AgentServiceStartAgentProcedure = "/gitpod.v1.AgentService/StartAgent"
 	// AgentServiceListAgentExecutionsProcedure is the fully-qualified name of the AgentService's
@@ -66,27 +53,6 @@ const (
 	// AgentServiceStopAgentExecutionProcedure is the fully-qualified name of the AgentService's
 	// StopAgentExecution RPC.
 	AgentServiceStopAgentExecutionProcedure = "/gitpod.v1.AgentService/StopAgentExecution"
-	// AgentServiceUpdateAgentExecutionProcedure is the fully-qualified name of the AgentService's
-	// UpdateAgentExecution RPC.
-	AgentServiceUpdateAgentExecutionProcedure = "/gitpod.v1.AgentService/UpdateAgentExecution"
-	// AgentServiceReportAgentExecutionOutputsProcedure is the fully-qualified name of the
-	// AgentService's ReportAgentExecutionOutputs RPC.
-	AgentServiceReportAgentExecutionOutputsProcedure = "/gitpod.v1.AgentService/ReportAgentExecutionOutputs"
-	// AgentServiceEmitAgentSessionActivityProcedure is the fully-qualified name of the AgentService's
-	// EmitAgentSessionActivity RPC.
-	AgentServiceEmitAgentSessionActivityProcedure = "/gitpod.v1.AgentService/EmitAgentSessionActivity"
-	// AgentServiceImprovePromptForAgentProcedure is the fully-qualified name of the AgentService's
-	// ImprovePromptForAgent RPC.
-	AgentServiceImprovePromptForAgentProcedure = "/gitpod.v1.AgentService/ImprovePromptForAgent"
-	// AgentServiceCreateLLMAccessTokenProcedure is the fully-qualified name of the AgentService's
-	// CreateLLMAccessToken RPC.
-	AgentServiceCreateLLMAccessTokenProcedure = "/gitpod.v1.AgentService/CreateLLMAccessToken"
-	// AgentServiceListMCPIntegrationsProcedure is the fully-qualified name of the AgentService's
-	// ListMCPIntegrations RPC.
-	AgentServiceListMCPIntegrationsProcedure = "/gitpod.v1.AgentService/ListMCPIntegrations"
-	// AgentServiceCreateMCPAccessTokenProcedure is the fully-qualified name of the AgentService's
-	// CreateMCPAccessToken RPC.
-	AgentServiceCreateMCPAccessTokenProcedure = "/gitpod.v1.AgentService/CreateMCPAccessToken"
 	// AgentServiceListPromptsProcedure is the fully-qualified name of the AgentService's ListPrompts
 	// RPC.
 	AgentServiceListPromptsProcedure = "/gitpod.v1.AgentService/ListPrompts"
@@ -105,53 +71,6 @@ const (
 
 // AgentServiceClient is a client for the gitpod.v1.AgentService service.
 type AgentServiceClient interface {
-	// Lists all agents matching the specified criteria.
-	//
-	// Use this method to find and monitor agents across your organization.
-	// Results are ordered by their creation time with the newest first.
-	//
-	// ### Examples
-	//
-	// - List all agents:
-	//
-	//	Retrieves all agents with pagination.
-	//
-	//	```yaml
-	//	pagination:
-	//	  pageSize: 10
-	//	```
-	ListAgents(context.Context, *connect.Request[v1.ListAgentsRequest]) (*connect.Response[v1.ListAgentsResponse], error)
-	// Gets details about a specific agent including description,
-	// and required models.
-	//
-	// Use this method to:
-	// - Check if an agent is defined correctly
-	// - Understand which models are required for this agent
-	//
-	// ### Examples
-	//
-	// - Get agent details:
-	//
-	//	```yaml
-	//	agentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
-	//	```
-	GetAgent(context.Context, *connect.Request[v1.GetAgentRequest]) (*connect.Response[v1.GetAgentResponse], error)
-	// Creates a new agent.
-	//
-	// Use this method to:
-	// - Define new agents with custom prompts and tools
-	CreateAgent(context.Context, *connect.Request[v1.CreateAgentRequest]) (*connect.Response[v1.CreateAgentResponse], error)
-	// Updates an existing agent.
-	//
-	// Use this method to:
-	// - Modify agent configuration
-	// - Update prompts or required tools
-	UpdateAgent(context.Context, *connect.Request[v1.UpdateAgentRequest]) (*connect.Response[v1.UpdateAgentResponse], error)
-	// Deletes an agent.
-	//
-	// Use this method to:
-	// - Remove custom agents
-	DeleteAgent(context.Context, *connect.Request[v1.DeleteAgentRequest]) (*connect.Response[v1.DeleteAgentResponse], error)
 	// Starts (or triggers) an agent run using a provided agent.
 	//
 	// Use this method to:
@@ -255,79 +174,6 @@ type AgentServiceClient interface {
 	//	agentExecutionId: "6fa1a3c7-fbb7-49d1-ba56-1890dc7c4c35"
 	//	```
 	StopAgentExecution(context.Context, *connect.Request[v1.StopAgentExecutionRequest]) (*connect.Response[v1.StopAgentExecutionResponse], error)
-	// Updates an agent execution's spec.
-	//
-	// Use this method to:
-	// - Set or update loop conditions on an agent execution
-	UpdateAgentExecution(context.Context, *connect.Request[v1.UpdateAgentExecutionRequest]) (*connect.Response[v1.UpdateAgentExecutionResponse], error)
-	// Reports outputs for an agent execution.
-	//
-	// This method allows agents to report key-value outputs during execution.
-	// Similar to task execution outputs, but with typed values for structured data.
-	// Outputs are merged with any existing outputs. The API automatically infers
-	// the type (int, float, bool, or string) from the value.
-	//
-	// Use this method to:
-	// - Record execution outcomes and metrics
-	// - Track test results, coverage, or success indicators
-	// - Store any execution-related data as key-value pairs
-	//
-	// Type inference rules:
-	// - "true" or "false" → bool
-	// - Valid integer (e.g., "42", "-10") → int
-	// - Valid float (e.g., "85.5", "3.14") → float
-	// - Everything else → string
-	//
-	// Validation limits (matching task execution outputs):
-	// - Keys: 1-128 characters
-	// - String values: max 4096 characters
-	//
-	// ### Examples
-	//
-	// - Report execution outputs (types will be inferred from string_value):
-	//
-	//	```yaml
-	//	agentExecutionId: "6fa1a3c7-fbb7-49d1-ba56-1890dc7c4c35"
-	//	outputs:
-	//	  tests_passed:
-	//	    stringValue: "42"        # inferred as int
-	//	  coverage:
-	//	    stringValue: "85.5"      # inferred as float
-	//	  success:
-	//	    stringValue: "true"      # inferred as bool
-	//	  message:
-	//	    stringValue: "All tests passed"  # stored as string
-	//	```
-	ReportAgentExecutionOutputs(context.Context, *connect.Request[v1.ReportAgentExecutionOutputsRequest]) (*connect.Response[v1.ReportAgentExecutionOutputsResponse], error)
-	// Emits an activity to the external agent session (e.g., Linear) associated
-	// with this agent execution. The backend resolves the session ID from the
-	// execution's annotations and uses the org's app token to authenticate.
-	EmitAgentSessionActivity(context.Context, *connect.Request[v1.EmitAgentSessionActivityRequest]) (*connect.Response[v1.EmitAgentSessionActivityResponse], error)
-	// Improves an agent's prompt.
-	//
-	// Use this method to:
-	// - Enhance the agent's understanding of the user's request
-	// - Refine the agent's response to be more accurate and relevant
-	ImprovePromptForAgent(context.Context, *connect.Request[v1.ImprovePromptForAgentRequest]) (*connect.Response[v1.ImprovePromptForAgentResponse], error)
-	// Creates a token for LLM access with a specific agent run.
-	CreateLLMAccessToken(context.Context, *connect.Request[v1.CreateLLMAccessTokenRequest]) (*connect.Response[v1.CreateLLMAccessTokenResponse], error)
-	// Lists all MCP integrations.
-	//
-	// Use this method to retrieve all configured MCP integrations.
-	//
-	// ### Examples
-	//
-	// - List all MCP integrations:
-	//
-	//	```yaml
-	//	pagination:
-	//	  pageSize: 10
-	//	```
-	ListMCPIntegrations(context.Context, *connect.Request[v1.ListMCPIntegrationsRequest]) (*connect.Response[v1.ListMCPIntegrationsResponse], error)
-	// Creates a token for MCP access.
-	//
-	// Use this method to generate an access token for MCP integrations.
-	CreateMCPAccessToken(context.Context, *connect.Request[v1.CreateMCPAccessTokenRequest]) (*connect.Response[v1.CreateMCPAccessTokenResponse], error)
 	// Lists all prompts matching the specified criteria.
 	//
 	// Use this method to find and browse prompts across your organization.
@@ -389,36 +235,6 @@ func NewAgentServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 	baseURL = strings.TrimRight(baseURL, "/")
 	agentServiceMethods := v1.File_gitpod_v1_agent_proto.Services().ByName("AgentService").Methods()
 	return &agentServiceClient{
-		listAgents: connect.NewClient[v1.ListAgentsRequest, v1.ListAgentsResponse](
-			httpClient,
-			baseURL+AgentServiceListAgentsProcedure,
-			connect.WithSchema(agentServiceMethods.ByName("ListAgents")),
-			connect.WithClientOptions(opts...),
-		),
-		getAgent: connect.NewClient[v1.GetAgentRequest, v1.GetAgentResponse](
-			httpClient,
-			baseURL+AgentServiceGetAgentProcedure,
-			connect.WithSchema(agentServiceMethods.ByName("GetAgent")),
-			connect.WithClientOptions(opts...),
-		),
-		createAgent: connect.NewClient[v1.CreateAgentRequest, v1.CreateAgentResponse](
-			httpClient,
-			baseURL+AgentServiceCreateAgentProcedure,
-			connect.WithSchema(agentServiceMethods.ByName("CreateAgent")),
-			connect.WithClientOptions(opts...),
-		),
-		updateAgent: connect.NewClient[v1.UpdateAgentRequest, v1.UpdateAgentResponse](
-			httpClient,
-			baseURL+AgentServiceUpdateAgentProcedure,
-			connect.WithSchema(agentServiceMethods.ByName("UpdateAgent")),
-			connect.WithClientOptions(opts...),
-		),
-		deleteAgent: connect.NewClient[v1.DeleteAgentRequest, v1.DeleteAgentResponse](
-			httpClient,
-			baseURL+AgentServiceDeleteAgentProcedure,
-			connect.WithSchema(agentServiceMethods.ByName("DeleteAgent")),
-			connect.WithClientOptions(opts...),
-		),
 		startAgent: connect.NewClient[v1.StartAgentRequest, v1.StartAgentResponse](
 			httpClient,
 			baseURL+AgentServiceStartAgentProcedure,
@@ -461,48 +277,6 @@ func NewAgentServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(agentServiceMethods.ByName("StopAgentExecution")),
 			connect.WithClientOptions(opts...),
 		),
-		updateAgentExecution: connect.NewClient[v1.UpdateAgentExecutionRequest, v1.UpdateAgentExecutionResponse](
-			httpClient,
-			baseURL+AgentServiceUpdateAgentExecutionProcedure,
-			connect.WithSchema(agentServiceMethods.ByName("UpdateAgentExecution")),
-			connect.WithClientOptions(opts...),
-		),
-		reportAgentExecutionOutputs: connect.NewClient[v1.ReportAgentExecutionOutputsRequest, v1.ReportAgentExecutionOutputsResponse](
-			httpClient,
-			baseURL+AgentServiceReportAgentExecutionOutputsProcedure,
-			connect.WithSchema(agentServiceMethods.ByName("ReportAgentExecutionOutputs")),
-			connect.WithClientOptions(opts...),
-		),
-		emitAgentSessionActivity: connect.NewClient[v1.EmitAgentSessionActivityRequest, v1.EmitAgentSessionActivityResponse](
-			httpClient,
-			baseURL+AgentServiceEmitAgentSessionActivityProcedure,
-			connect.WithSchema(agentServiceMethods.ByName("EmitAgentSessionActivity")),
-			connect.WithClientOptions(opts...),
-		),
-		improvePromptForAgent: connect.NewClient[v1.ImprovePromptForAgentRequest, v1.ImprovePromptForAgentResponse](
-			httpClient,
-			baseURL+AgentServiceImprovePromptForAgentProcedure,
-			connect.WithSchema(agentServiceMethods.ByName("ImprovePromptForAgent")),
-			connect.WithClientOptions(opts...),
-		),
-		createLLMAccessToken: connect.NewClient[v1.CreateLLMAccessTokenRequest, v1.CreateLLMAccessTokenResponse](
-			httpClient,
-			baseURL+AgentServiceCreateLLMAccessTokenProcedure,
-			connect.WithSchema(agentServiceMethods.ByName("CreateLLMAccessToken")),
-			connect.WithClientOptions(opts...),
-		),
-		listMCPIntegrations: connect.NewClient[v1.ListMCPIntegrationsRequest, v1.ListMCPIntegrationsResponse](
-			httpClient,
-			baseURL+AgentServiceListMCPIntegrationsProcedure,
-			connect.WithSchema(agentServiceMethods.ByName("ListMCPIntegrations")),
-			connect.WithClientOptions(opts...),
-		),
-		createMCPAccessToken: connect.NewClient[v1.CreateMCPAccessTokenRequest, v1.CreateMCPAccessTokenResponse](
-			httpClient,
-			baseURL+AgentServiceCreateMCPAccessTokenProcedure,
-			connect.WithSchema(agentServiceMethods.ByName("CreateMCPAccessToken")),
-			connect.WithClientOptions(opts...),
-		),
 		listPrompts: connect.NewClient[v1.ListPromptsRequest, v1.ListPromptsResponse](
 			httpClient,
 			baseURL+AgentServiceListPromptsProcedure,
@@ -538,11 +312,6 @@ func NewAgentServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 
 // agentServiceClient implements AgentServiceClient.
 type agentServiceClient struct {
-	listAgents                            *connect.Client[v1.ListAgentsRequest, v1.ListAgentsResponse]
-	getAgent                              *connect.Client[v1.GetAgentRequest, v1.GetAgentResponse]
-	createAgent                           *connect.Client[v1.CreateAgentRequest, v1.CreateAgentResponse]
-	updateAgent                           *connect.Client[v1.UpdateAgentRequest, v1.UpdateAgentResponse]
-	deleteAgent                           *connect.Client[v1.DeleteAgentRequest, v1.DeleteAgentResponse]
 	startAgent                            *connect.Client[v1.StartAgentRequest, v1.StartAgentResponse]
 	listAgentExecutions                   *connect.Client[v1.ListAgentExecutionsRequest, v1.ListAgentExecutionsResponse]
 	getAgentExecution                     *connect.Client[v1.GetAgentExecutionRequest, v1.GetAgentExecutionResponse]
@@ -550,43 +319,11 @@ type agentServiceClient struct {
 	sendToAgentExecution                  *connect.Client[v1.SendToAgentExecutionRequest, v1.SendToAgentExecutionResponse]
 	createAgentExecutionConversationToken *connect.Client[v1.CreateAgentExecutionConversationTokenRequest, v1.CreateAgentExecutionConversationTokenResponse]
 	stopAgentExecution                    *connect.Client[v1.StopAgentExecutionRequest, v1.StopAgentExecutionResponse]
-	updateAgentExecution                  *connect.Client[v1.UpdateAgentExecutionRequest, v1.UpdateAgentExecutionResponse]
-	reportAgentExecutionOutputs           *connect.Client[v1.ReportAgentExecutionOutputsRequest, v1.ReportAgentExecutionOutputsResponse]
-	emitAgentSessionActivity              *connect.Client[v1.EmitAgentSessionActivityRequest, v1.EmitAgentSessionActivityResponse]
-	improvePromptForAgent                 *connect.Client[v1.ImprovePromptForAgentRequest, v1.ImprovePromptForAgentResponse]
-	createLLMAccessToken                  *connect.Client[v1.CreateLLMAccessTokenRequest, v1.CreateLLMAccessTokenResponse]
-	listMCPIntegrations                   *connect.Client[v1.ListMCPIntegrationsRequest, v1.ListMCPIntegrationsResponse]
-	createMCPAccessToken                  *connect.Client[v1.CreateMCPAccessTokenRequest, v1.CreateMCPAccessTokenResponse]
 	listPrompts                           *connect.Client[v1.ListPromptsRequest, v1.ListPromptsResponse]
 	getPrompt                             *connect.Client[v1.GetPromptRequest, v1.GetPromptResponse]
 	createPrompt                          *connect.Client[v1.CreatePromptRequest, v1.CreatePromptResponse]
 	updatePrompt                          *connect.Client[v1.UpdatePromptRequest, v1.UpdatePromptResponse]
 	deletePrompt                          *connect.Client[v1.DeletePromptRequest, v1.DeletePromptResponse]
-}
-
-// ListAgents calls gitpod.v1.AgentService.ListAgents.
-func (c *agentServiceClient) ListAgents(ctx context.Context, req *connect.Request[v1.ListAgentsRequest]) (*connect.Response[v1.ListAgentsResponse], error) {
-	return c.listAgents.CallUnary(ctx, req)
-}
-
-// GetAgent calls gitpod.v1.AgentService.GetAgent.
-func (c *agentServiceClient) GetAgent(ctx context.Context, req *connect.Request[v1.GetAgentRequest]) (*connect.Response[v1.GetAgentResponse], error) {
-	return c.getAgent.CallUnary(ctx, req)
-}
-
-// CreateAgent calls gitpod.v1.AgentService.CreateAgent.
-func (c *agentServiceClient) CreateAgent(ctx context.Context, req *connect.Request[v1.CreateAgentRequest]) (*connect.Response[v1.CreateAgentResponse], error) {
-	return c.createAgent.CallUnary(ctx, req)
-}
-
-// UpdateAgent calls gitpod.v1.AgentService.UpdateAgent.
-func (c *agentServiceClient) UpdateAgent(ctx context.Context, req *connect.Request[v1.UpdateAgentRequest]) (*connect.Response[v1.UpdateAgentResponse], error) {
-	return c.updateAgent.CallUnary(ctx, req)
-}
-
-// DeleteAgent calls gitpod.v1.AgentService.DeleteAgent.
-func (c *agentServiceClient) DeleteAgent(ctx context.Context, req *connect.Request[v1.DeleteAgentRequest]) (*connect.Response[v1.DeleteAgentResponse], error) {
-	return c.deleteAgent.CallUnary(ctx, req)
 }
 
 // StartAgent calls gitpod.v1.AgentService.StartAgent.
@@ -625,41 +362,6 @@ func (c *agentServiceClient) StopAgentExecution(ctx context.Context, req *connec
 	return c.stopAgentExecution.CallUnary(ctx, req)
 }
 
-// UpdateAgentExecution calls gitpod.v1.AgentService.UpdateAgentExecution.
-func (c *agentServiceClient) UpdateAgentExecution(ctx context.Context, req *connect.Request[v1.UpdateAgentExecutionRequest]) (*connect.Response[v1.UpdateAgentExecutionResponse], error) {
-	return c.updateAgentExecution.CallUnary(ctx, req)
-}
-
-// ReportAgentExecutionOutputs calls gitpod.v1.AgentService.ReportAgentExecutionOutputs.
-func (c *agentServiceClient) ReportAgentExecutionOutputs(ctx context.Context, req *connect.Request[v1.ReportAgentExecutionOutputsRequest]) (*connect.Response[v1.ReportAgentExecutionOutputsResponse], error) {
-	return c.reportAgentExecutionOutputs.CallUnary(ctx, req)
-}
-
-// EmitAgentSessionActivity calls gitpod.v1.AgentService.EmitAgentSessionActivity.
-func (c *agentServiceClient) EmitAgentSessionActivity(ctx context.Context, req *connect.Request[v1.EmitAgentSessionActivityRequest]) (*connect.Response[v1.EmitAgentSessionActivityResponse], error) {
-	return c.emitAgentSessionActivity.CallUnary(ctx, req)
-}
-
-// ImprovePromptForAgent calls gitpod.v1.AgentService.ImprovePromptForAgent.
-func (c *agentServiceClient) ImprovePromptForAgent(ctx context.Context, req *connect.Request[v1.ImprovePromptForAgentRequest]) (*connect.Response[v1.ImprovePromptForAgentResponse], error) {
-	return c.improvePromptForAgent.CallUnary(ctx, req)
-}
-
-// CreateLLMAccessToken calls gitpod.v1.AgentService.CreateLLMAccessToken.
-func (c *agentServiceClient) CreateLLMAccessToken(ctx context.Context, req *connect.Request[v1.CreateLLMAccessTokenRequest]) (*connect.Response[v1.CreateLLMAccessTokenResponse], error) {
-	return c.createLLMAccessToken.CallUnary(ctx, req)
-}
-
-// ListMCPIntegrations calls gitpod.v1.AgentService.ListMCPIntegrations.
-func (c *agentServiceClient) ListMCPIntegrations(ctx context.Context, req *connect.Request[v1.ListMCPIntegrationsRequest]) (*connect.Response[v1.ListMCPIntegrationsResponse], error) {
-	return c.listMCPIntegrations.CallUnary(ctx, req)
-}
-
-// CreateMCPAccessToken calls gitpod.v1.AgentService.CreateMCPAccessToken.
-func (c *agentServiceClient) CreateMCPAccessToken(ctx context.Context, req *connect.Request[v1.CreateMCPAccessTokenRequest]) (*connect.Response[v1.CreateMCPAccessTokenResponse], error) {
-	return c.createMCPAccessToken.CallUnary(ctx, req)
-}
-
 // ListPrompts calls gitpod.v1.AgentService.ListPrompts.
 func (c *agentServiceClient) ListPrompts(ctx context.Context, req *connect.Request[v1.ListPromptsRequest]) (*connect.Response[v1.ListPromptsResponse], error) {
 	return c.listPrompts.CallUnary(ctx, req)
@@ -687,53 +389,6 @@ func (c *agentServiceClient) DeletePrompt(ctx context.Context, req *connect.Requ
 
 // AgentServiceHandler is an implementation of the gitpod.v1.AgentService service.
 type AgentServiceHandler interface {
-	// Lists all agents matching the specified criteria.
-	//
-	// Use this method to find and monitor agents across your organization.
-	// Results are ordered by their creation time with the newest first.
-	//
-	// ### Examples
-	//
-	// - List all agents:
-	//
-	//	Retrieves all agents with pagination.
-	//
-	//	```yaml
-	//	pagination:
-	//	  pageSize: 10
-	//	```
-	ListAgents(context.Context, *connect.Request[v1.ListAgentsRequest]) (*connect.Response[v1.ListAgentsResponse], error)
-	// Gets details about a specific agent including description,
-	// and required models.
-	//
-	// Use this method to:
-	// - Check if an agent is defined correctly
-	// - Understand which models are required for this agent
-	//
-	// ### Examples
-	//
-	// - Get agent details:
-	//
-	//	```yaml
-	//	agentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
-	//	```
-	GetAgent(context.Context, *connect.Request[v1.GetAgentRequest]) (*connect.Response[v1.GetAgentResponse], error)
-	// Creates a new agent.
-	//
-	// Use this method to:
-	// - Define new agents with custom prompts and tools
-	CreateAgent(context.Context, *connect.Request[v1.CreateAgentRequest]) (*connect.Response[v1.CreateAgentResponse], error)
-	// Updates an existing agent.
-	//
-	// Use this method to:
-	// - Modify agent configuration
-	// - Update prompts or required tools
-	UpdateAgent(context.Context, *connect.Request[v1.UpdateAgentRequest]) (*connect.Response[v1.UpdateAgentResponse], error)
-	// Deletes an agent.
-	//
-	// Use this method to:
-	// - Remove custom agents
-	DeleteAgent(context.Context, *connect.Request[v1.DeleteAgentRequest]) (*connect.Response[v1.DeleteAgentResponse], error)
 	// Starts (or triggers) an agent run using a provided agent.
 	//
 	// Use this method to:
@@ -837,79 +492,6 @@ type AgentServiceHandler interface {
 	//	agentExecutionId: "6fa1a3c7-fbb7-49d1-ba56-1890dc7c4c35"
 	//	```
 	StopAgentExecution(context.Context, *connect.Request[v1.StopAgentExecutionRequest]) (*connect.Response[v1.StopAgentExecutionResponse], error)
-	// Updates an agent execution's spec.
-	//
-	// Use this method to:
-	// - Set or update loop conditions on an agent execution
-	UpdateAgentExecution(context.Context, *connect.Request[v1.UpdateAgentExecutionRequest]) (*connect.Response[v1.UpdateAgentExecutionResponse], error)
-	// Reports outputs for an agent execution.
-	//
-	// This method allows agents to report key-value outputs during execution.
-	// Similar to task execution outputs, but with typed values for structured data.
-	// Outputs are merged with any existing outputs. The API automatically infers
-	// the type (int, float, bool, or string) from the value.
-	//
-	// Use this method to:
-	// - Record execution outcomes and metrics
-	// - Track test results, coverage, or success indicators
-	// - Store any execution-related data as key-value pairs
-	//
-	// Type inference rules:
-	// - "true" or "false" → bool
-	// - Valid integer (e.g., "42", "-10") → int
-	// - Valid float (e.g., "85.5", "3.14") → float
-	// - Everything else → string
-	//
-	// Validation limits (matching task execution outputs):
-	// - Keys: 1-128 characters
-	// - String values: max 4096 characters
-	//
-	// ### Examples
-	//
-	// - Report execution outputs (types will be inferred from string_value):
-	//
-	//	```yaml
-	//	agentExecutionId: "6fa1a3c7-fbb7-49d1-ba56-1890dc7c4c35"
-	//	outputs:
-	//	  tests_passed:
-	//	    stringValue: "42"        # inferred as int
-	//	  coverage:
-	//	    stringValue: "85.5"      # inferred as float
-	//	  success:
-	//	    stringValue: "true"      # inferred as bool
-	//	  message:
-	//	    stringValue: "All tests passed"  # stored as string
-	//	```
-	ReportAgentExecutionOutputs(context.Context, *connect.Request[v1.ReportAgentExecutionOutputsRequest]) (*connect.Response[v1.ReportAgentExecutionOutputsResponse], error)
-	// Emits an activity to the external agent session (e.g., Linear) associated
-	// with this agent execution. The backend resolves the session ID from the
-	// execution's annotations and uses the org's app token to authenticate.
-	EmitAgentSessionActivity(context.Context, *connect.Request[v1.EmitAgentSessionActivityRequest]) (*connect.Response[v1.EmitAgentSessionActivityResponse], error)
-	// Improves an agent's prompt.
-	//
-	// Use this method to:
-	// - Enhance the agent's understanding of the user's request
-	// - Refine the agent's response to be more accurate and relevant
-	ImprovePromptForAgent(context.Context, *connect.Request[v1.ImprovePromptForAgentRequest]) (*connect.Response[v1.ImprovePromptForAgentResponse], error)
-	// Creates a token for LLM access with a specific agent run.
-	CreateLLMAccessToken(context.Context, *connect.Request[v1.CreateLLMAccessTokenRequest]) (*connect.Response[v1.CreateLLMAccessTokenResponse], error)
-	// Lists all MCP integrations.
-	//
-	// Use this method to retrieve all configured MCP integrations.
-	//
-	// ### Examples
-	//
-	// - List all MCP integrations:
-	//
-	//	```yaml
-	//	pagination:
-	//	  pageSize: 10
-	//	```
-	ListMCPIntegrations(context.Context, *connect.Request[v1.ListMCPIntegrationsRequest]) (*connect.Response[v1.ListMCPIntegrationsResponse], error)
-	// Creates a token for MCP access.
-	//
-	// Use this method to generate an access token for MCP integrations.
-	CreateMCPAccessToken(context.Context, *connect.Request[v1.CreateMCPAccessTokenRequest]) (*connect.Response[v1.CreateMCPAccessTokenResponse], error)
 	// Lists all prompts matching the specified criteria.
 	//
 	// Use this method to find and browse prompts across your organization.
@@ -967,36 +549,6 @@ type AgentServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewAgentServiceHandler(svc AgentServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	agentServiceMethods := v1.File_gitpod_v1_agent_proto.Services().ByName("AgentService").Methods()
-	agentServiceListAgentsHandler := connect.NewUnaryHandler(
-		AgentServiceListAgentsProcedure,
-		svc.ListAgents,
-		connect.WithSchema(agentServiceMethods.ByName("ListAgents")),
-		connect.WithHandlerOptions(opts...),
-	)
-	agentServiceGetAgentHandler := connect.NewUnaryHandler(
-		AgentServiceGetAgentProcedure,
-		svc.GetAgent,
-		connect.WithSchema(agentServiceMethods.ByName("GetAgent")),
-		connect.WithHandlerOptions(opts...),
-	)
-	agentServiceCreateAgentHandler := connect.NewUnaryHandler(
-		AgentServiceCreateAgentProcedure,
-		svc.CreateAgent,
-		connect.WithSchema(agentServiceMethods.ByName("CreateAgent")),
-		connect.WithHandlerOptions(opts...),
-	)
-	agentServiceUpdateAgentHandler := connect.NewUnaryHandler(
-		AgentServiceUpdateAgentProcedure,
-		svc.UpdateAgent,
-		connect.WithSchema(agentServiceMethods.ByName("UpdateAgent")),
-		connect.WithHandlerOptions(opts...),
-	)
-	agentServiceDeleteAgentHandler := connect.NewUnaryHandler(
-		AgentServiceDeleteAgentProcedure,
-		svc.DeleteAgent,
-		connect.WithSchema(agentServiceMethods.ByName("DeleteAgent")),
-		connect.WithHandlerOptions(opts...),
-	)
 	agentServiceStartAgentHandler := connect.NewUnaryHandler(
 		AgentServiceStartAgentProcedure,
 		svc.StartAgent,
@@ -1039,48 +591,6 @@ func NewAgentServiceHandler(svc AgentServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(agentServiceMethods.ByName("StopAgentExecution")),
 		connect.WithHandlerOptions(opts...),
 	)
-	agentServiceUpdateAgentExecutionHandler := connect.NewUnaryHandler(
-		AgentServiceUpdateAgentExecutionProcedure,
-		svc.UpdateAgentExecution,
-		connect.WithSchema(agentServiceMethods.ByName("UpdateAgentExecution")),
-		connect.WithHandlerOptions(opts...),
-	)
-	agentServiceReportAgentExecutionOutputsHandler := connect.NewUnaryHandler(
-		AgentServiceReportAgentExecutionOutputsProcedure,
-		svc.ReportAgentExecutionOutputs,
-		connect.WithSchema(agentServiceMethods.ByName("ReportAgentExecutionOutputs")),
-		connect.WithHandlerOptions(opts...),
-	)
-	agentServiceEmitAgentSessionActivityHandler := connect.NewUnaryHandler(
-		AgentServiceEmitAgentSessionActivityProcedure,
-		svc.EmitAgentSessionActivity,
-		connect.WithSchema(agentServiceMethods.ByName("EmitAgentSessionActivity")),
-		connect.WithHandlerOptions(opts...),
-	)
-	agentServiceImprovePromptForAgentHandler := connect.NewUnaryHandler(
-		AgentServiceImprovePromptForAgentProcedure,
-		svc.ImprovePromptForAgent,
-		connect.WithSchema(agentServiceMethods.ByName("ImprovePromptForAgent")),
-		connect.WithHandlerOptions(opts...),
-	)
-	agentServiceCreateLLMAccessTokenHandler := connect.NewUnaryHandler(
-		AgentServiceCreateLLMAccessTokenProcedure,
-		svc.CreateLLMAccessToken,
-		connect.WithSchema(agentServiceMethods.ByName("CreateLLMAccessToken")),
-		connect.WithHandlerOptions(opts...),
-	)
-	agentServiceListMCPIntegrationsHandler := connect.NewUnaryHandler(
-		AgentServiceListMCPIntegrationsProcedure,
-		svc.ListMCPIntegrations,
-		connect.WithSchema(agentServiceMethods.ByName("ListMCPIntegrations")),
-		connect.WithHandlerOptions(opts...),
-	)
-	agentServiceCreateMCPAccessTokenHandler := connect.NewUnaryHandler(
-		AgentServiceCreateMCPAccessTokenProcedure,
-		svc.CreateMCPAccessToken,
-		connect.WithSchema(agentServiceMethods.ByName("CreateMCPAccessToken")),
-		connect.WithHandlerOptions(opts...),
-	)
 	agentServiceListPromptsHandler := connect.NewUnaryHandler(
 		AgentServiceListPromptsProcedure,
 		svc.ListPrompts,
@@ -1113,16 +623,6 @@ func NewAgentServiceHandler(svc AgentServiceHandler, opts ...connect.HandlerOpti
 	)
 	return "/gitpod.v1.AgentService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case AgentServiceListAgentsProcedure:
-			agentServiceListAgentsHandler.ServeHTTP(w, r)
-		case AgentServiceGetAgentProcedure:
-			agentServiceGetAgentHandler.ServeHTTP(w, r)
-		case AgentServiceCreateAgentProcedure:
-			agentServiceCreateAgentHandler.ServeHTTP(w, r)
-		case AgentServiceUpdateAgentProcedure:
-			agentServiceUpdateAgentHandler.ServeHTTP(w, r)
-		case AgentServiceDeleteAgentProcedure:
-			agentServiceDeleteAgentHandler.ServeHTTP(w, r)
 		case AgentServiceStartAgentProcedure:
 			agentServiceStartAgentHandler.ServeHTTP(w, r)
 		case AgentServiceListAgentExecutionsProcedure:
@@ -1137,20 +637,6 @@ func NewAgentServiceHandler(svc AgentServiceHandler, opts ...connect.HandlerOpti
 			agentServiceCreateAgentExecutionConversationTokenHandler.ServeHTTP(w, r)
 		case AgentServiceStopAgentExecutionProcedure:
 			agentServiceStopAgentExecutionHandler.ServeHTTP(w, r)
-		case AgentServiceUpdateAgentExecutionProcedure:
-			agentServiceUpdateAgentExecutionHandler.ServeHTTP(w, r)
-		case AgentServiceReportAgentExecutionOutputsProcedure:
-			agentServiceReportAgentExecutionOutputsHandler.ServeHTTP(w, r)
-		case AgentServiceEmitAgentSessionActivityProcedure:
-			agentServiceEmitAgentSessionActivityHandler.ServeHTTP(w, r)
-		case AgentServiceImprovePromptForAgentProcedure:
-			agentServiceImprovePromptForAgentHandler.ServeHTTP(w, r)
-		case AgentServiceCreateLLMAccessTokenProcedure:
-			agentServiceCreateLLMAccessTokenHandler.ServeHTTP(w, r)
-		case AgentServiceListMCPIntegrationsProcedure:
-			agentServiceListMCPIntegrationsHandler.ServeHTTP(w, r)
-		case AgentServiceCreateMCPAccessTokenProcedure:
-			agentServiceCreateMCPAccessTokenHandler.ServeHTTP(w, r)
 		case AgentServiceListPromptsProcedure:
 			agentServiceListPromptsHandler.ServeHTTP(w, r)
 		case AgentServiceGetPromptProcedure:
@@ -1169,26 +655,6 @@ func NewAgentServiceHandler(svc AgentServiceHandler, opts ...connect.HandlerOpti
 
 // UnimplementedAgentServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedAgentServiceHandler struct{}
-
-func (UnimplementedAgentServiceHandler) ListAgents(context.Context, *connect.Request[v1.ListAgentsRequest]) (*connect.Response[v1.ListAgentsResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AgentService.ListAgents is not implemented"))
-}
-
-func (UnimplementedAgentServiceHandler) GetAgent(context.Context, *connect.Request[v1.GetAgentRequest]) (*connect.Response[v1.GetAgentResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AgentService.GetAgent is not implemented"))
-}
-
-func (UnimplementedAgentServiceHandler) CreateAgent(context.Context, *connect.Request[v1.CreateAgentRequest]) (*connect.Response[v1.CreateAgentResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AgentService.CreateAgent is not implemented"))
-}
-
-func (UnimplementedAgentServiceHandler) UpdateAgent(context.Context, *connect.Request[v1.UpdateAgentRequest]) (*connect.Response[v1.UpdateAgentResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AgentService.UpdateAgent is not implemented"))
-}
-
-func (UnimplementedAgentServiceHandler) DeleteAgent(context.Context, *connect.Request[v1.DeleteAgentRequest]) (*connect.Response[v1.DeleteAgentResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AgentService.DeleteAgent is not implemented"))
-}
 
 func (UnimplementedAgentServiceHandler) StartAgent(context.Context, *connect.Request[v1.StartAgentRequest]) (*connect.Response[v1.StartAgentResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AgentService.StartAgent is not implemented"))
@@ -1216,34 +682,6 @@ func (UnimplementedAgentServiceHandler) CreateAgentExecutionConversationToken(co
 
 func (UnimplementedAgentServiceHandler) StopAgentExecution(context.Context, *connect.Request[v1.StopAgentExecutionRequest]) (*connect.Response[v1.StopAgentExecutionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AgentService.StopAgentExecution is not implemented"))
-}
-
-func (UnimplementedAgentServiceHandler) UpdateAgentExecution(context.Context, *connect.Request[v1.UpdateAgentExecutionRequest]) (*connect.Response[v1.UpdateAgentExecutionResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AgentService.UpdateAgentExecution is not implemented"))
-}
-
-func (UnimplementedAgentServiceHandler) ReportAgentExecutionOutputs(context.Context, *connect.Request[v1.ReportAgentExecutionOutputsRequest]) (*connect.Response[v1.ReportAgentExecutionOutputsResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AgentService.ReportAgentExecutionOutputs is not implemented"))
-}
-
-func (UnimplementedAgentServiceHandler) EmitAgentSessionActivity(context.Context, *connect.Request[v1.EmitAgentSessionActivityRequest]) (*connect.Response[v1.EmitAgentSessionActivityResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AgentService.EmitAgentSessionActivity is not implemented"))
-}
-
-func (UnimplementedAgentServiceHandler) ImprovePromptForAgent(context.Context, *connect.Request[v1.ImprovePromptForAgentRequest]) (*connect.Response[v1.ImprovePromptForAgentResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AgentService.ImprovePromptForAgent is not implemented"))
-}
-
-func (UnimplementedAgentServiceHandler) CreateLLMAccessToken(context.Context, *connect.Request[v1.CreateLLMAccessTokenRequest]) (*connect.Response[v1.CreateLLMAccessTokenResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AgentService.CreateLLMAccessToken is not implemented"))
-}
-
-func (UnimplementedAgentServiceHandler) ListMCPIntegrations(context.Context, *connect.Request[v1.ListMCPIntegrationsRequest]) (*connect.Response[v1.ListMCPIntegrationsResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AgentService.ListMCPIntegrations is not implemented"))
-}
-
-func (UnimplementedAgentServiceHandler) CreateMCPAccessToken(context.Context, *connect.Request[v1.CreateMCPAccessTokenRequest]) (*connect.Response[v1.CreateMCPAccessTokenResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AgentService.CreateMCPAccessToken is not implemented"))
 }
 
 func (UnimplementedAgentServiceHandler) ListPrompts(context.Context, *connect.Request[v1.ListPromptsRequest]) (*connect.Response[v1.ListPromptsResponse], error) {
