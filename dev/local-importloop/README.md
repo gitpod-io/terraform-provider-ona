@@ -4,6 +4,7 @@ This example exercises every resource type currently registered for Terraform
 Query and imports the discovered objects into disposable local Terraform state.
 It covers:
 
+- `ona_announcement_banner`
 - `ona_runner`
 - `ona_scm_integration`
 - `ona_environment_class`
