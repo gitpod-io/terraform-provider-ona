@@ -28,7 +28,12 @@ func (s *fakeInsightsProjectService) ListProjects(ctx context.Context, req *conn
 	return connect.NewResponse(&v1.ListProjectsResponse{Projects: []*v1.Project{{Id: projectInsightsTestProjectID, Metadata: &v1.ProjectMetadata{Name: "API"}}}}), nil
 }
 func TestAccProjectInsightsQuery(t *testing.T) {
-	insights := &fakeInsightsService{enabled: map[string]bool{projectInsightsTestProjectID: true}, enableCalls: map[string]int{}, disableCalls: map[string]int{}}
+	insights := &fakeInsightsService{
+		enabled:      map[string]bool{projectInsightsTestProjectID: true},
+		enableCalls:  map[string]int{},
+		disableCalls: map[string]int{},
+		getCalls:     map[string]int{},
+	}
 	mux := http.NewServeMux()
 	projectPath, projectHandler := v1connect.NewProjectServiceHandler(&fakeInsightsProjectService{})
 	insightsPath, insightsHandler := v1connect.NewInsightsServiceHandler(insights)
