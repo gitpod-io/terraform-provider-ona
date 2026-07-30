@@ -8,8 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -1430,22 +1428,18 @@ var File_gitpod_v1_account_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_account_proto_rawDesc = "" +
 	"\n" +
-	"\x17gitpod/v1/account.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1cgitpod/v1/organization.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x13\n" +
+	"\x17gitpod/v1/account.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1cgitpod/v1/organization.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x13\n" +
 	"\x11GetAccountRequest\"J\n" +
 	"\x12GetAccountResponse\x124\n" +
-	"\aaccount\x18\x01 \x01(\v2\x12.gitpod.v1.AccountB\x06\xbaH\x03\xc8\x01\x01R\aaccount\"\x87\x01\n" +
-	"\x14DeleteAccountRequest\x12:\n" +
+	"\aaccount\x18\x01 \x01(\v2\x12.gitpod.v1.AccountB\x06\xbaH\x03\xc8\x01\x01R\aaccount\"w\n" +
+	"\x14DeleteAccountRequest\x12*\n" +
 	"\n" +
-	"account_id\x18\x01 \x01(\tB\x1b\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"account.idR\taccountId\x12(\n" +
+	"account_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\taccountId\x12(\n" +
 	"\x06reason\x18\x02 \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\x18\x80\x02H\x00R\x06reason\x88\x01\x01B\t\n" +
 	"\a_reason\"\x17\n" +
-	"\x15DeleteAccountResponse\"\x8e\x04\n" +
-	"\aAccount\x12+\n" +
-	"\x02id\x18\x01 \x01(\tB\x1b\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"account.idR\x02id\x12\x1a\n" +
+	"\x15DeleteAccountResponse\"\xfe\x03\n" +
+	"\aAccount\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x02id\x12\x1a\n" +
 	"\x04name\x18\x02 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x04name\x12\x1d\n" +
 	"\n" +
 	"avatar_url\x18\x03 \x01(\tR\tavatarUrl\x12\x1c\n" +
@@ -1459,19 +1453,16 @@ const file_gitpod_v1_account_proto_rawDesc = "" +
 	"\x15public_email_provider\x18\t \x01(\bR\x13publicEmailProvider\x12,\n" +
 	"\x0forganization_id\x18\n" +
 	" \x01(\tH\x00R\x0eorganizationId\x88\x01\x01B\x12\n" +
-	"\x10_organization_id\"\x8e\x03\n" +
-	"\x11AccountMembership\x121\n" +
-	"\auser_id\x18\x01 \x01(\tB\x18\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\x12@\n" +
-	"\tuser_role\x18\x02 \x01(\x0e2\x1b.gitpod.v1.OrganizationRoleB\x06\xbaH\x03\xc8\x01\x01R\buserRole\x12I\n" +
-	"\x0forganization_id\x18\x03 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x123\n" +
+	"\x10_organization_id\"\xec\x02\n" +
+	"\x11AccountMembership\x12$\n" +
+	"\auser_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x06userId\x12@\n" +
+	"\tuser_role\x18\x02 \x01(\x0e2\x1b.gitpod.v1.OrganizationRoleB\x06\xbaH\x03\xc8\x01\x01R\buserRole\x124\n" +
+	"\x0forganization_id\x18\x03 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x123\n" +
 	"\x11organization_name\x18\x04 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x10organizationName\x12:\n" +
 	"\x19organization_member_count\x18\x05 \x01(\x05R\x17organizationMemberCount\x12H\n" +
-	"\x11organization_tier\x18\x06 \x01(\x0e2\x1b.gitpod.v1.OrganizationTierR\x10organizationTier\"\xd2\x01\n" +
-	"\x14JoinableOrganization\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x123\n" +
+	"\x11organization_tier\x18\x06 \x01(\x0e2\x1b.gitpod.v1.OrganizationTierR\x10organizationTier\"\xbd\x01\n" +
+	"\x14JoinableOrganization\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x123\n" +
 	"\x11organization_name\x18\x02 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x10organizationName\x12:\n" +
 	"\x19organization_member_count\x18\x03 \x01(\x05R\x17organizationMemberCount\"v\n" +
 	"\x15GetSSOLoginURLRequest\x12 \n" +
@@ -1498,15 +1489,14 @@ const file_gitpod_v1_account_proto_rawDesc = "" +
 	"pagination\x1aW\n" +
 	"\x05Login\x12)\n" +
 	"\fdisplay_name\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\vdisplayName\x12#\n" +
-	"\tlogin_url\x18\x02 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\bloginUrl\"\x96\x02\n" +
+	"\tlogin_url\x18\x02 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\bloginUrl\"\x87\x02\n" +
 	"\x19ListLoginProvidersRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12C\n" +
-	"\x06filter\x18\x02 \x01(\v2+.gitpod.v1.ListLoginProvidersRequest.FilterR\x06filter\x1av\n" +
-	"\x06Filter\x129\n" +
-	"\tinvite_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\tinvite.idH\x00R\binviteId\x88\x01\x01\x12\x19\n" +
+	"\x06filter\x18\x02 \x01(\v2+.gitpod.v1.ListLoginProvidersRequest.FilterR\x06filter\x1ag\n" +
+	"\x06Filter\x12*\n" +
+	"\tinvite_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\binviteId\x88\x01\x01\x12\x19\n" +
 	"\x05email\x18\x02 \x01(\tH\x01R\x05email\x88\x01\x01B\f\n" +
 	"\n" +
 	"_invite_idB\b\n" +
@@ -1535,42 +1525,35 @@ const file_gitpod_v1_account_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"E\n" +
 	"\x17CreateMagicLinkResponse\x12*\n" +
 	"\n" +
-	"magic_link\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\x88\x01\x01R\tmagicLink\"x\n" +
-	"\x13BlockAccountRequest\x12:\n" +
+	"magic_link\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\x88\x01\x01R\tmagicLink\"h\n" +
+	"\x13BlockAccountRequest\x12*\n" +
 	"\n" +
-	"account_id\x18\x01 \x01(\tB\x1b\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"account.idR\taccountId\x12%\n" +
+	"account_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\taccountId\x12%\n" +
 	"\x06reason\x18\x02 \x01(\tB\r\xbaH\n" +
 	"\xc8\x01\x01r\x05\x10\x01\x18\x80\bR\x06reason\"\x82\x01\n" +
 	"\x14BlockAccountResponse\x121\n" +
 	"\x14environments_stopped\x18\x01 \x01(\x05R\x13environmentsStopped\x127\n" +
-	"\x17subscriptions_cancelled\x18\x02 \x01(\x05R\x16subscriptionsCancelled\"S\n" +
-	"\x15UnblockAccountRequest\x12:\n" +
+	"\x17subscriptions_cancelled\x18\x02 \x01(\x05R\x16subscriptionsCancelled\"C\n" +
+	"\x15UnblockAccountRequest\x12*\n" +
 	"\n" +
-	"account_id\x18\x01 \x01(\tB\x1b\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"account.idR\taccountId\"\x18\n" +
+	"account_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\taccountId\"\x18\n" +
 	"\x16UnblockAccountResponse\"\x1d\n" +
 	"\x1bGetChatIdentityTokenRequest\"E\n" +
 	"\x1cGetChatIdentityTokenResponse\x12%\n" +
 	"\n" +
-	"email_hash\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\temailHash2\xd9\b\n" +
-	"\x0eAccountService\x12\\\n" +
+	"email_hash\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\temailHash2\xc6\a\n" +
+	"\x0eAccountService\x12N\n" +
 	"\n" +
-	"GetAccount\x12\x1c.gitpod.v1.GetAccountRequest\x1a\x1d.gitpod.v1.GetAccountResponse\"\x11\xb2\xab\x1e\n" +
-	"\x12\bretrieve\x90\x02\x01\x12`\n" +
-	"\rDeleteAccount\x12\x1f.gitpod.v1.DeleteAccountRequest\x1a .gitpod.v1.DeleteAccountResponse\"\f\xb2\xab\x1e\b\x12\x06delete\x12q\n" +
-	"\x0eGetSSOLoginURL\x12 .gitpod.v1.GetSSOLoginURLRequest\x1a!.gitpod.v1.GetSSOLoginURLResponse\"\x1a\xb2\xab\x1e\x13\x12\x11get_sso_login_url\x90\x02\x01\x12l\n" +
-	"\rListSSOLogins\x12\x1f.gitpod.v1.ListSSOLoginsRequest\x1a .gitpod.v1.ListSSOLoginsResponse\"\x18\xb2\xab\x1e\x11\x12\x0flist_sso_logins\x90\x02\x01\x12\x80\x01\n" +
-	"\x12ListLoginProviders\x12$.gitpod.v1.ListLoginProvidersRequest\x1a%.gitpod.v1.ListLoginProvidersResponse\"\x1d\xb2\xab\x1e\x16\x12\x14list_login_providers\x90\x02\x01\x12\x9c\x01\n" +
-	"\x19ListJoinableOrganizations\x12+.gitpod.v1.ListJoinableOrganizationsRequest\x1a,.gitpod.v1.ListJoinableOrganizationsResponse\"$\xb2\xab\x1e\x1d\x12\x1blist_joinable_organizations\x90\x02\x01\x12Z\n" +
+	"GetAccount\x12\x1c.gitpod.v1.GetAccountRequest\x1a\x1d.gitpod.v1.GetAccountResponse\"\x03\x90\x02\x01\x12T\n" +
+	"\rDeleteAccount\x12\x1f.gitpod.v1.DeleteAccountRequest\x1a .gitpod.v1.DeleteAccountResponse\"\x00\x12Z\n" +
+	"\x0eGetSSOLoginURL\x12 .gitpod.v1.GetSSOLoginURLRequest\x1a!.gitpod.v1.GetSSOLoginURLResponse\"\x03\x90\x02\x01\x12W\n" +
+	"\rListSSOLogins\x12\x1f.gitpod.v1.ListSSOLoginsRequest\x1a .gitpod.v1.ListSSOLoginsResponse\"\x03\x90\x02\x01\x12f\n" +
+	"\x12ListLoginProviders\x12$.gitpod.v1.ListLoginProvidersRequest\x1a%.gitpod.v1.ListLoginProvidersResponse\"\x03\x90\x02\x01\x12{\n" +
+	"\x19ListJoinableOrganizations\x12+.gitpod.v1.ListJoinableOrganizationsRequest\x1a,.gitpod.v1.ListJoinableOrganizationsResponse\"\x03\x90\x02\x01\x12Z\n" +
 	"\x0fCreateMagicLink\x12!.gitpod.v1.CreateMagicLinkRequest\x1a\".gitpod.v1.CreateMagicLinkResponse\"\x00\x12Q\n" +
 	"\fBlockAccount\x12\x1e.gitpod.v1.BlockAccountRequest\x1a\x1f.gitpod.v1.BlockAccountResponse\"\x00\x12W\n" +
 	"\x0eUnblockAccount\x12 .gitpod.v1.UnblockAccountRequest\x1a!.gitpod.v1.UnblockAccountResponse\"\x00\x12l\n" +
-	"\x14GetChatIdentityToken\x12&.gitpod.v1.GetChatIdentityTokenRequest\x1a'.gitpod.v1.GetChatIdentityTokenResponse\"\x03\x90\x02\x01\x1a\x0e\xaa\xab\x1e\n" +
-	"\n" +
-	"\baccountsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x14GetChatIdentityToken\x12&.gitpod.v1.GetChatIdentityTokenRequest\x1a'.gitpod.v1.GetChatIdentityTokenResponse\"\x03\x90\x02\x01B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_account_proto_rawDescOnce sync.Once
