@@ -120,9 +120,6 @@ const (
 	// OrganizationServiceUpdateOrganizationPoliciesProcedure is the fully-qualified name of the
 	// OrganizationService's UpdateOrganizationPolicies RPC.
 	OrganizationServiceUpdateOrganizationPoliciesProcedure = "/gitpod.v1.OrganizationService/UpdateOrganizationPolicies"
-	// OrganizationServiceGetOrganizationLLMCapabilitiesProcedure is the fully-qualified name of the
-	// OrganizationService's GetOrganizationLLMCapabilities RPC.
-	OrganizationServiceGetOrganizationLLMCapabilitiesProcedure = "/gitpod.v1.OrganizationService/GetOrganizationLLMCapabilities"
 	// OrganizationServiceGetOIDCConfigProcedure is the fully-qualified name of the
 	// OrganizationService's GetOIDCConfig RPC.
 	OrganizationServiceGetOIDCConfigProcedure = "/gitpod.v1.OrganizationService/GetOIDCConfig"
@@ -153,9 +150,6 @@ const (
 	// OrganizationServiceGetTermsOfServiceAcceptancesExportProcedure is the fully-qualified name of the
 	// OrganizationService's GetTermsOfServiceAcceptancesExport RPC.
 	OrganizationServiceGetTermsOfServiceAcceptancesExportProcedure = "/gitpod.v1.OrganizationService/GetTermsOfServiceAcceptancesExport"
-	// OrganizationServiceSetTierProcedure is the fully-qualified name of the OrganizationService's
-	// SetTier RPC.
-	OrganizationServiceSetTierProcedure = "/gitpod.v1.OrganizationService/SetTier"
 	// OrganizationServiceSetStripeCustomerIDProcedure is the fully-qualified name of the
 	// OrganizationService's SetStripeCustomerID RPC.
 	OrganizationServiceSetStripeCustomerIDProcedure = "/gitpod.v1.OrganizationService/SetStripeCustomerID"
@@ -833,26 +827,6 @@ type OrganizationServiceClient interface {
 	//	maximumEnvironmentsPerUser: "20"
 	//	```
 	UpdateOrganizationPolicies(context.Context, *connect.Request[v1.UpdateOrganizationPoliciesRequest]) (*connect.Response[v1.UpdateOrganizationPoliciesResponse], error)
-	// Retrieves the LLM provider capabilities that are unavailable for the
-	// organization. These are determined by the configured LLM provider, not by
-	// admin policy: a capability listed here cannot be served regardless of what
-	// the organization's agent policy permits.
-	//
-	// The dashboard uses this to render unavailable options as disabled. The
-	// authoritative per-execution enforcement happens in the agent runtime via
-	// disabled capabilities carried on the LLM access token.
-	//
-	// Use this method to:
-	// - Determine which agent capabilities to surface as disabled in the UI
-	//
-	// ### Examples
-	//
-	// - Get LLM capabilities:
-	//
-	//	```yaml
-	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
-	//	```
-	GetOrganizationLLMCapabilities(context.Context, *connect.Request[v1.GetOrganizationLLMCapabilitiesRequest]) (*connect.Response[v1.GetOrganizationLLMCapabilitiesResponse], error)
 	// Retrieves the OIDC token configuration for an organization.
 	//
 	// Use this method to:
@@ -970,22 +944,6 @@ type OrganizationServiceClient interface {
 	ListTermsOfServiceAcceptances(context.Context, *connect.Request[v1.ListTermsOfServiceAcceptancesRequest]) (*connect.Response[v1.ListTermsOfServiceAcceptancesResponse], error)
 	// Returns a signed download URL for a CSV export of per-member acceptance of a Terms of Service version.
 	GetTermsOfServiceAcceptancesExport(context.Context, *connect.Request[v1.GetTermsOfServiceAcceptancesExportRequest]) (*connect.Response[v1.GetTermsOfServiceAcceptancesExportResponse], error)
-	// Sets the tier of an organization.
-	//
-	// Use this method to:
-	// - Change an organization's tier between free, core, and enterprise
-	//
-	// ### Examples
-	//
-	// - Set organization tier:
-	//
-	//	Changes organization tier to enterprise.
-	//
-	//	```yaml
-	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
-	//	tier: ORGANIZATION_TIER_ENTERPRISE
-	//	```
-	SetTier(context.Context, *connect.Request[v1.SetTierRequest]) (*connect.Response[v1.SetTierResponse], error)
 	// Sets the Stripe customer ID for an organization's billing configuration.
 	//
 	// Use this method to associate an existing Stripe customer with an organization
@@ -1271,13 +1229,6 @@ func NewOrganizationServiceClient(httpClient connect.HTTPClient, baseURL string,
 			connect.WithSchema(organizationServiceMethods.ByName("UpdateOrganizationPolicies")),
 			connect.WithClientOptions(opts...),
 		),
-		getOrganizationLLMCapabilities: connect.NewClient[v1.GetOrganizationLLMCapabilitiesRequest, v1.GetOrganizationLLMCapabilitiesResponse](
-			httpClient,
-			baseURL+OrganizationServiceGetOrganizationLLMCapabilitiesProcedure,
-			connect.WithSchema(organizationServiceMethods.ByName("GetOrganizationLLMCapabilities")),
-			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
-			connect.WithClientOptions(opts...),
-		),
 		getOIDCConfig: connect.NewClient[v1.GetOIDCConfigRequest, v1.GetOIDCConfigResponse](
 			httpClient,
 			baseURL+OrganizationServiceGetOIDCConfigProcedure,
@@ -1341,12 +1292,6 @@ func NewOrganizationServiceClient(httpClient connect.HTTPClient, baseURL string,
 			baseURL+OrganizationServiceGetTermsOfServiceAcceptancesExportProcedure,
 			connect.WithSchema(organizationServiceMethods.ByName("GetTermsOfServiceAcceptancesExport")),
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
-			connect.WithClientOptions(opts...),
-		),
-		setTier: connect.NewClient[v1.SetTierRequest, v1.SetTierResponse](
-			httpClient,
-			baseURL+OrganizationServiceSetTierProcedure,
-			connect.WithSchema(organizationServiceMethods.ByName("SetTier")),
 			connect.WithClientOptions(opts...),
 		),
 		setStripeCustomerID: connect.NewClient[v1.SetStripeCustomerIDRequest, v1.SetStripeCustomerIDResponse](
@@ -1414,7 +1359,6 @@ type organizationServiceClient struct {
 	deleteDomainVerification           *connect.Client[v1.DeleteDomainVerificationRequest, v1.DeleteDomainVerificationResponse]
 	getOrganizationPolicies            *connect.Client[v1.GetOrganizationPoliciesRequest, v1.GetOrganizationPoliciesResponse]
 	updateOrganizationPolicies         *connect.Client[v1.UpdateOrganizationPoliciesRequest, v1.UpdateOrganizationPoliciesResponse]
-	getOrganizationLLMCapabilities     *connect.Client[v1.GetOrganizationLLMCapabilitiesRequest, v1.GetOrganizationLLMCapabilitiesResponse]
 	getOIDCConfig                      *connect.Client[v1.GetOIDCConfigRequest, v1.GetOIDCConfigResponse]
 	updateOIDCConfig                   *connect.Client[v1.UpdateOIDCConfigRequest, v1.UpdateOIDCConfigResponse]
 	getAnnouncementBanner              *connect.Client[v1.GetAnnouncementBannerRequest, v1.GetAnnouncementBannerResponse]
@@ -1425,7 +1369,6 @@ type organizationServiceClient struct {
 	listTermsOfServiceVersions         *connect.Client[v1.ListTermsOfServiceVersionsRequest, v1.ListTermsOfServiceVersionsResponse]
 	listTermsOfServiceAcceptances      *connect.Client[v1.ListTermsOfServiceAcceptancesRequest, v1.ListTermsOfServiceAcceptancesResponse]
 	getTermsOfServiceAcceptancesExport *connect.Client[v1.GetTermsOfServiceAcceptancesExportRequest, v1.GetTermsOfServiceAcceptancesExportResponse]
-	setTier                            *connect.Client[v1.SetTierRequest, v1.SetTierResponse]
 	setStripeCustomerID                *connect.Client[v1.SetStripeCustomerIDRequest, v1.SetStripeCustomerIDResponse]
 	createCustomDomain                 *connect.Client[v1.CreateCustomDomainRequest, v1.CreateCustomDomainResponse]
 	getCustomDomain                    *connect.Client[v1.GetCustomDomainRequest, v1.GetCustomDomainResponse]
@@ -1578,12 +1521,6 @@ func (c *organizationServiceClient) UpdateOrganizationPolicies(ctx context.Conte
 	return c.updateOrganizationPolicies.CallUnary(ctx, req)
 }
 
-// GetOrganizationLLMCapabilities calls
-// gitpod.v1.OrganizationService.GetOrganizationLLMCapabilities.
-func (c *organizationServiceClient) GetOrganizationLLMCapabilities(ctx context.Context, req *connect.Request[v1.GetOrganizationLLMCapabilitiesRequest]) (*connect.Response[v1.GetOrganizationLLMCapabilitiesResponse], error) {
-	return c.getOrganizationLLMCapabilities.CallUnary(ctx, req)
-}
-
 // GetOIDCConfig calls gitpod.v1.OrganizationService.GetOIDCConfig.
 func (c *organizationServiceClient) GetOIDCConfig(ctx context.Context, req *connect.Request[v1.GetOIDCConfigRequest]) (*connect.Response[v1.GetOIDCConfigResponse], error) {
 	return c.getOIDCConfig.CallUnary(ctx, req)
@@ -1633,11 +1570,6 @@ func (c *organizationServiceClient) ListTermsOfServiceAcceptances(ctx context.Co
 // gitpod.v1.OrganizationService.GetTermsOfServiceAcceptancesExport.
 func (c *organizationServiceClient) GetTermsOfServiceAcceptancesExport(ctx context.Context, req *connect.Request[v1.GetTermsOfServiceAcceptancesExportRequest]) (*connect.Response[v1.GetTermsOfServiceAcceptancesExportResponse], error) {
 	return c.getTermsOfServiceAcceptancesExport.CallUnary(ctx, req)
-}
-
-// SetTier calls gitpod.v1.OrganizationService.SetTier.
-func (c *organizationServiceClient) SetTier(ctx context.Context, req *connect.Request[v1.SetTierRequest]) (*connect.Response[v1.SetTierResponse], error) {
-	return c.setTier.CallUnary(ctx, req)
 }
 
 // SetStripeCustomerID calls gitpod.v1.OrganizationService.SetStripeCustomerID.
@@ -2327,26 +2259,6 @@ type OrganizationServiceHandler interface {
 	//	maximumEnvironmentsPerUser: "20"
 	//	```
 	UpdateOrganizationPolicies(context.Context, *connect.Request[v1.UpdateOrganizationPoliciesRequest]) (*connect.Response[v1.UpdateOrganizationPoliciesResponse], error)
-	// Retrieves the LLM provider capabilities that are unavailable for the
-	// organization. These are determined by the configured LLM provider, not by
-	// admin policy: a capability listed here cannot be served regardless of what
-	// the organization's agent policy permits.
-	//
-	// The dashboard uses this to render unavailable options as disabled. The
-	// authoritative per-execution enforcement happens in the agent runtime via
-	// disabled capabilities carried on the LLM access token.
-	//
-	// Use this method to:
-	// - Determine which agent capabilities to surface as disabled in the UI
-	//
-	// ### Examples
-	//
-	// - Get LLM capabilities:
-	//
-	//	```yaml
-	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
-	//	```
-	GetOrganizationLLMCapabilities(context.Context, *connect.Request[v1.GetOrganizationLLMCapabilitiesRequest]) (*connect.Response[v1.GetOrganizationLLMCapabilitiesResponse], error)
 	// Retrieves the OIDC token configuration for an organization.
 	//
 	// Use this method to:
@@ -2464,22 +2376,6 @@ type OrganizationServiceHandler interface {
 	ListTermsOfServiceAcceptances(context.Context, *connect.Request[v1.ListTermsOfServiceAcceptancesRequest]) (*connect.Response[v1.ListTermsOfServiceAcceptancesResponse], error)
 	// Returns a signed download URL for a CSV export of per-member acceptance of a Terms of Service version.
 	GetTermsOfServiceAcceptancesExport(context.Context, *connect.Request[v1.GetTermsOfServiceAcceptancesExportRequest]) (*connect.Response[v1.GetTermsOfServiceAcceptancesExportResponse], error)
-	// Sets the tier of an organization.
-	//
-	// Use this method to:
-	// - Change an organization's tier between free, core, and enterprise
-	//
-	// ### Examples
-	//
-	// - Set organization tier:
-	//
-	//	Changes organization tier to enterprise.
-	//
-	//	```yaml
-	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
-	//	tier: ORGANIZATION_TIER_ENTERPRISE
-	//	```
-	SetTier(context.Context, *connect.Request[v1.SetTierRequest]) (*connect.Response[v1.SetTierResponse], error)
 	// Sets the Stripe customer ID for an organization's billing configuration.
 	//
 	// Use this method to associate an existing Stripe customer with an organization
@@ -2761,13 +2657,6 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 		connect.WithSchema(organizationServiceMethods.ByName("UpdateOrganizationPolicies")),
 		connect.WithHandlerOptions(opts...),
 	)
-	organizationServiceGetOrganizationLLMCapabilitiesHandler := connect.NewUnaryHandler(
-		OrganizationServiceGetOrganizationLLMCapabilitiesProcedure,
-		svc.GetOrganizationLLMCapabilities,
-		connect.WithSchema(organizationServiceMethods.ByName("GetOrganizationLLMCapabilities")),
-		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
-		connect.WithHandlerOptions(opts...),
-	)
 	organizationServiceGetOIDCConfigHandler := connect.NewUnaryHandler(
 		OrganizationServiceGetOIDCConfigProcedure,
 		svc.GetOIDCConfig,
@@ -2831,12 +2720,6 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 		svc.GetTermsOfServiceAcceptancesExport,
 		connect.WithSchema(organizationServiceMethods.ByName("GetTermsOfServiceAcceptancesExport")),
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
-		connect.WithHandlerOptions(opts...),
-	)
-	organizationServiceSetTierHandler := connect.NewUnaryHandler(
-		OrganizationServiceSetTierProcedure,
-		svc.SetTier,
-		connect.WithSchema(organizationServiceMethods.ByName("SetTier")),
 		connect.WithHandlerOptions(opts...),
 	)
 	organizationServiceSetStripeCustomerIDHandler := connect.NewUnaryHandler(
@@ -2930,8 +2813,6 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 			organizationServiceGetOrganizationPoliciesHandler.ServeHTTP(w, r)
 		case OrganizationServiceUpdateOrganizationPoliciesProcedure:
 			organizationServiceUpdateOrganizationPoliciesHandler.ServeHTTP(w, r)
-		case OrganizationServiceGetOrganizationLLMCapabilitiesProcedure:
-			organizationServiceGetOrganizationLLMCapabilitiesHandler.ServeHTTP(w, r)
 		case OrganizationServiceGetOIDCConfigProcedure:
 			organizationServiceGetOIDCConfigHandler.ServeHTTP(w, r)
 		case OrganizationServiceUpdateOIDCConfigProcedure:
@@ -2952,8 +2833,6 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 			organizationServiceListTermsOfServiceAcceptancesHandler.ServeHTTP(w, r)
 		case OrganizationServiceGetTermsOfServiceAcceptancesExportProcedure:
 			organizationServiceGetTermsOfServiceAcceptancesExportHandler.ServeHTTP(w, r)
-		case OrganizationServiceSetTierProcedure:
-			organizationServiceSetTierHandler.ServeHTTP(w, r)
 		case OrganizationServiceSetStripeCustomerIDProcedure:
 			organizationServiceSetStripeCustomerIDHandler.ServeHTTP(w, r)
 		case OrganizationServiceCreateCustomDomainProcedure:
@@ -3089,10 +2968,6 @@ func (UnimplementedOrganizationServiceHandler) UpdateOrganizationPolicies(contex
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.OrganizationService.UpdateOrganizationPolicies is not implemented"))
 }
 
-func (UnimplementedOrganizationServiceHandler) GetOrganizationLLMCapabilities(context.Context, *connect.Request[v1.GetOrganizationLLMCapabilitiesRequest]) (*connect.Response[v1.GetOrganizationLLMCapabilitiesResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.OrganizationService.GetOrganizationLLMCapabilities is not implemented"))
-}
-
 func (UnimplementedOrganizationServiceHandler) GetOIDCConfig(context.Context, *connect.Request[v1.GetOIDCConfigRequest]) (*connect.Response[v1.GetOIDCConfigResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.OrganizationService.GetOIDCConfig is not implemented"))
 }
@@ -3131,10 +3006,6 @@ func (UnimplementedOrganizationServiceHandler) ListTermsOfServiceAcceptances(con
 
 func (UnimplementedOrganizationServiceHandler) GetTermsOfServiceAcceptancesExport(context.Context, *connect.Request[v1.GetTermsOfServiceAcceptancesExportRequest]) (*connect.Response[v1.GetTermsOfServiceAcceptancesExportResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.OrganizationService.GetTermsOfServiceAcceptancesExport is not implemented"))
-}
-
-func (UnimplementedOrganizationServiceHandler) SetTier(context.Context, *connect.Request[v1.SetTierRequest]) (*connect.Response[v1.SetTierResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.OrganizationService.SetTier is not implemented"))
 }
 
 func (UnimplementedOrganizationServiceHandler) SetStripeCustomerID(context.Context, *connect.Request[v1.SetStripeCustomerIDRequest]) (*connect.Response[v1.SetStripeCustomerIDResponse], error) {

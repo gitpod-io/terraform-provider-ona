@@ -8,8 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -949,104 +947,6 @@ func (x *ListJoinableOrganizationsResponse) GetPagination() *PaginationResponse 
 	return nil
 }
 
-type CreateMagicLinkRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Email string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	// Name of the Account
-	Name          string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateMagicLinkRequest) Reset() {
-	*x = CreateMagicLinkRequest{}
-	mi := &file_gitpod_v1_account_proto_msgTypes[16]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateMagicLinkRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateMagicLinkRequest) ProtoMessage() {}
-
-func (x *CreateMagicLinkRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_account_proto_msgTypes[16]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateMagicLinkRequest.ProtoReflect.Descriptor instead.
-func (*CreateMagicLinkRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_account_proto_rawDescGZIP(), []int{16}
-}
-
-func (x *CreateMagicLinkRequest) GetEmail() string {
-	if x != nil {
-		return x.Email
-	}
-	return ""
-}
-
-func (x *CreateMagicLinkRequest) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-type CreateMagicLinkResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The magic link to send to the user
-	MagicLink     string `protobuf:"bytes,1,opt,name=magic_link,json=magicLink,proto3" json:"magic_link,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateMagicLinkResponse) Reset() {
-	*x = CreateMagicLinkResponse{}
-	mi := &file_gitpod_v1_account_proto_msgTypes[17]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateMagicLinkResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateMagicLinkResponse) ProtoMessage() {}
-
-func (x *CreateMagicLinkResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_account_proto_msgTypes[17]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateMagicLinkResponse.ProtoReflect.Descriptor instead.
-func (*CreateMagicLinkResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_account_proto_rawDescGZIP(), []int{17}
-}
-
-func (x *CreateMagicLinkResponse) GetMagicLink() string {
-	if x != nil {
-		return x.MagicLink
-	}
-	return ""
-}
-
 type BlockAccountRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// account_id is the UUID of the account to block
@@ -1059,7 +959,7 @@ type BlockAccountRequest struct {
 
 func (x *BlockAccountRequest) Reset() {
 	*x = BlockAccountRequest{}
-	mi := &file_gitpod_v1_account_proto_msgTypes[18]
+	mi := &file_gitpod_v1_account_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1071,7 +971,7 @@ func (x *BlockAccountRequest) String() string {
 func (*BlockAccountRequest) ProtoMessage() {}
 
 func (x *BlockAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_account_proto_msgTypes[18]
+	mi := &file_gitpod_v1_account_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1084,7 +984,7 @@ func (x *BlockAccountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BlockAccountRequest.ProtoReflect.Descriptor instead.
 func (*BlockAccountRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_account_proto_rawDescGZIP(), []int{18}
+	return file_gitpod_v1_account_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *BlockAccountRequest) GetAccountId() string {
@@ -1113,7 +1013,7 @@ type BlockAccountResponse struct {
 
 func (x *BlockAccountResponse) Reset() {
 	*x = BlockAccountResponse{}
-	mi := &file_gitpod_v1_account_proto_msgTypes[19]
+	mi := &file_gitpod_v1_account_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1125,7 +1025,7 @@ func (x *BlockAccountResponse) String() string {
 func (*BlockAccountResponse) ProtoMessage() {}
 
 func (x *BlockAccountResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_account_proto_msgTypes[19]
+	mi := &file_gitpod_v1_account_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1138,7 +1038,7 @@ func (x *BlockAccountResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BlockAccountResponse.ProtoReflect.Descriptor instead.
 func (*BlockAccountResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_account_proto_rawDescGZIP(), []int{19}
+	return file_gitpod_v1_account_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *BlockAccountResponse) GetEnvironmentsStopped() int32 {
@@ -1165,7 +1065,7 @@ type UnblockAccountRequest struct {
 
 func (x *UnblockAccountRequest) Reset() {
 	*x = UnblockAccountRequest{}
-	mi := &file_gitpod_v1_account_proto_msgTypes[20]
+	mi := &file_gitpod_v1_account_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1177,7 +1077,7 @@ func (x *UnblockAccountRequest) String() string {
 func (*UnblockAccountRequest) ProtoMessage() {}
 
 func (x *UnblockAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_account_proto_msgTypes[20]
+	mi := &file_gitpod_v1_account_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1190,7 +1090,7 @@ func (x *UnblockAccountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnblockAccountRequest.ProtoReflect.Descriptor instead.
 func (*UnblockAccountRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_account_proto_rawDescGZIP(), []int{20}
+	return file_gitpod_v1_account_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *UnblockAccountRequest) GetAccountId() string {
@@ -1208,7 +1108,7 @@ type UnblockAccountResponse struct {
 
 func (x *UnblockAccountResponse) Reset() {
 	*x = UnblockAccountResponse{}
-	mi := &file_gitpod_v1_account_proto_msgTypes[21]
+	mi := &file_gitpod_v1_account_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1220,7 +1120,7 @@ func (x *UnblockAccountResponse) String() string {
 func (*UnblockAccountResponse) ProtoMessage() {}
 
 func (x *UnblockAccountResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_account_proto_msgTypes[21]
+	mi := &file_gitpod_v1_account_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1233,89 +1133,7 @@ func (x *UnblockAccountResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnblockAccountResponse.ProtoReflect.Descriptor instead.
 func (*UnblockAccountResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_account_proto_rawDescGZIP(), []int{21}
-}
-
-type GetChatIdentityTokenRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetChatIdentityTokenRequest) Reset() {
-	*x = GetChatIdentityTokenRequest{}
-	mi := &file_gitpod_v1_account_proto_msgTypes[22]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetChatIdentityTokenRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetChatIdentityTokenRequest) ProtoMessage() {}
-
-func (x *GetChatIdentityTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_account_proto_msgTypes[22]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetChatIdentityTokenRequest.ProtoReflect.Descriptor instead.
-func (*GetChatIdentityTokenRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_account_proto_rawDescGZIP(), []int{22}
-}
-
-type GetChatIdentityTokenResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// email_hash is the HMAC-SHA256 hash of the account's email address,
-	// used for chat widget identity verification
-	EmailHash     string `protobuf:"bytes,1,opt,name=email_hash,json=emailHash,proto3" json:"email_hash,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetChatIdentityTokenResponse) Reset() {
-	*x = GetChatIdentityTokenResponse{}
-	mi := &file_gitpod_v1_account_proto_msgTypes[23]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetChatIdentityTokenResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetChatIdentityTokenResponse) ProtoMessage() {}
-
-func (x *GetChatIdentityTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_account_proto_msgTypes[23]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetChatIdentityTokenResponse.ProtoReflect.Descriptor instead.
-func (*GetChatIdentityTokenResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_account_proto_rawDescGZIP(), []int{23}
-}
-
-func (x *GetChatIdentityTokenResponse) GetEmailHash() string {
-	if x != nil {
-		return x.EmailHash
-	}
-	return ""
+	return file_gitpod_v1_account_proto_rawDescGZIP(), []int{19}
 }
 
 type ListSSOLoginsResponse_Login struct {
@@ -1330,7 +1148,7 @@ type ListSSOLoginsResponse_Login struct {
 
 func (x *ListSSOLoginsResponse_Login) Reset() {
 	*x = ListSSOLoginsResponse_Login{}
-	mi := &file_gitpod_v1_account_proto_msgTypes[24]
+	mi := &file_gitpod_v1_account_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1342,7 +1160,7 @@ func (x *ListSSOLoginsResponse_Login) String() string {
 func (*ListSSOLoginsResponse_Login) ProtoMessage() {}
 
 func (x *ListSSOLoginsResponse_Login) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_account_proto_msgTypes[24]
+	mi := &file_gitpod_v1_account_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1384,7 +1202,7 @@ type ListLoginProvidersRequest_Filter struct {
 
 func (x *ListLoginProvidersRequest_Filter) Reset() {
 	*x = ListLoginProvidersRequest_Filter{}
-	mi := &file_gitpod_v1_account_proto_msgTypes[25]
+	mi := &file_gitpod_v1_account_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1396,7 +1214,7 @@ func (x *ListLoginProvidersRequest_Filter) String() string {
 func (*ListLoginProvidersRequest_Filter) ProtoMessage() {}
 
 func (x *ListLoginProvidersRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_account_proto_msgTypes[25]
+	mi := &file_gitpod_v1_account_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1430,22 +1248,18 @@ var File_gitpod_v1_account_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_account_proto_rawDesc = "" +
 	"\n" +
-	"\x17gitpod/v1/account.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1cgitpod/v1/organization.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x13\n" +
+	"\x17gitpod/v1/account.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1cgitpod/v1/organization.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x13\n" +
 	"\x11GetAccountRequest\"J\n" +
 	"\x12GetAccountResponse\x124\n" +
-	"\aaccount\x18\x01 \x01(\v2\x12.gitpod.v1.AccountB\x06\xbaH\x03\xc8\x01\x01R\aaccount\"\x87\x01\n" +
-	"\x14DeleteAccountRequest\x12:\n" +
+	"\aaccount\x18\x01 \x01(\v2\x12.gitpod.v1.AccountB\x06\xbaH\x03\xc8\x01\x01R\aaccount\"w\n" +
+	"\x14DeleteAccountRequest\x12*\n" +
 	"\n" +
-	"account_id\x18\x01 \x01(\tB\x1b\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"account.idR\taccountId\x12(\n" +
+	"account_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\taccountId\x12(\n" +
 	"\x06reason\x18\x02 \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\x18\x80\x02H\x00R\x06reason\x88\x01\x01B\t\n" +
 	"\a_reason\"\x17\n" +
-	"\x15DeleteAccountResponse\"\x8e\x04\n" +
-	"\aAccount\x12+\n" +
-	"\x02id\x18\x01 \x01(\tB\x1b\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"account.idR\x02id\x12\x1a\n" +
+	"\x15DeleteAccountResponse\"\xfe\x03\n" +
+	"\aAccount\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x02id\x12\x1a\n" +
 	"\x04name\x18\x02 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x04name\x12\x1d\n" +
 	"\n" +
 	"avatar_url\x18\x03 \x01(\tR\tavatarUrl\x12\x1c\n" +
@@ -1459,19 +1273,16 @@ const file_gitpod_v1_account_proto_rawDesc = "" +
 	"\x15public_email_provider\x18\t \x01(\bR\x13publicEmailProvider\x12,\n" +
 	"\x0forganization_id\x18\n" +
 	" \x01(\tH\x00R\x0eorganizationId\x88\x01\x01B\x12\n" +
-	"\x10_organization_id\"\x8e\x03\n" +
-	"\x11AccountMembership\x121\n" +
-	"\auser_id\x18\x01 \x01(\tB\x18\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\x12@\n" +
-	"\tuser_role\x18\x02 \x01(\x0e2\x1b.gitpod.v1.OrganizationRoleB\x06\xbaH\x03\xc8\x01\x01R\buserRole\x12I\n" +
-	"\x0forganization_id\x18\x03 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x123\n" +
+	"\x10_organization_id\"\xec\x02\n" +
+	"\x11AccountMembership\x12$\n" +
+	"\auser_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x06userId\x12@\n" +
+	"\tuser_role\x18\x02 \x01(\x0e2\x1b.gitpod.v1.OrganizationRoleB\x06\xbaH\x03\xc8\x01\x01R\buserRole\x124\n" +
+	"\x0forganization_id\x18\x03 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x123\n" +
 	"\x11organization_name\x18\x04 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x10organizationName\x12:\n" +
 	"\x19organization_member_count\x18\x05 \x01(\x05R\x17organizationMemberCount\x12H\n" +
-	"\x11organization_tier\x18\x06 \x01(\x0e2\x1b.gitpod.v1.OrganizationTierR\x10organizationTier\"\xd2\x01\n" +
-	"\x14JoinableOrganization\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x123\n" +
+	"\x11organization_tier\x18\x06 \x01(\x0e2\x1b.gitpod.v1.OrganizationTierR\x10organizationTier\"\xbd\x01\n" +
+	"\x14JoinableOrganization\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x123\n" +
 	"\x11organization_name\x18\x02 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x10organizationName\x12:\n" +
 	"\x19organization_member_count\x18\x03 \x01(\x05R\x17organizationMemberCount\"v\n" +
 	"\x15GetSSOLoginURLRequest\x12 \n" +
@@ -1498,15 +1309,14 @@ const file_gitpod_v1_account_proto_rawDesc = "" +
 	"pagination\x1aW\n" +
 	"\x05Login\x12)\n" +
 	"\fdisplay_name\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\vdisplayName\x12#\n" +
-	"\tlogin_url\x18\x02 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\bloginUrl\"\x96\x02\n" +
+	"\tlogin_url\x18\x02 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\bloginUrl\"\x87\x02\n" +
 	"\x19ListLoginProvidersRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12C\n" +
-	"\x06filter\x18\x02 \x01(\v2+.gitpod.v1.ListLoginProvidersRequest.FilterR\x06filter\x1av\n" +
-	"\x06Filter\x129\n" +
-	"\tinvite_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\tinvite.idH\x00R\binviteId\x88\x01\x01\x12\x19\n" +
+	"\x06filter\x18\x02 \x01(\v2+.gitpod.v1.ListLoginProvidersRequest.FilterR\x06filter\x1ag\n" +
+	"\x06Filter\x12*\n" +
+	"\tinvite_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\binviteId\x88\x01\x01\x12\x19\n" +
 	"\x05email\x18\x02 \x01(\tH\x01R\x05email\x88\x01\x01B\f\n" +
 	"\n" +
 	"_invite_idB\b\n" +
@@ -1528,49 +1338,29 @@ const file_gitpod_v1_account_proto_rawDesc = "" +
 	"\x16joinable_organizations\x18\x01 \x03(\v2\x1f.gitpod.v1.JoinableOrganizationR\x15joinableOrganizations\x12E\n" +
 	"\n" +
 	"pagination\x18\x02 \x01(\v2\x1d.gitpod.v1.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"pagination\"N\n" +
-	"\x16CreateMagicLinkRequest\x12 \n" +
-	"\x05email\x18\x01 \x01(\tB\n" +
-	"\xbaH\a\xc8\x01\x01r\x02`\x01R\x05email\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\"E\n" +
-	"\x17CreateMagicLinkResponse\x12*\n" +
+	"pagination\"h\n" +
+	"\x13BlockAccountRequest\x12*\n" +
 	"\n" +
-	"magic_link\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\x88\x01\x01R\tmagicLink\"x\n" +
-	"\x13BlockAccountRequest\x12:\n" +
-	"\n" +
-	"account_id\x18\x01 \x01(\tB\x1b\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"account.idR\taccountId\x12%\n" +
+	"account_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\taccountId\x12%\n" +
 	"\x06reason\x18\x02 \x01(\tB\r\xbaH\n" +
 	"\xc8\x01\x01r\x05\x10\x01\x18\x80\bR\x06reason\"\x82\x01\n" +
 	"\x14BlockAccountResponse\x121\n" +
 	"\x14environments_stopped\x18\x01 \x01(\x05R\x13environmentsStopped\x127\n" +
-	"\x17subscriptions_cancelled\x18\x02 \x01(\x05R\x16subscriptionsCancelled\"S\n" +
-	"\x15UnblockAccountRequest\x12:\n" +
+	"\x17subscriptions_cancelled\x18\x02 \x01(\x05R\x16subscriptionsCancelled\"C\n" +
+	"\x15UnblockAccountRequest\x12*\n" +
 	"\n" +
-	"account_id\x18\x01 \x01(\tB\x1b\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
+	"account_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\taccountId\"\x18\n" +
+	"\x16UnblockAccountResponse2\xfc\x05\n" +
+	"\x0eAccountService\x12N\n" +
 	"\n" +
-	"account.idR\taccountId\"\x18\n" +
-	"\x16UnblockAccountResponse\"\x1d\n" +
-	"\x1bGetChatIdentityTokenRequest\"E\n" +
-	"\x1cGetChatIdentityTokenResponse\x12%\n" +
-	"\n" +
-	"email_hash\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\temailHash2\xd9\b\n" +
-	"\x0eAccountService\x12\\\n" +
-	"\n" +
-	"GetAccount\x12\x1c.gitpod.v1.GetAccountRequest\x1a\x1d.gitpod.v1.GetAccountResponse\"\x11\xb2\xab\x1e\n" +
-	"\x12\bretrieve\x90\x02\x01\x12`\n" +
-	"\rDeleteAccount\x12\x1f.gitpod.v1.DeleteAccountRequest\x1a .gitpod.v1.DeleteAccountResponse\"\f\xb2\xab\x1e\b\x12\x06delete\x12q\n" +
-	"\x0eGetSSOLoginURL\x12 .gitpod.v1.GetSSOLoginURLRequest\x1a!.gitpod.v1.GetSSOLoginURLResponse\"\x1a\xb2\xab\x1e\x13\x12\x11get_sso_login_url\x90\x02\x01\x12l\n" +
-	"\rListSSOLogins\x12\x1f.gitpod.v1.ListSSOLoginsRequest\x1a .gitpod.v1.ListSSOLoginsResponse\"\x18\xb2\xab\x1e\x11\x12\x0flist_sso_logins\x90\x02\x01\x12\x80\x01\n" +
-	"\x12ListLoginProviders\x12$.gitpod.v1.ListLoginProvidersRequest\x1a%.gitpod.v1.ListLoginProvidersResponse\"\x1d\xb2\xab\x1e\x16\x12\x14list_login_providers\x90\x02\x01\x12\x9c\x01\n" +
-	"\x19ListJoinableOrganizations\x12+.gitpod.v1.ListJoinableOrganizationsRequest\x1a,.gitpod.v1.ListJoinableOrganizationsResponse\"$\xb2\xab\x1e\x1d\x12\x1blist_joinable_organizations\x90\x02\x01\x12Z\n" +
-	"\x0fCreateMagicLink\x12!.gitpod.v1.CreateMagicLinkRequest\x1a\".gitpod.v1.CreateMagicLinkResponse\"\x00\x12Q\n" +
+	"GetAccount\x12\x1c.gitpod.v1.GetAccountRequest\x1a\x1d.gitpod.v1.GetAccountResponse\"\x03\x90\x02\x01\x12T\n" +
+	"\rDeleteAccount\x12\x1f.gitpod.v1.DeleteAccountRequest\x1a .gitpod.v1.DeleteAccountResponse\"\x00\x12Z\n" +
+	"\x0eGetSSOLoginURL\x12 .gitpod.v1.GetSSOLoginURLRequest\x1a!.gitpod.v1.GetSSOLoginURLResponse\"\x03\x90\x02\x01\x12W\n" +
+	"\rListSSOLogins\x12\x1f.gitpod.v1.ListSSOLoginsRequest\x1a .gitpod.v1.ListSSOLoginsResponse\"\x03\x90\x02\x01\x12f\n" +
+	"\x12ListLoginProviders\x12$.gitpod.v1.ListLoginProvidersRequest\x1a%.gitpod.v1.ListLoginProvidersResponse\"\x03\x90\x02\x01\x12{\n" +
+	"\x19ListJoinableOrganizations\x12+.gitpod.v1.ListJoinableOrganizationsRequest\x1a,.gitpod.v1.ListJoinableOrganizationsResponse\"\x03\x90\x02\x01\x12Q\n" +
 	"\fBlockAccount\x12\x1e.gitpod.v1.BlockAccountRequest\x1a\x1f.gitpod.v1.BlockAccountResponse\"\x00\x12W\n" +
-	"\x0eUnblockAccount\x12 .gitpod.v1.UnblockAccountRequest\x1a!.gitpod.v1.UnblockAccountResponse\"\x00\x12l\n" +
-	"\x14GetChatIdentityToken\x12&.gitpod.v1.GetChatIdentityTokenRequest\x1a'.gitpod.v1.GetChatIdentityTokenResponse\"\x03\x90\x02\x01\x1a\x0e\xaa\xab\x1e\n" +
-	"\n" +
-	"\baccountsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x0eUnblockAccount\x12 .gitpod.v1.UnblockAccountRequest\x1a!.gitpod.v1.UnblockAccountResponse\"\x00B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_account_proto_rawDescOnce sync.Once
@@ -1584,7 +1374,7 @@ func file_gitpod_v1_account_proto_rawDescGZIP() []byte {
 	return file_gitpod_v1_account_proto_rawDescData
 }
 
-var file_gitpod_v1_account_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
+var file_gitpod_v1_account_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
 var file_gitpod_v1_account_proto_goTypes = []any{
 	(*GetAccountRequest)(nil),                 // 0: gitpod.v1.GetAccountRequest
 	(*GetAccountResponse)(nil),                // 1: gitpod.v1.GetAccountResponse
@@ -1602,62 +1392,54 @@ var file_gitpod_v1_account_proto_goTypes = []any{
 	(*LoginProvider)(nil),                     // 13: gitpod.v1.LoginProvider
 	(*ListJoinableOrganizationsRequest)(nil),  // 14: gitpod.v1.ListJoinableOrganizationsRequest
 	(*ListJoinableOrganizationsResponse)(nil), // 15: gitpod.v1.ListJoinableOrganizationsResponse
-	(*CreateMagicLinkRequest)(nil),            // 16: gitpod.v1.CreateMagicLinkRequest
-	(*CreateMagicLinkResponse)(nil),           // 17: gitpod.v1.CreateMagicLinkResponse
-	(*BlockAccountRequest)(nil),               // 18: gitpod.v1.BlockAccountRequest
-	(*BlockAccountResponse)(nil),              // 19: gitpod.v1.BlockAccountResponse
-	(*UnblockAccountRequest)(nil),             // 20: gitpod.v1.UnblockAccountRequest
-	(*UnblockAccountResponse)(nil),            // 21: gitpod.v1.UnblockAccountResponse
-	(*GetChatIdentityTokenRequest)(nil),       // 22: gitpod.v1.GetChatIdentityTokenRequest
-	(*GetChatIdentityTokenResponse)(nil),      // 23: gitpod.v1.GetChatIdentityTokenResponse
-	(*ListSSOLoginsResponse_Login)(nil),       // 24: gitpod.v1.ListSSOLoginsResponse.Login
-	(*ListLoginProvidersRequest_Filter)(nil),  // 25: gitpod.v1.ListLoginProvidersRequest.Filter
-	(*timestamppb.Timestamp)(nil),             // 26: google.protobuf.Timestamp
-	(OrganizationRole)(0),                     // 27: gitpod.v1.OrganizationRole
-	(OrganizationTier)(0),                     // 28: gitpod.v1.OrganizationTier
-	(*PaginationRequest)(nil),                 // 29: gitpod.v1.PaginationRequest
-	(*PaginationResponse)(nil),                // 30: gitpod.v1.PaginationResponse
+	(*BlockAccountRequest)(nil),               // 16: gitpod.v1.BlockAccountRequest
+	(*BlockAccountResponse)(nil),              // 17: gitpod.v1.BlockAccountResponse
+	(*UnblockAccountRequest)(nil),             // 18: gitpod.v1.UnblockAccountRequest
+	(*UnblockAccountResponse)(nil),            // 19: gitpod.v1.UnblockAccountResponse
+	(*ListSSOLoginsResponse_Login)(nil),       // 20: gitpod.v1.ListSSOLoginsResponse.Login
+	(*ListLoginProvidersRequest_Filter)(nil),  // 21: gitpod.v1.ListLoginProvidersRequest.Filter
+	(*timestamppb.Timestamp)(nil),             // 22: google.protobuf.Timestamp
+	(OrganizationRole)(0),                     // 23: gitpod.v1.OrganizationRole
+	(OrganizationTier)(0),                     // 24: gitpod.v1.OrganizationTier
+	(*PaginationRequest)(nil),                 // 25: gitpod.v1.PaginationRequest
+	(*PaginationResponse)(nil),                // 26: gitpod.v1.PaginationResponse
 }
 var file_gitpod_v1_account_proto_depIdxs = []int32{
 	4,  // 0: gitpod.v1.GetAccountResponse.account:type_name -> gitpod.v1.Account
-	26, // 1: gitpod.v1.Account.created_at:type_name -> google.protobuf.Timestamp
-	26, // 2: gitpod.v1.Account.updated_at:type_name -> google.protobuf.Timestamp
+	22, // 1: gitpod.v1.Account.created_at:type_name -> google.protobuf.Timestamp
+	22, // 2: gitpod.v1.Account.updated_at:type_name -> google.protobuf.Timestamp
 	5,  // 3: gitpod.v1.Account.memberships:type_name -> gitpod.v1.AccountMembership
 	6,  // 4: gitpod.v1.Account.joinables:type_name -> gitpod.v1.JoinableOrganization
-	27, // 5: gitpod.v1.AccountMembership.user_role:type_name -> gitpod.v1.OrganizationRole
-	28, // 6: gitpod.v1.AccountMembership.organization_tier:type_name -> gitpod.v1.OrganizationTier
-	29, // 7: gitpod.v1.ListSSOLoginsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	24, // 8: gitpod.v1.ListSSOLoginsResponse.logins:type_name -> gitpod.v1.ListSSOLoginsResponse.Login
-	30, // 9: gitpod.v1.ListSSOLoginsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	29, // 10: gitpod.v1.ListLoginProvidersRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	25, // 11: gitpod.v1.ListLoginProvidersRequest.filter:type_name -> gitpod.v1.ListLoginProvidersRequest.Filter
-	30, // 12: gitpod.v1.ListLoginProvidersResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	23, // 5: gitpod.v1.AccountMembership.user_role:type_name -> gitpod.v1.OrganizationRole
+	24, // 6: gitpod.v1.AccountMembership.organization_tier:type_name -> gitpod.v1.OrganizationTier
+	25, // 7: gitpod.v1.ListSSOLoginsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	20, // 8: gitpod.v1.ListSSOLoginsResponse.logins:type_name -> gitpod.v1.ListSSOLoginsResponse.Login
+	26, // 9: gitpod.v1.ListSSOLoginsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	25, // 10: gitpod.v1.ListLoginProvidersRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	21, // 11: gitpod.v1.ListLoginProvidersRequest.filter:type_name -> gitpod.v1.ListLoginProvidersRequest.Filter
+	26, // 12: gitpod.v1.ListLoginProvidersResponse.pagination:type_name -> gitpod.v1.PaginationResponse
 	13, // 13: gitpod.v1.ListLoginProvidersResponse.login_providers:type_name -> gitpod.v1.LoginProvider
-	29, // 14: gitpod.v1.ListJoinableOrganizationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	25, // 14: gitpod.v1.ListJoinableOrganizationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
 	6,  // 15: gitpod.v1.ListJoinableOrganizationsResponse.joinable_organizations:type_name -> gitpod.v1.JoinableOrganization
-	30, // 16: gitpod.v1.ListJoinableOrganizationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	26, // 16: gitpod.v1.ListJoinableOrganizationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
 	0,  // 17: gitpod.v1.AccountService.GetAccount:input_type -> gitpod.v1.GetAccountRequest
 	2,  // 18: gitpod.v1.AccountService.DeleteAccount:input_type -> gitpod.v1.DeleteAccountRequest
 	7,  // 19: gitpod.v1.AccountService.GetSSOLoginURL:input_type -> gitpod.v1.GetSSOLoginURLRequest
 	9,  // 20: gitpod.v1.AccountService.ListSSOLogins:input_type -> gitpod.v1.ListSSOLoginsRequest
 	11, // 21: gitpod.v1.AccountService.ListLoginProviders:input_type -> gitpod.v1.ListLoginProvidersRequest
 	14, // 22: gitpod.v1.AccountService.ListJoinableOrganizations:input_type -> gitpod.v1.ListJoinableOrganizationsRequest
-	16, // 23: gitpod.v1.AccountService.CreateMagicLink:input_type -> gitpod.v1.CreateMagicLinkRequest
-	18, // 24: gitpod.v1.AccountService.BlockAccount:input_type -> gitpod.v1.BlockAccountRequest
-	20, // 25: gitpod.v1.AccountService.UnblockAccount:input_type -> gitpod.v1.UnblockAccountRequest
-	22, // 26: gitpod.v1.AccountService.GetChatIdentityToken:input_type -> gitpod.v1.GetChatIdentityTokenRequest
-	1,  // 27: gitpod.v1.AccountService.GetAccount:output_type -> gitpod.v1.GetAccountResponse
-	3,  // 28: gitpod.v1.AccountService.DeleteAccount:output_type -> gitpod.v1.DeleteAccountResponse
-	8,  // 29: gitpod.v1.AccountService.GetSSOLoginURL:output_type -> gitpod.v1.GetSSOLoginURLResponse
-	10, // 30: gitpod.v1.AccountService.ListSSOLogins:output_type -> gitpod.v1.ListSSOLoginsResponse
-	12, // 31: gitpod.v1.AccountService.ListLoginProviders:output_type -> gitpod.v1.ListLoginProvidersResponse
-	15, // 32: gitpod.v1.AccountService.ListJoinableOrganizations:output_type -> gitpod.v1.ListJoinableOrganizationsResponse
-	17, // 33: gitpod.v1.AccountService.CreateMagicLink:output_type -> gitpod.v1.CreateMagicLinkResponse
-	19, // 34: gitpod.v1.AccountService.BlockAccount:output_type -> gitpod.v1.BlockAccountResponse
-	21, // 35: gitpod.v1.AccountService.UnblockAccount:output_type -> gitpod.v1.UnblockAccountResponse
-	23, // 36: gitpod.v1.AccountService.GetChatIdentityToken:output_type -> gitpod.v1.GetChatIdentityTokenResponse
-	27, // [27:37] is the sub-list for method output_type
-	17, // [17:27] is the sub-list for method input_type
+	16, // 23: gitpod.v1.AccountService.BlockAccount:input_type -> gitpod.v1.BlockAccountRequest
+	18, // 24: gitpod.v1.AccountService.UnblockAccount:input_type -> gitpod.v1.UnblockAccountRequest
+	1,  // 25: gitpod.v1.AccountService.GetAccount:output_type -> gitpod.v1.GetAccountResponse
+	3,  // 26: gitpod.v1.AccountService.DeleteAccount:output_type -> gitpod.v1.DeleteAccountResponse
+	8,  // 27: gitpod.v1.AccountService.GetSSOLoginURL:output_type -> gitpod.v1.GetSSOLoginURLResponse
+	10, // 28: gitpod.v1.AccountService.ListSSOLogins:output_type -> gitpod.v1.ListSSOLoginsResponse
+	12, // 29: gitpod.v1.AccountService.ListLoginProviders:output_type -> gitpod.v1.ListLoginProvidersResponse
+	15, // 30: gitpod.v1.AccountService.ListJoinableOrganizations:output_type -> gitpod.v1.ListJoinableOrganizationsResponse
+	17, // 31: gitpod.v1.AccountService.BlockAccount:output_type -> gitpod.v1.BlockAccountResponse
+	19, // 32: gitpod.v1.AccountService.UnblockAccount:output_type -> gitpod.v1.UnblockAccountResponse
+	25, // [25:33] is the sub-list for method output_type
+	17, // [17:25] is the sub-list for method input_type
 	17, // [17:17] is the sub-list for extension type_name
 	17, // [17:17] is the sub-list for extension extendee
 	0,  // [0:17] is the sub-list for field type_name
@@ -1674,14 +1456,14 @@ func file_gitpod_v1_account_proto_init() {
 	file_gitpod_v1_account_proto_msgTypes[4].OneofWrappers = []any{}
 	file_gitpod_v1_account_proto_msgTypes[7].OneofWrappers = []any{}
 	file_gitpod_v1_account_proto_msgTypes[9].OneofWrappers = []any{}
-	file_gitpod_v1_account_proto_msgTypes[25].OneofWrappers = []any{}
+	file_gitpod_v1_account_proto_msgTypes[21].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gitpod_v1_account_proto_rawDesc), len(file_gitpod_v1_account_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   26,
+			NumMessages:   22,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
