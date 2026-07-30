@@ -176,6 +176,7 @@ func (p *OnaProvider) EphemeralResources(ctx context.Context) []func() ephemeral
 func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResource {
 	return []func() list.ListResource{
 		organization.NewCustomDomainListResource,
+		organization.NewOIDCConfigListResource,
 		organization.NewSCIMConfigurationListResource,
 		organization.NewSSOConfigurationListResource,
 		project.NewListResource,

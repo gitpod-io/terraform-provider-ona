@@ -24,6 +24,7 @@ import (
 
 var _ resource.Resource = &OIDCConfigResource{}
 var _ resource.ResourceWithConfigure = &OIDCConfigResource{}
+var _ resource.ResourceWithIdentity = &OIDCConfigResource{}
 var _ resource.ResourceWithImportState = &OIDCConfigResource{}
 var _ resource.ResourceWithValidateConfig = &OIDCConfigResource{}
 
@@ -109,6 +110,7 @@ func (r *OIDCConfigResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 	data.ID = types.StringValue(organizationID)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, OIDCConfigIdentityModel{OrganizationID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -150,6 +152,7 @@ func (r *OIDCConfigResource) Read(ctx context.Context, req resource.ReadRequest,
 	prior := data
 	data = OIDCConfigModel{}
 	populateOIDCConfigModel(ctx, &data, organizationID, result.Msg.GetOidcConfig(), prior, &resp.Diagnostics)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, OIDCConfigIdentityModel{OrganizationID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -191,6 +194,7 @@ func (r *OIDCConfigResource) Update(ctx context.Context, req resource.UpdateRequ
 	planned := data
 	populateOIDCConfigModel(ctx, &data, organizationID, result.Msg.GetOidcConfig(), planned, &resp.Diagnostics)
 	preserveOIDCConfigPlannedInputs(&data, planned)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, OIDCConfigIdentityModel{OrganizationID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -199,6 +203,10 @@ func (r *OIDCConfigResource) Delete(ctx context.Context, req resource.DeleteRequ
 }
 
 func (r *OIDCConfigResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	if req.ID == "" {
+		resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("organization_id"), req, resp)
+		return
+	}
 	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "importing", "ona_oidc_config") {
 		return
 	}
@@ -215,6 +223,7 @@ func (r *OIDCConfigResource) ImportState(ctx context.Context, req resource.Impor
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), types.StringValue(organizationID))...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, OIDCConfigIdentityModel{OrganizationID: types.StringValue(organizationID)})...)
 }
 
 func validateOIDCOrganizationScope(diags *diag.Diagnostics, stateID types.String, organizationID string) bool {
