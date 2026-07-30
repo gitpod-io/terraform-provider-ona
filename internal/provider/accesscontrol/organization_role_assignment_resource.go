@@ -222,12 +222,12 @@ func (r *OrganizationRoleAssignmentResource) ImportState(ctx context.Context, re
 			addInvalidRoleDiagnostic(path.Root("role"), identity.Role.ValueString(), &resp.Diagnostics)
 			return
 		}
-		setImportString(ctx, resp, "group_id", identity.GroupID.ValueString())
-		setImportString(ctx, resp, "role", identity.Role.ValueString())
+		tfvalue.SetImportString(ctx, resp, "group_id", identity.GroupID.ValueString())
+		tfvalue.SetImportString(ctx, resp, "role", identity.Role.ValueString())
 		resp.Diagnostics.Append(resp.Identity.Set(ctx, identity)...)
 		return
 	}
-	parts, diags := splitImportID(req.ID, 2, "group_id/role")
+	parts, diags := tfvalue.SplitImportID(req.ID, 2, "group_id/role")
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
