@@ -33,6 +33,11 @@ list "ona_sso_configuration" "all" {
   include_resource = true
 }
 
+list "ona_terms_of_service" "all" {
+  provider         = ona
+  include_resource = true
+}
+
 list "ona_oidc_config" "all" {
   provider         = ona
   include_resource = true
