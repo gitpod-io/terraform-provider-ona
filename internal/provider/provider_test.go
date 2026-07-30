@@ -31,6 +31,21 @@ func TestProjectDataSourceIsRegistered(t *testing.T) {
 	t.Fatal("ona_project data source is not registered")
 }
 
+func TestSkillDataSourceIsRegistered(t *testing.T) {
+	t.Parallel()
+
+	provider := &OnaProvider{}
+	for _, newDataSource := range provider.DataSources(t.Context()) {
+		var resp datasource.MetadataResponse
+		newDataSource().Metadata(t.Context(), datasource.MetadataRequest{ProviderTypeName: "ona"}, &resp)
+		if resp.TypeName == "ona_skill" {
+			return
+		}
+	}
+
+	t.Fatal("ona_skill data source is not registered")
+}
+
 func TestSkillResourceIsRegistered(t *testing.T) {
 	t.Parallel()
 

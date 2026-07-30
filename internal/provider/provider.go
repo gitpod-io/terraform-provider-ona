@@ -200,6 +200,7 @@ func (p *OnaProvider) DataSources(ctx context.Context) []func() datasource.DataS
 		runner.NewCollectionDataSource,
 		runner.NewSingularDataSource,
 		security.NewPolicyCollectionDataSource,
+		skill.NewDataSource,
 		user.NewUserCollectionDataSource,
 		user.NewUserDataSource,
 		warmpool.NewWarmPoolCollectionDataSource,
