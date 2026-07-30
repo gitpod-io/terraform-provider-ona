@@ -10,6 +10,7 @@ It covers:
 - `ona_sso_configuration`
 - `ona_project`
 - `ona_warm_pool`
+- `ona_scim_configuration`
 - `ona_secret`
 - `ona_service_account`
 

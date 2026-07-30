@@ -28,6 +28,11 @@ list "ona_warm_pool" "all" {
   include_resource = true
 }
 
+list "ona_scim_configuration" "all" {
+  provider         = ona
+  include_resource = true
+}
+
 list "ona_secret" "all" {
   provider         = ona
   include_resource = true
