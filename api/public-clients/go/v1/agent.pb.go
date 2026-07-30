@@ -8,8 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -285,9 +283,7 @@ const (
 	// Disables provider-hosted tool search such as Anthropic server-side tool search.
 	LLMDisabledCapability_LLM_DISABLED_CAPABILITY_SERVER_SIDE_TOOL_SEARCH LLMDisabledCapability = 3
 	// Disables native Codex goal mode.
-	LLMDisabledCapability_LLM_DISABLED_CAPABILITY_GOAL_MODE LLMDisabledCapability = 4
-	// Disables Codex's Responses Lite request shape for provider compatibility.
-	LLMDisabledCapability_LLM_DISABLED_CAPABILITY_RESPONSES_LITE_UNSUPPORTED LLMDisabledCapability = 5
+	LLMDisabledCapability_LLM_DISABLED_CAPABILITY_GOAL_MODE LLMDisabledCapability = 4 // Disables Codex's Responses Lite request shape for provider compatibility.
 )
 
 // Enum value maps for LLMDisabledCapability.
@@ -298,15 +294,13 @@ var (
 		2: "LLM_DISABLED_CAPABILITY_FAST_SERVICE_TIER",
 		3: "LLM_DISABLED_CAPABILITY_SERVER_SIDE_TOOL_SEARCH",
 		4: "LLM_DISABLED_CAPABILITY_GOAL_MODE",
-		5: "LLM_DISABLED_CAPABILITY_RESPONSES_LITE_UNSUPPORTED",
 	}
 	LLMDisabledCapability_value = map[string]int32{
-		"LLM_DISABLED_CAPABILITY_UNSPECIFIED":                0,
-		"LLM_DISABLED_CAPABILITY_WEB_SEARCH":                 1,
-		"LLM_DISABLED_CAPABILITY_FAST_SERVICE_TIER":          2,
-		"LLM_DISABLED_CAPABILITY_SERVER_SIDE_TOOL_SEARCH":    3,
-		"LLM_DISABLED_CAPABILITY_GOAL_MODE":                  4,
-		"LLM_DISABLED_CAPABILITY_RESPONSES_LITE_UNSUPPORTED": 5,
+		"LLM_DISABLED_CAPABILITY_UNSPECIFIED":             0,
+		"LLM_DISABLED_CAPABILITY_WEB_SEARCH":              1,
+		"LLM_DISABLED_CAPABILITY_FAST_SERVICE_TIER":       2,
+		"LLM_DISABLED_CAPABILITY_SERVER_SIDE_TOOL_SEARCH": 3,
+		"LLM_DISABLED_CAPABILITY_GOAL_MODE":               4,
 	}
 )
 
@@ -350,6 +344,8 @@ const (
 	AgentExecutionFailureReason_AGENT_EXECUTION_FAILURE_REASON_LLM_INTEGRATION AgentExecutionFailureReason = 3
 	// Deprecated: The agent execution failed due to internal errors
 	// Use AGENT_EXECUTION_FAILURE_REASON_AGENT_EXECUTION instead
+	//
+	// Deprecated: Marked as deprecated in gitpod/v1/agent.proto.
 	AgentExecutionFailureReason_AGENT_EXECUTION_FAILURE_REASON_INTERNAL AgentExecutionFailureReason = 4
 	// The agent execution failed due to agent execution errors
 	AgentExecutionFailureReason_AGENT_EXECUTION_FAILURE_REASON_AGENT_EXECUTION AgentExecutionFailureReason = 5
@@ -624,7 +620,7 @@ func (x AgentExecution_Phase) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AgentExecution_Phase.Descriptor instead.
 func (AgentExecution_Phase) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 0}
 }
 
 type AgentExecution_Status_Goal_GoalStatus int32
@@ -692,7 +688,7 @@ func (x AgentExecution_Status_Goal_GoalStatus) Number() protoreflect.EnumNumber 
 
 // Deprecated: Use AgentExecution_Status_Goal_GoalStatus.Descriptor instead.
 func (AgentExecution_Status_Goal_GoalStatus) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 2, 10, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 2, 10, 0}
 }
 
 type AgentResponseBlock_Phase int32
@@ -747,7 +743,7 @@ func (x AgentResponseBlock_Phase) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AgentResponseBlock_Phase.Descriptor instead.
 func (AgentResponseBlock_Phase) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 0}
 }
 
 type AgentResponseBlock_TextOutput_Type int32
@@ -796,7 +792,7 @@ func (x AgentResponseBlock_TextOutput_Type) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AgentResponseBlock_TextOutput_Type.Descriptor instead.
 func (AgentResponseBlock_TextOutput_Type) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 0, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 0, 0}
 }
 
 type AgentResponseBlock_FileModification_DiffGroup_Type int32
@@ -851,7 +847,7 @@ func (x AgentResponseBlock_FileModification_DiffGroup_Type) Number() protoreflec
 
 // Deprecated: Use AgentResponseBlock_FileModification_DiffGroup_Type.Descriptor instead.
 func (AgentResponseBlock_FileModification_DiffGroup_Type) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 3, 0, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 3, 0, 0}
 }
 
 type AgentResponseBlock_TodoItem_Phase int32
@@ -906,7 +902,7 @@ func (x AgentResponseBlock_TodoItem_Phase) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AgentResponseBlock_TodoItem_Phase.Descriptor instead.
 func (AgentResponseBlock_TodoItem_Phase) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 8, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 8, 0}
 }
 
 type AgentResponseBlock_AgentModeChange_State int32
@@ -965,7 +961,7 @@ func (x AgentResponseBlock_AgentModeChange_State) Number() protoreflect.EnumNumb
 
 // Deprecated: Use AgentResponseBlock_AgentModeChange_State.Descriptor instead.
 func (AgentResponseBlock_AgentModeChange_State) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 12, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 12, 0}
 }
 
 type AgentMessage_Type int32
@@ -1016,7 +1012,7 @@ func (x AgentMessage_Type) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AgentMessage_Type.Descriptor instead.
 func (AgentMessage_Type) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{23, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{19, 0}
 }
 
 // Role identifies the sender's relationship in the parent/child hierarchy.
@@ -1068,7 +1064,7 @@ func (x AgentMessage_Role) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AgentMessage_Role.Descriptor instead.
 func (AgentMessage_Role) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{23, 1}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{19, 1}
 }
 
 // PullRequest represents pull request metadata from source control systems.
@@ -1420,190 +1416,6 @@ func (x *AgentMetadata) GetDescription() string {
 	return ""
 }
 
-type ListAgentsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Pagination    *PaginationRequest     `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListAgentsRequest) Reset() {
-	*x = ListAgentsRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListAgentsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListAgentsRequest) ProtoMessage() {}
-
-func (x *ListAgentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListAgentsRequest.ProtoReflect.Descriptor instead.
-func (*ListAgentsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *ListAgentsRequest) GetPagination() *PaginationRequest {
-	if x != nil {
-		return x.Pagination
-	}
-	return nil
-}
-
-type ListAgentsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Pagination    *PaginationResponse    `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Agents        []*Agent               `protobuf:"bytes,2,rep,name=agents,proto3" json:"agents,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListAgentsResponse) Reset() {
-	*x = ListAgentsResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListAgentsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListAgentsResponse) ProtoMessage() {}
-
-func (x *ListAgentsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListAgentsResponse.ProtoReflect.Descriptor instead.
-func (*ListAgentsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *ListAgentsResponse) GetPagination() *PaginationResponse {
-	if x != nil {
-		return x.Pagination
-	}
-	return nil
-}
-
-func (x *ListAgentsResponse) GetAgents() []*Agent {
-	if x != nil {
-		return x.Agents
-	}
-	return nil
-}
-
-type GetAgentRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AgentId       string                 `protobuf:"bytes,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetAgentRequest) Reset() {
-	*x = GetAgentRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetAgentRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetAgentRequest) ProtoMessage() {}
-
-func (x *GetAgentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetAgentRequest.ProtoReflect.Descriptor instead.
-func (*GetAgentRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *GetAgentRequest) GetAgentId() string {
-	if x != nil {
-		return x.AgentId
-	}
-	return ""
-}
-
-type GetAgentResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Agent         *Agent                 `protobuf:"bytes,1,opt,name=agent,proto3" json:"agent,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetAgentResponse) Reset() {
-	*x = GetAgentResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetAgentResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetAgentResponse) ProtoMessage() {}
-
-func (x *GetAgentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetAgentResponse.ProtoReflect.Descriptor instead.
-func (*GetAgentResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *GetAgentResponse) GetAgent() *Agent {
-	if x != nil {
-		return x.Agent
-	}
-	return nil
-}
-
 type AgentCodeContext struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Context:
@@ -1622,7 +1434,7 @@ type AgentCodeContext struct {
 
 func (x *AgentCodeContext) Reset() {
 	*x = AgentCodeContext{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[8]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1634,7 +1446,7 @@ func (x *AgentCodeContext) String() string {
 func (*AgentCodeContext) ProtoMessage() {}
 
 func (x *AgentCodeContext) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[8]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1647,7 +1459,7 @@ func (x *AgentCodeContext) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentCodeContext.ProtoReflect.Descriptor instead.
 func (*AgentCodeContext) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{8}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *AgentCodeContext) GetContext() isAgentCodeContext_Context {
@@ -1749,7 +1561,7 @@ type StartAgentRequest struct {
 
 func (x *StartAgentRequest) Reset() {
 	*x = StartAgentRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[9]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1761,7 +1573,7 @@ func (x *StartAgentRequest) String() string {
 func (*StartAgentRequest) ProtoMessage() {}
 
 func (x *StartAgentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[9]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1774,7 +1586,7 @@ func (x *StartAgentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartAgentRequest.ProtoReflect.Descriptor instead.
 func (*StartAgentRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{9}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *StartAgentRequest) GetAgentId() string {
@@ -1856,7 +1668,7 @@ type StartAgentResponse struct {
 
 func (x *StartAgentResponse) Reset() {
 	*x = StartAgentResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[10]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1868,7 +1680,7 @@ func (x *StartAgentResponse) String() string {
 func (*StartAgentResponse) ProtoMessage() {}
 
 func (x *StartAgentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[10]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1881,7 +1693,7 @@ func (x *StartAgentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartAgentResponse.ProtoReflect.Descriptor instead.
 func (*StartAgentResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{10}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *StartAgentResponse) GetAgentExecutionId() string {
@@ -1901,7 +1713,7 @@ type ListAgentExecutionsRequest struct {
 
 func (x *ListAgentExecutionsRequest) Reset() {
 	*x = ListAgentExecutionsRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[11]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1913,7 +1725,7 @@ func (x *ListAgentExecutionsRequest) String() string {
 func (*ListAgentExecutionsRequest) ProtoMessage() {}
 
 func (x *ListAgentExecutionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[11]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1926,7 +1738,7 @@ func (x *ListAgentExecutionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAgentExecutionsRequest.ProtoReflect.Descriptor instead.
 func (*ListAgentExecutionsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{11}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ListAgentExecutionsRequest) GetPagination() *PaginationRequest {
@@ -1953,7 +1765,7 @@ type ListAgentExecutionsResponse struct {
 
 func (x *ListAgentExecutionsResponse) Reset() {
 	*x = ListAgentExecutionsResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[12]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1965,7 +1777,7 @@ func (x *ListAgentExecutionsResponse) String() string {
 func (*ListAgentExecutionsResponse) ProtoMessage() {}
 
 func (x *ListAgentExecutionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[12]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1978,7 +1790,7 @@ func (x *ListAgentExecutionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAgentExecutionsResponse.ProtoReflect.Descriptor instead.
 func (*ListAgentExecutionsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{12}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ListAgentExecutionsResponse) GetPagination() *PaginationResponse {
@@ -2004,7 +1816,7 @@ type GetAgentExecutionRequest struct {
 
 func (x *GetAgentExecutionRequest) Reset() {
 	*x = GetAgentExecutionRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[13]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2016,7 +1828,7 @@ func (x *GetAgentExecutionRequest) String() string {
 func (*GetAgentExecutionRequest) ProtoMessage() {}
 
 func (x *GetAgentExecutionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[13]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2029,7 +1841,7 @@ func (x *GetAgentExecutionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAgentExecutionRequest.ProtoReflect.Descriptor instead.
 func (*GetAgentExecutionRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetAgentExecutionRequest) GetAgentExecutionId() string {
@@ -2048,7 +1860,7 @@ type GetAgentExecutionResponse struct {
 
 func (x *GetAgentExecutionResponse) Reset() {
 	*x = GetAgentExecutionResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[14]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2060,7 +1872,7 @@ func (x *GetAgentExecutionResponse) String() string {
 func (*GetAgentExecutionResponse) ProtoMessage() {}
 
 func (x *GetAgentExecutionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[14]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2073,7 +1885,7 @@ func (x *GetAgentExecutionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAgentExecutionResponse.ProtoReflect.Descriptor instead.
 func (*GetAgentExecutionResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{14}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetAgentExecutionResponse) GetAgentExecution() *AgentExecution {
@@ -2092,7 +1904,7 @@ type DeleteAgentExecutionRequest struct {
 
 func (x *DeleteAgentExecutionRequest) Reset() {
 	*x = DeleteAgentExecutionRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[15]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2104,7 +1916,7 @@ func (x *DeleteAgentExecutionRequest) String() string {
 func (*DeleteAgentExecutionRequest) ProtoMessage() {}
 
 func (x *DeleteAgentExecutionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[15]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2117,7 +1929,7 @@ func (x *DeleteAgentExecutionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAgentExecutionRequest.ProtoReflect.Descriptor instead.
 func (*DeleteAgentExecutionRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{15}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *DeleteAgentExecutionRequest) GetAgentExecutionId() string {
@@ -2135,7 +1947,7 @@ type DeleteAgentExecutionResponse struct {
 
 func (x *DeleteAgentExecutionResponse) Reset() {
 	*x = DeleteAgentExecutionResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[16]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2147,7 +1959,7 @@ func (x *DeleteAgentExecutionResponse) String() string {
 func (*DeleteAgentExecutionResponse) ProtoMessage() {}
 
 func (x *DeleteAgentExecutionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[16]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2160,7 +1972,7 @@ func (x *DeleteAgentExecutionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAgentExecutionResponse.ProtoReflect.Descriptor instead.
 func (*DeleteAgentExecutionResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{12}
 }
 
 type AgentExecution struct {
@@ -2182,7 +1994,7 @@ type AgentExecution struct {
 
 func (x *AgentExecution) Reset() {
 	*x = AgentExecution{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[17]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2194,7 +2006,7 @@ func (x *AgentExecution) String() string {
 func (*AgentExecution) ProtoMessage() {}
 
 func (x *AgentExecution) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[17]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2207,7 +2019,7 @@ func (x *AgentExecution) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentExecution.ProtoReflect.Descriptor instead.
 func (*AgentExecution) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *AgentExecution) GetId() string {
@@ -2247,7 +2059,7 @@ type ClarifyingQuestions struct {
 
 func (x *ClarifyingQuestions) Reset() {
 	*x = ClarifyingQuestions{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[18]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2259,7 +2071,7 @@ func (x *ClarifyingQuestions) String() string {
 func (*ClarifyingQuestions) ProtoMessage() {}
 
 func (x *ClarifyingQuestions) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[18]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2272,7 +2084,7 @@ func (x *ClarifyingQuestions) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClarifyingQuestions.ProtoReflect.Descriptor instead.
 func (*ClarifyingQuestions) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{18}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ClarifyingQuestions) GetQuestions() []*ClarifyingQuestions_Question {
@@ -2291,7 +2103,7 @@ type NextStepsProposal struct {
 
 func (x *NextStepsProposal) Reset() {
 	*x = NextStepsProposal{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[19]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2303,7 +2115,7 @@ func (x *NextStepsProposal) String() string {
 func (*NextStepsProposal) ProtoMessage() {}
 
 func (x *NextStepsProposal) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[19]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2316,7 +2128,7 @@ func (x *NextStepsProposal) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NextStepsProposal.ProtoReflect.Descriptor instead.
 func (*NextStepsProposal) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{19}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *NextStepsProposal) GetActions() []*NextStepsProposal_Action {
@@ -2366,7 +2178,7 @@ type AgentResponseBlock struct {
 
 func (x *AgentResponseBlock) Reset() {
 	*x = AgentResponseBlock{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[20]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2378,7 +2190,7 @@ func (x *AgentResponseBlock) String() string {
 func (*AgentResponseBlock) ProtoMessage() {}
 
 func (x *AgentResponseBlock) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[20]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2391,7 +2203,7 @@ func (x *AgentResponseBlock) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentResponseBlock.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *AgentResponseBlock) GetId() string {
@@ -2729,7 +2541,7 @@ type UserInputBlock struct {
 
 func (x *UserInputBlock) Reset() {
 	*x = UserInputBlock{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[21]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2741,7 +2553,7 @@ func (x *UserInputBlock) String() string {
 func (*UserInputBlock) ProtoMessage() {}
 
 func (x *UserInputBlock) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[21]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2754,7 +2566,7 @@ func (x *UserInputBlock) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserInputBlock.ProtoReflect.Descriptor instead.
 func (*UserInputBlock) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{21}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *UserInputBlock) GetId() string {
@@ -2851,7 +2663,7 @@ type UserInputMetadata struct {
 
 func (x *UserInputMetadata) Reset() {
 	*x = UserInputMetadata{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[22]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2863,7 +2675,7 @@ func (x *UserInputMetadata) String() string {
 func (*UserInputMetadata) ProtoMessage() {}
 
 func (x *UserInputMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[22]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2876,7 +2688,7 @@ func (x *UserInputMetadata) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserInputMetadata.ProtoReflect.Descriptor instead.
 func (*UserInputMetadata) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{22}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *UserInputMetadata) GetSource() string {
@@ -2910,7 +2722,7 @@ type AgentMessage struct {
 
 func (x *AgentMessage) Reset() {
 	*x = AgentMessage{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[23]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2922,7 +2734,7 @@ func (x *AgentMessage) String() string {
 func (*AgentMessage) ProtoMessage() {}
 
 func (x *AgentMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[23]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2935,7 +2747,7 @@ func (x *AgentMessage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentMessage.ProtoReflect.Descriptor instead.
 func (*AgentMessage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{23}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *AgentMessage) GetType() AgentMessage_Type {
@@ -2987,7 +2799,7 @@ type WakeEvent struct {
 
 func (x *WakeEvent) Reset() {
 	*x = WakeEvent{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[24]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2999,7 +2811,7 @@ func (x *WakeEvent) String() string {
 func (*WakeEvent) ProtoMessage() {}
 
 func (x *WakeEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[24]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3012,7 +2824,7 @@ func (x *WakeEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WakeEvent.ProtoReflect.Descriptor instead.
 func (*WakeEvent) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *WakeEvent) GetInterestId() string {
@@ -3113,7 +2925,7 @@ type SendToAgentExecutionRequest struct {
 
 func (x *SendToAgentExecutionRequest) Reset() {
 	*x = SendToAgentExecutionRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[25]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3125,7 +2937,7 @@ func (x *SendToAgentExecutionRequest) String() string {
 func (*SendToAgentExecutionRequest) ProtoMessage() {}
 
 func (x *SendToAgentExecutionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[25]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3138,7 +2950,7 @@ func (x *SendToAgentExecutionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendToAgentExecutionRequest.ProtoReflect.Descriptor instead.
 func (*SendToAgentExecutionRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{25}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *SendToAgentExecutionRequest) GetAgentExecutionId() string {
@@ -3241,7 +3053,7 @@ type SendToAgentExecutionResponse struct {
 
 func (x *SendToAgentExecutionResponse) Reset() {
 	*x = SendToAgentExecutionResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[26]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3253,7 +3065,7 @@ func (x *SendToAgentExecutionResponse) String() string {
 func (*SendToAgentExecutionResponse) ProtoMessage() {}
 
 func (x *SendToAgentExecutionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[26]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3266,7 +3078,7 @@ func (x *SendToAgentExecutionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendToAgentExecutionResponse.ProtoReflect.Descriptor instead.
 func (*SendToAgentExecutionResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{26}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{22}
 }
 
 type TurnOptions struct {
@@ -3281,7 +3093,7 @@ type TurnOptions struct {
 
 func (x *TurnOptions) Reset() {
 	*x = TurnOptions{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[27]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3293,7 +3105,7 @@ func (x *TurnOptions) String() string {
 func (*TurnOptions) ProtoMessage() {}
 
 func (x *TurnOptions) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[27]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3306,7 +3118,7 @@ func (x *TurnOptions) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TurnOptions.ProtoReflect.Descriptor instead.
 func (*TurnOptions) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{27}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *TurnOptions) GetModes() []AgentMode {
@@ -3332,7 +3144,7 @@ type AgentControlInput struct {
 
 func (x *AgentControlInput) Reset() {
 	*x = AgentControlInput{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[28]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3344,7 +3156,7 @@ func (x *AgentControlInput) String() string {
 func (*AgentControlInput) ProtoMessage() {}
 
 func (x *AgentControlInput) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[28]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3357,7 +3169,7 @@ func (x *AgentControlInput) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentControlInput.ProtoReflect.Descriptor instead.
 func (*AgentControlInput) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{28}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *AgentControlInput) GetControl() isAgentControlInput_Control {
@@ -3461,7 +3273,7 @@ type PromptValidationErrorDetails struct {
 
 func (x *PromptValidationErrorDetails) Reset() {
 	*x = PromptValidationErrorDetails{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[29]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3473,7 +3285,7 @@ func (x *PromptValidationErrorDetails) String() string {
 func (*PromptValidationErrorDetails) ProtoMessage() {}
 
 func (x *PromptValidationErrorDetails) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[29]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3486,7 +3298,7 @@ func (x *PromptValidationErrorDetails) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PromptValidationErrorDetails.ProtoReflect.Descriptor instead.
 func (*PromptValidationErrorDetails) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{29}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *PromptValidationErrorDetails) GetCleanedText() string {
@@ -3512,7 +3324,7 @@ type CreateAgentExecutionConversationTokenRequest struct {
 
 func (x *CreateAgentExecutionConversationTokenRequest) Reset() {
 	*x = CreateAgentExecutionConversationTokenRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[30]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3524,7 +3336,7 @@ func (x *CreateAgentExecutionConversationTokenRequest) String() string {
 func (*CreateAgentExecutionConversationTokenRequest) ProtoMessage() {}
 
 func (x *CreateAgentExecutionConversationTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[30]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3537,7 +3349,7 @@ func (x *CreateAgentExecutionConversationTokenRequest) ProtoReflect() protorefle
 
 // Deprecated: Use CreateAgentExecutionConversationTokenRequest.ProtoReflect.Descriptor instead.
 func (*CreateAgentExecutionConversationTokenRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{30}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *CreateAgentExecutionConversationTokenRequest) GetAgentExecutionId() string {
@@ -3556,7 +3368,7 @@ type CreateAgentExecutionConversationTokenResponse struct {
 
 func (x *CreateAgentExecutionConversationTokenResponse) Reset() {
 	*x = CreateAgentExecutionConversationTokenResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[31]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3568,7 +3380,7 @@ func (x *CreateAgentExecutionConversationTokenResponse) String() string {
 func (*CreateAgentExecutionConversationTokenResponse) ProtoMessage() {}
 
 func (x *CreateAgentExecutionConversationTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[31]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3581,7 +3393,7 @@ func (x *CreateAgentExecutionConversationTokenResponse) ProtoReflect() protorefl
 
 // Deprecated: Use CreateAgentExecutionConversationTokenResponse.ProtoReflect.Descriptor instead.
 func (*CreateAgentExecutionConversationTokenResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{31}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *CreateAgentExecutionConversationTokenResponse) GetToken() string {
@@ -3600,7 +3412,7 @@ type CreateAgentExecutionTranscriptTokenRequest struct {
 
 func (x *CreateAgentExecutionTranscriptTokenRequest) Reset() {
 	*x = CreateAgentExecutionTranscriptTokenRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[32]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3612,7 +3424,7 @@ func (x *CreateAgentExecutionTranscriptTokenRequest) String() string {
 func (*CreateAgentExecutionTranscriptTokenRequest) ProtoMessage() {}
 
 func (x *CreateAgentExecutionTranscriptTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[32]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3625,7 +3437,7 @@ func (x *CreateAgentExecutionTranscriptTokenRequest) ProtoReflect() protoreflect
 
 // Deprecated: Use CreateAgentExecutionTranscriptTokenRequest.ProtoReflect.Descriptor instead.
 func (*CreateAgentExecutionTranscriptTokenRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{32}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *CreateAgentExecutionTranscriptTokenRequest) GetAgentExecutionId() string {
@@ -3644,7 +3456,7 @@ type CreateAgentExecutionTranscriptTokenResponse struct {
 
 func (x *CreateAgentExecutionTranscriptTokenResponse) Reset() {
 	*x = CreateAgentExecutionTranscriptTokenResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[33]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3656,7 +3468,7 @@ func (x *CreateAgentExecutionTranscriptTokenResponse) String() string {
 func (*CreateAgentExecutionTranscriptTokenResponse) ProtoMessage() {}
 
 func (x *CreateAgentExecutionTranscriptTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[33]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3669,7 +3481,7 @@ func (x *CreateAgentExecutionTranscriptTokenResponse) ProtoReflect() protoreflec
 
 // Deprecated: Use CreateAgentExecutionTranscriptTokenResponse.ProtoReflect.Descriptor instead.
 func (*CreateAgentExecutionTranscriptTokenResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{33}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *CreateAgentExecutionTranscriptTokenResponse) GetToken() string {
@@ -3695,7 +3507,7 @@ type RunnerSideAgentSpec struct {
 
 func (x *RunnerSideAgentSpec) Reset() {
 	*x = RunnerSideAgentSpec{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[34]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3707,7 +3519,7 @@ func (x *RunnerSideAgentSpec) String() string {
 func (*RunnerSideAgentSpec) ProtoMessage() {}
 
 func (x *RunnerSideAgentSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[34]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3720,7 +3532,7 @@ func (x *RunnerSideAgentSpec) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunnerSideAgentSpec.ProtoReflect.Descriptor instead.
 func (*RunnerSideAgentSpec) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{34}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *RunnerSideAgentSpec) GetPrompts() []*RunnerSideAgentSpec_Prompts {
@@ -3760,7 +3572,7 @@ type InEnvironmentAgentSpec struct {
 
 func (x *InEnvironmentAgentSpec) Reset() {
 	*x = InEnvironmentAgentSpec{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[35]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3772,7 +3584,7 @@ func (x *InEnvironmentAgentSpec) String() string {
 func (*InEnvironmentAgentSpec) ProtoMessage() {}
 
 func (x *InEnvironmentAgentSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[35]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3785,7 +3597,7 @@ func (x *InEnvironmentAgentSpec) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InEnvironmentAgentSpec.ProtoReflect.Descriptor instead.
 func (*InEnvironmentAgentSpec) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{35}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *InEnvironmentAgentSpec) GetService() *ServiceSpec {
@@ -3809,341 +3621,6 @@ func (x *InEnvironmentAgentSpec) GetServiceMetadata() *ServiceMetadata {
 	return nil
 }
 
-type CreateAgentRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the agent
-	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// A description of what the agent does
-	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	// Types that are valid to be assigned to Spec:
-	//
-	//	*CreateAgentRequest_RunnerSide
-	//	*CreateAgentRequest_InEnvironment
-	Spec          isCreateAgentRequest_Spec `protobuf_oneof:"spec"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateAgentRequest) Reset() {
-	*x = CreateAgentRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[36]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateAgentRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateAgentRequest) ProtoMessage() {}
-
-func (x *CreateAgentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[36]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateAgentRequest.ProtoReflect.Descriptor instead.
-func (*CreateAgentRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{36}
-}
-
-func (x *CreateAgentRequest) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *CreateAgentRequest) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-func (x *CreateAgentRequest) GetSpec() isCreateAgentRequest_Spec {
-	if x != nil {
-		return x.Spec
-	}
-	return nil
-}
-
-func (x *CreateAgentRequest) GetRunnerSide() *RunnerSideAgentSpec {
-	if x != nil {
-		if x, ok := x.Spec.(*CreateAgentRequest_RunnerSide); ok {
-			return x.RunnerSide
-		}
-	}
-	return nil
-}
-
-func (x *CreateAgentRequest) GetInEnvironment() *InEnvironmentAgentSpec {
-	if x != nil {
-		if x, ok := x.Spec.(*CreateAgentRequest_InEnvironment); ok {
-			return x.InEnvironment
-		}
-	}
-	return nil
-}
-
-type isCreateAgentRequest_Spec interface {
-	isCreateAgentRequest_Spec()
-}
-
-type CreateAgentRequest_RunnerSide struct {
-	RunnerSide *RunnerSideAgentSpec `protobuf:"bytes,10,opt,name=runner_side,json=runnerSide,proto3,oneof"`
-}
-
-type CreateAgentRequest_InEnvironment struct {
-	InEnvironment *InEnvironmentAgentSpec `protobuf:"bytes,20,opt,name=in_environment,json=inEnvironment,proto3,oneof"`
-}
-
-func (*CreateAgentRequest_RunnerSide) isCreateAgentRequest_Spec() {}
-
-func (*CreateAgentRequest_InEnvironment) isCreateAgentRequest_Spec() {}
-
-type CreateAgentResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The created agent
-	Agent         *Agent `protobuf:"bytes,1,opt,name=agent,proto3" json:"agent,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateAgentResponse) Reset() {
-	*x = CreateAgentResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[37]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateAgentResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateAgentResponse) ProtoMessage() {}
-
-func (x *CreateAgentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[37]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateAgentResponse.ProtoReflect.Descriptor instead.
-func (*CreateAgentResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{37}
-}
-
-func (x *CreateAgentResponse) GetAgent() *Agent {
-	if x != nil {
-		return x.Agent
-	}
-	return nil
-}
-
-type UpdateAgentRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The ID of the agent to update
-	AgentId string `protobuf:"bytes,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
-	// Optional metadata which will replace the existing metadata partially
-	// If not provided, the existing metadata will be kept.
-	Metadata *UpdateAgentRequest_Metadata `protobuf:"bytes,2,opt,name=metadata,proto3" json:"metadata,omitempty"`
-	// Optional spec which will replace the existing spec partially
-	Spec          *UpdateAgentRequest_Spec `protobuf:"bytes,3,opt,name=spec,proto3" json:"spec,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateAgentRequest) Reset() {
-	*x = UpdateAgentRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[38]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateAgentRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateAgentRequest) ProtoMessage() {}
-
-func (x *UpdateAgentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[38]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateAgentRequest.ProtoReflect.Descriptor instead.
-func (*UpdateAgentRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{38}
-}
-
-func (x *UpdateAgentRequest) GetAgentId() string {
-	if x != nil {
-		return x.AgentId
-	}
-	return ""
-}
-
-func (x *UpdateAgentRequest) GetMetadata() *UpdateAgentRequest_Metadata {
-	if x != nil {
-		return x.Metadata
-	}
-	return nil
-}
-
-func (x *UpdateAgentRequest) GetSpec() *UpdateAgentRequest_Spec {
-	if x != nil {
-		return x.Spec
-	}
-	return nil
-}
-
-type UpdateAgentResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The updated agent
-	Agent         *Agent `protobuf:"bytes,1,opt,name=agent,proto3" json:"agent,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateAgentResponse) Reset() {
-	*x = UpdateAgentResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[39]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateAgentResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateAgentResponse) ProtoMessage() {}
-
-func (x *UpdateAgentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[39]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateAgentResponse.ProtoReflect.Descriptor instead.
-func (*UpdateAgentResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{39}
-}
-
-func (x *UpdateAgentResponse) GetAgent() *Agent {
-	if x != nil {
-		return x.Agent
-	}
-	return nil
-}
-
-type DeleteAgentRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The ID of the agent to delete
-	AgentId       string `protobuf:"bytes,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteAgentRequest) Reset() {
-	*x = DeleteAgentRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[40]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteAgentRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteAgentRequest) ProtoMessage() {}
-
-func (x *DeleteAgentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[40]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeleteAgentRequest.ProtoReflect.Descriptor instead.
-func (*DeleteAgentRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{40}
-}
-
-func (x *DeleteAgentRequest) GetAgentId() string {
-	if x != nil {
-		return x.AgentId
-	}
-	return ""
-}
-
-type DeleteAgentResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteAgentResponse) Reset() {
-	*x = DeleteAgentResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[41]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteAgentResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteAgentResponse) ProtoMessage() {}
-
-func (x *DeleteAgentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[41]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeleteAgentResponse.ProtoReflect.Descriptor instead.
-func (*DeleteAgentResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{41}
-}
-
 type StopAgentExecutionRequest struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	AgentExecutionId string                 `protobuf:"bytes,1,opt,name=agent_execution_id,json=agentExecutionId,proto3" json:"agent_execution_id,omitempty"`
@@ -4153,7 +3630,7 @@ type StopAgentExecutionRequest struct {
 
 func (x *StopAgentExecutionRequest) Reset() {
 	*x = StopAgentExecutionRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[42]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4165,7 +3642,7 @@ func (x *StopAgentExecutionRequest) String() string {
 func (*StopAgentExecutionRequest) ProtoMessage() {}
 
 func (x *StopAgentExecutionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[42]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4178,7 +3655,7 @@ func (x *StopAgentExecutionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopAgentExecutionRequest.ProtoReflect.Descriptor instead.
 func (*StopAgentExecutionRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{42}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *StopAgentExecutionRequest) GetAgentExecutionId() string {
@@ -4196,7 +3673,7 @@ type StopAgentExecutionResponse struct {
 
 func (x *StopAgentExecutionResponse) Reset() {
 	*x = StopAgentExecutionResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[43]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4208,7 +3685,7 @@ func (x *StopAgentExecutionResponse) String() string {
 func (*StopAgentExecutionResponse) ProtoMessage() {}
 
 func (x *StopAgentExecutionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[43]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4221,568 +3698,7 @@ func (x *StopAgentExecutionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopAgentExecutionResponse.ProtoReflect.Descriptor instead.
 func (*StopAgentExecutionResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{43}
-}
-
-type UpdateAgentExecutionRequest struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	AgentExecutionId string                 `protobuf:"bytes,1,opt,name=agent_execution_id,json=agentExecutionId,proto3" json:"agent_execution_id,omitempty"`
-	// Metadata updates. If not provided, existing metadata is kept.
-	Metadata      *UpdateAgentExecutionRequest_Metadata `protobuf:"bytes,2,opt,name=metadata,proto3" json:"metadata,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateAgentExecutionRequest) Reset() {
-	*x = UpdateAgentExecutionRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[44]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateAgentExecutionRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateAgentExecutionRequest) ProtoMessage() {}
-
-func (x *UpdateAgentExecutionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[44]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateAgentExecutionRequest.ProtoReflect.Descriptor instead.
-func (*UpdateAgentExecutionRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{44}
-}
-
-func (x *UpdateAgentExecutionRequest) GetAgentExecutionId() string {
-	if x != nil {
-		return x.AgentExecutionId
-	}
-	return ""
-}
-
-func (x *UpdateAgentExecutionRequest) GetMetadata() *UpdateAgentExecutionRequest_Metadata {
-	if x != nil {
-		return x.Metadata
-	}
-	return nil
-}
-
-type UpdateAgentExecutionResponse struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	AgentExecution *AgentExecution        `protobuf:"bytes,1,opt,name=agent_execution,json=agentExecution,proto3" json:"agent_execution,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *UpdateAgentExecutionResponse) Reset() {
-	*x = UpdateAgentExecutionResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[45]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateAgentExecutionResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateAgentExecutionResponse) ProtoMessage() {}
-
-func (x *UpdateAgentExecutionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[45]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateAgentExecutionResponse.ProtoReflect.Descriptor instead.
-func (*UpdateAgentExecutionResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{45}
-}
-
-func (x *UpdateAgentExecutionResponse) GetAgentExecution() *AgentExecution {
-	if x != nil {
-		return x.AgentExecution
-	}
-	return nil
-}
-
-type ReportAgentExecutionOutputsRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The ID of the agent execution to report outputs for
-	AgentExecutionId string `protobuf:"bytes,1,opt,name=agent_execution_id,json=agentExecutionId,proto3" json:"agent_execution_id,omitempty"`
-	// Outputs to report. New outputs are merged with existing outputs.
-	// Values are stored as strings and the API determines the type.
-	Outputs       map[string]*AgentExecution_Status_OutputValue `protobuf:"bytes,2,rep,name=outputs,proto3" json:"outputs,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ReportAgentExecutionOutputsRequest) Reset() {
-	*x = ReportAgentExecutionOutputsRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[46]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ReportAgentExecutionOutputsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReportAgentExecutionOutputsRequest) ProtoMessage() {}
-
-func (x *ReportAgentExecutionOutputsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[46]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReportAgentExecutionOutputsRequest.ProtoReflect.Descriptor instead.
-func (*ReportAgentExecutionOutputsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{46}
-}
-
-func (x *ReportAgentExecutionOutputsRequest) GetAgentExecutionId() string {
-	if x != nil {
-		return x.AgentExecutionId
-	}
-	return ""
-}
-
-func (x *ReportAgentExecutionOutputsRequest) GetOutputs() map[string]*AgentExecution_Status_OutputValue {
-	if x != nil {
-		return x.Outputs
-	}
-	return nil
-}
-
-type ReportAgentExecutionOutputsResponse struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	AgentExecution *AgentExecution        `protobuf:"bytes,1,opt,name=agent_execution,json=agentExecution,proto3" json:"agent_execution,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *ReportAgentExecutionOutputsResponse) Reset() {
-	*x = ReportAgentExecutionOutputsResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[47]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ReportAgentExecutionOutputsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReportAgentExecutionOutputsResponse) ProtoMessage() {}
-
-func (x *ReportAgentExecutionOutputsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[47]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReportAgentExecutionOutputsResponse.ProtoReflect.Descriptor instead.
-func (*ReportAgentExecutionOutputsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{47}
-}
-
-func (x *ReportAgentExecutionOutputsResponse) GetAgentExecution() *AgentExecution {
-	if x != nil {
-		return x.AgentExecution
-	}
-	return nil
-}
-
-type EmitAgentSessionActivityRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The agent execution ID. Used to resolve the organization for auth/token lookup.
-	AgentExecutionId string `protobuf:"bytes,1,opt,name=agent_execution_id,json=agentExecutionId,proto3" json:"agent_execution_id,omitempty"`
-	// The external session ID (e.g., Linear agent session ID).
-	// The runner resolves this from annotations at startup and passes it directly,
-	// avoiding repeated annotation lookups on every emit call.
-	ExternalAgentSessionId string `protobuf:"bytes,2,opt,name=external_agent_session_id,json=externalAgentSessionId,proto3" json:"external_agent_session_id,omitempty"`
-	// The structured response block to forward to the external session.
-	// The backend type-switches on the block's oneof output to decide how to render.
-	ResponseBlock *AgentResponseBlock `protobuf:"bytes,3,opt,name=response_block,json=responseBlock,proto3" json:"response_block,omitempty"`
-	// The current agent execution status. When present, the backend uses this
-	// for phase-specific emissions (thoughts, errors, keepalive, external URLs)
-	// instead of relying on the separate status reflection path.
-	// This field is optional for backward compatibility.
-	Status *AgentExecution_Status `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
-	// Optional next steps proposal from the agent. Reported separately from
-	// response_block so integrations can decide whether and how to render it.
-	// The Linear integration ignores this; other integrations may render it.
-	NextStepsProposal *NextStepsProposal `protobuf:"bytes,5,opt,name=next_steps_proposal,json=nextStepsProposal,proto3" json:"next_steps_proposal,omitempty"`
-	// Optional ordering cursor for this activity within an ordered producer
-	// stream. Empty means the activity has no ordering token and consumers must
-	// preserve their existing behavior.
-	//
-	// When two activities for the same ordered stream both have non-empty
-	// cursors, consumers may compare the cursor strings with <= to decide
-	// whether one activity is older or equal to another. Producers must choose a
-	// cursor encoding whose lexicographic order matches the stream order.
-	Cursor        string `protobuf:"bytes,6,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *EmitAgentSessionActivityRequest) Reset() {
-	*x = EmitAgentSessionActivityRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[48]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *EmitAgentSessionActivityRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*EmitAgentSessionActivityRequest) ProtoMessage() {}
-
-func (x *EmitAgentSessionActivityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[48]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use EmitAgentSessionActivityRequest.ProtoReflect.Descriptor instead.
-func (*EmitAgentSessionActivityRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{48}
-}
-
-func (x *EmitAgentSessionActivityRequest) GetAgentExecutionId() string {
-	if x != nil {
-		return x.AgentExecutionId
-	}
-	return ""
-}
-
-func (x *EmitAgentSessionActivityRequest) GetExternalAgentSessionId() string {
-	if x != nil {
-		return x.ExternalAgentSessionId
-	}
-	return ""
-}
-
-func (x *EmitAgentSessionActivityRequest) GetResponseBlock() *AgentResponseBlock {
-	if x != nil {
-		return x.ResponseBlock
-	}
-	return nil
-}
-
-func (x *EmitAgentSessionActivityRequest) GetStatus() *AgentExecution_Status {
-	if x != nil {
-		return x.Status
-	}
-	return nil
-}
-
-func (x *EmitAgentSessionActivityRequest) GetNextStepsProposal() *NextStepsProposal {
-	if x != nil {
-		return x.NextStepsProposal
-	}
-	return nil
-}
-
-func (x *EmitAgentSessionActivityRequest) GetCursor() string {
-	if x != nil {
-		return x.Cursor
-	}
-	return ""
-}
-
-type EmitAgentSessionActivityResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *EmitAgentSessionActivityResponse) Reset() {
-	*x = EmitAgentSessionActivityResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[49]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *EmitAgentSessionActivityResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*EmitAgentSessionActivityResponse) ProtoMessage() {}
-
-func (x *EmitAgentSessionActivityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[49]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use EmitAgentSessionActivityResponse.ProtoReflect.Descriptor instead.
-func (*EmitAgentSessionActivityResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{49}
-}
-
-type ImprovePromptForAgentRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AgentId       string                 `protobuf:"bytes,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
-	Prompt        string                 `protobuf:"bytes,2,opt,name=prompt,proto3" json:"prompt,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ImprovePromptForAgentRequest) Reset() {
-	*x = ImprovePromptForAgentRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[50]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ImprovePromptForAgentRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ImprovePromptForAgentRequest) ProtoMessage() {}
-
-func (x *ImprovePromptForAgentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[50]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ImprovePromptForAgentRequest.ProtoReflect.Descriptor instead.
-func (*ImprovePromptForAgentRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{50}
-}
-
-func (x *ImprovePromptForAgentRequest) GetAgentId() string {
-	if x != nil {
-		return x.AgentId
-	}
-	return ""
-}
-
-func (x *ImprovePromptForAgentRequest) GetPrompt() string {
-	if x != nil {
-		return x.Prompt
-	}
-	return ""
-}
-
-type ImprovePromptForAgentResponse struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	ImprovedPrompt string                 `protobuf:"bytes,1,opt,name=improved_prompt,json=improvedPrompt,proto3" json:"improved_prompt,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *ImprovePromptForAgentResponse) Reset() {
-	*x = ImprovePromptForAgentResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[51]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ImprovePromptForAgentResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ImprovePromptForAgentResponse) ProtoMessage() {}
-
-func (x *ImprovePromptForAgentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[51]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ImprovePromptForAgentResponse.ProtoReflect.Descriptor instead.
-func (*ImprovePromptForAgentResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{51}
-}
-
-func (x *ImprovePromptForAgentResponse) GetImprovedPrompt() string {
-	if x != nil {
-		return x.ImprovedPrompt
-	}
-	return ""
-}
-
-type CreateLLMAccessTokenRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The models required by the agent to function.
-	RequiredModels []SupportedModel `protobuf:"varint,1,rep,packed,name=required_models,json=requiredModels,proto3,enum=gitpod.v1.SupportedModel" json:"required_models,omitempty"`
-	// The agent execution ID for tracking and runner selection.
-	// If empty, falls back to current logic for backward compatibility.
-	AgentExecutionId string `protobuf:"bytes,3,opt,name=agent_execution_id,json=agentExecutionId,proto3" json:"agent_execution_id,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
-}
-
-func (x *CreateLLMAccessTokenRequest) Reset() {
-	*x = CreateLLMAccessTokenRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[52]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateLLMAccessTokenRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateLLMAccessTokenRequest) ProtoMessage() {}
-
-func (x *CreateLLMAccessTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[52]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateLLMAccessTokenRequest.ProtoReflect.Descriptor instead.
-func (*CreateLLMAccessTokenRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{52}
-}
-
-func (x *CreateLLMAccessTokenRequest) GetRequiredModels() []SupportedModel {
-	if x != nil {
-		return x.RequiredModels
-	}
-	return nil
-}
-
-func (x *CreateLLMAccessTokenRequest) GetAgentExecutionId() string {
-	if x != nil {
-		return x.AgentExecutionId
-	}
-	return ""
-}
-
-type CreateLLMAccessTokenResponse struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	AccessToken string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	LlmUrl      string                 `protobuf:"bytes,2,opt,name=llm_url,json=llmUrl,proto3" json:"llm_url,omitempty"`
-	// is_server_side_tool_search_enabled indicates whether the LLM provider
-	// supports Anthropic's server-side BM25 tool search. Computed by the
-	// management plane based on the provider type and feature flags.
-	IsServerSideToolSearchEnabled bool `protobuf:"varint,3,opt,name=is_server_side_tool_search_enabled,json=isServerSideToolSearchEnabled,proto3" json:"is_server_side_tool_search_enabled,omitempty"`
-	// disabled_capabilities lists provider capabilities unavailable for this LLM
-	// access token.
-	DisabledCapabilities []LLMDisabledCapability `protobuf:"varint,4,rep,packed,name=disabled_capabilities,json=disabledCapabilities,proto3,enum=gitpod.v1.LLMDisabledCapability" json:"disabled_capabilities,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
-}
-
-func (x *CreateLLMAccessTokenResponse) Reset() {
-	*x = CreateLLMAccessTokenResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[53]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateLLMAccessTokenResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateLLMAccessTokenResponse) ProtoMessage() {}
-
-func (x *CreateLLMAccessTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[53]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateLLMAccessTokenResponse.ProtoReflect.Descriptor instead.
-func (*CreateLLMAccessTokenResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{53}
-}
-
-func (x *CreateLLMAccessTokenResponse) GetAccessToken() string {
-	if x != nil {
-		return x.AccessToken
-	}
-	return ""
-}
-
-func (x *CreateLLMAccessTokenResponse) GetLlmUrl() string {
-	if x != nil {
-		return x.LlmUrl
-	}
-	return ""
-}
-
-func (x *CreateLLMAccessTokenResponse) GetIsServerSideToolSearchEnabled() bool {
-	if x != nil {
-		return x.IsServerSideToolSearchEnabled
-	}
-	return false
-}
-
-func (x *CreateLLMAccessTokenResponse) GetDisabledCapabilities() []LLMDisabledCapability {
-	if x != nil {
-		return x.DisabledCapabilities
-	}
-	return nil
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{33}
 }
 
 type MCPIntegration struct {
@@ -4799,7 +3715,7 @@ type MCPIntegration struct {
 
 func (x *MCPIntegration) Reset() {
 	*x = MCPIntegration{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[54]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4811,7 +3727,7 @@ func (x *MCPIntegration) String() string {
 func (*MCPIntegration) ProtoMessage() {}
 
 func (x *MCPIntegration) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[54]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4824,7 +3740,7 @@ func (x *MCPIntegration) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MCPIntegration.ProtoReflect.Descriptor instead.
 func (*MCPIntegration) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{54}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *MCPIntegration) GetId() string {
@@ -4855,182 +3771,6 @@ func (x *MCPIntegration) GetEnabled() bool {
 	return false
 }
 
-type ListMCPIntegrationsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Pagination    *PaginationRequest     `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListMCPIntegrationsRequest) Reset() {
-	*x = ListMCPIntegrationsRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[55]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListMCPIntegrationsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListMCPIntegrationsRequest) ProtoMessage() {}
-
-func (x *ListMCPIntegrationsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[55]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListMCPIntegrationsRequest.ProtoReflect.Descriptor instead.
-func (*ListMCPIntegrationsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{55}
-}
-
-func (x *ListMCPIntegrationsRequest) GetPagination() *PaginationRequest {
-	if x != nil {
-		return x.Pagination
-	}
-	return nil
-}
-
-type ListMCPIntegrationsResponse struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Pagination      *PaginationResponse    `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	McpIntegrations []*MCPIntegration      `protobuf:"bytes,2,rep,name=mcp_integrations,json=mcpIntegrations,proto3" json:"mcp_integrations,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
-
-func (x *ListMCPIntegrationsResponse) Reset() {
-	*x = ListMCPIntegrationsResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[56]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListMCPIntegrationsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListMCPIntegrationsResponse) ProtoMessage() {}
-
-func (x *ListMCPIntegrationsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[56]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListMCPIntegrationsResponse.ProtoReflect.Descriptor instead.
-func (*ListMCPIntegrationsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{56}
-}
-
-func (x *ListMCPIntegrationsResponse) GetPagination() *PaginationResponse {
-	if x != nil {
-		return x.Pagination
-	}
-	return nil
-}
-
-func (x *ListMCPIntegrationsResponse) GetMcpIntegrations() []*MCPIntegration {
-	if x != nil {
-		return x.McpIntegrations
-	}
-	return nil
-}
-
-type CreateMCPAccessTokenRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateMCPAccessTokenRequest) Reset() {
-	*x = CreateMCPAccessTokenRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[57]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateMCPAccessTokenRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateMCPAccessTokenRequest) ProtoMessage() {}
-
-func (x *CreateMCPAccessTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[57]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateMCPAccessTokenRequest.ProtoReflect.Descriptor instead.
-func (*CreateMCPAccessTokenRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{57}
-}
-
-type CreateMCPAccessTokenResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateMCPAccessTokenResponse) Reset() {
-	*x = CreateMCPAccessTokenResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[58]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateMCPAccessTokenResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateMCPAccessTokenResponse) ProtoMessage() {}
-
-func (x *CreateMCPAccessTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[58]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateMCPAccessTokenResponse.ProtoReflect.Descriptor instead.
-func (*CreateMCPAccessTokenResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{58}
-}
-
-func (x *CreateMCPAccessTokenResponse) GetAccessToken() string {
-	if x != nil {
-		return x.AccessToken
-	}
-	return ""
-}
-
 type Prompt struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -5042,7 +3782,7 @@ type Prompt struct {
 
 func (x *Prompt) Reset() {
 	*x = Prompt{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[59]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5054,7 +3794,7 @@ func (x *Prompt) String() string {
 func (*Prompt) ProtoMessage() {}
 
 func (x *Prompt) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[59]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5067,7 +3807,7 @@ func (x *Prompt) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Prompt.ProtoReflect.Descriptor instead.
 func (*Prompt) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{59}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *Prompt) GetId() string {
@@ -5109,7 +3849,7 @@ type PromptMetadata struct {
 
 func (x *PromptMetadata) Reset() {
 	*x = PromptMetadata{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[60]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5121,7 +3861,7 @@ func (x *PromptMetadata) String() string {
 func (*PromptMetadata) ProtoMessage() {}
 
 func (x *PromptMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[60]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5134,7 +3874,7 @@ func (x *PromptMetadata) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PromptMetadata.ProtoReflect.Descriptor instead.
 func (*PromptMetadata) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{60}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *PromptMetadata) GetOrganizationId() string {
@@ -5197,7 +3937,7 @@ type PromptSpec struct {
 
 func (x *PromptSpec) Reset() {
 	*x = PromptSpec{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[61]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5209,7 +3949,7 @@ func (x *PromptSpec) String() string {
 func (*PromptSpec) ProtoMessage() {}
 
 func (x *PromptSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[61]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5222,7 +3962,7 @@ func (x *PromptSpec) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PromptSpec.ProtoReflect.Descriptor instead.
 func (*PromptSpec) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{61}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *PromptSpec) GetPrompt() string {
@@ -5270,7 +4010,7 @@ type ListPromptsRequest struct {
 
 func (x *ListPromptsRequest) Reset() {
 	*x = ListPromptsRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[62]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5282,7 +4022,7 @@ func (x *ListPromptsRequest) String() string {
 func (*ListPromptsRequest) ProtoMessage() {}
 
 func (x *ListPromptsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[62]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5295,7 +4035,7 @@ func (x *ListPromptsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPromptsRequest.ProtoReflect.Descriptor instead.
 func (*ListPromptsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{62}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *ListPromptsRequest) GetPagination() *PaginationRequest {
@@ -5322,7 +4062,7 @@ type ListPromptsResponse struct {
 
 func (x *ListPromptsResponse) Reset() {
 	*x = ListPromptsResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[63]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5334,7 +4074,7 @@ func (x *ListPromptsResponse) String() string {
 func (*ListPromptsResponse) ProtoMessage() {}
 
 func (x *ListPromptsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[63]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5347,7 +4087,7 @@ func (x *ListPromptsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPromptsResponse.ProtoReflect.Descriptor instead.
 func (*ListPromptsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{63}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *ListPromptsResponse) GetPagination() *PaginationResponse {
@@ -5373,7 +4113,7 @@ type GetPromptRequest struct {
 
 func (x *GetPromptRequest) Reset() {
 	*x = GetPromptRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[64]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5385,7 +4125,7 @@ func (x *GetPromptRequest) String() string {
 func (*GetPromptRequest) ProtoMessage() {}
 
 func (x *GetPromptRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[64]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5398,7 +4138,7 @@ func (x *GetPromptRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPromptRequest.ProtoReflect.Descriptor instead.
 func (*GetPromptRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{64}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *GetPromptRequest) GetPromptId() string {
@@ -5417,7 +4157,7 @@ type GetPromptResponse struct {
 
 func (x *GetPromptResponse) Reset() {
 	*x = GetPromptResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[65]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5429,7 +4169,7 @@ func (x *GetPromptResponse) String() string {
 func (*GetPromptResponse) ProtoMessage() {}
 
 func (x *GetPromptResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[65]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5442,7 +4182,7 @@ func (x *GetPromptResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPromptResponse.ProtoReflect.Descriptor instead.
 func (*GetPromptResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{65}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *GetPromptResponse) GetPrompt() *Prompt {
@@ -5467,7 +4207,7 @@ type CreatePromptRequest struct {
 
 func (x *CreatePromptRequest) Reset() {
 	*x = CreatePromptRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[66]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5479,7 +4219,7 @@ func (x *CreatePromptRequest) String() string {
 func (*CreatePromptRequest) ProtoMessage() {}
 
 func (x *CreatePromptRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[66]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5492,7 +4232,7 @@ func (x *CreatePromptRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreatePromptRequest.ProtoReflect.Descriptor instead.
 func (*CreatePromptRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{66}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *CreatePromptRequest) GetName() string {
@@ -5553,7 +4293,7 @@ type CreatePromptResponse struct {
 
 func (x *CreatePromptResponse) Reset() {
 	*x = CreatePromptResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[67]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5565,7 +4305,7 @@ func (x *CreatePromptResponse) String() string {
 func (*CreatePromptResponse) ProtoMessage() {}
 
 func (x *CreatePromptResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[67]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5578,7 +4318,7 @@ func (x *CreatePromptResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreatePromptResponse.ProtoReflect.Descriptor instead.
 func (*CreatePromptResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{67}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *CreatePromptResponse) GetPrompt() *Prompt {
@@ -5602,7 +4342,7 @@ type UpdatePromptRequest struct {
 
 func (x *UpdatePromptRequest) Reset() {
 	*x = UpdatePromptRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[68]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5614,7 +4354,7 @@ func (x *UpdatePromptRequest) String() string {
 func (*UpdatePromptRequest) ProtoMessage() {}
 
 func (x *UpdatePromptRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[68]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5627,7 +4367,7 @@ func (x *UpdatePromptRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdatePromptRequest.ProtoReflect.Descriptor instead.
 func (*UpdatePromptRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{68}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *UpdatePromptRequest) GetPromptId() string {
@@ -5660,7 +4400,7 @@ type UpdatePromptResponse struct {
 
 func (x *UpdatePromptResponse) Reset() {
 	*x = UpdatePromptResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[69]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5672,7 +4412,7 @@ func (x *UpdatePromptResponse) String() string {
 func (*UpdatePromptResponse) ProtoMessage() {}
 
 func (x *UpdatePromptResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[69]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5685,7 +4425,7 @@ func (x *UpdatePromptResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdatePromptResponse.ProtoReflect.Descriptor instead.
 func (*UpdatePromptResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{69}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *UpdatePromptResponse) GetPrompt() *Prompt {
@@ -5704,7 +4444,7 @@ type DeletePromptRequest struct {
 
 func (x *DeletePromptRequest) Reset() {
 	*x = DeletePromptRequest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[70]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5716,7 +4456,7 @@ func (x *DeletePromptRequest) String() string {
 func (*DeletePromptRequest) ProtoMessage() {}
 
 func (x *DeletePromptRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[70]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5729,7 +4469,7 @@ func (x *DeletePromptRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeletePromptRequest.ProtoReflect.Descriptor instead.
 func (*DeletePromptRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{70}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *DeletePromptRequest) GetPromptId() string {
@@ -5747,7 +4487,7 @@ type DeletePromptResponse struct {
 
 func (x *DeletePromptResponse) Reset() {
 	*x = DeletePromptResponse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[71]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5759,7 +4499,7 @@ func (x *DeletePromptResponse) String() string {
 func (*DeletePromptResponse) ProtoMessage() {}
 
 func (x *DeletePromptResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[71]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5772,7 +4512,7 @@ func (x *DeletePromptResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeletePromptResponse.ProtoReflect.Descriptor instead.
 func (*DeletePromptResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{71}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{47}
 }
 
 // Repository information
@@ -5788,7 +4528,7 @@ type PullRequest_Repository struct {
 
 func (x *PullRequest_Repository) Reset() {
 	*x = PullRequest_Repository{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[72]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5800,7 +4540,7 @@ func (x *PullRequest_Repository) String() string {
 func (*PullRequest_Repository) ProtoMessage() {}
 
 func (x *PullRequest_Repository) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[72]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5854,7 +4594,7 @@ type AgentCodeContext_ContextURL struct {
 
 func (x *AgentCodeContext_ContextURL) Reset() {
 	*x = AgentCodeContext_ContextURL{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[73]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5866,7 +4606,7 @@ func (x *AgentCodeContext_ContextURL) String() string {
 func (*AgentCodeContext_ContextURL) ProtoMessage() {}
 
 func (x *AgentCodeContext_ContextURL) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[73]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5879,7 +4619,7 @@ func (x *AgentCodeContext_ContextURL) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentCodeContext_ContextURL.ProtoReflect.Descriptor instead.
 func (*AgentCodeContext_ContextURL) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{8, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{4, 0}
 }
 
 func (x *AgentCodeContext_ContextURL) GetUrl() string {
@@ -5918,7 +4658,7 @@ type ListAgentExecutionsRequest_Filter struct {
 
 func (x *ListAgentExecutionsRequest_Filter) Reset() {
 	*x = ListAgentExecutionsRequest_Filter{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[75]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5930,7 +4670,7 @@ func (x *ListAgentExecutionsRequest_Filter) String() string {
 func (*ListAgentExecutionsRequest_Filter) ProtoMessage() {}
 
 func (x *ListAgentExecutionsRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[75]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5943,7 +4683,7 @@ func (x *ListAgentExecutionsRequest_Filter) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ListAgentExecutionsRequest_Filter.ProtoReflect.Descriptor instead.
 func (*ListAgentExecutionsRequest_Filter) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{11, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{7, 0}
 }
 
 func (x *ListAgentExecutionsRequest_Filter) GetAgentIds() []string {
@@ -6031,7 +4771,7 @@ type AgentExecution_Metadata struct {
 
 func (x *AgentExecution_Metadata) Reset() {
 	*x = AgentExecution_Metadata{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[77]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6043,7 +4783,7 @@ func (x *AgentExecution_Metadata) String() string {
 func (*AgentExecution_Metadata) ProtoMessage() {}
 
 func (x *AgentExecution_Metadata) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[77]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6056,7 +4796,7 @@ func (x *AgentExecution_Metadata) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentExecution_Metadata.ProtoReflect.Descriptor instead.
 func (*AgentExecution_Metadata) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 0}
 }
 
 func (x *AgentExecution_Metadata) GetName() string {
@@ -6143,7 +4883,7 @@ type AgentExecution_Spec struct {
 
 func (x *AgentExecution_Spec) Reset() {
 	*x = AgentExecution_Spec{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[78]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6155,7 +4895,7 @@ func (x *AgentExecution_Spec) String() string {
 func (*AgentExecution_Spec) ProtoMessage() {}
 
 func (x *AgentExecution_Spec) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[78]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6168,7 +4908,7 @@ func (x *AgentExecution_Spec) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentExecution_Spec.ProtoReflect.Descriptor instead.
 func (*AgentExecution_Spec) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 1}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 1}
 }
 
 func (x *AgentExecution_Spec) GetSpecVersion() uint64 {
@@ -6288,7 +5028,7 @@ type AgentExecution_Status struct {
 
 func (x *AgentExecution_Status) Reset() {
 	*x = AgentExecution_Status{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[79]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6300,7 +5040,7 @@ func (x *AgentExecution_Status) String() string {
 func (*AgentExecution_Status) ProtoMessage() {}
 
 func (x *AgentExecution_Status) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[79]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6313,7 +5053,7 @@ func (x *AgentExecution_Status) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentExecution_Status.ProtoReflect.Descriptor instead.
 func (*AgentExecution_Status) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 2}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 2}
 }
 
 func (x *AgentExecution_Status) GetStatusVersion() uint64 {
@@ -6545,7 +5285,7 @@ type AgentExecution_WaitingInfo struct {
 
 func (x *AgentExecution_WaitingInfo) Reset() {
 	*x = AgentExecution_WaitingInfo{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[80]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6557,7 +5297,7 @@ func (x *AgentExecution_WaitingInfo) String() string {
 func (*AgentExecution_WaitingInfo) ProtoMessage() {}
 
 func (x *AgentExecution_WaitingInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[80]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6570,7 +5310,7 @@ func (x *AgentExecution_WaitingInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentExecution_WaitingInfo.ProtoReflect.Descriptor instead.
 func (*AgentExecution_WaitingInfo) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 3}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 3}
 }
 
 func (x *AgentExecution_WaitingInfo) GetWaitId() string {
@@ -6605,7 +5345,7 @@ type AgentExecution_Spec_Limits struct {
 
 func (x *AgentExecution_Spec_Limits) Reset() {
 	*x = AgentExecution_Spec_Limits{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[82]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6617,7 +5357,7 @@ func (x *AgentExecution_Spec_Limits) String() string {
 func (*AgentExecution_Spec_Limits) ProtoMessage() {}
 
 func (x *AgentExecution_Spec_Limits) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[82]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6630,7 +5370,7 @@ func (x *AgentExecution_Spec_Limits) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentExecution_Spec_Limits.ProtoReflect.Descriptor instead.
 func (*AgentExecution_Spec_Limits) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 1, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 1, 0}
 }
 
 func (x *AgentExecution_Spec_Limits) GetMaxIterations() int64 {
@@ -6664,7 +5404,7 @@ type AgentExecution_Status_ToolUse struct {
 
 func (x *AgentExecution_Status_ToolUse) Reset() {
 	*x = AgentExecution_Status_ToolUse{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[83]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6676,7 +5416,7 @@ func (x *AgentExecution_Status_ToolUse) String() string {
 func (*AgentExecution_Status_ToolUse) ProtoMessage() {}
 
 func (x *AgentExecution_Status_ToolUse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[83]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6689,7 +5429,7 @@ func (x *AgentExecution_Status_ToolUse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentExecution_Status_ToolUse.ProtoReflect.Descriptor instead.
 func (*AgentExecution_Status_ToolUse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 2, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 2, 0}
 }
 
 func (x *AgentExecution_Status_ToolUse) GetToolName() string {
@@ -6715,7 +5455,7 @@ type AgentExecution_Status_LLM struct {
 
 func (x *AgentExecution_Status_LLM) Reset() {
 	*x = AgentExecution_Status_LLM{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[84]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6727,7 +5467,7 @@ func (x *AgentExecution_Status_LLM) String() string {
 func (*AgentExecution_Status_LLM) ProtoMessage() {}
 
 func (x *AgentExecution_Status_LLM) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[84]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6740,7 +5480,7 @@ func (x *AgentExecution_Status_LLM) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentExecution_Status_LLM.ProtoReflect.Descriptor instead.
 func (*AgentExecution_Status_LLM) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 2, 1}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 2, 1}
 }
 
 func (x *AgentExecution_Status_LLM) GetComplete() bool {
@@ -6766,7 +5506,7 @@ type AgentExecution_Status_CurrentOperation struct {
 
 func (x *AgentExecution_Status_CurrentOperation) Reset() {
 	*x = AgentExecution_Status_CurrentOperation{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[85]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6778,7 +5518,7 @@ func (x *AgentExecution_Status_CurrentOperation) String() string {
 func (*AgentExecution_Status_CurrentOperation) ProtoMessage() {}
 
 func (x *AgentExecution_Status_CurrentOperation) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[85]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6791,7 +5531,7 @@ func (x *AgentExecution_Status_CurrentOperation) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use AgentExecution_Status_CurrentOperation.ProtoReflect.Descriptor instead.
 func (*AgentExecution_Status_CurrentOperation) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 2, 2}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 2, 2}
 }
 
 func (x *AgentExecution_Status_CurrentOperation) GetSession() string {
@@ -6861,7 +5601,7 @@ type AgentExecution_Status_EnvironmentUsage struct {
 
 func (x *AgentExecution_Status_EnvironmentUsage) Reset() {
 	*x = AgentExecution_Status_EnvironmentUsage{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[86]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6873,7 +5613,7 @@ func (x *AgentExecution_Status_EnvironmentUsage) String() string {
 func (*AgentExecution_Status_EnvironmentUsage) ProtoMessage() {}
 
 func (x *AgentExecution_Status_EnvironmentUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[86]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6886,7 +5626,7 @@ func (x *AgentExecution_Status_EnvironmentUsage) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use AgentExecution_Status_EnvironmentUsage.ProtoReflect.Descriptor instead.
 func (*AgentExecution_Status_EnvironmentUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 2, 3}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 2, 3}
 }
 
 func (x *AgentExecution_Status_EnvironmentUsage) GetEnvironmentId() string {
@@ -6917,7 +5657,7 @@ type AgentExecution_Status_ConversationURLs struct {
 
 func (x *AgentExecution_Status_ConversationURLs) Reset() {
 	*x = AgentExecution_Status_ConversationURLs{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[87]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6929,7 +5669,7 @@ func (x *AgentExecution_Status_ConversationURLs) String() string {
 func (*AgentExecution_Status_ConversationURLs) ProtoMessage() {}
 
 func (x *AgentExecution_Status_ConversationURLs) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[87]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6942,7 +5682,7 @@ func (x *AgentExecution_Status_ConversationURLs) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use AgentExecution_Status_ConversationURLs.ProtoReflect.Descriptor instead.
 func (*AgentExecution_Status_ConversationURLs) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 2, 4}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 2, 4}
 }
 
 func (x *AgentExecution_Status_ConversationURLs) GetHistory() string {
@@ -6983,7 +5723,7 @@ type AgentExecution_Status_Subagent struct {
 
 func (x *AgentExecution_Status_Subagent) Reset() {
 	*x = AgentExecution_Status_Subagent{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[88]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6995,7 +5735,7 @@ func (x *AgentExecution_Status_Subagent) String() string {
 func (*AgentExecution_Status_Subagent) ProtoMessage() {}
 
 func (x *AgentExecution_Status_Subagent) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[88]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7008,7 +5748,7 @@ func (x *AgentExecution_Status_Subagent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentExecution_Status_Subagent.ProtoReflect.Descriptor instead.
 func (*AgentExecution_Status_Subagent) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 2, 5}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 2, 5}
 }
 
 func (x *AgentExecution_Status_Subagent) GetId() string {
@@ -7089,7 +5829,7 @@ type AgentExecution_Status_OutputValue struct {
 
 func (x *AgentExecution_Status_OutputValue) Reset() {
 	*x = AgentExecution_Status_OutputValue{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[89]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7101,7 +5841,7 @@ func (x *AgentExecution_Status_OutputValue) String() string {
 func (*AgentExecution_Status_OutputValue) ProtoMessage() {}
 
 func (x *AgentExecution_Status_OutputValue) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[89]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7114,7 +5854,7 @@ func (x *AgentExecution_Status_OutputValue) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use AgentExecution_Status_OutputValue.ProtoReflect.Descriptor instead.
 func (*AgentExecution_Status_OutputValue) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 2, 6}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 2, 6}
 }
 
 func (x *AgentExecution_Status_OutputValue) GetValue() isAgentExecution_Status_OutputValue_Value {
@@ -7199,7 +5939,7 @@ type AgentExecution_Status_LLMCapabilities struct {
 
 func (x *AgentExecution_Status_LLMCapabilities) Reset() {
 	*x = AgentExecution_Status_LLMCapabilities{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[90]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7211,7 +5951,7 @@ func (x *AgentExecution_Status_LLMCapabilities) String() string {
 func (*AgentExecution_Status_LLMCapabilities) ProtoMessage() {}
 
 func (x *AgentExecution_Status_LLMCapabilities) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[90]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7224,7 +5964,7 @@ func (x *AgentExecution_Status_LLMCapabilities) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use AgentExecution_Status_LLMCapabilities.ProtoReflect.Descriptor instead.
 func (*AgentExecution_Status_LLMCapabilities) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 2, 7}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 2, 7}
 }
 
 func (x *AgentExecution_Status_LLMCapabilities) GetDisabledCapabilities() []LLMDisabledCapability {
@@ -7254,7 +5994,7 @@ type AgentExecution_Status_MCPIntegrationStatus struct {
 
 func (x *AgentExecution_Status_MCPIntegrationStatus) Reset() {
 	*x = AgentExecution_Status_MCPIntegrationStatus{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[91]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7266,7 +6006,7 @@ func (x *AgentExecution_Status_MCPIntegrationStatus) String() string {
 func (*AgentExecution_Status_MCPIntegrationStatus) ProtoMessage() {}
 
 func (x *AgentExecution_Status_MCPIntegrationStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[91]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7279,7 +6019,7 @@ func (x *AgentExecution_Status_MCPIntegrationStatus) ProtoReflect() protoreflect
 
 // Deprecated: Use AgentExecution_Status_MCPIntegrationStatus.ProtoReflect.Descriptor instead.
 func (*AgentExecution_Status_MCPIntegrationStatus) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 2, 8}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 2, 8}
 }
 
 func (x *AgentExecution_Status_MCPIntegrationStatus) GetId() string {
@@ -7340,7 +6080,7 @@ type AgentExecution_Status_Goal struct {
 
 func (x *AgentExecution_Status_Goal) Reset() {
 	*x = AgentExecution_Status_Goal{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[93]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7352,7 +6092,7 @@ func (x *AgentExecution_Status_Goal) String() string {
 func (*AgentExecution_Status_Goal) ProtoMessage() {}
 
 func (x *AgentExecution_Status_Goal) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[93]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7365,7 +6105,7 @@ func (x *AgentExecution_Status_Goal) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentExecution_Status_Goal.ProtoReflect.Descriptor instead.
 func (*AgentExecution_Status_Goal) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 2, 10}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 2, 10}
 }
 
 func (x *AgentExecution_Status_Goal) GetObjective() string {
@@ -7431,7 +6171,7 @@ type AgentExecution_WaitingInfo_TimerInterest struct {
 
 func (x *AgentExecution_WaitingInfo_TimerInterest) Reset() {
 	*x = AgentExecution_WaitingInfo_TimerInterest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[94]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7443,7 +6183,7 @@ func (x *AgentExecution_WaitingInfo_TimerInterest) String() string {
 func (*AgentExecution_WaitingInfo_TimerInterest) ProtoMessage() {}
 
 func (x *AgentExecution_WaitingInfo_TimerInterest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[94]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7456,7 +6196,7 @@ func (x *AgentExecution_WaitingInfo_TimerInterest) ProtoReflect() protoreflect.M
 
 // Deprecated: Use AgentExecution_WaitingInfo_TimerInterest.ProtoReflect.Descriptor instead.
 func (*AgentExecution_WaitingInfo_TimerInterest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 3, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 3, 0}
 }
 
 func (x *AgentExecution_WaitingInfo_TimerInterest) GetDuration() string {
@@ -7489,7 +6229,7 @@ type AgentExecution_WaitingInfo_SubAgentInterest struct {
 
 func (x *AgentExecution_WaitingInfo_SubAgentInterest) Reset() {
 	*x = AgentExecution_WaitingInfo_SubAgentInterest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[95]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7501,7 +6241,7 @@ func (x *AgentExecution_WaitingInfo_SubAgentInterest) String() string {
 func (*AgentExecution_WaitingInfo_SubAgentInterest) ProtoMessage() {}
 
 func (x *AgentExecution_WaitingInfo_SubAgentInterest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[95]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7514,7 +6254,7 @@ func (x *AgentExecution_WaitingInfo_SubAgentInterest) ProtoReflect() protoreflec
 
 // Deprecated: Use AgentExecution_WaitingInfo_SubAgentInterest.ProtoReflect.Descriptor instead.
 func (*AgentExecution_WaitingInfo_SubAgentInterest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 3, 1}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 3, 1}
 }
 
 func (x *AgentExecution_WaitingInfo_SubAgentInterest) GetExecutionId() string {
@@ -7532,7 +6272,7 @@ type AgentExecution_WaitingInfo_UserMessageInterest struct {
 
 func (x *AgentExecution_WaitingInfo_UserMessageInterest) Reset() {
 	*x = AgentExecution_WaitingInfo_UserMessageInterest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[96]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7544,7 +6284,7 @@ func (x *AgentExecution_WaitingInfo_UserMessageInterest) String() string {
 func (*AgentExecution_WaitingInfo_UserMessageInterest) ProtoMessage() {}
 
 func (x *AgentExecution_WaitingInfo_UserMessageInterest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[96]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7557,7 +6297,7 @@ func (x *AgentExecution_WaitingInfo_UserMessageInterest) ProtoReflect() protoref
 
 // Deprecated: Use AgentExecution_WaitingInfo_UserMessageInterest.ProtoReflect.Descriptor instead.
 func (*AgentExecution_WaitingInfo_UserMessageInterest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 3, 2}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 3, 2}
 }
 
 type AgentExecution_WaitingInfo_EnvironmentInterest struct {
@@ -7572,7 +6312,7 @@ type AgentExecution_WaitingInfo_EnvironmentInterest struct {
 
 func (x *AgentExecution_WaitingInfo_EnvironmentInterest) Reset() {
 	*x = AgentExecution_WaitingInfo_EnvironmentInterest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[97]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7584,7 +6324,7 @@ func (x *AgentExecution_WaitingInfo_EnvironmentInterest) String() string {
 func (*AgentExecution_WaitingInfo_EnvironmentInterest) ProtoMessage() {}
 
 func (x *AgentExecution_WaitingInfo_EnvironmentInterest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[97]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7597,7 +6337,7 @@ func (x *AgentExecution_WaitingInfo_EnvironmentInterest) ProtoReflect() protoref
 
 // Deprecated: Use AgentExecution_WaitingInfo_EnvironmentInterest.ProtoReflect.Descriptor instead.
 func (*AgentExecution_WaitingInfo_EnvironmentInterest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 3, 3}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 3, 3}
 }
 
 func (x *AgentExecution_WaitingInfo_EnvironmentInterest) GetEnvironmentId() string {
@@ -7629,7 +6369,7 @@ type AgentExecution_WaitingInfo_DevcontainerRebuildInterest struct {
 
 func (x *AgentExecution_WaitingInfo_DevcontainerRebuildInterest) Reset() {
 	*x = AgentExecution_WaitingInfo_DevcontainerRebuildInterest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[98]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7641,7 +6381,7 @@ func (x *AgentExecution_WaitingInfo_DevcontainerRebuildInterest) String() string
 func (*AgentExecution_WaitingInfo_DevcontainerRebuildInterest) ProtoMessage() {}
 
 func (x *AgentExecution_WaitingInfo_DevcontainerRebuildInterest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[98]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7654,7 +6394,7 @@ func (x *AgentExecution_WaitingInfo_DevcontainerRebuildInterest) ProtoReflect() 
 
 // Deprecated: Use AgentExecution_WaitingInfo_DevcontainerRebuildInterest.ProtoReflect.Descriptor instead.
 func (*AgentExecution_WaitingInfo_DevcontainerRebuildInterest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 3, 4}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 3, 4}
 }
 
 func (x *AgentExecution_WaitingInfo_DevcontainerRebuildInterest) GetEnvironmentId() string {
@@ -7695,7 +6435,7 @@ type AgentExecution_WaitingInfo_Interest struct {
 
 func (x *AgentExecution_WaitingInfo_Interest) Reset() {
 	*x = AgentExecution_WaitingInfo_Interest{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[99]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7707,7 +6447,7 @@ func (x *AgentExecution_WaitingInfo_Interest) String() string {
 func (*AgentExecution_WaitingInfo_Interest) ProtoMessage() {}
 
 func (x *AgentExecution_WaitingInfo_Interest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[99]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7720,7 +6460,7 @@ func (x *AgentExecution_WaitingInfo_Interest) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use AgentExecution_WaitingInfo_Interest.ProtoReflect.Descriptor instead.
 func (*AgentExecution_WaitingInfo_Interest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 3, 5}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{13, 3, 5}
 }
 
 func (x *AgentExecution_WaitingInfo_Interest) GetId() string {
@@ -7831,7 +6571,7 @@ type ClarifyingQuestions_Choice struct {
 
 func (x *ClarifyingQuestions_Choice) Reset() {
 	*x = ClarifyingQuestions_Choice{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[100]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7843,7 +6583,7 @@ func (x *ClarifyingQuestions_Choice) String() string {
 func (*ClarifyingQuestions_Choice) ProtoMessage() {}
 
 func (x *ClarifyingQuestions_Choice) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[100]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7856,7 +6596,7 @@ func (x *ClarifyingQuestions_Choice) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClarifyingQuestions_Choice.ProtoReflect.Descriptor instead.
 func (*ClarifyingQuestions_Choice) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{18, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{14, 0}
 }
 
 func (x *ClarifyingQuestions_Choice) GetLabel() string {
@@ -7892,7 +6632,7 @@ type ClarifyingQuestions_Question struct {
 
 func (x *ClarifyingQuestions_Question) Reset() {
 	*x = ClarifyingQuestions_Question{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[101]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7904,7 +6644,7 @@ func (x *ClarifyingQuestions_Question) String() string {
 func (*ClarifyingQuestions_Question) ProtoMessage() {}
 
 func (x *ClarifyingQuestions_Question) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[101]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7917,7 +6657,7 @@ func (x *ClarifyingQuestions_Question) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClarifyingQuestions_Question.ProtoReflect.Descriptor instead.
 func (*ClarifyingQuestions_Question) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{18, 1}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{14, 1}
 }
 
 func (x *ClarifyingQuestions_Question) GetQuestionId() string {
@@ -7959,7 +6699,7 @@ type NextStepsProposal_Action struct {
 
 func (x *NextStepsProposal_Action) Reset() {
 	*x = NextStepsProposal_Action{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[102]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7971,7 +6711,7 @@ func (x *NextStepsProposal_Action) String() string {
 func (*NextStepsProposal_Action) ProtoMessage() {}
 
 func (x *NextStepsProposal_Action) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[102]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7984,7 +6724,7 @@ func (x *NextStepsProposal_Action) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NextStepsProposal_Action.ProtoReflect.Descriptor instead.
 func (*NextStepsProposal_Action) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{19, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{15, 0}
 }
 
 func (x *NextStepsProposal_Action) GetTitle() string {
@@ -8020,7 +6760,7 @@ type AgentResponseBlock_TextOutput struct {
 
 func (x *AgentResponseBlock_TextOutput) Reset() {
 	*x = AgentResponseBlock_TextOutput{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[103]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[79]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8032,7 +6772,7 @@ func (x *AgentResponseBlock_TextOutput) String() string {
 func (*AgentResponseBlock_TextOutput) ProtoMessage() {}
 
 func (x *AgentResponseBlock_TextOutput) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[103]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[79]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8045,7 +6785,7 @@ func (x *AgentResponseBlock_TextOutput) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentResponseBlock_TextOutput.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_TextOutput) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 0}
 }
 
 func (x *AgentResponseBlock_TextOutput) GetType() AgentResponseBlock_TextOutput_Type {
@@ -8079,7 +6819,7 @@ type AgentResponseBlock_ActionStarted struct {
 
 func (x *AgentResponseBlock_ActionStarted) Reset() {
 	*x = AgentResponseBlock_ActionStarted{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[104]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[80]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8091,7 +6831,7 @@ func (x *AgentResponseBlock_ActionStarted) String() string {
 func (*AgentResponseBlock_ActionStarted) ProtoMessage() {}
 
 func (x *AgentResponseBlock_ActionStarted) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[104]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[80]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8104,7 +6844,7 @@ func (x *AgentResponseBlock_ActionStarted) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentResponseBlock_ActionStarted.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_ActionStarted) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 1}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 1}
 }
 
 func (x *AgentResponseBlock_ActionStarted) GetActionId() string {
@@ -8132,7 +6872,7 @@ type AgentResponseBlock_ActionCompleted struct {
 
 func (x *AgentResponseBlock_ActionCompleted) Reset() {
 	*x = AgentResponseBlock_ActionCompleted{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[105]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[81]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8144,7 +6884,7 @@ func (x *AgentResponseBlock_ActionCompleted) String() string {
 func (*AgentResponseBlock_ActionCompleted) ProtoMessage() {}
 
 func (x *AgentResponseBlock_ActionCompleted) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[105]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[81]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8157,7 +6897,7 @@ func (x *AgentResponseBlock_ActionCompleted) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use AgentResponseBlock_ActionCompleted.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_ActionCompleted) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 2}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 2}
 }
 
 func (x *AgentResponseBlock_ActionCompleted) GetActionId() string {
@@ -8186,6 +6926,8 @@ type AgentResponseBlock_FileModification struct {
 	ActionId string                 `protobuf:"bytes,1,opt,name=action_id,json=actionId,proto3" json:"action_id,omitempty"`
 	FilePath string                 `protobuf:"bytes,2,opt,name=file_path,json=filePath,proto3" json:"file_path,omitempty"`
 	// Legacy SEARCH/REPLACE format content (deprecated in favor of diff)
+	//
+	// Deprecated: Marked as deprecated in gitpod/v1/agent.proto.
 	Content   string `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`
 	StartLine int32  `protobuf:"varint,4,opt,name=start_line,json=startLine,proto3" json:"start_line,omitempty"`
 	// Enhanced diff format for dashboard consumption.
@@ -8198,7 +6940,7 @@ type AgentResponseBlock_FileModification struct {
 
 func (x *AgentResponseBlock_FileModification) Reset() {
 	*x = AgentResponseBlock_FileModification{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[106]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[82]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8210,7 +6952,7 @@ func (x *AgentResponseBlock_FileModification) String() string {
 func (*AgentResponseBlock_FileModification) ProtoMessage() {}
 
 func (x *AgentResponseBlock_FileModification) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[106]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[82]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8223,7 +6965,7 @@ func (x *AgentResponseBlock_FileModification) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use AgentResponseBlock_FileModification.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_FileModification) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 3}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 3}
 }
 
 func (x *AgentResponseBlock_FileModification) GetActionId() string {
@@ -8240,6 +6982,7 @@ func (x *AgentResponseBlock_FileModification) GetFilePath() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in gitpod/v1/agent.proto.
 func (x *AgentResponseBlock_FileModification) GetContent() string {
 	if x != nil {
 		return x.Content
@@ -8271,7 +7014,7 @@ type AgentResponseBlock_EnvironmentCreation struct {
 
 func (x *AgentResponseBlock_EnvironmentCreation) Reset() {
 	*x = AgentResponseBlock_EnvironmentCreation{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[107]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[83]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8283,7 +7026,7 @@ func (x *AgentResponseBlock_EnvironmentCreation) String() string {
 func (*AgentResponseBlock_EnvironmentCreation) ProtoMessage() {}
 
 func (x *AgentResponseBlock_EnvironmentCreation) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[107]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[83]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8296,7 +7039,7 @@ func (x *AgentResponseBlock_EnvironmentCreation) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use AgentResponseBlock_EnvironmentCreation.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_EnvironmentCreation) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 4}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 4}
 }
 
 func (x *AgentResponseBlock_EnvironmentCreation) GetActionId() string {
@@ -8324,7 +7067,7 @@ type AgentResponseBlock_HostAuthenticationRequired struct {
 
 func (x *AgentResponseBlock_HostAuthenticationRequired) Reset() {
 	*x = AgentResponseBlock_HostAuthenticationRequired{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[108]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8336,7 +7079,7 @@ func (x *AgentResponseBlock_HostAuthenticationRequired) String() string {
 func (*AgentResponseBlock_HostAuthenticationRequired) ProtoMessage() {}
 
 func (x *AgentResponseBlock_HostAuthenticationRequired) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[108]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8349,7 +7092,7 @@ func (x *AgentResponseBlock_HostAuthenticationRequired) ProtoReflect() protorefl
 
 // Deprecated: Use AgentResponseBlock_HostAuthenticationRequired.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_HostAuthenticationRequired) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 5}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 5}
 }
 
 func (x *AgentResponseBlock_HostAuthenticationRequired) GetActionId() string {
@@ -8386,7 +7129,7 @@ type AgentResponseBlock_CodeAnnotation struct {
 
 func (x *AgentResponseBlock_CodeAnnotation) Reset() {
 	*x = AgentResponseBlock_CodeAnnotation{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[109]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8398,7 +7141,7 @@ func (x *AgentResponseBlock_CodeAnnotation) String() string {
 func (*AgentResponseBlock_CodeAnnotation) ProtoMessage() {}
 
 func (x *AgentResponseBlock_CodeAnnotation) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[109]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8411,7 +7154,7 @@ func (x *AgentResponseBlock_CodeAnnotation) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use AgentResponseBlock_CodeAnnotation.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_CodeAnnotation) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 6}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 6}
 }
 
 func (x *AgentResponseBlock_CodeAnnotation) GetFilePath() string {
@@ -8463,7 +7206,7 @@ type AgentResponseBlock_TodoGroup struct {
 
 func (x *AgentResponseBlock_TodoGroup) Reset() {
 	*x = AgentResponseBlock_TodoGroup{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[110]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[86]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8475,7 +7218,7 @@ func (x *AgentResponseBlock_TodoGroup) String() string {
 func (*AgentResponseBlock_TodoGroup) ProtoMessage() {}
 
 func (x *AgentResponseBlock_TodoGroup) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[110]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[86]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8488,7 +7231,7 @@ func (x *AgentResponseBlock_TodoGroup) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentResponseBlock_TodoGroup.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_TodoGroup) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 7}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 7}
 }
 
 func (x *AgentResponseBlock_TodoGroup) GetGroupId() string {
@@ -8523,7 +7266,7 @@ type AgentResponseBlock_TodoItem struct {
 
 func (x *AgentResponseBlock_TodoItem) Reset() {
 	*x = AgentResponseBlock_TodoItem{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[111]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[87]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8535,7 +7278,7 @@ func (x *AgentResponseBlock_TodoItem) String() string {
 func (*AgentResponseBlock_TodoItem) ProtoMessage() {}
 
 func (x *AgentResponseBlock_TodoItem) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[111]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[87]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8548,7 +7291,7 @@ func (x *AgentResponseBlock_TodoItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentResponseBlock_TodoItem.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_TodoItem) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 8}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 8}
 }
 
 func (x *AgentResponseBlock_TodoItem) GetId() string {
@@ -8581,7 +7324,7 @@ type AgentResponseBlock_Thought struct {
 
 func (x *AgentResponseBlock_Thought) Reset() {
 	*x = AgentResponseBlock_Thought{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[112]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[88]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8593,7 +7336,7 @@ func (x *AgentResponseBlock_Thought) String() string {
 func (*AgentResponseBlock_Thought) ProtoMessage() {}
 
 func (x *AgentResponseBlock_Thought) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[112]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[88]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8606,7 +7349,7 @@ func (x *AgentResponseBlock_Thought) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentResponseBlock_Thought.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_Thought) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 9}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 9}
 }
 
 func (x *AgentResponseBlock_Thought) GetContent() string {
@@ -8625,7 +7368,7 @@ type AgentResponseBlock_UserInputBlockSeen struct {
 
 func (x *AgentResponseBlock_UserInputBlockSeen) Reset() {
 	*x = AgentResponseBlock_UserInputBlockSeen{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[113]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[89]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8637,7 +7380,7 @@ func (x *AgentResponseBlock_UserInputBlockSeen) String() string {
 func (*AgentResponseBlock_UserInputBlockSeen) ProtoMessage() {}
 
 func (x *AgentResponseBlock_UserInputBlockSeen) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[113]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[89]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8650,7 +7393,7 @@ func (x *AgentResponseBlock_UserInputBlockSeen) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use AgentResponseBlock_UserInputBlockSeen.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_UserInputBlockSeen) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 10}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 10}
 }
 
 func (x *AgentResponseBlock_UserInputBlockSeen) GetId() string {
@@ -8669,7 +7412,7 @@ type AgentResponseBlock_UserInputBlockDeleted struct {
 
 func (x *AgentResponseBlock_UserInputBlockDeleted) Reset() {
 	*x = AgentResponseBlock_UserInputBlockDeleted{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[114]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[90]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8681,7 +7424,7 @@ func (x *AgentResponseBlock_UserInputBlockDeleted) String() string {
 func (*AgentResponseBlock_UserInputBlockDeleted) ProtoMessage() {}
 
 func (x *AgentResponseBlock_UserInputBlockDeleted) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[114]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[90]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8694,7 +7437,7 @@ func (x *AgentResponseBlock_UserInputBlockDeleted) ProtoReflect() protoreflect.M
 
 // Deprecated: Use AgentResponseBlock_UserInputBlockDeleted.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_UserInputBlockDeleted) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 11}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 11}
 }
 
 func (x *AgentResponseBlock_UserInputBlockDeleted) GetId() string {
@@ -8717,7 +7460,7 @@ type AgentResponseBlock_AgentModeChange struct {
 
 func (x *AgentResponseBlock_AgentModeChange) Reset() {
 	*x = AgentResponseBlock_AgentModeChange{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[115]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[91]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8729,7 +7472,7 @@ func (x *AgentResponseBlock_AgentModeChange) String() string {
 func (*AgentResponseBlock_AgentModeChange) ProtoMessage() {}
 
 func (x *AgentResponseBlock_AgentModeChange) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[115]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[91]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8742,7 +7485,7 @@ func (x *AgentResponseBlock_AgentModeChange) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use AgentResponseBlock_AgentModeChange.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_AgentModeChange) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 12}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 12}
 }
 
 func (x *AgentResponseBlock_AgentModeChange) GetState() AgentResponseBlock_AgentModeChange_State {
@@ -8771,7 +7514,7 @@ type AgentResponseBlock_AvailableCommand struct {
 
 func (x *AgentResponseBlock_AvailableCommand) Reset() {
 	*x = AgentResponseBlock_AvailableCommand{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[116]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[92]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8783,7 +7526,7 @@ func (x *AgentResponseBlock_AvailableCommand) String() string {
 func (*AgentResponseBlock_AvailableCommand) ProtoMessage() {}
 
 func (x *AgentResponseBlock_AvailableCommand) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[116]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[92]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8796,7 +7539,7 @@ func (x *AgentResponseBlock_AvailableCommand) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use AgentResponseBlock_AvailableCommand.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_AvailableCommand) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 13}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 13}
 }
 
 func (x *AgentResponseBlock_AvailableCommand) GetName() string {
@@ -8822,7 +7565,7 @@ type AgentResponseBlock_AvailableCommands struct {
 
 func (x *AgentResponseBlock_AvailableCommands) Reset() {
 	*x = AgentResponseBlock_AvailableCommands{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[117]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[93]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8834,7 +7577,7 @@ func (x *AgentResponseBlock_AvailableCommands) String() string {
 func (*AgentResponseBlock_AvailableCommands) ProtoMessage() {}
 
 func (x *AgentResponseBlock_AvailableCommands) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[117]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[93]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8847,7 +7590,7 @@ func (x *AgentResponseBlock_AvailableCommands) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use AgentResponseBlock_AvailableCommands.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_AvailableCommands) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 14}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 14}
 }
 
 func (x *AgentResponseBlock_AvailableCommands) GetCommands() []*AgentResponseBlock_AvailableCommand {
@@ -8867,7 +7610,7 @@ type AgentResponseBlock_UserInputQueueUpdated struct {
 
 func (x *AgentResponseBlock_UserInputQueueUpdated) Reset() {
 	*x = AgentResponseBlock_UserInputQueueUpdated{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[118]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[94]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8879,7 +7622,7 @@ func (x *AgentResponseBlock_UserInputQueueUpdated) String() string {
 func (*AgentResponseBlock_UserInputQueueUpdated) ProtoMessage() {}
 
 func (x *AgentResponseBlock_UserInputQueueUpdated) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[118]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[94]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8892,7 +7635,7 @@ func (x *AgentResponseBlock_UserInputQueueUpdated) ProtoReflect() protoreflect.M
 
 // Deprecated: Use AgentResponseBlock_UserInputQueueUpdated.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_UserInputQueueUpdated) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 15}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 15}
 }
 
 func (x *AgentResponseBlock_UserInputQueueUpdated) GetQueuedUserInputIds() []string {
@@ -8914,7 +7657,7 @@ type AgentResponseBlock_FileModification_DiffGroup struct {
 
 func (x *AgentResponseBlock_FileModification_DiffGroup) Reset() {
 	*x = AgentResponseBlock_FileModification_DiffGroup{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[119]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[95]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8926,7 +7669,7 @@ func (x *AgentResponseBlock_FileModification_DiffGroup) String() string {
 func (*AgentResponseBlock_FileModification_DiffGroup) ProtoMessage() {}
 
 func (x *AgentResponseBlock_FileModification_DiffGroup) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[119]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[95]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8939,7 +7682,7 @@ func (x *AgentResponseBlock_FileModification_DiffGroup) ProtoReflect() protorefl
 
 // Deprecated: Use AgentResponseBlock_FileModification_DiffGroup.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_FileModification_DiffGroup) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 3, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 3, 0}
 }
 
 func (x *AgentResponseBlock_FileModification_DiffGroup) GetType() AgentResponseBlock_FileModification_DiffGroup_Type {
@@ -8969,7 +7712,7 @@ type AgentResponseBlock_FileModification_DiffStats struct {
 
 func (x *AgentResponseBlock_FileModification_DiffStats) Reset() {
 	*x = AgentResponseBlock_FileModification_DiffStats{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[120]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[96]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8981,7 +7724,7 @@ func (x *AgentResponseBlock_FileModification_DiffStats) String() string {
 func (*AgentResponseBlock_FileModification_DiffStats) ProtoMessage() {}
 
 func (x *AgentResponseBlock_FileModification_DiffStats) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[120]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[96]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8994,7 +7737,7 @@ func (x *AgentResponseBlock_FileModification_DiffStats) ProtoReflect() protorefl
 
 // Deprecated: Use AgentResponseBlock_FileModification_DiffStats.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_FileModification_DiffStats) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 3, 1}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 3, 1}
 }
 
 func (x *AgentResponseBlock_FileModification_DiffStats) GetAdditions() int32 {
@@ -9026,7 +7769,7 @@ type AgentResponseBlock_FileModification_Diff struct {
 
 func (x *AgentResponseBlock_FileModification_Diff) Reset() {
 	*x = AgentResponseBlock_FileModification_Diff{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[121]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[97]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9038,7 +7781,7 @@ func (x *AgentResponseBlock_FileModification_Diff) String() string {
 func (*AgentResponseBlock_FileModification_Diff) ProtoMessage() {}
 
 func (x *AgentResponseBlock_FileModification_Diff) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[121]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[97]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9051,7 +7794,7 @@ func (x *AgentResponseBlock_FileModification_Diff) ProtoReflect() protoreflect.M
 
 // Deprecated: Use AgentResponseBlock_FileModification_Diff.ProtoReflect.Descriptor instead.
 func (*AgentResponseBlock_FileModification_Diff) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 3, 2}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{16, 3, 2}
 }
 
 func (x *AgentResponseBlock_FileModification_Diff) GetDiffGroups() []*AgentResponseBlock_FileModification_DiffGroup {
@@ -9077,7 +7820,7 @@ type UserInputBlock_TextInput struct {
 
 func (x *UserInputBlock_TextInput) Reset() {
 	*x = UserInputBlock_TextInput{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[122]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[98]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9089,7 +7832,7 @@ func (x *UserInputBlock_TextInput) String() string {
 func (*UserInputBlock_TextInput) ProtoMessage() {}
 
 func (x *UserInputBlock_TextInput) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[122]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[98]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9102,7 +7845,7 @@ func (x *UserInputBlock_TextInput) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserInputBlock_TextInput.ProtoReflect.Descriptor instead.
 func (*UserInputBlock_TextInput) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{21, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 0}
 }
 
 func (x *UserInputBlock_TextInput) GetContent() string {
@@ -9129,7 +7872,7 @@ type UserInputBlock_ImageInput struct {
 
 func (x *UserInputBlock_ImageInput) Reset() {
 	*x = UserInputBlock_ImageInput{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[123]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[99]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9141,7 +7884,7 @@ func (x *UserInputBlock_ImageInput) String() string {
 func (*UserInputBlock_ImageInput) ProtoMessage() {}
 
 func (x *UserInputBlock_ImageInput) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[123]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[99]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9154,7 +7897,7 @@ func (x *UserInputBlock_ImageInput) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserInputBlock_ImageInput.ProtoReflect.Descriptor instead.
 func (*UserInputBlock_ImageInput) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{21, 1}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 1}
 }
 
 func (x *UserInputBlock_ImageInput) GetData() []byte {
@@ -9191,7 +7934,7 @@ type UserInputBlock_Input struct {
 
 func (x *UserInputBlock_Input) Reset() {
 	*x = UserInputBlock_Input{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[124]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[100]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9203,7 +7946,7 @@ func (x *UserInputBlock_Input) String() string {
 func (*UserInputBlock_Input) ProtoMessage() {}
 
 func (x *UserInputBlock_Input) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[124]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[100]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9216,7 +7959,7 @@ func (x *UserInputBlock_Input) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserInputBlock_Input.ProtoReflect.Descriptor instead.
 func (*UserInputBlock_Input) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{21, 2}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{17, 2}
 }
 
 func (x *UserInputBlock_Input) GetInput() isUserInputBlock_Input_Input {
@@ -9270,7 +8013,7 @@ type WakeEvent_TimerFired struct {
 
 func (x *WakeEvent_TimerFired) Reset() {
 	*x = WakeEvent_TimerFired{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[125]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[101]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9282,7 +8025,7 @@ func (x *WakeEvent_TimerFired) String() string {
 func (*WakeEvent_TimerFired) ProtoMessage() {}
 
 func (x *WakeEvent_TimerFired) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[125]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[101]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9295,7 +8038,7 @@ func (x *WakeEvent_TimerFired) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WakeEvent_TimerFired.ProtoReflect.Descriptor instead.
 func (*WakeEvent_TimerFired) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 0}
 }
 
 func (x *WakeEvent_TimerFired) GetFiredAt() *timestamppb.Timestamp {
@@ -9315,7 +8058,7 @@ type WakeEvent_LoopRetrigger struct {
 
 func (x *WakeEvent_LoopRetrigger) Reset() {
 	*x = WakeEvent_LoopRetrigger{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[126]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[102]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9327,7 +8070,7 @@ func (x *WakeEvent_LoopRetrigger) String() string {
 func (*WakeEvent_LoopRetrigger) ProtoMessage() {}
 
 func (x *WakeEvent_LoopRetrigger) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[126]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[102]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9340,7 +8083,7 @@ func (x *WakeEvent_LoopRetrigger) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WakeEvent_LoopRetrigger.ProtoReflect.Descriptor instead.
 func (*WakeEvent_LoopRetrigger) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24, 1}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 1}
 }
 
 func (x *WakeEvent_LoopRetrigger) GetUnmetConditions() []*WakeEvent_LoopRetrigger_UnmetCondition {
@@ -9369,7 +8112,7 @@ type WakeEvent_EnvironmentPhaseReached struct {
 
 func (x *WakeEvent_EnvironmentPhaseReached) Reset() {
 	*x = WakeEvent_EnvironmentPhaseReached{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[127]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[103]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9381,7 +8124,7 @@ func (x *WakeEvent_EnvironmentPhaseReached) String() string {
 func (*WakeEvent_EnvironmentPhaseReached) ProtoMessage() {}
 
 func (x *WakeEvent_EnvironmentPhaseReached) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[127]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[103]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9394,7 +8137,7 @@ func (x *WakeEvent_EnvironmentPhaseReached) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use WakeEvent_EnvironmentPhaseReached.ProtoReflect.Descriptor instead.
 func (*WakeEvent_EnvironmentPhaseReached) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24, 2}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 2}
 }
 
 func (x *WakeEvent_EnvironmentPhaseReached) GetEnvironmentId() string {
@@ -9431,7 +8174,7 @@ type WakeEvent_DevcontainerPhaseReached struct {
 
 func (x *WakeEvent_DevcontainerPhaseReached) Reset() {
 	*x = WakeEvent_DevcontainerPhaseReached{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[128]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[104]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9443,7 +8186,7 @@ func (x *WakeEvent_DevcontainerPhaseReached) String() string {
 func (*WakeEvent_DevcontainerPhaseReached) ProtoMessage() {}
 
 func (x *WakeEvent_DevcontainerPhaseReached) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[128]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[104]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9456,7 +8199,7 @@ func (x *WakeEvent_DevcontainerPhaseReached) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use WakeEvent_DevcontainerPhaseReached.ProtoReflect.Descriptor instead.
 func (*WakeEvent_DevcontainerPhaseReached) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24, 3}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 3}
 }
 
 func (x *WakeEvent_DevcontainerPhaseReached) GetEnvironmentId() string {
@@ -9501,7 +8244,7 @@ type WakeEvent_LoopRetrigger_UnmetCondition struct {
 
 func (x *WakeEvent_LoopRetrigger_UnmetCondition) Reset() {
 	*x = WakeEvent_LoopRetrigger_UnmetCondition{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[129]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[105]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9513,7 +8256,7 @@ func (x *WakeEvent_LoopRetrigger_UnmetCondition) String() string {
 func (*WakeEvent_LoopRetrigger_UnmetCondition) ProtoMessage() {}
 
 func (x *WakeEvent_LoopRetrigger_UnmetCondition) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[129]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[105]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9526,7 +8269,7 @@ func (x *WakeEvent_LoopRetrigger_UnmetCondition) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use WakeEvent_LoopRetrigger_UnmetCondition.ProtoReflect.Descriptor instead.
 func (*WakeEvent_LoopRetrigger_UnmetCondition) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24, 1, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{20, 1, 0}
 }
 
 func (x *WakeEvent_LoopRetrigger_UnmetCondition) GetId() string {
@@ -9579,7 +8322,7 @@ type AgentControlInput_Compact struct {
 
 func (x *AgentControlInput_Compact) Reset() {
 	*x = AgentControlInput_Compact{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[131]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[107]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9591,7 +8334,7 @@ func (x *AgentControlInput_Compact) String() string {
 func (*AgentControlInput_Compact) ProtoMessage() {}
 
 func (x *AgentControlInput_Compact) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[131]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[107]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9604,7 +8347,7 @@ func (x *AgentControlInput_Compact) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentControlInput_Compact.ProtoReflect.Descriptor instead.
 func (*AgentControlInput_Compact) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{28, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24, 0}
 }
 
 type AgentControlInput_DeleteQueuedMessage struct {
@@ -9616,7 +8359,7 @@ type AgentControlInput_DeleteQueuedMessage struct {
 
 func (x *AgentControlInput_DeleteQueuedMessage) Reset() {
 	*x = AgentControlInput_DeleteQueuedMessage{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[132]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[108]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9628,7 +8371,7 @@ func (x *AgentControlInput_DeleteQueuedMessage) String() string {
 func (*AgentControlInput_DeleteQueuedMessage) ProtoMessage() {}
 
 func (x *AgentControlInput_DeleteQueuedMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[132]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[108]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9641,7 +8384,7 @@ func (x *AgentControlInput_DeleteQueuedMessage) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use AgentControlInput_DeleteQueuedMessage.ProtoReflect.Descriptor instead.
 func (*AgentControlInput_DeleteQueuedMessage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{28, 1}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24, 1}
 }
 
 func (x *AgentControlInput_DeleteQueuedMessage) GetUserInputId() string {
@@ -9667,7 +8410,7 @@ type AgentControlInput_Goal struct {
 
 func (x *AgentControlInput_Goal) Reset() {
 	*x = AgentControlInput_Goal{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[133]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[109]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9679,7 +8422,7 @@ func (x *AgentControlInput_Goal) String() string {
 func (*AgentControlInput_Goal) ProtoMessage() {}
 
 func (x *AgentControlInput_Goal) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[133]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[109]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9692,7 +8435,7 @@ func (x *AgentControlInput_Goal) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentControlInput_Goal.ProtoReflect.Descriptor instead.
 func (*AgentControlInput_Goal) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{28, 2}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24, 2}
 }
 
 func (x *AgentControlInput_Goal) GetAction() isAgentControlInput_Goal_Action {
@@ -9790,7 +8533,7 @@ type AgentControlInput_SteerQueuedMessage struct {
 
 func (x *AgentControlInput_SteerQueuedMessage) Reset() {
 	*x = AgentControlInput_SteerQueuedMessage{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[134]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[110]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9802,7 +8545,7 @@ func (x *AgentControlInput_SteerQueuedMessage) String() string {
 func (*AgentControlInput_SteerQueuedMessage) ProtoMessage() {}
 
 func (x *AgentControlInput_SteerQueuedMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[134]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[110]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9815,7 +8558,7 @@ func (x *AgentControlInput_SteerQueuedMessage) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use AgentControlInput_SteerQueuedMessage.ProtoReflect.Descriptor instead.
 func (*AgentControlInput_SteerQueuedMessage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{28, 3}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24, 3}
 }
 
 func (x *AgentControlInput_SteerQueuedMessage) GetUserInputId() string {
@@ -9836,7 +8579,7 @@ type AgentControlInput_MoveQueuedMessage struct {
 
 func (x *AgentControlInput_MoveQueuedMessage) Reset() {
 	*x = AgentControlInput_MoveQueuedMessage{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[135]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[111]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9848,7 +8591,7 @@ func (x *AgentControlInput_MoveQueuedMessage) String() string {
 func (*AgentControlInput_MoveQueuedMessage) ProtoMessage() {}
 
 func (x *AgentControlInput_MoveQueuedMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[135]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[111]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9861,7 +8604,7 @@ func (x *AgentControlInput_MoveQueuedMessage) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use AgentControlInput_MoveQueuedMessage.ProtoReflect.Descriptor instead.
 func (*AgentControlInput_MoveQueuedMessage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{28, 4}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24, 4}
 }
 
 func (x *AgentControlInput_MoveQueuedMessage) GetUserInputId() string {
@@ -9886,7 +8629,7 @@ type AgentControlInput_Goal_Pause struct {
 
 func (x *AgentControlInput_Goal_Pause) Reset() {
 	*x = AgentControlInput_Goal_Pause{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[136]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[112]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9898,7 +8641,7 @@ func (x *AgentControlInput_Goal_Pause) String() string {
 func (*AgentControlInput_Goal_Pause) ProtoMessage() {}
 
 func (x *AgentControlInput_Goal_Pause) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[136]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[112]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9911,7 +8654,7 @@ func (x *AgentControlInput_Goal_Pause) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentControlInput_Goal_Pause.ProtoReflect.Descriptor instead.
 func (*AgentControlInput_Goal_Pause) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{28, 2, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24, 2, 0}
 }
 
 type AgentControlInput_Goal_Resume struct {
@@ -9922,7 +8665,7 @@ type AgentControlInput_Goal_Resume struct {
 
 func (x *AgentControlInput_Goal_Resume) Reset() {
 	*x = AgentControlInput_Goal_Resume{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[137]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[113]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9934,7 +8677,7 @@ func (x *AgentControlInput_Goal_Resume) String() string {
 func (*AgentControlInput_Goal_Resume) ProtoMessage() {}
 
 func (x *AgentControlInput_Goal_Resume) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[137]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[113]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9947,7 +8690,7 @@ func (x *AgentControlInput_Goal_Resume) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentControlInput_Goal_Resume.ProtoReflect.Descriptor instead.
 func (*AgentControlInput_Goal_Resume) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{28, 2, 1}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24, 2, 1}
 }
 
 type AgentControlInput_Goal_Complete struct {
@@ -9958,7 +8701,7 @@ type AgentControlInput_Goal_Complete struct {
 
 func (x *AgentControlInput_Goal_Complete) Reset() {
 	*x = AgentControlInput_Goal_Complete{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[138]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[114]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9970,7 +8713,7 @@ func (x *AgentControlInput_Goal_Complete) String() string {
 func (*AgentControlInput_Goal_Complete) ProtoMessage() {}
 
 func (x *AgentControlInput_Goal_Complete) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[138]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[114]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9983,7 +8726,7 @@ func (x *AgentControlInput_Goal_Complete) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentControlInput_Goal_Complete.ProtoReflect.Descriptor instead.
 func (*AgentControlInput_Goal_Complete) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{28, 2, 2}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24, 2, 2}
 }
 
 type AgentControlInput_Goal_Clear struct {
@@ -9994,7 +8737,7 @@ type AgentControlInput_Goal_Clear struct {
 
 func (x *AgentControlInput_Goal_Clear) Reset() {
 	*x = AgentControlInput_Goal_Clear{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[139]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[115]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10006,7 +8749,7 @@ func (x *AgentControlInput_Goal_Clear) String() string {
 func (*AgentControlInput_Goal_Clear) ProtoMessage() {}
 
 func (x *AgentControlInput_Goal_Clear) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[139]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[115]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10019,7 +8762,7 @@ func (x *AgentControlInput_Goal_Clear) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentControlInput_Goal_Clear.ProtoReflect.Descriptor instead.
 func (*AgentControlInput_Goal_Clear) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{28, 2, 3}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24, 2, 3}
 }
 
 type AgentControlInput_Goal_Set struct {
@@ -10032,7 +8775,7 @@ type AgentControlInput_Goal_Set struct {
 
 func (x *AgentControlInput_Goal_Set) Reset() {
 	*x = AgentControlInput_Goal_Set{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[140]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[116]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10044,7 +8787,7 @@ func (x *AgentControlInput_Goal_Set) String() string {
 func (*AgentControlInput_Goal_Set) ProtoMessage() {}
 
 func (x *AgentControlInput_Goal_Set) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[140]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[116]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10057,7 +8800,7 @@ func (x *AgentControlInput_Goal_Set) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentControlInput_Goal_Set.ProtoReflect.Descriptor instead.
 func (*AgentControlInput_Goal_Set) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{28, 2, 4}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{24, 2, 4}
 }
 
 func (x *AgentControlInput_Goal_Set) GetObjective() string {
@@ -10092,7 +8835,7 @@ type RunnerSideAgentSpec_Prompts struct {
 
 func (x *RunnerSideAgentSpec_Prompts) Reset() {
 	*x = RunnerSideAgentSpec_Prompts{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[141]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[117]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10104,7 +8847,7 @@ func (x *RunnerSideAgentSpec_Prompts) String() string {
 func (*RunnerSideAgentSpec_Prompts) ProtoMessage() {}
 
 func (x *RunnerSideAgentSpec_Prompts) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[141]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[117]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10117,7 +8860,7 @@ func (x *RunnerSideAgentSpec_Prompts) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunnerSideAgentSpec_Prompts.ProtoReflect.Descriptor instead.
 func (*RunnerSideAgentSpec_Prompts) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{34, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{30, 0}
 }
 
 func (x *RunnerSideAgentSpec_Prompts) GetModel() SupportedModel {
@@ -10155,165 +8898,6 @@ func (x *RunnerSideAgentSpec_Prompts) GetImprovePrompt() string {
 	return ""
 }
 
-type UpdateAgentRequest_Metadata struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the agent
-	Name *string `protobuf:"bytes,1,opt,name=name,proto3,oneof" json:"name,omitempty"`
-	// A description of what the agent does
-	Description   *string `protobuf:"bytes,2,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateAgentRequest_Metadata) Reset() {
-	*x = UpdateAgentRequest_Metadata{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[142]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateAgentRequest_Metadata) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateAgentRequest_Metadata) ProtoMessage() {}
-
-func (x *UpdateAgentRequest_Metadata) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[142]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateAgentRequest_Metadata.ProtoReflect.Descriptor instead.
-func (*UpdateAgentRequest_Metadata) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{38, 0}
-}
-
-func (x *UpdateAgentRequest_Metadata) GetName() string {
-	if x != nil && x.Name != nil {
-		return *x.Name
-	}
-	return ""
-}
-
-func (x *UpdateAgentRequest_Metadata) GetDescription() string {
-	if x != nil && x.Description != nil {
-		return *x.Description
-	}
-	return ""
-}
-
-type UpdateAgentRequest_Spec struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The prompts configuration for each supported model.
-	// Setting the system prompt of a model to the empty value will remove the system prompt for that model.
-	// Adding a prompt for a model that already has a prompt will replace the existing prompt for that model.
-	// Adding a prompt for a model that does not exist adds a new prompt for that model.
-	Prompts []*RunnerSideAgentSpec_Prompts `protobuf:"bytes,1,rep,name=prompts,proto3" json:"prompts,omitempty"`
-	// The list of tools required by this agent to function.
-	// Providing a value here will replace the existing list of required tools.
-	RequiredTools []string `protobuf:"bytes,2,rep,name=required_tools,json=requiredTools,proto3" json:"required_tools,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateAgentRequest_Spec) Reset() {
-	*x = UpdateAgentRequest_Spec{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[143]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateAgentRequest_Spec) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateAgentRequest_Spec) ProtoMessage() {}
-
-func (x *UpdateAgentRequest_Spec) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[143]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateAgentRequest_Spec.ProtoReflect.Descriptor instead.
-func (*UpdateAgentRequest_Spec) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{38, 1}
-}
-
-func (x *UpdateAgentRequest_Spec) GetPrompts() []*RunnerSideAgentSpec_Prompts {
-	if x != nil {
-		return x.Prompts
-	}
-	return nil
-}
-
-func (x *UpdateAgentRequest_Spec) GetRequiredTools() []string {
-	if x != nil {
-		return x.RequiredTools
-	}
-	return nil
-}
-
-type UpdateAgentExecutionRequest_Metadata struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// annotations are key-value pairs for tracking external context.
-	// Keys with the "gitpod.io/" prefix are reserved and cannot be set through this API.
-	// Provided annotations are merged with existing annotations.
-	Annotations   map[string]string `protobuf:"bytes,2,rep,name=annotations,proto3" json:"annotations,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateAgentExecutionRequest_Metadata) Reset() {
-	*x = UpdateAgentExecutionRequest_Metadata{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[144]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateAgentExecutionRequest_Metadata) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateAgentExecutionRequest_Metadata) ProtoMessage() {}
-
-func (x *UpdateAgentExecutionRequest_Metadata) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[144]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateAgentExecutionRequest_Metadata.ProtoReflect.Descriptor instead.
-func (*UpdateAgentExecutionRequest_Metadata) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{44, 0}
-}
-
-func (x *UpdateAgentExecutionRequest_Metadata) GetAnnotations() map[string]string {
-	if x != nil {
-		return x.Annotations
-	}
-	return nil
-}
-
 type ListPromptsRequest_Filter struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	IsTemplate    bool                   `protobuf:"varint,1,opt,name=is_template,json=isTemplate,proto3" json:"is_template,omitempty"`
@@ -10333,7 +8917,7 @@ type ListPromptsRequest_Filter struct {
 
 func (x *ListPromptsRequest_Filter) Reset() {
 	*x = ListPromptsRequest_Filter{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[147]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[118]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10345,7 +8929,7 @@ func (x *ListPromptsRequest_Filter) String() string {
 func (*ListPromptsRequest_Filter) ProtoMessage() {}
 
 func (x *ListPromptsRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[147]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[118]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10358,7 +8942,7 @@ func (x *ListPromptsRequest_Filter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPromptsRequest_Filter.ProtoReflect.Descriptor instead.
 func (*ListPromptsRequest_Filter) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{62, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{38, 0}
 }
 
 func (x *ListPromptsRequest_Filter) GetIsTemplate() bool {
@@ -10422,7 +9006,7 @@ type UpdatePromptRequest_Metadata struct {
 
 func (x *UpdatePromptRequest_Metadata) Reset() {
 	*x = UpdatePromptRequest_Metadata{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[148]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[119]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10434,7 +9018,7 @@ func (x *UpdatePromptRequest_Metadata) String() string {
 func (*UpdatePromptRequest_Metadata) ProtoMessage() {}
 
 func (x *UpdatePromptRequest_Metadata) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[148]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[119]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10447,7 +9031,7 @@ func (x *UpdatePromptRequest_Metadata) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdatePromptRequest_Metadata.ProtoReflect.Descriptor instead.
 func (*UpdatePromptRequest_Metadata) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{68, 0}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{44, 0}
 }
 
 func (x *UpdatePromptRequest_Metadata) GetName() string {
@@ -10482,7 +9066,7 @@ type UpdatePromptRequest_Spec struct {
 
 func (x *UpdatePromptRequest_Spec) Reset() {
 	*x = UpdatePromptRequest_Spec{}
-	mi := &file_gitpod_v1_agent_proto_msgTypes[149]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[120]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10494,7 +9078,7 @@ func (x *UpdatePromptRequest_Spec) String() string {
 func (*UpdatePromptRequest_Spec) ProtoMessage() {}
 
 func (x *UpdatePromptRequest_Spec) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_proto_msgTypes[149]
+	mi := &file_gitpod_v1_agent_proto_msgTypes[120]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10507,7 +9091,7 @@ func (x *UpdatePromptRequest_Spec) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdatePromptRequest_Spec.ProtoReflect.Descriptor instead.
 func (*UpdatePromptRequest_Spec) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{68, 1}
+	return file_gitpod_v1_agent_proto_rawDescGZIP(), []int{44, 1}
 }
 
 func (x *UpdatePromptRequest_Spec) GetPrompt() string {
@@ -10549,7 +9133,7 @@ var File_gitpod_v1_agent_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\n" +
-	"\x15gitpod/v1/agent.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a&gitpod/v1/environment_automation.proto\x1a\x18gitpod/v1/identity.proto\x1a\x15gitpod/v1/model.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x88\x04\n" +
+	"\x15gitpod/v1/agent.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a&gitpod/v1/environment_automation.proto\x1a\x18gitpod/v1/identity.proto\x1a\x15gitpod/v1/model.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x80\x04\n" +
 	"\vPullRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x1f\n" +
@@ -10562,9 +9146,9 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"repository\x18\a \x01(\v2!.gitpod.v1.PullRequest.RepositoryR\n" +
 	"repository\x12\x14\n" +
 	"\x05draft\x18\b \x01(\bR\x05draft\x122\n" +
-	"\x05state\x18\t \x01(\x0e2\x1c.gitpod.v1.PullRequest.StateR\x05state\x12!\n" +
+	"\x05state\x18\t \x01(\x0e2\x1c.gitpod.v1.PullRequest.StateR\x05state\x12\x19\n" +
 	"\bhead_sha\x18\n" +
-	" \x01(\tB\x06ʫ\x1e\x02\b\x01R\aheadSha\x1ag\n" +
+	" \x01(\tR\aheadSha\x1ag\n" +
 	"\n" +
 	"Repository\x12\x1b\n" +
 	"\tclone_url\x18\x01 \x01(\tR\bcloneUrl\x12\x12\n" +
@@ -10592,20 +9176,7 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"agent_spec\"E\n" +
 	"\rAgentMetadata\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x02 \x01(\tR\vdescription\"Q\n" +
-	"\x11ListAgentsRequest\x12<\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\"}\n" +
-	"\x12ListAgentsResponse\x12=\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
-	"pagination\x12(\n" +
-	"\x06agents\x18\x02 \x03(\v2\x10.gitpod.v1.AgentR\x06agents\"6\n" +
-	"\x0fGetAgentRequest\x12#\n" +
-	"\bagent_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\aagentId\":\n" +
-	"\x10GetAgentResponse\x12&\n" +
-	"\x05agent\x18\x01 \x01(\v2\x10.gitpod.v1.AgentR\x05agent\"\xfd\x02\n" +
+	"\vdescription\x18\x02 \x01(\tR\vdescription\"\xfd\x02\n" +
 	"\x10AgentCodeContext\x12)\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\tprojectId\x121\n" +
@@ -10618,7 +9189,7 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x03url\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01R\x03url\x12:\n" +
 	"\x14environment_class_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x12environmentClassIdB\t\n" +
 	"\acontextB\x0f\n" +
-	"\r_pull_request\"\x89\x05\n" +
+	"\r_pull_request\"\xf9\x04\n" +
 	"\x11StartAgentRequest\x12&\n" +
 	"\bagent_id\x18\x01 \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\aagentId\x12>\n" +
 	"\fcode_context\x18\x02 \x01(\v2\x1b.gitpod.v1.AgentCodeContextR\vcodeContext\x12\x1b\n" +
@@ -10628,42 +9199,38 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\trunner_id\x18\x06 \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\brunnerId\x12O\n" +
 	"\vannotations\x18\a \x03(\v2-.gitpod.v1.StartAgentRequest.AnnotationsEntryR\vannotations\x12*\n" +
 	"\n" +
-	"session_id\x18\b \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\tsessionId\x12G\n" +
-	"\x0ecodex_settings\x18\t \x01(\v2\x18.gitpod.v1.CodexSettingsB\x06ʫ\x1e\x02\b\x01R\rcodexSettings\x12A\n" +
+	"session_id\x18\b \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\tsessionId\x12?\n" +
+	"\x0ecodex_settings\x18\t \x01(\v2\x18.gitpod.v1.CodexSettingsR\rcodexSettings\x129\n" +
 	"\fturn_options\x18\n" +
-	" \x01(\v2\x16.gitpod.v1.TurnOptionsB\x06ʫ\x1e\x02\b\x01R\vturnOptions\x1a>\n" +
+	" \x01(\v2\x16.gitpod.v1.TurnOptionsR\vturnOptions\x1a>\n" +
 	"\x10AnnotationsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x15\n" +
 	"\x13_workflow_action_id\"L\n" +
 	"\x12StartAgentResponse\x126\n" +
-	"\x12agent_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\"\xe2\a\n" +
+	"\x12agent_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\"\x9c\x06\n" +
 	"\x1aListAgentExecutionsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12D\n" +
-	"\x06filter\x18\x02 \x01(\v2,.gitpod.v1.ListAgentExecutionsRequest.FilterR\x06filter\x1a\xbf\x06\n" +
-	"\x06Filter\x12=\n" +
-	"\tagent_ids\x18\x01 \x03(\tB \xbaH\a\x92\x01\x04\b\x00\x10\x19\xa2\xab\x1e\x12\n" +
-	"\x10filter.agents_idR\bagentIds\x12J\n" +
-	"\vproject_ids\x18\x02 \x03(\tB)\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12filter.project_idsR\n" +
-	"projectIds\x12O\n" +
-	"\x0fenvironment_ids\x18\x03 \x03(\tB&\xbaH\a\x92\x01\x04\b\x00\x10\x19\xa2\xab\x1e\x18\n" +
-	"\x16filter.environment_idsR\x0eenvironmentIds\x12C\n" +
-	"\vcreator_ids\x18\x04 \x03(\tB\"\xbaH\a\x92\x01\x04\b\x00\x10\x19\xa2\xab\x1e\x14\n" +
-	"\x12filter.creator_idsR\n" +
-	"creatorIds\x12j\n" +
-	"\rstatus_phases\x18\x05 \x03(\x0e2\x1f.gitpod.v1.AgentExecution.PhaseB$\xbaH\a\x92\x01\x04\b\x00\x10\x19\xa2\xab\x1e\x16\n" +
-	"\x14filter.status_phasesR\fstatusPhases\x12X\n" +
-	"\x05roles\x18\x06 \x03(\x0e2\x1d.gitpod.v1.AgentExecutionRoleB#\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\x0e\n" +
-	"\ffilter.rolesR\x05roles\x12_\n" +
-	"\vannotations\x18\a \x03(\v2=.gitpod.v1.ListAgentExecutionsRequest.Filter.AnnotationsEntryR\vannotations\x12J\n" +
-	"\vsession_ids\x18\b \x03(\tB)\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12filter.session_idsR\n" +
-	"sessionIds\x12a\n" +
-	"\x13agent_execution_ids\x18\t \x03(\tB1\xbaH\x0e\x92\x01\v\b\x00\x10d\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1c\n" +
-	"\x1afilter.agent_execution_idsR\x11agentExecutionIds\x1a>\n" +
+	"\x06filter\x18\x02 \x01(\v2,.gitpod.v1.ListAgentExecutionsRequest.FilterR\x06filter\x1a\xf9\x04\n" +
+	"\x06Filter\x12'\n" +
+	"\tagent_ids\x18\x01 \x03(\tB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\x19R\bagentIds\x122\n" +
+	"\vproject_ids\x18\x02 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\n" +
+	"projectIds\x123\n" +
+	"\x0fenvironment_ids\x18\x03 \x03(\tB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\x19R\x0eenvironmentIds\x12+\n" +
+	"\vcreator_ids\x18\x04 \x03(\tB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\x19R\n" +
+	"creatorIds\x12P\n" +
+	"\rstatus_phases\x18\x05 \x03(\x0e2\x1f.gitpod.v1.AgentExecution.PhaseB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\x19R\fstatusPhases\x12F\n" +
+	"\x05roles\x18\x06 \x03(\x0e2\x1d.gitpod.v1.AgentExecutionRoleB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01R\x05roles\x12_\n" +
+	"\vannotations\x18\a \x03(\v2=.gitpod.v1.ListAgentExecutionsRequest.Filter.AnnotationsEntryR\vannotations\x122\n" +
+	"\vsession_ids\x18\b \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\n" +
+	"sessionIds\x12A\n" +
+	"\x13agent_execution_ids\x18\t \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10d\"\x05r\x03\xb0\x01\x01R\x11agentExecutionIds\x1a>\n" +
 	"\x10AnnotationsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xa2\x01\n" +
@@ -10678,13 +9245,12 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x0fagent_execution\x18\x01 \x01(\v2\x19.gitpod.v1.AgentExecutionR\x0eagentExecution\"U\n" +
 	"\x1bDeleteAgentExecutionRequest\x126\n" +
 	"\x12agent_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\"\x1e\n" +
-	"\x1cDeleteAgentExecutionResponse\"\xef3\n" +
-	"\x0eAgentExecution\x12(\n" +
-	"\x02id\x18\x01 \x01(\tB\x18\xa2\xab\x1e\x14\n" +
-	"\x12agent_execution.idR\x02id\x12>\n" +
+	"\x1cDeleteAgentExecutionResponse\"\x853\n" +
+	"\x0eAgentExecution\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12>\n" +
 	"\bmetadata\x18\x02 \x01(\v2\".gitpod.v1.AgentExecution.MetadataR\bmetadata\x122\n" +
 	"\x04spec\x18\x03 \x01(\v2\x1e.gitpod.v1.AgentExecution.SpecR\x04spec\x128\n" +
-	"\x06status\x18\x04 \x01(\v2 .gitpod.v1.AgentExecution.StatusR\x06status\x1a\xac\x04\n" +
+	"\x06status\x18\x04 \x01(\v2 .gitpod.v1.AgentExecution.StatusR\x06status\x1a\xa4\x04\n" +
 	"\bMetadata\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12,\n" +
@@ -10695,25 +9261,25 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x121\n" +
 	"\x04role\x18\x06 \x01(\x0e2\x1d.gitpod.v1.AgentExecutionRoleR\x04role\x12>\n" +
 	"\x12workflow_action_id\x18\a \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01H\x00R\x10workflowActionId\x88\x01\x01\x12U\n" +
-	"\vannotations\x18\b \x03(\v23.gitpod.v1.AgentExecution.Metadata.AnnotationsEntryR\vannotations\x12%\n" +
+	"\vannotations\x18\b \x03(\v23.gitpod.v1.AgentExecution.Metadata.AnnotationsEntryR\vannotations\x12\x1d\n" +
 	"\n" +
-	"session_id\x18\t \x01(\tB\x06ʫ\x1e\x02\b\x01R\tsessionId\x1a>\n" +
+	"session_id\x18\t \x01(\tR\tsessionId\x1a>\n" +
 	"\x10AnnotationsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x15\n" +
-	"\x13_workflow_action_id\x1a\x8a\x04\n" +
+	"\x13_workflow_action_id\x1a\x82\x04\n" +
 	"\x04Spec\x12!\n" +
 	"\fspec_version\x18\x01 \x01(\x04R\vspecVersion\x12\x18\n" +
 	"\asession\x18\x02 \x01(\tR\asession\x12D\n" +
 	"\rdesired_phase\x18\x03 \x01(\x0e2\x1f.gitpod.v1.AgentExecution.PhaseR\fdesiredPhase\x12#\n" +
 	"\bagent_id\x18\x04 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\aagentId\x12>\n" +
 	"\fcode_context\x18\x05 \x01(\v2\x1b.gitpod.v1.AgentCodeContextR\vcodeContext\x12=\n" +
-	"\x06limits\x18\x06 \x01(\v2%.gitpod.v1.AgentExecution.Spec.LimitsR\x06limits\x12G\n" +
-	"\x0ecodex_settings\x18\t \x01(\v2\x18.gitpod.v1.CodexSettingsB\x06ʫ\x1e\x02\b\x01R\rcodexSettings\x1a\x85\x01\n" +
+	"\x06limits\x18\x06 \x01(\v2%.gitpod.v1.AgentExecution.Spec.LimitsR\x06limits\x12?\n" +
+	"\x0ecodex_settings\x18\t \x01(\v2\x18.gitpod.v1.CodexSettingsR\rcodexSettings\x1a\x85\x01\n" +
 	"\x06Limits\x12%\n" +
 	"\x0emax_iterations\x18\x01 \x01(\x03R\rmaxIterations\x12*\n" +
 	"\x11max_output_tokens\x18\x02 \x01(\x03R\x0fmaxOutputTokens\x12(\n" +
-	"\x10max_input_tokens\x18\x03 \x01(\x03R\x0emaxInputTokensJ\x04\b\a\x10\bJ\x04\b\b\x10\t\x1a\xc5\x1f\n" +
+	"\x10max_input_tokens\x18\x03 \x01(\x03R\x0emaxInputTokensJ\x04\b\a\x10\bJ\x04\b\b\x10\t\x1a\x85\x1f\n" +
 	"\x06Status\x12%\n" +
 	"\x0estatus_version\x18\x01 \x01(\x04R\rstatusVersion\x12\x18\n" +
 	"\asession\x18\x02 \x01(\tR\asession\x125\n" +
@@ -10723,9 +9289,9 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x0efailure_reason\x18\x06 \x01(\x0e2&.gitpod.v1.AgentExecutionFailureReasonR\rfailureReason\x12)\n" +
 	"\x10conversation_url\x18\n" +
 	" \x01(\tR\x0fconversationUrl\x12%\n" +
-	"\x0etranscript_url\x18\v \x01(\tR\rtranscriptUrl\x124\n" +
-	"\x12support_bundle_url\x18\f \x01(\tB\x06ʫ\x1e\x02\b\x01R\x10supportBundleUrl\x12f\n" +
-	"\x11conversation_urls\x18\r \x01(\v21.gitpod.v1.AgentExecution.Status.ConversationURLsB\x06ʫ\x1e\x02\b\x01R\x10conversationUrls\x12\x1e\n" +
+	"\x0etranscript_url\x18\v \x01(\tR\rtranscriptUrl\x12,\n" +
+	"\x12support_bundle_url\x18\f \x01(\tR\x10supportBundleUrl\x12^\n" +
+	"\x11conversation_urls\x18\r \x01(\v21.gitpod.v1.AgentExecution.Status.ConversationURLsR\x10conversationUrls\x12\x1e\n" +
 	"\n" +
 	"iterations\x18\x14 \x01(\x03R\n" +
 	"iterations\x12*\n" +
@@ -10733,23 +9299,23 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x12output_tokens_used\x18\x16 \x01(\x03R\x10outputTokensUsed\x122\n" +
 	"\x15context_window_length\x18\x17 \x01(\x03R\x13contextWindowLength\x12=\n" +
 	"\x1bcached_creation_tokens_used\x18\x18 \x01(\x03R\x18cachedCreationTokensUsed\x127\n" +
-	"\x18cached_input_tokens_used\x18\x19 \x01(\x03R\x15cachedInputTokensUsed\x128\n" +
-	"\x14context_window_limit\x18\x1a \x01(\x03B\x06ʫ\x1e\x02\b\x01R\x12contextWindowLimit\x12\x1c\n" +
+	"\x18cached_input_tokens_used\x18\x19 \x01(\x03R\x15cachedInputTokensUsed\x120\n" +
+	"\x14context_window_limit\x18\x1a \x01(\x03R\x12contextWindowLimit\x12\x1c\n" +
 	"\tjudgement\x18\x1e \x01(\tR\tjudgement\x12^\n" +
 	"\x11current_operation\x18( \x01(\v21.gitpod.v1.AgentExecution.Status.CurrentOperationR\x10currentOperation\x12^\n" +
 	"\x11used_environments\x182 \x03(\v21.gitpod.v1.AgentExecution.Status.EnvironmentUsageR\x10usedEnvironments\x12)\n" +
 	"\x10current_activity\x18< \x01(\tR\x0fcurrentActivity\x12X\n" +
 	"\aoutputs\x18F \x03(\v2-.gitpod.v1.AgentExecution.Status.OutputsEntryB\x0f\xbaH\f\x9a\x01\t\"\ar\x05\x10\x01\x18\x80\x01R\aoutputs\x12B\n" +
-	"\x0fsupported_model\x18P \x01(\x0e2\x19.gitpod.v1.SupportedModelR\x0esupportedModel\x12c\n" +
-	"\x10llm_capabilities\x18Q \x01(\v20.gitpod.v1.AgentExecution.Status.LLMCapabilitiesB\x06ʫ\x1e\x02\b\x01R\x0fllmCapabilities\x12(\n" +
+	"\x0fsupported_model\x18P \x01(\x0e2\x19.gitpod.v1.SupportedModelR\x0esupportedModel\x12[\n" +
+	"\x10llm_capabilities\x18Q \x01(\v20.gitpod.v1.AgentExecution.Status.LLMCapabilitiesR\x0fllmCapabilities\x12(\n" +
 	"\x04mode\x18Z \x01(\x0e2\x14.gitpod.v1.AgentModeR\x04mode\x12o\n" +
-	"\x18mcp_integration_statuses\x18d \x03(\v25.gitpod.v1.AgentExecution.Status.MCPIntegrationStatusR\x16mcpIntegrationStatuses\x12P\n" +
-	"\fwaiting_info\x18n \x01(\v2%.gitpod.v1.AgentExecution.WaitingInfoB\x06ʫ\x1e\x02\b\x01R\vwaitingInfo\x12(\n" +
-	"\vterminal_id\x18\x82\x01 \x01(\tB\x06ʫ\x1e\x02\b\x01R\n" +
+	"\x18mcp_integration_statuses\x18d \x03(\v25.gitpod.v1.AgentExecution.Status.MCPIntegrationStatusR\x16mcpIntegrationStatuses\x12H\n" +
+	"\fwaiting_info\x18n \x01(\v2%.gitpod.v1.AgentExecution.WaitingInfoR\vwaitingInfo\x12 \n" +
+	"\vterminal_id\x18\x82\x01 \x01(\tR\n" +
 	"terminalId\x12:\n" +
-	"\x04goal\x18\x8c\x01 \x01(\v2%.gitpod.v1.AgentExecution.Status.GoalR\x04goal\x12H\n" +
-	"\x0ecodex_settings\x18\x96\x01 \x01(\v2\x18.gitpod.v1.CodexSettingsB\x06ʫ\x1e\x02\b\x01R\rcodexSettings\x12P\n" +
-	"\tsubagents\x18\xa0\x01 \x03(\v2).gitpod.v1.AgentExecution.Status.SubagentB\x06ʫ\x1e\x02\b\x01R\tsubagents\x1aK\n" +
+	"\x04goal\x18\x8c\x01 \x01(\v2%.gitpod.v1.AgentExecution.Status.GoalR\x04goal\x12@\n" +
+	"\x0ecodex_settings\x18\x96\x01 \x01(\v2\x18.gitpod.v1.CodexSettingsR\rcodexSettings\x12H\n" +
+	"\tsubagents\x18\xa0\x01 \x03(\v2).gitpod.v1.AgentExecution.Status.SubagentR\tsubagents\x1aK\n" +
 	"\aToolUse\x12$\n" +
 	"\ttool_name\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\btoolName\x12\x1a\n" +
 	"\bcomplete\x18\x02 \x01(\bR\bcomplete\x1a!\n" +
@@ -10875,15 +9441,15 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x06Action\x12\x1d\n" +
 	"\x05title\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x05title\x12\x1f\n" +
 	"\x06prompt\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x06prompt\x12\x18\n" +
-	"\avariant\x18\x03 \x01(\tR\avariant\"\x98#\n" +
+	"\avariant\x18\x03 \x01(\tR\avariant\"\x8c#\n" +
 	"\x12AgentResponseBlock\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x129\n" +
 	"\x05phase\x18\x02 \x01(\x0e2#.gitpod.v1.AgentResponseBlock.PhaseR\x05phase\x12Z\n" +
 	"\x0fuser_input_seen\x18\b \x01(\v20.gitpod.v1.AgentResponseBlock.UserInputBlockSeenH\x00R\ruserInputSeen\x12:\n" +
 	"\n" +
-	"user_input\x18\t \x01(\v2\x19.gitpod.v1.UserInputBlockH\x00R\tuserInput\x12k\n" +
-	"\x12user_input_deleted\x18\v \x01(\v23.gitpod.v1.AgentResponseBlock.UserInputBlockDeletedB\x06ʫ\x1e\x02\b\x01H\x00R\x10userInputDeleted\x12v\n" +
-	"\x18user_input_queue_updated\x18\f \x01(\v23.gitpod.v1.AgentResponseBlock.UserInputQueueUpdatedB\x06ʫ\x1e\x02\b\x01H\x00R\x15userInputQueueUpdated\x12>\n" +
+	"user_input\x18\t \x01(\v2\x19.gitpod.v1.UserInputBlockH\x00R\tuserInput\x12c\n" +
+	"\x12user_input_deleted\x18\v \x01(\v23.gitpod.v1.AgentResponseBlock.UserInputBlockDeletedH\x00R\x10userInputDeleted\x12n\n" +
+	"\x18user_input_queue_updated\x18\f \x01(\v23.gitpod.v1.AgentResponseBlock.UserInputQueueUpdatedH\x00R\x15userInputQueueUpdated\x12>\n" +
 	"\x04text\x18\n" +
 	" \x01(\v2(.gitpod.v1.AgentResponseBlock.TextOutputH\x00R\x04text\x12T\n" +
 	"\x0eaction_started\x18\x14 \x01(\v2+.gitpod.v1.AgentResponseBlock.ActionStartedH\x00R\ractionStarted\x12Z\n" +
@@ -10921,11 +9487,11 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x0fActionCompleted\x12$\n" +
 	"\taction_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bactionId\x12-\n" +
 	"\x12result_description\x18\x02 \x01(\tR\x11resultDescription\x12\x16\n" +
-	"\x06failed\x18\x03 \x01(\bR\x06failed\x1a\x9f\x05\n" +
+	"\x06failed\x18\x03 \x01(\bR\x06failed\x1a\xa3\x05\n" +
 	"\x10FileModification\x12\x1b\n" +
 	"\taction_id\x18\x01 \x01(\tR\bactionId\x12$\n" +
-	"\tfile_path\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bfilePath\x12\x18\n" +
-	"\acontent\x18\x03 \x01(\tR\acontent\x12\x1d\n" +
+	"\tfile_path\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bfilePath\x12\x1c\n" +
+	"\acontent\x18\x03 \x01(\tB\x02\x18\x01R\acontent\x12\x1d\n" +
 	"\n" +
 	"start_line\x18\x04 \x01(\x05R\tstartLine\x12G\n" +
 	"\x04diff\x18\x05 \x01(\v23.gitpod.v1.AgentResponseBlock.FileModification.DiffR\x04diff\x1a\xc8\x01\n" +
@@ -11002,7 +9568,7 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\fPHASE_UPDATE\x10\x01\x12\x13\n" +
 	"\x0fPHASE_COMPLETED\x10\x02\x12\x0f\n" +
 	"\vPHASE_DELTA\x10\x03B\x0f\n" +
-	"\x06output\x12\x05\xbaH\x02\b\x01\"\xbc\x05\n" +
+	"\x06output\x12\x05\xbaH\x02\b\x01\"\xac\x05\n" +
 	"\x0eUserInputBlock\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12=\n" +
 	"\x04text\x18\x14 \x01(\v2#.gitpod.v1.UserInputBlock.TextInputB\x02\x18\x01H\x00R\x04text\x12@\n" +
@@ -11010,29 +9576,29 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x06inputs\x18\x1e \x03(\v2\x1f.gitpod.v1.UserInputBlock.InputB\b\xbaH\x05\x92\x01\x02\x10\n" +
 	"R\x06inputs\x129\n" +
 	"\n" +
-	"created_at\x18d \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12@\n" +
-	"\bmetadata\x18x \x01(\v2\x1c.gitpod.v1.UserInputMetadataB\x06ʫ\x1e\x02\b\x01R\bmetadata\x1a.\n" +
+	"created_at\x18d \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x128\n" +
+	"\bmetadata\x18x \x01(\v2\x1c.gitpod.v1.UserInputMetadataR\bmetadata\x1a.\n" +
 	"\tTextInput\x12!\n" +
-	"\acontent\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\acontent\x1a\x8c\x01\n" +
+	"\acontent\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\acontent\x1a\x84\x01\n" +
 	"\n" +
 	"ImageInput\x12 \n" +
 	"\x04data\x18\x01 \x01(\fB\f\xbaH\tz\a\x10\x01\x18\x80\x80\x80\x02R\x04data\x129\n" +
 	"\tmime_type\x18\x02 \x01(\tB\x1c\xbaH\x19r\x17R\timage/pngR\n" +
-	"image/jpegR\bmimeType\x12!\n" +
-	"\bdata_ref\x18\x03 \x01(\tB\x06ʫ\x1e\x02\b\x01R\adataRef\x1a\x90\x01\n" +
+	"image/jpegR\bmimeType\x12\x19\n" +
+	"\bdata_ref\x18\x03 \x01(\tR\adataRef\x1a\x90\x01\n" +
 	"\x05Input\x129\n" +
 	"\x04text\x18\x14 \x01(\v2#.gitpod.v1.UserInputBlock.TextInputH\x00R\x04text\x12<\n" +
 	"\x05image\x18\x15 \x01(\v2$.gitpod.v1.UserInputBlock.ImageInputH\x00R\x05imageB\x0e\n" +
 	"\x05input\x12\x05\xbaH\x02\b\x01B\a\n" +
-	"\x05input\"g\n" +
+	"\x05input\"a\n" +
 	"\x11UserInputMetadata\x12\x16\n" +
-	"\x06source\x18\x01 \x01(\tR\x06source\x12:\n" +
-	"\x05modes\x18\x02 \x03(\x0e2\x14.gitpod.v1.AgentModeB\x0e\xbaH\x05\x92\x01\x02\x10\x04ʫ\x1e\x02\b\x01R\x05modes\"\xcd\x02\n" +
+	"\x06source\x18\x01 \x01(\tR\x06source\x124\n" +
+	"\x05modes\x18\x02 \x03(\x0e2\x14.gitpod.v1.AgentModeB\b\xbaH\x05\x92\x01\x02\x10\x04R\x05modes\"\xbd\x02\n" +
 	"\fAgentMessage\x120\n" +
 	"\x04type\x18\x01 \x01(\x0e2\x1c.gitpod.v1.AgentMessage.TypeR\x04type\x12\x18\n" +
-	"\apayload\x18\x02 \x01(\tR\apayload\x128\n" +
-	"\x04role\x18\x03 \x01(\x0e2\x1c.gitpod.v1.AgentMessage.RoleB\x06ʫ\x1e\x02\b\x01R\x04role\x126\n" +
-	"\x13sender_execution_id\x18\x04 \x01(\tB\x06ʫ\x1e\x02\b\x01R\x11senderExecutionId\"@\n" +
+	"\apayload\x18\x02 \x01(\tR\apayload\x120\n" +
+	"\x04role\x18\x03 \x01(\x0e2\x1c.gitpod.v1.AgentMessage.RoleR\x04role\x12.\n" +
+	"\x13sender_execution_id\x18\x04 \x01(\tR\x11senderExecutionId\"@\n" +
 	"\x04Type\x12\x14\n" +
 	"\x10TYPE_UNSPECIFIED\x10\x00\x12\x0f\n" +
 	"\vTYPE_UPDATE\x10\x01\x12\x11\n" +
@@ -11077,74 +9643,51 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\n" +
 	"session_id\x18\x03 \x01(\tR\tsessionId\x12'\n" +
 	"\x0ffailure_message\x18\x04 \x03(\tR\x0efailureMessageB\t\n" +
-	"\apayload\"\xea\x03\n" +
+	"\apayload\"\xd2\x03\n" +
 	"\x1bSendToAgentExecutionRequest\x126\n" +
 	"\x12agent_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\x12:\n" +
 	"\n" +
 	"user_input\x18\x02 \x01(\v2\x19.gitpod.v1.UserInputBlockH\x00R\tuserInput\x12>\n" +
 	"\ragent_message\x18\x03 \x01(\v2\x17.gitpod.v1.AgentMessageH\x00R\fagentMessage\x125\n" +
 	"\n" +
-	"wake_event\x18\x04 \x01(\v2\x14.gitpod.v1.WakeEventH\x00R\twakeEvent\x12K\n" +
-	"\rcontrol_input\x18\x06 \x01(\v2\x1c.gitpod.v1.AgentControlInputB\x06ʫ\x1e\x02\b\x01H\x00R\fcontrolInput\x12G\n" +
-	"\x0ecodex_settings\x18\x05 \x01(\v2\x18.gitpod.v1.CodexSettingsB\x06ʫ\x1e\x02\b\x01R\rcodexSettings\x12A\n" +
-	"\fturn_options\x18\a \x01(\v2\x16.gitpod.v1.TurnOptionsB\x06ʫ\x1e\x02\b\x01R\vturnOptionsB\a\n" +
+	"wake_event\x18\x04 \x01(\v2\x14.gitpod.v1.WakeEventH\x00R\twakeEvent\x12C\n" +
+	"\rcontrol_input\x18\x06 \x01(\v2\x1c.gitpod.v1.AgentControlInputH\x00R\fcontrolInput\x12?\n" +
+	"\x0ecodex_settings\x18\x05 \x01(\v2\x18.gitpod.v1.CodexSettingsR\rcodexSettings\x129\n" +
+	"\fturn_options\x18\a \x01(\v2\x16.gitpod.v1.TurnOptionsR\vturnOptionsB\a\n" +
 	"\x05input\"\x1e\n" +
-	"\x1cSendToAgentExecutionResponse\"S\n" +
+	"\x1cSendToAgentExecutionResponse\"C\n" +
 	"\vTurnOptions\x124\n" +
-	"\x05modes\x18\x01 \x03(\x0e2\x14.gitpod.v1.AgentModeB\b\xbaH\x05\x92\x01\x02\x10\x04R\x05modes:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01\"\x8d\v\n" +
+	"\x05modes\x18\x01 \x03(\x0e2\x14.gitpod.v1.AgentModeB\b\xbaH\x05\x92\x01\x02\x10\x04R\x05modes\"\xdc\t\n" +
 	"\x11AgentControlInput\x12@\n" +
 	"\acompact\x18\x01 \x01(\v2$.gitpod.v1.AgentControlInput.CompactH\x00R\acompact\x127\n" +
 	"\x04goal\x18\x02 \x01(\v2!.gitpod.v1.AgentControlInput.GoalH\x00R\x04goal\x12f\n" +
 	"\x15delete_queued_message\x18\x03 \x01(\v20.gitpod.v1.AgentControlInput.DeleteQueuedMessageH\x00R\x13deleteQueuedMessage\x12c\n" +
 	"\x14steer_queued_message\x18\x04 \x01(\v2/.gitpod.v1.AgentControlInput.SteerQueuedMessageH\x00R\x12steerQueuedMessage\x12`\n" +
-	"\x13move_queued_message\x18\x05 \x01(\v2..gitpod.v1.AgentControlInput.MoveQueuedMessageH\x00R\x11moveQueuedMessage\x1a\x19\n" +
-	"\aCompact:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01\x1aR\n" +
+	"\x13move_queued_message\x18\x05 \x01(\v2..gitpod.v1.AgentControlInput.MoveQueuedMessageH\x00R\x11moveQueuedMessage\x1a\t\n" +
+	"\aCompact\x1aB\n" +
 	"\x13DeleteQueuedMessage\x12+\n" +
-	"\ruser_input_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vuserInputId:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01\x1a\xec\x04\n" +
+	"\ruser_input_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vuserInputId\x1a\x8c\x04\n" +
 	"\x04Goal\x12?\n" +
 	"\x05pause\x18\x01 \x01(\v2'.gitpod.v1.AgentControlInput.Goal.PauseH\x00R\x05pause\x12B\n" +
 	"\x06resume\x18\x02 \x01(\v2(.gitpod.v1.AgentControlInput.Goal.ResumeH\x00R\x06resume\x12H\n" +
 	"\bcomplete\x18\x03 \x01(\v2*.gitpod.v1.AgentControlInput.Goal.CompleteH\x00R\bcomplete\x12?\n" +
 	"\x05clear\x18\x04 \x01(\v2'.gitpod.v1.AgentControlInput.Goal.ClearH\x00R\x05clear\x129\n" +
-	"\x03set\x18\x05 \x01(\v2%.gitpod.v1.AgentControlInput.Goal.SetH\x00R\x03set\x1a\x17\n" +
-	"\x05Pause:\x0e\xba\xab\x1e\n" +
+	"\x03set\x18\x05 \x01(\v2%.gitpod.v1.AgentControlInput.Goal.SetH\x00R\x03set\x1a\a\n" +
+	"\x05Pause\x1a\b\n" +
+	"\x06Resume\x1a\n" +
 	"\n" +
-	"\x06agents\x18\x01\x1a\x18\n" +
-	"\x06Resume:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01\x1a\x1a\n" +
-	"\bComplete:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01\x1a\x17\n" +
-	"\x05Clear:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01\x1a\x96\x01\n" +
+	"\bComplete\x1a\a\n" +
+	"\x05Clear\x1a\x86\x01\n" +
 	"\x03Set\x12%\n" +
 	"\tobjective\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\tobjective\x12M\n" +
-	"\x06status\x18\x02 \x01(\x0e20.gitpod.v1.AgentExecution.Status.Goal.GoalStatusH\x00R\x06status\x88\x01\x01:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01B\t\n" +
-	"\a_status:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01B\b\n" +
-	"\x06action\x1aQ\n" +
+	"\x06status\x18\x02 \x01(\x0e20.gitpod.v1.AgentExecution.Status.Goal.GoalStatusH\x00R\x06status\x88\x01\x01B\t\n" +
+	"\a_statusB\b\n" +
+	"\x06action\x1aA\n" +
 	"\x12SteerQueuedMessage\x12+\n" +
-	"\ruser_input_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vuserInputId:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01\x1a\x81\x01\n" +
+	"\ruser_input_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vuserInputId\x1aq\n" +
 	"\x11MoveQueuedMessage\x12+\n" +
 	"\ruser_input_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vuserInputId\x12/\n" +
-	"\x14before_user_input_id\x18\x02 \x01(\tR\x11beforeUserInputId:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01:\x0e\xba\xab\x1e\n" +
-	"\n" +
-	"\x06agents\x18\x01B\t\n" +
+	"\x14before_user_input_id\x18\x02 \x01(\tR\x11beforeUserInputIdB\t\n" +
 	"\acontrol\"f\n" +
 	"\x1cPromptValidationErrorDetails\x12!\n" +
 	"\fcleaned_text\x18\x01 \x01(\tR\vcleanedText\x12#\n" +
@@ -11170,100 +9713,21 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x16InEnvironmentAgentSpec\x120\n" +
 	"\aservice\x18\x01 \x01(\v2\x16.gitpod.v1.ServiceSpecR\aservice\x12B\n" +
 	"\x0frequired_models\x18\x02 \x03(\x0e2\x19.gitpod.v1.SupportedModelR\x0erequiredModels\x12E\n" +
-	"\x10service_metadata\x18\x03 \x01(\v2\x1a.gitpod.v1.ServiceMetadataR\x0fserviceMetadata\"\xea\x01\n" +
-	"\x12CreateAgentRequest\x12\x1b\n" +
-	"\x04name\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x04name\x12 \n" +
-	"\vdescription\x18\x02 \x01(\tR\vdescription\x12A\n" +
-	"\vrunner_side\x18\n" +
-	" \x01(\v2\x1e.gitpod.v1.RunnerSideAgentSpecH\x00R\n" +
-	"runnerSide\x12J\n" +
-	"\x0ein_environment\x18\x14 \x01(\v2!.gitpod.v1.InEnvironmentAgentSpecH\x00R\rinEnvironmentB\x06\n" +
-	"\x04spec\"E\n" +
-	"\x13CreateAgentResponse\x12.\n" +
-	"\x05agent\x18\x01 \x01(\v2\x10.gitpod.v1.AgentB\x06\xbaH\x03\xc8\x01\x01R\x05agent\"\x8b\x03\n" +
-	"\x12UpdateAgentRequest\x12#\n" +
-	"\bagent_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\aagentId\x12B\n" +
-	"\bmetadata\x18\x02 \x01(\v2&.gitpod.v1.UpdateAgentRequest.MetadataR\bmetadata\x126\n" +
-	"\x04spec\x18\x03 \x01(\v2\".gitpod.v1.UpdateAgentRequest.SpecR\x04spec\x1ac\n" +
-	"\bMetadata\x12\x17\n" +
-	"\x04name\x18\x01 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\x02 \x01(\tH\x01R\vdescription\x88\x01\x01B\a\n" +
-	"\x05_nameB\x0e\n" +
-	"\f_description\x1ao\n" +
-	"\x04Spec\x12@\n" +
-	"\aprompts\x18\x01 \x03(\v2&.gitpod.v1.RunnerSideAgentSpec.PromptsR\aprompts\x12%\n" +
-	"\x0erequired_tools\x18\x02 \x03(\tR\rrequiredTools\"=\n" +
-	"\x13UpdateAgentResponse\x12&\n" +
-	"\x05agent\x18\x01 \x01(\v2\x10.gitpod.v1.AgentR\x05agent\"9\n" +
-	"\x12DeleteAgentRequest\x12#\n" +
-	"\bagent_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\aagentId\"\x15\n" +
-	"\x13DeleteAgentResponse\"S\n" +
+	"\x10service_metadata\x18\x03 \x01(\v2\x1a.gitpod.v1.ServiceMetadataR\x0fserviceMetadata\"S\n" +
 	"\x19StopAgentExecutionRequest\x126\n" +
 	"\x12agent_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\"\x1c\n" +
-	"\x1aStopAgentExecutionResponse\"\xd9\x02\n" +
-	"\x1bUpdateAgentExecutionRequest\x126\n" +
-	"\x12agent_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\x12K\n" +
-	"\bmetadata\x18\x02 \x01(\v2/.gitpod.v1.UpdateAgentExecutionRequest.MetadataR\bmetadata\x1a\xae\x01\n" +
-	"\bMetadata\x12b\n" +
-	"\vannotations\x18\x02 \x03(\v2@.gitpod.v1.UpdateAgentExecutionRequest.Metadata.AnnotationsEntryR\vannotations\x1a>\n" +
-	"\x10AnnotationsEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01J\x04\b\x03\x10\x04\"b\n" +
-	"\x1cUpdateAgentExecutionResponse\x12B\n" +
-	"\x0fagent_execution\x18\x01 \x01(\v2\x19.gitpod.v1.AgentExecutionR\x0eagentExecution\"\xa6\x02\n" +
-	"\"ReportAgentExecutionOutputsRequest\x126\n" +
-	"\x12agent_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\x12^\n" +
-	"\aoutputs\x18\x02 \x03(\v2:.gitpod.v1.ReportAgentExecutionOutputsRequest.OutputsEntryB\b\xbaH\x05\x9a\x01\x02\b\x01R\aoutputs\x1ah\n" +
-	"\fOutputsEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12B\n" +
-	"\x05value\x18\x02 \x01(\v2,.gitpod.v1.AgentExecution.Status.OutputValueR\x05value:\x028\x01\"i\n" +
-	"#ReportAgentExecutionOutputsResponse\x12B\n" +
-	"\x0fagent_execution\x18\x01 \x01(\v2\x19.gitpod.v1.AgentExecutionR\x0eagentExecution\"\x8b\x03\n" +
-	"\x1fEmitAgentSessionActivityRequest\x126\n" +
-	"\x12agent_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10agentExecutionId\x12B\n" +
-	"\x19external_agent_session_id\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x16externalAgentSessionId\x12D\n" +
-	"\x0eresponse_block\x18\x03 \x01(\v2\x1d.gitpod.v1.AgentResponseBlockR\rresponseBlock\x128\n" +
-	"\x06status\x18\x04 \x01(\v2 .gitpod.v1.AgentExecution.StatusR\x06status\x12L\n" +
-	"\x13next_steps_proposal\x18\x05 \x01(\v2\x1c.gitpod.v1.NextStepsProposalR\x11nextStepsProposal\x12\x1e\n" +
-	"\x06cursor\x18\x06 \x01(\tB\x06ʫ\x1e\x02\b\x01R\x06cursor\"\"\n" +
-	" EmitAgentSessionActivityResponse\"[\n" +
-	"\x1cImprovePromptForAgentRequest\x12#\n" +
-	"\bagent_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\aagentId\x12\x16\n" +
-	"\x06prompt\x18\x02 \x01(\tR\x06prompt\"H\n" +
-	"\x1dImprovePromptForAgentResponse\x12'\n" +
-	"\x0fimproved_prompt\x18\x01 \x01(\tR\x0eimprovedPrompt\"\x95\x01\n" +
-	"\x1bCreateLLMAccessTokenRequest\x12B\n" +
-	"\x0frequired_models\x18\x01 \x03(\x0e2\x19.gitpod.v1.SupportedModelR\x0erequiredModels\x12,\n" +
-	"\x12agent_execution_id\x18\x03 \x01(\tR\x10agentExecutionIdJ\x04\b\x02\x10\x03\"\x9e\x02\n" +
-	"\x1cCreateLLMAccessTokenResponse\x12!\n" +
-	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12\x17\n" +
-	"\allm_url\x18\x02 \x01(\tR\x06llmUrl\x12I\n" +
-	"\"is_server_side_tool_search_enabled\x18\x03 \x01(\bR\x1disServerSideToolSearchEnabled\x12]\n" +
-	"\x15disabled_capabilities\x18\x04 \x03(\x0e2 .gitpod.v1.LLMDisabledCapabilityB\x06ʫ\x1e\x02\b\x01R\x14disabledCapabilitiesJ\x04\b\x05\x10\x06R\x12llm_integration_id\"`\n" +
+	"\x1aStopAgentExecutionResponse\"`\n" +
 	"\x0eMCPIntegration\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x10\n" +
 	"\x03url\x18\x03 \x01(\tR\x03url\x12\x18\n" +
-	"\aenabled\x18\x04 \x01(\bR\aenabled\"Z\n" +
-	"\x1aListMCPIntegrationsRequest\x12<\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\"\xa2\x01\n" +
-	"\x1bListMCPIntegrationsResponse\x12=\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
-	"pagination\x12D\n" +
-	"\x10mcp_integrations\x18\x02 \x03(\v2\x19.gitpod.v1.MCPIntegrationR\x0fmcpIntegrations\"\x1d\n" +
-	"\x1bCreateMCPAccessTokenRequest\"A\n" +
-	"\x1cCreateMCPAccessTokenResponse\x12!\n" +
-	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\"z\n" +
+	"\aenabled\x18\x04 \x01(\bR\aenabled\"z\n" +
 	"\x06Prompt\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x125\n" +
 	"\bmetadata\x18\x02 \x01(\v2\x19.gitpod.v1.PromptMetadataR\bmetadata\x12)\n" +
-	"\x04spec\x18\x03 \x01(\v2\x15.gitpod.v1.PromptSpecR\x04spec\"\xb2\x02\n" +
-	"\x0ePromptMetadata\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\x12\n" +
+	"\x04spec\x18\x03 \x01(\v2\x15.gitpod.v1.PromptSpecR\x04spec\"\x9d\x02\n" +
+	"\x0ePromptMetadata\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12,\n" +
 	"\acreator\x18\x04 \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x129\n" +
@@ -11375,20 +9839,19 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"!CODEX_REASONING_EFFORT_EXTRA_HIGH\x10\x04*S\n" +
 	"\x10CodexServiceTier\x12\"\n" +
 	"\x1eCODEX_SERVICE_TIER_UNSPECIFIED\x10\x00\x12\x1b\n" +
-	"\x17CODEX_SERVICE_TIER_FAST\x10\x01*\xab\x02\n" +
+	"\x17CODEX_SERVICE_TIER_FAST\x10\x01*\xf3\x01\n" +
 	"\x15LLMDisabledCapability\x12'\n" +
 	"#LLM_DISABLED_CAPABILITY_UNSPECIFIED\x10\x00\x12&\n" +
 	"\"LLM_DISABLED_CAPABILITY_WEB_SEARCH\x10\x01\x12-\n" +
 	")LLM_DISABLED_CAPABILITY_FAST_SERVICE_TIER\x10\x02\x123\n" +
 	"/LLM_DISABLED_CAPABILITY_SERVER_SIDE_TOOL_SEARCH\x10\x03\x12%\n" +
-	"!LLM_DISABLED_CAPABILITY_GOAL_MODE\x10\x04\x126\n" +
-	"2LLM_DISABLED_CAPABILITY_RESPONSES_LITE_UNSUPPORTED\x10\x05*\xbe\x02\n" +
+	"!LLM_DISABLED_CAPABILITY_GOAL_MODE\x10\x04*\xc2\x02\n" +
 	"\x1bAgentExecutionFailureReason\x12.\n" +
 	"*AGENT_EXECUTION_FAILURE_REASON_UNSPECIFIED\x10\x00\x12.\n" +
 	"*AGENT_EXECUTION_FAILURE_REASON_ENVIRONMENT\x10\x01\x12*\n" +
 	"&AGENT_EXECUTION_FAILURE_REASON_SERVICE\x10\x02\x122\n" +
-	".AGENT_EXECUTION_FAILURE_REASON_LLM_INTEGRATION\x10\x03\x12+\n" +
-	"'AGENT_EXECUTION_FAILURE_REASON_INTERNAL\x10\x04\x122\n" +
+	".AGENT_EXECUTION_FAILURE_REASON_LLM_INTEGRATION\x10\x03\x12/\n" +
+	"'AGENT_EXECUTION_FAILURE_REASON_INTERNAL\x10\x04\x1a\x02\b\x01\x122\n" +
 	".AGENT_EXECUTION_FAILURE_REASON_AGENT_EXECUTION\x10\x05*\x7f\n" +
 	"\x12AgentExecutionRole\x12$\n" +
 	" AGENT_EXECUTION_ROLE_UNSPECIFIED\x10\x00\x12 \n" +
@@ -11400,35 +9863,21 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x12\x1f\n" +
 	"\x1bMCP_INTEGRATION_PHASE_READY\x10\x14\x12 \n" +
 	"\x1cMCP_INTEGRATION_PHASE_FAILED\x10\x1e\x12%\n" +
-	"!MCP_INTEGRATION_PHASE_UNAVAILABLE\x10(2\xbf\x14\n" +
+	"!MCP_INTEGRATION_PHASE_UNAVAILABLE\x10(2\x92\t\n" +
 	"\fAgentService\x12K\n" +
 	"\n" +
-	"ListAgents\x12\x1c.gitpod.v1.ListAgentsRequest\x1a\x1d.gitpod.v1.ListAgentsResponse\"\x00\x12E\n" +
-	"\bGetAgent\x12\x1a.gitpod.v1.GetAgentRequest\x1a\x1b.gitpod.v1.GetAgentResponse\"\x00\x12N\n" +
-	"\vCreateAgent\x12\x1d.gitpod.v1.CreateAgentRequest\x1a\x1e.gitpod.v1.CreateAgentResponse\"\x00\x12N\n" +
-	"\vUpdateAgent\x12\x1d.gitpod.v1.UpdateAgentRequest\x1a\x1e.gitpod.v1.UpdateAgentResponse\"\x00\x12N\n" +
-	"\vDeleteAgent\x12\x1d.gitpod.v1.DeleteAgentRequest\x1a\x1e.gitpod.v1.DeleteAgentResponse\"\x00\x12`\n" +
-	"\n" +
-	"StartAgent\x12\x1c.gitpod.v1.StartAgentRequest\x1a\x1d.gitpod.v1.StartAgentResponse\"\x15\xb2\xab\x1e\x11\x12\x0fstart_execution\x12{\n" +
-	"\x13ListAgentExecutions\x12%.gitpod.v1.ListAgentExecutionsRequest\x1a&.gitpod.v1.ListAgentExecutionsResponse\"\x15\xb2\xab\x1e\x11\x12\x0flist_executions\x12x\n" +
-	"\x11GetAgentExecution\x12#.gitpod.v1.GetAgentExecutionRequest\x1a$.gitpod.v1.GetAgentExecutionResponse\"\x18\xb2\xab\x1e\x14\x12\x12retrieve_execution\x12\x7f\n" +
-	"\x14DeleteAgentExecution\x12&.gitpod.v1.DeleteAgentExecutionRequest\x1a'.gitpod.v1.DeleteAgentExecutionResponse\"\x16\xb2\xab\x1e\x12\x12\x10delete_execution\x12\x80\x01\n" +
-	"\x14SendToAgentExecution\x12&.gitpod.v1.SendToAgentExecutionRequest\x1a'.gitpod.v1.SendToAgentExecutionResponse\"\x17\xb2\xab\x1e\x13\x12\x11send_to_execution\x12\xc5\x01\n" +
-	"%CreateAgentExecutionConversationToken\x127.gitpod.v1.CreateAgentExecutionConversationTokenRequest\x1a8.gitpod.v1.CreateAgentExecutionConversationTokenResponse\")\xb2\xab\x1e%\x12#create_execution_conversation_token\x12w\n" +
-	"\x12StopAgentExecution\x12$.gitpod.v1.StopAgentExecutionRequest\x1a%.gitpod.v1.StopAgentExecutionResponse\"\x14\xb2\xab\x1e\x10\x12\x0estop_execution\x12i\n" +
-	"\x14UpdateAgentExecution\x12&.gitpod.v1.UpdateAgentExecutionRequest\x1a'.gitpod.v1.UpdateAgentExecutionResponse\"\x00\x12~\n" +
-	"\x1bReportAgentExecutionOutputs\x12-.gitpod.v1.ReportAgentExecutionOutputsRequest\x1a..gitpod.v1.ReportAgentExecutionOutputsResponse\"\x00\x12u\n" +
-	"\x18EmitAgentSessionActivity\x12*.gitpod.v1.EmitAgentSessionActivityRequest\x1a+.gitpod.v1.EmitAgentSessionActivityResponse\"\x00\x12l\n" +
-	"\x15ImprovePromptForAgent\x12'.gitpod.v1.ImprovePromptForAgentRequest\x1a(.gitpod.v1.ImprovePromptForAgentResponse\"\x00\x12i\n" +
-	"\x14CreateLLMAccessToken\x12&.gitpod.v1.CreateLLMAccessTokenRequest\x1a'.gitpod.v1.CreateLLMAccessTokenResponse\"\x00\x12f\n" +
-	"\x13ListMCPIntegrations\x12%.gitpod.v1.ListMCPIntegrationsRequest\x1a&.gitpod.v1.ListMCPIntegrationsResponse\"\x00\x12i\n" +
-	"\x14CreateMCPAccessToken\x12&.gitpod.v1.CreateMCPAccessTokenRequest\x1a'.gitpod.v1.CreateMCPAccessTokenResponse\"\x00\x12`\n" +
-	"\vListPrompts\x12\x1d.gitpod.v1.ListPromptsRequest\x1a\x1e.gitpod.v1.ListPromptsResponse\"\x12\xb2\xab\x1e\x0e\x12\flist_prompts\x12]\n" +
-	"\tGetPrompt\x12\x1b.gitpod.v1.GetPromptRequest\x1a\x1c.gitpod.v1.GetPromptResponse\"\x15\xb2\xab\x1e\x11\x12\x0fretrieve_prompt\x12d\n" +
-	"\fCreatePrompt\x12\x1e.gitpod.v1.CreatePromptRequest\x1a\x1f.gitpod.v1.CreatePromptResponse\"\x13\xb2\xab\x1e\x0f\x12\rcreate_prompt\x12d\n" +
-	"\fUpdatePrompt\x12\x1e.gitpod.v1.UpdatePromptRequest\x1a\x1f.gitpod.v1.UpdatePromptResponse\"\x13\xb2\xab\x1e\x0f\x12\rupdate_prompt\x12d\n" +
-	"\fDeletePrompt\x12\x1e.gitpod.v1.DeletePromptRequest\x1a\x1f.gitpod.v1.DeletePromptResponse\"\x13\xb2\xab\x1e\x0f\x12\rdelete_prompt\x1a\f\xaa\xab\x1e\b\n" +
-	"\x06agentsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"StartAgent\x12\x1c.gitpod.v1.StartAgentRequest\x1a\x1d.gitpod.v1.StartAgentResponse\"\x00\x12f\n" +
+	"\x13ListAgentExecutions\x12%.gitpod.v1.ListAgentExecutionsRequest\x1a&.gitpod.v1.ListAgentExecutionsResponse\"\x00\x12`\n" +
+	"\x11GetAgentExecution\x12#.gitpod.v1.GetAgentExecutionRequest\x1a$.gitpod.v1.GetAgentExecutionResponse\"\x00\x12i\n" +
+	"\x14DeleteAgentExecution\x12&.gitpod.v1.DeleteAgentExecutionRequest\x1a'.gitpod.v1.DeleteAgentExecutionResponse\"\x00\x12i\n" +
+	"\x14SendToAgentExecution\x12&.gitpod.v1.SendToAgentExecutionRequest\x1a'.gitpod.v1.SendToAgentExecutionResponse\"\x00\x12\x9c\x01\n" +
+	"%CreateAgentExecutionConversationToken\x127.gitpod.v1.CreateAgentExecutionConversationTokenRequest\x1a8.gitpod.v1.CreateAgentExecutionConversationTokenResponse\"\x00\x12c\n" +
+	"\x12StopAgentExecution\x12$.gitpod.v1.StopAgentExecutionRequest\x1a%.gitpod.v1.StopAgentExecutionResponse\"\x00\x12N\n" +
+	"\vListPrompts\x12\x1d.gitpod.v1.ListPromptsRequest\x1a\x1e.gitpod.v1.ListPromptsResponse\"\x00\x12H\n" +
+	"\tGetPrompt\x12\x1b.gitpod.v1.GetPromptRequest\x1a\x1c.gitpod.v1.GetPromptResponse\"\x00\x12Q\n" +
+	"\fCreatePrompt\x12\x1e.gitpod.v1.CreatePromptRequest\x1a\x1f.gitpod.v1.CreatePromptResponse\"\x00\x12Q\n" +
+	"\fUpdatePrompt\x12\x1e.gitpod.v1.UpdatePromptRequest\x1a\x1f.gitpod.v1.UpdatePromptResponse\"\x00\x12Q\n" +
+	"\fDeletePrompt\x12\x1e.gitpod.v1.DeletePromptRequest\x1a\x1f.gitpod.v1.DeletePromptResponse\"\x00B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_agent_proto_rawDescOnce sync.Once
@@ -11443,7 +9892,7 @@ func file_gitpod_v1_agent_proto_rawDescGZIP() []byte {
 }
 
 var file_gitpod_v1_agent_proto_enumTypes = make([]protoimpl.EnumInfo, 18)
-var file_gitpod_v1_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 150)
+var file_gitpod_v1_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 121)
 var file_gitpod_v1_agent_proto_goTypes = []any{
 	(AgentMode)(0),                                          // 0: gitpod.v1.AgentMode
 	(CodexOpenAIModel)(0),                                   // 1: gitpod.v1.CodexOpenAIModel
@@ -11467,399 +9916,321 @@ var file_gitpod_v1_agent_proto_goTypes = []any{
 	(*CodexSettings)(nil),                                   // 19: gitpod.v1.CodexSettings
 	(*Agent)(nil),                                           // 20: gitpod.v1.Agent
 	(*AgentMetadata)(nil),                                   // 21: gitpod.v1.AgentMetadata
-	(*ListAgentsRequest)(nil),                               // 22: gitpod.v1.ListAgentsRequest
-	(*ListAgentsResponse)(nil),                              // 23: gitpod.v1.ListAgentsResponse
-	(*GetAgentRequest)(nil),                                 // 24: gitpod.v1.GetAgentRequest
-	(*GetAgentResponse)(nil),                                // 25: gitpod.v1.GetAgentResponse
-	(*AgentCodeContext)(nil),                                // 26: gitpod.v1.AgentCodeContext
-	(*StartAgentRequest)(nil),                               // 27: gitpod.v1.StartAgentRequest
-	(*StartAgentResponse)(nil),                              // 28: gitpod.v1.StartAgentResponse
-	(*ListAgentExecutionsRequest)(nil),                      // 29: gitpod.v1.ListAgentExecutionsRequest
-	(*ListAgentExecutionsResponse)(nil),                     // 30: gitpod.v1.ListAgentExecutionsResponse
-	(*GetAgentExecutionRequest)(nil),                        // 31: gitpod.v1.GetAgentExecutionRequest
-	(*GetAgentExecutionResponse)(nil),                       // 32: gitpod.v1.GetAgentExecutionResponse
-	(*DeleteAgentExecutionRequest)(nil),                     // 33: gitpod.v1.DeleteAgentExecutionRequest
-	(*DeleteAgentExecutionResponse)(nil),                    // 34: gitpod.v1.DeleteAgentExecutionResponse
-	(*AgentExecution)(nil),                                  // 35: gitpod.v1.AgentExecution
-	(*ClarifyingQuestions)(nil),                             // 36: gitpod.v1.ClarifyingQuestions
-	(*NextStepsProposal)(nil),                               // 37: gitpod.v1.NextStepsProposal
-	(*AgentResponseBlock)(nil),                              // 38: gitpod.v1.AgentResponseBlock
-	(*UserInputBlock)(nil),                                  // 39: gitpod.v1.UserInputBlock
-	(*UserInputMetadata)(nil),                               // 40: gitpod.v1.UserInputMetadata
-	(*AgentMessage)(nil),                                    // 41: gitpod.v1.AgentMessage
-	(*WakeEvent)(nil),                                       // 42: gitpod.v1.WakeEvent
-	(*SendToAgentExecutionRequest)(nil),                     // 43: gitpod.v1.SendToAgentExecutionRequest
-	(*SendToAgentExecutionResponse)(nil),                    // 44: gitpod.v1.SendToAgentExecutionResponse
-	(*TurnOptions)(nil),                                     // 45: gitpod.v1.TurnOptions
-	(*AgentControlInput)(nil),                               // 46: gitpod.v1.AgentControlInput
-	(*PromptValidationErrorDetails)(nil),                    // 47: gitpod.v1.PromptValidationErrorDetails
-	(*CreateAgentExecutionConversationTokenRequest)(nil),    // 48: gitpod.v1.CreateAgentExecutionConversationTokenRequest
-	(*CreateAgentExecutionConversationTokenResponse)(nil),   // 49: gitpod.v1.CreateAgentExecutionConversationTokenResponse
-	(*CreateAgentExecutionTranscriptTokenRequest)(nil),      // 50: gitpod.v1.CreateAgentExecutionTranscriptTokenRequest
-	(*CreateAgentExecutionTranscriptTokenResponse)(nil),     // 51: gitpod.v1.CreateAgentExecutionTranscriptTokenResponse
-	(*RunnerSideAgentSpec)(nil),                             // 52: gitpod.v1.RunnerSideAgentSpec
-	(*InEnvironmentAgentSpec)(nil),                          // 53: gitpod.v1.InEnvironmentAgentSpec
-	(*CreateAgentRequest)(nil),                              // 54: gitpod.v1.CreateAgentRequest
-	(*CreateAgentResponse)(nil),                             // 55: gitpod.v1.CreateAgentResponse
-	(*UpdateAgentRequest)(nil),                              // 56: gitpod.v1.UpdateAgentRequest
-	(*UpdateAgentResponse)(nil),                             // 57: gitpod.v1.UpdateAgentResponse
-	(*DeleteAgentRequest)(nil),                              // 58: gitpod.v1.DeleteAgentRequest
-	(*DeleteAgentResponse)(nil),                             // 59: gitpod.v1.DeleteAgentResponse
-	(*StopAgentExecutionRequest)(nil),                       // 60: gitpod.v1.StopAgentExecutionRequest
-	(*StopAgentExecutionResponse)(nil),                      // 61: gitpod.v1.StopAgentExecutionResponse
-	(*UpdateAgentExecutionRequest)(nil),                     // 62: gitpod.v1.UpdateAgentExecutionRequest
-	(*UpdateAgentExecutionResponse)(nil),                    // 63: gitpod.v1.UpdateAgentExecutionResponse
-	(*ReportAgentExecutionOutputsRequest)(nil),              // 64: gitpod.v1.ReportAgentExecutionOutputsRequest
-	(*ReportAgentExecutionOutputsResponse)(nil),             // 65: gitpod.v1.ReportAgentExecutionOutputsResponse
-	(*EmitAgentSessionActivityRequest)(nil),                 // 66: gitpod.v1.EmitAgentSessionActivityRequest
-	(*EmitAgentSessionActivityResponse)(nil),                // 67: gitpod.v1.EmitAgentSessionActivityResponse
-	(*ImprovePromptForAgentRequest)(nil),                    // 68: gitpod.v1.ImprovePromptForAgentRequest
-	(*ImprovePromptForAgentResponse)(nil),                   // 69: gitpod.v1.ImprovePromptForAgentResponse
-	(*CreateLLMAccessTokenRequest)(nil),                     // 70: gitpod.v1.CreateLLMAccessTokenRequest
-	(*CreateLLMAccessTokenResponse)(nil),                    // 71: gitpod.v1.CreateLLMAccessTokenResponse
-	(*MCPIntegration)(nil),                                  // 72: gitpod.v1.MCPIntegration
-	(*ListMCPIntegrationsRequest)(nil),                      // 73: gitpod.v1.ListMCPIntegrationsRequest
-	(*ListMCPIntegrationsResponse)(nil),                     // 74: gitpod.v1.ListMCPIntegrationsResponse
-	(*CreateMCPAccessTokenRequest)(nil),                     // 75: gitpod.v1.CreateMCPAccessTokenRequest
-	(*CreateMCPAccessTokenResponse)(nil),                    // 76: gitpod.v1.CreateMCPAccessTokenResponse
-	(*Prompt)(nil),                                          // 77: gitpod.v1.Prompt
-	(*PromptMetadata)(nil),                                  // 78: gitpod.v1.PromptMetadata
-	(*PromptSpec)(nil),                                      // 79: gitpod.v1.PromptSpec
-	(*ListPromptsRequest)(nil),                              // 80: gitpod.v1.ListPromptsRequest
-	(*ListPromptsResponse)(nil),                             // 81: gitpod.v1.ListPromptsResponse
-	(*GetPromptRequest)(nil),                                // 82: gitpod.v1.GetPromptRequest
-	(*GetPromptResponse)(nil),                               // 83: gitpod.v1.GetPromptResponse
-	(*CreatePromptRequest)(nil),                             // 84: gitpod.v1.CreatePromptRequest
-	(*CreatePromptResponse)(nil),                            // 85: gitpod.v1.CreatePromptResponse
-	(*UpdatePromptRequest)(nil),                             // 86: gitpod.v1.UpdatePromptRequest
-	(*UpdatePromptResponse)(nil),                            // 87: gitpod.v1.UpdatePromptResponse
-	(*DeletePromptRequest)(nil),                             // 88: gitpod.v1.DeletePromptRequest
-	(*DeletePromptResponse)(nil),                            // 89: gitpod.v1.DeletePromptResponse
-	(*PullRequest_Repository)(nil),                          // 90: gitpod.v1.PullRequest.Repository
-	(*AgentCodeContext_ContextURL)(nil),                     // 91: gitpod.v1.AgentCodeContext.ContextURL
-	nil,                                                     // 92: gitpod.v1.StartAgentRequest.AnnotationsEntry
-	(*ListAgentExecutionsRequest_Filter)(nil),               // 93: gitpod.v1.ListAgentExecutionsRequest.Filter
-	nil,                                                // 94: gitpod.v1.ListAgentExecutionsRequest.Filter.AnnotationsEntry
-	(*AgentExecution_Metadata)(nil),                    // 95: gitpod.v1.AgentExecution.Metadata
-	(*AgentExecution_Spec)(nil),                        // 96: gitpod.v1.AgentExecution.Spec
-	(*AgentExecution_Status)(nil),                      // 97: gitpod.v1.AgentExecution.Status
-	(*AgentExecution_WaitingInfo)(nil),                 // 98: gitpod.v1.AgentExecution.WaitingInfo
-	nil,                                                // 99: gitpod.v1.AgentExecution.Metadata.AnnotationsEntry
-	(*AgentExecution_Spec_Limits)(nil),                 // 100: gitpod.v1.AgentExecution.Spec.Limits
-	(*AgentExecution_Status_ToolUse)(nil),              // 101: gitpod.v1.AgentExecution.Status.ToolUse
-	(*AgentExecution_Status_LLM)(nil),                  // 102: gitpod.v1.AgentExecution.Status.LLM
-	(*AgentExecution_Status_CurrentOperation)(nil),     // 103: gitpod.v1.AgentExecution.Status.CurrentOperation
-	(*AgentExecution_Status_EnvironmentUsage)(nil),     // 104: gitpod.v1.AgentExecution.Status.EnvironmentUsage
-	(*AgentExecution_Status_ConversationURLs)(nil),     // 105: gitpod.v1.AgentExecution.Status.ConversationURLs
-	(*AgentExecution_Status_Subagent)(nil),             // 106: gitpod.v1.AgentExecution.Status.Subagent
-	(*AgentExecution_Status_OutputValue)(nil),          // 107: gitpod.v1.AgentExecution.Status.OutputValue
-	(*AgentExecution_Status_LLMCapabilities)(nil),      // 108: gitpod.v1.AgentExecution.Status.LLMCapabilities
-	(*AgentExecution_Status_MCPIntegrationStatus)(nil), // 109: gitpod.v1.AgentExecution.Status.MCPIntegrationStatus
-	nil,                                // 110: gitpod.v1.AgentExecution.Status.OutputsEntry
-	(*AgentExecution_Status_Goal)(nil), // 111: gitpod.v1.AgentExecution.Status.Goal
-	(*AgentExecution_WaitingInfo_TimerInterest)(nil),               // 112: gitpod.v1.AgentExecution.WaitingInfo.TimerInterest
-	(*AgentExecution_WaitingInfo_SubAgentInterest)(nil),            // 113: gitpod.v1.AgentExecution.WaitingInfo.SubAgentInterest
-	(*AgentExecution_WaitingInfo_UserMessageInterest)(nil),         // 114: gitpod.v1.AgentExecution.WaitingInfo.UserMessageInterest
-	(*AgentExecution_WaitingInfo_EnvironmentInterest)(nil),         // 115: gitpod.v1.AgentExecution.WaitingInfo.EnvironmentInterest
-	(*AgentExecution_WaitingInfo_DevcontainerRebuildInterest)(nil), // 116: gitpod.v1.AgentExecution.WaitingInfo.DevcontainerRebuildInterest
-	(*AgentExecution_WaitingInfo_Interest)(nil),                    // 117: gitpod.v1.AgentExecution.WaitingInfo.Interest
-	(*ClarifyingQuestions_Choice)(nil),                             // 118: gitpod.v1.ClarifyingQuestions.Choice
-	(*ClarifyingQuestions_Question)(nil),                           // 119: gitpod.v1.ClarifyingQuestions.Question
-	(*NextStepsProposal_Action)(nil),                               // 120: gitpod.v1.NextStepsProposal.Action
-	(*AgentResponseBlock_TextOutput)(nil),                          // 121: gitpod.v1.AgentResponseBlock.TextOutput
-	(*AgentResponseBlock_ActionStarted)(nil),                       // 122: gitpod.v1.AgentResponseBlock.ActionStarted
-	(*AgentResponseBlock_ActionCompleted)(nil),                     // 123: gitpod.v1.AgentResponseBlock.ActionCompleted
-	(*AgentResponseBlock_FileModification)(nil),                    // 124: gitpod.v1.AgentResponseBlock.FileModification
-	(*AgentResponseBlock_EnvironmentCreation)(nil),                 // 125: gitpod.v1.AgentResponseBlock.EnvironmentCreation
-	(*AgentResponseBlock_HostAuthenticationRequired)(nil),          // 126: gitpod.v1.AgentResponseBlock.HostAuthenticationRequired
-	(*AgentResponseBlock_CodeAnnotation)(nil),                      // 127: gitpod.v1.AgentResponseBlock.CodeAnnotation
-	(*AgentResponseBlock_TodoGroup)(nil),                           // 128: gitpod.v1.AgentResponseBlock.TodoGroup
-	(*AgentResponseBlock_TodoItem)(nil),                            // 129: gitpod.v1.AgentResponseBlock.TodoItem
-	(*AgentResponseBlock_Thought)(nil),                             // 130: gitpod.v1.AgentResponseBlock.Thought
-	(*AgentResponseBlock_UserInputBlockSeen)(nil),                  // 131: gitpod.v1.AgentResponseBlock.UserInputBlockSeen
-	(*AgentResponseBlock_UserInputBlockDeleted)(nil),               // 132: gitpod.v1.AgentResponseBlock.UserInputBlockDeleted
-	(*AgentResponseBlock_AgentModeChange)(nil),                     // 133: gitpod.v1.AgentResponseBlock.AgentModeChange
-	(*AgentResponseBlock_AvailableCommand)(nil),                    // 134: gitpod.v1.AgentResponseBlock.AvailableCommand
-	(*AgentResponseBlock_AvailableCommands)(nil),                   // 135: gitpod.v1.AgentResponseBlock.AvailableCommands
-	(*AgentResponseBlock_UserInputQueueUpdated)(nil),               // 136: gitpod.v1.AgentResponseBlock.UserInputQueueUpdated
-	(*AgentResponseBlock_FileModification_DiffGroup)(nil),          // 137: gitpod.v1.AgentResponseBlock.FileModification.DiffGroup
-	(*AgentResponseBlock_FileModification_DiffStats)(nil),          // 138: gitpod.v1.AgentResponseBlock.FileModification.DiffStats
-	(*AgentResponseBlock_FileModification_Diff)(nil),               // 139: gitpod.v1.AgentResponseBlock.FileModification.Diff
-	(*UserInputBlock_TextInput)(nil),                               // 140: gitpod.v1.UserInputBlock.TextInput
-	(*UserInputBlock_ImageInput)(nil),                              // 141: gitpod.v1.UserInputBlock.ImageInput
-	(*UserInputBlock_Input)(nil),                                   // 142: gitpod.v1.UserInputBlock.Input
-	(*WakeEvent_TimerFired)(nil),                                   // 143: gitpod.v1.WakeEvent.TimerFired
-	(*WakeEvent_LoopRetrigger)(nil),                                // 144: gitpod.v1.WakeEvent.LoopRetrigger
-	(*WakeEvent_EnvironmentPhaseReached)(nil),                      // 145: gitpod.v1.WakeEvent.EnvironmentPhaseReached
-	(*WakeEvent_DevcontainerPhaseReached)(nil),                     // 146: gitpod.v1.WakeEvent.DevcontainerPhaseReached
-	(*WakeEvent_LoopRetrigger_UnmetCondition)(nil),                 // 147: gitpod.v1.WakeEvent.LoopRetrigger.UnmetCondition
-	nil,                               // 148: gitpod.v1.WakeEvent.LoopRetrigger.OutputsEntry
-	(*AgentControlInput_Compact)(nil), // 149: gitpod.v1.AgentControlInput.Compact
-	(*AgentControlInput_DeleteQueuedMessage)(nil), // 150: gitpod.v1.AgentControlInput.DeleteQueuedMessage
-	(*AgentControlInput_Goal)(nil),                // 151: gitpod.v1.AgentControlInput.Goal
-	(*AgentControlInput_SteerQueuedMessage)(nil),  // 152: gitpod.v1.AgentControlInput.SteerQueuedMessage
-	(*AgentControlInput_MoveQueuedMessage)(nil),   // 153: gitpod.v1.AgentControlInput.MoveQueuedMessage
-	(*AgentControlInput_Goal_Pause)(nil),          // 154: gitpod.v1.AgentControlInput.Goal.Pause
-	(*AgentControlInput_Goal_Resume)(nil),         // 155: gitpod.v1.AgentControlInput.Goal.Resume
-	(*AgentControlInput_Goal_Complete)(nil),       // 156: gitpod.v1.AgentControlInput.Goal.Complete
-	(*AgentControlInput_Goal_Clear)(nil),          // 157: gitpod.v1.AgentControlInput.Goal.Clear
-	(*AgentControlInput_Goal_Set)(nil),            // 158: gitpod.v1.AgentControlInput.Goal.Set
-	(*RunnerSideAgentSpec_Prompts)(nil),           // 159: gitpod.v1.RunnerSideAgentSpec.Prompts
-	(*UpdateAgentRequest_Metadata)(nil),           // 160: gitpod.v1.UpdateAgentRequest.Metadata
-	(*UpdateAgentRequest_Spec)(nil),               // 161: gitpod.v1.UpdateAgentRequest.Spec
-	(*UpdateAgentExecutionRequest_Metadata)(nil),  // 162: gitpod.v1.UpdateAgentExecutionRequest.Metadata
-	nil,                                  // 163: gitpod.v1.UpdateAgentExecutionRequest.Metadata.AnnotationsEntry
-	nil,                                  // 164: gitpod.v1.ReportAgentExecutionOutputsRequest.OutputsEntry
-	(*ListPromptsRequest_Filter)(nil),    // 165: gitpod.v1.ListPromptsRequest.Filter
-	(*UpdatePromptRequest_Metadata)(nil), // 166: gitpod.v1.UpdatePromptRequest.Metadata
-	(*UpdatePromptRequest_Spec)(nil),     // 167: gitpod.v1.UpdatePromptRequest.Spec
-	(*PaginationRequest)(nil),            // 168: gitpod.v1.PaginationRequest
-	(*PaginationResponse)(nil),           // 169: gitpod.v1.PaginationResponse
-	(*timestamppb.Timestamp)(nil),        // 170: google.protobuf.Timestamp
-	(SupportedModel)(0),                  // 171: gitpod.v1.SupportedModel
-	(*ServiceSpec)(nil),                  // 172: gitpod.v1.ServiceSpec
-	(*ServiceMetadata)(nil),              // 173: gitpod.v1.ServiceMetadata
-	(*Subject)(nil),                      // 174: gitpod.v1.Subject
-	(*durationpb.Duration)(nil),          // 175: google.protobuf.Duration
+	(*AgentCodeContext)(nil),                                // 22: gitpod.v1.AgentCodeContext
+	(*StartAgentRequest)(nil),                               // 23: gitpod.v1.StartAgentRequest
+	(*StartAgentResponse)(nil),                              // 24: gitpod.v1.StartAgentResponse
+	(*ListAgentExecutionsRequest)(nil),                      // 25: gitpod.v1.ListAgentExecutionsRequest
+	(*ListAgentExecutionsResponse)(nil),                     // 26: gitpod.v1.ListAgentExecutionsResponse
+	(*GetAgentExecutionRequest)(nil),                        // 27: gitpod.v1.GetAgentExecutionRequest
+	(*GetAgentExecutionResponse)(nil),                       // 28: gitpod.v1.GetAgentExecutionResponse
+	(*DeleteAgentExecutionRequest)(nil),                     // 29: gitpod.v1.DeleteAgentExecutionRequest
+	(*DeleteAgentExecutionResponse)(nil),                    // 30: gitpod.v1.DeleteAgentExecutionResponse
+	(*AgentExecution)(nil),                                  // 31: gitpod.v1.AgentExecution
+	(*ClarifyingQuestions)(nil),                             // 32: gitpod.v1.ClarifyingQuestions
+	(*NextStepsProposal)(nil),                               // 33: gitpod.v1.NextStepsProposal
+	(*AgentResponseBlock)(nil),                              // 34: gitpod.v1.AgentResponseBlock
+	(*UserInputBlock)(nil),                                  // 35: gitpod.v1.UserInputBlock
+	(*UserInputMetadata)(nil),                               // 36: gitpod.v1.UserInputMetadata
+	(*AgentMessage)(nil),                                    // 37: gitpod.v1.AgentMessage
+	(*WakeEvent)(nil),                                       // 38: gitpod.v1.WakeEvent
+	(*SendToAgentExecutionRequest)(nil),                     // 39: gitpod.v1.SendToAgentExecutionRequest
+	(*SendToAgentExecutionResponse)(nil),                    // 40: gitpod.v1.SendToAgentExecutionResponse
+	(*TurnOptions)(nil),                                     // 41: gitpod.v1.TurnOptions
+	(*AgentControlInput)(nil),                               // 42: gitpod.v1.AgentControlInput
+	(*PromptValidationErrorDetails)(nil),                    // 43: gitpod.v1.PromptValidationErrorDetails
+	(*CreateAgentExecutionConversationTokenRequest)(nil),    // 44: gitpod.v1.CreateAgentExecutionConversationTokenRequest
+	(*CreateAgentExecutionConversationTokenResponse)(nil),   // 45: gitpod.v1.CreateAgentExecutionConversationTokenResponse
+	(*CreateAgentExecutionTranscriptTokenRequest)(nil),      // 46: gitpod.v1.CreateAgentExecutionTranscriptTokenRequest
+	(*CreateAgentExecutionTranscriptTokenResponse)(nil),     // 47: gitpod.v1.CreateAgentExecutionTranscriptTokenResponse
+	(*RunnerSideAgentSpec)(nil),                             // 48: gitpod.v1.RunnerSideAgentSpec
+	(*InEnvironmentAgentSpec)(nil),                          // 49: gitpod.v1.InEnvironmentAgentSpec
+	(*StopAgentExecutionRequest)(nil),                       // 50: gitpod.v1.StopAgentExecutionRequest
+	(*StopAgentExecutionResponse)(nil),                      // 51: gitpod.v1.StopAgentExecutionResponse
+	(*MCPIntegration)(nil),                                  // 52: gitpod.v1.MCPIntegration
+	(*Prompt)(nil),                                          // 53: gitpod.v1.Prompt
+	(*PromptMetadata)(nil),                                  // 54: gitpod.v1.PromptMetadata
+	(*PromptSpec)(nil),                                      // 55: gitpod.v1.PromptSpec
+	(*ListPromptsRequest)(nil),                              // 56: gitpod.v1.ListPromptsRequest
+	(*ListPromptsResponse)(nil),                             // 57: gitpod.v1.ListPromptsResponse
+	(*GetPromptRequest)(nil),                                // 58: gitpod.v1.GetPromptRequest
+	(*GetPromptResponse)(nil),                               // 59: gitpod.v1.GetPromptResponse
+	(*CreatePromptRequest)(nil),                             // 60: gitpod.v1.CreatePromptRequest
+	(*CreatePromptResponse)(nil),                            // 61: gitpod.v1.CreatePromptResponse
+	(*UpdatePromptRequest)(nil),                             // 62: gitpod.v1.UpdatePromptRequest
+	(*UpdatePromptResponse)(nil),                            // 63: gitpod.v1.UpdatePromptResponse
+	(*DeletePromptRequest)(nil),                             // 64: gitpod.v1.DeletePromptRequest
+	(*DeletePromptResponse)(nil),                            // 65: gitpod.v1.DeletePromptResponse
+	(*PullRequest_Repository)(nil),                          // 66: gitpod.v1.PullRequest.Repository
+	(*AgentCodeContext_ContextURL)(nil),                     // 67: gitpod.v1.AgentCodeContext.ContextURL
+	nil,                                                     // 68: gitpod.v1.StartAgentRequest.AnnotationsEntry
+	(*ListAgentExecutionsRequest_Filter)(nil),               // 69: gitpod.v1.ListAgentExecutionsRequest.Filter
+	nil,                                                // 70: gitpod.v1.ListAgentExecutionsRequest.Filter.AnnotationsEntry
+	(*AgentExecution_Metadata)(nil),                    // 71: gitpod.v1.AgentExecution.Metadata
+	(*AgentExecution_Spec)(nil),                        // 72: gitpod.v1.AgentExecution.Spec
+	(*AgentExecution_Status)(nil),                      // 73: gitpod.v1.AgentExecution.Status
+	(*AgentExecution_WaitingInfo)(nil),                 // 74: gitpod.v1.AgentExecution.WaitingInfo
+	nil,                                                // 75: gitpod.v1.AgentExecution.Metadata.AnnotationsEntry
+	(*AgentExecution_Spec_Limits)(nil),                 // 76: gitpod.v1.AgentExecution.Spec.Limits
+	(*AgentExecution_Status_ToolUse)(nil),              // 77: gitpod.v1.AgentExecution.Status.ToolUse
+	(*AgentExecution_Status_LLM)(nil),                  // 78: gitpod.v1.AgentExecution.Status.LLM
+	(*AgentExecution_Status_CurrentOperation)(nil),     // 79: gitpod.v1.AgentExecution.Status.CurrentOperation
+	(*AgentExecution_Status_EnvironmentUsage)(nil),     // 80: gitpod.v1.AgentExecution.Status.EnvironmentUsage
+	(*AgentExecution_Status_ConversationURLs)(nil),     // 81: gitpod.v1.AgentExecution.Status.ConversationURLs
+	(*AgentExecution_Status_Subagent)(nil),             // 82: gitpod.v1.AgentExecution.Status.Subagent
+	(*AgentExecution_Status_OutputValue)(nil),          // 83: gitpod.v1.AgentExecution.Status.OutputValue
+	(*AgentExecution_Status_LLMCapabilities)(nil),      // 84: gitpod.v1.AgentExecution.Status.LLMCapabilities
+	(*AgentExecution_Status_MCPIntegrationStatus)(nil), // 85: gitpod.v1.AgentExecution.Status.MCPIntegrationStatus
+	nil,                                // 86: gitpod.v1.AgentExecution.Status.OutputsEntry
+	(*AgentExecution_Status_Goal)(nil), // 87: gitpod.v1.AgentExecution.Status.Goal
+	(*AgentExecution_WaitingInfo_TimerInterest)(nil),               // 88: gitpod.v1.AgentExecution.WaitingInfo.TimerInterest
+	(*AgentExecution_WaitingInfo_SubAgentInterest)(nil),            // 89: gitpod.v1.AgentExecution.WaitingInfo.SubAgentInterest
+	(*AgentExecution_WaitingInfo_UserMessageInterest)(nil),         // 90: gitpod.v1.AgentExecution.WaitingInfo.UserMessageInterest
+	(*AgentExecution_WaitingInfo_EnvironmentInterest)(nil),         // 91: gitpod.v1.AgentExecution.WaitingInfo.EnvironmentInterest
+	(*AgentExecution_WaitingInfo_DevcontainerRebuildInterest)(nil), // 92: gitpod.v1.AgentExecution.WaitingInfo.DevcontainerRebuildInterest
+	(*AgentExecution_WaitingInfo_Interest)(nil),                    // 93: gitpod.v1.AgentExecution.WaitingInfo.Interest
+	(*ClarifyingQuestions_Choice)(nil),                             // 94: gitpod.v1.ClarifyingQuestions.Choice
+	(*ClarifyingQuestions_Question)(nil),                           // 95: gitpod.v1.ClarifyingQuestions.Question
+	(*NextStepsProposal_Action)(nil),                               // 96: gitpod.v1.NextStepsProposal.Action
+	(*AgentResponseBlock_TextOutput)(nil),                          // 97: gitpod.v1.AgentResponseBlock.TextOutput
+	(*AgentResponseBlock_ActionStarted)(nil),                       // 98: gitpod.v1.AgentResponseBlock.ActionStarted
+	(*AgentResponseBlock_ActionCompleted)(nil),                     // 99: gitpod.v1.AgentResponseBlock.ActionCompleted
+	(*AgentResponseBlock_FileModification)(nil),                    // 100: gitpod.v1.AgentResponseBlock.FileModification
+	(*AgentResponseBlock_EnvironmentCreation)(nil),                 // 101: gitpod.v1.AgentResponseBlock.EnvironmentCreation
+	(*AgentResponseBlock_HostAuthenticationRequired)(nil),          // 102: gitpod.v1.AgentResponseBlock.HostAuthenticationRequired
+	(*AgentResponseBlock_CodeAnnotation)(nil),                      // 103: gitpod.v1.AgentResponseBlock.CodeAnnotation
+	(*AgentResponseBlock_TodoGroup)(nil),                           // 104: gitpod.v1.AgentResponseBlock.TodoGroup
+	(*AgentResponseBlock_TodoItem)(nil),                            // 105: gitpod.v1.AgentResponseBlock.TodoItem
+	(*AgentResponseBlock_Thought)(nil),                             // 106: gitpod.v1.AgentResponseBlock.Thought
+	(*AgentResponseBlock_UserInputBlockSeen)(nil),                  // 107: gitpod.v1.AgentResponseBlock.UserInputBlockSeen
+	(*AgentResponseBlock_UserInputBlockDeleted)(nil),               // 108: gitpod.v1.AgentResponseBlock.UserInputBlockDeleted
+	(*AgentResponseBlock_AgentModeChange)(nil),                     // 109: gitpod.v1.AgentResponseBlock.AgentModeChange
+	(*AgentResponseBlock_AvailableCommand)(nil),                    // 110: gitpod.v1.AgentResponseBlock.AvailableCommand
+	(*AgentResponseBlock_AvailableCommands)(nil),                   // 111: gitpod.v1.AgentResponseBlock.AvailableCommands
+	(*AgentResponseBlock_UserInputQueueUpdated)(nil),               // 112: gitpod.v1.AgentResponseBlock.UserInputQueueUpdated
+	(*AgentResponseBlock_FileModification_DiffGroup)(nil),          // 113: gitpod.v1.AgentResponseBlock.FileModification.DiffGroup
+	(*AgentResponseBlock_FileModification_DiffStats)(nil),          // 114: gitpod.v1.AgentResponseBlock.FileModification.DiffStats
+	(*AgentResponseBlock_FileModification_Diff)(nil),               // 115: gitpod.v1.AgentResponseBlock.FileModification.Diff
+	(*UserInputBlock_TextInput)(nil),                               // 116: gitpod.v1.UserInputBlock.TextInput
+	(*UserInputBlock_ImageInput)(nil),                              // 117: gitpod.v1.UserInputBlock.ImageInput
+	(*UserInputBlock_Input)(nil),                                   // 118: gitpod.v1.UserInputBlock.Input
+	(*WakeEvent_TimerFired)(nil),                                   // 119: gitpod.v1.WakeEvent.TimerFired
+	(*WakeEvent_LoopRetrigger)(nil),                                // 120: gitpod.v1.WakeEvent.LoopRetrigger
+	(*WakeEvent_EnvironmentPhaseReached)(nil),                      // 121: gitpod.v1.WakeEvent.EnvironmentPhaseReached
+	(*WakeEvent_DevcontainerPhaseReached)(nil),                     // 122: gitpod.v1.WakeEvent.DevcontainerPhaseReached
+	(*WakeEvent_LoopRetrigger_UnmetCondition)(nil),                 // 123: gitpod.v1.WakeEvent.LoopRetrigger.UnmetCondition
+	nil,                               // 124: gitpod.v1.WakeEvent.LoopRetrigger.OutputsEntry
+	(*AgentControlInput_Compact)(nil), // 125: gitpod.v1.AgentControlInput.Compact
+	(*AgentControlInput_DeleteQueuedMessage)(nil), // 126: gitpod.v1.AgentControlInput.DeleteQueuedMessage
+	(*AgentControlInput_Goal)(nil),                // 127: gitpod.v1.AgentControlInput.Goal
+	(*AgentControlInput_SteerQueuedMessage)(nil),  // 128: gitpod.v1.AgentControlInput.SteerQueuedMessage
+	(*AgentControlInput_MoveQueuedMessage)(nil),   // 129: gitpod.v1.AgentControlInput.MoveQueuedMessage
+	(*AgentControlInput_Goal_Pause)(nil),          // 130: gitpod.v1.AgentControlInput.Goal.Pause
+	(*AgentControlInput_Goal_Resume)(nil),         // 131: gitpod.v1.AgentControlInput.Goal.Resume
+	(*AgentControlInput_Goal_Complete)(nil),       // 132: gitpod.v1.AgentControlInput.Goal.Complete
+	(*AgentControlInput_Goal_Clear)(nil),          // 133: gitpod.v1.AgentControlInput.Goal.Clear
+	(*AgentControlInput_Goal_Set)(nil),            // 134: gitpod.v1.AgentControlInput.Goal.Set
+	(*RunnerSideAgentSpec_Prompts)(nil),           // 135: gitpod.v1.RunnerSideAgentSpec.Prompts
+	(*ListPromptsRequest_Filter)(nil),             // 136: gitpod.v1.ListPromptsRequest.Filter
+	(*UpdatePromptRequest_Metadata)(nil),          // 137: gitpod.v1.UpdatePromptRequest.Metadata
+	(*UpdatePromptRequest_Spec)(nil),              // 138: gitpod.v1.UpdatePromptRequest.Spec
+	(*PaginationRequest)(nil),                     // 139: gitpod.v1.PaginationRequest
+	(*PaginationResponse)(nil),                    // 140: gitpod.v1.PaginationResponse
+	(*timestamppb.Timestamp)(nil),                 // 141: google.protobuf.Timestamp
+	(SupportedModel)(0),                           // 142: gitpod.v1.SupportedModel
+	(*ServiceSpec)(nil),                           // 143: gitpod.v1.ServiceSpec
+	(*ServiceMetadata)(nil),                       // 144: gitpod.v1.ServiceMetadata
+	(*Subject)(nil),                               // 145: gitpod.v1.Subject
+	(*durationpb.Duration)(nil),                   // 146: google.protobuf.Duration
 }
 var file_gitpod_v1_agent_proto_depIdxs = []int32{
-	90,  // 0: gitpod.v1.PullRequest.repository:type_name -> gitpod.v1.PullRequest.Repository
+	66,  // 0: gitpod.v1.PullRequest.repository:type_name -> gitpod.v1.PullRequest.Repository
 	8,   // 1: gitpod.v1.PullRequest.state:type_name -> gitpod.v1.PullRequest.State
 	1,   // 2: gitpod.v1.CodexSettings.model:type_name -> gitpod.v1.CodexOpenAIModel
 	2,   // 3: gitpod.v1.CodexSettings.reasoning_effort:type_name -> gitpod.v1.CodexReasoningEffort
 	3,   // 4: gitpod.v1.CodexSettings.service_tier:type_name -> gitpod.v1.CodexServiceTier
 	21,  // 5: gitpod.v1.Agent.metadata:type_name -> gitpod.v1.AgentMetadata
-	52,  // 6: gitpod.v1.Agent.spec:type_name -> gitpod.v1.RunnerSideAgentSpec
-	52,  // 7: gitpod.v1.Agent.runner_side:type_name -> gitpod.v1.RunnerSideAgentSpec
-	53,  // 8: gitpod.v1.Agent.in_environment:type_name -> gitpod.v1.InEnvironmentAgentSpec
-	168, // 9: gitpod.v1.ListAgentsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	169, // 10: gitpod.v1.ListAgentsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	20,  // 11: gitpod.v1.ListAgentsResponse.agents:type_name -> gitpod.v1.Agent
-	20,  // 12: gitpod.v1.GetAgentResponse.agent:type_name -> gitpod.v1.Agent
-	91,  // 13: gitpod.v1.AgentCodeContext.context_url:type_name -> gitpod.v1.AgentCodeContext.ContextURL
-	18,  // 14: gitpod.v1.AgentCodeContext.pull_request:type_name -> gitpod.v1.PullRequest
-	26,  // 15: gitpod.v1.StartAgentRequest.code_context:type_name -> gitpod.v1.AgentCodeContext
-	0,   // 16: gitpod.v1.StartAgentRequest.mode:type_name -> gitpod.v1.AgentMode
-	92,  // 17: gitpod.v1.StartAgentRequest.annotations:type_name -> gitpod.v1.StartAgentRequest.AnnotationsEntry
-	19,  // 18: gitpod.v1.StartAgentRequest.codex_settings:type_name -> gitpod.v1.CodexSettings
-	45,  // 19: gitpod.v1.StartAgentRequest.turn_options:type_name -> gitpod.v1.TurnOptions
-	168, // 20: gitpod.v1.ListAgentExecutionsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	93,  // 21: gitpod.v1.ListAgentExecutionsRequest.filter:type_name -> gitpod.v1.ListAgentExecutionsRequest.Filter
-	169, // 22: gitpod.v1.ListAgentExecutionsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	35,  // 23: gitpod.v1.ListAgentExecutionsResponse.agent_executions:type_name -> gitpod.v1.AgentExecution
-	35,  // 24: gitpod.v1.GetAgentExecutionResponse.agent_execution:type_name -> gitpod.v1.AgentExecution
-	95,  // 25: gitpod.v1.AgentExecution.metadata:type_name -> gitpod.v1.AgentExecution.Metadata
-	96,  // 26: gitpod.v1.AgentExecution.spec:type_name -> gitpod.v1.AgentExecution.Spec
-	97,  // 27: gitpod.v1.AgentExecution.status:type_name -> gitpod.v1.AgentExecution.Status
-	119, // 28: gitpod.v1.ClarifyingQuestions.questions:type_name -> gitpod.v1.ClarifyingQuestions.Question
-	120, // 29: gitpod.v1.NextStepsProposal.actions:type_name -> gitpod.v1.NextStepsProposal.Action
-	11,  // 30: gitpod.v1.AgentResponseBlock.phase:type_name -> gitpod.v1.AgentResponseBlock.Phase
-	131, // 31: gitpod.v1.AgentResponseBlock.user_input_seen:type_name -> gitpod.v1.AgentResponseBlock.UserInputBlockSeen
-	39,  // 32: gitpod.v1.AgentResponseBlock.user_input:type_name -> gitpod.v1.UserInputBlock
-	132, // 33: gitpod.v1.AgentResponseBlock.user_input_deleted:type_name -> gitpod.v1.AgentResponseBlock.UserInputBlockDeleted
-	136, // 34: gitpod.v1.AgentResponseBlock.user_input_queue_updated:type_name -> gitpod.v1.AgentResponseBlock.UserInputQueueUpdated
-	121, // 35: gitpod.v1.AgentResponseBlock.text:type_name -> gitpod.v1.AgentResponseBlock.TextOutput
-	122, // 36: gitpod.v1.AgentResponseBlock.action_started:type_name -> gitpod.v1.AgentResponseBlock.ActionStarted
-	123, // 37: gitpod.v1.AgentResponseBlock.action_completed:type_name -> gitpod.v1.AgentResponseBlock.ActionCompleted
-	124, // 38: gitpod.v1.AgentResponseBlock.file_modification:type_name -> gitpod.v1.AgentResponseBlock.FileModification
-	125, // 39: gitpod.v1.AgentResponseBlock.environment_creation:type_name -> gitpod.v1.AgentResponseBlock.EnvironmentCreation
-	127, // 40: gitpod.v1.AgentResponseBlock.code_annotation:type_name -> gitpod.v1.AgentResponseBlock.CodeAnnotation
-	126, // 41: gitpod.v1.AgentResponseBlock.host_authentication_required:type_name -> gitpod.v1.AgentResponseBlock.HostAuthenticationRequired
-	128, // 42: gitpod.v1.AgentResponseBlock.todo_group:type_name -> gitpod.v1.AgentResponseBlock.TodoGroup
-	129, // 43: gitpod.v1.AgentResponseBlock.todo_item:type_name -> gitpod.v1.AgentResponseBlock.TodoItem
-	130, // 44: gitpod.v1.AgentResponseBlock.thought:type_name -> gitpod.v1.AgentResponseBlock.Thought
-	133, // 45: gitpod.v1.AgentResponseBlock.agent_mode_change:type_name -> gitpod.v1.AgentResponseBlock.AgentModeChange
-	36,  // 46: gitpod.v1.AgentResponseBlock.clarifying_questions:type_name -> gitpod.v1.ClarifyingQuestions
-	37,  // 47: gitpod.v1.AgentResponseBlock.next_steps_proposal:type_name -> gitpod.v1.NextStepsProposal
-	135, // 48: gitpod.v1.AgentResponseBlock.available_commands:type_name -> gitpod.v1.AgentResponseBlock.AvailableCommands
-	170, // 49: gitpod.v1.AgentResponseBlock.created_at:type_name -> google.protobuf.Timestamp
-	140, // 50: gitpod.v1.UserInputBlock.text:type_name -> gitpod.v1.UserInputBlock.TextInput
-	141, // 51: gitpod.v1.UserInputBlock.image:type_name -> gitpod.v1.UserInputBlock.ImageInput
-	142, // 52: gitpod.v1.UserInputBlock.inputs:type_name -> gitpod.v1.UserInputBlock.Input
-	170, // 53: gitpod.v1.UserInputBlock.created_at:type_name -> google.protobuf.Timestamp
-	40,  // 54: gitpod.v1.UserInputBlock.metadata:type_name -> gitpod.v1.UserInputMetadata
-	0,   // 55: gitpod.v1.UserInputMetadata.modes:type_name -> gitpod.v1.AgentMode
-	16,  // 56: gitpod.v1.AgentMessage.type:type_name -> gitpod.v1.AgentMessage.Type
-	17,  // 57: gitpod.v1.AgentMessage.role:type_name -> gitpod.v1.AgentMessage.Role
-	143, // 58: gitpod.v1.WakeEvent.timer:type_name -> gitpod.v1.WakeEvent.TimerFired
-	144, // 59: gitpod.v1.WakeEvent.loop_retrigger:type_name -> gitpod.v1.WakeEvent.LoopRetrigger
-	145, // 60: gitpod.v1.WakeEvent.environment:type_name -> gitpod.v1.WakeEvent.EnvironmentPhaseReached
-	146, // 61: gitpod.v1.WakeEvent.devcontainer_rebuild:type_name -> gitpod.v1.WakeEvent.DevcontainerPhaseReached
-	39,  // 62: gitpod.v1.SendToAgentExecutionRequest.user_input:type_name -> gitpod.v1.UserInputBlock
-	41,  // 63: gitpod.v1.SendToAgentExecutionRequest.agent_message:type_name -> gitpod.v1.AgentMessage
-	42,  // 64: gitpod.v1.SendToAgentExecutionRequest.wake_event:type_name -> gitpod.v1.WakeEvent
-	46,  // 65: gitpod.v1.SendToAgentExecutionRequest.control_input:type_name -> gitpod.v1.AgentControlInput
-	19,  // 66: gitpod.v1.SendToAgentExecutionRequest.codex_settings:type_name -> gitpod.v1.CodexSettings
-	45,  // 67: gitpod.v1.SendToAgentExecutionRequest.turn_options:type_name -> gitpod.v1.TurnOptions
-	0,   // 68: gitpod.v1.TurnOptions.modes:type_name -> gitpod.v1.AgentMode
-	149, // 69: gitpod.v1.AgentControlInput.compact:type_name -> gitpod.v1.AgentControlInput.Compact
-	151, // 70: gitpod.v1.AgentControlInput.goal:type_name -> gitpod.v1.AgentControlInput.Goal
-	150, // 71: gitpod.v1.AgentControlInput.delete_queued_message:type_name -> gitpod.v1.AgentControlInput.DeleteQueuedMessage
-	152, // 72: gitpod.v1.AgentControlInput.steer_queued_message:type_name -> gitpod.v1.AgentControlInput.SteerQueuedMessage
-	153, // 73: gitpod.v1.AgentControlInput.move_queued_message:type_name -> gitpod.v1.AgentControlInput.MoveQueuedMessage
-	159, // 74: gitpod.v1.RunnerSideAgentSpec.prompts:type_name -> gitpod.v1.RunnerSideAgentSpec.Prompts
-	171, // 75: gitpod.v1.RunnerSideAgentSpec.preferred_models:type_name -> gitpod.v1.SupportedModel
-	172, // 76: gitpod.v1.InEnvironmentAgentSpec.service:type_name -> gitpod.v1.ServiceSpec
-	171, // 77: gitpod.v1.InEnvironmentAgentSpec.required_models:type_name -> gitpod.v1.SupportedModel
-	173, // 78: gitpod.v1.InEnvironmentAgentSpec.service_metadata:type_name -> gitpod.v1.ServiceMetadata
-	52,  // 79: gitpod.v1.CreateAgentRequest.runner_side:type_name -> gitpod.v1.RunnerSideAgentSpec
-	53,  // 80: gitpod.v1.CreateAgentRequest.in_environment:type_name -> gitpod.v1.InEnvironmentAgentSpec
-	20,  // 81: gitpod.v1.CreateAgentResponse.agent:type_name -> gitpod.v1.Agent
-	160, // 82: gitpod.v1.UpdateAgentRequest.metadata:type_name -> gitpod.v1.UpdateAgentRequest.Metadata
-	161, // 83: gitpod.v1.UpdateAgentRequest.spec:type_name -> gitpod.v1.UpdateAgentRequest.Spec
-	20,  // 84: gitpod.v1.UpdateAgentResponse.agent:type_name -> gitpod.v1.Agent
-	162, // 85: gitpod.v1.UpdateAgentExecutionRequest.metadata:type_name -> gitpod.v1.UpdateAgentExecutionRequest.Metadata
-	35,  // 86: gitpod.v1.UpdateAgentExecutionResponse.agent_execution:type_name -> gitpod.v1.AgentExecution
-	164, // 87: gitpod.v1.ReportAgentExecutionOutputsRequest.outputs:type_name -> gitpod.v1.ReportAgentExecutionOutputsRequest.OutputsEntry
-	35,  // 88: gitpod.v1.ReportAgentExecutionOutputsResponse.agent_execution:type_name -> gitpod.v1.AgentExecution
-	38,  // 89: gitpod.v1.EmitAgentSessionActivityRequest.response_block:type_name -> gitpod.v1.AgentResponseBlock
-	97,  // 90: gitpod.v1.EmitAgentSessionActivityRequest.status:type_name -> gitpod.v1.AgentExecution.Status
-	37,  // 91: gitpod.v1.EmitAgentSessionActivityRequest.next_steps_proposal:type_name -> gitpod.v1.NextStepsProposal
-	171, // 92: gitpod.v1.CreateLLMAccessTokenRequest.required_models:type_name -> gitpod.v1.SupportedModel
-	4,   // 93: gitpod.v1.CreateLLMAccessTokenResponse.disabled_capabilities:type_name -> gitpod.v1.LLMDisabledCapability
-	168, // 94: gitpod.v1.ListMCPIntegrationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	169, // 95: gitpod.v1.ListMCPIntegrationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	72,  // 96: gitpod.v1.ListMCPIntegrationsResponse.mcp_integrations:type_name -> gitpod.v1.MCPIntegration
-	78,  // 97: gitpod.v1.Prompt.metadata:type_name -> gitpod.v1.PromptMetadata
-	79,  // 98: gitpod.v1.Prompt.spec:type_name -> gitpod.v1.PromptSpec
-	174, // 99: gitpod.v1.PromptMetadata.creator:type_name -> gitpod.v1.Subject
-	170, // 100: gitpod.v1.PromptMetadata.created_at:type_name -> google.protobuf.Timestamp
-	170, // 101: gitpod.v1.PromptMetadata.updated_at:type_name -> google.protobuf.Timestamp
-	168, // 102: gitpod.v1.ListPromptsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	165, // 103: gitpod.v1.ListPromptsRequest.filter:type_name -> gitpod.v1.ListPromptsRequest.Filter
-	169, // 104: gitpod.v1.ListPromptsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	77,  // 105: gitpod.v1.ListPromptsResponse.prompts:type_name -> gitpod.v1.Prompt
-	77,  // 106: gitpod.v1.GetPromptResponse.prompt:type_name -> gitpod.v1.Prompt
-	77,  // 107: gitpod.v1.CreatePromptResponse.prompt:type_name -> gitpod.v1.Prompt
-	166, // 108: gitpod.v1.UpdatePromptRequest.metadata:type_name -> gitpod.v1.UpdatePromptRequest.Metadata
-	167, // 109: gitpod.v1.UpdatePromptRequest.spec:type_name -> gitpod.v1.UpdatePromptRequest.Spec
-	77,  // 110: gitpod.v1.UpdatePromptResponse.prompt:type_name -> gitpod.v1.Prompt
-	9,   // 111: gitpod.v1.ListAgentExecutionsRequest.Filter.status_phases:type_name -> gitpod.v1.AgentExecution.Phase
-	6,   // 112: gitpod.v1.ListAgentExecutionsRequest.Filter.roles:type_name -> gitpod.v1.AgentExecutionRole
-	94,  // 113: gitpod.v1.ListAgentExecutionsRequest.Filter.annotations:type_name -> gitpod.v1.ListAgentExecutionsRequest.Filter.AnnotationsEntry
-	174, // 114: gitpod.v1.AgentExecution.Metadata.creator:type_name -> gitpod.v1.Subject
-	170, // 115: gitpod.v1.AgentExecution.Metadata.created_at:type_name -> google.protobuf.Timestamp
-	170, // 116: gitpod.v1.AgentExecution.Metadata.updated_at:type_name -> google.protobuf.Timestamp
-	6,   // 117: gitpod.v1.AgentExecution.Metadata.role:type_name -> gitpod.v1.AgentExecutionRole
-	99,  // 118: gitpod.v1.AgentExecution.Metadata.annotations:type_name -> gitpod.v1.AgentExecution.Metadata.AnnotationsEntry
-	9,   // 119: gitpod.v1.AgentExecution.Spec.desired_phase:type_name -> gitpod.v1.AgentExecution.Phase
-	26,  // 120: gitpod.v1.AgentExecution.Spec.code_context:type_name -> gitpod.v1.AgentCodeContext
-	100, // 121: gitpod.v1.AgentExecution.Spec.limits:type_name -> gitpod.v1.AgentExecution.Spec.Limits
-	19,  // 122: gitpod.v1.AgentExecution.Spec.codex_settings:type_name -> gitpod.v1.CodexSettings
-	9,   // 123: gitpod.v1.AgentExecution.Status.phase:type_name -> gitpod.v1.AgentExecution.Phase
-	5,   // 124: gitpod.v1.AgentExecution.Status.failure_reason:type_name -> gitpod.v1.AgentExecutionFailureReason
-	105, // 125: gitpod.v1.AgentExecution.Status.conversation_urls:type_name -> gitpod.v1.AgentExecution.Status.ConversationURLs
-	103, // 126: gitpod.v1.AgentExecution.Status.current_operation:type_name -> gitpod.v1.AgentExecution.Status.CurrentOperation
-	104, // 127: gitpod.v1.AgentExecution.Status.used_environments:type_name -> gitpod.v1.AgentExecution.Status.EnvironmentUsage
-	110, // 128: gitpod.v1.AgentExecution.Status.outputs:type_name -> gitpod.v1.AgentExecution.Status.OutputsEntry
-	171, // 129: gitpod.v1.AgentExecution.Status.supported_model:type_name -> gitpod.v1.SupportedModel
-	108, // 130: gitpod.v1.AgentExecution.Status.llm_capabilities:type_name -> gitpod.v1.AgentExecution.Status.LLMCapabilities
-	0,   // 131: gitpod.v1.AgentExecution.Status.mode:type_name -> gitpod.v1.AgentMode
-	109, // 132: gitpod.v1.AgentExecution.Status.mcp_integration_statuses:type_name -> gitpod.v1.AgentExecution.Status.MCPIntegrationStatus
-	98,  // 133: gitpod.v1.AgentExecution.Status.waiting_info:type_name -> gitpod.v1.AgentExecution.WaitingInfo
-	111, // 134: gitpod.v1.AgentExecution.Status.goal:type_name -> gitpod.v1.AgentExecution.Status.Goal
-	19,  // 135: gitpod.v1.AgentExecution.Status.codex_settings:type_name -> gitpod.v1.CodexSettings
-	106, // 136: gitpod.v1.AgentExecution.Status.subagents:type_name -> gitpod.v1.AgentExecution.Status.Subagent
-	117, // 137: gitpod.v1.AgentExecution.WaitingInfo.interests:type_name -> gitpod.v1.AgentExecution.WaitingInfo.Interest
-	170, // 138: gitpod.v1.AgentExecution.WaitingInfo.waiting_since:type_name -> google.protobuf.Timestamp
-	101, // 139: gitpod.v1.AgentExecution.Status.CurrentOperation.tool_use:type_name -> gitpod.v1.AgentExecution.Status.ToolUse
-	102, // 140: gitpod.v1.AgentExecution.Status.CurrentOperation.llm:type_name -> gitpod.v1.AgentExecution.Status.LLM
-	9,   // 141: gitpod.v1.AgentExecution.Status.Subagent.phase:type_name -> gitpod.v1.AgentExecution.Phase
-	105, // 142: gitpod.v1.AgentExecution.Status.Subagent.conversation_urls:type_name -> gitpod.v1.AgentExecution.Status.ConversationURLs
-	170, // 143: gitpod.v1.AgentExecution.Status.Subagent.created_at:type_name -> google.protobuf.Timestamp
-	170, // 144: gitpod.v1.AgentExecution.Status.Subagent.updated_at:type_name -> google.protobuf.Timestamp
-	4,   // 145: gitpod.v1.AgentExecution.Status.LLMCapabilities.disabled_capabilities:type_name -> gitpod.v1.LLMDisabledCapability
-	7,   // 146: gitpod.v1.AgentExecution.Status.MCPIntegrationStatus.phase:type_name -> gitpod.v1.MCPIntegrationPhase
-	107, // 147: gitpod.v1.AgentExecution.Status.OutputsEntry.value:type_name -> gitpod.v1.AgentExecution.Status.OutputValue
-	10,  // 148: gitpod.v1.AgentExecution.Status.Goal.status:type_name -> gitpod.v1.AgentExecution.Status.Goal.GoalStatus
-	170, // 149: gitpod.v1.AgentExecution.Status.Goal.updated_at:type_name -> google.protobuf.Timestamp
-	170, // 150: gitpod.v1.AgentExecution.Status.Goal.created_at:type_name -> google.protobuf.Timestamp
-	175, // 151: gitpod.v1.AgentExecution.Status.Goal.time_used:type_name -> google.protobuf.Duration
-	170, // 152: gitpod.v1.AgentExecution.WaitingInfo.TimerInterest.fires_at:type_name -> google.protobuf.Timestamp
-	112, // 153: gitpod.v1.AgentExecution.WaitingInfo.Interest.timer:type_name -> gitpod.v1.AgentExecution.WaitingInfo.TimerInterest
-	113, // 154: gitpod.v1.AgentExecution.WaitingInfo.Interest.sub_agent:type_name -> gitpod.v1.AgentExecution.WaitingInfo.SubAgentInterest
-	114, // 155: gitpod.v1.AgentExecution.WaitingInfo.Interest.user_message:type_name -> gitpod.v1.AgentExecution.WaitingInfo.UserMessageInterest
-	115, // 156: gitpod.v1.AgentExecution.WaitingInfo.Interest.environment:type_name -> gitpod.v1.AgentExecution.WaitingInfo.EnvironmentInterest
-	116, // 157: gitpod.v1.AgentExecution.WaitingInfo.Interest.devcontainer_rebuild:type_name -> gitpod.v1.AgentExecution.WaitingInfo.DevcontainerRebuildInterest
-	118, // 158: gitpod.v1.ClarifyingQuestions.Question.choices:type_name -> gitpod.v1.ClarifyingQuestions.Choice
-	12,  // 159: gitpod.v1.AgentResponseBlock.TextOutput.type:type_name -> gitpod.v1.AgentResponseBlock.TextOutput.Type
-	139, // 160: gitpod.v1.AgentResponseBlock.FileModification.diff:type_name -> gitpod.v1.AgentResponseBlock.FileModification.Diff
-	170, // 161: gitpod.v1.AgentResponseBlock.TodoGroup.updated_at:type_name -> google.protobuf.Timestamp
-	129, // 162: gitpod.v1.AgentResponseBlock.TodoGroup.todos:type_name -> gitpod.v1.AgentResponseBlock.TodoItem
-	14,  // 163: gitpod.v1.AgentResponseBlock.TodoItem.phase:type_name -> gitpod.v1.AgentResponseBlock.TodoItem.Phase
-	15,  // 164: gitpod.v1.AgentResponseBlock.AgentModeChange.state:type_name -> gitpod.v1.AgentResponseBlock.AgentModeChange.State
-	134, // 165: gitpod.v1.AgentResponseBlock.AvailableCommands.commands:type_name -> gitpod.v1.AgentResponseBlock.AvailableCommand
-	13,  // 166: gitpod.v1.AgentResponseBlock.FileModification.DiffGroup.type:type_name -> gitpod.v1.AgentResponseBlock.FileModification.DiffGroup.Type
-	137, // 167: gitpod.v1.AgentResponseBlock.FileModification.Diff.diff_groups:type_name -> gitpod.v1.AgentResponseBlock.FileModification.DiffGroup
-	138, // 168: gitpod.v1.AgentResponseBlock.FileModification.Diff.stats:type_name -> gitpod.v1.AgentResponseBlock.FileModification.DiffStats
-	140, // 169: gitpod.v1.UserInputBlock.Input.text:type_name -> gitpod.v1.UserInputBlock.TextInput
-	141, // 170: gitpod.v1.UserInputBlock.Input.image:type_name -> gitpod.v1.UserInputBlock.ImageInput
-	170, // 171: gitpod.v1.WakeEvent.TimerFired.fired_at:type_name -> google.protobuf.Timestamp
-	147, // 172: gitpod.v1.WakeEvent.LoopRetrigger.unmet_conditions:type_name -> gitpod.v1.WakeEvent.LoopRetrigger.UnmetCondition
-	148, // 173: gitpod.v1.WakeEvent.LoopRetrigger.outputs:type_name -> gitpod.v1.WakeEvent.LoopRetrigger.OutputsEntry
-	154, // 174: gitpod.v1.AgentControlInput.Goal.pause:type_name -> gitpod.v1.AgentControlInput.Goal.Pause
-	155, // 175: gitpod.v1.AgentControlInput.Goal.resume:type_name -> gitpod.v1.AgentControlInput.Goal.Resume
-	156, // 176: gitpod.v1.AgentControlInput.Goal.complete:type_name -> gitpod.v1.AgentControlInput.Goal.Complete
-	157, // 177: gitpod.v1.AgentControlInput.Goal.clear:type_name -> gitpod.v1.AgentControlInput.Goal.Clear
-	158, // 178: gitpod.v1.AgentControlInput.Goal.set:type_name -> gitpod.v1.AgentControlInput.Goal.Set
-	10,  // 179: gitpod.v1.AgentControlInput.Goal.Set.status:type_name -> gitpod.v1.AgentExecution.Status.Goal.GoalStatus
-	171, // 180: gitpod.v1.RunnerSideAgentSpec.Prompts.model:type_name -> gitpod.v1.SupportedModel
-	159, // 181: gitpod.v1.UpdateAgentRequest.Spec.prompts:type_name -> gitpod.v1.RunnerSideAgentSpec.Prompts
-	163, // 182: gitpod.v1.UpdateAgentExecutionRequest.Metadata.annotations:type_name -> gitpod.v1.UpdateAgentExecutionRequest.Metadata.AnnotationsEntry
-	107, // 183: gitpod.v1.ReportAgentExecutionOutputsRequest.OutputsEntry.value:type_name -> gitpod.v1.AgentExecution.Status.OutputValue
-	22,  // 184: gitpod.v1.AgentService.ListAgents:input_type -> gitpod.v1.ListAgentsRequest
-	24,  // 185: gitpod.v1.AgentService.GetAgent:input_type -> gitpod.v1.GetAgentRequest
-	54,  // 186: gitpod.v1.AgentService.CreateAgent:input_type -> gitpod.v1.CreateAgentRequest
-	56,  // 187: gitpod.v1.AgentService.UpdateAgent:input_type -> gitpod.v1.UpdateAgentRequest
-	58,  // 188: gitpod.v1.AgentService.DeleteAgent:input_type -> gitpod.v1.DeleteAgentRequest
-	27,  // 189: gitpod.v1.AgentService.StartAgent:input_type -> gitpod.v1.StartAgentRequest
-	29,  // 190: gitpod.v1.AgentService.ListAgentExecutions:input_type -> gitpod.v1.ListAgentExecutionsRequest
-	31,  // 191: gitpod.v1.AgentService.GetAgentExecution:input_type -> gitpod.v1.GetAgentExecutionRequest
-	33,  // 192: gitpod.v1.AgentService.DeleteAgentExecution:input_type -> gitpod.v1.DeleteAgentExecutionRequest
-	43,  // 193: gitpod.v1.AgentService.SendToAgentExecution:input_type -> gitpod.v1.SendToAgentExecutionRequest
-	48,  // 194: gitpod.v1.AgentService.CreateAgentExecutionConversationToken:input_type -> gitpod.v1.CreateAgentExecutionConversationTokenRequest
-	60,  // 195: gitpod.v1.AgentService.StopAgentExecution:input_type -> gitpod.v1.StopAgentExecutionRequest
-	62,  // 196: gitpod.v1.AgentService.UpdateAgentExecution:input_type -> gitpod.v1.UpdateAgentExecutionRequest
-	64,  // 197: gitpod.v1.AgentService.ReportAgentExecutionOutputs:input_type -> gitpod.v1.ReportAgentExecutionOutputsRequest
-	66,  // 198: gitpod.v1.AgentService.EmitAgentSessionActivity:input_type -> gitpod.v1.EmitAgentSessionActivityRequest
-	68,  // 199: gitpod.v1.AgentService.ImprovePromptForAgent:input_type -> gitpod.v1.ImprovePromptForAgentRequest
-	70,  // 200: gitpod.v1.AgentService.CreateLLMAccessToken:input_type -> gitpod.v1.CreateLLMAccessTokenRequest
-	73,  // 201: gitpod.v1.AgentService.ListMCPIntegrations:input_type -> gitpod.v1.ListMCPIntegrationsRequest
-	75,  // 202: gitpod.v1.AgentService.CreateMCPAccessToken:input_type -> gitpod.v1.CreateMCPAccessTokenRequest
-	80,  // 203: gitpod.v1.AgentService.ListPrompts:input_type -> gitpod.v1.ListPromptsRequest
-	82,  // 204: gitpod.v1.AgentService.GetPrompt:input_type -> gitpod.v1.GetPromptRequest
-	84,  // 205: gitpod.v1.AgentService.CreatePrompt:input_type -> gitpod.v1.CreatePromptRequest
-	86,  // 206: gitpod.v1.AgentService.UpdatePrompt:input_type -> gitpod.v1.UpdatePromptRequest
-	88,  // 207: gitpod.v1.AgentService.DeletePrompt:input_type -> gitpod.v1.DeletePromptRequest
-	23,  // 208: gitpod.v1.AgentService.ListAgents:output_type -> gitpod.v1.ListAgentsResponse
-	25,  // 209: gitpod.v1.AgentService.GetAgent:output_type -> gitpod.v1.GetAgentResponse
-	55,  // 210: gitpod.v1.AgentService.CreateAgent:output_type -> gitpod.v1.CreateAgentResponse
-	57,  // 211: gitpod.v1.AgentService.UpdateAgent:output_type -> gitpod.v1.UpdateAgentResponse
-	59,  // 212: gitpod.v1.AgentService.DeleteAgent:output_type -> gitpod.v1.DeleteAgentResponse
-	28,  // 213: gitpod.v1.AgentService.StartAgent:output_type -> gitpod.v1.StartAgentResponse
-	30,  // 214: gitpod.v1.AgentService.ListAgentExecutions:output_type -> gitpod.v1.ListAgentExecutionsResponse
-	32,  // 215: gitpod.v1.AgentService.GetAgentExecution:output_type -> gitpod.v1.GetAgentExecutionResponse
-	34,  // 216: gitpod.v1.AgentService.DeleteAgentExecution:output_type -> gitpod.v1.DeleteAgentExecutionResponse
-	44,  // 217: gitpod.v1.AgentService.SendToAgentExecution:output_type -> gitpod.v1.SendToAgentExecutionResponse
-	49,  // 218: gitpod.v1.AgentService.CreateAgentExecutionConversationToken:output_type -> gitpod.v1.CreateAgentExecutionConversationTokenResponse
-	61,  // 219: gitpod.v1.AgentService.StopAgentExecution:output_type -> gitpod.v1.StopAgentExecutionResponse
-	63,  // 220: gitpod.v1.AgentService.UpdateAgentExecution:output_type -> gitpod.v1.UpdateAgentExecutionResponse
-	65,  // 221: gitpod.v1.AgentService.ReportAgentExecutionOutputs:output_type -> gitpod.v1.ReportAgentExecutionOutputsResponse
-	67,  // 222: gitpod.v1.AgentService.EmitAgentSessionActivity:output_type -> gitpod.v1.EmitAgentSessionActivityResponse
-	69,  // 223: gitpod.v1.AgentService.ImprovePromptForAgent:output_type -> gitpod.v1.ImprovePromptForAgentResponse
-	71,  // 224: gitpod.v1.AgentService.CreateLLMAccessToken:output_type -> gitpod.v1.CreateLLMAccessTokenResponse
-	74,  // 225: gitpod.v1.AgentService.ListMCPIntegrations:output_type -> gitpod.v1.ListMCPIntegrationsResponse
-	76,  // 226: gitpod.v1.AgentService.CreateMCPAccessToken:output_type -> gitpod.v1.CreateMCPAccessTokenResponse
-	81,  // 227: gitpod.v1.AgentService.ListPrompts:output_type -> gitpod.v1.ListPromptsResponse
-	83,  // 228: gitpod.v1.AgentService.GetPrompt:output_type -> gitpod.v1.GetPromptResponse
-	85,  // 229: gitpod.v1.AgentService.CreatePrompt:output_type -> gitpod.v1.CreatePromptResponse
-	87,  // 230: gitpod.v1.AgentService.UpdatePrompt:output_type -> gitpod.v1.UpdatePromptResponse
-	89,  // 231: gitpod.v1.AgentService.DeletePrompt:output_type -> gitpod.v1.DeletePromptResponse
-	208, // [208:232] is the sub-list for method output_type
-	184, // [184:208] is the sub-list for method input_type
-	184, // [184:184] is the sub-list for extension type_name
-	184, // [184:184] is the sub-list for extension extendee
-	0,   // [0:184] is the sub-list for field type_name
+	48,  // 6: gitpod.v1.Agent.spec:type_name -> gitpod.v1.RunnerSideAgentSpec
+	48,  // 7: gitpod.v1.Agent.runner_side:type_name -> gitpod.v1.RunnerSideAgentSpec
+	49,  // 8: gitpod.v1.Agent.in_environment:type_name -> gitpod.v1.InEnvironmentAgentSpec
+	67,  // 9: gitpod.v1.AgentCodeContext.context_url:type_name -> gitpod.v1.AgentCodeContext.ContextURL
+	18,  // 10: gitpod.v1.AgentCodeContext.pull_request:type_name -> gitpod.v1.PullRequest
+	22,  // 11: gitpod.v1.StartAgentRequest.code_context:type_name -> gitpod.v1.AgentCodeContext
+	0,   // 12: gitpod.v1.StartAgentRequest.mode:type_name -> gitpod.v1.AgentMode
+	68,  // 13: gitpod.v1.StartAgentRequest.annotations:type_name -> gitpod.v1.StartAgentRequest.AnnotationsEntry
+	19,  // 14: gitpod.v1.StartAgentRequest.codex_settings:type_name -> gitpod.v1.CodexSettings
+	41,  // 15: gitpod.v1.StartAgentRequest.turn_options:type_name -> gitpod.v1.TurnOptions
+	139, // 16: gitpod.v1.ListAgentExecutionsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	69,  // 17: gitpod.v1.ListAgentExecutionsRequest.filter:type_name -> gitpod.v1.ListAgentExecutionsRequest.Filter
+	140, // 18: gitpod.v1.ListAgentExecutionsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	31,  // 19: gitpod.v1.ListAgentExecutionsResponse.agent_executions:type_name -> gitpod.v1.AgentExecution
+	31,  // 20: gitpod.v1.GetAgentExecutionResponse.agent_execution:type_name -> gitpod.v1.AgentExecution
+	71,  // 21: gitpod.v1.AgentExecution.metadata:type_name -> gitpod.v1.AgentExecution.Metadata
+	72,  // 22: gitpod.v1.AgentExecution.spec:type_name -> gitpod.v1.AgentExecution.Spec
+	73,  // 23: gitpod.v1.AgentExecution.status:type_name -> gitpod.v1.AgentExecution.Status
+	95,  // 24: gitpod.v1.ClarifyingQuestions.questions:type_name -> gitpod.v1.ClarifyingQuestions.Question
+	96,  // 25: gitpod.v1.NextStepsProposal.actions:type_name -> gitpod.v1.NextStepsProposal.Action
+	11,  // 26: gitpod.v1.AgentResponseBlock.phase:type_name -> gitpod.v1.AgentResponseBlock.Phase
+	107, // 27: gitpod.v1.AgentResponseBlock.user_input_seen:type_name -> gitpod.v1.AgentResponseBlock.UserInputBlockSeen
+	35,  // 28: gitpod.v1.AgentResponseBlock.user_input:type_name -> gitpod.v1.UserInputBlock
+	108, // 29: gitpod.v1.AgentResponseBlock.user_input_deleted:type_name -> gitpod.v1.AgentResponseBlock.UserInputBlockDeleted
+	112, // 30: gitpod.v1.AgentResponseBlock.user_input_queue_updated:type_name -> gitpod.v1.AgentResponseBlock.UserInputQueueUpdated
+	97,  // 31: gitpod.v1.AgentResponseBlock.text:type_name -> gitpod.v1.AgentResponseBlock.TextOutput
+	98,  // 32: gitpod.v1.AgentResponseBlock.action_started:type_name -> gitpod.v1.AgentResponseBlock.ActionStarted
+	99,  // 33: gitpod.v1.AgentResponseBlock.action_completed:type_name -> gitpod.v1.AgentResponseBlock.ActionCompleted
+	100, // 34: gitpod.v1.AgentResponseBlock.file_modification:type_name -> gitpod.v1.AgentResponseBlock.FileModification
+	101, // 35: gitpod.v1.AgentResponseBlock.environment_creation:type_name -> gitpod.v1.AgentResponseBlock.EnvironmentCreation
+	103, // 36: gitpod.v1.AgentResponseBlock.code_annotation:type_name -> gitpod.v1.AgentResponseBlock.CodeAnnotation
+	102, // 37: gitpod.v1.AgentResponseBlock.host_authentication_required:type_name -> gitpod.v1.AgentResponseBlock.HostAuthenticationRequired
+	104, // 38: gitpod.v1.AgentResponseBlock.todo_group:type_name -> gitpod.v1.AgentResponseBlock.TodoGroup
+	105, // 39: gitpod.v1.AgentResponseBlock.todo_item:type_name -> gitpod.v1.AgentResponseBlock.TodoItem
+	106, // 40: gitpod.v1.AgentResponseBlock.thought:type_name -> gitpod.v1.AgentResponseBlock.Thought
+	109, // 41: gitpod.v1.AgentResponseBlock.agent_mode_change:type_name -> gitpod.v1.AgentResponseBlock.AgentModeChange
+	32,  // 42: gitpod.v1.AgentResponseBlock.clarifying_questions:type_name -> gitpod.v1.ClarifyingQuestions
+	33,  // 43: gitpod.v1.AgentResponseBlock.next_steps_proposal:type_name -> gitpod.v1.NextStepsProposal
+	111, // 44: gitpod.v1.AgentResponseBlock.available_commands:type_name -> gitpod.v1.AgentResponseBlock.AvailableCommands
+	141, // 45: gitpod.v1.AgentResponseBlock.created_at:type_name -> google.protobuf.Timestamp
+	116, // 46: gitpod.v1.UserInputBlock.text:type_name -> gitpod.v1.UserInputBlock.TextInput
+	117, // 47: gitpod.v1.UserInputBlock.image:type_name -> gitpod.v1.UserInputBlock.ImageInput
+	118, // 48: gitpod.v1.UserInputBlock.inputs:type_name -> gitpod.v1.UserInputBlock.Input
+	141, // 49: gitpod.v1.UserInputBlock.created_at:type_name -> google.protobuf.Timestamp
+	36,  // 50: gitpod.v1.UserInputBlock.metadata:type_name -> gitpod.v1.UserInputMetadata
+	0,   // 51: gitpod.v1.UserInputMetadata.modes:type_name -> gitpod.v1.AgentMode
+	16,  // 52: gitpod.v1.AgentMessage.type:type_name -> gitpod.v1.AgentMessage.Type
+	17,  // 53: gitpod.v1.AgentMessage.role:type_name -> gitpod.v1.AgentMessage.Role
+	119, // 54: gitpod.v1.WakeEvent.timer:type_name -> gitpod.v1.WakeEvent.TimerFired
+	120, // 55: gitpod.v1.WakeEvent.loop_retrigger:type_name -> gitpod.v1.WakeEvent.LoopRetrigger
+	121, // 56: gitpod.v1.WakeEvent.environment:type_name -> gitpod.v1.WakeEvent.EnvironmentPhaseReached
+	122, // 57: gitpod.v1.WakeEvent.devcontainer_rebuild:type_name -> gitpod.v1.WakeEvent.DevcontainerPhaseReached
+	35,  // 58: gitpod.v1.SendToAgentExecutionRequest.user_input:type_name -> gitpod.v1.UserInputBlock
+	37,  // 59: gitpod.v1.SendToAgentExecutionRequest.agent_message:type_name -> gitpod.v1.AgentMessage
+	38,  // 60: gitpod.v1.SendToAgentExecutionRequest.wake_event:type_name -> gitpod.v1.WakeEvent
+	42,  // 61: gitpod.v1.SendToAgentExecutionRequest.control_input:type_name -> gitpod.v1.AgentControlInput
+	19,  // 62: gitpod.v1.SendToAgentExecutionRequest.codex_settings:type_name -> gitpod.v1.CodexSettings
+	41,  // 63: gitpod.v1.SendToAgentExecutionRequest.turn_options:type_name -> gitpod.v1.TurnOptions
+	0,   // 64: gitpod.v1.TurnOptions.modes:type_name -> gitpod.v1.AgentMode
+	125, // 65: gitpod.v1.AgentControlInput.compact:type_name -> gitpod.v1.AgentControlInput.Compact
+	127, // 66: gitpod.v1.AgentControlInput.goal:type_name -> gitpod.v1.AgentControlInput.Goal
+	126, // 67: gitpod.v1.AgentControlInput.delete_queued_message:type_name -> gitpod.v1.AgentControlInput.DeleteQueuedMessage
+	128, // 68: gitpod.v1.AgentControlInput.steer_queued_message:type_name -> gitpod.v1.AgentControlInput.SteerQueuedMessage
+	129, // 69: gitpod.v1.AgentControlInput.move_queued_message:type_name -> gitpod.v1.AgentControlInput.MoveQueuedMessage
+	135, // 70: gitpod.v1.RunnerSideAgentSpec.prompts:type_name -> gitpod.v1.RunnerSideAgentSpec.Prompts
+	142, // 71: gitpod.v1.RunnerSideAgentSpec.preferred_models:type_name -> gitpod.v1.SupportedModel
+	143, // 72: gitpod.v1.InEnvironmentAgentSpec.service:type_name -> gitpod.v1.ServiceSpec
+	142, // 73: gitpod.v1.InEnvironmentAgentSpec.required_models:type_name -> gitpod.v1.SupportedModel
+	144, // 74: gitpod.v1.InEnvironmentAgentSpec.service_metadata:type_name -> gitpod.v1.ServiceMetadata
+	54,  // 75: gitpod.v1.Prompt.metadata:type_name -> gitpod.v1.PromptMetadata
+	55,  // 76: gitpod.v1.Prompt.spec:type_name -> gitpod.v1.PromptSpec
+	145, // 77: gitpod.v1.PromptMetadata.creator:type_name -> gitpod.v1.Subject
+	141, // 78: gitpod.v1.PromptMetadata.created_at:type_name -> google.protobuf.Timestamp
+	141, // 79: gitpod.v1.PromptMetadata.updated_at:type_name -> google.protobuf.Timestamp
+	139, // 80: gitpod.v1.ListPromptsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	136, // 81: gitpod.v1.ListPromptsRequest.filter:type_name -> gitpod.v1.ListPromptsRequest.Filter
+	140, // 82: gitpod.v1.ListPromptsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	53,  // 83: gitpod.v1.ListPromptsResponse.prompts:type_name -> gitpod.v1.Prompt
+	53,  // 84: gitpod.v1.GetPromptResponse.prompt:type_name -> gitpod.v1.Prompt
+	53,  // 85: gitpod.v1.CreatePromptResponse.prompt:type_name -> gitpod.v1.Prompt
+	137, // 86: gitpod.v1.UpdatePromptRequest.metadata:type_name -> gitpod.v1.UpdatePromptRequest.Metadata
+	138, // 87: gitpod.v1.UpdatePromptRequest.spec:type_name -> gitpod.v1.UpdatePromptRequest.Spec
+	53,  // 88: gitpod.v1.UpdatePromptResponse.prompt:type_name -> gitpod.v1.Prompt
+	9,   // 89: gitpod.v1.ListAgentExecutionsRequest.Filter.status_phases:type_name -> gitpod.v1.AgentExecution.Phase
+	6,   // 90: gitpod.v1.ListAgentExecutionsRequest.Filter.roles:type_name -> gitpod.v1.AgentExecutionRole
+	70,  // 91: gitpod.v1.ListAgentExecutionsRequest.Filter.annotations:type_name -> gitpod.v1.ListAgentExecutionsRequest.Filter.AnnotationsEntry
+	145, // 92: gitpod.v1.AgentExecution.Metadata.creator:type_name -> gitpod.v1.Subject
+	141, // 93: gitpod.v1.AgentExecution.Metadata.created_at:type_name -> google.protobuf.Timestamp
+	141, // 94: gitpod.v1.AgentExecution.Metadata.updated_at:type_name -> google.protobuf.Timestamp
+	6,   // 95: gitpod.v1.AgentExecution.Metadata.role:type_name -> gitpod.v1.AgentExecutionRole
+	75,  // 96: gitpod.v1.AgentExecution.Metadata.annotations:type_name -> gitpod.v1.AgentExecution.Metadata.AnnotationsEntry
+	9,   // 97: gitpod.v1.AgentExecution.Spec.desired_phase:type_name -> gitpod.v1.AgentExecution.Phase
+	22,  // 98: gitpod.v1.AgentExecution.Spec.code_context:type_name -> gitpod.v1.AgentCodeContext
+	76,  // 99: gitpod.v1.AgentExecution.Spec.limits:type_name -> gitpod.v1.AgentExecution.Spec.Limits
+	19,  // 100: gitpod.v1.AgentExecution.Spec.codex_settings:type_name -> gitpod.v1.CodexSettings
+	9,   // 101: gitpod.v1.AgentExecution.Status.phase:type_name -> gitpod.v1.AgentExecution.Phase
+	5,   // 102: gitpod.v1.AgentExecution.Status.failure_reason:type_name -> gitpod.v1.AgentExecutionFailureReason
+	81,  // 103: gitpod.v1.AgentExecution.Status.conversation_urls:type_name -> gitpod.v1.AgentExecution.Status.ConversationURLs
+	79,  // 104: gitpod.v1.AgentExecution.Status.current_operation:type_name -> gitpod.v1.AgentExecution.Status.CurrentOperation
+	80,  // 105: gitpod.v1.AgentExecution.Status.used_environments:type_name -> gitpod.v1.AgentExecution.Status.EnvironmentUsage
+	86,  // 106: gitpod.v1.AgentExecution.Status.outputs:type_name -> gitpod.v1.AgentExecution.Status.OutputsEntry
+	142, // 107: gitpod.v1.AgentExecution.Status.supported_model:type_name -> gitpod.v1.SupportedModel
+	84,  // 108: gitpod.v1.AgentExecution.Status.llm_capabilities:type_name -> gitpod.v1.AgentExecution.Status.LLMCapabilities
+	0,   // 109: gitpod.v1.AgentExecution.Status.mode:type_name -> gitpod.v1.AgentMode
+	85,  // 110: gitpod.v1.AgentExecution.Status.mcp_integration_statuses:type_name -> gitpod.v1.AgentExecution.Status.MCPIntegrationStatus
+	74,  // 111: gitpod.v1.AgentExecution.Status.waiting_info:type_name -> gitpod.v1.AgentExecution.WaitingInfo
+	87,  // 112: gitpod.v1.AgentExecution.Status.goal:type_name -> gitpod.v1.AgentExecution.Status.Goal
+	19,  // 113: gitpod.v1.AgentExecution.Status.codex_settings:type_name -> gitpod.v1.CodexSettings
+	82,  // 114: gitpod.v1.AgentExecution.Status.subagents:type_name -> gitpod.v1.AgentExecution.Status.Subagent
+	93,  // 115: gitpod.v1.AgentExecution.WaitingInfo.interests:type_name -> gitpod.v1.AgentExecution.WaitingInfo.Interest
+	141, // 116: gitpod.v1.AgentExecution.WaitingInfo.waiting_since:type_name -> google.protobuf.Timestamp
+	77,  // 117: gitpod.v1.AgentExecution.Status.CurrentOperation.tool_use:type_name -> gitpod.v1.AgentExecution.Status.ToolUse
+	78,  // 118: gitpod.v1.AgentExecution.Status.CurrentOperation.llm:type_name -> gitpod.v1.AgentExecution.Status.LLM
+	9,   // 119: gitpod.v1.AgentExecution.Status.Subagent.phase:type_name -> gitpod.v1.AgentExecution.Phase
+	81,  // 120: gitpod.v1.AgentExecution.Status.Subagent.conversation_urls:type_name -> gitpod.v1.AgentExecution.Status.ConversationURLs
+	141, // 121: gitpod.v1.AgentExecution.Status.Subagent.created_at:type_name -> google.protobuf.Timestamp
+	141, // 122: gitpod.v1.AgentExecution.Status.Subagent.updated_at:type_name -> google.protobuf.Timestamp
+	4,   // 123: gitpod.v1.AgentExecution.Status.LLMCapabilities.disabled_capabilities:type_name -> gitpod.v1.LLMDisabledCapability
+	7,   // 124: gitpod.v1.AgentExecution.Status.MCPIntegrationStatus.phase:type_name -> gitpod.v1.MCPIntegrationPhase
+	83,  // 125: gitpod.v1.AgentExecution.Status.OutputsEntry.value:type_name -> gitpod.v1.AgentExecution.Status.OutputValue
+	10,  // 126: gitpod.v1.AgentExecution.Status.Goal.status:type_name -> gitpod.v1.AgentExecution.Status.Goal.GoalStatus
+	141, // 127: gitpod.v1.AgentExecution.Status.Goal.updated_at:type_name -> google.protobuf.Timestamp
+	141, // 128: gitpod.v1.AgentExecution.Status.Goal.created_at:type_name -> google.protobuf.Timestamp
+	146, // 129: gitpod.v1.AgentExecution.Status.Goal.time_used:type_name -> google.protobuf.Duration
+	141, // 130: gitpod.v1.AgentExecution.WaitingInfo.TimerInterest.fires_at:type_name -> google.protobuf.Timestamp
+	88,  // 131: gitpod.v1.AgentExecution.WaitingInfo.Interest.timer:type_name -> gitpod.v1.AgentExecution.WaitingInfo.TimerInterest
+	89,  // 132: gitpod.v1.AgentExecution.WaitingInfo.Interest.sub_agent:type_name -> gitpod.v1.AgentExecution.WaitingInfo.SubAgentInterest
+	90,  // 133: gitpod.v1.AgentExecution.WaitingInfo.Interest.user_message:type_name -> gitpod.v1.AgentExecution.WaitingInfo.UserMessageInterest
+	91,  // 134: gitpod.v1.AgentExecution.WaitingInfo.Interest.environment:type_name -> gitpod.v1.AgentExecution.WaitingInfo.EnvironmentInterest
+	92,  // 135: gitpod.v1.AgentExecution.WaitingInfo.Interest.devcontainer_rebuild:type_name -> gitpod.v1.AgentExecution.WaitingInfo.DevcontainerRebuildInterest
+	94,  // 136: gitpod.v1.ClarifyingQuestions.Question.choices:type_name -> gitpod.v1.ClarifyingQuestions.Choice
+	12,  // 137: gitpod.v1.AgentResponseBlock.TextOutput.type:type_name -> gitpod.v1.AgentResponseBlock.TextOutput.Type
+	115, // 138: gitpod.v1.AgentResponseBlock.FileModification.diff:type_name -> gitpod.v1.AgentResponseBlock.FileModification.Diff
+	141, // 139: gitpod.v1.AgentResponseBlock.TodoGroup.updated_at:type_name -> google.protobuf.Timestamp
+	105, // 140: gitpod.v1.AgentResponseBlock.TodoGroup.todos:type_name -> gitpod.v1.AgentResponseBlock.TodoItem
+	14,  // 141: gitpod.v1.AgentResponseBlock.TodoItem.phase:type_name -> gitpod.v1.AgentResponseBlock.TodoItem.Phase
+	15,  // 142: gitpod.v1.AgentResponseBlock.AgentModeChange.state:type_name -> gitpod.v1.AgentResponseBlock.AgentModeChange.State
+	110, // 143: gitpod.v1.AgentResponseBlock.AvailableCommands.commands:type_name -> gitpod.v1.AgentResponseBlock.AvailableCommand
+	13,  // 144: gitpod.v1.AgentResponseBlock.FileModification.DiffGroup.type:type_name -> gitpod.v1.AgentResponseBlock.FileModification.DiffGroup.Type
+	113, // 145: gitpod.v1.AgentResponseBlock.FileModification.Diff.diff_groups:type_name -> gitpod.v1.AgentResponseBlock.FileModification.DiffGroup
+	114, // 146: gitpod.v1.AgentResponseBlock.FileModification.Diff.stats:type_name -> gitpod.v1.AgentResponseBlock.FileModification.DiffStats
+	116, // 147: gitpod.v1.UserInputBlock.Input.text:type_name -> gitpod.v1.UserInputBlock.TextInput
+	117, // 148: gitpod.v1.UserInputBlock.Input.image:type_name -> gitpod.v1.UserInputBlock.ImageInput
+	141, // 149: gitpod.v1.WakeEvent.TimerFired.fired_at:type_name -> google.protobuf.Timestamp
+	123, // 150: gitpod.v1.WakeEvent.LoopRetrigger.unmet_conditions:type_name -> gitpod.v1.WakeEvent.LoopRetrigger.UnmetCondition
+	124, // 151: gitpod.v1.WakeEvent.LoopRetrigger.outputs:type_name -> gitpod.v1.WakeEvent.LoopRetrigger.OutputsEntry
+	130, // 152: gitpod.v1.AgentControlInput.Goal.pause:type_name -> gitpod.v1.AgentControlInput.Goal.Pause
+	131, // 153: gitpod.v1.AgentControlInput.Goal.resume:type_name -> gitpod.v1.AgentControlInput.Goal.Resume
+	132, // 154: gitpod.v1.AgentControlInput.Goal.complete:type_name -> gitpod.v1.AgentControlInput.Goal.Complete
+	133, // 155: gitpod.v1.AgentControlInput.Goal.clear:type_name -> gitpod.v1.AgentControlInput.Goal.Clear
+	134, // 156: gitpod.v1.AgentControlInput.Goal.set:type_name -> gitpod.v1.AgentControlInput.Goal.Set
+	10,  // 157: gitpod.v1.AgentControlInput.Goal.Set.status:type_name -> gitpod.v1.AgentExecution.Status.Goal.GoalStatus
+	142, // 158: gitpod.v1.RunnerSideAgentSpec.Prompts.model:type_name -> gitpod.v1.SupportedModel
+	23,  // 159: gitpod.v1.AgentService.StartAgent:input_type -> gitpod.v1.StartAgentRequest
+	25,  // 160: gitpod.v1.AgentService.ListAgentExecutions:input_type -> gitpod.v1.ListAgentExecutionsRequest
+	27,  // 161: gitpod.v1.AgentService.GetAgentExecution:input_type -> gitpod.v1.GetAgentExecutionRequest
+	29,  // 162: gitpod.v1.AgentService.DeleteAgentExecution:input_type -> gitpod.v1.DeleteAgentExecutionRequest
+	39,  // 163: gitpod.v1.AgentService.SendToAgentExecution:input_type -> gitpod.v1.SendToAgentExecutionRequest
+	44,  // 164: gitpod.v1.AgentService.CreateAgentExecutionConversationToken:input_type -> gitpod.v1.CreateAgentExecutionConversationTokenRequest
+	50,  // 165: gitpod.v1.AgentService.StopAgentExecution:input_type -> gitpod.v1.StopAgentExecutionRequest
+	56,  // 166: gitpod.v1.AgentService.ListPrompts:input_type -> gitpod.v1.ListPromptsRequest
+	58,  // 167: gitpod.v1.AgentService.GetPrompt:input_type -> gitpod.v1.GetPromptRequest
+	60,  // 168: gitpod.v1.AgentService.CreatePrompt:input_type -> gitpod.v1.CreatePromptRequest
+	62,  // 169: gitpod.v1.AgentService.UpdatePrompt:input_type -> gitpod.v1.UpdatePromptRequest
+	64,  // 170: gitpod.v1.AgentService.DeletePrompt:input_type -> gitpod.v1.DeletePromptRequest
+	24,  // 171: gitpod.v1.AgentService.StartAgent:output_type -> gitpod.v1.StartAgentResponse
+	26,  // 172: gitpod.v1.AgentService.ListAgentExecutions:output_type -> gitpod.v1.ListAgentExecutionsResponse
+	28,  // 173: gitpod.v1.AgentService.GetAgentExecution:output_type -> gitpod.v1.GetAgentExecutionResponse
+	30,  // 174: gitpod.v1.AgentService.DeleteAgentExecution:output_type -> gitpod.v1.DeleteAgentExecutionResponse
+	40,  // 175: gitpod.v1.AgentService.SendToAgentExecution:output_type -> gitpod.v1.SendToAgentExecutionResponse
+	45,  // 176: gitpod.v1.AgentService.CreateAgentExecutionConversationToken:output_type -> gitpod.v1.CreateAgentExecutionConversationTokenResponse
+	51,  // 177: gitpod.v1.AgentService.StopAgentExecution:output_type -> gitpod.v1.StopAgentExecutionResponse
+	57,  // 178: gitpod.v1.AgentService.ListPrompts:output_type -> gitpod.v1.ListPromptsResponse
+	59,  // 179: gitpod.v1.AgentService.GetPrompt:output_type -> gitpod.v1.GetPromptResponse
+	61,  // 180: gitpod.v1.AgentService.CreatePrompt:output_type -> gitpod.v1.CreatePromptResponse
+	63,  // 181: gitpod.v1.AgentService.UpdatePrompt:output_type -> gitpod.v1.UpdatePromptResponse
+	65,  // 182: gitpod.v1.AgentService.DeletePrompt:output_type -> gitpod.v1.DeletePromptResponse
+	171, // [171:183] is the sub-list for method output_type
+	159, // [159:171] is the sub-list for method input_type
+	159, // [159:159] is the sub-list for extension type_name
+	159, // [159:159] is the sub-list for extension extendee
+	0,   // [0:159] is the sub-list for field type_name
 }
 
 func init() { file_gitpod_v1_agent_proto_init() }
@@ -11875,13 +10246,13 @@ func file_gitpod_v1_agent_proto_init() {
 		(*Agent_RunnerSide)(nil),
 		(*Agent_InEnvironment)(nil),
 	}
-	file_gitpod_v1_agent_proto_msgTypes[8].OneofWrappers = []any{
+	file_gitpod_v1_agent_proto_msgTypes[4].OneofWrappers = []any{
 		(*AgentCodeContext_ProjectId)(nil),
 		(*AgentCodeContext_EnvironmentId)(nil),
 		(*AgentCodeContext_ContextUrl)(nil),
 	}
-	file_gitpod_v1_agent_proto_msgTypes[9].OneofWrappers = []any{}
-	file_gitpod_v1_agent_proto_msgTypes[20].OneofWrappers = []any{
+	file_gitpod_v1_agent_proto_msgTypes[5].OneofWrappers = []any{}
+	file_gitpod_v1_agent_proto_msgTypes[16].OneofWrappers = []any{
 		(*AgentResponseBlock_UserInputSeen)(nil),
 		(*AgentResponseBlock_UserInput)(nil),
 		(*AgentResponseBlock_UserInputDeleted)(nil),
@@ -11901,75 +10272,70 @@ func file_gitpod_v1_agent_proto_init() {
 		(*AgentResponseBlock_NextStepsProposal)(nil),
 		(*AgentResponseBlock_AvailableCommands_)(nil),
 	}
-	file_gitpod_v1_agent_proto_msgTypes[21].OneofWrappers = []any{
+	file_gitpod_v1_agent_proto_msgTypes[17].OneofWrappers = []any{
 		(*UserInputBlock_Text)(nil),
 		(*UserInputBlock_Image)(nil),
 	}
-	file_gitpod_v1_agent_proto_msgTypes[24].OneofWrappers = []any{
+	file_gitpod_v1_agent_proto_msgTypes[20].OneofWrappers = []any{
 		(*WakeEvent_Timer)(nil),
 		(*WakeEvent_LoopRetrigger_)(nil),
 		(*WakeEvent_Environment)(nil),
 		(*WakeEvent_DevcontainerRebuild)(nil),
 	}
-	file_gitpod_v1_agent_proto_msgTypes[25].OneofWrappers = []any{
+	file_gitpod_v1_agent_proto_msgTypes[21].OneofWrappers = []any{
 		(*SendToAgentExecutionRequest_UserInput)(nil),
 		(*SendToAgentExecutionRequest_AgentMessage)(nil),
 		(*SendToAgentExecutionRequest_WakeEvent)(nil),
 		(*SendToAgentExecutionRequest_ControlInput)(nil),
 	}
-	file_gitpod_v1_agent_proto_msgTypes[28].OneofWrappers = []any{
+	file_gitpod_v1_agent_proto_msgTypes[24].OneofWrappers = []any{
 		(*AgentControlInput_Compact_)(nil),
 		(*AgentControlInput_Goal_)(nil),
 		(*AgentControlInput_DeleteQueuedMessage_)(nil),
 		(*AgentControlInput_SteerQueuedMessage_)(nil),
 		(*AgentControlInput_MoveQueuedMessage_)(nil),
 	}
-	file_gitpod_v1_agent_proto_msgTypes[36].OneofWrappers = []any{
-		(*CreateAgentRequest_RunnerSide)(nil),
-		(*CreateAgentRequest_InEnvironment)(nil),
-	}
-	file_gitpod_v1_agent_proto_msgTypes[68].OneofWrappers = []any{}
-	file_gitpod_v1_agent_proto_msgTypes[77].OneofWrappers = []any{}
-	file_gitpod_v1_agent_proto_msgTypes[85].OneofWrappers = []any{
+	file_gitpod_v1_agent_proto_msgTypes[44].OneofWrappers = []any{}
+	file_gitpod_v1_agent_proto_msgTypes[53].OneofWrappers = []any{}
+	file_gitpod_v1_agent_proto_msgTypes[61].OneofWrappers = []any{
 		(*AgentExecution_Status_CurrentOperation_ToolUse)(nil),
 		(*AgentExecution_Status_CurrentOperation_Llm)(nil),
 	}
-	file_gitpod_v1_agent_proto_msgTypes[89].OneofWrappers = []any{
+	file_gitpod_v1_agent_proto_msgTypes[65].OneofWrappers = []any{
 		(*AgentExecution_Status_OutputValue_StringValue)(nil),
 		(*AgentExecution_Status_OutputValue_IntValue)(nil),
 		(*AgentExecution_Status_OutputValue_FloatValue)(nil),
 		(*AgentExecution_Status_OutputValue_BoolValue)(nil),
 	}
-	file_gitpod_v1_agent_proto_msgTypes[93].OneofWrappers = []any{}
-	file_gitpod_v1_agent_proto_msgTypes[99].OneofWrappers = []any{
+	file_gitpod_v1_agent_proto_msgTypes[69].OneofWrappers = []any{}
+	file_gitpod_v1_agent_proto_msgTypes[75].OneofWrappers = []any{
 		(*AgentExecution_WaitingInfo_Interest_Timer)(nil),
 		(*AgentExecution_WaitingInfo_Interest_SubAgent)(nil),
 		(*AgentExecution_WaitingInfo_Interest_UserMessage)(nil),
 		(*AgentExecution_WaitingInfo_Interest_Environment)(nil),
 		(*AgentExecution_WaitingInfo_Interest_DevcontainerRebuild)(nil),
 	}
-	file_gitpod_v1_agent_proto_msgTypes[124].OneofWrappers = []any{
+	file_gitpod_v1_agent_proto_msgTypes[100].OneofWrappers = []any{
 		(*UserInputBlock_Input_Text)(nil),
 		(*UserInputBlock_Input_Image)(nil),
 	}
-	file_gitpod_v1_agent_proto_msgTypes[133].OneofWrappers = []any{
+	file_gitpod_v1_agent_proto_msgTypes[109].OneofWrappers = []any{
 		(*AgentControlInput_Goal_Pause_)(nil),
 		(*AgentControlInput_Goal_Resume_)(nil),
 		(*AgentControlInput_Goal_Complete_)(nil),
 		(*AgentControlInput_Goal_Clear_)(nil),
 		(*AgentControlInput_Goal_Set_)(nil),
 	}
-	file_gitpod_v1_agent_proto_msgTypes[140].OneofWrappers = []any{}
-	file_gitpod_v1_agent_proto_msgTypes[142].OneofWrappers = []any{}
-	file_gitpod_v1_agent_proto_msgTypes[148].OneofWrappers = []any{}
-	file_gitpod_v1_agent_proto_msgTypes[149].OneofWrappers = []any{}
+	file_gitpod_v1_agent_proto_msgTypes[116].OneofWrappers = []any{}
+	file_gitpod_v1_agent_proto_msgTypes[119].OneofWrappers = []any{}
+	file_gitpod_v1_agent_proto_msgTypes[120].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gitpod_v1_agent_proto_rawDesc), len(file_gitpod_v1_agent_proto_rawDesc)),
 			NumEnums:      18,
-			NumMessages:   150,
+			NumMessages:   121,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
