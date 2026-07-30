@@ -73,6 +73,14 @@ list resources. A query-enabled managed resource needs all of these pieces:
    mapping/import unit tests, and a hermetic Terraform 1.14+ Query acceptance
    test that checks identity, display name, filters, limits, resource values,
    and secret omission where applicable.
+8. Add `templates/list-resources/<resource_name>.md.tmpl` for every list
+   resource. Set a non-empty `subcategory` that matches the corresponding
+   managed-resource template unless there is a documented reason to differ.
+   Preserve the standard list-resource title, description, examples, and schema
+   layout.
+9. After `make generate`, verify every `docs/list-resources/*.md` has a
+   matching template and non-empty `subcategory`. Treat an empty category or
+   missing template as incomplete documentation.
 
 Shared list helpers belong in `internal/provider/listutil`; API-specific
 discovery stays in the resource package or an `internal/client` wrapper. Run
@@ -99,6 +107,9 @@ discovery stays in the resource package or an `internal/client` wrapper. Run
 - Build: `make build`.
 - Lint: `make lint` when code changes warrant it.
 - Generation: `make generate`, then `git diff --exit-code` when schemas, examples, docs, or codegen inputs change.
+- List-resource docs: inventory `docs/list-resources/` against
+  `templates/list-resources/` and verify each category matches its related
+  managed resource.
 
 ## Local Terraform Dev Loop
 
