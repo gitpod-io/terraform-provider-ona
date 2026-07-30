@@ -8,8 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -538,7 +536,7 @@ var File_gitpod_v1_editor_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_editor_proto_rawDesc = "" +
 	"\n" +
-	"\x16gitpod/v1/editor.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1agitpod/v1/pagination.proto\"\xc6\x01\n" +
+	"\x16gitpod/v1/editor.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1agitpod/v1/pagination.proto\"\xc6\x01\n" +
 	"\x12ListEditorsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
@@ -550,40 +548,33 @@ const file_gitpod_v1_editor_proto_rawDesc = "" +
 	"\aeditors\x18\x01 \x03(\v2\x11.gitpod.v1.EditorB\x06\xbaH\x03\xc8\x01\x01R\aeditors\x12=\n" +
 	"\n" +
 	"pagination\x18\x02 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
-	"pagination\"9\n" +
-	"\x10GetEditorRequest\x12%\n" +
-	"\x02id\x18\x01 \x01(\tB\x15\xbaH\x03\xc8\x01\x01\xa2\xab\x1e\v\n" +
-	"\teditor.idR\x02id\"F\n" +
+	"pagination\"*\n" +
+	"\x10GetEditorRequest\x12\x16\n" +
+	"\x02id\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x02id\"F\n" +
 	"\x11GetEditorResponse\x121\n" +
-	"\x06editor\x18\x01 \x01(\v2\x11.gitpod.v1.EditorB\x06\xbaH\x03\xc8\x01\x01R\x06editor\"\xff\x01\n" +
-	"\x17ResolveEditorURLRequest\x127\n" +
-	"\teditor_id\x18\x01 \x01(\tB\x1a\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\teditor.idR\beditorId\x12F\n" +
-	"\x0eenvironment_id\x18\x02 \x01(\tB\x1f\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x12I\n" +
-	"\x0forganization_id\x18\x03 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\x18\n" +
+	"\x06editor\x18\x01 \x01(\v2\x11.gitpod.v1.EditorB\x06\xbaH\x03\xc8\x01\x01R\x06editor\"\xc7\x01\n" +
+	"\x17ResolveEditorURLRequest\x12(\n" +
+	"\teditor_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\beditorId\x122\n" +
+	"\x0eenvironment_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\renvironmentId\x124\n" +
+	"\x0forganization_id\x18\x03 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12\x18\n" +
 	"\aversion\x18\x04 \x01(\tR\aversion\"4\n" +
 	"\x18ResolveEditorURLResponse\x12\x18\n" +
 	"\x03url\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x03url\"1\n" +
 	"\rEditorVersion\x12 \n" +
-	"\aversion\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\aversion\"\xd4\x02\n" +
-	"\x06Editor\x12*\n" +
-	"\x02id\x18\x01 \x01(\tB\x1a\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\teditor.idR\x02id\x12\x1a\n" +
+	"\aversion\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\aversion\"\xc5\x02\n" +
+	"\x06Editor\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x02id\x12\x1a\n" +
 	"\x04name\x18\x02 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x04name\x12+\n" +
 	"\x11short_description\x18\x03 \x01(\tR\x10shortDescription\x12C\n" +
 	"\x19installation_instructions\x18\x04 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x18installationInstructions\x12\x19\n" +
 	"\bicon_url\x18\x05 \x01(\tR\aiconUrl\x12)\n" +
 	"\furl_template\x18\x06 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\vurlTemplate\x12\x14\n" +
 	"\x05alias\x18\a \x01(\tR\x05alias\x124\n" +
-	"\bversions\x18\b \x03(\v2\x18.gitpod.v1.EditorVersionR\bversions2\xc6\x02\n" +
-	"\rEditorService\x12[\n" +
-	"\vListEditors\x12\x1d.gitpod.v1.ListEditorsRequest\x1a\x1e.gitpod.v1.ListEditorsResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x12Y\n" +
-	"\tGetEditor\x12\x1b.gitpod.v1.GetEditorRequest\x1a\x1c.gitpod.v1.GetEditorResponse\"\x11\xb2\xab\x1e\n" +
-	"\x12\bretrieve\x90\x02\x01\x12n\n" +
-	"\x10ResolveEditorURL\x12\".gitpod.v1.ResolveEditorURLRequest\x1a#.gitpod.v1.ResolveEditorURLResponse\"\x11\xb2\xab\x1e\r\x12\vresolve_url\x1a\r\xaa\xab\x1e\t\n" +
-	"\aeditorsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\bversions\x18\b \x03(\v2\x18.gitpod.v1.EditorVersionR\bversions2\x8e\x02\n" +
+	"\rEditorService\x12Q\n" +
+	"\vListEditors\x12\x1d.gitpod.v1.ListEditorsRequest\x1a\x1e.gitpod.v1.ListEditorsResponse\"\x03\x90\x02\x01\x12K\n" +
+	"\tGetEditor\x12\x1b.gitpod.v1.GetEditorRequest\x1a\x1c.gitpod.v1.GetEditorResponse\"\x03\x90\x02\x01\x12]\n" +
+	"\x10ResolveEditorURL\x12\".gitpod.v1.ResolveEditorURLRequest\x1a#.gitpod.v1.ResolveEditorURLResponse\"\x00B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_editor_proto_rawDescOnce sync.Once

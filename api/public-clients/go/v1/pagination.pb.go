@@ -8,8 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -289,32 +287,24 @@ var File_gitpod_v1_pagination_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_pagination_proto_rawDesc = "" +
 	"\n" +
-	"\x1agitpod/v1/pagination.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\"\x83\x01\n" +
-	"\x11PaginationRequest\x125\n" +
-	"\tpage_size\x18\x01 \x01(\x05B\x18\xbaH\x06\x1a\x04\x18d(\x00\xa2\xab\x1e\v\n" +
-	"\tpage.sizeR\bpageSize\x12\x14\n" +
-	"\x05token\x18\x02 \x01(\tR\x05token:!\xba\xab\x1e\x1d\n" +
-	"\a$shared\x12\x12pagination_request\"W\n" +
+	"\x1agitpod/v1/pagination.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\"Q\n" +
+	"\x11PaginationRequest\x12&\n" +
+	"\tpage_size\x18\x01 \x01(\x05B\t\xbaH\x06\x1a\x04\x18d(\x00R\bpageSize\x12\x14\n" +
+	"\x05token\x18\x02 \x01(\tR\x05token\"3\n" +
 	"\x12PaginationResponse\x12\x1d\n" +
 	"\n" +
-	"next_token\x18\x01 \x01(\tR\tnextToken:\"\xba\xab\x1e\x1e\n" +
-	"\a$shared\x12\x13pagination_response\"l\n" +
-	"\x04Sort\x12&\n" +
-	"\x05field\x18\x01 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"sort.fieldR\x05field\x12<\n" +
-	"\x05order\x18\x02 \x01(\x0e2\x14.gitpod.v1.SortOrderB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"sort.orderR\x05order\"\x8b\x01\n" +
-	"\x14BigPaginationRequest\x126\n" +
-	"\tpage_size\x18\x01 \x01(\x05B\x19\xbaH\a\x1a\x05\x18\x90N(\x00\xa2\xab\x1e\v\n" +
-	"\tpage.sizeR\bpageSize\x12\x14\n" +
-	"\x05token\x18\x02 \x01(\tR\x05token:%\xba\xab\x1e!\n" +
-	"\a$shared\x12\x16big_pagination_request*P\n" +
+	"next_token\x18\x01 \x01(\tR\tnextToken\"H\n" +
+	"\x04Sort\x12\x14\n" +
+	"\x05field\x18\x01 \x01(\tR\x05field\x12*\n" +
+	"\x05order\x18\x02 \x01(\x0e2\x14.gitpod.v1.SortOrderR\x05order\"U\n" +
+	"\x14BigPaginationRequest\x12'\n" +
+	"\tpage_size\x18\x01 \x01(\x05B\n" +
+	"\xbaH\a\x1a\x05\x18\x90N(\x00R\bpageSize\x12\x14\n" +
+	"\x05token\x18\x02 \x01(\tR\x05token*P\n" +
 	"\tSortOrder\x12\x1a\n" +
 	"\x16SORT_ORDER_UNSPECIFIED\x10\x00\x12\x12\n" +
 	"\x0eSORT_ORDER_ASC\x10\x01\x12\x13\n" +
-	"\x0fSORT_ORDER_DESC\x10\x02B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x0fSORT_ORDER_DESC\x10\x02B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_pagination_proto_rawDescOnce sync.Once
