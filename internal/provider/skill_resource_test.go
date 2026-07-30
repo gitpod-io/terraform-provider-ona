@@ -27,6 +27,7 @@ const (
 	skillTestOtherOrgID = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"
 	skillTestID1        = "11111111-1111-4111-8111-111111111111"
 	skillTestID2        = "22222222-2222-4222-8222-222222222222"
+	skillTestID3        = "33333333-3333-4333-8333-333333333333"
 )
 
 func TestAccSkillResourceLifecycle(t *testing.T) {
@@ -244,6 +245,10 @@ type fakeSkillService struct {
 	nextOrgID      string
 	prompts        map[string]*v1.Prompt
 	nextID         int
+	listRequests   []*v1.ListPromptsRequest
+	listErr        error
+	listPageSize   int32
+	getCalls       int
 }
 
 func (s *fakeSkillService) GetAuthenticatedIdentity(context.Context, *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error) {
@@ -282,6 +287,7 @@ func (s *fakeSkillService) CreatePrompt(_ context.Context, req *connect.Request[
 func (s *fakeSkillService) GetPrompt(_ context.Context, req *connect.Request[v1.GetPromptRequest]) (*connect.Response[v1.GetPromptResponse], error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	s.getCalls++
 	prompt := s.prompts[req.Msg.GetPromptId()]
 	if prompt == nil || prompt.GetMetadata().GetOrganizationId() != s.organizationID {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("prompt not found"))

@@ -102,6 +102,21 @@ func TestListResourceRegistrationsAreValid(t *testing.T) {
 	}
 }
 
+func TestSkillListResourceIsRegistered(t *testing.T) {
+	t.Parallel()
+
+	provider := &OnaProvider{}
+	for _, newListResource := range provider.ListResources(t.Context()) {
+		var resp frameworkresource.MetadataResponse
+		newListResource().Metadata(t.Context(), frameworkresource.MetadataRequest{ProviderTypeName: "ona"}, &resp)
+		if resp.TypeName == "ona_skill" {
+			return
+		}
+	}
+
+	t.Fatal("ona_skill list resource is not registered")
+}
+
 func TestConfigureSharesProviderDataWithListResources(t *testing.T) {
 	t.Parallel()
 
