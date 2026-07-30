@@ -9,17 +9,24 @@ import (
 )
 
 type Model struct {
-	ID          types.String `tfsdk:"id"`
-	Name        types.String `tfsdk:"name"`
-	Description types.String `tfsdk:"description"`
-	Triggers    types.List   `tfsdk:"triggers"`
-	Action      types.Object `tfsdk:"action"`
-	Executor    types.Object `tfsdk:"executor"`
-	Disabled    types.Bool   `tfsdk:"disabled"`
-	WebhookURL  types.String `tfsdk:"webhook_url"`
-	Creator     types.Object `tfsdk:"creator"`
-	CreatedAt   types.String `tfsdk:"created_at"`
-	UpdatedAt   types.String `tfsdk:"updated_at"`
+	ID            types.String `tfsdk:"id"`
+	Name          types.String `tfsdk:"name"`
+	Description   types.String `tfsdk:"description"`
+	CodexSettings types.Object `tfsdk:"codex_settings"`
+	Triggers      types.List   `tfsdk:"triggers"`
+	Action        types.Object `tfsdk:"action"`
+	Executor      types.Object `tfsdk:"executor"`
+	Disabled      types.Bool   `tfsdk:"disabled"`
+	WebhookURL    types.String `tfsdk:"webhook_url"`
+	Creator       types.Object `tfsdk:"creator"`
+	CreatedAt     types.String `tfsdk:"created_at"`
+	UpdatedAt     types.String `tfsdk:"updated_at"`
+}
+
+type CodexSettingsModel struct {
+	Model           types.String `tfsdk:"model"`
+	ReasoningEffort types.String `tfsdk:"reasoning_effort"`
+	ServiceTier     types.String `tfsdk:"service_tier"`
 }
 
 type TriggerModel struct {
@@ -127,6 +134,12 @@ type SummaryModel struct {
 }
 
 var emptyAttributeTypes = map[string]attr.Type{}
+
+var codexSettingsAttributeTypes = map[string]attr.Type{
+	"model":            types.StringType,
+	"reasoning_effort": types.StringType,
+	"service_tier":     types.StringType,
+}
 
 var timeTriggerAttributeTypes = map[string]attr.Type{
 	"cron_expression": types.StringType,

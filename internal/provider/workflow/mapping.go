@@ -31,11 +31,13 @@ func createWorkflowRequest(ctx context.Context, data Model) (*v1.CreateWorkflowR
 		return nil, diags
 	}
 	return &v1.CreateWorkflowRequest{
-		Name:        data.Name.ValueString(),
-		Description: optionalString(data.Description),
-		Triggers:    triggers,
-		Action:      action,
-		Executor:    executor,
+		Name:          data.Name.ValueString(),
+		Description:   optionalString(data.Description),
+		Triggers:      triggers,
+		Action:        action,
+		Executor:      executor,
+		AgentId:       codexAgentID,
+		CodexSettings: codexSettingsFromObject(ctx, data.CodexSettings, &diags),
 	}, diags
 }
 
@@ -49,13 +51,17 @@ func updateWorkflowRequest(ctx context.Context, data Model) (*v1.UpdateWorkflowR
 	description := optionalString(data.Description)
 	disabled := data.Disabled.ValueBool()
 	request := &v1.UpdateWorkflowRequest{
-		WorkflowId:  data.ID.ValueString(),
-		Name:        &name,
-		Description: &description,
-		Triggers:    triggersFromModel(ctx, data.Triggers, &diags),
-		Action:      actionFromModel(ctx, data.Action, &diags),
-		Executor:    subjectFromObject(ctx, data.Executor, &diags),
-		Disabled:    &disabled,
+		WorkflowId:    data.ID.ValueString(),
+		Name:          &name,
+		Description:   &description,
+		Triggers:      triggersFromModel(ctx, data.Triggers, &diags),
+		Action:        actionFromModel(ctx, data.Action, &diags),
+		Executor:      subjectFromObject(ctx, data.Executor, &diags),
+		Disabled:      &disabled,
+		CodexSettings: codexSettingsFromObject(ctx, data.CodexSettings, &diags),
+	}
+	if request.CodexSettings == nil && !diags.HasError() {
+		request.CodexSettings = &v1.CodexSettings{}
 	}
 	if diags.HasError() {
 		return nil, diags
@@ -190,6 +196,7 @@ func populateModel(ctx context.Context, data *Model, workflow *v1.Workflow, diag
 	data.ID = stringValue(workflow.GetId())
 	data.Name = stringValue(metadata.GetName())
 	data.Description = tfvalue.OptionalStringValue(metadata.GetDescription())
+	data.CodexSettings = codexSettingsToObject(ctx, spec.GetCodexSettings(), diags)
 	data.Triggers = triggersToList(ctx, spec.GetTriggers(), diags)
 	data.Action = actionToObject(ctx, spec.GetAction(), diags)
 	data.Executor = subjectObject(metadata.GetExecutor(), diags)
@@ -331,9 +338,6 @@ func unsupportedWorkflowReason(workflow *v1.Workflow) string {
 	if spec.GetReport() != nil {
 		return "The workflow configures a report action, which is not supported by ona_automation. Remove the report before importing it."
 	}
-	if spec.GetAgentId() != "" || spec.GetCodexSettings() != nil {
-		return "The workflow configures workflow-level agent or Codex settings, which are not supported by ona_automation. Remove those settings before importing it."
-	}
 	for _, step := range spec.GetAction().GetSteps() {
 		if step.GetReport() != nil {
 			return "The workflow contains a report step, which is not supported by ona_automation. Remove the report step before importing it."
@@ -401,6 +405,7 @@ func preservePlannedInputs(ctx context.Context, data *Model, planned Model, diag
 		data.Description = planned.Description
 	}
 	preserveMaxTimeLexeme(ctx, data, planned, diags)
+	preserveDefaultCodexSettings(&data.CodexSettings, planned.CodexSettings)
 }
 
 func preserveTerraformOnlyState(ctx context.Context, data *Model, prior Model, diags *diag.Diagnostics) {
@@ -408,6 +413,7 @@ func preserveTerraformOnlyState(ctx context.Context, data *Model, prior Model, d
 		data.Description = prior.Description
 	}
 	preserveMaxTimeLexeme(ctx, data, prior, diags)
+	preserveDefaultCodexSettings(&data.CodexSettings, prior.CodexSettings)
 }
 
 func preserveMaxTimeLexeme(ctx context.Context, data *Model, source Model, diags *diag.Diagnostics) {

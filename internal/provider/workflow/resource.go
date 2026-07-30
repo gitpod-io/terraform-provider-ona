@@ -80,6 +80,10 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	if !workflowUsesCodex(workflow) {
+		resp.Diagnostics.AddError("Unable to Create Codex Automation", "The Ona API created the automation without the required Codex agent. The workflow ID was saved in Terraform state so it can be inspected or removed safely.")
+		return
+	}
 	populateModel(ctx, &data, workflow, &resp.Diagnostics)
 	preservePlannedInputs(ctx, &data, planned, &resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
@@ -94,6 +98,10 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 	updated, err := r.client.WorkflowService().UpdateWorkflow(ctx, connect.NewRequest(&v1.UpdateWorkflowRequest{WorkflowId: workflow.GetId(), Disabled: &disabled}))
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Disable Ona Workflow", "disabling the newly created Ona workflow", err)
+		return
+	}
+	if !workflowUsesCodex(updated.Msg.GetWorkflow()) {
+		resp.Diagnostics.AddError("Unable to Disable Codex Automation", "The Ona API returned the newly created automation without the required Codex agent after disabling it.")
 		return
 	}
 	populateModel(ctx, &data, updated.Msg.GetWorkflow(), &resp.Diagnostics)
@@ -145,6 +153,19 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", "ona_automation") {
 		return
 	}
+	current, err := r.getWorkflow(ctx, data.ID.ValueString())
+	if err != nil {
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Workflow", "checking whether the Ona workflow uses Codex", err)
+		return
+	}
+	if current == nil {
+		resp.Diagnostics.AddError("Unable to Update Ona Workflow", "The Ona workflow no longer exists. Refresh the Terraform state and try again.")
+		return
+	}
+	if !workflowUsesCodex(current) {
+		resp.Diagnostics.AddError("Unable to Update Non-Codex Automation", "Terraform can read and delete this automation, but cannot update it because it is not pinned to the Codex agent. Migrate the automation to Codex outside Terraform or replace it before applying changes.")
+		return
+	}
 	updateRequest, diags := updateWorkflowRequest(ctx, data)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -155,6 +176,10 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Workflow", "updating the Ona workflow", err)
 		return
 	}
+	if !workflowUsesCodex(result.Msg.GetWorkflow()) {
+		resp.Diagnostics.AddError("Unable to Update Codex Automation", "The Ona API returned the updated automation without the required Codex agent. Refresh the Terraform state before retrying.")
+		return
+	}
 	planned := data
 	populateModel(ctx, &data, result.Msg.GetWorkflow(), &resp.Diagnostics)
 	preservePlannedInputs(ctx, &data, planned, &resp.Diagnostics)
@@ -162,6 +187,10 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 		return
 	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func workflowUsesCodex(workflow *v1.Workflow) bool {
+	return workflow != nil && workflow.GetSpec() != nil && workflow.GetSpec().GetAgentId() == codexAgentID
 }
 
 func (r *Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {

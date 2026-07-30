@@ -2,12 +2,12 @@
 page_title: "ona_automation Resource - ona"
 subcategory: "Integrations and Automation"
 description: |-
-  Persistent Ona automation. Creating automations requires a permitted user credential; the Ona API rejects automation creation by service accounts. A caller changing automation triggers or actions must own the current user executor or set the executor to themselves or a service account. Removing this resource uses graceful deletion: Ona immediately deletes idle automations, but cancels active executions and finishes their cleanup asynchronously.
+  Persistent Ona automation. New automations are pinned to Codex. Existing non-Codex automations can be read, imported, and deleted, but must be migrated to Codex outside Terraform before they can be updated. Creating automations requires a permitted user credential; the Ona API rejects automation creation by service accounts. A caller changing automation triggers or actions must own the current user executor or set the executor to themselves or a service account. Removing this resource uses graceful deletion: Ona immediately deletes idle automations, but cancels active executions and finishes their cleanup asynchronously.
 ---
 
 # ona_automation (Resource)
 
-Persistent Ona automation. Creating automations requires a permitted user credential; the Ona API rejects automation creation by service accounts. A caller changing automation triggers or actions must own the current user executor or set the executor to themselves or a service account. Removing this resource uses graceful deletion: Ona immediately deletes idle automations, but cancels active executions and finishes their cleanup asynchronously.
+Persistent Ona automation. New automations are pinned to Codex. Existing non-Codex automations can be read, imported, and deleted, but must be migrated to Codex outside Terraform before they can be updated. Creating automations requires a permitted user credential; the Ona API rejects automation creation by service accounts. A caller changing automation triggers or actions must own the current user executor or set the executor to themselves or a service account. Removing this resource uses graceful deletion: Ona immediately deletes idle automations, but cancels active executions and finishes their cleanup asynchronously.
 
 For product context, see [Background automations](https://ona.com/docs/ona/automations/overview), [Configure Automations](https://ona.com/docs/ona/automations/configure-automations), and [Webhooks](https://ona.com/docs/ona/automations/webhooks).
 
@@ -19,13 +19,13 @@ The provider supports:
 - Project, repository, agent-prompt, and inherited trigger contexts
 - Shell-task, agent-prompt, and pull-request action steps
 - Executors, execution limits, and disabling automations
+- Codex model, reasoning-effort, and service-tier settings
 
 It does not model:
 
 - Top-level report actions
 - Report steps
 - Workflow-level `agent_id`
-- Workflow-level Codex model, reasoning-effort, or service-tier settings
 
 Legacy pull-request triggers without a webhook or integration cannot be imported or managed.
 
@@ -40,6 +40,12 @@ resource "ona_automation" "nightly_checks" {
   executor = {
     id        = "<service-account-id>"
     principal = "service_account"
+  }
+
+  codex_settings = {
+    model            = "gpt-5.6-sol"
+    reasoning_effort = "high"
+    service_tier     = "fast"
   }
 
   triggers = [
@@ -98,6 +104,7 @@ resource "ona_automation" "nightly_checks" {
 
 ### Optional
 
+- `codex_settings` (Attributes) Codex model, reasoning, and service settings. Omit this object or use an empty object to select runtime defaults. Ona applies these settings only to Codex automations. Existing non-Codex automations remain readable and deletable, but must be migrated to Codex outside Terraform before they can be updated. (see [below for nested schema](#nestedatt--codex_settings))
 - `description` (String) Optional workflow description. Must not exceed 500 characters. Set an empty string to clear it.
 - `disabled` (Boolean) Whether automatic and manual workflow starts are disabled. Defaults to `false`.
 - `executor` (Attributes) Identity that executes the workflow. Omit to use the creating user. A user executor must be the API caller; a service-account executor may be selected by ID. Removing this block retains the resolved remote executor because the API has no clear operation. (see [below for nested schema](#nestedatt--executor))
@@ -262,6 +269,16 @@ Required:
 
 - `cron_expression` (String) Five-field cron expression or supported cron descriptor. Must be between 1 and 100 characters.
 
+
+
+<a id="nestedatt--codex_settings"></a>
+### Nested Schema for `codex_settings`
+
+Optional:
+
+- `model` (String) Codex model. Supported values are `gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex`, `gpt-5.3-codex-spark`, `gpt-5.2`, `gpt-5.6-sol`, `gpt-5.6-terra`, and `gpt-5.6-luna`.
+- `reasoning_effort` (String) Codex reasoning effort. Supported values are `low`, `medium`, `high`, and `xhigh`.
+- `service_tier` (String) Codex service tier. The supported value is `fast`.
 
 
 <a id="nestedatt--executor"></a>

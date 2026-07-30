@@ -22,6 +22,7 @@ var workflowCronParser = cron.NewParser(cron.Minute | cron.Hour | cron.Dom | cro
 func validateModel(ctx context.Context, data Model, requireKnown bool, diags *diag.Diagnostics) {
 	validateString(data.Name, path.Root("name"), 1, 80, true, requireKnown, diags)
 	validateString(data.Description, path.Root("description"), 0, 500, false, requireKnown, diags)
+	validateCodexSettings(ctx, data.CodexSettings, requireKnown, diags)
 	validateExecutor(ctx, data.Executor, requireKnown, diags)
 
 	if data.Triggers.IsUnknown() {
@@ -62,6 +63,25 @@ func validateModel(ctx context.Context, data Model, requireKnown bool, diags *di
 			validateAction(ctx, action, path.Root("action"), requireKnown, diags)
 		}
 	}
+}
+
+func validateCodexSettings(ctx context.Context, value types.Object, requireKnown bool, diags *diag.Diagnostics) {
+	p := path.Root("codex_settings")
+	if value.IsNull() {
+		return
+	}
+	if value.IsUnknown() {
+		unknownRequired(p, "Codex Settings", requireKnown, diags)
+		return
+	}
+	var settings CodexSettingsModel
+	diags.Append(value.As(ctx, &settings, basetypes.ObjectAsOptions{})...)
+	if diags.HasError() {
+		return
+	}
+	validateEnumString(settings.Model, p.AtName("model"), codexModelValues, false, requireKnown, diags)
+	validateEnumString(settings.ReasoningEffort, p.AtName("reasoning_effort"), codexReasoningEffortValues, false, requireKnown, diags)
+	validateEnumString(settings.ServiceTier, p.AtName("service_tier"), codexServiceTierValues, false, requireKnown, diags)
 }
 
 func validateExecutor(ctx context.Context, value types.Object, requireKnown bool, diags *diag.Diagnostics) {

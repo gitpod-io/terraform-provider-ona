@@ -16,7 +16,7 @@ import (
 
 func resourceSchema() resourceschema.Schema {
 	return resourceschema.Schema{
-		MarkdownDescription: "Persistent Ona automation. Creating automations requires a permitted user credential; the Ona API rejects automation creation by service accounts. A caller changing automation triggers or actions must own the current user executor or set the executor to themselves or a service account. Removing this resource uses graceful deletion: Ona immediately deletes idle automations, but cancels active executions and finishes their cleanup asynchronously.",
+		MarkdownDescription: "Persistent Ona automation. New automations are pinned to Codex. Existing non-Codex automations can be read, imported, and deleted, but must be migrated to Codex outside Terraform before they can be updated. Creating automations requires a permitted user credential; the Ona API rejects automation creation by service accounts. A caller changing automation triggers or actions must own the current user executor or set the executor to themselves or a service account. Removing this resource uses graceful deletion: Ona immediately deletes idle automations, but cancels active executions and finishes their cleanup asynchronously.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id": tfvalue.StableComputedString("Workflow ID. Use this value as the Terraform import ID."),
 			"name": resourceschema.StringAttribute{
@@ -26,6 +26,24 @@ func resourceSchema() resourceschema.Schema {
 			"description": resourceschema.StringAttribute{
 				Optional:            true,
 				MarkdownDescription: "Optional workflow description. Must not exceed 500 characters. Set an empty string to clear it.",
+			},
+			"codex_settings": resourceschema.SingleNestedAttribute{
+				Optional:            true,
+				MarkdownDescription: "Codex model, reasoning, and service settings. Omit this object or use an empty object to select runtime defaults. Ona applies these settings only to Codex automations. Existing non-Codex automations remain readable and deletable, but must be migrated to Codex outside Terraform before they can be updated.",
+				Attributes: map[string]resourceschema.Attribute{
+					"model": resourceschema.StringAttribute{
+						Optional:            true,
+						MarkdownDescription: "Codex model. Supported values are `gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex`, `gpt-5.3-codex-spark`, `gpt-5.2`, `gpt-5.6-sol`, `gpt-5.6-terra`, and `gpt-5.6-luna`.",
+					},
+					"reasoning_effort": resourceschema.StringAttribute{
+						Optional:            true,
+						MarkdownDescription: "Codex reasoning effort. Supported values are `low`, `medium`, `high`, and `xhigh`.",
+					},
+					"service_tier": resourceschema.StringAttribute{
+						Optional:            true,
+						MarkdownDescription: "Codex service tier. The supported value is `fast`.",
+					},
+				},
 			},
 			"triggers": resourceschema.ListNestedAttribute{
 				Required:            true,

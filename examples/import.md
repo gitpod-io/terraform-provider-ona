@@ -86,11 +86,13 @@ import {
 
 Run `terraform plan -generate-config-out=generated.tf`, review the generated
 configuration, apply the import, and run `terraform plan` again. The final plan
-should be empty. Existing automations that use top-level report actions, report
-steps, workflow-level `agent_id`, or workflow-level Codex model,
-reasoning-effort, or service-tier settings must be updated in Ona before import
-because `ona_automation` does not model those fields. Legacy pull-request
-triggers without a webhook or integration must also be updated before import.
+should be empty. Terraform imports Codex settings using the friendly values
+documented by `ona_automation`. Automations using Codex, Ona Agent, no pinned
+agent, or another agent ID can be imported and refreshed. Terraform can delete
+an imported non-Codex automation, but rejects updates until the automation is
+migrated to Codex outside Terraform. Top-level report actions, report steps,
+and legacy pull-request triggers without a webhook or integration must be
+updated in Ona before import because `ona_automation` cannot reproduce them.
 
 Removing an imported `ona_automation` from configuration deletes it remotely.
 Remove its address from Terraform state instead when you only want Terraform to
