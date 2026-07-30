@@ -3,6 +3,11 @@ list "ona_runner" "all" {
   include_resource = true
 }
 
+list "ona_runner_policy" "all" {
+  provider         = ona
+  include_resource = true
+}
+
 list "ona_scm_integration" "all" {
   provider         = ona
   include_resource = true
