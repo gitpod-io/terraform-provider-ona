@@ -9,6 +9,7 @@ It covers:
 - `ona_environment_class`
 - `ona_project`
 - `ona_warm_pool`
+- `ona_scim_configuration`
 - `ona_secret`
 
 The example only generates imports for objects that already exist and can be
