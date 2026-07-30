@@ -10,6 +10,7 @@ It covers:
 - `ona_scm_integration`
 - `ona_environment_class`
 - `ona_custom_domain`
+- `ona_group`
 - `ona_sso_configuration`
 - `ona_terms_of_service`
 - `ona_oidc_config`

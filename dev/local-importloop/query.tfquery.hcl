@@ -28,6 +28,11 @@ list "ona_custom_domain" "all" {
   include_resource = true
 }
 
+list "ona_group" "all" {
+  provider         = ona
+  include_resource = true
+}
+
 list "ona_sso_configuration" "all" {
   provider         = ona
   include_resource = true
