@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/hashicorp/terraform-plugin-framework/list"
 	listschema "github.com/hashicorp/terraform-plugin-framework/list/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -51,7 +52,7 @@ func (r *PoliciesResource) List(ctx context.Context, req list.ListRequest, resp 
 		organizationID := data.OrganizationID.ValueString()
 		if organizationID == "" {
 			var err error
-			organizationID, err = listutil.AuthenticatedOrganizationID(ctx, r.client)
+			organizationID, err = providerdata.AuthenticatedOrganizationID(ctx, r.client)
 			if err != nil {
 				push(listutil.Error("Unable to Determine Organization", err))
 				return
