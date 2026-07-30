@@ -98,6 +98,8 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 					`"24h"`, `"24h0m0s"`,
 					`"30m"`, `"30m0s"`,
 					`"720h"`, `"720h0m0s"`,
+					`    allowed_agent_ids             = ["ona"]`, `    allowed_agent_ids             = ["ona"]
+    codex_model_states            = { CODEX_OPEN_AI_MODEL_GPT_5_4 = "disabled" }`,
 				).Replace(testAccPolicyConfig(server.URL, "baseline", "24h", "organization")),
 				ImportStateCheck: func(states []*terraform.InstanceState) error {
 					if len(states) != 1 {
