@@ -8,9 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -967,86 +964,74 @@ var File_gitpod_v1_security_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_security_proto_rawDesc = "" +
 	"\n" +
-	"\x18gitpod/v1/security.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe9\x01\n" +
-	"\x1bCreateSecurityPolicyRequest\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12F\n" +
+	"\x18gitpod/v1/security.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd4\x01\n" +
+	"\x1bCreateSecurityPolicyRequest\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12F\n" +
 	"\bmetadata\x18\x02 \x01(\v2\".gitpod.v1.SecurityPolicy.MetadataB\x06\xbaH\x03\xc8\x01\x01R\bmetadata\x12:\n" +
 	"\x04spec\x18\x03 \x01(\v2\x1e.gitpod.v1.SecurityPolicy.SpecB\x06\xbaH\x03\xc8\x01\x01R\x04spec\"j\n" +
 	"\x1cCreateSecurityPolicyResponse\x12J\n" +
-	"\x0fsecurity_policy\x18\x01 \x01(\v2\x19.gitpod.v1.SecurityPolicyB\x06\xbaH\x03\xc8\x01\x01R\x0esecurityPolicy\"j\n" +
-	"\x18GetSecurityPolicyRequest\x12N\n" +
-	"\x12security_policy_id\x18\x01 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12security_policy.idR\x10securityPolicyId\"g\n" +
+	"\x0fsecurity_policy\x18\x01 \x01(\v2\x19.gitpod.v1.SecurityPolicyB\x06\xbaH\x03\xc8\x01\x01R\x0esecurityPolicy\"R\n" +
+	"\x18GetSecurityPolicyRequest\x126\n" +
+	"\x12security_policy_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10securityPolicyId\"g\n" +
 	"\x19GetSecurityPolicyResponse\x12J\n" +
-	"\x0fsecurity_policy\x18\x01 \x01(\v2\x19.gitpod.v1.SecurityPolicyB\x06\xbaH\x03\xc8\x01\x01R\x0esecurityPolicy\"\xfa\x02\n" +
+	"\x0fsecurity_policy\x18\x01 \x01(\v2\x19.gitpod.v1.SecurityPolicyB\x06\xbaH\x03\xc8\x01\x01R\x0esecurityPolicy\"\xc5\x02\n" +
 	"\x1bListSecurityPoliciesRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12E\n" +
-	"\x06filter\x18\x02 \x01(\v2-.gitpod.v1.ListSecurityPoliciesRequest.FilterR\x06filter\x1a\xd5\x01\n" +
-	"\x06Filter\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12a\n" +
-	"\x13security_policy_ids\x18\x02 \x03(\tB1\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1c\n" +
-	"\x1afilter.security_policy_idsR\x11securityPolicyIds\x12 \n" +
+	"\x06filter\x18\x02 \x01(\v2-.gitpod.v1.ListSecurityPoliciesRequest.FilterR\x06filter\x1a\xa0\x01\n" +
+	"\x06Filter\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12A\n" +
+	"\x13security_policy_ids\x18\x02 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\x11securityPolicyIds\x12 \n" +
 	"\x06search\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02R\x06search\"\xa5\x01\n" +
 	"\x1cListSecurityPoliciesResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12F\n" +
-	"\x11security_policies\x18\x02 \x03(\v2\x19.gitpod.v1.SecurityPolicyR\x10securityPolicies\"\xe1\x01\n" +
-	"\x1bUpdateSecurityPolicyRequest\x12N\n" +
-	"\x12security_policy_id\x18\x01 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12security_policy.idR\x10securityPolicyId\x12>\n" +
+	"\x11security_policies\x18\x02 \x03(\v2\x19.gitpod.v1.SecurityPolicyR\x10securityPolicies\"\xc9\x01\n" +
+	"\x1bUpdateSecurityPolicyRequest\x126\n" +
+	"\x12security_policy_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10securityPolicyId\x12>\n" +
 	"\bmetadata\x18\x02 \x01(\v2\".gitpod.v1.SecurityPolicy.MetadataR\bmetadata\x122\n" +
 	"\x04spec\x18\x03 \x01(\v2\x1e.gitpod.v1.SecurityPolicy.SpecR\x04spec\"j\n" +
 	"\x1cUpdateSecurityPolicyResponse\x12J\n" +
-	"\x0fsecurity_policy\x18\x01 \x01(\v2\x19.gitpod.v1.SecurityPolicyB\x06\xbaH\x03\xc8\x01\x01R\x0esecurityPolicy\"m\n" +
-	"\x1bDeleteSecurityPolicyRequest\x12N\n" +
-	"\x12security_policy_id\x18\x01 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12security_policy.idR\x10securityPolicyId\"\x1e\n" +
-	"\x1cDeleteSecurityPolicyResponse\"\xf3\b\n" +
-	"\x0eSecurityPolicy\x124\n" +
-	"\x02id\x18\x01 \x01(\tB$\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12security_policy.idګ\x1e\x00R\x02id\x12F\n" +
-	"\bmetadata\x18\x02 \x01(\v2\".gitpod.v1.SecurityPolicy.MetadataB\x06\xbaH\x03\xc8\x01\x01R\bmetadata\x12>\n" +
-	"\x04spec\x18\x03 \x01(\v2\x1e.gitpod.v1.SecurityPolicy.SpecB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x04spec\x12J\n" +
-	"\x0forganization_id\x18\x04 \x01(\tB!\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12?\n" +
+	"\x0fsecurity_policy\x18\x01 \x01(\v2\x19.gitpod.v1.SecurityPolicyB\x06\xbaH\x03\xc8\x01\x01R\x0esecurityPolicy\"U\n" +
+	"\x1bDeleteSecurityPolicyRequest\x126\n" +
+	"\x12security_policy_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10securityPolicyId\"\x1e\n" +
+	"\x1cDeleteSecurityPolicyResponse\"\xf3\a\n" +
+	"\x0eSecurityPolicy\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12F\n" +
+	"\bmetadata\x18\x02 \x01(\v2\".gitpod.v1.SecurityPolicy.MetadataB\x06\xbaH\x03\xc8\x01\x01R\bmetadata\x12:\n" +
+	"\x04spec\x18\x03 \x01(\v2\x1e.gitpod.v1.SecurityPolicy.SpecB\x06\xbaH\x03\xc8\x01\x01R\x04spec\x121\n" +
+	"\x0forganization_id\x18\x04 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x129\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tcreatedAt\x12?\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tupdatedAt\x1a-\n" +
-	"\bMetadata\x12!\n" +
-	"\x04name\x18\x01 \x01(\tB\r\xbaH\x06r\x04\x10\x01\x18Pګ\x1e\x00R\x04name\x1a\xc7\x04\n" +
-	"\x04Spec\x12K\n" +
-	"\x05ports\x18\x01 \x01(\v2).gitpod.v1.SecurityPolicy.Spec.PortPolicyB\n" +
-	"ʫ\x1e\x02\b\x01ګ\x1e\x00R\x05ports\x12W\n" +
-	"\vexecutables\x18\x02 \x01(\v2/.gitpod.v1.SecurityPolicy.Spec.ExecutablePolicyB\x04ګ\x1e\x00R\vexecutables\x1a\x80\x01\n" +
+	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x1a)\n" +
+	"\bMetadata\x12\x1d\n" +
+	"\x04name\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18PR\x04name\x1a\x96\x04\n" +
+	"\x04Spec\x12?\n" +
+	"\x05ports\x18\x01 \x01(\v2).gitpod.v1.SecurityPolicy.Spec.PortPolicyR\x05ports\x12Q\n" +
+	"\vexecutables\x18\x02 \x01(\v2/.gitpod.v1.SecurityPolicy.Spec.ExecutablePolicyR\vexecutables\x1az\n" +
 	"\n" +
-	"PortPolicy\x12O\n" +
-	"\x13max_admission_level\x18\x03 \x01(\x0e2\x19.gitpod.v1.AdmissionLevelB\x04ګ\x1e\x00R\x11maxAdmissionLevelJ\x04\b\x01\x10\x02J\x04\b\x02\x10\x03R\x0edefault_effectR\x05rules\x1a\x95\x02\n" +
-	"\x10ExecutablePolicy\x12M\n" +
-	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\rdefaultEffect\x12P\n" +
-	"\x05rules\x18\x02 \x03(\v24.gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy.RuleB\x04ګ\x1e\x00R\x05rules\x1a`\n" +
-	"\x04Rule\x12\x18\n" +
-	"\x04path\x18\x01 \x01(\tB\x04ګ\x1e\x00R\x04path\x12>\n" +
-	"\x06effect\x18\x04 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectB\x04ګ\x1e\x00R\x06effect\"V\n" +
+	"PortPolicy\x12I\n" +
+	"\x13max_admission_level\x18\x03 \x01(\x0e2\x19.gitpod.v1.AdmissionLevelR\x11maxAdmissionLevelJ\x04\b\x01\x10\x02J\x04\b\x02\x10\x03R\x0edefault_effectR\x05rules\x1a\xfd\x01\n" +
+	"\x10ExecutablePolicy\x12G\n" +
+	"\x0edefault_effect\x18\x01 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectR\rdefaultEffect\x12J\n" +
+	"\x05rules\x18\x02 \x03(\v24.gitpod.v1.SecurityPolicy.Spec.ExecutablePolicy.RuleR\x05rules\x1aT\n" +
+	"\x04Rule\x12\x12\n" +
+	"\x04path\x18\x01 \x01(\tR\x04path\x128\n" +
+	"\x06effect\x18\x04 \x01(\x0e2 .gitpod.v1.SecurityPolicy.EffectR\x06effect\"V\n" +
 	"\x06Effect\x12\x16\n" +
 	"\x12EFFECT_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fEFFECT_ALLOW\x10\x01\x12\x10\n" +
 	"\fEFFECT_BLOCK\x10\x02\x12\x10\n" +
-	"\fEFFECT_AUDIT\x10\x03:\x04ҫ\x1e\x002\xfa\x04\n" +
-	"\x0fSecurityService\x12u\n" +
-	"\x14CreateSecurityPolicy\x12&.gitpod.v1.CreateSecurityPolicyRequest\x1a'.gitpod.v1.CreateSecurityPolicyResponse\"\f\xb2\xab\x1e\b\x12\x06create\x12q\n" +
-	"\x11GetSecurityPolicy\x12#.gitpod.v1.GetSecurityPolicyRequest\x1a$.gitpod.v1.GetSecurityPolicyResponse\"\x11\xb2\xab\x1e\n" +
-	"\x12\bretrieve\x90\x02\x01\x12v\n" +
-	"\x14ListSecurityPolicies\x12&.gitpod.v1.ListSecurityPoliciesRequest\x1a'.gitpod.v1.ListSecurityPoliciesResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x12u\n" +
-	"\x14UpdateSecurityPolicy\x12&.gitpod.v1.UpdateSecurityPolicyRequest\x1a'.gitpod.v1.UpdateSecurityPolicyResponse\"\f\xb2\xab\x1e\b\x12\x06update\x12u\n" +
-	"\x14DeleteSecurityPolicy\x12&.gitpod.v1.DeleteSecurityPolicyRequest\x1a'.gitpod.v1.DeleteSecurityPolicyResponse\"\f\xb2\xab\x1e\b\x12\x06delete\x1a\x17\xaa\xab\x1e\x13\n" +
-	"\x11security_policiesB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\fEFFECT_AUDIT\x10\x032\xa5\x04\n" +
+	"\x0fSecurityService\x12i\n" +
+	"\x14CreateSecurityPolicy\x12&.gitpod.v1.CreateSecurityPolicyRequest\x1a'.gitpod.v1.CreateSecurityPolicyResponse\"\x00\x12c\n" +
+	"\x11GetSecurityPolicy\x12#.gitpod.v1.GetSecurityPolicyRequest\x1a$.gitpod.v1.GetSecurityPolicyResponse\"\x03\x90\x02\x01\x12l\n" +
+	"\x14ListSecurityPolicies\x12&.gitpod.v1.ListSecurityPoliciesRequest\x1a'.gitpod.v1.ListSecurityPoliciesResponse\"\x03\x90\x02\x01\x12i\n" +
+	"\x14UpdateSecurityPolicy\x12&.gitpod.v1.UpdateSecurityPolicyRequest\x1a'.gitpod.v1.UpdateSecurityPolicyResponse\"\x00\x12i\n" +
+	"\x14DeleteSecurityPolicy\x12&.gitpod.v1.DeleteSecurityPolicyRequest\x1a'.gitpod.v1.DeleteSecurityPolicyResponse\"\x00B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_security_proto_rawDescOnce sync.Once
