@@ -8,9 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -8480,19 +8477,18 @@ var File_gitpod_v1_organization_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\n" +
-	"\x1cgitpod/v1/organization.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x15gitpod/v1/agent.proto\x1a\x15gitpod/v1/count.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x14gitpod/v1/user.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe1\x01\n" +
-	"\x19UpdateOrganizationRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\x17\n" +
+	"\x1cgitpod/v1/organization.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x15gitpod/v1/agent.proto\x1a\x15gitpod/v1/count.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x14gitpod/v1/user.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xcc\x01\n" +
+	"\x19UpdateOrganizationRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12D\n" +
 	"\x0einvite_domains\x18\x03 \x01(\v2\x18.gitpod.v1.InviteDomainsH\x01R\rinviteDomains\x88\x01\x01B\a\n" +
 	"\x05_nameB\x11\n" +
 	"\x0f_invite_domains\"a\n" +
 	"\x1aUpdateOrganizationResponse\x12C\n" +
-	"\forganization\x18\x01 \x01(\v2\x17.gitpod.v1.OrganizationB\x06\xbaH\x03\xc8\x01\x01R\forganization\"\xcf\x01\n" +
-	"\x19CreateOrganizationRequest\x125\n" +
-	"\x04name\x18\x01 \x01(\tB!\xbaH\a\xc8\x01\x01r\x02\x10\x03\xa2\xab\x1e\x13\n" +
-	"\x11organization.nameR\x04name\x12+\n" +
+	"\forganization\x18\x01 \x01(\v2\x17.gitpod.v1.OrganizationB\x06\xbaH\x03\xc8\x01\x01R\forganization\"\xb8\x01\n" +
+	"\x19CreateOrganizationRequest\x12\x1e\n" +
+	"\x04name\x18\x01 \x01(\tB\n" +
+	"\xbaH\a\xc8\x01\x01r\x02\x10\x03R\x04name\x12+\n" +
 	"\x11join_organization\x18\x02 \x01(\bR\x10joinOrganization\x12N\n" +
 	"$invite_accounts_with_matching_domain\x18\x03 \x01(\bR inviteAccountsWithMatchingDomain\"\x98\x01\n" +
 	"\x1aCreateOrganizationResponse\x12C\n" +
@@ -8503,38 +8499,32 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\tinvite_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\binviteIdB\t\n" +
 	"\ajoin_id\"Y\n" +
 	"\x18JoinOrganizationResponse\x12=\n" +
-	"\x06member\x18\x01 \x01(\v2\x1d.gitpod.v1.OrganizationMemberB\x06\xbaH\x03\xc8\x01\x01R\x06member\"M\n" +
-	"\x18LeaveOrganizationRequest\x121\n" +
-	"\auser_id\x18\x01 \x01(\tB\x18\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\"\x1b\n" +
-	"\x19LeaveOrganizationResponse\"c\n" +
-	"\x16GetOrganizationRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"^\n" +
+	"\x06member\x18\x01 \x01(\v2\x1d.gitpod.v1.OrganizationMemberB\x06\xbaH\x03\xc8\x01\x01R\x06member\"@\n" +
+	"\x18LeaveOrganizationRequest\x12$\n" +
+	"\auser_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x06userId\"\x1b\n" +
+	"\x19LeaveOrganizationResponse\"N\n" +
+	"\x16GetOrganizationRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"^\n" +
 	"\x17GetOrganizationResponse\x12C\n" +
-	"\forganization\x18\x01 \x01(\v2\x17.gitpod.v1.OrganizationB\x06\xbaH\x03\xc8\x01\x01R\forganization\"f\n" +
-	"\x19DeleteOrganizationRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\x1c\n" +
-	"\x1aDeleteOrganizationResponse\"\x8a\a\n" +
+	"\forganization\x18\x01 \x01(\v2\x17.gitpod.v1.OrganizationB\x06\xbaH\x03\xc8\x01\x01R\forganization\"Q\n" +
+	"\x19DeleteOrganizationRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"\x1c\n" +
+	"\x1aDeleteOrganizationResponse\"\xba\x06\n" +
 	"\x12ListMembersRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x12I\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12<\n" +
+	"pagination\x124\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12<\n" +
 	"\x06filter\x18\x03 \x01(\v2$.gitpod.v1.ListMembersRequest.FilterR\x06filter\x126\n" +
-	"\x04sort\x18\x04 \x01(\v2\".gitpod.v1.ListMembersRequest.SortR\x04sort\x125\n" +
-	"\x05count\x18\x05 \x01(\v2\x17.gitpod.v1.CountRequestB\x06ʫ\x1e\x02\b\x01R\x05count\x1a\xf0\x02\n" +
+	"\x04sort\x18\x04 \x01(\v2\".gitpod.v1.ListMembersRequest.SortR\x04sort\x12-\n" +
+	"\x05count\x18\x05 \x01(\v2\x17.gitpod.v1.CountRequestR\x05count\x1a\xbd\x02\n" +
 	"\x06Filter\x12\"\n" +
 	"\x06search\x18\x01 \x01(\tB\n" +
 	"\xbaH\ar\x05\x10\x00\x18\x80\x02R\x06search\x121\n" +
 	"\bstatuses\x18\x02 \x03(\x0e2\x15.gitpod.v1.UserStatusR\bstatuses\x121\n" +
-	"\x05roles\x18\x03 \x03(\x0e2\x1b.gitpod.v1.OrganizationRoleR\x05roles\x12A\n" +
-	"\buser_ids\x18\x04 \x03(\tB&\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0ffilter.user_idsR\auserIds\x12[\n" +
-	"\x11exclude_group_ids\x18\x05 \x03(\tB/\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1a\n" +
-	"\x18filter.exclude_group_idsR\x0fexcludeGroupIds\x12<\n" +
+	"\x05roles\x18\x03 \x03(\x0e2\x1b.gitpod.v1.OrganizationRoleR\x05roles\x12,\n" +
+	"\buser_ids\x18\x04 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\auserIds\x12=\n" +
+	"\x11exclude_group_ids\x18\x05 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\x0fexcludeGroupIds\x12<\n" +
 	"\x1bexclude_members_in_any_team\x18\x06 \x01(\bR\x17excludeMembersInAnyTeam\x1aq\n" +
 	"\x04Sort\x12=\n" +
 	"\x05field\x18\x01 \x01(\x0e2'.gitpod.v1.ListMembersRequest.SortFieldR\x05field\x12*\n" +
@@ -8542,30 +8532,26 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\tSortField\x12\x1a\n" +
 	"\x16SORT_FIELD_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fSORT_FIELD_NAME\x10\x01\x12\x1a\n" +
-	"\x16SORT_FIELD_DATE_JOINED\x10\x02\"\xd5\x01\n" +
+	"\x16SORT_FIELD_DATE_JOINED\x10\x02\"\xcd\x01\n" +
 	"\x13ListMembersResponse\x12E\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12?\n" +
-	"\amembers\x18\x02 \x03(\v2\x1d.gitpod.v1.OrganizationMemberB\x06\xbaH\x03\xc8\x01\x01R\amembers\x126\n" +
-	"\x05count\x18\x03 \x01(\v2\x18.gitpod.v1.CountResponseB\x06ʫ\x1e\x02\b\x01R\x05count\"\xbf\x01\n" +
-	"\x0eSetRoleRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x121\n" +
-	"\auser_id\x18\x02 \x01(\tB\x18\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\x12/\n" +
+	"\amembers\x18\x02 \x03(\v2\x1d.gitpod.v1.OrganizationMemberB\x06\xbaH\x03\xc8\x01\x01R\amembers\x12.\n" +
+	"\x05count\x18\x03 \x01(\v2\x18.gitpod.v1.CountResponseR\x05count\"\x9d\x01\n" +
+	"\x0eSetRoleRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12$\n" +
+	"\auser_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x06userId\x12/\n" +
 	"\x04role\x18\x03 \x01(\x0e2\x1b.gitpod.v1.OrganizationRoleR\x04role\"\x11\n" +
-	"\x0fSetRoleResponse\"i\n" +
-	"\x1cGetOrganizationInviteRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"^\n" +
+	"\x0fSetRoleResponse\"T\n" +
+	"\x1cGetOrganizationInviteRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"^\n" +
 	"\x1dGetOrganizationInviteResponse\x12=\n" +
 	"\x06invite\x18\x01 \x01(\v2\x1d.gitpod.v1.OrganizationInviteB\x06\xbaH\x03\xc8\x01\x01R\x06invite\">\n" +
 	"\x12OrganizationInvite\x12(\n" +
-	"\tinvite_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\binviteId\"l\n" +
-	"\x1fCreateOrganizationInviteRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"a\n" +
+	"\tinvite_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\binviteId\"W\n" +
+	"\x1fCreateOrganizationInviteRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"a\n" +
 	" CreateOrganizationInviteResponse\x12=\n" +
 	"\x06invite\x18\x01 \x01(\v2\x1d.gitpod.v1.OrganizationInviteB\x06\xbaH\x03\xc8\x01\x01R\x06invite\"O\n" +
 	"#GetOrganizationInviteSummaryRequest\x12(\n" +
@@ -8573,10 +8559,9 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"$GetOrganizationInviteSummaryResponse\x124\n" +
 	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12+\n" +
 	"\x11organization_name\x18\x02 \x01(\tR\x10organizationName\x12:\n" +
-	"\x19organization_member_count\x18\x03 \x01(\x05R\x17organizationMemberCount\"\xdc\x02\n" +
-	"\fOrganization\x120\n" +
-	"\x02id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x02id\x12\x1a\n" +
+	"\x19organization_member_count\x18\x03 \x01(\x05R\x17organizationMemberCount\"\xc7\x02\n" +
+	"\fOrganization\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x02id\x12\x1a\n" +
 	"\x04name\x18\x02 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x04name\x12A\n" +
 	"\n" +
 	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\tcreatedAt\x12A\n" +
@@ -8595,80 +8580,74 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\x06status\x18\a \x01(\x0e2\x15.gitpod.v1.UserStatusB\x06\xbaH\x03\xc8\x01\x01R\x06status\x12-\n" +
 	"\x0elogin_provider\x18\b \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\rloginProvider\"\x80\x01\n" +
 	"\rInviteDomains\x12o\n" +
-	"\adomains\x18\x01 \x03(\tBU\xbaHR\x92\x01O\x18\x01\"KrI\x10\x04\x18\xfd\x012B^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$R\adomains\"\x89\x05\n" +
-	"\x1dCreateSSOConfigurationRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12+\n" +
-	"\tclient_id\x18\x02 \x01(\tB\x0e\xbaH\a\xc8\x01\x01r\x02\x10\x01ګ\x1e\x00R\bclientId\x123\n" +
-	"\rclient_secret\x18\x03 \x01(\tB\x0e\xbaH\a\xc8\x01\x01r\x02\x10\x01ګ\x1e\x00R\fclientSecret\x12.\n" +
+	"\adomains\x18\x01 \x03(\tBU\xbaHR\x92\x01O\x18\x01\"KrI\x10\x04\x18\xfd\x012B^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$R\adomains\"\xd8\x04\n" +
+	"\x1dCreateSSOConfigurationRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12'\n" +
+	"\tclient_id\x18\x02 \x01(\tB\n" +
+	"\xbaH\a\xc8\x01\x01r\x02\x10\x01R\bclientId\x12/\n" +
+	"\rclient_secret\x18\x03 \x01(\tB\n" +
+	"\xbaH\a\xc8\x01\x01r\x02\x10\x01R\fclientSecret\x12*\n" +
 	"\n" +
-	"issuer_url\x18\x04 \x01(\tB\x0f\xbaH\b\xc8\x01\x01r\x03\x88\x01\x01ګ\x1e\x00R\tissuerUrl\x12/\n" +
-	"\femail_domain\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x10\x04H\x00R\vemailDomain\x88\x01\x01\x12~\n" +
-	"\remail_domains\x18\x06 \x03(\tBY\xbaHR\x92\x01O\x18\x01\"KrI\x10\x04\x18\xfd\x012B^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$ګ\x1e\x00R\femailDomains\x12/\n" +
-	"\fdisplay_name\x18\a \x01(\tB\f\xbaH\x05r\x03\x18\x80\x01ګ\x1e\x00R\vdisplayName\x12B\n" +
-	"\x11additional_scopes\x18\b \x03(\tB\x15\xbaH\x0e\x92\x01\v\x10d\"\ar\x05\x10\x01\x18\x80\x01ګ\x1e\x00R\x10additionalScopes\x12>\n" +
-	"\x11claims_expression\x18\t \x01(\tB\f\xbaH\x05r\x03\x18\x80 ګ\x1e\x00H\x01R\x10claimsExpression\x88\x01\x01B\x0f\n" +
+	"issuer_url\x18\x04 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\x88\x01\x01R\tissuerUrl\x12/\n" +
+	"\femail_domain\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x10\x04H\x00R\vemailDomain\x88\x01\x01\x12z\n" +
+	"\remail_domains\x18\x06 \x03(\tBU\xbaHR\x92\x01O\x18\x01\"KrI\x10\x04\x18\xfd\x012B^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$R\femailDomains\x12+\n" +
+	"\fdisplay_name\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01R\vdisplayName\x12>\n" +
+	"\x11additional_scopes\x18\b \x03(\tB\x11\xbaH\x0e\x92\x01\v\x10d\"\ar\x05\x10\x01\x18\x80\x01R\x10additionalScopes\x12:\n" +
+	"\x11claims_expression\x18\t \x01(\tB\b\xbaH\x05r\x03\x18\x80 H\x01R\x10claimsExpression\x88\x01\x01B\x0f\n" +
 	"\r_email_domainB\x14\n" +
 	"\x12_claims_expression\"r\n" +
 	"\x1eCreateSSOConfigurationResponse\x12P\n" +
-	"\x11sso_configuration\x18\x01 \x01(\v2\x1b.gitpod.v1.SSOConfigurationB\x06\xbaH\x03\xc8\x01\x01R\x10ssoConfiguration\"\x97\a\n" +
-	"\x10SSOConfiguration\x12\x1f\n" +
-	"\x02id\x18\x01 \x01(\tB\x0f\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01ګ\x1e\x00R\x02id\x12M\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB$\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12!\n" +
-	"\tclient_id\x18\x03 \x01(\tB\x04ګ\x1e\x00R\bclientId\x12)\n" +
+	"\x11sso_configuration\x18\x01 \x01(\v2\x1b.gitpod.v1.SSOConfigurationB\x06\xbaH\x03\xc8\x01\x01R\x10ssoConfiguration\"\xd0\x06\n" +
+	"\x10SSOConfiguration\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x02id\x124\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12\x1b\n" +
+	"\tclient_id\x18\x03 \x01(\tR\bclientId\x12%\n" +
 	"\n" +
-	"issuer_url\x18\x04 \x01(\tB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\tissuerUrl\x12B\n" +
-	"\x05state\x18\x05 \x01(\x0e2 .gitpod.v1.SSOConfigurationStateB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x05state\x12?\n" +
+	"issuer_url\x18\x04 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\tissuerUrl\x12>\n" +
+	"\x05state\x18\x05 \x01(\x0e2 .gitpod.v1.SSOConfigurationStateB\x06\xbaH\x03\xc8\x01\x01R\x05state\x12?\n" +
 	"\x06claims\x18\x06 \x03(\v2'.gitpod.v1.SSOConfiguration.ClaimsEntryR\x06claims\x12!\n" +
-	"\femail_domain\x18\a \x01(\tR\vemailDomain\x12Y\n" +
-	"\rprovider_type\x18\b \x01(\x0e2(.gitpod.v1.SSOConfiguration.ProviderTypeB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\fproviderType\x12~\n" +
-	"\remail_domains\x18\t \x03(\tBY\xbaHR\x92\x01O\x18\x01\"KrI\x10\x04\x18\xfd\x012B^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$ګ\x1e\x00R\femailDomains\x12/\n" +
+	"\femail_domain\x18\a \x01(\tR\vemailDomain\x12U\n" +
+	"\rprovider_type\x18\b \x01(\x0e2(.gitpod.v1.SSOConfiguration.ProviderTypeB\x06\xbaH\x03\xc8\x01\x01R\fproviderType\x12z\n" +
+	"\remail_domains\x18\t \x03(\tBU\xbaHR\x92\x01O\x18\x01\"KrI\x10\x04\x18\xfd\x012B^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$R\femailDomains\x12+\n" +
 	"\fdisplay_name\x18\n" +
-	" \x01(\tB\f\xbaH\x05r\x03\x18\x80\x01ګ\x1e\x00R\vdisplayName\x121\n" +
-	"\x11additional_scopes\x18\v \x03(\tB\x04ګ\x1e\x00R\x10additionalScopes\x129\n" +
-	"\x11claims_expression\x18\f \x01(\tB\f\xbaH\x05r\x03\x18\x80 ګ\x1e\x00R\x10claimsExpression\x1a9\n" +
+	" \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01R\vdisplayName\x12+\n" +
+	"\x11additional_scopes\x18\v \x03(\tR\x10additionalScopes\x125\n" +
+	"\x11claims_expression\x18\f \x01(\tB\b\xbaH\x05r\x03\x18\x80 R\x10claimsExpression\x1a9\n" +
 	"\vClaimsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"b\n" +
 	"\fProviderType\x12\x1d\n" +
 	"\x19PROVIDER_TYPE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15PROVIDER_TYPE_BUILTIN\x10\x01\x12\x18\n" +
-	"\x14PROVIDER_TYPE_CUSTOM\x10\x02:\x04ҫ\x1e\x00\"u\n" +
-	"\x1aGetSSOConfigurationRequest\x12W\n" +
-	"\x14sso_configuration_id\x18\x01 \x01(\tB%\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x16\n" +
-	"\x14sso_configuration.idR\x12ssoConfigurationId\"o\n" +
+	"\x14PROVIDER_TYPE_CUSTOM\x10\x02\"[\n" +
+	"\x1aGetSSOConfigurationRequest\x12=\n" +
+	"\x14sso_configuration_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x12ssoConfigurationId\"o\n" +
 	"\x1bGetSSOConfigurationResponse\x12P\n" +
-	"\x11sso_configuration\x18\x01 \x01(\v2\x1b.gitpod.v1.SSOConfigurationB\x06\xbaH\x03\xc8\x01\x01R\x10ssoConfiguration\"\xa7\x01\n" +
+	"\x11sso_configuration\x18\x01 \x01(\v2\x1b.gitpod.v1.SSOConfigurationB\x06\xbaH\x03\xc8\x01\x01R\x10ssoConfiguration\"\x92\x01\n" +
 	"\x1cListSSOConfigurationsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x12I\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\xb2\x01\n" +
+	"pagination\x124\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"\xb2\x01\n" +
 	"\x1dListSSOConfigurationsResponse\x12E\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12J\n" +
-	"\x12sso_configurations\x18\x02 \x03(\v2\x1b.gitpod.v1.SSOConfigurationR\x11ssoConfigurations\"\xe5\a\n" +
-	"\x1dUpdateSSOConfigurationRequest\x12W\n" +
-	"\x14sso_configuration_id\x18\x01 \x01(\tB%\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x16\n" +
-	"\x14sso_configuration.idR\x12ssoConfigurationId\x12-\n" +
-	"\tclient_id\x18\x02 \x01(\tB\v\xbaH\x04r\x02\x10\x01ګ\x1e\x00H\x00R\bclientId\x88\x01\x01\x125\n" +
-	"\rclient_secret\x18\x03 \x01(\tB\v\xbaH\x04r\x02\x10\x01ګ\x1e\x00H\x01R\fclientSecret\x88\x01\x01\x120\n" +
+	"\x12sso_configurations\x18\x02 \x03(\v2\x1b.gitpod.v1.SSOConfigurationR\x11ssoConfigurations\"\xa7\a\n" +
+	"\x1dUpdateSSOConfigurationRequest\x12=\n" +
+	"\x14sso_configuration_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x12ssoConfigurationId\x12)\n" +
+	"\tclient_id\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01H\x00R\bclientId\x88\x01\x01\x121\n" +
+	"\rclient_secret\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01H\x01R\fclientSecret\x88\x01\x01\x12,\n" +
 	"\n" +
-	"issuer_url\x18\x04 \x01(\tB\f\xbaH\x05r\x03\x88\x01\x01ګ\x1e\x00H\x02R\tissuerUrl\x88\x01\x01\x12A\n" +
-	"\x05state\x18\x05 \x01(\x0e2 .gitpod.v1.SSOConfigurationStateB\x04ګ\x1e\x00H\x03R\x05state\x88\x01\x01\x12L\n" +
+	"issuer_url\x18\x04 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01H\x02R\tissuerUrl\x88\x01\x01\x12;\n" +
+	"\x05state\x18\x05 \x01(\x0e2 .gitpod.v1.SSOConfigurationStateH\x03R\x05state\x88\x01\x01\x12L\n" +
 	"\x06claims\x18\x06 \x03(\v24.gitpod.v1.UpdateSSOConfigurationRequest.ClaimsEntryR\x06claims\x12/\n" +
-	"\femail_domain\x18\a \x01(\tB\a\xbaH\x04r\x02\x10\x04H\x04R\vemailDomain\x88\x01\x01\x12~\n" +
-	"\remail_domains\x18\t \x03(\tBY\xbaHR\x92\x01O\x18\x01\"KrI\x10\x04\x18\xfd\x012B^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$ګ\x1e\x00R\femailDomains\x124\n" +
+	"\femail_domain\x18\a \x01(\tB\a\xbaH\x04r\x02\x10\x04H\x04R\vemailDomain\x88\x01\x01\x12z\n" +
+	"\remail_domains\x18\t \x03(\tBU\xbaHR\x92\x01O\x18\x01\"KrI\x10\x04\x18\xfd\x012B^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$R\femailDomains\x120\n" +
 	"\fdisplay_name\x18\n" +
-	" \x01(\tB\f\xbaH\x05r\x03\x18\x80\x01ګ\x1e\x00H\x05R\vdisplayName\x88\x01\x01\x12Y\n" +
-	"\x11additional_scopes\x18\v \x01(\v2!.gitpod.v1.AdditionalScopesUpdateB\x04ګ\x1e\x00H\x06R\x10additionalScopes\x88\x01\x01\x12>\n" +
-	"\x11claims_expression\x18\f \x01(\tB\f\xbaH\x05r\x03\x18\x80 ګ\x1e\x00H\aR\x10claimsExpression\x88\x01\x01\x1a9\n" +
+	" \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\x05R\vdisplayName\x88\x01\x01\x12S\n" +
+	"\x11additional_scopes\x18\v \x01(\v2!.gitpod.v1.AdditionalScopesUpdateH\x06R\x10additionalScopes\x88\x01\x01\x12:\n" +
+	"\x11claims_expression\x18\f \x01(\tB\b\xbaH\x05r\x03\x18\x80 H\aR\x10claimsExpression\x88\x01\x01\x1a9\n" +
 	"\vClaimsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\f\n" +
@@ -8680,47 +8659,40 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\r_email_domainB\x0f\n" +
 	"\r_display_nameB\x14\n" +
 	"\x12_additional_scopesB\x14\n" +
-	"\x12_claims_expression\"G\n" +
-	"\x16AdditionalScopesUpdate\x12-\n" +
-	"\x06scopes\x18\x01 \x03(\tB\x15\xbaH\x0e\x92\x01\v\x10d\"\ar\x05\x10\x01\x18\x80\x01ګ\x1e\x00R\x06scopes\" \n" +
-	"\x1eUpdateSSOConfigurationResponse\"x\n" +
-	"\x1dDeleteSSOConfigurationRequest\x12W\n" +
-	"\x14sso_configuration_id\x18\x01 \x01(\tB%\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x16\n" +
-	"\x14sso_configuration.idR\x12ssoConfigurationId\" \n" +
-	"\x1eDeleteSSOConfigurationResponse\"\xc5\x04\n" +
-	"\x11SCIMConfiguration\x12\x1f\n" +
-	"\x02id\x18\x01 \x01(\tB\x0f\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01ګ\x1e\x00R\x02id\x12M\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB$\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12 \n" +
-	"\x04name\x18\x03 \x01(\tB\f\xbaH\x05r\x03\x18\x80\x01ګ\x1e\x00R\x04name\x12\x1e\n" +
-	"\aenabled\x18\x04 \x01(\bB\x04ګ\x1e\x00R\aenabled\x12>\n" +
-	"\x14sso_configuration_id\x18\x05 \x01(\tB\f\xbaH\x05r\x03\xb0\x01\x01ګ\x1e\x00R\x12ssoConfigurationId\x12E\n" +
+	"\x12_claims_expression\"C\n" +
+	"\x16AdditionalScopesUpdate\x12)\n" +
+	"\x06scopes\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\x10d\"\ar\x05\x10\x01\x18\x80\x01R\x06scopes\" \n" +
+	"\x1eUpdateSSOConfigurationResponse\"^\n" +
+	"\x1dDeleteSSOConfigurationRequest\x12=\n" +
+	"\x14sso_configuration_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x12ssoConfigurationId\" \n" +
+	"\x1eDeleteSSOConfigurationResponse\"\x82\x04\n" +
+	"\x11SCIMConfiguration\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x02id\x124\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12\x1c\n" +
+	"\x04name\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01R\x04name\x12\x18\n" +
+	"\aenabled\x18\x04 \x01(\bR\aenabled\x12:\n" +
+	"\x14sso_configuration_id\x18\x05 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x12ssoConfigurationId\x12A\n" +
 	"\n" +
-	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\tcreatedAt\x12E\n" +
+	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\tcreatedAt\x12A\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\tupdatedAt\x12P\n" +
-	"\x10token_expires_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x0etokenExpiresAt\x12X\n" +
-	"&allow_unverified_email_account_linking\x18\t \x01(\bB\x04ګ\x1e\x00R\"allowUnverifiedEmailAccountLinking:\x04ҫ\x1e\x00\"\xe0\x03\n" +
-	"\x1eCreateSCIMConfigurationRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12%\n" +
-	"\x04name\x18\x02 \x01(\tB\f\xbaH\x05r\x03\x18\x80\x01ګ\x1e\x00H\x00R\x04name\x88\x01\x01\x12A\n" +
-	"\x14sso_configuration_id\x18\x03 \x01(\tB\x0f\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01ګ\x1e\x00R\x12ssoConfigurationId\x12a\n" +
-	"\x10token_expires_in\x18\x04 \x01(\v2\x19.google.protobuf.DurationB\x17\xbaH\x10\xaa\x01\r\"\x05\b\x80Ή\x1e2\x04\b\x80\xa3\x05ګ\x1e\x00H\x01R\x0etokenExpiresIn\x88\x01\x01\x12]\n" +
-	"&allow_unverified_email_account_linking\x18\x05 \x01(\bB\x04ګ\x1e\x00H\x02R\"allowUnverifiedEmailAccountLinking\x88\x01\x01B\a\n" +
+	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\tupdatedAt\x12L\n" +
+	"\x10token_expires_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\x0etokenExpiresAt\x12R\n" +
+	"&allow_unverified_email_account_linking\x18\t \x01(\bR\"allowUnverifiedEmailAccountLinking\"\xb9\x03\n" +
+	"\x1eCreateSCIMConfigurationRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12!\n" +
+	"\x04name\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\x00R\x04name\x88\x01\x01\x12=\n" +
+	"\x14sso_configuration_id\x18\x03 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x12ssoConfigurationId\x12]\n" +
+	"\x10token_expires_in\x18\x04 \x01(\v2\x19.google.protobuf.DurationB\x13\xbaH\x10\xaa\x01\r\"\x05\b\x80Ή\x1e2\x04\b\x80\xa3\x05H\x01R\x0etokenExpiresIn\x88\x01\x01\x12W\n" +
+	"&allow_unverified_email_account_linking\x18\x05 \x01(\bH\x02R\"allowUnverifiedEmailAccountLinking\x88\x01\x01B\a\n" +
 	"\x05_nameB\x13\n" +
 	"\x11_token_expires_inB)\n" +
 	"'_allow_unverified_email_account_linking\"\xe2\x01\n" +
 	"\x1fCreateSCIMConfigurationResponse\x12S\n" +
 	"\x12scim_configuration\x18\x01 \x01(\v2\x1c.gitpod.v1.SCIMConfigurationB\x06\xbaH\x03\xc8\x01\x01R\x11scimConfiguration\x12\x1c\n" +
 	"\x05token\x18\x02 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x05token\x12L\n" +
-	"\x10token_expires_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\x0etokenExpiresAt\"y\n" +
-	"\x1bGetSCIMConfigurationRequest\x12Z\n" +
-	"\x15scim_configuration_id\x18\x01 \x01(\tB&\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x17\n" +
-	"\x15scim_configuration.idR\x13scimConfigurationId\"s\n" +
+	"\x10token_expires_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\x0etokenExpiresAt\"^\n" +
+	"\x1bGetSCIMConfigurationRequest\x12?\n" +
+	"\x15scim_configuration_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x13scimConfigurationId\"s\n" +
 	"\x1cGetSCIMConfigurationResponse\x12S\n" +
 	"\x12scim_configuration\x18\x01 \x01(\v2\x1c.gitpod.v1.SCIMConfigurationB\x06\xbaH\x03\xc8\x01\x01R\x11scimConfiguration\"]\n" +
 	"\x1dListSCIMConfigurationsRequest\x12<\n" +
@@ -8731,28 +8703,25 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12M\n" +
-	"\x13scim_configurations\x18\x02 \x03(\v2\x1c.gitpod.v1.SCIMConfigurationR\x12scimConfigurations\"\xc5\x03\n" +
-	"\x1eUpdateSCIMConfigurationRequest\x12Z\n" +
-	"\x15scim_configuration_id\x18\x01 \x01(\tB&\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x17\n" +
-	"\x15scim_configuration.idR\x13scimConfigurationId\x12%\n" +
-	"\x04name\x18\x02 \x01(\tB\f\xbaH\x05r\x03\x18\x80\x01ګ\x1e\x00H\x00R\x04name\x88\x01\x01\x12#\n" +
-	"\aenabled\x18\x03 \x01(\bB\x04ګ\x1e\x00H\x01R\aenabled\x88\x01\x01\x12C\n" +
-	"\x14sso_configuration_id\x18\x04 \x01(\tB\f\xbaH\x05r\x03\xb0\x01\x01ګ\x1e\x00H\x02R\x12ssoConfigurationId\x88\x01\x01\x12]\n" +
-	"&allow_unverified_email_account_linking\x18\x05 \x01(\bB\x04ګ\x1e\x00H\x03R\"allowUnverifiedEmailAccountLinking\x88\x01\x01B\a\n" +
+	"\x13scim_configurations\x18\x02 \x03(\v2\x1c.gitpod.v1.SCIMConfigurationR\x12scimConfigurations\"\x96\x03\n" +
+	"\x1eUpdateSCIMConfigurationRequest\x12?\n" +
+	"\x15scim_configuration_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x13scimConfigurationId\x12!\n" +
+	"\x04name\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\x00R\x04name\x88\x01\x01\x12\x1d\n" +
+	"\aenabled\x18\x03 \x01(\bH\x01R\aenabled\x88\x01\x01\x12?\n" +
+	"\x14sso_configuration_id\x18\x04 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x02R\x12ssoConfigurationId\x88\x01\x01\x12W\n" +
+	"&allow_unverified_email_account_linking\x18\x05 \x01(\bH\x03R\"allowUnverifiedEmailAccountLinking\x88\x01\x01B\a\n" +
 	"\x05_nameB\n" +
 	"\n" +
 	"\b_enabledB\x17\n" +
 	"\x15_sso_configuration_idB)\n" +
 	"'_allow_unverified_email_account_linking\"v\n" +
 	"\x1fUpdateSCIMConfigurationResponse\x12S\n" +
-	"\x12scim_configuration\x18\x01 \x01(\v2\x1c.gitpod.v1.SCIMConfigurationB\x06\xbaH\x03\xc8\x01\x01R\x11scimConfiguration\"|\n" +
-	"\x1eDeleteSCIMConfigurationRequest\x12Z\n" +
-	"\x15scim_configuration_id\x18\x01 \x01(\tB&\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x17\n" +
-	"\x15scim_configuration.idR\x13scimConfigurationId\"!\n" +
-	"\x1fDeleteSCIMConfigurationResponse\"\xec\x01\n" +
-	"\x1aRegenerateSCIMTokenRequest\x12Z\n" +
-	"\x15scim_configuration_id\x18\x01 \x01(\tB&\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x17\n" +
-	"\x15scim_configuration.idR\x13scimConfigurationId\x12]\n" +
+	"\x12scim_configuration\x18\x01 \x01(\v2\x1c.gitpod.v1.SCIMConfigurationB\x06\xbaH\x03\xc8\x01\x01R\x11scimConfiguration\"a\n" +
+	"\x1eDeleteSCIMConfigurationRequest\x12?\n" +
+	"\x15scim_configuration_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x13scimConfigurationId\"!\n" +
+	"\x1fDeleteSCIMConfigurationResponse\"\xd1\x01\n" +
+	"\x1aRegenerateSCIMTokenRequest\x12?\n" +
+	"\x15scim_configuration_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x13scimConfigurationId\x12]\n" +
 	"\x10token_expires_in\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x13\xbaH\x10\xaa\x01\r\"\x05\b\x80Ή\x1e2\x04\b\x80\xa3\x05H\x00R\x0etokenExpiresIn\x88\x01\x01B\x13\n" +
 	"\x11_token_expires_in\"\x89\x01\n" +
 	"\x1bRegenerateSCIMTokenResponse\x12\x1c\n" +
@@ -8768,22 +8737,19 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"verifiedAt\x12-\n" +
 	"\x12verification_token\x18\x06 \x01(\tR\x11verificationToken\x129\n" +
 	"\n" +
-	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x93\x01\n" +
-	"\x1fCreateDomainVerificationRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12%\n" +
+	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"~\n" +
+	"\x1fCreateDomainVerificationRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12%\n" +
 	"\x06domain\x18\x02 \x01(\tB\r\xbaH\n" +
 	"\xc8\x01\x01r\x05\x10\x04\x18\xfd\x01R\x06domain\"z\n" +
 	" CreateDomainVerificationResponse\x12V\n" +
-	"\x13domain_verification\x18\x01 \x01(\v2\x1d.gitpod.v1.DomainVerificationB\x06\xbaH\x03\xc8\x01\x01R\x12domainVerification\"}\n" +
-	"\x1cGetDomainVerificationRequest\x12]\n" +
-	"\x16domain_verification_id\x18\x01 \x01(\tB'\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x18\n" +
-	"\x16domain_verification.idR\x14domainVerificationId\"w\n" +
+	"\x13domain_verification\x18\x01 \x01(\v2\x1d.gitpod.v1.DomainVerificationB\x06\xbaH\x03\xc8\x01\x01R\x12domainVerification\"a\n" +
+	"\x1cGetDomainVerificationRequest\x12A\n" +
+	"\x16domain_verification_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x14domainVerificationId\"w\n" +
 	"\x1dGetDomainVerificationResponse\x12V\n" +
-	"\x13domain_verification\x18\x01 \x01(\v2\x1d.gitpod.v1.DomainVerificationB\x06\xbaH\x03\xc8\x01\x01R\x12domainVerification\"\xa9\x01\n" +
-	"\x1eListDomainVerificationsRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12<\n" +
+	"\x13domain_verification\x18\x01 \x01(\v2\x1d.gitpod.v1.DomainVerificationB\x06\xbaH\x03\xc8\x01\x01R\x12domainVerification\"\x94\x01\n" +
+	"\x1eListDomainVerificationsRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12<\n" +
 	"\n" +
 	"pagination\x18\x02 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\"\xba\x01\n" +
@@ -8791,105 +8757,84 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\x14domain_verifications\x18\x01 \x03(\v2\x1d.gitpod.v1.DomainVerificationR\x13domainVerifications\x12E\n" +
 	"\n" +
 	"pagination\x18\x02 \x01(\v2\x1d.gitpod.v1.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"pagination\"t\n" +
-	"\x13VerifyDomainRequest\x12]\n" +
-	"\x16domain_verification_id\x18\x01 \x01(\tB'\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x18\n" +
-	"\x16domain_verification.idR\x14domainVerificationId\"n\n" +
+	"pagination\"X\n" +
+	"\x13VerifyDomainRequest\x12A\n" +
+	"\x16domain_verification_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x14domainVerificationId\"n\n" +
 	"\x14VerifyDomainResponse\x12V\n" +
-	"\x13domain_verification\x18\x01 \x01(\v2\x1d.gitpod.v1.DomainVerificationB\x06\xbaH\x03\xc8\x01\x01R\x12domainVerification\"\x80\x01\n" +
-	"\x1fDeleteDomainVerificationRequest\x12]\n" +
-	"\x16domain_verification_id\x18\x01 \x01(\tB'\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x18\n" +
-	"\x16domain_verification.idR\x14domainVerificationId\"\"\n" +
+	"\x13domain_verification\x18\x01 \x01(\v2\x1d.gitpod.v1.DomainVerificationB\x06\xbaH\x03\xc8\x01\x01R\x12domainVerification\"d\n" +
+	"\x1fDeleteDomainVerificationRequest\x12A\n" +
+	"\x16domain_verification_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x14domainVerificationId\"\"\n" +
 	" DeleteDomainVerificationResponse\"\x87\x01\n" +
 	")OrganizationTierFailedPreconditionDetails\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\x12@\n" +
-	"\rrequired_tier\x18\x02 \x01(\x0e2\x1b.gitpod.v1.OrganizationTierR\frequiredTier\"\x8f\x14\n" +
-	"\x14OrganizationPolicies\x12M\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB$\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12\xf6\x01\n" +
-	"\x1bmaximum_environment_timeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x9a\x01\xbaH\x92\x01\xba\x01\x8e\x01\n" +
-	"\x1bmaximum_environment_timeout\x12:value must be 0s (no limit) or at least 1800s (30 minutes)\x1a3this == duration('0s') || this >= duration('1800s')ګ\x1e\x00R\x19maximumEnvironmentTimeout\x12D\n" +
-	"\x18members_require_projects\x18\x03 \x01(\bB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x16membersRequireProjects\x12B\n" +
-	"\x17members_create_projects\x18\x04 \x01(\bB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x15membersCreateProjects\x128\n" +
-	"\x12allowed_editor_ids\x18\x05 \x03(\tB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x10allowedEditorIds\x126\n" +
-	"\x11default_editor_id\x18\x06 \x01(\tB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x0fdefaultEditorId\x12:\n" +
-	"\x13allow_local_runners\x18\a \x01(\bB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x11allowLocalRunners\x12\\\n" +
-	"%maximum_running_environments_per_user\x18\b \x01(\x03B\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R!maximumRunningEnvironmentsPerUser\x12M\n" +
-	"\x1dmaximum_environments_per_user\x18\t \x01(\x03B\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x1amaximumEnvironmentsPerUser\x12F\n" +
+	"\rrequired_tier\x18\x02 \x01(\x0e2\x1b.gitpod.v1.OrganizationTierR\frequiredTier\"\xff\x12\n" +
+	"\x14OrganizationPolicies\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12\xf2\x01\n" +
+	"\x1bmaximum_environment_timeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x96\x01\xbaH\x92\x01\xba\x01\x8e\x01\n" +
+	"\x1bmaximum_environment_timeout\x12:value must be 0s (no limit) or at least 1800s (30 minutes)\x1a3this == duration('0s') || this >= duration('1800s')R\x19maximumEnvironmentTimeout\x12@\n" +
+	"\x18members_require_projects\x18\x03 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x16membersRequireProjects\x12>\n" +
+	"\x17members_create_projects\x18\x04 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x15membersCreateProjects\x124\n" +
+	"\x12allowed_editor_ids\x18\x05 \x03(\tB\x06\xbaH\x03\xc8\x01\x01R\x10allowedEditorIds\x122\n" +
+	"\x11default_editor_id\x18\x06 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x0fdefaultEditorId\x126\n" +
+	"\x13allow_local_runners\x18\a \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x11allowLocalRunners\x12X\n" +
+	"%maximum_running_environments_per_user\x18\b \x01(\x03B\x06\xbaH\x03\xc8\x01\x01R!maximumRunningEnvironmentsPerUser\x12I\n" +
+	"\x1dmaximum_environments_per_user\x18\t \x01(\x03B\x06\xbaH\x03\xc8\x01\x01R\x1amaximumEnvironmentsPerUser\x12B\n" +
 	"\x19default_environment_image\x18\n" +
-	" \x01(\tB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x17defaultEnvironmentImage\x12>\n" +
-	"\x15port_sharing_disabled\x18\v \x01(\bB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x13portSharingDisabled\x12{\n" +
-	"\"delete_archived_environments_after\x18\f \x01(\v2\x19.google.protobuf.DurationB\x13\xbaH\f\xaa\x01\t\"\x05\b\x80ԓ\x012\x00ګ\x1e\x00R\x1fdeleteArchivedEnvironmentsAfter\x12E\n" +
-	"\fagent_policy\x18\r \x01(\v2\x16.gitpod.v1.AgentPolicyB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\vagentPolicy\x12p\n" +
-	"\x1cmaximum_environment_lifetime\x18\x0e \x01(\v2\x19.google.protobuf.DurationB\x13\xbaH\f\xaa\x01\t\"\x05\b\x80\x9c\xb5\a2\x00ګ\x1e\x00R\x1amaximumEnvironmentLifetime\x12K\n" +
-	"\x1crequire_custom_domain_access\x18\x0f \x01(\bB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x19requireCustomDomainAccess\x12\x84\x01\n" +
-	"\x1beditor_version_restrictions\x18\x10 \x03(\v2>.gitpod.v1.OrganizationPolicies.EditorVersionRestrictionsEntryB\x04ګ\x1e\x00R\x19editorVersionRestrictions\x12R\n" +
-	"\x15security_agent_policy\x18\x11 \x01(\v2\x1e.gitpod.v1.SecurityAgentPolicyR\x13securityAgentPolicy\x12T\n" +
-	"!restrict_account_creation_to_scim\x18\x12 \x01(\bB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x1drestrictAccountCreationToScim\x12C\n" +
-	"\x10veto_exec_policy\x18\x14 \x01(\v2\x19.gitpod.v1.VetoExecPolicyR\x0evetoExecPolicy\x12U\n" +
-	"#maximum_environment_lifetime_strict\x18\x15 \x01(\bB\x06ʫ\x1e\x02\b\x01R maximumEnvironmentLifetimeStrict\x12Z\n" +
-	"\x18max_port_admission_level\x18\x16 \x01(\x0e2\x19.gitpod.v1.AdmissionLevelB\x06ʫ\x1e\x02\b\x01R\x15maxPortAdmissionLevel\x12<\n" +
-	"\x14web_browser_disabled\x18\x18 \x01(\bB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x12webBrowserDisabled\x12<\n" +
-	"\x14disable_from_scratch\x18\x19 \x01(\bB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x12disableFromScratch\x12K\n" +
-	"\x10veto_file_policy\x18\x1a \x01(\v2\x19.gitpod.v1.VetoFilePolicyB\x06ʫ\x1e\x02\b\x01R\x0evetoFilePolicy\x12=\n" +
-	"\x12security_policy_id\x18\x1b \x01(\tB\x0f\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01ګ\x1e\x00R\x10securityPolicyId\x12\xf2\x01\n" +
-	"\x1aarchive_environments_after\x18\x1c \x01(\v2\x19.google.protobuf.DurationB\x98\x01\xbaH\x8a\x01\xba\x01w\n" +
-	"%archive_environments_after_whole_days\x12$value must be a whole number of days\x1a(int(this) % int(duration('86400s')) == 0\xaa\x01\r\"\x05\b\x80\x9a\x9e\x012\x04\b\x80\xa3\x05ʫ\x1e\x02\b\x01ګ\x1e\x00R\x18archiveEnvironmentsAfter\x1al\n" +
+	" \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x17defaultEnvironmentImage\x12:\n" +
+	"\x15port_sharing_disabled\x18\v \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x13portSharingDisabled\x12w\n" +
+	"\"delete_archived_environments_after\x18\f \x01(\v2\x19.google.protobuf.DurationB\x0f\xbaH\f\xaa\x01\t\"\x05\b\x80ԓ\x012\x00R\x1fdeleteArchivedEnvironmentsAfter\x12A\n" +
+	"\fagent_policy\x18\r \x01(\v2\x16.gitpod.v1.AgentPolicyB\x06\xbaH\x03\xc8\x01\x01R\vagentPolicy\x12l\n" +
+	"\x1cmaximum_environment_lifetime\x18\x0e \x01(\v2\x19.google.protobuf.DurationB\x0f\xbaH\f\xaa\x01\t\"\x05\b\x80\x9c\xb5\a2\x00R\x1amaximumEnvironmentLifetime\x12G\n" +
+	"\x1crequire_custom_domain_access\x18\x0f \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x19requireCustomDomainAccess\x12~\n" +
+	"\x1beditor_version_restrictions\x18\x10 \x03(\v2>.gitpod.v1.OrganizationPolicies.EditorVersionRestrictionsEntryR\x19editorVersionRestrictions\x12R\n" +
+	"\x15security_agent_policy\x18\x11 \x01(\v2\x1e.gitpod.v1.SecurityAgentPolicyR\x13securityAgentPolicy\x12P\n" +
+	"!restrict_account_creation_to_scim\x18\x12 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x1drestrictAccountCreationToScim\x12C\n" +
+	"\x10veto_exec_policy\x18\x14 \x01(\v2\x19.gitpod.v1.VetoExecPolicyR\x0evetoExecPolicy\x12M\n" +
+	"#maximum_environment_lifetime_strict\x18\x15 \x01(\bR maximumEnvironmentLifetimeStrict\x12R\n" +
+	"\x18max_port_admission_level\x18\x16 \x01(\x0e2\x19.gitpod.v1.AdmissionLevelR\x15maxPortAdmissionLevel\x128\n" +
+	"\x14web_browser_disabled\x18\x18 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x12webBrowserDisabled\x128\n" +
+	"\x14disable_from_scratch\x18\x19 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x12disableFromScratch\x12C\n" +
+	"\x10veto_file_policy\x18\x1a \x01(\v2\x19.gitpod.v1.VetoFilePolicyR\x0evetoFilePolicy\x129\n" +
+	"\x12security_policy_id\x18\x1b \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\x10securityPolicyId\x12\xe8\x01\n" +
+	"\x1aarchive_environments_after\x18\x1c \x01(\v2\x19.google.protobuf.DurationB\x8e\x01\xbaH\x8a\x01\xba\x01w\n" +
+	"%archive_environments_after_whole_days\x12$value must be a whole number of days\x1a(int(this) % int(duration('86400s')) == 0\xaa\x01\r\"\x05\b\x80\x9a\x9e\x012\x04\b\x80\xa3\x05R\x18archiveEnvironmentsAfter\x1al\n" +
 	"\x1eEditorVersionRestrictionsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x124\n" +
-	"\x05value\x18\x02 \x01(\v2\x1e.gitpod.v1.EditorVersionPolicyR\x05value:\x028\x01:\x04ҫ\x1e\x00J\x04\b\x13\x10\x14J\x04\b\x17\x10\x18R\x19project_creation_defaults\"\xa9\x01\n" +
+	"\x05value\x18\x02 \x01(\v2\x1e.gitpod.v1.EditorVersionPolicyR\x05value:\x028\x01J\x04\b\x13\x10\x14J\x04\b\x17\x10\x18R\x19project_creation_defaults\"\xa1\x01\n" +
 	"\x0eVetoExecPolicy\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12 \n" +
 	"\vexecutables\x18\x02 \x03(\tR\vexecutables\x127\n" +
-	"\x06action\x18\x03 \x01(\x0e2\x1f.gitpod.v1.KernelControlsActionR\x06action\x12\"\n" +
-	"\bsafelist\x18\x04 \x03(\tB\x06ʫ\x1e\x02\b\x01R\bsafelist\"\xcb\x01\n" +
+	"\x06action\x18\x03 \x01(\x0e2\x1f.gitpod.v1.KernelControlsActionR\x06action\x12\x1a\n" +
+	"\bsafelist\x18\x04 \x03(\tR\bsafelist\"\xab\x01\n" +
 	"\x0eVetoFilePolicy\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x123\n" +
 	"\x05paths\x18\x02 \x01(\v2\x1d.gitpod.v1.VetoFilePathPolicyR\x05paths\x12J\n" +
-	"\rblock_devices\x18\x03 \x01(\v2%.gitpod.v1.VetoFileBlockDevicesPolicyR\fblockDevices:\x1e\xba\xab\x1e\x1a\n" +
-	"\x16organizations.policies\x18\x01\"F\n" +
-	"\x13EditorVersionPolicy\x12/\n" +
-	"\x10allowed_versions\x18\x01 \x03(\tB\x04ګ\x1e\x00R\x0fallowedVersions\"\xc5\x01\n" +
+	"\rblock_devices\x18\x03 \x01(\v2%.gitpod.v1.VetoFileBlockDevicesPolicyR\fblockDevices\"@\n" +
+	"\x13EditorVersionPolicy\x12)\n" +
+	"\x10allowed_versions\x18\x01 \x03(\tR\x0fallowedVersions\"\xc5\x01\n" +
 	"\x10CodexModelPolicy\x12O\n" +
 	"\fmodel_states\x18\x01 \x03(\v2,.gitpod.v1.CodexModelPolicy.ModelStatesEntryR\vmodelStates\x1a`\n" +
 	"\x10ModelStatesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x126\n" +
-	"\x05value\x18\x02 \x01(\x0e2 .gitpod.v1.CodexModelPolicyStateR\x05value:\x028\x01\"\xf8\x06\n" +
-	"\vAgentPolicy\x12-\n" +
-	"\fmcp_disabled\x18\x01 \x01(\bB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\vmcpDisabled\x126\n" +
-	"\x11command_deny_list\x18\x02 \x03(\tB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x0fcommandDenyList\x128\n" +
-	"\x12scm_tools_disabled\x18\x03 \x01(\bB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x10scmToolsDisabled\x12@\n" +
-	"\x1ascm_tools_allowed_group_id\x18\x04 \x01(\tB\x04ګ\x1e\x00R\x16scmToolsAllowedGroupId\x12j\n" +
-	"\x1bconversation_sharing_policy\x18\x05 \x01(\x0e2$.gitpod.v1.ConversationSharingPolicyB\x04ګ\x1e\x00R\x19conversationSharingPolicy\x12P\n" +
-	"\x1dmax_subagents_per_environment\x18\x06 \x01(\x05B\r\xbaH\x06\x1a\x04\x18\n" +
-	"(\x00ګ\x1e\x00R\x1amaxSubagentsPerEnvironment\x120\n" +
-	"\x11allowed_agent_ids\x18\a \x03(\tB\x04ګ\x1e\x00R\x0fallowedAgentIds\x12Q\n" +
+	"\x05value\x18\x02 \x01(\x0e2 .gitpod.v1.CodexModelPolicyStateR\x05value:\x028\x01\"\xce\x06\n" +
+	"\vAgentPolicy\x12)\n" +
+	"\fmcp_disabled\x18\x01 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\vmcpDisabled\x122\n" +
+	"\x11command_deny_list\x18\x02 \x03(\tB\x06\xbaH\x03\xc8\x01\x01R\x0fcommandDenyList\x124\n" +
+	"\x12scm_tools_disabled\x18\x03 \x01(\bB\x06\xbaH\x03\xc8\x01\x01R\x10scmToolsDisabled\x12:\n" +
+	"\x1ascm_tools_allowed_group_id\x18\x04 \x01(\tR\x16scmToolsAllowedGroupId\x12d\n" +
+	"\x1bconversation_sharing_policy\x18\x05 \x01(\x0e2$.gitpod.v1.ConversationSharingPolicyR\x19conversationSharingPolicy\x12L\n" +
+	"\x1dmax_subagents_per_environment\x18\x06 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
+	"(\x00R\x1amaxSubagentsPerEnvironment\x12*\n" +
+	"\x11allowed_agent_ids\x18\a \x03(\tR\x0fallowedAgentIds\x12Q\n" +
 	"\x14allowed_codex_models\x18\b \x03(\x0e2\x1b.gitpod.v1.CodexOpenAIModelB\x02\x18\x01R\x12allowedCodexModels\x12f\n" +
 	"\x1fallowed_codex_reasoning_efforts\x18\t \x03(\x0e2\x1f.gitpod.v1.CodexReasoningEffortR\x1callowedCodexReasoningEfforts\x12Z\n" +
 	"\x1ballowed_codex_service_tiers\x18\n" +
-	" \x03(\x0e2\x1b.gitpod.v1.CodexServiceTierR\x18allowedCodexServiceTiers\x124\n" +
-	"\x12goal_mode_disabled\x18\v \x01(\bB\x06ʫ\x1e\x02\b\x01R\x10goalModeDisabled\x12I\n" +
-	"\x12codex_model_policy\x18\f \x01(\v2\x1b.gitpod.v1.CodexModelPolicyR\x10codexModelPolicy\"\xa2\x01\n" +
+	" \x03(\x0e2\x1b.gitpod.v1.CodexServiceTierR\x18allowedCodexServiceTiers\x12,\n" +
+	"\x12goal_mode_disabled\x18\v \x01(\bR\x10goalModeDisabled\x12I\n" +
+	"\x12codex_model_policy\x18\f \x01(\v2\x1b.gitpod.v1.CodexModelPolicyR\x10codexModelPolicy\"\x9a\x01\n" +
 	"\x13SecurityAgentPolicy\x12>\n" +
-	"\vcrowdstrike\x18\x01 \x01(\v2\x1c.gitpod.v1.CrowdStrikeConfigR\vcrowdstrike\x12K\n" +
-	"\rcustom_agents\x18\x02 \x03(\v2\x1e.gitpod.v1.CustomSecurityAgentB\x06ʫ\x1e\x02\b\x01R\fcustomAgents\"\xaf\x02\n" +
+	"\vcrowdstrike\x18\x01 \x01(\v2\x1c.gitpod.v1.CrowdStrikeConfigR\vcrowdstrike\x12C\n" +
+	"\rcustom_agents\x18\x02 \x03(\v2\x1e.gitpod.v1.CustomSecurityAgentR\fcustomAgents\"\xaf\x02\n" +
 	"\x11CrowdStrikeConfig\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x14\n" +
 	"\x05image\x18\x02 \x01(\tR\x05image\x12,\n" +
@@ -8909,20 +8854,17 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\x15CustomAgentEnvMapping\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
 	"\vsecret_name\x18\x02 \x01(\tR\n" +
-	"secretName\"k\n" +
-	"\x1eGetOrganizationPoliciesRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"f\n" +
+	"secretName\"V\n" +
+	"\x1eGetOrganizationPoliciesRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"f\n" +
 	"\x1fGetOrganizationPoliciesResponse\x12C\n" +
-	"\bpolicies\x18\x01 \x01(\v2\x1f.gitpod.v1.OrganizationPoliciesB\x06\xbaH\x03\xc8\x01\x01R\bpolicies\"r\n" +
-	"%GetOrganizationLLMCapabilitiesRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\x87\x01\n" +
-	"&GetOrganizationLLMCapabilitiesResponse\x12]\n" +
-	"\x15disabled_capabilities\x18\x01 \x03(\x0e2 .gitpod.v1.LLMDisabledCapabilityB\x06ʫ\x1e\x02\b\x01R\x14disabledCapabilities\"\xcf&\n" +
-	"!UpdateOrganizationPoliciesRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\xf7\x01\n" +
+	"\bpolicies\x18\x01 \x01(\v2\x1f.gitpod.v1.OrganizationPoliciesB\x06\xbaH\x03\xc8\x01\x01R\bpolicies\"]\n" +
+	"%GetOrganizationLLMCapabilitiesRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"\x7f\n" +
+	"&GetOrganizationLLMCapabilitiesResponse\x12U\n" +
+	"\x15disabled_capabilities\x18\x01 \x03(\x0e2 .gitpod.v1.LLMDisabledCapabilityR\x14disabledCapabilities\"\x8c&\n" +
+	"!UpdateOrganizationPoliciesRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12\xf7\x01\n" +
 	"\x1bmaximum_environment_timeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x96\x01\xbaH\x92\x01\xba\x01\x8e\x01\n" +
 	"\x1bmaximum_environment_timeout\x12:value must be 0s (no limit) or at least 1800s (30 minutes)\x1a3this == duration('0s') || this >= duration('1800s')H\x00R\x19maximumEnvironmentTimeout\x88\x01\x01\x12=\n" +
 	"\x18members_require_projects\x18\x03 \x01(\bH\x01R\x16membersRequireProjects\x88\x01\x01\x12;\n" +
@@ -8943,15 +8885,15 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\x1beditor_version_restrictions\x18\x10 \x03(\v2K.gitpod.v1.UpdateOrganizationPoliciesRequest.EditorVersionRestrictionsEntryR\x19editorVersionRestrictions\x12\x7f\n" +
 	"\x15security_agent_policy\x18\x11 \x01(\v2F.gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateSecurityAgentPolicyH\rR\x13securityAgentPolicy\x88\x01\x01\x12M\n" +
 	"!restrict_account_creation_to_scim\x18\x12 \x01(\bH\x0eR\x1drestrictAccountCreationToScim\x88\x01\x01\x12H\n" +
-	"\x10veto_exec_policy\x18\x14 \x01(\v2\x19.gitpod.v1.VetoExecPolicyH\x0fR\x0evetoExecPolicy\x88\x01\x01\x12Z\n" +
-	"#maximum_environment_lifetime_strict\x18\x15 \x01(\bB\x06ʫ\x1e\x02\b\x01H\x10R maximumEnvironmentLifetimeStrict\x88\x01\x01\x12_\n" +
-	"\x18max_port_admission_level\x18\x16 \x01(\x0e2\x19.gitpod.v1.AdmissionLevelB\x06ʫ\x1e\x02\b\x01H\x11R\x15maxPortAdmissionLevel\x88\x01\x01\x125\n" +
+	"\x10veto_exec_policy\x18\x14 \x01(\v2\x19.gitpod.v1.VetoExecPolicyH\x0fR\x0evetoExecPolicy\x88\x01\x01\x12R\n" +
+	"#maximum_environment_lifetime_strict\x18\x15 \x01(\bH\x10R maximumEnvironmentLifetimeStrict\x88\x01\x01\x12W\n" +
+	"\x18max_port_admission_level\x18\x16 \x01(\x0e2\x19.gitpod.v1.AdmissionLevelH\x11R\x15maxPortAdmissionLevel\x88\x01\x01\x125\n" +
 	"\x14web_browser_disabled\x18\x18 \x01(\bH\x12R\x12webBrowserDisabled\x88\x01\x01\x125\n" +
-	"\x14disable_from_scratch\x18\x19 \x01(\bH\x13R\x12disableFromScratch\x88\x01\x01\x12P\n" +
-	"\x10veto_file_policy\x18\x1a \x01(\v2\x19.gitpod.v1.VetoFilePolicyB\x06ʫ\x1e\x02\b\x01H\x14R\x0evetoFilePolicy\x88\x01\x01\x12>\n" +
-	"\x12security_policy_id\x18\x1b \x01(\tB\v\xbaH\b\xd8\x01\x02r\x03\xb0\x01\x01H\x15R\x10securityPolicyId\x88\x01\x01\x12\xf3\x01\n" +
-	"\x1aarchive_environments_after\x18\x1c \x01(\v2\x19.google.protobuf.DurationB\x94\x01\xbaH\x8a\x01\xba\x01w\n" +
-	"%archive_environments_after_whole_days\x12$value must be a whole number of days\x1a(int(this) % int(duration('86400s')) == 0\xaa\x01\r\"\x05\b\x80\x9a\x9e\x012\x04\b\x80\xa3\x05ʫ\x1e\x02\b\x01H\x16R\x18archiveEnvironmentsAfter\x88\x01\x01\x1a\x82\b\n" +
+	"\x14disable_from_scratch\x18\x19 \x01(\bH\x13R\x12disableFromScratch\x88\x01\x01\x12H\n" +
+	"\x10veto_file_policy\x18\x1a \x01(\v2\x19.gitpod.v1.VetoFilePolicyH\x14R\x0evetoFilePolicy\x88\x01\x01\x12>\n" +
+	"\x12security_policy_id\x18\x1b \x01(\tB\v\xbaH\b\xd8\x01\x02r\x03\xb0\x01\x01H\x15R\x10securityPolicyId\x88\x01\x01\x12\xed\x01\n" +
+	"\x1aarchive_environments_after\x18\x1c \x01(\v2\x19.google.protobuf.DurationB\x8e\x01\xbaH\x8a\x01\xba\x01w\n" +
+	"%archive_environments_after_whole_days\x12$value must be a whole number of days\x1a(int(this) % int(duration('86400s')) == 0\xaa\x01\r\"\x05\b\x80\x9a\x9e\x012\x04\b\x80\xa3\x05H\x16R\x18archiveEnvironmentsAfter\x88\x01\x01\x1a\xfa\a\n" +
 	"\x11UpdateAgentPolicy\x12&\n" +
 	"\fmcp_disabled\x18\x01 \x01(\bH\x00R\vmcpDisabled\x88\x01\x01\x12*\n" +
 	"\x11command_deny_list\x18\x02 \x03(\tR\x0fcommandDenyList\x121\n" +
@@ -8964,18 +8906,18 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\x14allowed_codex_models\x18\b \x03(\x0e2\x1b.gitpod.v1.CodexOpenAIModelB\x02\x18\x01R\x12allowedCodexModels\x12f\n" +
 	"\x1fallowed_codex_reasoning_efforts\x18\t \x03(\x0e2\x1f.gitpod.v1.CodexReasoningEffortR\x1callowedCodexReasoningEfforts\x12Z\n" +
 	"\x1ballowed_codex_service_tiers\x18\n" +
-	" \x03(\x0e2\x1b.gitpod.v1.CodexServiceTierR\x18allowedCodexServiceTiers\x129\n" +
-	"\x12goal_mode_disabled\x18\v \x01(\bB\x06ʫ\x1e\x02\b\x01H\x05R\x10goalModeDisabled\x88\x01\x01\x12I\n" +
+	" \x03(\x0e2\x1b.gitpod.v1.CodexServiceTierR\x18allowedCodexServiceTiers\x121\n" +
+	"\x12goal_mode_disabled\x18\v \x01(\bH\x05R\x10goalModeDisabled\x88\x01\x01\x12I\n" +
 	"\x12codex_model_policy\x18\f \x01(\v2\x1b.gitpod.v1.CodexModelPolicyR\x10codexModelPolicyB\x0f\n" +
 	"\r_mcp_disabledB\x15\n" +
 	"\x13_scm_tools_disabledB\x1d\n" +
 	"\x1b_scm_tools_allowed_group_idB\x1e\n" +
 	"\x1c_conversation_sharing_policyB \n" +
 	"\x1e_max_subagents_per_environmentB\x15\n" +
-	"\x13_goal_mode_disabled\x1a\xe5\x01\n" +
+	"\x13_goal_mode_disabled\x1a\xdd\x01\n" +
 	"\x19UpdateSecurityAgentPolicy\x12k\n" +
-	"\vcrowdstrike\x18\x01 \x01(\v2D.gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfigH\x00R\vcrowdstrike\x88\x01\x01\x12K\n" +
-	"\rcustom_agents\x18\x02 \x03(\v2\x1e.gitpod.v1.CustomSecurityAgentB\x06ʫ\x1e\x02\b\x01R\fcustomAgentsB\x0e\n" +
+	"\vcrowdstrike\x18\x01 \x01(\v2D.gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfigH\x00R\vcrowdstrike\x88\x01\x01\x12C\n" +
+	"\rcustom_agents\x18\x02 \x03(\v2\x1e.gitpod.v1.CustomSecurityAgentR\fcustomAgentsB\x0e\n" +
 	"\f_crowdstrike\x1a\xa3\x03\n" +
 	"\x17UpdateCrowdStrikeConfig\x12\x1d\n" +
 	"\aenabled\x18\x01 \x01(\bH\x00R\aenabled\x88\x01\x01\x12\x19\n" +
@@ -9017,77 +8959,68 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\x11_veto_file_policyB\x15\n" +
 	"\x13_security_policy_idB\x1d\n" +
 	"\x1b_archive_environments_afterJ\x04\b\x13\x10\x14J\x04\b\x17\x10\x18R\x19project_creation_defaults\"$\n" +
-	"\"UpdateOrganizationPoliciesResponse\"\xdf\x01\n" +
+	"\"UpdateOrganizationPoliciesResponse\"\xd7\x01\n" +
 	"'PolicyEnforcedFailedPreconditionDetails\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\x12\x1f\n" +
 	"\vpolicy_name\x18\x02 \x01(\tR\n" +
-	"policyName\x12n\n" +
-	"\x15max_lifetime_exceeded\x18\x03 \x01(\v20.gitpod.v1.EnvironmentMaxLifetimeExceededDetailsB\x06ʫ\x1e\x02\b\x01H\x00R\x13maxLifetimeExceededB\t\n" +
-	"\adetails\"\xb0\x01\n" +
-	"%EnvironmentMaxLifetimeExceededDetails\x12A\n" +
+	"policyName\x12f\n" +
+	"\x15max_lifetime_exceeded\x18\x03 \x01(\v20.gitpod.v1.EnvironmentMaxLifetimeExceededDetailsH\x00R\x13maxLifetimeExceededB\t\n" +
+	"\adetails\"\xa0\x01\n" +
+	"%EnvironmentMaxLifetimeExceededDetails\x129\n" +
 	"\n" +
-	"expired_at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x06ʫ\x1e\x02\b\x01R\texpiredAt\x12D\n" +
-	"\fpolicy_value\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x06ʫ\x1e\x02\b\x01R\vpolicyValue\"\xb1\x01\n" +
-	"\x12AnnouncementBanner\x12M\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB$\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12&\n" +
-	"\amessage\x18\x02 \x01(\tB\f\xbaH\x05r\x03\x18\xe8\aګ\x1e\x00R\amessage\x12\x1e\n" +
-	"\aenabled\x18\x03 \x01(\bB\x04ګ\x1e\x00R\aenabled:\x04ҫ\x1e\x00\"i\n" +
-	"\x1cGetAnnouncementBannerRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"^\n" +
+	"expired_at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\texpiredAt\x12<\n" +
+	"\fpolicy_value\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\vpolicyValue\"\x88\x01\n" +
+	"\x12AnnouncementBanner\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12\"\n" +
+	"\amessage\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xe8\aR\amessage\x12\x18\n" +
+	"\aenabled\x18\x03 \x01(\bR\aenabled\"T\n" +
+	"\x1cGetAnnouncementBannerRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"^\n" +
 	"\x1dGetAnnouncementBannerResponse\x12=\n" +
-	"\x06banner\x18\x01 \x01(\v2\x1d.gitpod.v1.AnnouncementBannerB\x06\xbaH\x03\xc8\x01\x01R\x06banner\"\xd6\x01\n" +
-	"\x1fUpdateAnnouncementBannerRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12+\n" +
-	"\amessage\x18\x02 \x01(\tB\f\xbaH\x05r\x03\x18\xe8\aګ\x1e\x00H\x00R\amessage\x88\x01\x01\x12#\n" +
-	"\aenabled\x18\x03 \x01(\bB\x04ګ\x1e\x00H\x01R\aenabled\x88\x01\x01B\n" +
+	"\x06banner\x18\x01 \x01(\v2\x1d.gitpod.v1.AnnouncementBannerB\x06\xbaH\x03\xc8\x01\x01R\x06banner\"\xb7\x01\n" +
+	"\x1fUpdateAnnouncementBannerRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12'\n" +
+	"\amessage\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xe8\aH\x00R\amessage\x88\x01\x01\x12\x1d\n" +
+	"\aenabled\x18\x03 \x01(\bH\x01R\aenabled\x88\x01\x01B\n" +
 	"\n" +
 	"\b_messageB\n" +
 	"\n" +
 	"\b_enabled\"a\n" +
 	" UpdateAnnouncementBannerResponse\x12=\n" +
-	"\x06banner\x18\x01 \x01(\v2\x1d.gitpod.v1.AnnouncementBannerB\x06\xbaH\x03\xc8\x01\x01R\x06banner\"\x9c\x02\n" +
-	"\x15TermsOfServiceVersion\x12\x1f\n" +
-	"\x02id\x18\x01 \x01(\tB\x0f\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01ګ\x1e\x00R\x02id\x12%\n" +
-	"\aversion\x18\x02 \x01(\x05B\v\xbaH\x04\x1a\x02(\x01ګ\x1e\x00R\aversion\x12)\n" +
-	"\bmarkdown\x18\x03 \x01(\tB\r\xbaH\x06r\x04\x18\x80\xfa\x01ګ\x1e\x00R\bmarkdown\x12E\n" +
+	"\x06banner\x18\x01 \x01(\v2\x1d.gitpod.v1.AnnouncementBannerB\x06\xbaH\x03\xc8\x01\x01R\x06banner\"\xfb\x01\n" +
+	"\x15TermsOfServiceVersion\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x02id\x12!\n" +
+	"\aversion\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02(\x01R\aversion\x12%\n" +
+	"\bmarkdown\x18\x03 \x01(\tB\t\xbaH\x06r\x04\x18\x80\xfa\x01R\bmarkdown\x12A\n" +
 	"\n" +
-	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\tcreatedAt\x12I\n" +
-	"\x12created_by_user_id\x18\x05 \x01(\tB\x1c\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idګ\x1e\x00R\x0fcreatedByUserId\"\xae\x01\n" +
+	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\tcreatedAt\x128\n" +
+	"\x12created_by_user_id\x18\x05 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0fcreatedByUserId\"\xae\x01\n" +
 	"\x18TermsOfServiceAcceptance\x12*\n" +
 	"\n" +
 	"version_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\tversionId\x12!\n" +
 	"\aversion\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02(\x01R\aversion\x12C\n" +
 	"\vaccepted_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"acceptedAt\"\xb3\x02\n" +
-	"\x0eTermsOfService\x12M\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB$\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12\x1e\n" +
-	"\aenabled\x18\x02 \x01(\bB\x04ګ\x1e\x00R\aenabled\x12O\n" +
-	"\x0fcurrent_version\x18\x03 \x01(\v2 .gitpod.v1.TermsOfServiceVersionB\x04ګ\x1e\x00R\x0ecurrentVersion\x12[\n" +
-	"\x17current_user_acceptance\x18\x04 \x01(\v2#.gitpod.v1.TermsOfServiceAcceptanceR\x15currentUserAcceptance:\x04ҫ\x1e\x00\"e\n" +
-	"\x18GetTermsOfServiceRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"h\n" +
+	"acceptedAt\"\x88\x02\n" +
+	"\x0eTermsOfService\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12\x18\n" +
+	"\aenabled\x18\x02 \x01(\bR\aenabled\x12I\n" +
+	"\x0fcurrent_version\x18\x03 \x01(\v2 .gitpod.v1.TermsOfServiceVersionR\x0ecurrentVersion\x12[\n" +
+	"\x17current_user_acceptance\x18\x04 \x01(\v2#.gitpod.v1.TermsOfServiceAcceptanceR\x15currentUserAcceptance\"P\n" +
+	"\x18GetTermsOfServiceRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"h\n" +
 	"\x19GetTermsOfServiceResponse\x12K\n" +
-	"\x10terms_of_service\x18\x01 \x01(\v2\x19.gitpod.v1.TermsOfServiceB\x06\xbaH\x03\xc8\x01\x01R\x0etermsOfService\"\xd6\x01\n" +
-	"\x1bUpdateTermsOfServiceRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12.\n" +
-	"\bmarkdown\x18\x02 \x01(\tB\r\xbaH\x06r\x04\x18\x80\xfa\x01ګ\x1e\x00H\x00R\bmarkdown\x88\x01\x01\x12#\n" +
-	"\aenabled\x18\x03 \x01(\bB\x04ګ\x1e\x00H\x01R\aenabled\x88\x01\x01B\v\n" +
+	"\x10terms_of_service\x18\x01 \x01(\v2\x19.gitpod.v1.TermsOfServiceB\x06\xbaH\x03\xc8\x01\x01R\x0etermsOfService\"\xb7\x01\n" +
+	"\x1bUpdateTermsOfServiceRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12*\n" +
+	"\bmarkdown\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x18\x80\xfa\x01H\x00R\bmarkdown\x88\x01\x01\x12\x1d\n" +
+	"\aenabled\x18\x03 \x01(\bH\x01R\aenabled\x88\x01\x01B\v\n" +
 	"\t_markdownB\n" +
 	"\n" +
 	"\b_enabled\"k\n" +
 	"\x1cUpdateTermsOfServiceResponse\x12K\n" +
-	"\x10terms_of_service\x18\x01 \x01(\v2\x19.gitpod.v1.TermsOfServiceB\x06\xbaH\x03\xc8\x01\x01R\x0etermsOfService\"\x94\x01\n" +
-	"\x1bAcceptTermsOfServiceRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12*\n" +
+	"\x10terms_of_service\x18\x01 \x01(\v2\x19.gitpod.v1.TermsOfServiceB\x06\xbaH\x03\xc8\x01\x01R\x0etermsOfService\"\x7f\n" +
+	"\x1bAcceptTermsOfServiceRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12*\n" +
 	"\n" +
 	"version_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\tversionId\"k\n" +
 	"\x1cAcceptTermsOfServiceResponse\x12K\n" +
@@ -9100,129 +9033,114 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\x10accepted_version\x18\x03 \x01(\x05B\a\xbaH\x04\x1a\x02(\x01H\x00R\x0facceptedVersion\x88\x01\x01\x12;\n" +
 	"\vaccepted_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"acceptedAtB\x13\n" +
-	"\x11_accepted_version\"\xac\x01\n" +
+	"\x11_accepted_version\"\x97\x01\n" +
 	"!ListTermsOfServiceVersionsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x12I\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\xb1\x01\n" +
+	"pagination\x124\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"\xb1\x01\n" +
 	"\"ListTermsOfServiceVersionsResponse\x12E\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12D\n" +
-	"\bversions\x18\x02 \x03(\v2 .gitpod.v1.TermsOfServiceVersionB\x06\xbaH\x03\xc8\x01\x01R\bversions\"\x91\x01\n" +
+	"\bversions\x18\x02 \x03(\v2 .gitpod.v1.TermsOfServiceVersionB\x06\xbaH\x03\xc8\x01\x01R\bversions\"\x8b\x01\n" +
 	"\x1eTermsOfServiceAcceptanceFilter\x12E\n" +
-	"\bstatuses\x18\x01 \x03(\x0e2).gitpod.v1.TermsOfServiceAcceptanceStatusR\bstatuses\x12(\n" +
-	"\x06search\x18\x02 \x01(\tB\x10\xbaH\ar\x05\x10\x00\x18\x80\x02ʫ\x1e\x02\b\x01R\x06search\"\x95\x02\n" +
+	"\bstatuses\x18\x01 \x03(\x0e2).gitpod.v1.TermsOfServiceAcceptanceStatusR\bstatuses\x12\"\n" +
+	"\x06search\x18\x02 \x01(\tB\n" +
+	"\xbaH\ar\x05\x10\x00\x18\x80\x02R\x06search\"\x80\x02\n" +
 	"$ListTermsOfServiceAcceptancesRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x12I\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12!\n" +
+	"pagination\x124\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12!\n" +
 	"\aversion\x18\x03 \x01(\x05B\a\xbaH\x04\x1a\x02(\x01R\aversion\x12A\n" +
 	"\x06filter\x18\x04 \x01(\v2).gitpod.v1.TermsOfServiceAcceptanceFilterR\x06filter\"\xc3\x01\n" +
 	"%ListTermsOfServiceAcceptancesResponse\x12E\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12S\n" +
-	"\vacceptances\x18\x02 \x03(\v2).gitpod.v1.MemberTermsOfServiceAcceptanceB\x06\xbaH\x03\xc8\x01\x01R\vacceptances\"\xdc\x01\n" +
-	")GetTermsOfServiceAcceptancesExportRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12!\n" +
+	"\vacceptances\x18\x02 \x03(\v2).gitpod.v1.MemberTermsOfServiceAcceptanceB\x06\xbaH\x03\xc8\x01\x01R\vacceptances\"\xc7\x01\n" +
+	")GetTermsOfServiceAcceptancesExportRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12!\n" +
 	"\aversion\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02(\x01R\aversion\x12A\n" +
 	"\x06filter\x18\x03 \x01(\v2).gitpod.v1.TermsOfServiceAcceptanceFilterR\x06filter\"O\n" +
 	"*GetTermsOfServiceAcceptancesExportResponse\x12!\n" +
-	"\fdownload_url\x18\x01 \x01(\tR\vdownloadUrl\"\xb0\x01\n" +
-	"\x0eSetTierRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12S\n" +
-	"\x04tier\x18\x02 \x01(\x0e2\x1b.gitpod.v1.OrganizationTierB\"\xbaH\b\xc8\x01\x01\x82\x01\x02\x10\x01\xa2\xab\x1e\x13\n" +
-	"\x11organization.tierR\x04tier\"\x11\n" +
-	"\x0fSetTierResponse\"\xb9\x01\n" +
-	"\x1aSetStripeCustomerIDRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12P\n" +
-	"\x12stripe_customer_id\x18\x02 \x01(\tB\"\xbaH\a\xc8\x01\x01r\x02\x10\x01\xa2\xab\x1e\x14\n" +
-	"\x12stripe_customer_idR\x10stripeCustomerId\"\x1d\n" +
-	"\x1bSetStripeCustomerIDResponse\"\xeb\x03\n" +
-	"\fCustomDomain\x12\x1f\n" +
-	"\x02id\x18\x01 \x01(\tB\x0f\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01ګ\x1e\x00R\x02id\x12M\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB$\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x122\n" +
-	"\vdomain_name\x18\x03 \x01(\tB\x11\xbaH\n" +
-	"\xc8\x01\x01r\x05\x10\x04\x18\xfd\x01ګ\x1e\x00R\n" +
-	"domainName\x12I\n" +
-	"\bprovider\x18\x04 \x01(\x0e2\x1f.gitpod.v1.CustomDomainProviderB\f\xbaH\x05\x82\x01\x02\x10\x01ګ\x1e\x00R\bprovider\x12(\n" +
-	"\x0eaws_account_id\x18\x05 \x01(\tB\x02\x18\x01R\fawsAccountId\x12E\n" +
+	"\fdownload_url\x18\x01 \x01(\tR\vdownloadUrl\"\x84\x01\n" +
+	"\x0eSetTierRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12<\n" +
+	"\x04tier\x18\x02 \x01(\x0e2\x1b.gitpod.v1.OrganizationTierB\v\xbaH\b\xc8\x01\x01\x82\x01\x02\x10\x01R\x04tier\"\x11\n" +
+	"\x0fSetTierResponse\"\x8c\x01\n" +
+	"\x1aSetStripeCustomerIDRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x128\n" +
+	"\x12stripe_customer_id\x18\x02 \x01(\tB\n" +
+	"\xbaH\a\xc8\x01\x01r\x02\x10\x01R\x10stripeCustomerId\"\x1d\n" +
+	"\x1bSetStripeCustomerIDResponse\"\xb2\x03\n" +
+	"\fCustomDomain\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x02id\x124\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12.\n" +
+	"\vdomain_name\x18\x03 \x01(\tB\r\xbaH\n" +
+	"\xc8\x01\x01r\x05\x10\x04\x18\xfd\x01R\n" +
+	"domainName\x12E\n" +
+	"\bprovider\x18\x04 \x01(\x0e2\x1f.gitpod.v1.CustomDomainProviderB\b\xbaH\x05\x82\x01\x02\x10\x01R\bprovider\x12(\n" +
+	"\x0eaws_account_id\x18\x05 \x01(\tB\x02\x18\x01R\fawsAccountId\x12A\n" +
 	"\n" +
-	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\tcreatedAt\x12E\n" +
+	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\tcreatedAt\x12A\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\tupdatedAt\x12.\n" +
-	"\x10cloud_account_id\x18\b \x01(\tB\x04ګ\x1e\x00R\x0ecloudAccountId:\x04ҫ\x1e\x00\"\xf1\x02\n" +
-	"\x19CreateCustomDomainRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x122\n" +
-	"\vdomain_name\x18\x02 \x01(\tB\x11\xbaH\n" +
-	"\xc8\x01\x01r\x05\x10\x04\x18\xfd\x01ګ\x1e\x00R\n" +
-	"domainName\x12I\n" +
-	"\bprovider\x18\x03 \x01(\x0e2\x1f.gitpod.v1.CustomDomainProviderB\f\xbaH\x05\x82\x01\x02\x10\x01ګ\x1e\x00R\bprovider\x12-\n" +
-	"\x0eaws_account_id\x18\x04 \x01(\tB\x02\x18\x01H\x00R\fawsAccountId\x88\x01\x01\x123\n" +
-	"\x10cloud_account_id\x18\x05 \x01(\tB\x04ګ\x1e\x00H\x01R\x0ecloudAccountId\x88\x01\x01B\x11\n" +
+	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\tupdatedAt\x12(\n" +
+	"\x10cloud_account_id\x18\b \x01(\tR\x0ecloudAccountId\"\xce\x02\n" +
+	"\x19CreateCustomDomainRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12.\n" +
+	"\vdomain_name\x18\x02 \x01(\tB\r\xbaH\n" +
+	"\xc8\x01\x01r\x05\x10\x04\x18\xfd\x01R\n" +
+	"domainName\x12E\n" +
+	"\bprovider\x18\x03 \x01(\x0e2\x1f.gitpod.v1.CustomDomainProviderB\b\xbaH\x05\x82\x01\x02\x10\x01R\bprovider\x12-\n" +
+	"\x0eaws_account_id\x18\x04 \x01(\tB\x02\x18\x01H\x00R\fawsAccountId\x88\x01\x01\x12-\n" +
+	"\x10cloud_account_id\x18\x05 \x01(\tH\x01R\x0ecloudAccountId\x88\x01\x01B\x11\n" +
 	"\x0f_aws_account_idB\x13\n" +
 	"\x11_cloud_account_id\"b\n" +
 	"\x1aCreateCustomDomainResponse\x12D\n" +
-	"\rcustom_domain\x18\x01 \x01(\v2\x17.gitpod.v1.CustomDomainB\x06\xbaH\x03\xc8\x01\x01R\fcustomDomain\"c\n" +
-	"\x16GetCustomDomainRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"_\n" +
+	"\rcustom_domain\x18\x01 \x01(\v2\x17.gitpod.v1.CustomDomainB\x06\xbaH\x03\xc8\x01\x01R\fcustomDomain\"N\n" +
+	"\x16GetCustomDomainRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"_\n" +
 	"\x17GetCustomDomainResponse\x12D\n" +
-	"\rcustom_domain\x18\x01 \x01(\v2\x17.gitpod.v1.CustomDomainB\x06\xbaH\x03\xc8\x01\x01R\fcustomDomain\"\x83\x03\n" +
-	"\x19UpdateCustomDomainRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x122\n" +
-	"\vdomain_name\x18\x02 \x01(\tB\x11\xbaH\n" +
-	"\xc8\x01\x01r\x05\x10\x04\x18\xfd\x01ګ\x1e\x00R\n" +
+	"\rcustom_domain\x18\x01 \x01(\v2\x17.gitpod.v1.CustomDomainB\x06\xbaH\x03\xc8\x01\x01R\fcustomDomain\"\xe0\x02\n" +
+	"\x19UpdateCustomDomainRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12.\n" +
+	"\vdomain_name\x18\x02 \x01(\tB\r\xbaH\n" +
+	"\xc8\x01\x01r\x05\x10\x04\x18\xfd\x01R\n" +
 	"domainName\x12-\n" +
-	"\x0eaws_account_id\x18\x03 \x01(\tB\x02\x18\x01H\x00R\fawsAccountId\x88\x01\x01\x123\n" +
-	"\x10cloud_account_id\x18\x04 \x01(\tB\x04ګ\x1e\x00H\x01R\x0ecloudAccountId\x88\x01\x01\x12N\n" +
-	"\bprovider\x18\x05 \x01(\x0e2\x1f.gitpod.v1.CustomDomainProviderB\f\xbaH\x05\x82\x01\x02\x10\x01ګ\x1e\x00H\x02R\bprovider\x88\x01\x01B\x11\n" +
+	"\x0eaws_account_id\x18\x03 \x01(\tB\x02\x18\x01H\x00R\fawsAccountId\x88\x01\x01\x12-\n" +
+	"\x10cloud_account_id\x18\x04 \x01(\tH\x01R\x0ecloudAccountId\x88\x01\x01\x12J\n" +
+	"\bprovider\x18\x05 \x01(\x0e2\x1f.gitpod.v1.CustomDomainProviderB\b\xbaH\x05\x82\x01\x02\x10\x01H\x02R\bprovider\x88\x01\x01B\x11\n" +
 	"\x0f_aws_account_idB\x13\n" +
 	"\x11_cloud_account_idB\v\n" +
 	"\t_provider\"b\n" +
 	"\x1aUpdateCustomDomainResponse\x12D\n" +
-	"\rcustom_domain\x18\x01 \x01(\v2\x17.gitpod.v1.CustomDomainB\x06\xbaH\x03\xc8\x01\x01R\fcustomDomain\"f\n" +
-	"\x19DeleteCustomDomainRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\x1c\n" +
-	"\x1aDeleteCustomDomainResponse\"a\n" +
-	"\x14GetOIDCConfigRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"W\n" +
+	"\rcustom_domain\x18\x01 \x01(\v2\x17.gitpod.v1.CustomDomainB\x06\xbaH\x03\xc8\x01\x01R\fcustomDomain\"Q\n" +
+	"\x19DeleteCustomDomainRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"\x1c\n" +
+	"\x1aDeleteCustomDomainResponse\"L\n" +
+	"\x14GetOIDCConfigRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"W\n" +
 	"\x15GetOIDCConfigResponse\x12>\n" +
 	"\voidc_config\x18\x01 \x01(\v2\x15.gitpod.v1.OIDCConfigB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"oidcConfig\"\xa8\x01\n" +
-	"\x17UpdateOIDCConfigRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12B\n" +
-	"\voidc_config\x18\x02 \x01(\v2\x15.gitpod.v1.OIDCConfigB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\n" +
+	"oidcConfig\"\x8f\x01\n" +
+	"\x17UpdateOIDCConfigRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12>\n" +
+	"\voidc_config\x18\x02 \x01(\v2\x15.gitpod.v1.OIDCConfigB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"oidcConfig\"Z\n" +
 	"\x18UpdateOIDCConfigResponse\x12>\n" +
 	"\voidc_config\x18\x01 \x01(\v2\x15.gitpod.v1.OIDCConfigB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"oidcConfig\"\x86\x01\n" +
+	"oidcConfig\"t\n" +
 	"\n" +
-	"OIDCConfig\x12/\n" +
-	"\x02v2\x18\x01 \x01(\v2\x17.gitpod.v1.OIDCConfigV2B\x04ګ\x1e\x00H\x00R\x02v2\x12/\n" +
-	"\x02v3\x18\x02 \x01(\v2\x17.gitpod.v1.OIDCConfigV3B\x04ګ\x1e\x00H\x00R\x02v3:\x04ҫ\x1e\x00B\x10\n" +
+	"OIDCConfig\x12)\n" +
+	"\x02v2\x18\x01 \x01(\v2\x17.gitpod.v1.OIDCConfigV2H\x00R\x02v2\x12)\n" +
+	"\x02v3\x18\x02 \x01(\v2\x17.gitpod.v1.OIDCConfigV3H\x00R\x02v3B\x10\n" +
 	"\aversion\x12\x05\xbaH\x02\b\x01\"\x0e\n" +
-	"\fOIDCConfigV2\"N\n" +
-	"\fOIDCConfigV3\x12>\n" +
-	"\x10extra_sub_fields\x18\x01 \x03(\tB\x14\xbaH\r\x92\x01\n" +
-	"\x102\x18\x01\"\x04r\x02\x10\x01ګ\x1e\x00R\x0eextraSubFields*\xaf\x01\n" +
+	"\fOIDCConfigV2\"J\n" +
+	"\fOIDCConfigV3\x12:\n" +
+	"\x10extra_sub_fields\x18\x01 \x03(\tB\x10\xbaH\r\x92\x01\n" +
+	"\x102\x18\x01\"\x04r\x02\x10\x01R\x0eextraSubFields*\xaf\x01\n" +
 	"\x10OrganizationTier\x12!\n" +
 	"\x1dORGANIZATION_TIER_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16ORGANIZATION_TIER_FREE\x10\x01\x12 \n" +
@@ -9256,68 +9174,42 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\x14CustomDomainProvider\x12&\n" +
 	"\"CUSTOM_DOMAIN_PROVIDER_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aCUSTOM_DOMAIN_PROVIDER_AWS\x10\x01\x12\x1e\n" +
-	"\x1aCUSTOM_DOMAIN_PROVIDER_GCP\x10\x022\xed1\n" +
-	"\x13OrganizationService\x12o\n" +
-	"\x12CreateOrganization\x12$.gitpod.v1.CreateOrganizationRequest\x1a%.gitpod.v1.CreateOrganizationResponse\"\f\xb2\xab\x1e\b\x12\x06create\x12g\n" +
-	"\x10JoinOrganization\x12\".gitpod.v1.JoinOrganizationRequest\x1a#.gitpod.v1.JoinOrganizationResponse\"\n" +
-	"\xb2\xab\x1e\x06\x12\x04join\x12k\n" +
-	"\x0fGetOrganization\x12!.gitpod.v1.GetOrganizationRequest\x1a\".gitpod.v1.GetOrganizationResponse\"\x11\xb2\xab\x1e\n" +
-	"\x12\bretrieve\x90\x02\x01\x12o\n" +
-	"\x12UpdateOrganization\x12$.gitpod.v1.UpdateOrganizationRequest\x1a%.gitpod.v1.UpdateOrganizationResponse\"\f\xb2\xab\x1e\b\x12\x06update\x12o\n" +
-	"\x12DeleteOrganization\x12$.gitpod.v1.DeleteOrganizationRequest\x1a%.gitpod.v1.DeleteOrganizationResponse\"\f\xb2\xab\x1e\b\x12\x06delete\x12c\n" +
-	"\vListMembers\x12\x1d.gitpod.v1.ListMembersRequest\x1a\x1e.gitpod.v1.ListMembersResponse\"\x15\xb2\xab\x1e\x0e\x12\flist_members\x90\x02\x01\x12P\n" +
-	"\aSetRole\x12\x19.gitpod.v1.SetRoleRequest\x1a\x1a.gitpod.v1.SetRoleResponse\"\x0e\xb2\xab\x1e\n" +
-	"\x12\bset_role\x12\x98\x01\n" +
-	"\x18CreateOrganizationInvite\x12*.gitpod.v1.CreateOrganizationInviteRequest\x1a+.gitpod.v1.CreateOrganizationInviteResponse\"#\xb2\xab\x1e\x1f\n" +
-	"\x15organizations.invites\x12\x06create\x12\x91\x01\n" +
-	"\x15GetOrganizationInvite\x12'.gitpod.v1.GetOrganizationInviteRequest\x1a(.gitpod.v1.GetOrganizationInviteResponse\"%\xb2\xab\x1e!\n" +
-	"\x15organizations.invites\x12\bretrieve\x12\xac\x01\n" +
-	"\x1cGetOrganizationInviteSummary\x12..gitpod.v1.GetOrganizationInviteSummaryRequest\x1a/.gitpod.v1.GetOrganizationInviteSummaryResponse\"+\xb2\xab\x1e$\n" +
-	"\x15organizations.invites\x12\vget_summary\x90\x02\x01\x12k\n" +
-	"\x11LeaveOrganization\x12#.gitpod.v1.LeaveOrganizationRequest\x1a$.gitpod.v1.LeaveOrganizationResponse\"\v\xb2\xab\x1e\a\x12\x05leave\x12\x9d\x01\n" +
-	"\x16CreateSSOConfiguration\x12(.gitpod.v1.CreateSSOConfigurationRequest\x1a).gitpod.v1.CreateSSOConfigurationResponse\".\xb2\xab\x1e*\n" +
-	" organizations.sso_configurations\x12\x06create\x12\x99\x01\n" +
-	"\x13GetSSOConfiguration\x12%.gitpod.v1.GetSSOConfigurationRequest\x1a&.gitpod.v1.GetSSOConfigurationResponse\"3\xb2\xab\x1e,\n" +
-	" organizations.sso_configurations\x12\bretrieve\x90\x02\x01\x12\x9b\x01\n" +
-	"\x15ListSSOConfigurations\x12'.gitpod.v1.ListSSOConfigurationsRequest\x1a(.gitpod.v1.ListSSOConfigurationsResponse\"/\xb2\xab\x1e(\n" +
-	" organizations.sso_configurations\x12\x04list\x90\x02\x01\x12\x9d\x01\n" +
-	"\x16DeleteSSOConfiguration\x12(.gitpod.v1.DeleteSSOConfigurationRequest\x1a).gitpod.v1.DeleteSSOConfigurationResponse\".\xb2\xab\x1e*\n" +
-	" organizations.sso_configurations\x12\x06delete\x12\x9d\x01\n" +
-	"\x16UpdateSSOConfiguration\x12(.gitpod.v1.UpdateSSOConfigurationRequest\x1a).gitpod.v1.UpdateSSOConfigurationResponse\".\xb2\xab\x1e*\n" +
-	" organizations.sso_configurations\x12\x06update\x12\xa1\x01\n" +
-	"\x17CreateSCIMConfiguration\x12).gitpod.v1.CreateSCIMConfigurationRequest\x1a*.gitpod.v1.CreateSCIMConfigurationResponse\"/\xb2\xab\x1e+\n" +
-	"!organizations.scim_configurations\x12\x06create\x12\x9d\x01\n" +
-	"\x14GetSCIMConfiguration\x12&.gitpod.v1.GetSCIMConfigurationRequest\x1a'.gitpod.v1.GetSCIMConfigurationResponse\"4\xb2\xab\x1e-\n" +
-	"!organizations.scim_configurations\x12\bretrieve\x90\x02\x01\x12\x9f\x01\n" +
-	"\x16ListSCIMConfigurations\x12(.gitpod.v1.ListSCIMConfigurationsRequest\x1a).gitpod.v1.ListSCIMConfigurationsResponse\"0\xb2\xab\x1e)\n" +
-	"!organizations.scim_configurations\x12\x04list\x90\x02\x01\x12\xa1\x01\n" +
-	"\x17UpdateSCIMConfiguration\x12).gitpod.v1.UpdateSCIMConfigurationRequest\x1a*.gitpod.v1.UpdateSCIMConfigurationResponse\"/\xb2\xab\x1e+\n" +
-	"!organizations.scim_configurations\x12\x06update\x12\xa1\x01\n" +
-	"\x17DeleteSCIMConfiguration\x12).gitpod.v1.DeleteSCIMConfigurationRequest\x1a*.gitpod.v1.DeleteSCIMConfigurationResponse\"/\xb2\xab\x1e+\n" +
-	"!organizations.scim_configurations\x12\x06delete\x12\x9f\x01\n" +
-	"\x13RegenerateSCIMToken\x12%.gitpod.v1.RegenerateSCIMTokenRequest\x1a&.gitpod.v1.RegenerateSCIMTokenResponse\"9\xb2\xab\x1e5\n" +
-	"!organizations.scim_configurations\x12\x10regenerate_token\x12\xa5\x01\n" +
-	"\x18CreateDomainVerification\x12*.gitpod.v1.CreateDomainVerificationRequest\x1a+.gitpod.v1.CreateDomainVerificationResponse\"0\xb2\xab\x1e,\n" +
-	"\"organizations.domain_verifications\x12\x06create\x12\xa1\x01\n" +
-	"\x15GetDomainVerification\x12'.gitpod.v1.GetDomainVerificationRequest\x1a(.gitpod.v1.GetDomainVerificationResponse\"5\xb2\xab\x1e.\n" +
-	"\"organizations.domain_verifications\x12\bretrieve\x90\x02\x01\x12\xa3\x01\n" +
-	"\x17ListDomainVerifications\x12).gitpod.v1.ListDomainVerificationsRequest\x1a*.gitpod.v1.ListDomainVerificationsResponse\"1\xb2\xab\x1e*\n" +
-	"\"organizations.domain_verifications\x12\x04list\x90\x02\x01\x12\x81\x01\n" +
-	"\fVerifyDomain\x12\x1e.gitpod.v1.VerifyDomainRequest\x1a\x1f.gitpod.v1.VerifyDomainResponse\"0\xb2\xab\x1e,\n" +
-	"\"organizations.domain_verifications\x12\x06verify\x12\xa5\x01\n" +
-	"\x18DeleteDomainVerification\x12*.gitpod.v1.DeleteDomainVerificationRequest\x1a+.gitpod.v1.DeleteDomainVerificationResponse\"0\xb2\xab\x1e,\n" +
-	"\"organizations.domain_verifications\x12\x06delete\x12\x9b\x01\n" +
-	"\x17GetOrganizationPolicies\x12).gitpod.v1.GetOrganizationPoliciesRequest\x1a*.gitpod.v1.GetOrganizationPoliciesResponse\")\xb2\xab\x1e\"\n" +
-	"\x16organizations.policies\x12\bretrieve\x90\x02\x01\x12\x9f\x01\n" +
-	"\x1aUpdateOrganizationPolicies\x12,.gitpod.v1.UpdateOrganizationPoliciesRequest\x1a-.gitpod.v1.UpdateOrganizationPoliciesResponse\"$\xb2\xab\x1e \n" +
-	"\x16organizations.policies\x12\x06update\x12\x8a\x01\n" +
+	"\x1aCUSTOM_DOMAIN_PROVIDER_GCP\x10\x022\x9e'\n" +
+	"\x13OrganizationService\x12c\n" +
+	"\x12CreateOrganization\x12$.gitpod.v1.CreateOrganizationRequest\x1a%.gitpod.v1.CreateOrganizationResponse\"\x00\x12]\n" +
+	"\x10JoinOrganization\x12\".gitpod.v1.JoinOrganizationRequest\x1a#.gitpod.v1.JoinOrganizationResponse\"\x00\x12]\n" +
+	"\x0fGetOrganization\x12!.gitpod.v1.GetOrganizationRequest\x1a\".gitpod.v1.GetOrganizationResponse\"\x03\x90\x02\x01\x12c\n" +
+	"\x12UpdateOrganization\x12$.gitpod.v1.UpdateOrganizationRequest\x1a%.gitpod.v1.UpdateOrganizationResponse\"\x00\x12c\n" +
+	"\x12DeleteOrganization\x12$.gitpod.v1.DeleteOrganizationRequest\x1a%.gitpod.v1.DeleteOrganizationResponse\"\x00\x12Q\n" +
+	"\vListMembers\x12\x1d.gitpod.v1.ListMembersRequest\x1a\x1e.gitpod.v1.ListMembersResponse\"\x03\x90\x02\x01\x12B\n" +
+	"\aSetRole\x12\x19.gitpod.v1.SetRoleRequest\x1a\x1a.gitpod.v1.SetRoleResponse\"\x00\x12u\n" +
+	"\x18CreateOrganizationInvite\x12*.gitpod.v1.CreateOrganizationInviteRequest\x1a+.gitpod.v1.CreateOrganizationInviteResponse\"\x00\x12l\n" +
+	"\x15GetOrganizationInvite\x12'.gitpod.v1.GetOrganizationInviteRequest\x1a(.gitpod.v1.GetOrganizationInviteResponse\"\x00\x12\x84\x01\n" +
+	"\x1cGetOrganizationInviteSummary\x12..gitpod.v1.GetOrganizationInviteSummaryRequest\x1a/.gitpod.v1.GetOrganizationInviteSummaryResponse\"\x03\x90\x02\x01\x12`\n" +
+	"\x11LeaveOrganization\x12#.gitpod.v1.LeaveOrganizationRequest\x1a$.gitpod.v1.LeaveOrganizationResponse\"\x00\x12o\n" +
+	"\x16CreateSSOConfiguration\x12(.gitpod.v1.CreateSSOConfigurationRequest\x1a).gitpod.v1.CreateSSOConfigurationResponse\"\x00\x12i\n" +
+	"\x13GetSSOConfiguration\x12%.gitpod.v1.GetSSOConfigurationRequest\x1a&.gitpod.v1.GetSSOConfigurationResponse\"\x03\x90\x02\x01\x12o\n" +
+	"\x15ListSSOConfigurations\x12'.gitpod.v1.ListSSOConfigurationsRequest\x1a(.gitpod.v1.ListSSOConfigurationsResponse\"\x03\x90\x02\x01\x12o\n" +
+	"\x16DeleteSSOConfiguration\x12(.gitpod.v1.DeleteSSOConfigurationRequest\x1a).gitpod.v1.DeleteSSOConfigurationResponse\"\x00\x12o\n" +
+	"\x16UpdateSSOConfiguration\x12(.gitpod.v1.UpdateSSOConfigurationRequest\x1a).gitpod.v1.UpdateSSOConfigurationResponse\"\x00\x12r\n" +
+	"\x17CreateSCIMConfiguration\x12).gitpod.v1.CreateSCIMConfigurationRequest\x1a*.gitpod.v1.CreateSCIMConfigurationResponse\"\x00\x12l\n" +
+	"\x14GetSCIMConfiguration\x12&.gitpod.v1.GetSCIMConfigurationRequest\x1a'.gitpod.v1.GetSCIMConfigurationResponse\"\x03\x90\x02\x01\x12r\n" +
+	"\x16ListSCIMConfigurations\x12(.gitpod.v1.ListSCIMConfigurationsRequest\x1a).gitpod.v1.ListSCIMConfigurationsResponse\"\x03\x90\x02\x01\x12r\n" +
+	"\x17UpdateSCIMConfiguration\x12).gitpod.v1.UpdateSCIMConfigurationRequest\x1a*.gitpod.v1.UpdateSCIMConfigurationResponse\"\x00\x12r\n" +
+	"\x17DeleteSCIMConfiguration\x12).gitpod.v1.DeleteSCIMConfigurationRequest\x1a*.gitpod.v1.DeleteSCIMConfigurationResponse\"\x00\x12f\n" +
+	"\x13RegenerateSCIMToken\x12%.gitpod.v1.RegenerateSCIMTokenRequest\x1a&.gitpod.v1.RegenerateSCIMTokenResponse\"\x00\x12u\n" +
+	"\x18CreateDomainVerification\x12*.gitpod.v1.CreateDomainVerificationRequest\x1a+.gitpod.v1.CreateDomainVerificationResponse\"\x00\x12o\n" +
+	"\x15GetDomainVerification\x12'.gitpod.v1.GetDomainVerificationRequest\x1a(.gitpod.v1.GetDomainVerificationResponse\"\x03\x90\x02\x01\x12u\n" +
+	"\x17ListDomainVerifications\x12).gitpod.v1.ListDomainVerificationsRequest\x1a*.gitpod.v1.ListDomainVerificationsResponse\"\x03\x90\x02\x01\x12Q\n" +
+	"\fVerifyDomain\x12\x1e.gitpod.v1.VerifyDomainRequest\x1a\x1f.gitpod.v1.VerifyDomainResponse\"\x00\x12u\n" +
+	"\x18DeleteDomainVerification\x12*.gitpod.v1.DeleteDomainVerificationRequest\x1a+.gitpod.v1.DeleteDomainVerificationResponse\"\x00\x12u\n" +
+	"\x17GetOrganizationPolicies\x12).gitpod.v1.GetOrganizationPoliciesRequest\x1a*.gitpod.v1.GetOrganizationPoliciesResponse\"\x03\x90\x02\x01\x12{\n" +
+	"\x1aUpdateOrganizationPolicies\x12,.gitpod.v1.UpdateOrganizationPoliciesRequest\x1a-.gitpod.v1.UpdateOrganizationPoliciesResponse\"\x00\x12\x8a\x01\n" +
 	"\x1eGetOrganizationLLMCapabilities\x120.gitpod.v1.GetOrganizationLLMCapabilitiesRequest\x1a1.gitpod.v1.GetOrganizationLLMCapabilitiesResponse\"\x03\x90\x02\x01\x12W\n" +
 	"\rGetOIDCConfig\x12\x1f.gitpod.v1.GetOIDCConfigRequest\x1a .gitpod.v1.GetOIDCConfigResponse\"\x03\x90\x02\x01\x12]\n" +
-	"\x10UpdateOIDCConfig\x12\".gitpod.v1.UpdateOIDCConfigRequest\x1a#.gitpod.v1.UpdateOIDCConfigResponse\"\x00\x12\x98\x01\n" +
-	"\x15GetAnnouncementBanner\x12'.gitpod.v1.GetAnnouncementBannerRequest\x1a(.gitpod.v1.GetAnnouncementBannerResponse\",\xb2\xab\x1e(\n" +
-	"!organizations.announcement_banner\x12\x03get\x12\xa4\x01\n" +
-	"\x18UpdateAnnouncementBanner\x12*.gitpod.v1.UpdateAnnouncementBannerRequest\x1a+.gitpod.v1.UpdateAnnouncementBannerResponse\"/\xb2\xab\x1e+\n" +
-	"!organizations.announcement_banner\x12\x06update\x12c\n" +
+	"\x10UpdateOIDCConfig\x12\".gitpod.v1.UpdateOIDCConfigRequest\x1a#.gitpod.v1.UpdateOIDCConfigResponse\"\x00\x12l\n" +
+	"\x15GetAnnouncementBanner\x12'.gitpod.v1.GetAnnouncementBannerRequest\x1a(.gitpod.v1.GetAnnouncementBannerResponse\"\x00\x12u\n" +
+	"\x18UpdateAnnouncementBanner\x12*.gitpod.v1.UpdateAnnouncementBannerRequest\x1a+.gitpod.v1.UpdateAnnouncementBannerResponse\"\x00\x12c\n" +
 	"\x11GetTermsOfService\x12#.gitpod.v1.GetTermsOfServiceRequest\x1a$.gitpod.v1.GetTermsOfServiceResponse\"\x03\x90\x02\x01\x12i\n" +
 	"\x14UpdateTermsOfService\x12&.gitpod.v1.UpdateTermsOfServiceRequest\x1a'.gitpod.v1.UpdateTermsOfServiceResponse\"\x00\x12i\n" +
 	"\x14AcceptTermsOfService\x12&.gitpod.v1.AcceptTermsOfServiceRequest\x1a'.gitpod.v1.AcceptTermsOfServiceResponse\"\x00\x12~\n" +
@@ -9325,16 +9217,11 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\x1dListTermsOfServiceAcceptances\x12/.gitpod.v1.ListTermsOfServiceAcceptancesRequest\x1a0.gitpod.v1.ListTermsOfServiceAcceptancesResponse\"\x03\x90\x02\x01\x12\x96\x01\n" +
 	"\"GetTermsOfServiceAcceptancesExport\x124.gitpod.v1.GetTermsOfServiceAcceptancesExportRequest\x1a5.gitpod.v1.GetTermsOfServiceAcceptancesExportResponse\"\x03\x90\x02\x01\x12B\n" +
 	"\aSetTier\x12\x19.gitpod.v1.SetTierRequest\x1a\x1a.gitpod.v1.SetTierResponse\"\x00\x12i\n" +
-	"\x13SetStripeCustomerID\x12%.gitpod.v1.SetStripeCustomerIDRequest\x1a&.gitpod.v1.SetStripeCustomerIDResponse\"\x03\x88\x02\x01\x12\x8d\x01\n" +
-	"\x12CreateCustomDomain\x12$.gitpod.v1.CreateCustomDomainRequest\x1a%.gitpod.v1.CreateCustomDomainResponse\"*\xb2\xab\x1e&\n" +
-	"\x1corganizations.custom_domains\x12\x06create\x12\x89\x01\n" +
-	"\x0fGetCustomDomain\x12!.gitpod.v1.GetCustomDomainRequest\x1a\".gitpod.v1.GetCustomDomainResponse\"/\xb2\xab\x1e(\n" +
-	"\x1corganizations.custom_domains\x12\bretrieve\x90\x02\x01\x12\x8d\x01\n" +
-	"\x12UpdateCustomDomain\x12$.gitpod.v1.UpdateCustomDomainRequest\x1a%.gitpod.v1.UpdateCustomDomainResponse\"*\xb2\xab\x1e&\n" +
-	"\x1corganizations.custom_domains\x12\x06update\x12\x8d\x01\n" +
-	"\x12DeleteCustomDomain\x12$.gitpod.v1.DeleteCustomDomainRequest\x1a%.gitpod.v1.DeleteCustomDomainResponse\"*\xb2\xab\x1e&\n" +
-	"\x1corganizations.custom_domains\x12\x06delete\x1a\x13\xaa\xab\x1e\x0f\n" +
-	"\rorganizationsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x13SetStripeCustomerID\x12%.gitpod.v1.SetStripeCustomerIDRequest\x1a&.gitpod.v1.SetStripeCustomerIDResponse\"\x03\x88\x02\x01\x12c\n" +
+	"\x12CreateCustomDomain\x12$.gitpod.v1.CreateCustomDomainRequest\x1a%.gitpod.v1.CreateCustomDomainResponse\"\x00\x12]\n" +
+	"\x0fGetCustomDomain\x12!.gitpod.v1.GetCustomDomainRequest\x1a\".gitpod.v1.GetCustomDomainResponse\"\x03\x90\x02\x01\x12c\n" +
+	"\x12UpdateCustomDomain\x12$.gitpod.v1.UpdateCustomDomainRequest\x1a%.gitpod.v1.UpdateCustomDomainResponse\"\x00\x12c\n" +
+	"\x12DeleteCustomDomain\x12$.gitpod.v1.DeleteCustomDomainRequest\x1a%.gitpod.v1.DeleteCustomDomainResponse\"\x00B$Z\"github.com/gitpod-io/ona-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_organization_proto_rawDescOnce sync.Once
