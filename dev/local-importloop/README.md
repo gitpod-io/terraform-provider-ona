@@ -9,6 +9,7 @@ It covers:
 - `ona_environment_class`
 - `ona_custom_domain`
 - `ona_sso_configuration`
+- `ona_oidc_config`
 - `ona_project`
 - `ona_warm_pool`
 - `ona_scim_configuration`
