@@ -43,6 +43,11 @@ list "ona_scim_configuration" "all" {
   include_resource = true
 }
 
+list "ona_security_policy" "all" {
+  provider         = ona
+  include_resource = true
+}
+
 list "ona_secret" "all" {
   provider         = ona
   include_resource = true

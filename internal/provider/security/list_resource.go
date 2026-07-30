@@ -11,6 +11,7 @@ import (
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/hashicorp/terraform-plugin-framework/list"
 	listschema "github.com/hashicorp/terraform-plugin-framework/list/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -87,10 +88,8 @@ func (r *PolicyResource) List(ctx context.Context, req list.ListRequest, resp *l
 				item.Diagnostics.Append(item.Identity.Set(ctx, PolicyIdentityModel{ID: types.StringValue(policy.GetId())})...)
 				if req.IncludeResource && !item.Diagnostics.HasError() {
 					var model PolicyModel
-					item.Diagnostics.Append(populatePolicyModel(ctx, &model, policy)...)
-					if !item.Diagnostics.HasError() {
-						item.Diagnostics.Append(item.Resource.Set(ctx, &model)...)
-					}
+					populatePolicyModel(&model, policy)
+					item.Diagnostics.Append(item.Resource.Set(ctx, &model)...)
 				}
 				if !push(item) || item.Diagnostics.HasError() {
 					return
@@ -125,7 +124,7 @@ func policyListFilter(ctx context.Context, r *PolicyResource, req list.ListReque
 	organizationID := data.OrganizationID.ValueString()
 	if organizationID == "" {
 		var err error
-		organizationID, err = listutil.AuthenticatedOrganizationID(ctx, r.client)
+		organizationID, err = providerdata.AuthenticatedOrganizationID(ctx, r.client)
 		if err != nil {
 			push(listutil.Error("Unable to Determine Organization", err))
 			return nil, false
