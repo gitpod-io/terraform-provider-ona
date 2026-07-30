@@ -48,6 +48,7 @@ Direct `terraform import` uses these resource IDs:
 | `ona_scm_integration` | SCM integration ID |
 | `ona_environment_class` | Environment class ID |
 | `ona_project` | Project ID |
+| `ona_skill` | Skill Prompt UUID |
 | `ona_security_policy` | Security policy ID |
 | `ona_organization_policies` | `current` or the authenticated organization ID |
 | `ona_announcement_banner` | `current` |

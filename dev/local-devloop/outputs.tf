@@ -3,6 +3,11 @@ output "managed_runner_id" {
   value       = ona_runner.devloop.runner_id
 }
 
+output "managed_skill_id" {
+  description = "ID of the organization skill managed by this module."
+  value       = ona_skill.devloop.id
+}
+
 output "cloudformation_template_url" {
   description = "CloudFormation template URL for the managed AWS EC2 runner."
   value       = ona_runner.devloop.cloudformation_template_url

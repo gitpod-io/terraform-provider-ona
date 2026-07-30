@@ -4,6 +4,7 @@ This module exercises the Terraform provider resources, ephemeral resources,
 and data sources:
 
 - `ona_runner.devloop`
+- `ona_skill.devloop`
 - `ona_service_account.devloop`
 - `ona_group.devloop`
 - `ona_team.devloop`
@@ -73,6 +74,13 @@ Terraform outputs or stored in state.
 
 The integration uses the visible built-in definition for `linear.app`, so the
 dev loop does not require or persist an OAuth client secret.
+
+Skill creation requires access to Ona Agents and Prompt management permission.
+The dev loop reads its prompt from `skills/provider-development.md`. Removing
+`ona_skill.devloop` from configuration deletes the organization skill; remove
+the address from Terraform state instead to stop managing it without deletion.
+Adding or renaming a slash command updates in place, while removing a configured
+command replaces the skill so Ona releases the stored command name.
 
 AI budget resources are opt-in because they require an enterprise organization,
 suitable Billing permissions, and change organization billing policy. Enabling

@@ -11,6 +11,12 @@ provider "ona" {
   token = var.ona_token
 }
 
+resource "ona_skill" "devloop" {
+  name        = "Terraform provider development"
+  description = "Repository-specific guidance for developing the Ona Terraform provider."
+  prompt      = file("${path.module}/skills/provider-development.md")
+}
+
 resource "ona_service_account" "devloop" {
   name        = var.service_account_name
   description = "Service account created by the Terraform provider local dev loop."
