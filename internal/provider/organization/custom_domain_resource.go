@@ -28,6 +28,7 @@ import (
 
 var _ resource.Resource = &CustomDomainResource{}
 var _ resource.ResourceWithConfigure = &CustomDomainResource{}
+var _ resource.ResourceWithIdentity = &CustomDomainResource{}
 var _ resource.ResourceWithImportState = &CustomDomainResource{}
 var _ resource.ResourceWithValidateConfig = &CustomDomainResource{}
 
@@ -158,6 +159,7 @@ func (r *CustomDomainResource) Create(ctx context.Context, req resource.CreateRe
 	}
 
 	data.ID = types.StringValue(customDomain.GetId())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, CustomDomainIdentityModel{OrganizationID: types.StringValue(organizationID)})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	resp.Diagnostics.Append(setPrivateOrganizationID(ctx, resp.Private, organizationID)...)
 	if resp.Diagnostics.HasError() {
@@ -205,6 +207,7 @@ func (r *CustomDomainResource) Read(ctx context.Context, req resource.ReadReques
 	data = CustomDomainModel{}
 	resp.Diagnostics.Append(populateCustomDomainModel(&data, customDomain, organizationID)...)
 	resp.Diagnostics.Append(setPrivateOrganizationID(ctx, resp.Private, organizationID)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, CustomDomainIdentityModel{OrganizationID: types.StringValue(organizationID)})...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -252,6 +255,7 @@ func (r *CustomDomainResource) Update(ctx context.Context, req resource.UpdateRe
 
 	resp.Diagnostics.Append(populateCustomDomainModel(&data, result.Msg.GetCustomDomain(), organizationID)...)
 	resp.Diagnostics.Append(setPrivateOrganizationID(ctx, resp.Private, organizationID)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, CustomDomainIdentityModel{OrganizationID: types.StringValue(organizationID)})...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -295,34 +299,60 @@ func (r *CustomDomainResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *CustomDomainResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "importing", "ona_custom_domain") {
-		return
+	resp.Diagnostics.Append(r.importState(ctx, req, &resp.State, resp.Identity, resp.Private)...)
+}
+
+func (r *CustomDomainResource) importState(ctx context.Context, req resource.ImportStateRequest, state *tfsdk.State, identityState *tfsdk.ResourceIdentity, private privateState) diag.Diagnostics {
+	var diags diag.Diagnostics
+	if !providerdata.RequireResourceClient(r.client, &diags, "importing", "ona_custom_domain") {
+		return diags
 	}
 
-	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
-	if err != nil {
-		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "getting the authenticated organization for ona_custom_domain", err)
-		return
-	}
+	var organizationID string
+	var customDomain *v1.CustomDomain
 
-	resp.Diagnostics.Append(validateCustomDomainImportID(req.ID, organizationID)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
+	if req.ID == "" {
+		var identity CustomDomainIdentityModel
+		diags.Append(req.Identity.Get(ctx, &identity)...)
+		if diags.HasError() {
+			return diags
+		}
+		organizationID = identity.OrganizationID.ValueString()
+		var err error
+		customDomain, err = r.getCustomDomain(ctx, organizationID)
+		if err != nil {
+			providerdiag.AddAPIError(&diags, "Unable to Import Ona Custom Domain", "reading the Ona custom domain for identity import", err)
+			return diags
+		}
+	} else {
+		var err error
+		organizationID, err = providerdata.AuthenticatedOrganizationID(ctx, r.client)
+		if err != nil {
+			providerdiag.AddAPIError(&diags, "Unable to Resolve Ona Organization", "getting the authenticated organization for ona_custom_domain", err)
+			return diags
+		}
 
-	customDomain, err := r.getCustomDomain(ctx, organizationID)
-	if err != nil {
-		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Import Ona Custom Domain", "reading the Ona custom domain for import", err)
-		return
+		diags.Append(validateCustomDomainImportID(req.ID, organizationID)...)
+		if diags.HasError() {
+			return diags
+		}
+
+		customDomain, err = r.getCustomDomain(ctx, organizationID)
+		if err != nil {
+			providerdiag.AddAPIError(&diags, "Unable to Import Ona Custom Domain", "reading the Ona custom domain for import", err)
+			return diags
+		}
 	}
 
 	var data CustomDomainModel
-	resp.Diagnostics.Append(populateCustomDomainModel(&data, customDomain, organizationID)...)
-	resp.Diagnostics.Append(setPrivateOrganizationID(ctx, resp.Private, organizationID)...)
-	if resp.Diagnostics.HasError() {
-		return
+	diags.Append(populateCustomDomainModel(&data, customDomain, organizationID)...)
+	diags.Append(setPrivateOrganizationID(ctx, private, organizationID)...)
+	diags.Append(identityState.Set(ctx, CustomDomainIdentityModel{OrganizationID: types.StringValue(organizationID)})...)
+	if diags.HasError() {
+		return diags
 	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	diags.Append(state.Set(ctx, &data)...)
+	return diags
 }
 
 func (r *CustomDomainResource) getCustomDomain(ctx context.Context, organizationID string) (*v1.CustomDomain, error) {
