@@ -24,6 +24,7 @@ import (
 
 var _ resource.Resource = &SSOConfigurationResource{}
 var _ resource.ResourceWithConfigure = &SSOConfigurationResource{}
+var _ resource.ResourceWithIdentity = &SSOConfigurationResource{}
 var _ resource.ResourceWithImportState = &SSOConfigurationResource{}
 var _ resource.ResourceWithValidateConfig = &SSOConfigurationResource{}
 
@@ -168,6 +169,7 @@ func (r *SSOConfigurationResource) Create(ctx context.Context, req resource.Crea
 	}
 
 	data.ID = types.StringValue(sso.GetId())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, SSOConfigurationIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -230,6 +232,7 @@ func (r *SSOConfigurationResource) Read(ctx context.Context, req resource.ReadRe
 	prior := data
 	data = SSOConfigurationModel{}
 	populateSSOConfigurationModel(ctx, &data, sso, prior, &resp.Diagnostics)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, SSOConfigurationIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -280,6 +283,7 @@ func (r *SSOConfigurationResource) Update(ctx context.Context, req resource.Upda
 	planned := data
 	populateSSOConfigurationModel(ctx, &data, sso, planned, &resp.Diagnostics)
 	preserveSSOConfigurationPlannedInputs(&data, planned)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, SSOConfigurationIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -307,7 +311,7 @@ func (r *SSOConfigurationResource) Delete(ctx context.Context, req resource.Dele
 }
 
 func (r *SSOConfigurationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("id"), req, resp)
 }
 
 func (r *SSOConfigurationResource) getSSOConfiguration(ctx context.Context, id string) (*v1.SSOConfiguration, error) {

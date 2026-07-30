@@ -13,12 +13,22 @@ list "ona_environment_class" "all" {
   include_resource = true
 }
 
+list "ona_sso_configuration" "all" {
+  provider         = ona
+  include_resource = true
+}
+
 list "ona_project" "all" {
   provider         = ona
   include_resource = true
 }
 
 list "ona_warm_pool" "all" {
+  provider         = ona
+  include_resource = true
+}
+
+list "ona_scim_configuration" "all" {
   provider         = ona
   include_resource = true
 }
@@ -30,4 +40,9 @@ list "ona_secret" "all" {
   config {
     scope = "organization"
   }
+}
+
+list "ona_service_account" "all" {
+  provider         = ona
+  include_resource = true
 }

@@ -7,9 +7,12 @@ It covers:
 - `ona_runner`
 - `ona_scm_integration`
 - `ona_environment_class`
+- `ona_sso_configuration`
 - `ona_project`
 - `ona_warm_pool`
+- `ona_scim_configuration`
 - `ona_secret`
+- `ona_service_account`
 
 The example only generates imports for objects that already exist and can be
 represented by the provider. To exercise the complete workflow, use an Ona
