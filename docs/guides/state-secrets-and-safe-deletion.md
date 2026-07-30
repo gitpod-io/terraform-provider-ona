@@ -1,6 +1,6 @@
 ---
 page_title: "State, Secrets, and Safe Deletion - Ona Provider"
-subcategory: "Security and Secrets"
+subcategory: "Guides"
 description: |-
   Understand state storage, write-only values, ephemeral values, and deletion behavior.
 ---

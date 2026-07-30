@@ -1,6 +1,6 @@
 ---
 page_title: "Troubleshooting and Support - Ona Provider"
-subcategory: "Integrations and Automation"
+subcategory: "Guides"
 description: |-
   Diagnose provider installation, authentication, permission, host, and secret-rotation issues.
 ---
