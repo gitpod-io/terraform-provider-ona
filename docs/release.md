@@ -119,7 +119,7 @@ published assets, and verify them again.
 
 Release binaries embed the resolved release version in provider metadata and
 the default Ona API `User-Agent`, for example
-`terraform-provider-ona/0.3.0-beta.7` or `terraform-provider-ona/0.2.0`.
+`terraform-provider-ona/0.3.0-beta.37` or `terraform-provider-ona/0.2.0`.
 
 Local publishing is not supported. The publish scripts are CI entrypoints and
 fail unless GitHub Actions runs them from `refs/heads/main`.
@@ -161,7 +161,7 @@ terraform {
   required_providers {
     ona = {
       source  = "gitpod-io/ona"
-      version = "= 0.2.0-beta.1"
+      version = "= 0.3.0-beta.37"
     }
   }
 }
