@@ -175,6 +175,7 @@ func (p *OnaProvider) EphemeralResources(ctx context.Context) []func() ephemeral
 // registered by the provider. Resource-specific PRs add constructors here.
 func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResource {
 	return []func() list.ListResource{
+		organization.NewAnnouncementBannerListResource,
 		organization.NewCustomDomainListResource,
 		organization.NewOIDCConfigListResource,
 		organization.NewPoliciesListResource,
