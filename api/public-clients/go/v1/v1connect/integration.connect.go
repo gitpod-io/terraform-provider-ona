@@ -36,18 +36,9 @@ const (
 	// IntegrationServiceListIntegrationDefinitionsProcedure is the fully-qualified name of the
 	// IntegrationService's ListIntegrationDefinitions RPC.
 	IntegrationServiceListIntegrationDefinitionsProcedure = "/gitpod.v1.IntegrationService/ListIntegrationDefinitions"
-	// IntegrationServiceCreateIntegrationDefinitionProcedure is the fully-qualified name of the
-	// IntegrationService's CreateIntegrationDefinition RPC.
-	IntegrationServiceCreateIntegrationDefinitionProcedure = "/gitpod.v1.IntegrationService/CreateIntegrationDefinition"
 	// IntegrationServiceGetIntegrationDefinitionProcedure is the fully-qualified name of the
 	// IntegrationService's GetIntegrationDefinition RPC.
 	IntegrationServiceGetIntegrationDefinitionProcedure = "/gitpod.v1.IntegrationService/GetIntegrationDefinition"
-	// IntegrationServiceUpdateIntegrationDefinitionProcedure is the fully-qualified name of the
-	// IntegrationService's UpdateIntegrationDefinition RPC.
-	IntegrationServiceUpdateIntegrationDefinitionProcedure = "/gitpod.v1.IntegrationService/UpdateIntegrationDefinition"
-	// IntegrationServiceDeleteIntegrationDefinitionProcedure is the fully-qualified name of the
-	// IntegrationService's DeleteIntegrationDefinition RPC.
-	IntegrationServiceDeleteIntegrationDefinitionProcedure = "/gitpod.v1.IntegrationService/DeleteIntegrationDefinition"
 	// IntegrationServiceCreateIntegrationProcedure is the fully-qualified name of the
 	// IntegrationService's CreateIntegration RPC.
 	IntegrationServiceCreateIntegrationProcedure = "/gitpod.v1.IntegrationService/CreateIntegration"
@@ -66,12 +57,6 @@ const (
 	// IntegrationServiceValidateIntegrationProcedure is the fully-qualified name of the
 	// IntegrationService's ValidateIntegration RPC.
 	IntegrationServiceValidateIntegrationProcedure = "/gitpod.v1.IntegrationService/ValidateIntegration"
-	// IntegrationServiceStartCodexDeviceLoginProcedure is the fully-qualified name of the
-	// IntegrationService's StartCodexDeviceLogin RPC.
-	IntegrationServiceStartCodexDeviceLoginProcedure = "/gitpod.v1.IntegrationService/StartCodexDeviceLogin"
-	// IntegrationServiceCompleteCodexDeviceLoginProcedure is the fully-qualified name of the
-	// IntegrationService's CompleteCodexDeviceLogin RPC.
-	IntegrationServiceCompleteCodexDeviceLoginProcedure = "/gitpod.v1.IntegrationService/CompleteCodexDeviceLogin"
 )
 
 // IntegrationServiceClient is a client for the gitpod.v1.IntegrationService service.
@@ -83,14 +68,6 @@ type IntegrationServiceClient interface {
 	// - Check integration capabilities
 	// - Discover supported services
 	ListIntegrationDefinitions(context.Context, *connect.Request[v1.ListIntegrationDefinitionsRequest]) (*connect.Response[v1.ListIntegrationDefinitionsResponse], error)
-	// Creates a new integration definition.
-	// Requires service account authentication.
-	//
-	// Use this method to:
-	// - Add new integration types dynamically
-	// - Configure integration capabilities
-	// - Set up authentication requirements
-	CreateIntegrationDefinition(context.Context, *connect.Request[v1.CreateIntegrationDefinitionRequest]) (*connect.Response[v1.CreateIntegrationDefinitionResponse], error)
 	// Gets details about a specific integration definition.
 	//
 	// Use this method to:
@@ -98,22 +75,6 @@ type IntegrationServiceClient interface {
 	// - Check supported capabilities
 	// - Verify authentication requirements
 	GetIntegrationDefinition(context.Context, *connect.Request[v1.GetIntegrationDefinitionRequest]) (*connect.Response[v1.GetIntegrationDefinitionResponse], error)
-	// Updates an existing integration definition.
-	// Requires service account authentication.
-	//
-	// Use this method to:
-	// - Modify integration capabilities
-	// - Update authentication configuration
-	// - Change integration metadata
-	UpdateIntegrationDefinition(context.Context, *connect.Request[v1.UpdateIntegrationDefinitionRequest]) (*connect.Response[v1.UpdateIntegrationDefinitionResponse], error)
-	// Deletes an integration definition.
-	// Requires service account authentication.
-	// Fails if any integrations depend on this definition.
-	//
-	// Use this method to:
-	// - Remove unused integration types
-	// - Clean up deprecated integrations
-	DeleteIntegrationDefinition(context.Context, *connect.Request[v1.DeleteIntegrationDefinitionRequest]) (*connect.Response[v1.DeleteIntegrationDefinitionResponse], error)
 	// Creates a new integration instance within an organization.
 	//
 	// Use this method to:
@@ -153,10 +114,6 @@ type IntegrationServiceClient interface {
 	// Runs a set of checks (e.g. app token validity) and returns results for each.
 	// All checks are always returned; failing checks include a message and an optional action_hint.
 	ValidateIntegration(context.Context, *connect.Request[v1.ValidateIntegrationRequest]) (*connect.Response[v1.ValidateIntegrationResponse], error)
-	// Starts the Codex device authorization flow for a user integration.
-	StartCodexDeviceLogin(context.Context, *connect.Request[v1.StartCodexDeviceLoginRequest]) (*connect.Response[v1.StartCodexDeviceLoginResponse], error)
-	// Polls the Codex device authorization flow and stores the resulting token when authorized.
-	CompleteCodexDeviceLogin(context.Context, *connect.Request[v1.CompleteCodexDeviceLoginRequest]) (*connect.Response[v1.CompleteCodexDeviceLoginResponse], error)
 }
 
 // NewIntegrationServiceClient constructs a client for the gitpod.v1.IntegrationService service. By
@@ -177,29 +134,11 @@ func NewIntegrationServiceClient(httpClient connect.HTTPClient, baseURL string, 
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
-		createIntegrationDefinition: connect.NewClient[v1.CreateIntegrationDefinitionRequest, v1.CreateIntegrationDefinitionResponse](
-			httpClient,
-			baseURL+IntegrationServiceCreateIntegrationDefinitionProcedure,
-			connect.WithSchema(integrationServiceMethods.ByName("CreateIntegrationDefinition")),
-			connect.WithClientOptions(opts...),
-		),
 		getIntegrationDefinition: connect.NewClient[v1.GetIntegrationDefinitionRequest, v1.GetIntegrationDefinitionResponse](
 			httpClient,
 			baseURL+IntegrationServiceGetIntegrationDefinitionProcedure,
 			connect.WithSchema(integrationServiceMethods.ByName("GetIntegrationDefinition")),
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
-			connect.WithClientOptions(opts...),
-		),
-		updateIntegrationDefinition: connect.NewClient[v1.UpdateIntegrationDefinitionRequest, v1.UpdateIntegrationDefinitionResponse](
-			httpClient,
-			baseURL+IntegrationServiceUpdateIntegrationDefinitionProcedure,
-			connect.WithSchema(integrationServiceMethods.ByName("UpdateIntegrationDefinition")),
-			connect.WithClientOptions(opts...),
-		),
-		deleteIntegrationDefinition: connect.NewClient[v1.DeleteIntegrationDefinitionRequest, v1.DeleteIntegrationDefinitionResponse](
-			httpClient,
-			baseURL+IntegrationServiceDeleteIntegrationDefinitionProcedure,
-			connect.WithSchema(integrationServiceMethods.ByName("DeleteIntegrationDefinition")),
 			connect.WithClientOptions(opts...),
 		),
 		createIntegration: connect.NewClient[v1.CreateIntegrationRequest, v1.CreateIntegrationResponse](
@@ -241,36 +180,19 @@ func NewIntegrationServiceClient(httpClient connect.HTTPClient, baseURL string, 
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
-		startCodexDeviceLogin: connect.NewClient[v1.StartCodexDeviceLoginRequest, v1.StartCodexDeviceLoginResponse](
-			httpClient,
-			baseURL+IntegrationServiceStartCodexDeviceLoginProcedure,
-			connect.WithSchema(integrationServiceMethods.ByName("StartCodexDeviceLogin")),
-			connect.WithClientOptions(opts...),
-		),
-		completeCodexDeviceLogin: connect.NewClient[v1.CompleteCodexDeviceLoginRequest, v1.CompleteCodexDeviceLoginResponse](
-			httpClient,
-			baseURL+IntegrationServiceCompleteCodexDeviceLoginProcedure,
-			connect.WithSchema(integrationServiceMethods.ByName("CompleteCodexDeviceLogin")),
-			connect.WithClientOptions(opts...),
-		),
 	}
 }
 
 // integrationServiceClient implements IntegrationServiceClient.
 type integrationServiceClient struct {
-	listIntegrationDefinitions  *connect.Client[v1.ListIntegrationDefinitionsRequest, v1.ListIntegrationDefinitionsResponse]
-	createIntegrationDefinition *connect.Client[v1.CreateIntegrationDefinitionRequest, v1.CreateIntegrationDefinitionResponse]
-	getIntegrationDefinition    *connect.Client[v1.GetIntegrationDefinitionRequest, v1.GetIntegrationDefinitionResponse]
-	updateIntegrationDefinition *connect.Client[v1.UpdateIntegrationDefinitionRequest, v1.UpdateIntegrationDefinitionResponse]
-	deleteIntegrationDefinition *connect.Client[v1.DeleteIntegrationDefinitionRequest, v1.DeleteIntegrationDefinitionResponse]
-	createIntegration           *connect.Client[v1.CreateIntegrationRequest, v1.CreateIntegrationResponse]
-	getIntegration              *connect.Client[v1.GetIntegrationRequest, v1.GetIntegrationResponse]
-	updateIntegration           *connect.Client[v1.UpdateIntegrationRequest, v1.UpdateIntegrationResponse]
-	deleteIntegration           *connect.Client[v1.DeleteIntegrationRequest, v1.DeleteIntegrationResponse]
-	listIntegrations            *connect.Client[v1.ListIntegrationsRequest, v1.ListIntegrationsResponse]
-	validateIntegration         *connect.Client[v1.ValidateIntegrationRequest, v1.ValidateIntegrationResponse]
-	startCodexDeviceLogin       *connect.Client[v1.StartCodexDeviceLoginRequest, v1.StartCodexDeviceLoginResponse]
-	completeCodexDeviceLogin    *connect.Client[v1.CompleteCodexDeviceLoginRequest, v1.CompleteCodexDeviceLoginResponse]
+	listIntegrationDefinitions *connect.Client[v1.ListIntegrationDefinitionsRequest, v1.ListIntegrationDefinitionsResponse]
+	getIntegrationDefinition   *connect.Client[v1.GetIntegrationDefinitionRequest, v1.GetIntegrationDefinitionResponse]
+	createIntegration          *connect.Client[v1.CreateIntegrationRequest, v1.CreateIntegrationResponse]
+	getIntegration             *connect.Client[v1.GetIntegrationRequest, v1.GetIntegrationResponse]
+	updateIntegration          *connect.Client[v1.UpdateIntegrationRequest, v1.UpdateIntegrationResponse]
+	deleteIntegration          *connect.Client[v1.DeleteIntegrationRequest, v1.DeleteIntegrationResponse]
+	listIntegrations           *connect.Client[v1.ListIntegrationsRequest, v1.ListIntegrationsResponse]
+	validateIntegration        *connect.Client[v1.ValidateIntegrationRequest, v1.ValidateIntegrationResponse]
 }
 
 // ListIntegrationDefinitions calls gitpod.v1.IntegrationService.ListIntegrationDefinitions.
@@ -278,24 +200,9 @@ func (c *integrationServiceClient) ListIntegrationDefinitions(ctx context.Contex
 	return c.listIntegrationDefinitions.CallUnary(ctx, req)
 }
 
-// CreateIntegrationDefinition calls gitpod.v1.IntegrationService.CreateIntegrationDefinition.
-func (c *integrationServiceClient) CreateIntegrationDefinition(ctx context.Context, req *connect.Request[v1.CreateIntegrationDefinitionRequest]) (*connect.Response[v1.CreateIntegrationDefinitionResponse], error) {
-	return c.createIntegrationDefinition.CallUnary(ctx, req)
-}
-
 // GetIntegrationDefinition calls gitpod.v1.IntegrationService.GetIntegrationDefinition.
 func (c *integrationServiceClient) GetIntegrationDefinition(ctx context.Context, req *connect.Request[v1.GetIntegrationDefinitionRequest]) (*connect.Response[v1.GetIntegrationDefinitionResponse], error) {
 	return c.getIntegrationDefinition.CallUnary(ctx, req)
-}
-
-// UpdateIntegrationDefinition calls gitpod.v1.IntegrationService.UpdateIntegrationDefinition.
-func (c *integrationServiceClient) UpdateIntegrationDefinition(ctx context.Context, req *connect.Request[v1.UpdateIntegrationDefinitionRequest]) (*connect.Response[v1.UpdateIntegrationDefinitionResponse], error) {
-	return c.updateIntegrationDefinition.CallUnary(ctx, req)
-}
-
-// DeleteIntegrationDefinition calls gitpod.v1.IntegrationService.DeleteIntegrationDefinition.
-func (c *integrationServiceClient) DeleteIntegrationDefinition(ctx context.Context, req *connect.Request[v1.DeleteIntegrationDefinitionRequest]) (*connect.Response[v1.DeleteIntegrationDefinitionResponse], error) {
-	return c.deleteIntegrationDefinition.CallUnary(ctx, req)
 }
 
 // CreateIntegration calls gitpod.v1.IntegrationService.CreateIntegration.
@@ -328,16 +235,6 @@ func (c *integrationServiceClient) ValidateIntegration(ctx context.Context, req 
 	return c.validateIntegration.CallUnary(ctx, req)
 }
 
-// StartCodexDeviceLogin calls gitpod.v1.IntegrationService.StartCodexDeviceLogin.
-func (c *integrationServiceClient) StartCodexDeviceLogin(ctx context.Context, req *connect.Request[v1.StartCodexDeviceLoginRequest]) (*connect.Response[v1.StartCodexDeviceLoginResponse], error) {
-	return c.startCodexDeviceLogin.CallUnary(ctx, req)
-}
-
-// CompleteCodexDeviceLogin calls gitpod.v1.IntegrationService.CompleteCodexDeviceLogin.
-func (c *integrationServiceClient) CompleteCodexDeviceLogin(ctx context.Context, req *connect.Request[v1.CompleteCodexDeviceLoginRequest]) (*connect.Response[v1.CompleteCodexDeviceLoginResponse], error) {
-	return c.completeCodexDeviceLogin.CallUnary(ctx, req)
-}
-
 // IntegrationServiceHandler is an implementation of the gitpod.v1.IntegrationService service.
 type IntegrationServiceHandler interface {
 	// Lists available integration definitions.
@@ -347,14 +244,6 @@ type IntegrationServiceHandler interface {
 	// - Check integration capabilities
 	// - Discover supported services
 	ListIntegrationDefinitions(context.Context, *connect.Request[v1.ListIntegrationDefinitionsRequest]) (*connect.Response[v1.ListIntegrationDefinitionsResponse], error)
-	// Creates a new integration definition.
-	// Requires service account authentication.
-	//
-	// Use this method to:
-	// - Add new integration types dynamically
-	// - Configure integration capabilities
-	// - Set up authentication requirements
-	CreateIntegrationDefinition(context.Context, *connect.Request[v1.CreateIntegrationDefinitionRequest]) (*connect.Response[v1.CreateIntegrationDefinitionResponse], error)
 	// Gets details about a specific integration definition.
 	//
 	// Use this method to:
@@ -362,22 +251,6 @@ type IntegrationServiceHandler interface {
 	// - Check supported capabilities
 	// - Verify authentication requirements
 	GetIntegrationDefinition(context.Context, *connect.Request[v1.GetIntegrationDefinitionRequest]) (*connect.Response[v1.GetIntegrationDefinitionResponse], error)
-	// Updates an existing integration definition.
-	// Requires service account authentication.
-	//
-	// Use this method to:
-	// - Modify integration capabilities
-	// - Update authentication configuration
-	// - Change integration metadata
-	UpdateIntegrationDefinition(context.Context, *connect.Request[v1.UpdateIntegrationDefinitionRequest]) (*connect.Response[v1.UpdateIntegrationDefinitionResponse], error)
-	// Deletes an integration definition.
-	// Requires service account authentication.
-	// Fails if any integrations depend on this definition.
-	//
-	// Use this method to:
-	// - Remove unused integration types
-	// - Clean up deprecated integrations
-	DeleteIntegrationDefinition(context.Context, *connect.Request[v1.DeleteIntegrationDefinitionRequest]) (*connect.Response[v1.DeleteIntegrationDefinitionResponse], error)
 	// Creates a new integration instance within an organization.
 	//
 	// Use this method to:
@@ -417,10 +290,6 @@ type IntegrationServiceHandler interface {
 	// Runs a set of checks (e.g. app token validity) and returns results for each.
 	// All checks are always returned; failing checks include a message and an optional action_hint.
 	ValidateIntegration(context.Context, *connect.Request[v1.ValidateIntegrationRequest]) (*connect.Response[v1.ValidateIntegrationResponse], error)
-	// Starts the Codex device authorization flow for a user integration.
-	StartCodexDeviceLogin(context.Context, *connect.Request[v1.StartCodexDeviceLoginRequest]) (*connect.Response[v1.StartCodexDeviceLoginResponse], error)
-	// Polls the Codex device authorization flow and stores the resulting token when authorized.
-	CompleteCodexDeviceLogin(context.Context, *connect.Request[v1.CompleteCodexDeviceLoginRequest]) (*connect.Response[v1.CompleteCodexDeviceLoginResponse], error)
 }
 
 // NewIntegrationServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -437,29 +306,11 @@ func NewIntegrationServiceHandler(svc IntegrationServiceHandler, opts ...connect
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
-	integrationServiceCreateIntegrationDefinitionHandler := connect.NewUnaryHandler(
-		IntegrationServiceCreateIntegrationDefinitionProcedure,
-		svc.CreateIntegrationDefinition,
-		connect.WithSchema(integrationServiceMethods.ByName("CreateIntegrationDefinition")),
-		connect.WithHandlerOptions(opts...),
-	)
 	integrationServiceGetIntegrationDefinitionHandler := connect.NewUnaryHandler(
 		IntegrationServiceGetIntegrationDefinitionProcedure,
 		svc.GetIntegrationDefinition,
 		connect.WithSchema(integrationServiceMethods.ByName("GetIntegrationDefinition")),
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
-		connect.WithHandlerOptions(opts...),
-	)
-	integrationServiceUpdateIntegrationDefinitionHandler := connect.NewUnaryHandler(
-		IntegrationServiceUpdateIntegrationDefinitionProcedure,
-		svc.UpdateIntegrationDefinition,
-		connect.WithSchema(integrationServiceMethods.ByName("UpdateIntegrationDefinition")),
-		connect.WithHandlerOptions(opts...),
-	)
-	integrationServiceDeleteIntegrationDefinitionHandler := connect.NewUnaryHandler(
-		IntegrationServiceDeleteIntegrationDefinitionProcedure,
-		svc.DeleteIntegrationDefinition,
-		connect.WithSchema(integrationServiceMethods.ByName("DeleteIntegrationDefinition")),
 		connect.WithHandlerOptions(opts...),
 	)
 	integrationServiceCreateIntegrationHandler := connect.NewUnaryHandler(
@@ -501,30 +352,12 @@ func NewIntegrationServiceHandler(svc IntegrationServiceHandler, opts ...connect
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
-	integrationServiceStartCodexDeviceLoginHandler := connect.NewUnaryHandler(
-		IntegrationServiceStartCodexDeviceLoginProcedure,
-		svc.StartCodexDeviceLogin,
-		connect.WithSchema(integrationServiceMethods.ByName("StartCodexDeviceLogin")),
-		connect.WithHandlerOptions(opts...),
-	)
-	integrationServiceCompleteCodexDeviceLoginHandler := connect.NewUnaryHandler(
-		IntegrationServiceCompleteCodexDeviceLoginProcedure,
-		svc.CompleteCodexDeviceLogin,
-		connect.WithSchema(integrationServiceMethods.ByName("CompleteCodexDeviceLogin")),
-		connect.WithHandlerOptions(opts...),
-	)
 	return "/gitpod.v1.IntegrationService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case IntegrationServiceListIntegrationDefinitionsProcedure:
 			integrationServiceListIntegrationDefinitionsHandler.ServeHTTP(w, r)
-		case IntegrationServiceCreateIntegrationDefinitionProcedure:
-			integrationServiceCreateIntegrationDefinitionHandler.ServeHTTP(w, r)
 		case IntegrationServiceGetIntegrationDefinitionProcedure:
 			integrationServiceGetIntegrationDefinitionHandler.ServeHTTP(w, r)
-		case IntegrationServiceUpdateIntegrationDefinitionProcedure:
-			integrationServiceUpdateIntegrationDefinitionHandler.ServeHTTP(w, r)
-		case IntegrationServiceDeleteIntegrationDefinitionProcedure:
-			integrationServiceDeleteIntegrationDefinitionHandler.ServeHTTP(w, r)
 		case IntegrationServiceCreateIntegrationProcedure:
 			integrationServiceCreateIntegrationHandler.ServeHTTP(w, r)
 		case IntegrationServiceGetIntegrationProcedure:
@@ -537,10 +370,6 @@ func NewIntegrationServiceHandler(svc IntegrationServiceHandler, opts ...connect
 			integrationServiceListIntegrationsHandler.ServeHTTP(w, r)
 		case IntegrationServiceValidateIntegrationProcedure:
 			integrationServiceValidateIntegrationHandler.ServeHTTP(w, r)
-		case IntegrationServiceStartCodexDeviceLoginProcedure:
-			integrationServiceStartCodexDeviceLoginHandler.ServeHTTP(w, r)
-		case IntegrationServiceCompleteCodexDeviceLoginProcedure:
-			integrationServiceCompleteCodexDeviceLoginHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -554,20 +383,8 @@ func (UnimplementedIntegrationServiceHandler) ListIntegrationDefinitions(context
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.IntegrationService.ListIntegrationDefinitions is not implemented"))
 }
 
-func (UnimplementedIntegrationServiceHandler) CreateIntegrationDefinition(context.Context, *connect.Request[v1.CreateIntegrationDefinitionRequest]) (*connect.Response[v1.CreateIntegrationDefinitionResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.IntegrationService.CreateIntegrationDefinition is not implemented"))
-}
-
 func (UnimplementedIntegrationServiceHandler) GetIntegrationDefinition(context.Context, *connect.Request[v1.GetIntegrationDefinitionRequest]) (*connect.Response[v1.GetIntegrationDefinitionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.IntegrationService.GetIntegrationDefinition is not implemented"))
-}
-
-func (UnimplementedIntegrationServiceHandler) UpdateIntegrationDefinition(context.Context, *connect.Request[v1.UpdateIntegrationDefinitionRequest]) (*connect.Response[v1.UpdateIntegrationDefinitionResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.IntegrationService.UpdateIntegrationDefinition is not implemented"))
-}
-
-func (UnimplementedIntegrationServiceHandler) DeleteIntegrationDefinition(context.Context, *connect.Request[v1.DeleteIntegrationDefinitionRequest]) (*connect.Response[v1.DeleteIntegrationDefinitionResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.IntegrationService.DeleteIntegrationDefinition is not implemented"))
 }
 
 func (UnimplementedIntegrationServiceHandler) CreateIntegration(context.Context, *connect.Request[v1.CreateIntegrationRequest]) (*connect.Response[v1.CreateIntegrationResponse], error) {
@@ -592,12 +409,4 @@ func (UnimplementedIntegrationServiceHandler) ListIntegrations(context.Context, 
 
 func (UnimplementedIntegrationServiceHandler) ValidateIntegration(context.Context, *connect.Request[v1.ValidateIntegrationRequest]) (*connect.Response[v1.ValidateIntegrationResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.IntegrationService.ValidateIntegration is not implemented"))
-}
-
-func (UnimplementedIntegrationServiceHandler) StartCodexDeviceLogin(context.Context, *connect.Request[v1.StartCodexDeviceLoginRequest]) (*connect.Response[v1.StartCodexDeviceLoginResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.IntegrationService.StartCodexDeviceLogin is not implemented"))
-}
-
-func (UnimplementedIntegrationServiceHandler) CompleteCodexDeviceLogin(context.Context, *connect.Request[v1.CompleteCodexDeviceLoginRequest]) (*connect.Response[v1.CompleteCodexDeviceLoginResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.IntegrationService.CompleteCodexDeviceLogin is not implemented"))
 }
