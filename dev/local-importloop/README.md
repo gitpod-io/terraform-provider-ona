@@ -11,6 +11,7 @@ It covers:
 - `ona_environment_class`
 - `ona_custom_domain`
 - `ona_sso_configuration`
+- `ona_terms_of_service`
 - `ona_oidc_config`
 - `ona_organization_policies`
 - `ona_project`
