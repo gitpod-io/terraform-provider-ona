@@ -9,6 +9,7 @@ import (
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	onaclient "github.com/gitpod-io/terraform-provider-ona/internal/client"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
@@ -30,6 +31,7 @@ func NewTeamAIBudgetResource() resource.Resource { return &TeamAIBudgetResource{
 
 type TeamAIBudgetResource struct {
 	client *managementclient.ManagementPlane
+	raw    *onaclient.Client
 }
 
 func (r *TeamAIBudgetResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -42,6 +44,7 @@ func (r *TeamAIBudgetResource) Schema(_ context.Context, _ resource.SchemaReques
 
 func (r *TeamAIBudgetResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
+	r.raw = providerdata.ResourceRawClient(req.ProviderData, r.raw, &resp.Diagnostics)
 }
 
 func (r *TeamAIBudgetResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -60,7 +63,9 @@ func (r *TeamAIBudgetResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	validateTeamBudget(data, true, &resp.Diagnostics)
-	if resp.Diagnostics.HasError() || !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", teamAIBudgetResourceType) {
+	if resp.Diagnostics.HasError() ||
+		!providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", teamAIBudgetResourceType) ||
+		!providerdata.RequireResourceRawClient(r.raw, &resp.Diagnostics, "creating", teamAIBudgetResourceType) {
 		return
 	}
 	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
@@ -119,7 +124,9 @@ func (r *TeamAIBudgetResource) Create(ctx context.Context, req resource.CreateRe
 func (r *TeamAIBudgetResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data TeamAIBudgetModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-	if resp.Diagnostics.HasError() || !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", teamAIBudgetResourceType) {
+	if resp.Diagnostics.HasError() ||
+		!providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", teamAIBudgetResourceType) ||
+		!providerdata.RequireResourceRawClient(r.raw, &resp.Diagnostics, "reading", teamAIBudgetResourceType) {
 		return
 	}
 	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
@@ -144,7 +151,9 @@ func (r *TeamAIBudgetResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	validateTeamBudget(data, true, &resp.Diagnostics)
-	if resp.Diagnostics.HasError() || !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", teamAIBudgetResourceType) {
+	if resp.Diagnostics.HasError() ||
+		!providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", teamAIBudgetResourceType) ||
+		!providerdata.RequireResourceRawClient(r.raw, &resp.Diagnostics, "updating", teamAIBudgetResourceType) {
 		return
 	}
 	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
@@ -157,7 +166,7 @@ func (r *TeamAIBudgetResource) Update(ctx context.Context, req resource.UpdateRe
 		resp.Diagnostics.AddError("Unable to Map Ona Team AI Budget", err.Error())
 		return
 	}
-	if _, err := r.client.BillingService().UpdateTeamCreditAllocation(ctx, connect.NewRequest(updateReq)); err != nil {
+	if _, err := updateTeamCreditAllocation(ctx, r.raw, updateReq); err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona Team AI Budget", "updating the team AI budget", err)
 		return
 	}
@@ -171,7 +180,9 @@ func (r *TeamAIBudgetResource) Update(ctx context.Context, req resource.UpdateRe
 func (r *TeamAIBudgetResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data TeamAIBudgetModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-	if resp.Diagnostics.HasError() || !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", teamAIBudgetResourceType) {
+	if resp.Diagnostics.HasError() ||
+		!providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", teamAIBudgetResourceType) ||
+		!providerdata.RequireResourceRawClient(r.raw, &resp.Diagnostics, "deleting", teamAIBudgetResourceType) {
 		return
 	}
 	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
@@ -186,7 +197,7 @@ func (r *TeamAIBudgetResource) Delete(ctx context.Context, req resource.DeleteRe
 	teamID := data.TeamID.ValueString()
 	switch data.Mode.ValueString() {
 	case modeCredits:
-		_, err = r.client.BillingService().DeleteTeamCreditAllocation(ctx, connect.NewRequest(&v1.DeleteTeamCreditAllocationRequest{OrganizationId: organizationID, TeamId: teamID}))
+		err = deleteTeamCreditAllocation(ctx, r.raw, &teamCreditAllocationRequest{OrganizationID: organizationID, TeamID: teamID})
 	case modeBYOK:
 		var allocation *v1.TeamCreditAllocationInfo
 		allocation, err = r.getTeamAllocation(ctx, organizationID, teamID)
@@ -195,9 +206,9 @@ func (r *TeamAIBudgetResource) Delete(ctx context.Context, req resource.DeleteRe
 			return
 		}
 		if err == nil && allocation.GetCreditBudget() > 0 {
-			_, err = r.client.BillingService().UpdateTeamCreditAllocation(ctx, connect.NewRequest(clearTeamBYOKRequest(organizationID, teamID)))
+			_, err = updateTeamCreditAllocation(ctx, r.raw, clearTeamBYOKRequest(organizationID, teamID))
 		} else if err == nil {
-			_, err = r.client.BillingService().DeleteTeamCreditAllocation(ctx, connect.NewRequest(&v1.DeleteTeamCreditAllocationRequest{OrganizationId: organizationID, TeamId: teamID}))
+			err = deleteTeamCreditAllocation(ctx, r.raw, &teamCreditAllocationRequest{OrganizationID: organizationID, TeamID: teamID})
 		}
 	default:
 		resp.Diagnostics.AddError("Unable to Delete Ona Team AI Budget", fmt.Sprintf("Unsupported mode %q.", data.Mode.ValueString()))
@@ -241,17 +252,17 @@ func (r *TeamAIBudgetResource) ImportState(ctx context.Context, req resource.Imp
 }
 
 func (r *TeamAIBudgetResource) getTeamAllocation(ctx context.Context, organizationID, teamID string) (*v1.TeamCreditAllocationInfo, error) {
-	result, err := r.client.BillingService().GetTeamCreditAllocation(ctx, connect.NewRequest(&v1.GetTeamCreditAllocationRequest{OrganizationId: organizationID, TeamId: teamID}))
+	allocation, err := getTeamCreditAllocation(ctx, r.raw, &teamCreditAllocationRequest{OrganizationID: organizationID, TeamID: teamID})
 	if err != nil {
 		if connect.CodeOf(err) == connect.CodeNotFound {
 			return nil, nil
 		}
 		return nil, err
 	}
-	if result == nil || result.Msg == nil {
+	if allocation == nil {
 		return nil, fmt.Errorf("API returned an empty team allocation response")
 	}
-	return result.Msg.GetAllocation(), nil
+	return allocation, nil
 }
 
 func (r *TeamAIBudgetResource) addTeamBudget(ctx context.Context, organizationID string, data TeamAIBudgetModel, existing *v1.TeamCreditAllocationInfo) (*v1.TeamCreditAllocationInfo, error) {
@@ -260,27 +271,27 @@ func (r *TeamAIBudgetResource) addTeamBudget(ctx context.Context, organizationID
 		if err != nil {
 			return nil, err
 		}
-		result, err := r.client.BillingService().CreateTeamCreditAllocation(ctx, connect.NewRequest(createReq))
+		allocation, err := createTeamCreditAllocation(ctx, r.raw, createReq)
 		if err != nil {
 			return nil, err
 		}
-		if result == nil || result.Msg == nil {
+		if allocation == nil {
 			return nil, fmt.Errorf("API returned an empty create response")
 		}
-		return result.Msg.GetAllocation(), nil
+		return allocation, nil
 	}
 	updateReq, err := updateTeamBudgetRequest(organizationID, data)
 	if err != nil {
 		return nil, err
 	}
-	result, err := r.client.BillingService().UpdateTeamCreditAllocation(ctx, connect.NewRequest(updateReq))
+	allocation, err := updateTeamCreditAllocation(ctx, r.raw, updateReq)
 	if err != nil {
 		return nil, err
 	}
-	if result == nil || result.Msg == nil {
+	if allocation == nil {
 		return nil, fmt.Errorf("API returned an empty update response")
 	}
-	return result.Msg.GetAllocation(), nil
+	return allocation, nil
 }
 
 func (r *TeamAIBudgetResource) refresh(ctx context.Context, data *TeamAIBudgetModel, organizationID string, diags *diag.Diagnostics, remove func()) {

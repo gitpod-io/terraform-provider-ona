@@ -44,7 +44,7 @@ func TestUserPolicySetRequestNoCap(t *testing.T) {
 	if err != nil {
 		t.Fatalf("userPolicySetRequest() error = %v", err)
 	}
-	if got.UserId == nil || *got.UserId != "user" || !got.NoCap {
+	if got.UserID == nil || *got.UserID != "user" || !got.NoCap {
 		t.Fatalf("request identity/no_cap = %#v", got)
 	}
 	if got.MonthlyCreditLimit != nil || got.MonthlyCostLimitMicrounits != nil {

@@ -7,7 +7,7 @@ import (
 	"context"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	onaclient "github.com/gitpod-io/terraform-provider-ona/internal/client"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
@@ -29,6 +29,7 @@ func NewUserAIBudgetResource() resource.Resource { return &UserAIBudgetResource{
 
 type UserAIBudgetResource struct {
 	client *managementclient.ManagementPlane
+	raw    *onaclient.Client
 }
 
 func (r *UserAIBudgetResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -41,6 +42,7 @@ func (r *UserAIBudgetResource) Schema(_ context.Context, _ resource.SchemaReques
 
 func (r *UserAIBudgetResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
+	r.raw = providerdata.ResourceRawClient(req.ProviderData, r.raw, &resp.Diagnostics)
 }
 
 func (r *UserAIBudgetResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -59,7 +61,9 @@ func (r *UserAIBudgetResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	validateUserBudget(data, true, &resp.Diagnostics)
-	if resp.Diagnostics.HasError() || !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", userAIBudgetResourceType) {
+	if resp.Diagnostics.HasError() ||
+		!providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", userAIBudgetResourceType) ||
+		!providerdata.RequireResourceRawClient(r.raw, &resp.Diagnostics, "creating", userAIBudgetResourceType) {
 		return
 	}
 	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
@@ -72,16 +76,16 @@ func (r *UserAIBudgetResource) Create(ctx context.Context, req resource.CreateRe
 		resp.Diagnostics.AddError("Unable to Map Ona User AI Budget", err.Error())
 		return
 	}
-	result, err := r.client.BillingService().SetEnterpriseAIUserBudgetPolicy(ctx, connect.NewRequest(setReq))
+	policy, err := setEnterpriseAIUserBudgetPolicy(ctx, r.raw, setReq)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Create Ona User AI Budget", "setting the user AI budget override", err)
 		return
 	}
-	if result == nil || result.Msg == nil {
+	if policy == nil {
 		resp.Diagnostics.AddError("Unable to Create Ona User AI Budget", "The Ona API returned an empty response.")
 		return
 	}
-	if err := populateUserBudget(&data, result.Msg.GetPolicy(), organizationID, data.UserID.ValueString()); err != nil {
+	if err := populateUserBudget(&data, policy, organizationID, data.UserID.ValueString()); err != nil {
 		resp.Diagnostics.AddError("Unable to Map Created Ona User AI Budget", err.Error())
 		return
 	}
@@ -99,7 +103,9 @@ func (r *UserAIBudgetResource) Create(ctx context.Context, req resource.CreateRe
 func (r *UserAIBudgetResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data UserAIBudgetModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-	if resp.Diagnostics.HasError() || !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", userAIBudgetResourceType) {
+	if resp.Diagnostics.HasError() ||
+		!providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", userAIBudgetResourceType) ||
+		!providerdata.RequireResourceRawClient(r.raw, &resp.Diagnostics, "reading", userAIBudgetResourceType) {
 		return
 	}
 	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
@@ -124,7 +130,9 @@ func (r *UserAIBudgetResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	validateUserBudget(data, true, &resp.Diagnostics)
-	if resp.Diagnostics.HasError() || !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", userAIBudgetResourceType) {
+	if resp.Diagnostics.HasError() ||
+		!providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", userAIBudgetResourceType) ||
+		!providerdata.RequireResourceRawClient(r.raw, &resp.Diagnostics, "updating", userAIBudgetResourceType) {
 		return
 	}
 	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
@@ -137,7 +145,7 @@ func (r *UserAIBudgetResource) Update(ctx context.Context, req resource.UpdateRe
 		resp.Diagnostics.AddError("Unable to Map Ona User AI Budget", err.Error())
 		return
 	}
-	if _, err := r.client.BillingService().SetEnterpriseAIUserBudgetPolicy(ctx, connect.NewRequest(setReq)); err != nil {
+	if _, err := setEnterpriseAIUserBudgetPolicy(ctx, r.raw, setReq); err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Update Ona User AI Budget", "updating the user AI budget override", err)
 		return
 	}
@@ -151,7 +159,9 @@ func (r *UserAIBudgetResource) Update(ctx context.Context, req resource.UpdateRe
 func (r *UserAIBudgetResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data UserAIBudgetModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-	if resp.Diagnostics.HasError() || !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", userAIBudgetResourceType) {
+	if resp.Diagnostics.HasError() ||
+		!providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", userAIBudgetResourceType) ||
+		!providerdata.RequireResourceRawClient(r.raw, &resp.Diagnostics, "deleting", userAIBudgetResourceType) {
 		return
 	}
 	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
@@ -168,7 +178,7 @@ func (r *UserAIBudgetResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 	userID := data.UserID.ValueString()
-	_, err = r.client.BillingService().DeleteEnterpriseAIUserBudgetPolicy(ctx, connect.NewRequest(&v1.DeleteEnterpriseAIUserBudgetPolicyRequest{OrganizationId: organizationID, Mode: mode, UserId: &userID}))
+	err = deleteEnterpriseAIUserBudgetPolicy(ctx, r.raw, &enterpriseAIUserBudgetPolicyRequest{OrganizationID: organizationID, Mode: mode.String(), UserID: &userID})
 	if err != nil && connect.CodeOf(err) != connect.CodeNotFound {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Delete Ona User AI Budget", "deleting the user AI budget override", err)
 		return
@@ -216,7 +226,7 @@ func (r *UserAIBudgetResource) refresh(ctx context.Context, data *UserAIBudgetMo
 		return
 	}
 	userID := data.UserID.ValueString()
-	result, err := r.client.BillingService().GetEnterpriseAIUserBudgetPolicy(ctx, connect.NewRequest(&v1.GetEnterpriseAIUserBudgetPolicyRequest{OrganizationId: organizationID, Mode: mode, UserId: &userID}))
+	policy, err := getEnterpriseAIUserBudgetPolicy(ctx, r.raw, &enterpriseAIUserBudgetPolicyRequest{OrganizationID: organizationID, Mode: mode.String(), UserID: &userID})
 	if err != nil {
 		if connect.CodeOf(err) == connect.CodeNotFound {
 			*data = UserAIBudgetModel{}
@@ -226,12 +236,12 @@ func (r *UserAIBudgetResource) refresh(ctx context.Context, data *UserAIBudgetMo
 		providerdiag.AddAPIError(diags, "Unable to Read Ona User AI Budget", "reading the user AI budget override", err)
 		return
 	}
-	if result == nil || result.Msg == nil || result.Msg.GetPolicy() == nil {
+	if policy == nil {
 		*data = UserAIBudgetModel{}
 		remove()
 		return
 	}
-	if err := populateUserBudget(data, result.Msg.GetPolicy(), organizationID, userID); err != nil {
+	if err := populateUserBudget(data, policy, organizationID, userID); err != nil {
 		diags.AddError("Unable to Map Ona User AI Budget", err.Error())
 	}
 }

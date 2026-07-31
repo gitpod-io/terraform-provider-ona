@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	gitpod "github.com/gitpod-io/gitpod-sdk-go"
+	"connectrpc.com/connect"
 )
 
 type APIError struct {
@@ -22,9 +22,8 @@ func (e *APIError) Error() string {
 }
 
 func IsNotFound(err error) bool {
-	var sdkErr *gitpod.Error
-	if errors.As(err, &sdkErr) {
-		return sdkErr.StatusCode == http.StatusNotFound || string(sdkErr.Code) == "not_found"
+	if connect.CodeOf(err) == connect.CodeNotFound {
+		return true
 	}
 	var apiErr *APIError
 	return errors.As(err, &apiErr) && (apiErr.StatusCode == http.StatusNotFound || apiErr.Code == "not_found")

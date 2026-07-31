@@ -19,19 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	IntegrationService_ListIntegrationDefinitions_FullMethodName  = "/gitpod.v1.IntegrationService/ListIntegrationDefinitions"
-	IntegrationService_CreateIntegrationDefinition_FullMethodName = "/gitpod.v1.IntegrationService/CreateIntegrationDefinition"
-	IntegrationService_GetIntegrationDefinition_FullMethodName    = "/gitpod.v1.IntegrationService/GetIntegrationDefinition"
-	IntegrationService_UpdateIntegrationDefinition_FullMethodName = "/gitpod.v1.IntegrationService/UpdateIntegrationDefinition"
-	IntegrationService_DeleteIntegrationDefinition_FullMethodName = "/gitpod.v1.IntegrationService/DeleteIntegrationDefinition"
-	IntegrationService_CreateIntegration_FullMethodName           = "/gitpod.v1.IntegrationService/CreateIntegration"
-	IntegrationService_GetIntegration_FullMethodName              = "/gitpod.v1.IntegrationService/GetIntegration"
-	IntegrationService_UpdateIntegration_FullMethodName           = "/gitpod.v1.IntegrationService/UpdateIntegration"
-	IntegrationService_DeleteIntegration_FullMethodName           = "/gitpod.v1.IntegrationService/DeleteIntegration"
-	IntegrationService_ListIntegrations_FullMethodName            = "/gitpod.v1.IntegrationService/ListIntegrations"
-	IntegrationService_ValidateIntegration_FullMethodName         = "/gitpod.v1.IntegrationService/ValidateIntegration"
-	IntegrationService_StartCodexDeviceLogin_FullMethodName       = "/gitpod.v1.IntegrationService/StartCodexDeviceLogin"
-	IntegrationService_CompleteCodexDeviceLogin_FullMethodName    = "/gitpod.v1.IntegrationService/CompleteCodexDeviceLogin"
+	IntegrationService_ListIntegrationDefinitions_FullMethodName = "/gitpod.v1.IntegrationService/ListIntegrationDefinitions"
+	IntegrationService_GetIntegrationDefinition_FullMethodName   = "/gitpod.v1.IntegrationService/GetIntegrationDefinition"
+	IntegrationService_CreateIntegration_FullMethodName          = "/gitpod.v1.IntegrationService/CreateIntegration"
+	IntegrationService_GetIntegration_FullMethodName             = "/gitpod.v1.IntegrationService/GetIntegration"
+	IntegrationService_UpdateIntegration_FullMethodName          = "/gitpod.v1.IntegrationService/UpdateIntegration"
+	IntegrationService_DeleteIntegration_FullMethodName          = "/gitpod.v1.IntegrationService/DeleteIntegration"
+	IntegrationService_ListIntegrations_FullMethodName           = "/gitpod.v1.IntegrationService/ListIntegrations"
+	IntegrationService_ValidateIntegration_FullMethodName        = "/gitpod.v1.IntegrationService/ValidateIntegration"
 )
 
 // IntegrationServiceClient is the client API for IntegrationService service.
@@ -45,14 +40,6 @@ type IntegrationServiceClient interface {
 	// - Check integration capabilities
 	// - Discover supported services
 	ListIntegrationDefinitions(ctx context.Context, in *ListIntegrationDefinitionsRequest, opts ...grpc.CallOption) (*ListIntegrationDefinitionsResponse, error)
-	// Creates a new integration definition.
-	// Requires service account authentication.
-	//
-	// Use this method to:
-	// - Add new integration types dynamically
-	// - Configure integration capabilities
-	// - Set up authentication requirements
-	CreateIntegrationDefinition(ctx context.Context, in *CreateIntegrationDefinitionRequest, opts ...grpc.CallOption) (*CreateIntegrationDefinitionResponse, error)
 	// Gets details about a specific integration definition.
 	//
 	// Use this method to:
@@ -60,22 +47,6 @@ type IntegrationServiceClient interface {
 	// - Check supported capabilities
 	// - Verify authentication requirements
 	GetIntegrationDefinition(ctx context.Context, in *GetIntegrationDefinitionRequest, opts ...grpc.CallOption) (*GetIntegrationDefinitionResponse, error)
-	// Updates an existing integration definition.
-	// Requires service account authentication.
-	//
-	// Use this method to:
-	// - Modify integration capabilities
-	// - Update authentication configuration
-	// - Change integration metadata
-	UpdateIntegrationDefinition(ctx context.Context, in *UpdateIntegrationDefinitionRequest, opts ...grpc.CallOption) (*UpdateIntegrationDefinitionResponse, error)
-	// Deletes an integration definition.
-	// Requires service account authentication.
-	// Fails if any integrations depend on this definition.
-	//
-	// Use this method to:
-	// - Remove unused integration types
-	// - Clean up deprecated integrations
-	DeleteIntegrationDefinition(ctx context.Context, in *DeleteIntegrationDefinitionRequest, opts ...grpc.CallOption) (*DeleteIntegrationDefinitionResponse, error)
 	// Creates a new integration instance within an organization.
 	//
 	// Use this method to:
@@ -115,10 +86,6 @@ type IntegrationServiceClient interface {
 	// Runs a set of checks (e.g. app token validity) and returns results for each.
 	// All checks are always returned; failing checks include a message and an optional action_hint.
 	ValidateIntegration(ctx context.Context, in *ValidateIntegrationRequest, opts ...grpc.CallOption) (*ValidateIntegrationResponse, error)
-	// Starts the Codex device authorization flow for a user integration.
-	StartCodexDeviceLogin(ctx context.Context, in *StartCodexDeviceLoginRequest, opts ...grpc.CallOption) (*StartCodexDeviceLoginResponse, error)
-	// Polls the Codex device authorization flow and stores the resulting token when authorized.
-	CompleteCodexDeviceLogin(ctx context.Context, in *CompleteCodexDeviceLoginRequest, opts ...grpc.CallOption) (*CompleteCodexDeviceLoginResponse, error)
 }
 
 type integrationServiceClient struct {
@@ -139,40 +106,10 @@ func (c *integrationServiceClient) ListIntegrationDefinitions(ctx context.Contex
 	return out, nil
 }
 
-func (c *integrationServiceClient) CreateIntegrationDefinition(ctx context.Context, in *CreateIntegrationDefinitionRequest, opts ...grpc.CallOption) (*CreateIntegrationDefinitionResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateIntegrationDefinitionResponse)
-	err := c.cc.Invoke(ctx, IntegrationService_CreateIntegrationDefinition_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *integrationServiceClient) GetIntegrationDefinition(ctx context.Context, in *GetIntegrationDefinitionRequest, opts ...grpc.CallOption) (*GetIntegrationDefinitionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetIntegrationDefinitionResponse)
 	err := c.cc.Invoke(ctx, IntegrationService_GetIntegrationDefinition_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *integrationServiceClient) UpdateIntegrationDefinition(ctx context.Context, in *UpdateIntegrationDefinitionRequest, opts ...grpc.CallOption) (*UpdateIntegrationDefinitionResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateIntegrationDefinitionResponse)
-	err := c.cc.Invoke(ctx, IntegrationService_UpdateIntegrationDefinition_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *integrationServiceClient) DeleteIntegrationDefinition(ctx context.Context, in *DeleteIntegrationDefinitionRequest, opts ...grpc.CallOption) (*DeleteIntegrationDefinitionResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteIntegrationDefinitionResponse)
-	err := c.cc.Invoke(ctx, IntegrationService_DeleteIntegrationDefinition_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -239,26 +176,6 @@ func (c *integrationServiceClient) ValidateIntegration(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *integrationServiceClient) StartCodexDeviceLogin(ctx context.Context, in *StartCodexDeviceLoginRequest, opts ...grpc.CallOption) (*StartCodexDeviceLoginResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(StartCodexDeviceLoginResponse)
-	err := c.cc.Invoke(ctx, IntegrationService_StartCodexDeviceLogin_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *integrationServiceClient) CompleteCodexDeviceLogin(ctx context.Context, in *CompleteCodexDeviceLoginRequest, opts ...grpc.CallOption) (*CompleteCodexDeviceLoginResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CompleteCodexDeviceLoginResponse)
-	err := c.cc.Invoke(ctx, IntegrationService_CompleteCodexDeviceLogin_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // IntegrationServiceServer is the server API for IntegrationService service.
 // All implementations must embed UnimplementedIntegrationServiceServer
 // for forward compatibility.
@@ -270,14 +187,6 @@ type IntegrationServiceServer interface {
 	// - Check integration capabilities
 	// - Discover supported services
 	ListIntegrationDefinitions(context.Context, *ListIntegrationDefinitionsRequest) (*ListIntegrationDefinitionsResponse, error)
-	// Creates a new integration definition.
-	// Requires service account authentication.
-	//
-	// Use this method to:
-	// - Add new integration types dynamically
-	// - Configure integration capabilities
-	// - Set up authentication requirements
-	CreateIntegrationDefinition(context.Context, *CreateIntegrationDefinitionRequest) (*CreateIntegrationDefinitionResponse, error)
 	// Gets details about a specific integration definition.
 	//
 	// Use this method to:
@@ -285,22 +194,6 @@ type IntegrationServiceServer interface {
 	// - Check supported capabilities
 	// - Verify authentication requirements
 	GetIntegrationDefinition(context.Context, *GetIntegrationDefinitionRequest) (*GetIntegrationDefinitionResponse, error)
-	// Updates an existing integration definition.
-	// Requires service account authentication.
-	//
-	// Use this method to:
-	// - Modify integration capabilities
-	// - Update authentication configuration
-	// - Change integration metadata
-	UpdateIntegrationDefinition(context.Context, *UpdateIntegrationDefinitionRequest) (*UpdateIntegrationDefinitionResponse, error)
-	// Deletes an integration definition.
-	// Requires service account authentication.
-	// Fails if any integrations depend on this definition.
-	//
-	// Use this method to:
-	// - Remove unused integration types
-	// - Clean up deprecated integrations
-	DeleteIntegrationDefinition(context.Context, *DeleteIntegrationDefinitionRequest) (*DeleteIntegrationDefinitionResponse, error)
 	// Creates a new integration instance within an organization.
 	//
 	// Use this method to:
@@ -340,10 +233,6 @@ type IntegrationServiceServer interface {
 	// Runs a set of checks (e.g. app token validity) and returns results for each.
 	// All checks are always returned; failing checks include a message and an optional action_hint.
 	ValidateIntegration(context.Context, *ValidateIntegrationRequest) (*ValidateIntegrationResponse, error)
-	// Starts the Codex device authorization flow for a user integration.
-	StartCodexDeviceLogin(context.Context, *StartCodexDeviceLoginRequest) (*StartCodexDeviceLoginResponse, error)
-	// Polls the Codex device authorization flow and stores the resulting token when authorized.
-	CompleteCodexDeviceLogin(context.Context, *CompleteCodexDeviceLoginRequest) (*CompleteCodexDeviceLoginResponse, error)
 	mustEmbedUnimplementedIntegrationServiceServer()
 }
 
@@ -357,17 +246,8 @@ type UnimplementedIntegrationServiceServer struct{}
 func (UnimplementedIntegrationServiceServer) ListIntegrationDefinitions(context.Context, *ListIntegrationDefinitionsRequest) (*ListIntegrationDefinitionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListIntegrationDefinitions not implemented")
 }
-func (UnimplementedIntegrationServiceServer) CreateIntegrationDefinition(context.Context, *CreateIntegrationDefinitionRequest) (*CreateIntegrationDefinitionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateIntegrationDefinition not implemented")
-}
 func (UnimplementedIntegrationServiceServer) GetIntegrationDefinition(context.Context, *GetIntegrationDefinitionRequest) (*GetIntegrationDefinitionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetIntegrationDefinition not implemented")
-}
-func (UnimplementedIntegrationServiceServer) UpdateIntegrationDefinition(context.Context, *UpdateIntegrationDefinitionRequest) (*UpdateIntegrationDefinitionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateIntegrationDefinition not implemented")
-}
-func (UnimplementedIntegrationServiceServer) DeleteIntegrationDefinition(context.Context, *DeleteIntegrationDefinitionRequest) (*DeleteIntegrationDefinitionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteIntegrationDefinition not implemented")
 }
 func (UnimplementedIntegrationServiceServer) CreateIntegration(context.Context, *CreateIntegrationRequest) (*CreateIntegrationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateIntegration not implemented")
@@ -386,12 +266,6 @@ func (UnimplementedIntegrationServiceServer) ListIntegrations(context.Context, *
 }
 func (UnimplementedIntegrationServiceServer) ValidateIntegration(context.Context, *ValidateIntegrationRequest) (*ValidateIntegrationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ValidateIntegration not implemented")
-}
-func (UnimplementedIntegrationServiceServer) StartCodexDeviceLogin(context.Context, *StartCodexDeviceLoginRequest) (*StartCodexDeviceLoginResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method StartCodexDeviceLogin not implemented")
-}
-func (UnimplementedIntegrationServiceServer) CompleteCodexDeviceLogin(context.Context, *CompleteCodexDeviceLoginRequest) (*CompleteCodexDeviceLoginResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CompleteCodexDeviceLogin not implemented")
 }
 func (UnimplementedIntegrationServiceServer) mustEmbedUnimplementedIntegrationServiceServer() {}
 func (UnimplementedIntegrationServiceServer) testEmbeddedByValue()                            {}
@@ -432,24 +306,6 @@ func _IntegrationService_ListIntegrationDefinitions_Handler(srv interface{}, ctx
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IntegrationService_CreateIntegrationDefinition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateIntegrationDefinitionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IntegrationServiceServer).CreateIntegrationDefinition(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: IntegrationService_CreateIntegrationDefinition_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IntegrationServiceServer).CreateIntegrationDefinition(ctx, req.(*CreateIntegrationDefinitionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _IntegrationService_GetIntegrationDefinition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetIntegrationDefinitionRequest)
 	if err := dec(in); err != nil {
@@ -464,42 +320,6 @@ func _IntegrationService_GetIntegrationDefinition_Handler(srv interface{}, ctx c
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(IntegrationServiceServer).GetIntegrationDefinition(ctx, req.(*GetIntegrationDefinitionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _IntegrationService_UpdateIntegrationDefinition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateIntegrationDefinitionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IntegrationServiceServer).UpdateIntegrationDefinition(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: IntegrationService_UpdateIntegrationDefinition_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IntegrationServiceServer).UpdateIntegrationDefinition(ctx, req.(*UpdateIntegrationDefinitionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _IntegrationService_DeleteIntegrationDefinition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteIntegrationDefinitionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IntegrationServiceServer).DeleteIntegrationDefinition(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: IntegrationService_DeleteIntegrationDefinition_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IntegrationServiceServer).DeleteIntegrationDefinition(ctx, req.(*DeleteIntegrationDefinitionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -612,42 +432,6 @@ func _IntegrationService_ValidateIntegration_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IntegrationService_StartCodexDeviceLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StartCodexDeviceLoginRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IntegrationServiceServer).StartCodexDeviceLogin(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: IntegrationService_StartCodexDeviceLogin_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IntegrationServiceServer).StartCodexDeviceLogin(ctx, req.(*StartCodexDeviceLoginRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _IntegrationService_CompleteCodexDeviceLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CompleteCodexDeviceLoginRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IntegrationServiceServer).CompleteCodexDeviceLogin(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: IntegrationService_CompleteCodexDeviceLogin_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IntegrationServiceServer).CompleteCodexDeviceLogin(ctx, req.(*CompleteCodexDeviceLoginRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // IntegrationService_ServiceDesc is the grpc.ServiceDesc for IntegrationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -660,20 +444,8 @@ var IntegrationService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _IntegrationService_ListIntegrationDefinitions_Handler,
 		},
 		{
-			MethodName: "CreateIntegrationDefinition",
-			Handler:    _IntegrationService_CreateIntegrationDefinition_Handler,
-		},
-		{
 			MethodName: "GetIntegrationDefinition",
 			Handler:    _IntegrationService_GetIntegrationDefinition_Handler,
-		},
-		{
-			MethodName: "UpdateIntegrationDefinition",
-			Handler:    _IntegrationService_UpdateIntegrationDefinition_Handler,
-		},
-		{
-			MethodName: "DeleteIntegrationDefinition",
-			Handler:    _IntegrationService_DeleteIntegrationDefinition_Handler,
 		},
 		{
 			MethodName: "CreateIntegration",
@@ -698,14 +470,6 @@ var IntegrationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ValidateIntegration",
 			Handler:    _IntegrationService_ValidateIntegration_Handler,
-		},
-		{
-			MethodName: "StartCodexDeviceLogin",
-			Handler:    _IntegrationService_StartCodexDeviceLogin_Handler,
-		},
-		{
-			MethodName: "CompleteCodexDeviceLogin",
-			Handler:    _IntegrationService_CompleteCodexDeviceLogin_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

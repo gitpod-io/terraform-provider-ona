@@ -118,9 +118,15 @@ func (p *OnaProvider) Configure(ctx context.Context, req provider.ConfigureReque
 			return
 		}
 	}
+	rawAPI, rawErr := onaclient.New(cfg)
+	if rawErr != nil && !errors.Is(rawErr, onaclient.ErrMissingToken) {
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Configure Ona API Client", "configuring the Ona API client", rawErr)
+		return
+	}
 
 	providerData := &providerdata.Data{
 		Client:     api,
+		RawClient:  rawAPI,
 		APIBaseURL: apiBaseURL,
 		UserAgent:  cfg.UserAgent,
 	}

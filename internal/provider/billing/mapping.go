@@ -60,24 +60,24 @@ func currencyFromProto(currency v1.BillingCurrency) (string, error) {
 	}
 }
 
-func organizationPolicySetRequest(organizationID string, data OrganizationAIBudgetModel) (*v1.SetEnterpriseAIUserBudgetPolicyRequest, error) {
+func organizationPolicySetRequest(organizationID string, data OrganizationAIBudgetModel) (*enterpriseAIUserBudgetPolicyRequest, error) {
 	return policySetRequest(organizationID, nil, data.Mode.ValueString(), data.MonthlyCreditLimit, data.MonthlyCostLimitMicrounits, data.Currency, false)
 }
 
-func userPolicySetRequest(organizationID string, data UserAIBudgetModel) (*v1.SetEnterpriseAIUserBudgetPolicyRequest, error) {
+func userPolicySetRequest(organizationID string, data UserAIBudgetModel) (*enterpriseAIUserBudgetPolicyRequest, error) {
 	userID := data.UserID.ValueString()
 	return policySetRequest(organizationID, &userID, data.Mode.ValueString(), data.MonthlyCreditLimit, data.MonthlyCostLimitMicrounits, data.Currency, data.NoCap.ValueBool())
 }
 
-func policySetRequest(organizationID string, userID *string, mode string, credit, cost types.Int64, currency types.String, noCap bool) (*v1.SetEnterpriseAIUserBudgetPolicyRequest, error) {
+func policySetRequest(organizationID string, userID *string, mode string, credit, cost types.Int64, currency types.String, noCap bool) (*enterpriseAIUserBudgetPolicyRequest, error) {
 	apiMode, err := modeToProto(mode)
 	if err != nil {
 		return nil, err
 	}
-	req := &v1.SetEnterpriseAIUserBudgetPolicyRequest{
-		OrganizationId: organizationID,
-		Mode:           apiMode,
-		UserId:         userID,
+	req := &enterpriseAIUserBudgetPolicyRequest{
+		OrganizationID: organizationID,
+		Mode:           apiMode.String(),
+		UserID:         userID,
 		NoCap:          noCap,
 	}
 	if !credit.IsNull() {
@@ -89,10 +89,11 @@ func policySetRequest(organizationID string, userID *string, mode string, credit
 		req.MonthlyCostLimitMicrounits = &value
 	}
 	if !currency.IsNull() {
-		req.Currency, err = currencyToProto(currency.ValueString())
+		apiCurrency, err := currencyToProto(currency.ValueString())
 		if err != nil {
 			return nil, err
 		}
+		req.Currency = apiCurrency.String()
 	}
 	return req, nil
 }
@@ -218,8 +219,8 @@ func populateTeamBudget(data *TeamAIBudgetModel, allocation *v1.TeamCreditAlloca
 	return true, nil
 }
 
-func createTeamBudgetRequest(organizationID string, data TeamAIBudgetModel) (*v1.CreateTeamCreditAllocationRequest, error) {
-	req := &v1.CreateTeamCreditAllocationRequest{OrganizationId: organizationID, TeamId: data.TeamID.ValueString()}
+func createTeamBudgetRequest(organizationID string, data TeamAIBudgetModel) (*teamCreditAllocationRequest, error) {
+	req := &teamCreditAllocationRequest{OrganizationID: organizationID, TeamID: data.TeamID.ValueString()}
 	switch data.Mode.ValueString() {
 	case modeCredits:
 		req.CreditBudget = data.CreditBudget.ValueInt64()
@@ -230,15 +231,15 @@ func createTeamBudgetRequest(organizationID string, data TeamAIBudgetModel) (*v1
 		if err != nil {
 			return nil, err
 		}
-		req.CostBudgetCurrency = currency
+		req.CostBudgetCurrency = currency.String()
 	default:
 		return nil, fmt.Errorf("unsupported team budget mode %q", data.Mode.ValueString())
 	}
 	return req, nil
 }
 
-func updateTeamBudgetRequest(organizationID string, data TeamAIBudgetModel) (*v1.UpdateTeamCreditAllocationRequest, error) {
-	req := &v1.UpdateTeamCreditAllocationRequest{OrganizationId: organizationID, TeamId: data.TeamID.ValueString()}
+func updateTeamBudgetRequest(organizationID string, data TeamAIBudgetModel) (*teamCreditAllocationRequest, error) {
+	req := &teamCreditAllocationRequest{OrganizationID: organizationID, TeamID: data.TeamID.ValueString()}
 	switch data.Mode.ValueString() {
 	case modeCredits:
 		req.CreditBudget = data.CreditBudget.ValueInt64()
@@ -250,17 +251,17 @@ func updateTeamBudgetRequest(organizationID string, data TeamAIBudgetModel) (*v1
 		if err != nil {
 			return nil, err
 		}
-		req.CostBudgetCurrency = currency
+		req.CostBudgetCurrency = currency.String()
 	default:
 		return nil, fmt.Errorf("unsupported team budget mode %q", data.Mode.ValueString())
 	}
 	return req, nil
 }
 
-func clearTeamBYOKRequest(organizationID, teamID string) *v1.UpdateTeamCreditAllocationRequest {
-	return &v1.UpdateTeamCreditAllocationRequest{
-		OrganizationId:       organizationID,
-		TeamId:               teamID,
+func clearTeamBYOKRequest(organizationID, teamID string) *teamCreditAllocationRequest {
+	return &teamCreditAllocationRequest{
+		OrganizationID:       organizationID,
+		TeamID:               teamID,
 		ClearCostBudget:      true,
 		PreserveCreditBudget: true,
 	}

@@ -7,15 +7,18 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	onaclient "github.com/gitpod-io/terraform-provider-ona/internal/client"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 )
 
 type Data struct {
 	Client     *managementclient.ManagementPlane
+	RawClient  *onaclient.Client
 	APIBaseURL string
 	UserAgent  string
 }
@@ -31,6 +34,16 @@ func ResourceClient(providerData any, current *managementclient.ManagementPlane,
 		return current
 	}
 	return data.Client
+}
+
+// ResourceRawClient extracts the raw API client supplied to a resource and
+// preserves current when provider data is absent or invalid.
+func ResourceRawClient(providerData any, current *onaclient.Client, diags *diag.Diagnostics) *onaclient.Client {
+	data := configureData(providerData, "Resource", diags)
+	if data == nil {
+		return current
+	}
+	return data.RawClient
 }
 
 // DataSourceClient extracts the management client supplied to a data source
@@ -73,6 +86,11 @@ func RequireResourceClient(client *managementclient.ManagementPlane, diags *diag
 	return requireClient(client, diags, fmt.Sprintf("Set the provider token argument or ONA_TOKEN before %s %s resources.", action, resourceType))
 }
 
+// RequireResourceRawClient reports whether a resource has a configured raw API client.
+func RequireResourceRawClient(client *onaclient.Client, diags *diag.Diagnostics, action, resourceType string) bool {
+	return requireClient(client, diags, fmt.Sprintf("Set the provider token argument or ONA_TOKEN before %s %s resources.", action, resourceType))
+}
+
 // RequireDataSourceClient reports whether a data source has a configured client.
 func RequireDataSourceClient(client *managementclient.ManagementPlane, diags *diag.Diagnostics, dataSourceType string) bool {
 	return requireClient(client, diags, fmt.Sprintf("Set the provider token argument or ONA_TOKEN before reading %s data sources.", dataSourceType))
@@ -83,8 +101,8 @@ func RequireEphemeralResourceClient(client *managementclient.ManagementPlane, di
 	return requireClient(client, diags, fmt.Sprintf("Set the provider token argument or ONA_TOKEN before opening %s ephemeral resources.", resourceType))
 }
 
-func requireClient(client *managementclient.ManagementPlane, diags *diag.Diagnostics, detail string) bool {
-	if client != nil {
+func requireClient(client any, diags *diag.Diagnostics, detail string) bool {
+	if client != nil && !reflect.ValueOf(client).IsNil() {
 		return true
 	}
 	diags.AddError("Ona API Client Is Not Configured", detail)

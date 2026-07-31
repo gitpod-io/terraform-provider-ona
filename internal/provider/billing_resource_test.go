@@ -5,6 +5,7 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -19,6 +20,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -138,20 +140,31 @@ func newBillingAPIServer(t *testing.T) *billingAPIServer {
 	t.Helper()
 	service := &fakeBillingService{}
 	mux := http.NewServeMux()
-	billingPath, billingHandler := v1connect.NewBillingServiceHandler(service)
 	identityPath, identityHandler := v1connect.NewIdentityServiceHandler(service)
-	mux.Handle(billingPath, billingHandler)
+	mux.HandleFunc("/gitpod.v1.BillingService/CreateTeamCreditAllocation", service.createTeamCreditAllocation)
+	mux.HandleFunc("/gitpod.v1.BillingService/GetTeamCreditAllocation", service.getTeamCreditAllocation)
+	mux.HandleFunc("/gitpod.v1.BillingService/UpdateTeamCreditAllocation", service.updateTeamCreditAllocation)
+	mux.HandleFunc("/gitpod.v1.BillingService/DeleteTeamCreditAllocation", service.deleteTeamCreditAllocation)
 	mux.Handle(identityPath, identityHandler)
 	server := httptest.NewServer(http.StripPrefix("/api", mux))
 	return &billingAPIServer{Server: server, service: service}
 }
 
 type fakeBillingService struct {
-	v1connect.UnimplementedBillingServiceHandler
 	v1connect.UnimplementedIdentityServiceHandler
 
 	mu         sync.Mutex
 	allocation *v1.TeamCreditAllocationInfo
+}
+
+type fakeTeamCreditAllocationRequest struct {
+	OrganizationID       string `json:"organizationId"`
+	TeamID               string `json:"teamId"`
+	CreditBudget         int64  `json:"creditBudget"`
+	CostBudgetMicrounits *int64 `json:"costBudgetMicrounits"`
+	CostBudgetCurrency   string `json:"costBudgetCurrency"`
+	PreserveCreditBudget bool   `json:"preserveCreditBudget"`
+	ClearCostBudget      bool   `json:"clearCostBudget"`
 }
 
 func (s *fakeBillingService) GetAuthenticatedIdentity(context.Context, *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error) {
@@ -161,66 +174,117 @@ func (s *fakeBillingService) GetAuthenticatedIdentity(context.Context, *connect.
 	}), nil
 }
 
-func (s *fakeBillingService) CreateTeamCreditAllocation(_ context.Context, req *connect.Request[v1.CreateTeamCreditAllocationRequest]) (*connect.Response[v1.CreateTeamCreditAllocationResponse], error) {
+func (s *fakeBillingService) createTeamCreditAllocation(w http.ResponseWriter, r *http.Request) {
+	req, ok := decodeFakeTeamRequest(w, r)
+	if !ok {
+		return
+	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.allocation != nil {
-		return nil, connect.NewError(connect.CodeAlreadyExists, errors.New("allocation already exists"))
+		writeFakeError(w, http.StatusConflict, "already_exists", "allocation already exists")
+		return
 	}
 	s.allocation = &v1.TeamCreditAllocationInfo{
 		Id:                   billingAllocationID,
-		OrganizationId:       req.Msg.GetOrganizationId(),
-		TeamId:               req.Msg.GetTeamId(),
-		CreditBudget:         req.Msg.GetCreditBudget(),
-		CostBudgetMicrounits: copyInt64(req.Msg.CostBudgetMicrounits),
-		CostBudgetCurrency:   req.Msg.GetCostBudgetCurrency(),
+		OrganizationId:       req.OrganizationID,
+		TeamId:               req.TeamID,
+		CreditBudget:         req.CreditBudget,
+		CostBudgetMicrounits: copyInt64(req.CostBudgetMicrounits),
+		CostBudgetCurrency:   fakeCurrency(req.CostBudgetCurrency),
 		CreatedAt:            timestamppb.New(time.Date(2026, time.July, 27, 0, 0, 0, 0, time.UTC)),
 	}
-	return connect.NewResponse(&v1.CreateTeamCreditAllocationResponse{Allocation: cloneTeamAllocation(s.allocation)}), nil
+	writeFakeAllocation(w, s.allocation)
 }
 
-func (s *fakeBillingService) GetTeamCreditAllocation(_ context.Context, req *connect.Request[v1.GetTeamCreditAllocationRequest]) (*connect.Response[v1.GetTeamCreditAllocationResponse], error) {
+func (s *fakeBillingService) getTeamCreditAllocation(w http.ResponseWriter, r *http.Request) {
+	req, ok := decodeFakeTeamRequest(w, r)
+	if !ok {
+		return
+	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	if s.allocation == nil || req.Msg.GetOrganizationId() != s.allocation.GetOrganizationId() || req.Msg.GetTeamId() != s.allocation.GetTeamId() {
-		return nil, connect.NewError(connect.CodeNotFound, errors.New("allocation not found"))
+	if s.allocation == nil || req.OrganizationID != s.allocation.GetOrganizationId() || req.TeamID != s.allocation.GetTeamId() {
+		writeFakeError(w, http.StatusNotFound, "not_found", "allocation not found")
+		return
 	}
-	return connect.NewResponse(&v1.GetTeamCreditAllocationResponse{Allocation: cloneTeamAllocation(s.allocation)}), nil
+	writeFakeAllocation(w, s.allocation)
 }
 
-func (s *fakeBillingService) UpdateTeamCreditAllocation(_ context.Context, req *connect.Request[v1.UpdateTeamCreditAllocationRequest]) (*connect.Response[v1.UpdateTeamCreditAllocationResponse], error) {
+func (s *fakeBillingService) updateTeamCreditAllocation(w http.ResponseWriter, r *http.Request) {
+	req, ok := decodeFakeTeamRequest(w, r)
+	if !ok {
+		return
+	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.allocation == nil {
-		return nil, connect.NewError(connect.CodeNotFound, errors.New("allocation not found"))
+		writeFakeError(w, http.StatusNotFound, "not_found", "allocation not found")
+		return
 	}
-	if req.Msg.GetClearCostBudget() {
+	if req.ClearCostBudget {
 		s.allocation.CostBudgetMicrounits = nil
 		s.allocation.CostBudgetCurrency = v1.BillingCurrency_BILLING_CURRENCY_UNSPECIFIED
-	} else if req.Msg.CostBudgetMicrounits != nil {
-		s.allocation.CostBudgetMicrounits = copyInt64(req.Msg.CostBudgetMicrounits)
-		s.allocation.CostBudgetCurrency = req.Msg.GetCostBudgetCurrency()
+	} else if req.CostBudgetMicrounits != nil {
+		s.allocation.CostBudgetMicrounits = copyInt64(req.CostBudgetMicrounits)
+		s.allocation.CostBudgetCurrency = fakeCurrency(req.CostBudgetCurrency)
 	}
-	if req.Msg.GetCreditBudget() > 0 {
-		s.allocation.CreditBudget = req.Msg.GetCreditBudget()
-	} else if !req.Msg.GetPreserveCreditBudget() {
+	if req.CreditBudget > 0 {
+		s.allocation.CreditBudget = req.CreditBudget
+	} else if !req.PreserveCreditBudget {
 		s.allocation.CreditBudget = 0
 	}
-	return connect.NewResponse(&v1.UpdateTeamCreditAllocationResponse{Allocation: cloneTeamAllocation(s.allocation)}), nil
+	writeFakeAllocation(w, s.allocation)
 }
 
-func (s *fakeBillingService) DeleteTeamCreditAllocation(_ context.Context, _ *connect.Request[v1.DeleteTeamCreditAllocationRequest]) (*connect.Response[v1.DeleteTeamCreditAllocationResponse], error) {
+func (s *fakeBillingService) deleteTeamCreditAllocation(w http.ResponseWriter, r *http.Request) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.allocation == nil {
-		return nil, connect.NewError(connect.CodeNotFound, errors.New("allocation not found"))
+		writeFakeError(w, http.StatusNotFound, "not_found", "allocation not found")
+		return
 	}
 	if s.allocation.CostBudgetMicrounits != nil && s.allocation.GetCreditBudget() > 0 {
 		s.allocation.CreditBudget = 0
 	} else {
 		s.allocation = nil
 	}
-	return connect.NewResponse(&v1.DeleteTeamCreditAllocationResponse{}), nil
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, "{}")
+}
+
+func decodeFakeTeamRequest(w http.ResponseWriter, r *http.Request) (fakeTeamCreditAllocationRequest, bool) {
+	var req fakeTeamCreditAllocationRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeFakeError(w, http.StatusBadRequest, "invalid_argument", err.Error())
+		return req, false
+	}
+	return req, true
+}
+
+func writeFakeAllocation(w http.ResponseWriter, allocation *v1.TeamCreditAllocationInfo) {
+	raw, err := protojson.Marshal(cloneTeamAllocation(allocation))
+	if err != nil {
+		writeFakeError(w, http.StatusInternalServerError, "internal", err.Error())
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(w, `{"allocation":%s}`, raw)
+}
+
+func writeFakeError(w http.ResponseWriter, status int, code, message string) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	_ = json.NewEncoder(w).Encode(map[string]string{"code": code, "message": message})
+}
+
+func fakeCurrency(value string) v1.BillingCurrency {
+	switch value {
+	case v1.BillingCurrency_BILLING_CURRENCY_USD.String():
+		return v1.BillingCurrency_BILLING_CURRENCY_USD
+	default:
+		return v1.BillingCurrency_BILLING_CURRENCY_UNSPECIFIED
+	}
 }
 
 func (s *fakeBillingService) allocationSnapshot() *v1.TeamCreditAllocationInfo {

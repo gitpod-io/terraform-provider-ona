@@ -1,16 +1,19 @@
 package client
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
 	"net/url"
 	"os"
 	"strings"
 	"sync"
 
-	gitpod "github.com/gitpod-io/gitpod-sdk-go"
-	"github.com/gitpod-io/gitpod-sdk-go/option"
+	"connectrpc.com/connect"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	providerversion "github.com/gitpod-io/terraform-provider-ona/version"
 )
@@ -30,7 +33,7 @@ type Config struct {
 type Client struct {
 	APIBaseURL string
 
-	sdk *gitpod.Client
+	raw *rawClient
 
 	mu             sync.Mutex
 	organizationID string
@@ -41,17 +44,17 @@ func DefaultUserAgent() string {
 }
 
 func New(cfg Config) (*Client, error) {
-	sdk, apiBaseURL, err := NewSDK(cfg)
+	raw, apiBaseURL, err := newRawClient(cfg)
 	if err != nil {
 		return nil, err
 	}
 	return &Client{
 		APIBaseURL: apiBaseURL,
-		sdk:        sdk,
+		raw:        raw,
 	}, nil
 }
 
-func NewSDK(cfg Config) (*gitpod.Client, string, error) {
+func newRawClient(cfg Config) (*rawClient, string, error) {
 	host := resolveHost(cfg.Host)
 	token := resolveToken(cfg.Token)
 	if token == "" {
@@ -67,11 +70,12 @@ func NewSDK(cfg Config) (*gitpod.Client, string, error) {
 	if userAgent == "" {
 		userAgent = DefaultUserAgent()
 	}
-	return gitpod.NewClient(
-		option.WithBaseURL(apiBaseURL),
-		option.WithBearerToken(token),
-		option.WithHeader("User-Agent", userAgent),
-	), apiBaseURL, nil
+	return &rawClient{
+		baseURL:    apiBaseURL,
+		token:      token,
+		userAgent:  userAgent,
+		httpClient: http.DefaultClient,
+	}, apiBaseURL, nil
 }
 
 func NewManagementPlane(cfg Config) (*managementclient.ManagementPlane, string, error) {
@@ -232,7 +236,80 @@ func (c *Client) GetOrganizationPolicies(ctx context.Context, req GetOrganizatio
 }
 
 func (c *Client) post(ctx context.Context, path string, in any, out any) error {
-	return c.sdk.Post(ctx, strings.TrimLeft(path, "/"), in, out)
+	return c.raw.Post(ctx, strings.TrimLeft(path, "/"), in, out)
+}
+
+func (c *Client) Post(ctx context.Context, path string, in any, out any) error {
+	return c.post(ctx, path, in, out)
+}
+
+type rawClient struct {
+	baseURL    string
+	token      string
+	userAgent  string
+	httpClient *http.Client
+}
+
+func (c *rawClient) Post(ctx context.Context, path string, in any, out any) error {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(in); err != nil {
+		return fmt.Errorf("encode request body: %w", err)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, strings.TrimRight(c.baseURL, "/")+"/"+strings.TrimLeft(path, "/"), &body)
+	if err != nil {
+		return fmt.Errorf("create request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Authorization", "Bearer "+c.token)
+	if c.userAgent != "" {
+		req.Header.Set("User-Agent", c.userAgent)
+	}
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("send request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
+		return decodeAPIError(resp)
+	}
+	if out == nil {
+		if _, err := io.Copy(io.Discard, resp.Body); err != nil {
+			return fmt.Errorf("drain response body: %w", err)
+		}
+		return nil
+	}
+	if err := json.NewDecoder(resp.Body).Decode(out); err != nil {
+		return fmt.Errorf("decode response body: %w", err)
+	}
+	return nil
+}
+
+func decodeAPIError(resp *http.Response) error {
+	apiErr := &APIError{StatusCode: resp.StatusCode}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		apiErr.Message = err.Error()
+		return apiErr
+	}
+	if len(body) == 0 {
+		return apiErr
+	}
+	if err := json.Unmarshal(body, apiErr); err != nil {
+		apiErr.Message = strings.TrimSpace(string(body))
+		return apiErr
+	}
+	switch apiErr.Code {
+	case "already_exists":
+		return connect.NewError(connect.CodeAlreadyExists, apiErr)
+	case "not_found":
+		return connect.NewError(connect.CodeNotFound, apiErr)
+	default:
+		return apiErr
+	}
 }
 
 func APIBaseURL(host string) (string, error) {

@@ -8,9 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/terraform"
 	_ "github.com/google/gnostic/openapiv3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -358,8 +355,6 @@ const (
 	EnvironmentRole_ENVIRONMENT_ROLE_PREBUILD EnvironmentRole = 2
 	// Workflow role for environments that are part of a workflow
 	EnvironmentRole_ENVIRONMENT_ROLE_WORKFLOW EnvironmentRole = 3
-	// Base snapshot build role for internal scratch environments that produce base snapshots
-	EnvironmentRole_ENVIRONMENT_ROLE_BASE_SNAPSHOT_BUILD EnvironmentRole = 4
 )
 
 // Enum value maps for EnvironmentRole.
@@ -369,14 +364,12 @@ var (
 		1: "ENVIRONMENT_ROLE_DEFAULT",
 		2: "ENVIRONMENT_ROLE_PREBUILD",
 		3: "ENVIRONMENT_ROLE_WORKFLOW",
-		4: "ENVIRONMENT_ROLE_BASE_SNAPSHOT_BUILD",
 	}
 	EnvironmentRole_value = map[string]int32{
-		"ENVIRONMENT_ROLE_UNSPECIFIED":         0,
-		"ENVIRONMENT_ROLE_DEFAULT":             1,
-		"ENVIRONMENT_ROLE_PREBUILD":            2,
-		"ENVIRONMENT_ROLE_WORKFLOW":            3,
-		"ENVIRONMENT_ROLE_BASE_SNAPSHOT_BUILD": 4,
+		"ENVIRONMENT_ROLE_UNSPECIFIED": 0,
+		"ENVIRONMENT_ROLE_DEFAULT":     1,
+		"ENVIRONMENT_ROLE_PREBUILD":    2,
+		"ENVIRONMENT_ROLE_WORKFLOW":    3,
 	}
 )
 
@@ -6547,56 +6540,46 @@ var File_gitpod_v1_environment_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\n" +
-	"\x1bgitpod/v1/environment.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x15gitpod/v1/count.proto\x1a&gitpod/v1/environment_automation.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gitpod/v1/runner_configuration.proto\x1a\x16gitpod/v1/secret.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb2\x01\n" +
-	"\x1cMarkEnvironmentActiveRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x12M\n" +
+	"\x1bgitpod/v1/environment.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x15gitpod/v1/count.proto\x1a&gitpod/v1/environment_automation.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gitpod/v1/runner_configuration.proto\x1a\x16gitpod/v1/secret.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x9e\x01\n" +
+	"\x1cMarkEnvironmentActiveRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x12M\n" +
 	"\x0factivity_signal\x18\x02 \x01(\v2$.gitpod.v1.EnvironmentActivitySignalR\x0eactivitySignal\"x\n" +
 	"\x19EnvironmentActivitySignal\x12!\n" +
 	"\x06source\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18PR\x06source\x128\n" +
 	"\ttimestamp\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\"\x1f\n" +
-	"\x1dMarkEnvironmentActiveResponse\"_\n" +
-	"\x15GetEnvironmentRequest\x12F\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1f\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\"Z\n" +
+	"\x1dMarkEnvironmentActiveResponse\"K\n" +
+	"\x15GetEnvironmentRequest\x122\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\renvironmentId\"Z\n" +
 	"\x16GetEnvironmentResponse\x12@\n" +
-	"\venvironment\x18\x01 \x01(\v2\x16.gitpod.v1.EnvironmentB\x06\xbaH\x03\xc8\x01\x01R\venvironment\"\x91\r\n" +
+	"\venvironment\x18\x01 \x01(\v2\x16.gitpod.v1.EnvironmentB\x06\xbaH\x03\xc8\x01\x01R\venvironment\"\x83\v\n" +
 	"\x17ListEnvironmentsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12A\n" +
-	"\x06filter\x18\x03 \x01(\v2).gitpod.v1.ListEnvironmentsRequest.FilterR\x06filter\x125\n" +
-	"\x05count\x18\x04 \x01(\v2\x17.gitpod.v1.CountRequestB\x06ʫ\x1e\x02\b\x01R\x05count\x12C\n" +
-	"\x04sort\x18\x05 \x01(\v2'.gitpod.v1.ListEnvironmentsRequest.SortB\x06ʫ\x1e\x02\b\x01R\x04sort\x1a\x80\x01\n" +
+	"\x06filter\x18\x03 \x01(\v2).gitpod.v1.ListEnvironmentsRequest.FilterR\x06filter\x12-\n" +
+	"\x05count\x18\x04 \x01(\v2\x17.gitpod.v1.CountRequestR\x05count\x12;\n" +
+	"\x04sort\x18\x05 \x01(\v2'.gitpod.v1.ListEnvironmentsRequest.SortR\x04sort\x1a\x80\x01\n" +
 	"\x04Sort\x12L\n" +
 	"\x05field\x18\x01 \x01(\x0e2,.gitpod.v1.ListEnvironmentsRequest.SortFieldB\b\xbaH\x05\x82\x01\x02\x10\x01R\x05field\x12*\n" +
-	"\x05order\x18\x02 \x01(\x0e2\x14.gitpod.v1.SortOrderR\x05order\x1a\x90\b\n" +
-	"\x06Filter\x12G\n" +
+	"\x05order\x18\x02 \x01(\x0e2\x14.gitpod.v1.SortOrderR\x05order\x1a\x92\x06\n" +
+	"\x06Filter\x120\n" +
 	"\n" +
-	"runner_ids\x18\x01 \x03(\tB(\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11filter.runner_idsR\trunnerIds\x12f\n" +
-	"\rstatus_phases\x18\x02 \x03(\x0e2\x1b.gitpod.v1.EnvironmentPhaseB$\xbaH\a\x92\x01\x04\b\x00\x10\x19\xa2\xab\x1e\x16\n" +
-	"\x14filter.status_phasesR\fstatusPhases\x12J\n" +
-	"\vcreator_ids\x18\x03 \x03(\tB)\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12filter.creator_idsR\n" +
-	"creatorIds\x12J\n" +
-	"\vproject_ids\x18\x04 \x03(\tB)\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12filter.project_idsR\n" +
-	"projectIds\x12d\n" +
-	"\frunner_kinds\x18\x05 \x03(\x0e2\x15.gitpod.v1.RunnerKindB*\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\x15\n" +
-	"\x13filter.runner_kindsR\vrunnerKinds\x12\x85\x01\n" +
-	"\x0farchival_status\x18\x06 \x01(\x0e21.gitpod.v1.ListEnvironmentsRequest.ArchivalStatusB$\xbaH\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\x18\n" +
-	"\x16filter.archival_statusH\x00R\x0earchivalStatus\x88\x01\x01\x12F\n" +
-	"\x0ecreated_before\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x01R\rcreatedBefore\x88\x01\x01\x12U\n" +
-	"\x05roles\x18\b \x03(\x0e2\x1a.gitpod.v1.EnvironmentRoleB#\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\x0e\n" +
-	"\ffilter.rolesR\x05roles\x12l\n" +
+	"runner_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\trunnerIds\x12L\n" +
+	"\rstatus_phases\x18\x02 \x03(\x0e2\x1b.gitpod.v1.EnvironmentPhaseB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\x19R\fstatusPhases\x122\n" +
+	"\vcreator_ids\x18\x03 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\n" +
+	"creatorIds\x122\n" +
+	"\vproject_ids\x18\x04 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\n" +
+	"projectIds\x12K\n" +
+	"\frunner_kinds\x18\x05 \x03(\x0e2\x15.gitpod.v1.RunnerKindB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01R\vrunnerKinds\x12i\n" +
+	"\x0farchival_status\x18\x06 \x01(\x0e21.gitpod.v1.ListEnvironmentsRequest.ArchivalStatusB\b\xbaH\x05\x82\x01\x02\x10\x01H\x00R\x0earchivalStatus\x88\x01\x01\x12F\n" +
+	"\x0ecreated_before\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x01R\rcreatedBefore\x88\x01\x01\x12C\n" +
+	"\x05roles\x18\b \x03(\x0e2\x1a.gitpod.v1.EnvironmentRoleB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01R\x05roles\x12H\n" +
 	"\x0flockdown_before\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampB\"\xa2\xab\x1e\x18\n" +
-	"\x16filter.lockdown_beforeʫ\x1e\x02\b\x01H\x02R\x0elockdownBefore\x88\x01\x01\x12;\n" +
-	"\x06search\x18\v \x01(\tB#\xbaH\ar\x05\x10\x00\x18\x80\x02\xa2\xab\x1e\x0f\n" +
-	"\rfilter.searchʫ\x1e\x02\b\x01R\x06search\x12J\n" +
-	"\vsession_ids\x18\f \x03(\tB)\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12filter.session_idsR\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampH\x02R\x0elockdownBefore\x88\x01\x01\x12\"\n" +
+	"\x06search\x18\v \x01(\tB\n" +
+	"\xbaH\ar\x05\x10\x00\x18\x80\x02R\x06search\x122\n" +
+	"\vsession_ids\x18\f \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\n" +
 	"sessionIdsB\x12\n" +
 	"\x10_archival_statusB\x11\n" +
 	"\x0f_created_beforeB\x12\n" +
@@ -6609,33 +6592,31 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\tSortField\x12\x1a\n" +
 	"\x16SORT_FIELD_UNSPECIFIED\x10\x00\x12\x11\n" +
 	"\rSORT_FIELD_ID\x10\x01\x12\x1a\n" +
-	"\x16SORT_FIELD_ARCHIVED_AT\x10\x02J\x04\b\x02\x10\x03\"\xcd\x01\n" +
+	"\x16SORT_FIELD_ARCHIVED_AT\x10\x02J\x04\b\x02\x10\x03\"\xc5\x01\n" +
 	"\x18ListEnvironmentsResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12:\n" +
-	"\fenvironments\x18\x02 \x03(\v2\x16.gitpod.v1.EnvironmentR\fenvironments\x126\n" +
-	"\x05count\x18\x03 \x01(\v2\x18.gitpod.v1.CountResponseB\x06ʫ\x1e\x02\b\x01R\x05count\"\xc1\x02\n" +
+	"\fenvironments\x18\x02 \x03(\v2\x16.gitpod.v1.EnvironmentR\fenvironments\x12.\n" +
+	"\x05count\x18\x03 \x01(\v2\x18.gitpod.v1.CountResponseR\x05count\"\xb9\x02\n" +
 	"\x18CreateEnvironmentRequest\x12.\n" +
 	"\x04spec\x18\x01 \x01(\v2\x1a.gitpod.v1.EnvironmentSpecR\x04spec\x12 \n" +
 	"\x04name\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18PH\x00R\x04name\x88\x01\x01\x12*\n" +
 	"\n" +
-	"session_id\x18\x03 \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\tsessionId\x12^\n" +
-	"\vannotations\x18\x04 \x03(\v24.gitpod.v1.CreateEnvironmentRequest.AnnotationsEntryB\x06ʫ\x1e\x02\b\x01R\vannotations\x1a>\n" +
+	"session_id\x18\x03 \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\tsessionId\x12V\n" +
+	"\vannotations\x18\x04 \x03(\v24.gitpod.v1.CreateEnvironmentRequest.AnnotationsEntryR\vannotations\x1a>\n" +
 	"\x10AnnotationsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\a\n" +
 	"\x05_name\"]\n" +
 	"\x19CreateEnvironmentResponse\x12@\n" +
-	"\venvironment\x18\x01 \x01(\v2\x16.gitpod.v1.EnvironmentB\x06\xbaH\x03\xc8\x01\x01R\venvironment\"\x90\x03\n" +
-	"#CreateEnvironmentFromProjectRequest\x127\n" +
+	"\venvironment\x18\x01 \x01(\v2\x16.gitpod.v1.EnvironmentB\x06\xbaH\x03\xc8\x01\x01R\venvironment\"\xf8\x02\n" +
+	"#CreateEnvironmentFromProjectRequest\x12'\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12.\n" +
+	"project_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tprojectId\x12.\n" +
 	"\x04spec\x18\x03 \x01(\v2\x1a.gitpod.v1.EnvironmentSpecR\x04spec\x12 \n" +
-	"\x04name\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18PH\x00R\x04name\x88\x01\x01\x12i\n" +
-	"\vannotations\x18\x05 \x03(\v2?.gitpod.v1.CreateEnvironmentFromProjectRequest.AnnotationsEntryB\x06ʫ\x1e\x02\b\x01R\vannotations\x12*\n" +
+	"\x04name\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18PH\x00R\x04name\x88\x01\x01\x12a\n" +
+	"\vannotations\x18\x05 \x03(\v2?.gitpod.v1.CreateEnvironmentFromProjectRequest.AnnotationsEntryR\vannotations\x12*\n" +
 	"\n" +
 	"session_id\x18\x06 \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\tsessionId\x1a>\n" +
 	"\x10AnnotationsEntry\x12\x10\n" +
@@ -6648,24 +6629,20 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"'missing_authentication_tokens_for_hosts\x18\x01 \x03(\tR#missingAuthenticationTokensForHosts\"\x82\x01\n" +
 	"=CreateEnvironmentFromProjectBadRequestEnvironmentClassDetails\x12A\n" +
 	"\x15environment_class_ids\x18\x01 \x03(\tB\r\xbaH\n" +
-	"\x92\x01\a\"\x05r\x03\xb0\x01\x01R\x13environmentClassIds\"b\n" +
-	"\x1bUnarchiveEnvironmentRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\"\x1e\n" +
-	"\x1cUnarchiveEnvironmentResponse\"`\n" +
-	"\x19ArchiveEnvironmentRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\"\x1c\n" +
-	"\x1aArchiveEnvironmentResponse\"\xdf\x01\n" +
-	"\vEnvironment\x12$\n" +
-	"\x02id\x18\x01 \x01(\tB\x14\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\x02id\x12:\n" +
+	"\x92\x01\a\"\x05r\x03\xb0\x01\x01R\x13environmentClassIds\"N\n" +
+	"\x1bUnarchiveEnvironmentRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\"\x1e\n" +
+	"\x1cUnarchiveEnvironmentResponse\"L\n" +
+	"\x19ArchiveEnvironmentRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\"\x1c\n" +
+	"\x1aArchiveEnvironmentResponse\"\xc9\x01\n" +
+	"\vEnvironment\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12:\n" +
 	"\bmetadata\x18\x02 \x01(\v2\x1e.gitpod.v1.EnvironmentMetadataR\bmetadata\x12.\n" +
 	"\x04spec\x18\x03 \x01(\v2\x1a.gitpod.v1.EnvironmentSpecR\x04spec\x124\n" +
-	"\x06status\x18\x04 \x01(\v2\x1c.gitpod.v1.EnvironmentStatusR\x06status:\b\xbaG\x05\xba\x01\x02id\"\xdb\x06\n" +
-	"\x13EnvironmentMetadata\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12Q\n" +
+	"\x06status\x18\x04 \x01(\v2\x1c.gitpod.v1.EnvironmentStatusR\x06status:\b\xbaG\x05\xba\x01\x02id\"\x9c\x06\n" +
+	"\x13EnvironmentMetadata\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12Q\n" +
 	"\vannotations\x18\x02 \x03(\v2/.gitpod.v1.EnvironmentMetadata.AnnotationsEntryR\vannotations\x12\x1b\n" +
 	"\x04name\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18PR\x04name\x12,\n" +
 	"\acreator\x18\x04 \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x120\n" +
@@ -6673,64 +6650,59 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\a \x01(\tR\tprojectId\x12,\n" +
-	"\trunner_id\x18\t \x01(\tB\x0f\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12B\n" +
+	"project_id\x18\a \x01(\tR\tprojectId\x12\x1b\n" +
+	"\trunner_id\x18\t \x01(\tR\brunnerId\x12B\n" +
 	"\x0flast_started_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\rlastStartedAt\x12;\n" +
 	"\varchived_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"archivedAt\x12.\n" +
-	"\x04role\x18\f \x01(\x0e2\x1a.gitpod.v1.EnvironmentRoleR\x04role\x12?\n" +
-	"\vprebuild_id\x18\r \x01(\tB\x19\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vprebuild.idH\x00R\n" +
+	"\x04role\x18\f \x01(\x0e2\x1a.gitpod.v1.EnvironmentRoleR\x04role\x12.\n" +
+	"\vprebuild_id\x18\r \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\n" +
 	"prebuildId\x88\x01\x01\x12;\n" +
 	"\vlockdown_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"lockdownAt\x12%\n" +
+	"lockdownAt\x12\x1d\n" +
 	"\n" +
-	"session_id\x18\x0f \x01(\tB\x06ʫ\x1e\x02\b\x01R\tsessionId\x1a>\n" +
+	"session_id\x18\x0f \x01(\tR\tsessionId\x1a>\n" +
 	"\x10AnnotationsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x0e\n" +
-	"\f_prebuild_id\"\xdb\x01\n" +
+	"\f_prebuild_id\"\xbb\x01\n" +
 	"\x11VetoFilePathEntry\x12\x12\n" +
 	"\x04path\x18\x01 \x01(\tR\x04path\x124\n" +
 	"\asurface\x18\x02 \x01(\x0e2\x1a.gitpod.v1.VetoFileSurfaceR\asurface\x127\n" +
 	"\x06effect\x18\x03 \x01(\x0e2\x1f.gitpod.v1.KernelControlsActionR\x06effect\x12#\n" +
-	"\rtrack_changes\x18\x04 \x01(\bR\ftrackChanges:\x1e\xba\xab\x1e\x1a\n" +
-	"\x16organizations.policies\x18\x01\"\xf9\x01\n" +
+	"\rtrack_changes\x18\x04 \x01(\bR\ftrackChanges\"\xd9\x01\n" +
 	"\x12VetoFilePathPolicy\x126\n" +
 	"\aentries\x18\x01 \x03(\v2\x1c.gitpod.v1.VetoFilePathEntryR\aentries\x12C\n" +
 	"\x0fdefault_surface\x18\x02 \x01(\x0e2\x1a.gitpod.v1.VetoFileSurfaceR\x0edefaultSurface\x12F\n" +
-	"\x0edefault_effect\x18\x03 \x01(\x0e2\x1f.gitpod.v1.KernelControlsActionR\rdefaultEffect:\x1e\xba\xab\x1e\x1a\n" +
-	"\x16organizations.policies\x18\x01\"\x8f\x01\n" +
+	"\x0edefault_effect\x18\x03 \x01(\x0e2\x1f.gitpod.v1.KernelControlsActionR\rdefaultEffect\"o\n" +
 	"\x1aVetoFileBlockDevicesPolicy\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x127\n" +
-	"\x06action\x18\x02 \x01(\x0e2\x1f.gitpod.v1.KernelControlsActionR\x06action:\x1e\xba\xab\x1e\x1a\n" +
-	"\x16organizations.policies\x18\x01\"\xa9\x06\n" +
+	"\x06action\x18\x02 \x01(\x0e2\x1f.gitpod.v1.KernelControlsActionR\x06action\"\xea\x05\n" +
 	"\x04Veto\x12(\n" +
-	"\x04exec\x18\x01 \x01(\v2\x14.gitpod.v1.Veto.ExecR\x04exec\x120\n" +
-	"\x04file\x18\x02 \x01(\v2\x14.gitpod.v1.Veto.FileB\x06ʫ\x1e\x02\b\x01R\x04file\x1a\xab\x02\n" +
+	"\x04exec\x18\x01 \x01(\v2\x14.gitpod.v1.Veto.ExecR\x04exec\x12(\n" +
+	"\x04file\x18\x02 \x01(\v2\x14.gitpod.v1.Veto.FileR\x04file\x1a\x8d\x02\n" +
 	"\x04Exec\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x1a\n" +
 	"\bdenylist\x18\x02 \x03(\tR\bdenylist\x127\n" +
-	"\x06action\x18\x03 \x01(\x0e2\x1f.gitpod.v1.KernelControlsActionR\x06action\x124\n" +
-	"\x12resolve_bare_names\x18\x04 \x01(\bB\x06ʫ\x1e\x02\b\x01R\x10resolveBareNames\x12(\n" +
-	"\vuntouchable\x18\x05 \x01(\bB\x06ʫ\x1e\x02\b\x01R\vuntouchable\x12\x1c\n" +
-	"\x05watch\x18\x06 \x01(\bB\x06ʫ\x1e\x02\b\x01R\x05watch\x126\n" +
-	"\x12deny_block_devices\x18\a \x01(\bB\bʫ\x1e\x02\b\x01\x18\x01R\x10denyBlockDevices\x1a\x96\x03\n" +
+	"\x06action\x18\x03 \x01(\x0e2\x1f.gitpod.v1.KernelControlsActionR\x06action\x12,\n" +
+	"\x12resolve_bare_names\x18\x04 \x01(\bR\x10resolveBareNames\x12 \n" +
+	"\vuntouchable\x18\x05 \x01(\bR\vuntouchable\x12\x14\n" +
+	"\x05watch\x18\x06 \x01(\bR\x05watch\x120\n" +
+	"\x12deny_block_devices\x18\a \x01(\bB\x02\x18\x01R\x10denyBlockDevices\x1a\xfd\x02\n" +
 	"\x04File\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x123\n" +
 	"\x05paths\x18\x02 \x01(\v2\x1d.gitpod.v1.VetoFilePathPolicyR\x05paths\x12J\n" +
-	"\rblock_devices\x18\x03 \x01(\v2%.gitpod.v1.VetoFileBlockDevicesPolicyR\fblockDevices\x12f\n" +
-	"\x15supervisor_protection\x18\x04 \x01(\v2).gitpod.v1.Veto.File.SupervisorProtectionB\x06ʫ\x1e\x02\b\x01R\x14supervisorProtection\x1a\x8a\x01\n" +
-	"\x14SupervisorProtection\x12%\n" +
-	"\aenabled\x18\x01 \x01(\bB\x06ʫ\x1e\x02\b\x01H\x00R\aenabled\x88\x01\x01\x12?\n" +
-	"\x06effect\x18\x02 \x01(\x0e2\x1f.gitpod.v1.KernelControlsActionB\x06ʫ\x1e\x02\b\x01R\x06effectB\n" +
+	"\rblock_devices\x18\x03 \x01(\v2%.gitpod.v1.VetoFileBlockDevicesPolicyR\fblockDevices\x12^\n" +
+	"\x15supervisor_protection\x18\x04 \x01(\v2).gitpod.v1.Veto.File.SupervisorProtectionR\x14supervisorProtection\x1az\n" +
+	"\x14SupervisorProtection\x12\x1d\n" +
+	"\aenabled\x18\x01 \x01(\bH\x00R\aenabled\x88\x01\x01\x127\n" +
+	"\x06effect\x18\x02 \x01(\x0e2\x1f.gitpod.v1.KernelControlsActionR\x06effectB\n" +
 	"\n" +
-	"\b_enabled\"\x85\x01\n" +
+	"\b_enabled\"}\n" +
 	"\x14KernelControlsConfig\x12#\n" +
-	"\x04veto\x18\x01 \x01(\v2\x0f.gitpod.v1.VetoR\x04veto\x12H\n" +
-	"\x0fbpf_debug_level\x18\x02 \x01(\x0e2\x18.gitpod.v1.BPFDebugLevelB\x06ʫ\x1e\x02\b\x01R\rbpfDebugLevel\"\xa9\x1b\n" +
+	"\x04veto\x18\x01 \x01(\v2\x0f.gitpod.v1.VetoR\x04veto\x12@\n" +
+	"\x0fbpf_debug_level\x18\x02 \x01(\x0e2\x18.gitpod.v1.BPFDebugLevelR\rbpfDebugLevel\"\xed\x1a\n" +
 	"\x0fEnvironmentSpec\x12!\n" +
 	"\fspec_version\x18\x01 \x01(\x04R\vspecVersion\x12@\n" +
 	"\rdesired_phase\x18\x02 \x01(\x0e2\x1b.gitpod.v1.EnvironmentPhaseR\fdesiredPhase\x12<\n" +
@@ -6745,15 +6717,15 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	" \x03(\v2'.gitpod.v1.EnvironmentSpec.SSHPublicKeyR\rsshPublicKeys\x12U\n" +
 	"\x10automations_file\x18\v \x01(\v2*.gitpod.v1.EnvironmentSpec.AutomationsFileR\x0fautomationsFile\x12;\n" +
 	"\x12workflow_action_id\x18\f \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\x10workflowActionId\x88\x01\x01\x12U\n" +
-	"\x16kernel_controls_config\x18\r \x01(\v2\x1f.gitpod.v1.KernelControlsConfigR\x14kernelControlsConfig\x12?\n" +
-	"\x12security_policy_id\x18\x0e \x01(\tB\x11\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01ʫ\x1e\x02\b\x01R\x10securityPolicyId\x1a\xdb\x01\n" +
+	"\x16kernel_controls_config\x18\r \x01(\v2\x1f.gitpod.v1.KernelControlsConfigR\x14kernelControlsConfig\x129\n" +
+	"\x12security_policy_id\x18\x0e \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\x10securityPolicyId\x1a\xdb\x01\n" +
 	"\aTimeout\x12\xcf\x01\n" +
 	"\fdisconnected\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x8f\x01\xbaH\x8b\x01\xba\x01\x87\x01\n" +
-	"\x14disconnected_timeout\x12:value must be 0s (disabled) or at least 1800s (30 minutes)\x1a3this == duration('0s') || this >= duration('1800s')R\fdisconnected\x1ak\n" +
+	"\x14disconnected_timeout\x12:value must be 0s (disabled) or at least 1800s (30 minutes)\x1a3this == duration('0s') || this >= duration('1800s')R\fdisconnected\x1ac\n" +
 	"\aMachine\x12\x18\n" +
 	"\asession\x18\x01 \x01(\tR\asession\x12\x14\n" +
-	"\x05class\x18\x02 \x01(\tR\x05class\x120\n" +
-	"\x10prefer_dual_disk\x18\x03 \x01(\bB\x06ʫ\x1e\x02\b\x01R\x0epreferDualDisk\x1a\xa8\x01\n" +
+	"\x05class\x18\x02 \x01(\tR\x05class\x12(\n" +
+	"\x10prefer_dual_disk\x18\x03 \x01(\bR\x0epreferDualDisk\x1a\xa8\x01\n" +
 	"\aContent\x12\x18\n" +
 	"\asession\x18\x01 \x01(\tR\asession\x12C\n" +
 	"\vinitializer\x18\x02 \x01(\v2!.gitpod.v1.EnvironmentInitializerR\vinitializer\x12!\n" +
@@ -6773,7 +6745,7 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\x0eLifecycleStage\x12\x1f\n" +
 	"\x1bLIFECYCLE_STAGE_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14LIFECYCLE_STAGE_FULL\x10\x01\x12\x1c\n" +
-	"\x18LIFECYCLE_STAGE_PREBUILD\x10\x02\x1a\xdd\x05\n" +
+	"\x18LIFECYCLE_STAGE_PREBUILD\x10\x02\x1a\xd5\x05\n" +
 	"\x06Secret\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x16\n" +
 	"\x06source\x18\x02 \x01(\tR\x06source\x12\x1d\n" +
@@ -6788,8 +6760,8 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\asession\x18\x04 \x01(\tR\asession\x12\x0e\n" +
 	"\x02id\x18\x05 \x01(\tR\x02id\x12=\n" +
 	"\x05scope\x18\x06 \x01(\x0e2'.gitpod.v1.EnvironmentSpec.Secret.ScopeR\x05scope\x12L\n" +
-	"\x10credential_proxy\x18\x0f \x01(\v2!.gitpod.v1.Secret.CredentialProxyR\x0fcredentialProxy\x12G\n" +
-	"\x0esource_details\x18\x10 \x01(\v2\x18.gitpod.v1.Secret.SourceB\x06ʫ\x1e\x02\b\x01R\rsourceDetails\"\x86\x01\n" +
+	"\x10credential_proxy\x18\x0f \x01(\v2!.gitpod.v1.Secret.CredentialProxyR\x0fcredentialProxy\x12?\n" +
+	"\x0esource_details\x18\x10 \x01(\v2\x18.gitpod.v1.Secret.SourceR\rsourceDetails\"\x86\x01\n" +
 	"\x05Scope\x12\x15\n" +
 	"\x11SCOPE_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12SCOPE_ORGANIZATION\x10\x01\x12\x11\n" +
@@ -6798,19 +6770,18 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"SCOPE_USER\x10\x03\x12\x19\n" +
 	"\x15SCOPE_SERVICE_ACCOUNT\x10\x04\x12\x10\n" +
 	"\fSCOPE_RUNNER\x10\x05B\x0e\n" +
-	"\x05mount\x12\x05\xbaH\x02\b\x01\x1a\xee\x02\n" +
+	"\x05mount\x12\x05\xbaH\x02\b\x01\x1a\xc8\x02\n" +
 	"\x0fEnvironmentPort\x12 \n" +
 	"\x04port\x18\x01 \x01(\x05B\f\xbaH\t\x1a\a\x18\xff\xff\x03(\x80\bR\x04port\x127\n" +
 	"\tadmission\x18\x02 \x01(\x0e2\x19.gitpod.v1.AdmissionLevelR\tadmission\x12\x1d\n" +
 	"\x04name\x18\x03 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18dR\x04name\x12O\n" +
-	"\bprotocol\x18\x04 \x01(\x0e23.gitpod.v1.EnvironmentSpec.EnvironmentPort.ProtocolR\bprotocol\x12%\n" +
+	"\bprotocol\x18\x04 \x01(\x0e23.gitpod.v1.EnvironmentSpec.EnvironmentPort.ProtocolR\bprotocol\x12\x1d\n" +
 	"\n" +
-	"auth_nonce\x18\x05 \x01(\x04B\x06ʫ\x1e\x02\b\x01R\tauthNonce\"i\n" +
+	"auth_nonce\x18\x05 \x01(\x04R\tauthNonce\"K\n" +
 	"\bProtocol\x12\x18\n" +
 	"\x14PROTOCOL_UNSPECIFIED\x10\x00\x12\x11\n" +
 	"\rPROTOCOL_HTTP\x10\x01\x12\x12\n" +
-	"\x0ePROTOCOL_HTTPS\x10\x02\x1a\x1c«\x1e\x18\n" +
-	"\fenvironments\x12\bprotocol\x1a4\n" +
+	"\x0ePROTOCOL_HTTPS\x10\x02\x1a4\n" +
 	"\fSSHPublicKey\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\x1a\x84\x02\n" +
@@ -6819,7 +6790,7 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\x15automations_file_path\x18\x02 \x01(\tB]\xbaHZ\xba\x01W\n" +
 	"\rrelative_path\x12*path must not be absolute (start with a /)\x1a\x1athis.matches('^$|^[^/].*')R\x13automationsFilePath\x12C\n" +
 	"\x0etrigger_filter\x18\x03 \x03(\v2\x1c.gitpod.v1.AutomationTriggerR\rtriggerFilterB\x15\n" +
-	"\x13_workflow_action_id\"\xc0\"\n" +
+	"\x13_workflow_action_id\"\x8d\"\n" +
 	"\x11EnvironmentStatus\x12%\n" +
 	"\x0estatus_version\x18\x01 \x01(\x04R\rstatusVersion\x12E\n" +
 	"\n" +
@@ -6840,22 +6811,22 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\x04port\x18\x01 \x01(\x05B\f\xbaH\t\x1a\a\x18\xff\xff\x03(\x80\bR\x04port\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x1a%\n" +
 	"\x11EnvironmentSSHURL\x12\x10\n" +
-	"\x03url\x18\x01 \x01(\tR\x03url\x1a\x93\x02\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url\x1a\x8b\x02\n" +
 	"\x0fEnvironmentURLs\x12@\n" +
 	"\x03ssh\x18\x01 \x01(\v2..gitpod.v1.EnvironmentStatus.EnvironmentSSHURLR\x03ssh\x12E\n" +
 	"\x05ports\x18\x02 \x03(\v2/.gitpod.v1.EnvironmentStatus.EnvironmentPortURLR\x05ports\x12\x12\n" +
 	"\x04logs\x18\x03 \x01(\tR\x04logs\x12%\n" +
 	"\x0esupport_bundle\x18\x04 \x01(\tR\rsupportBundle\x12\x10\n" +
-	"\x03ops\x18\x05 \x01(\tR\x03ops\x12*\n" +
-	"\rvm_live_usage\x18\x06 \x01(\tB\x06ʫ\x1e\x02\b\x01R\vvmLiveUsage\x1a\xf4\x04\n" +
+	"\x03ops\x18\x05 \x01(\tR\x03ops\x12\"\n" +
+	"\rvm_live_usage\x18\x06 \x01(\tR\vvmLiveUsage\x1a\xec\x04\n" +
 	"\aMachine\x12\x18\n" +
 	"\asession\x18\x01 \x01(\tR\asession\x12J\n" +
 	"\x05phase\x18\x02 \x01(\x0e2*.gitpod.v1.EnvironmentStatus.Machine.PhaseB\b\xbaH\x05\x82\x01\x02\x10\x01R\x05phase\x12'\n" +
 	"\x0ffailure_message\x18\x03 \x01(\tR\x0efailureMessage\x12\x18\n" +
 	"\atimeout\x18\x04 \x01(\tR\atimeout\x12I\n" +
 	"\bversions\x18\x05 \x01(\v2-.gitpod.v1.EnvironmentStatus.Machine.VersionsR\bversions\x12'\n" +
-	"\x0fwarning_message\x18\x06 \x01(\tR\x0ewarningMessage\x12#\n" +
-	"\tdual_disk\x18\a \x01(\bB\x06ʫ\x1e\x02\b\x01R\bdualDisk\x1a}\n" +
+	"\x0fwarning_message\x18\x06 \x01(\tR\x0ewarningMessage\x12\x1b\n" +
+	"\tdual_disk\x18\a \x01(\bR\bdualDisk\x1a}\n" +
 	"\bVersions\x12-\n" +
 	"\x12supervisor_version\x18\x01 \x01(\tR\x11supervisorVersion\x12+\n" +
 	"\x11supervisor_commit\x18\x02 \x01(\tR\x10supervisorCommit\x12\x15\n" +
@@ -6937,7 +6908,7 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\x14PRESENCE_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fPRESENCE_ABSENT\x10\x01\x12\x17\n" +
 	"\x13PRESENCE_DISCOVERED\x10\x02\x12\x16\n" +
-	"\x12PRESENCE_SPECIFIED\x10\x03\"\xfa\x01\n" +
+	"\x12PRESENCE_SPECIFIED\x10\x03\"\xd7\x01\n" +
 	"\fContentPhase\x12\x1d\n" +
 	"\x19CONTENT_PHASE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16CONTENT_PHASE_CREATING\x10\n" +
@@ -6946,8 +6917,7 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\x13CONTENT_PHASE_READY\x10\x1e\x12\x1a\n" +
 	"\x16CONTENT_PHASE_UPDATING\x10#\x12\x18\n" +
 	"\x14CONTENT_PHASE_FAILED\x10(\x12\x1d\n" +
-	"\x19CONTENT_PHASE_UNAVAILABLE\x10-\x1a!«\x1e\x1d\n" +
-	"\fenvironments\x12\rcontent_phase\"\xd1\x02\n" +
+	"\x19CONTENT_PHASE_UNAVAILABLE\x10-\"\xd1\x02\n" +
 	"\x14EnvironmentGitStatus\x12\x1b\n" +
 	"\tclone_url\x18\x01 \x01(\tR\bcloneUrl\x12\x16\n" +
 	"\x06branch\x18\x02 \x01(\tR\x06branch\x12#\n" +
@@ -6980,14 +6950,14 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"contextUrlB\r\n" +
 	"\x04spec\x12\x05\xbaH\x02\b\x01\"3\n" +
 	"\x15ContextURLInitializer\x12\x1a\n" +
-	"\x03url\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01R\x03url\"\xf1\x03\n" +
-	"\x0eGitInitializer\x12#\n" +
+	"\x03url\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01R\x03url\"\xe5\x03\n" +
+	"\x0eGitInitializer\x12\x1d\n" +
 	"\n" +
-	"remote_uri\x18\x01 \x01(\tB\x04ګ\x1e\x00R\tremoteUri\x12.\n" +
+	"remote_uri\x18\x01 \x01(\tR\tremoteUri\x12.\n" +
 	"\x13upstream_remote_uri\x18\x02 \x01(\tR\x11upstreamRemoteUri\x12J\n" +
 	"\vtarget_mode\x18\x03 \x01(\x0e2).gitpod.v1.GitInitializer.CloneTargetModeR\n" +
-	"targetMode\x12'\n" +
-	"\fclone_target\x18\x04 \x01(\tB\x04ګ\x1e\x00R\vcloneTarget\x12+\n" +
+	"targetMode\x12!\n" +
+	"\fclone_target\x18\x04 \x01(\tR\vcloneTarget\x12+\n" +
 	"\x11checkout_location\x18\x05 \x01(\tR\x10checkoutLocation\"\xe7\x01\n" +
 	"\x0fCloneTargetMode\x12!\n" +
 	"\x1dCLONE_TARGET_MODE_UNSPECIFIED\x10\x00\x12!\n" +
@@ -6995,18 +6965,15 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\x1fCLONE_TARGET_MODE_REMOTE_COMMIT\x10\x02\x12#\n" +
 	"\x1fCLONE_TARGET_MODE_REMOTE_BRANCH\x10\x03\x12\"\n" +
 	"\x1eCLONE_TARGET_MODE_LOCAL_BRANCH\x10\x04\x12 \n" +
-	"\x1cCLONE_TARGET_MODE_REMOTE_TAG\x10\x05\"^\n" +
-	"\x17StartEnvironmentRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\"\x1a\n" +
-	"\x18StartEnvironmentResponse\"]\n" +
-	"\x16StopEnvironmentRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\"\x19\n" +
-	"\x17StopEnvironmentResponse\"\xe3\x10\n" +
-	"\x18UpdateEnvironmentRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x12M\n" +
+	"\x1cCLONE_TARGET_MODE_REMOTE_TAG\x10\x05\"J\n" +
+	"\x17StartEnvironmentRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\"\x1a\n" +
+	"\x18StartEnvironmentResponse\"I\n" +
+	"\x16StopEnvironmentRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\"\x19\n" +
+	"\x17StopEnvironmentResponse\"\xc7\x10\n" +
+	"\x18UpdateEnvironmentRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x12M\n" +
 	"\bmetadata\x18\x02 \x01(\v2,.gitpod.v1.UpdateEnvironmentRequest.MetadataH\x00R\bmetadata\x88\x01\x01\x12A\n" +
 	"\x04spec\x18\x03 \x01(\v2(.gitpod.v1.UpdateEnvironmentRequest.SpecH\x01R\x04spec\x88\x01\x01\x1a\xf7\x01\n" +
 	"\aContent\x12\x1d\n" +
@@ -7041,10 +7008,10 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\rrelative_path\x12*path must not be absolute (start with a /)\x1a\x1athis.matches('^$|^[^/].*')H\x01R\x13automationsFilePath\x88\x01\x01B\n" +
 	"\n" +
 	"\b_sessionB\x18\n" +
-	"\x16_automations_file_path\x1a\x90\x01\n" +
+	"\x16_automations_file_path\x1a\x88\x01\n" +
 	"\bMetadata\x12!\n" +
-	"\x04name\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\x00R\x04name\x88\x01\x01\x12H\n" +
-	"\vlockdown_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\x06ʫ\x1e\x02\b\x01H\x01R\n" +
+	"\x04name\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\x00R\x04name\x88\x01\x01\x12@\n" +
+	"\vlockdown_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\n" +
 	"lockdownAt\x88\x01\x01B\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_lockdown_at\x1a\xaf\x05\n" +
@@ -7065,55 +7032,48 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\x17_kernel_controls_configB\v\n" +
 	"\t_metadataB\a\n" +
 	"\x05_spec\"\x1b\n" +
-	"\x19UpdateEnvironmentResponse\"u\n" +
-	"\x18DeleteEnvironmentRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x12\x14\n" +
+	"\x19UpdateEnvironmentResponse\"a\n" +
+	"\x18DeleteEnvironmentRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x12\x14\n" +
 	"\x05force\x18\x02 \x01(\bR\x05force\"\x1b\n" +
-	"\x19DeleteEnvironmentResponse\"h\n" +
-	"!CreateEnvironmentLogsTokenRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\"O\n" +
+	"\x19DeleteEnvironmentResponse\"T\n" +
+	"!CreateEnvironmentLogsTokenRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\"O\n" +
 	"\"CreateEnvironmentLogsTokenResponse\x12)\n" +
-	"\faccess_token\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\vaccessToken\"m\n" +
-	"#CreateEnvironmentAccessTokenRequest\x12F\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1f\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\"Q\n" +
+	"\faccess_token\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\vaccessToken\"Y\n" +
+	"#CreateEnvironmentAccessTokenRequest\x122\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\renvironmentId\"Q\n" +
 	"$CreateEnvironmentAccessTokenResponse\x12)\n" +
-	"\faccess_token\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\vaccessToken\"\x84\x01\n" +
-	"\x1cCreatePortAccessTokenRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x12\x1f\n" +
+	"\faccess_token\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\vaccessToken\"p\n" +
+	"\x1cCreatePortAccessTokenRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x12\x1f\n" +
 	"\x04port\x18\x02 \x01(\x05B\v\xbaH\b\x1a\x06\x18\xff\xff\x03(\x01R\x04port\"J\n" +
 	"\x1dCreatePortAccessTokenResponse\x12)\n" +
-	"\faccess_token\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\vaccessToken\"~\n" +
-	"\x16AllowPortAccessRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x12\x1f\n" +
+	"\faccess_token\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\vaccessToken\"j\n" +
+	"\x16AllowPortAccessRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x12\x1f\n" +
 	"\x04port\x18\x02 \x01(\x05B\v\xbaH\b\x1a\x06\x18\xff\xff\x03(\x01R\x04port\"3\n" +
 	"\x17AllowPortAccessResponse\x12\x18\n" +
 	"\aallowed\x18\x01 \x01(\bR\aallowed*\x82\x01\n" +
 	"\x14KernelControlsAction\x12&\n" +
 	"\"KERNEL_CONTROLS_ACTION_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cKERNEL_CONTROLS_ACTION_BLOCK\x10\x01\x12 \n" +
-	"\x1cKERNEL_CONTROLS_ACTION_AUDIT\x10\x02*\xbe\x01\n" +
+	"\x1cKERNEL_CONTROLS_ACTION_AUDIT\x10\x02*\x9e\x01\n" +
 	"\x0fVetoFileSurface\x12!\n" +
 	"\x1dVETO_FILE_SURFACE_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18VETO_FILE_SURFACE_ACCESS\x10\x01\x12&\n" +
 	"\"VETO_FILE_SURFACE_CONTENT_MUTATION\x10\x02\x12\"\n" +
-	"\x1eVETO_FILE_SURFACE_CONTENT_READ\x10\x03\x1a\x1e«\x1e\x1a\n" +
-	"\x16organizations.policies\x18\x01*g\n" +
+	"\x1eVETO_FILE_SURFACE_CONTENT_READ\x10\x03*g\n" +
 	"\rBPFDebugLevel\x12\x1f\n" +
 	"\x1bBPF_DEBUG_LEVEL_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14BPF_DEBUG_LEVEL_INFO\x10\x01\x12\x1b\n" +
-	"\x17BPF_DEBUG_LEVEL_VERBOSE\x10\x02*\xdc\x01\n" +
+	"\x17BPF_DEBUG_LEVEL_VERBOSE\x10\x02*\xb7\x01\n" +
 	"\x0eAdmissionLevel\x12\x1f\n" +
 	"\x1bADMISSION_LEVEL_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1aADMISSION_LEVEL_OWNER_ONLY\x10\x01\x1a\x02\b\x01\x12\x1c\n" +
 	"\x18ADMISSION_LEVEL_EVERYONE\x10\x02\x12 \n" +
 	"\x1cADMISSION_LEVEL_ORGANIZATION\x10\x03\x12 \n" +
-	"\x1cADMISSION_LEVEL_CREATOR_ONLY\x10\x04\x1a#«\x1e\x1f\n" +
-	"\fenvironments\x12\x0fadmission_level*\xd9\x02\n" +
+	"\x1cADMISSION_LEVEL_CREATOR_ONLY\x10\x04*\xb2\x02\n" +
 	"\x10EnvironmentPhase\x12!\n" +
 	"\x1dENVIRONMENT_PHASE_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aENVIRONMENT_PHASE_CREATING\x10\n" +
@@ -7124,36 +7084,29 @@ const file_gitpod_v1_environment_proto_rawDesc = "" +
 	"\x1aENVIRONMENT_PHASE_STOPPING\x102\x12\x1d\n" +
 	"\x19ENVIRONMENT_PHASE_STOPPED\x10<\x12\x1e\n" +
 	"\x1aENVIRONMENT_PHASE_DELETING\x10F\x12\x1d\n" +
-	"\x19ENVIRONMENT_PHASE_DELETED\x10P\x1a%«\x1e!\n" +
-	"\fenvironments\x12\x11environment_phase*\xdf\x01\n" +
+	"\x19ENVIRONMENT_PHASE_DELETED\x10P*\x8f\x01\n" +
 	"\x0fEnvironmentRole\x12 \n" +
 	"\x1cENVIRONMENT_ROLE_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18ENVIRONMENT_ROLE_DEFAULT\x10\x01\x12\x1d\n" +
 	"\x19ENVIRONMENT_ROLE_PREBUILD\x10\x02\x12\x1d\n" +
-	"\x19ENVIRONMENT_ROLE_WORKFLOW\x10\x03\x12(\n" +
-	"$ENVIRONMENT_ROLE_BASE_SNAPSHOT_BUILD\x10\x04\x1a$«\x1e \n" +
-	"\fenvironments\x12\x10environment_role2\xac\x0f\n" +
-	"\x12EnvironmentService\x12h\n" +
-	"\x0eGetEnvironment\x12 .gitpod.v1.GetEnvironmentRequest\x1a!.gitpod.v1.GetEnvironmentResponse\"\x11\xb2\xab\x1e\n" +
-	"\x12\bretrieve\x90\x02\x01\x12j\n" +
-	"\x10ListEnvironments\x12\".gitpod.v1.ListEnvironmentsRequest\x1a#.gitpod.v1.ListEnvironmentsResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x12\x92\x01\n" +
-	"\x16ListEnvironmentClasses\x12(.gitpod.v1.ListEnvironmentClassesRequest\x1a).gitpod.v1.ListEnvironmentClassesResponse\"#\xb2\xab\x1e\x1c\n" +
-	"\x14environments.classes\x12\x04list\x90\x02\x01\x12l\n" +
-	"\x11CreateEnvironment\x12#.gitpod.v1.CreateEnvironmentRequest\x1a$.gitpod.v1.CreateEnvironmentResponse\"\f\xb2\xab\x1e\b\x12\x06create\x12\x9a\x01\n" +
-	"\x1cCreateEnvironmentFromProject\x12..gitpod.v1.CreateEnvironmentFromProjectRequest\x1a/.gitpod.v1.CreateEnvironmentFromProjectResponse\"\x19\xb2\xab\x1e\x15\x12\x13create_from_project\x12h\n" +
-	"\x10StartEnvironment\x12\".gitpod.v1.StartEnvironmentRequest\x1a#.gitpod.v1.StartEnvironmentResponse\"\v\xb2\xab\x1e\a\x12\x05start\x12d\n" +
-	"\x0fStopEnvironment\x12!.gitpod.v1.StopEnvironmentRequest\x1a\".gitpod.v1.StopEnvironmentResponse\"\n" +
-	"\xb2\xab\x1e\x06\x12\x04stop\x12l\n" +
-	"\x11UpdateEnvironment\x12#.gitpod.v1.UpdateEnvironmentRequest\x1a$.gitpod.v1.UpdateEnvironmentResponse\"\f\xb2\xab\x1e\b\x12\x06update\x12l\n" +
-	"\x11DeleteEnvironment\x12#.gitpod.v1.DeleteEnvironmentRequest\x1a$.gitpod.v1.DeleteEnvironmentResponse\"\f\xb2\xab\x1e\b\x12\x06delete\x12\x92\x01\n" +
-	"\x1aCreateEnvironmentLogsToken\x12,.gitpod.v1.CreateEnvironmentLogsTokenRequest\x1a-.gitpod.v1.CreateEnvironmentLogsTokenResponse\"\x17\xb2\xab\x1e\x13\x12\x11create_logs_token\x12\x9f\x01\n" +
-	"\x1cCreateEnvironmentAccessToken\x12..gitpod.v1.CreateEnvironmentAccessTokenRequest\x1a/.gitpod.v1.CreateEnvironmentAccessTokenResponse\"\x1e\xb2\xab\x1e\x1a\x12\x18create_environment_token\x12l\n" +
+	"\x19ENVIRONMENT_ROLE_WORKFLOW\x10\x032\xb7\r\n" +
+	"\x12EnvironmentService\x12Z\n" +
+	"\x0eGetEnvironment\x12 .gitpod.v1.GetEnvironmentRequest\x1a!.gitpod.v1.GetEnvironmentResponse\"\x03\x90\x02\x01\x12`\n" +
+	"\x10ListEnvironments\x12\".gitpod.v1.ListEnvironmentsRequest\x1a#.gitpod.v1.ListEnvironmentsResponse\"\x03\x90\x02\x01\x12r\n" +
+	"\x16ListEnvironmentClasses\x12(.gitpod.v1.ListEnvironmentClassesRequest\x1a).gitpod.v1.ListEnvironmentClassesResponse\"\x03\x90\x02\x01\x12`\n" +
+	"\x11CreateEnvironment\x12#.gitpod.v1.CreateEnvironmentRequest\x1a$.gitpod.v1.CreateEnvironmentResponse\"\x00\x12\x81\x01\n" +
+	"\x1cCreateEnvironmentFromProject\x12..gitpod.v1.CreateEnvironmentFromProjectRequest\x1a/.gitpod.v1.CreateEnvironmentFromProjectResponse\"\x00\x12]\n" +
+	"\x10StartEnvironment\x12\".gitpod.v1.StartEnvironmentRequest\x1a#.gitpod.v1.StartEnvironmentResponse\"\x00\x12Z\n" +
+	"\x0fStopEnvironment\x12!.gitpod.v1.StopEnvironmentRequest\x1a\".gitpod.v1.StopEnvironmentResponse\"\x00\x12`\n" +
+	"\x11UpdateEnvironment\x12#.gitpod.v1.UpdateEnvironmentRequest\x1a$.gitpod.v1.UpdateEnvironmentResponse\"\x00\x12`\n" +
+	"\x11DeleteEnvironment\x12#.gitpod.v1.DeleteEnvironmentRequest\x1a$.gitpod.v1.DeleteEnvironmentResponse\"\x00\x12{\n" +
+	"\x1aCreateEnvironmentLogsToken\x12,.gitpod.v1.CreateEnvironmentLogsTokenRequest\x1a-.gitpod.v1.CreateEnvironmentLogsTokenResponse\"\x00\x12\x81\x01\n" +
+	"\x1cCreateEnvironmentAccessToken\x12..gitpod.v1.CreateEnvironmentAccessTokenRequest\x1a/.gitpod.v1.CreateEnvironmentAccessTokenResponse\"\x00\x12l\n" +
 	"\x15CreatePortAccessToken\x12'.gitpod.v1.CreatePortAccessTokenRequest\x1a(.gitpod.v1.CreatePortAccessTokenResponse\"\x00\x12]\n" +
-	"\x0fAllowPortAccess\x12!.gitpod.v1.AllowPortAccessRequest\x1a\".gitpod.v1.AllowPortAccessResponse\"\x03\x88\x02\x01\x12}\n" +
-	"\x15MarkEnvironmentActive\x12'.gitpod.v1.MarkEnvironmentActiveRequest\x1a(.gitpod.v1.MarkEnvironmentActiveResponse\"\x11\xb2\xab\x1e\r\x12\vmark_active\x12x\n" +
-	"\x14UnarchiveEnvironment\x12&.gitpod.v1.UnarchiveEnvironmentRequest\x1a'.gitpod.v1.UnarchiveEnvironmentResponse\"\x0f\xb2\xab\x1e\v\x12\tunarchive\x12c\n" +
-	"\x12ArchiveEnvironment\x12$.gitpod.v1.ArchiveEnvironmentRequest\x1a%.gitpod.v1.ArchiveEnvironmentResponse\"\x00\x1a\x12\xaa\xab\x1e\x0e\n" +
-	"\fenvironmentsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x0fAllowPortAccess\x12!.gitpod.v1.AllowPortAccessRequest\x1a\".gitpod.v1.AllowPortAccessResponse\"\x03\x88\x02\x01\x12l\n" +
+	"\x15MarkEnvironmentActive\x12'.gitpod.v1.MarkEnvironmentActiveRequest\x1a(.gitpod.v1.MarkEnvironmentActiveResponse\"\x00\x12i\n" +
+	"\x14UnarchiveEnvironment\x12&.gitpod.v1.UnarchiveEnvironmentRequest\x1a'.gitpod.v1.UnarchiveEnvironmentResponse\"\x00\x12c\n" +
+	"\x12ArchiveEnvironment\x12$.gitpod.v1.ArchiveEnvironmentRequest\x1a%.gitpod.v1.ArchiveEnvironmentResponse\"\x00B'Z%github.com/gitpod-io/gitpod-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_environment_proto_rawDescOnce sync.Once
