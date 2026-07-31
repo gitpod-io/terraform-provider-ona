@@ -18,6 +18,7 @@ It covers:
 - `ona_organization_policies`
 - `ona_organization_role_assignment`
 - `ona_project`
+- `ona_project_insights`
 - `ona_warm_pool`
 - `ona_scim_configuration`
 - `ona_security_policy`
