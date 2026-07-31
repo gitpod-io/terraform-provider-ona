@@ -8,9 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -2234,80 +2231,63 @@ var File_gitpod_v1_prebuild_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_prebuild_proto_rawDesc = "" +
 	"\n" +
-	"\x18gitpod/v1/prebuild.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xfc\x01\n" +
-	"\x15CreatePrebuildRequest\x12:\n" +
+	"\x18gitpod/v1/prebuild.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd2\x01\n" +
+	"\x15CreatePrebuildRequest\x12*\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tB\x1b\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12Y\n" +
-	"\x14environment_class_id\x18\x02 \x01(\tB\"\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x16\n" +
-	"\x14environment_class.idH\x00R\x12environmentClassId\x88\x01\x01\x123\n" +
+	"project_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\tprojectId\x12?\n" +
+	"\x14environment_class_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\x12environmentClassId\x88\x01\x01\x123\n" +
 	"\x04spec\x18\x03 \x01(\v2\x17.gitpod.v1.PrebuildSpecB\x06\xbaH\x03\xc8\x01\x01R\x04specB\x17\n" +
 	"\x15_environment_class_id\"Q\n" +
 	"\x16CreatePrebuildResponse\x127\n" +
-	"\bprebuild\x18\x01 \x01(\v2\x13.gitpod.v1.PrebuildB\x06\xbaH\x03\xc8\x01\x01R\bprebuild\"\xd0\x04\n" +
+	"\bprebuild\x18\x01 \x01(\v2\x13.gitpod.v1.PrebuildB\x06\xbaH\x03\xc8\x01\x01R\bprebuild\"\xdb\x03\n" +
 	"\x14ListPrebuildsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12>\n" +
-	"\x06filter\x18\x02 \x01(\v2&.gitpod.v1.ListPrebuildsRequest.FilterR\x06filter\x1a\xb9\x03\n" +
-	"\x06Filter\x12H\n" +
-	"\vproject_ids\x18\x01 \x03(\tB'\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12filter.project_idsR\n" +
-	"projectIds\x12T\n" +
-	"\x06phases\x18\x02 \x03(\x0e2\x18.gitpod.v1.PrebuildPhaseB\"\xbaH\f\x92\x01\t\x10\n" +
-	"\"\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\x0f\n" +
-	"\rfilter.phasesR\x06phases\x12x\n" +
-	"\ftriggered_by\x18\x03 \x03(\x0e2+.gitpod.v1.PrebuildMetadata.PrebuildTriggerB(\xbaH\f\x92\x01\t\x10\x05\"\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\x15\n" +
-	"\x13filter.triggered_byR\vtriggeredBy\x12H\n" +
-	"\vcreator_ids\x18\x04 \x03(\tB'\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12filter.creator_idsR\n" +
-	"creatorIds\x12K\n" +
-	"\fexecutor_ids\x18\x05 \x03(\tB(\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x15\n" +
-	"\x13filter.executor_idsR\vexecutorIds\"\x89\x01\n" +
+	"\x06filter\x18\x02 \x01(\v2&.gitpod.v1.ListPrebuildsRequest.FilterR\x06filter\x1a\xc4\x02\n" +
+	"\x06Filter\x120\n" +
+	"\vproject_ids\x18\x01 \x03(\tB\x0f\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01R\n" +
+	"projectIds\x12A\n" +
+	"\x06phases\x18\x02 \x03(\x0e2\x18.gitpod.v1.PrebuildPhaseB\x0f\xbaH\f\x92\x01\t\x10\n" +
+	"\"\x05\x82\x01\x02\x10\x01R\x06phases\x12_\n" +
+	"\ftriggered_by\x18\x03 \x03(\x0e2+.gitpod.v1.PrebuildMetadata.PrebuildTriggerB\x0f\xbaH\f\x92\x01\t\x10\x05\"\x05\x82\x01\x02\x10\x01R\vtriggeredBy\x120\n" +
+	"\vcreator_ids\x18\x04 \x03(\tB\x0f\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01R\n" +
+	"creatorIds\x122\n" +
+	"\fexecutor_ids\x18\x05 \x03(\tB\x0f\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01R\vexecutorIds\"\x89\x01\n" +
 	"\x15ListPrebuildsResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x121\n" +
-	"\tprebuilds\x18\x02 \x03(\v2\x13.gitpod.v1.PrebuildR\tprebuilds\"S\n" +
-	"\x12GetPrebuildRequest\x12=\n" +
-	"\vprebuild_id\x18\x01 \x01(\tB\x1c\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vprebuild.idR\n" +
+	"\tprebuilds\x18\x02 \x03(\v2\x13.gitpod.v1.PrebuildR\tprebuilds\"B\n" +
+	"\x12GetPrebuildRequest\x12,\n" +
+	"\vprebuild_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\n" +
 	"prebuildId\"N\n" +
 	"\x13GetPrebuildResponse\x127\n" +
-	"\bprebuild\x18\x01 \x01(\v2\x13.gitpod.v1.PrebuildB\x06\xbaH\x03\xc8\x01\x01R\bprebuild\"V\n" +
-	"\x15CancelPrebuildRequest\x12=\n" +
-	"\vprebuild_id\x18\x01 \x01(\tB\x1c\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vprebuild.idR\n" +
+	"\bprebuild\x18\x01 \x01(\v2\x13.gitpod.v1.PrebuildB\x06\xbaH\x03\xc8\x01\x01R\bprebuild\"E\n" +
+	"\x15CancelPrebuildRequest\x12,\n" +
+	"\vprebuild_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\n" +
 	"prebuildId\"Q\n" +
 	"\x16CancelPrebuildResponse\x127\n" +
-	"\bprebuild\x18\x01 \x01(\v2\x13.gitpod.v1.PrebuildB\x06\xbaH\x03\xc8\x01\x01R\bprebuild\"V\n" +
-	"\x15DeletePrebuildRequest\x12=\n" +
-	"\vprebuild_id\x18\x01 \x01(\tB\x1c\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vprebuild.idR\n" +
+	"\bprebuild\x18\x01 \x01(\v2\x13.gitpod.v1.PrebuildB\x06\xbaH\x03\xc8\x01\x01R\bprebuild\"E\n" +
+	"\x15DeletePrebuildRequest\x12,\n" +
+	"\vprebuild_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\n" +
 	"prebuildId\"\x18\n" +
-	"\x16DeletePrebuildResponse\"_\n" +
-	"\x1eCreatePrebuildLogsTokenRequest\x12=\n" +
-	"\vprebuild_id\x18\x01 \x01(\tB\x1c\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vprebuild.idR\n" +
+	"\x16DeletePrebuildResponse\"N\n" +
+	"\x1eCreatePrebuildLogsTokenRequest\x12,\n" +
+	"\vprebuild_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\n" +
 	"prebuildId\"L\n" +
 	"\x1fCreatePrebuildLogsTokenResponse\x12)\n" +
-	"\faccess_token\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\vaccessToken\"\xe6\x01\n" +
-	"\bPrebuild\x12)\n" +
-	"\x02id\x18\x01 \x01(\tB\x19\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vprebuild.idR\x02id\x12?\n" +
+	"\faccess_token\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\vaccessToken\"\xd5\x01\n" +
+	"\bPrebuild\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12?\n" +
 	"\bmetadata\x18\x02 \x01(\v2\x1b.gitpod.v1.PrebuildMetadataB\x06\xbaH\x03\xc8\x01\x01R\bmetadata\x123\n" +
 	"\x04spec\x18\x03 \x01(\v2\x17.gitpod.v1.PrebuildSpecB\x06\xbaH\x03\xc8\x01\x01R\x04spec\x129\n" +
-	"\x06status\x18\x04 \x01(\v2\x19.gitpod.v1.PrebuildStatusB\x06\xbaH\x03\xc8\x01\x01R\x06status\"\xa1\x05\n" +
-	"\x10PrebuildMetadata\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x127\n" +
+	"\x06status\x18\x04 \x01(\v2\x19.gitpod.v1.PrebuildStatusB\x06\xbaH\x03\xc8\x01\x01R\x06status\"\xe2\x04\n" +
+	"\x10PrebuildMetadata\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12'\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12T\n" +
-	"\x14environment_class_id\x18\x03 \x01(\tB\"\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x16\n" +
-	"\x14environment_class.idR\x12environmentClassId\x124\n" +
+	"project_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tprojectId\x12:\n" +
+	"\x14environment_class_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x12environmentClassId\x124\n" +
 	"\acreator\x18\x04 \x01(\v2\x12.gitpod.v1.SubjectB\x06\xbaH\x03\xc8\x01\x01R\acreator\x12A\n" +
 	"\n" +
 	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\tcreatedAt\x12A\n" +
@@ -2323,58 +2303,50 @@ const file_gitpod_v1_prebuild_proto_rawDesc = "" +
 	"\fspec_version\x18\x01 \x01(\x04R\vspecVersion\x12G\n" +
 	"\rdesired_phase\x18\x02 \x01(\x0e2\x18.gitpod.v1.PrebuildPhaseB\b\xbaH\x05\x82\x01\x02\x10\x01R\fdesiredPhase\x12E\n" +
 	"\atimeout\x18\x03 \x01(\v2\x19.google.protobuf.DurationB\x10\xbaH\r\xaa\x01\n" +
-	"\"\x03\b\xa082\x03\b\xac\x02R\atimeout\"\xf4\x03\n" +
+	"\"\x03\b\xa082\x03\b\xac\x02R\atimeout\"\xe0\x03\n" +
 	"\x0ePrebuildStatus\x12;\n" +
 	"\x05phase\x18\x01 \x01(\x0e2\x18.gitpod.v1.PrebuildPhaseB\v\xbaH\b\xc8\x01\x01\x82\x01\x02\x10\x01R\x05phase\x12C\n" +
 	"\x0fcompletion_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x0ecompletionTime\x12'\n" +
 	"\x0ffailure_message\x18\x03 \x01(\tR\x0efailureMessage\x12!\n" +
-	"\alog_url\x18\x04 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01R\x06logUrl\x12C\n" +
-	"\x0eenvironment_id\x18\x05 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x12%\n" +
+	"\alog_url\x18\x04 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01R\x06logUrl\x12/\n" +
+	"\x0eenvironment_id\x18\x05 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x12%\n" +
 	"\x0estatus_version\x18\x06 \x01(\x04R\rstatusVersion\x12'\n" +
 	"\x0fwarning_message\x18\a \x01(\tR\x0ewarningMessage\x12O\n" +
 	"\x1esnapshot_completion_percentage\x18\b \x01(\x05B\t\xbaH\x06\x1a\x04\x18d(\x00R\x1csnapshotCompletionPercentage\x12.\n" +
-	"\x13snapshot_size_bytes\x18\t \x01(\x03R\x11snapshotSizeBytes\"\xcf\x02\n" +
-	"\x15CreateWarmPoolRequest\x12:\n" +
+	"\x13snapshot_size_bytes\x18\t \x01(\x03R\x11snapshotSizeBytes\"\xa5\x02\n" +
+	"\x15CreateWarmPoolRequest\x12*\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tB\x1b\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12W\n" +
-	"\x14environment_class_id\x18\x02 \x01(\tB%\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x16\n" +
-	"\x14environment_class.idR\x12environmentClassId\x121\n" +
+	"project_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\tprojectId\x12=\n" +
+	"\x14environment_class_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x12environmentClassId\x121\n" +
 	"\fdesired_size\x18\x03 \x01(\x05B\x0e\xbaH\t\xd8\x01\x01\x1a\x04\x18\x14(\x01\x18\x01R\vdesiredSize\x12)\n" +
 	"\bmin_size\x18\x04 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x14(\x00H\x00R\aminSize\x88\x01\x01\x12)\n" +
 	"\bmax_size\x18\x05 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x14(\x01H\x01R\amaxSize\x88\x01\x01B\v\n" +
 	"\t_min_sizeB\v\n" +
 	"\t_max_size\"R\n" +
 	"\x16CreateWarmPoolResponse\x128\n" +
-	"\twarm_pool\x18\x01 \x01(\v2\x13.gitpod.v1.WarmPoolB\x06\xbaH\x03\xc8\x01\x01R\bwarmPool\"U\n" +
-	"\x12GetWarmPoolRequest\x12?\n" +
-	"\fwarm_pool_id\x18\x01 \x01(\tB\x1d\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x0e\n" +
-	"\fwarm_pool.idR\n" +
+	"\twarm_pool\x18\x01 \x01(\v2\x13.gitpod.v1.WarmPoolB\x06\xbaH\x03\xc8\x01\x01R\bwarmPool\"C\n" +
+	"\x12GetWarmPoolRequest\x12-\n" +
+	"\fwarm_pool_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\n" +
 	"warmPoolId\"O\n" +
 	"\x13GetWarmPoolResponse\x128\n" +
-	"\twarm_pool\x18\x01 \x01(\v2\x13.gitpod.v1.WarmPoolB\x06\xbaH\x03\xc8\x01\x01R\bwarmPool\"\xd0\x02\n" +
+	"\twarm_pool\x18\x01 \x01(\v2\x13.gitpod.v1.WarmPoolB\x06\xbaH\x03\xc8\x01\x01R\bwarmPool\"\x95\x02\n" +
 	"\x14ListWarmPoolsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12>\n" +
-	"\x06filter\x18\x02 \x01(\v2&.gitpod.v1.ListWarmPoolsRequest.FilterR\x06filter\x1a\xb9\x01\n" +
-	"\x06Filter\x12H\n" +
-	"\vproject_ids\x18\x01 \x03(\tB'\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12filter.project_idsR\n" +
-	"projectIds\x12e\n" +
-	"\x15environment_class_ids\x18\x02 \x03(\tB1\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1e\n" +
-	"\x1cfilter.environment_class_idsR\x13environmentClassIds\"\x8a\x01\n" +
+	"\x06filter\x18\x02 \x01(\v2&.gitpod.v1.ListWarmPoolsRequest.FilterR\x06filter\x1a\x7f\n" +
+	"\x06Filter\x120\n" +
+	"\vproject_ids\x18\x01 \x03(\tB\x0f\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01R\n" +
+	"projectIds\x12C\n" +
+	"\x15environment_class_ids\x18\x02 \x03(\tB\x0f\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01R\x13environmentClassIds\"\x8a\x01\n" +
 	"\x15ListWarmPoolsResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x122\n" +
 	"\n" +
-	"warm_pools\x18\x02 \x03(\v2\x13.gitpod.v1.WarmPoolR\twarmPools\"\x8e\x02\n" +
-	"\x15UpdateWarmPoolRequest\x12?\n" +
-	"\fwarm_pool_id\x18\x01 \x01(\tB\x1d\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x0e\n" +
-	"\fwarm_pool.idR\n" +
+	"warm_pools\x18\x02 \x03(\v2\x13.gitpod.v1.WarmPoolR\twarmPools\"\xfc\x01\n" +
+	"\x15UpdateWarmPoolRequest\x12-\n" +
+	"\fwarm_pool_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\n" +
 	"warmPoolId\x123\n" +
 	"\fdesired_size\x18\x02 \x01(\x05B\v\xbaH\x06\x1a\x04\x18\x14(\x01\x18\x01H\x00R\vdesiredSize\x88\x01\x01\x12)\n" +
 	"\bmin_size\x18\x03 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x14(\x00H\x01R\aminSize\x88\x01\x01\x12)\n" +
@@ -2383,46 +2355,34 @@ const file_gitpod_v1_prebuild_proto_rawDesc = "" +
 	"\t_min_sizeB\v\n" +
 	"\t_max_size\"R\n" +
 	"\x16UpdateWarmPoolResponse\x128\n" +
-	"\twarm_pool\x18\x01 \x01(\v2\x13.gitpod.v1.WarmPoolB\x06\xbaH\x03\xc8\x01\x01R\bwarmPool\"X\n" +
-	"\x15DeleteWarmPoolRequest\x12?\n" +
-	"\fwarm_pool_id\x18\x01 \x01(\tB\x1d\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x0e\n" +
-	"\fwarm_pool.idR\n" +
+	"\twarm_pool\x18\x01 \x01(\v2\x13.gitpod.v1.WarmPoolB\x06\xbaH\x03\xc8\x01\x01R\bwarmPool\"F\n" +
+	"\x15DeleteWarmPoolRequest\x12-\n" +
+	"\fwarm_pool_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\n" +
 	"warmPoolId\"\x18\n" +
-	"\x16DeleteWarmPoolResponse\"\xf9\x01\n" +
-	"\bWarmPool\x12.\n" +
-	"\x02id\x18\x01 \x01(\tB\x1e\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x0e\n" +
-	"\fwarm_pool.idګ\x1e\x00R\x02id\x12C\n" +
-	"\bmetadata\x18\x02 \x01(\v2\x1b.gitpod.v1.WarmPoolMetadataB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\bmetadata\x127\n" +
-	"\x04spec\x18\x03 \x01(\v2\x17.gitpod.v1.WarmPoolSpecB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x04spec\x129\n" +
-	"\x06status\x18\x04 \x01(\v2\x19.gitpod.v1.WarmPoolStatusB\x06\xbaH\x03\xc8\x01\x01R\x06status:\x04ҫ\x1e\x00\"\xbd\x03\n" +
-	"\x10WarmPoolMetadata\x12J\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB!\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idګ\x1e\x00R\x0eorganizationId\x12;\n" +
+	"\x16DeleteWarmPoolResponse\"\xd5\x01\n" +
+	"\bWarmPool\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12?\n" +
+	"\bmetadata\x18\x02 \x01(\v2\x1b.gitpod.v1.WarmPoolMetadataB\x06\xbaH\x03\xc8\x01\x01R\bmetadata\x123\n" +
+	"\x04spec\x18\x03 \x01(\v2\x17.gitpod.v1.WarmPoolSpecB\x06\xbaH\x03\xc8\x01\x01R\x04spec\x129\n" +
+	"\x06status\x18\x04 \x01(\v2\x19.gitpod.v1.WarmPoolStatusB\x06\xbaH\x03\xc8\x01\x01R\x06status\"\xd7\x02\n" +
+	"\x10WarmPoolMetadata\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12'\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
+	"project_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tprojectId\x12:\n" +
+	"\x14environment_class_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x12environmentClassId\x12%\n" +
+	"\trunner_id\x18\x04 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12A\n" +
 	"\n" +
-	"project.idګ\x1e\x00R\tprojectId\x12X\n" +
-	"\x14environment_class_id\x18\x03 \x01(\tB&\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x16\n" +
-	"\x14environment_class.idګ\x1e\x00R\x12environmentClassId\x128\n" +
-	"\trunner_id\x18\x04 \x01(\tB\x1b\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idګ\x1e\x00R\brunnerId\x12E\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\tcreatedAt\x12A\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\tcreatedAt\x12E\n" +
-	"\n" +
-	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\tupdatedAt\"\xfd\x02\n" +
+	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\tupdatedAt\"\xe0\x02\n" +
 	"\fWarmPoolSpec\x12!\n" +
 	"\fspec_version\x18\x01 \x01(\x04R\vspecVersion\x121\n" +
-	"\fdesired_size\x18\x02 \x01(\x05B\x0e\xbaH\t\xd8\x01\x01\x1a\x04\x18\x14(\x01\x18\x01R\vdesiredSize\x12F\n" +
-	"\vsnapshot_id\x18\x03 \x01(\tB \xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vsnapshot.idګ\x1e\x00H\x00R\n" +
+	"\fdesired_size\x18\x02 \x01(\x05B\x0e\xbaH\t\xd8\x01\x01\x1a\x04\x18\x14(\x01\x18\x01R\vdesiredSize\x121\n" +
+	"\vsnapshot_id\x18\x03 \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01H\x00R\n" +
 	"snapshotId\x88\x01\x01\x12G\n" +
-	"\rdesired_phase\x18\x04 \x01(\x0e2\x18.gitpod.v1.WarmPoolPhaseB\b\xbaH\x05\x82\x01\x02\x10\x01R\fdesiredPhase\x12-\n" +
-	"\bmin_size\x18\x05 \x01(\x05B\r\xbaH\x06\x1a\x04\x18\x14(\x00ګ\x1e\x00H\x01R\aminSize\x88\x01\x01\x12-\n" +
-	"\bmax_size\x18\x06 \x01(\x05B\r\xbaH\x06\x1a\x04\x18\x14(\x01ګ\x1e\x00H\x02R\amaxSize\x88\x01\x01B\x0e\n" +
+	"\rdesired_phase\x18\x04 \x01(\x0e2\x18.gitpod.v1.WarmPoolPhaseB\b\xbaH\x05\x82\x01\x02\x10\x01R\fdesiredPhase\x12)\n" +
+	"\bmin_size\x18\x05 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x14(\x00H\x01R\aminSize\x88\x01\x01\x12)\n" +
+	"\bmax_size\x18\x06 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x14(\x01H\x02R\amaxSize\x88\x01\x01B\x0e\n" +
 	"\f_snapshot_idB\v\n" +
 	"\t_min_sizeB\v\n" +
 	"\t_max_size\"\x9a\x02\n" +
@@ -2432,7 +2392,7 @@ const file_gitpod_v1_prebuild_proto_rawDesc = "" +
 	"\x0estatus_version\x18\x03 \x01(\x04R\rstatusVersion\x12+\n" +
 	"\x11running_instances\x18\x04 \x01(\x05R\x10runningInstances\x12+\n" +
 	"\x11stopped_instances\x18\x05 \x01(\x05R\x10stoppedInstances\x12!\n" +
-	"\fdesired_size\x18\x06 \x01(\x05R\vdesiredSize*\x82\x03\n" +
+	"\fdesired_size\x18\x06 \x01(\x05R\vdesiredSize*\xf1\x02\n" +
 	"\rPrebuildPhase\x12\x1e\n" +
 	"\x1aPREBUILD_PHASE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16PREBUILD_PHASE_PENDING\x10\n" +
@@ -2446,8 +2406,7 @@ const file_gitpod_v1_prebuild_proto_rawDesc = "" +
 	"\x19PREBUILD_PHASE_CANCELLING\x10K\x12\x1c\n" +
 	"\x18PREBUILD_PHASE_CANCELLED\x10P\x12\x1b\n" +
 	"\x17PREBUILD_PHASE_DELETING\x10U\x12\x1a\n" +
-	"\x16PREBUILD_PHASE_DELETED\x10Z\x1a\x0f«\x1e\v\n" +
-	"\tprebuilds*\xd2\x01\n" +
+	"\x16PREBUILD_PHASE_DELETED\x10Z*\xc1\x01\n" +
 	"\rWarmPoolPhase\x12\x1f\n" +
 	"\x1bWARM_POOL_PHASE_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17WARM_POOL_PHASE_PENDING\x10\n" +
@@ -2455,22 +2414,19 @@ const file_gitpod_v1_prebuild_proto_rawDesc = "" +
 	"\x15WARM_POOL_PHASE_READY\x10\x14\x12\x1c\n" +
 	"\x18WARM_POOL_PHASE_DEGRADED\x10\x1e\x12\x1c\n" +
 	"\x18WARM_POOL_PHASE_DELETING\x10(\x12\x1b\n" +
-	"\x17WARM_POOL_PHASE_DELETED\x102\x1a\x0f«\x1e\v\n" +
-	"\tprebuilds2\xc7\t\n" +
-	"\x0fPrebuildService\x12c\n" +
-	"\x0eCreatePrebuild\x12 .gitpod.v1.CreatePrebuildRequest\x1a!.gitpod.v1.CreatePrebuildResponse\"\f\xb2\xab\x1e\b\x12\x06create\x12a\n" +
-	"\rListPrebuilds\x12\x1f.gitpod.v1.ListPrebuildsRequest\x1a .gitpod.v1.ListPrebuildsResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x12_\n" +
-	"\vGetPrebuild\x12\x1d.gitpod.v1.GetPrebuildRequest\x1a\x1e.gitpod.v1.GetPrebuildResponse\"\x11\xb2\xab\x1e\n" +
-	"\x12\bretrieve\x90\x02\x01\x12c\n" +
-	"\x0eCancelPrebuild\x12 .gitpod.v1.CancelPrebuildRequest\x1a!.gitpod.v1.CancelPrebuildResponse\"\f\xb2\xab\x1e\b\x12\x06cancel\x12c\n" +
-	"\x0eDeletePrebuild\x12 .gitpod.v1.DeletePrebuildRequest\x1a!.gitpod.v1.DeletePrebuildResponse\"\f\xb2\xab\x1e\b\x12\x06delete\x12\x89\x01\n" +
-	"\x17CreatePrebuildLogsToken\x12).gitpod.v1.CreatePrebuildLogsTokenRequest\x1a*.gitpod.v1.CreatePrebuildLogsTokenResponse\"\x17\xb2\xab\x1e\x13\x12\x11create_logs_token\x12m\n" +
-	"\x0eCreateWarmPool\x12 .gitpod.v1.CreateWarmPoolRequest\x1a!.gitpod.v1.CreateWarmPoolResponse\"\x16\xb2\xab\x1e\x12\x12\x10create_warm_pool\x12i\n" +
-	"\vGetWarmPool\x12\x1d.gitpod.v1.GetWarmPoolRequest\x1a\x1e.gitpod.v1.GetWarmPoolResponse\"\x1b\xb2\xab\x1e\x14\x12\x12retrieve_warm_pool\x90\x02\x01\x12l\n" +
-	"\rListWarmPools\x12\x1f.gitpod.v1.ListWarmPoolsRequest\x1a .gitpod.v1.ListWarmPoolsResponse\"\x18\xb2\xab\x1e\x11\x12\x0flist_warm_pools\x90\x02\x01\x12m\n" +
-	"\x0eUpdateWarmPool\x12 .gitpod.v1.UpdateWarmPoolRequest\x1a!.gitpod.v1.UpdateWarmPoolResponse\"\x16\xb2\xab\x1e\x12\x12\x10update_warm_pool\x12m\n" +
-	"\x0eDeleteWarmPool\x12 .gitpod.v1.DeleteWarmPoolRequest\x1a!.gitpod.v1.DeleteWarmPoolResponse\"\x16\xb2\xab\x1e\x12\x12\x10delete_warm_pool\x1a\x0f\xaa\xab\x1e\v\n" +
-	"\tprebuildsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x17WARM_POOL_PHASE_DELETED\x1022\xf3\a\n" +
+	"\x0fPrebuildService\x12W\n" +
+	"\x0eCreatePrebuild\x12 .gitpod.v1.CreatePrebuildRequest\x1a!.gitpod.v1.CreatePrebuildResponse\"\x00\x12W\n" +
+	"\rListPrebuilds\x12\x1f.gitpod.v1.ListPrebuildsRequest\x1a .gitpod.v1.ListPrebuildsResponse\"\x03\x90\x02\x01\x12Q\n" +
+	"\vGetPrebuild\x12\x1d.gitpod.v1.GetPrebuildRequest\x1a\x1e.gitpod.v1.GetPrebuildResponse\"\x03\x90\x02\x01\x12W\n" +
+	"\x0eCancelPrebuild\x12 .gitpod.v1.CancelPrebuildRequest\x1a!.gitpod.v1.CancelPrebuildResponse\"\x00\x12W\n" +
+	"\x0eDeletePrebuild\x12 .gitpod.v1.DeletePrebuildRequest\x1a!.gitpod.v1.DeletePrebuildResponse\"\x00\x12r\n" +
+	"\x17CreatePrebuildLogsToken\x12).gitpod.v1.CreatePrebuildLogsTokenRequest\x1a*.gitpod.v1.CreatePrebuildLogsTokenResponse\"\x00\x12W\n" +
+	"\x0eCreateWarmPool\x12 .gitpod.v1.CreateWarmPoolRequest\x1a!.gitpod.v1.CreateWarmPoolResponse\"\x00\x12Q\n" +
+	"\vGetWarmPool\x12\x1d.gitpod.v1.GetWarmPoolRequest\x1a\x1e.gitpod.v1.GetWarmPoolResponse\"\x03\x90\x02\x01\x12W\n" +
+	"\rListWarmPools\x12\x1f.gitpod.v1.ListWarmPoolsRequest\x1a .gitpod.v1.ListWarmPoolsResponse\"\x03\x90\x02\x01\x12W\n" +
+	"\x0eUpdateWarmPool\x12 .gitpod.v1.UpdateWarmPoolRequest\x1a!.gitpod.v1.UpdateWarmPoolResponse\"\x00\x12W\n" +
+	"\x0eDeleteWarmPool\x12 .gitpod.v1.DeleteWarmPoolRequest\x1a!.gitpod.v1.DeleteWarmPoolResponse\"\x00B'Z%github.com/gitpod-io/gitpod-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_prebuild_proto_rawDescOnce sync.Once

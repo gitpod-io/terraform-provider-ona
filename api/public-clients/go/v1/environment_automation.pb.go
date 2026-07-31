@@ -8,8 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
 	_ "github.com/google/gnostic/openapiv3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -2247,113 +2245,6 @@ func (*StopTaskExecutionResponse) Descriptor() ([]byte, []int) {
 	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{38}
 }
 
-type UpdateTaskExecutionStatusRequest struct {
-	state protoimpl.MessageState      `protogen:"open.v1"`
-	Id    string                      `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Steps []*TaskExecutionStatus_Step `protobuf:"bytes,2,rep,name=steps,proto3" json:"steps,omitempty"`
-	// failure_message marks the task execution as failed and provides a message explaining the failure.
-	// If an individual step has failed, callers are NOT expected to set this message; only if the task execution as a whole has failed/cannot be started.
-	FailureMessage *string `protobuf:"bytes,3,opt,name=failure_message,json=failureMessage,proto3,oneof" json:"failure_message,omitempty"`
-	// log_url is the URL to the logs of the task's steps. If this is empty, the task either has no logs or has not yet started.
-	LogUrl        *string `protobuf:"bytes,4,opt,name=log_url,json=logUrl,proto3,oneof" json:"log_url,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateTaskExecutionStatusRequest) Reset() {
-	*x = UpdateTaskExecutionStatusRequest{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[39]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateTaskExecutionStatusRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateTaskExecutionStatusRequest) ProtoMessage() {}
-
-func (x *UpdateTaskExecutionStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[39]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateTaskExecutionStatusRequest.ProtoReflect.Descriptor instead.
-func (*UpdateTaskExecutionStatusRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{39}
-}
-
-func (x *UpdateTaskExecutionStatusRequest) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *UpdateTaskExecutionStatusRequest) GetSteps() []*TaskExecutionStatus_Step {
-	if x != nil {
-		return x.Steps
-	}
-	return nil
-}
-
-func (x *UpdateTaskExecutionStatusRequest) GetFailureMessage() string {
-	if x != nil && x.FailureMessage != nil {
-		return *x.FailureMessage
-	}
-	return ""
-}
-
-func (x *UpdateTaskExecutionStatusRequest) GetLogUrl() string {
-	if x != nil && x.LogUrl != nil {
-		return *x.LogUrl
-	}
-	return ""
-}
-
-type UpdateTaskExecutionStatusResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateTaskExecutionStatusResponse) Reset() {
-	*x = UpdateTaskExecutionStatusResponse{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[40]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateTaskExecutionStatusResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateTaskExecutionStatusResponse) ProtoMessage() {}
-
-func (x *UpdateTaskExecutionStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[40]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateTaskExecutionStatusResponse.ProtoReflect.Descriptor instead.
-func (*UpdateTaskExecutionStatusResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{40}
-}
-
 type TaskMetadata struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// reference is a user-facing identifier for the task which must be unique on the environment.
@@ -2376,7 +2267,7 @@ type TaskMetadata struct {
 
 func (x *TaskMetadata) Reset() {
 	*x = TaskMetadata{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[41]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2388,7 +2279,7 @@ func (x *TaskMetadata) String() string {
 func (*TaskMetadata) ProtoMessage() {}
 
 func (x *TaskMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[41]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2401,7 +2292,7 @@ func (x *TaskMetadata) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskMetadata.ProtoReflect.Descriptor instead.
 func (*TaskMetadata) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{41}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *TaskMetadata) GetReference() string {
@@ -2466,7 +2357,7 @@ type TaskSpec struct {
 
 func (x *TaskSpec) Reset() {
 	*x = TaskSpec{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[42]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2478,7 +2369,7 @@ func (x *TaskSpec) String() string {
 func (*TaskSpec) ProtoMessage() {}
 
 func (x *TaskSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[42]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2491,7 +2382,7 @@ func (x *TaskSpec) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskSpec.ProtoReflect.Descriptor instead.
 func (*TaskSpec) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{42}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *TaskSpec) GetCommand() string {
@@ -2536,7 +2427,7 @@ type Task struct {
 
 func (x *Task) Reset() {
 	*x = Task{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[43]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2548,7 +2439,7 @@ func (x *Task) String() string {
 func (*Task) ProtoMessage() {}
 
 func (x *Task) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[43]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2561,7 +2452,7 @@ func (x *Task) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Task.ProtoReflect.Descriptor instead.
 func (*Task) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{43}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *Task) GetId() string {
@@ -2612,7 +2503,7 @@ type RunsOn struct {
 
 func (x *RunsOn) Reset() {
 	*x = RunsOn{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[44]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2624,7 +2515,7 @@ func (x *RunsOn) String() string {
 func (*RunsOn) ProtoMessage() {}
 
 func (x *RunsOn) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[44]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2637,7 +2528,7 @@ func (x *RunsOn) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunsOn.ProtoReflect.Descriptor instead.
 func (*RunsOn) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{44}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *RunsOn) GetTarget() isRunsOn_Target {
@@ -2698,7 +2589,7 @@ type EnvironmentVariableItem struct {
 
 func (x *EnvironmentVariableItem) Reset() {
 	*x = EnvironmentVariableItem{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[45]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2710,7 +2601,7 @@ func (x *EnvironmentVariableItem) String() string {
 func (*EnvironmentVariableItem) ProtoMessage() {}
 
 func (x *EnvironmentVariableItem) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[45]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2723,7 +2614,7 @@ func (x *EnvironmentVariableItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnvironmentVariableItem.ProtoReflect.Descriptor instead.
 func (*EnvironmentVariableItem) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{45}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *EnvironmentVariableItem) GetName() string {
@@ -2789,7 +2680,7 @@ type EnvironmentVariableSource struct {
 
 func (x *EnvironmentVariableSource) Reset() {
 	*x = EnvironmentVariableSource{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[46]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2801,7 +2692,7 @@ func (x *EnvironmentVariableSource) String() string {
 func (*EnvironmentVariableSource) ProtoMessage() {}
 
 func (x *EnvironmentVariableSource) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[46]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2814,7 +2705,7 @@ func (x *EnvironmentVariableSource) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnvironmentVariableSource.ProtoReflect.Descriptor instead.
 func (*EnvironmentVariableSource) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{46}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *EnvironmentVariableSource) GetSource() isEnvironmentVariableSource_Source {
@@ -2855,7 +2746,7 @@ type SecretRef struct {
 
 func (x *SecretRef) Reset() {
 	*x = SecretRef{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[47]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2867,7 +2758,7 @@ func (x *SecretRef) String() string {
 func (*SecretRef) ProtoMessage() {}
 
 func (x *SecretRef) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[47]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2880,7 +2771,7 @@ func (x *SecretRef) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SecretRef.ProtoReflect.Descriptor instead.
 func (*SecretRef) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{47}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *SecretRef) GetId() string {
@@ -2902,7 +2793,7 @@ type TaskExecution struct {
 
 func (x *TaskExecution) Reset() {
 	*x = TaskExecution{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[48]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2914,7 +2805,7 @@ func (x *TaskExecution) String() string {
 func (*TaskExecution) ProtoMessage() {}
 
 func (x *TaskExecution) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[48]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2927,7 +2818,7 @@ func (x *TaskExecution) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskExecution.ProtoReflect.Descriptor instead.
 func (*TaskExecution) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{48}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *TaskExecution) GetId() string {
@@ -2980,7 +2871,7 @@ type TaskExecutionMetadata struct {
 
 func (x *TaskExecutionMetadata) Reset() {
 	*x = TaskExecutionMetadata{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[49]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2992,7 +2883,7 @@ func (x *TaskExecutionMetadata) String() string {
 func (*TaskExecutionMetadata) ProtoMessage() {}
 
 func (x *TaskExecutionMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[49]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3005,7 +2896,7 @@ func (x *TaskExecutionMetadata) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskExecutionMetadata.ProtoReflect.Descriptor instead.
 func (*TaskExecutionMetadata) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{49}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *TaskExecutionMetadata) GetTaskId() string {
@@ -3070,7 +2961,7 @@ type TaskExecutionSpec struct {
 
 func (x *TaskExecutionSpec) Reset() {
 	*x = TaskExecutionSpec{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[50]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3082,7 +2973,7 @@ func (x *TaskExecutionSpec) String() string {
 func (*TaskExecutionSpec) ProtoMessage() {}
 
 func (x *TaskExecutionSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[50]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3095,7 +2986,7 @@ func (x *TaskExecutionSpec) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskExecutionSpec.ProtoReflect.Descriptor instead.
 func (*TaskExecutionSpec) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{50}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *TaskExecutionSpec) GetPlan() []*TaskExecutionSpec_Group {
@@ -3137,7 +3028,7 @@ type TaskExecutionStatus struct {
 
 func (x *TaskExecutionStatus) Reset() {
 	*x = TaskExecutionStatus{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[51]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3149,7 +3040,7 @@ func (x *TaskExecutionStatus) String() string {
 func (*TaskExecutionStatus) ProtoMessage() {}
 
 func (x *TaskExecutionStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[51]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3162,7 +3053,7 @@ func (x *TaskExecutionStatus) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskExecutionStatus.ProtoReflect.Descriptor instead.
 func (*TaskExecutionStatus) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{51}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *TaskExecutionStatus) GetStatusVersion() uint64 {
@@ -3227,7 +3118,7 @@ type AutomationTrigger struct {
 
 func (x *AutomationTrigger) Reset() {
 	*x = AutomationTrigger{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[52]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3239,7 +3130,7 @@ func (x *AutomationTrigger) String() string {
 func (*AutomationTrigger) ProtoMessage() {}
 
 func (x *AutomationTrigger) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[52]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3252,7 +3143,7 @@ func (x *AutomationTrigger) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AutomationTrigger.ProtoReflect.Descriptor instead.
 func (*AutomationTrigger) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{52}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *AutomationTrigger) GetTrigger() isAutomationTrigger_Trigger {
@@ -3382,7 +3273,7 @@ type ServiceSpec_Commands struct {
 
 func (x *ServiceSpec_Commands) Reset() {
 	*x = ServiceSpec_Commands{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[53]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3394,7 +3285,7 @@ func (x *ServiceSpec_Commands) String() string {
 func (*ServiceSpec_Commands) ProtoMessage() {}
 
 func (x *ServiceSpec_Commands) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[53]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3447,7 +3338,7 @@ type ListServicesRequest_Filter struct {
 
 func (x *ListServicesRequest_Filter) Reset() {
 	*x = ListServicesRequest_Filter{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[55]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3459,7 +3350,7 @@ func (x *ListServicesRequest_Filter) String() string {
 func (*ListServicesRequest_Filter) ProtoMessage() {}
 
 func (x *ListServicesRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[55]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3512,7 +3403,7 @@ type UpdateServiceRequest_AutomationTriggerUpdate struct {
 
 func (x *UpdateServiceRequest_AutomationTriggerUpdate) Reset() {
 	*x = UpdateServiceRequest_AutomationTriggerUpdate{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[56]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3524,7 +3415,7 @@ func (x *UpdateServiceRequest_AutomationTriggerUpdate) String() string {
 func (*UpdateServiceRequest_AutomationTriggerUpdate) ProtoMessage() {}
 
 func (x *UpdateServiceRequest_AutomationTriggerUpdate) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[56]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3559,7 +3450,7 @@ type UpdateServiceRequest_ServiceMetadata struct {
 
 func (x *UpdateServiceRequest_ServiceMetadata) Reset() {
 	*x = UpdateServiceRequest_ServiceMetadata{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[57]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3571,7 +3462,7 @@ func (x *UpdateServiceRequest_ServiceMetadata) String() string {
 func (*UpdateServiceRequest_ServiceMetadata) ProtoMessage() {}
 
 func (x *UpdateServiceRequest_ServiceMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[57]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3627,7 +3518,7 @@ type UpdateServiceRequest_ServiceSpec struct {
 
 func (x *UpdateServiceRequest_ServiceSpec) Reset() {
 	*x = UpdateServiceRequest_ServiceSpec{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[58]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3639,7 +3530,7 @@ func (x *UpdateServiceRequest_ServiceSpec) String() string {
 func (*UpdateServiceRequest_ServiceSpec) ProtoMessage() {}
 
 func (x *UpdateServiceRequest_ServiceSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[58]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3697,7 +3588,7 @@ type UpdateServiceRequest_ServiceStatus struct {
 
 func (x *UpdateServiceRequest_ServiceStatus) Reset() {
 	*x = UpdateServiceRequest_ServiceStatus{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[59]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3709,7 +3600,7 @@ func (x *UpdateServiceRequest_ServiceStatus) String() string {
 func (*UpdateServiceRequest_ServiceStatus) ProtoMessage() {}
 
 func (x *UpdateServiceRequest_ServiceStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[59]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3771,7 +3662,7 @@ type UpdateServiceRequest_ServiceSpec_Commands struct {
 
 func (x *UpdateServiceRequest_ServiceSpec_Commands) Reset() {
 	*x = UpdateServiceRequest_ServiceSpec_Commands{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[60]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3783,7 +3674,7 @@ func (x *UpdateServiceRequest_ServiceSpec_Commands) String() string {
 func (*UpdateServiceRequest_ServiceSpec_Commands) ProtoMessage() {}
 
 func (x *UpdateServiceRequest_ServiceSpec_Commands) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[60]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3835,7 +3726,7 @@ type AutomationsFile_Service struct {
 
 func (x *AutomationsFile_Service) Reset() {
 	*x = AutomationsFile_Service{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[62]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3847,7 +3738,7 @@ func (x *AutomationsFile_Service) String() string {
 func (*AutomationsFile_Service) ProtoMessage() {}
 
 func (x *AutomationsFile_Service) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[62]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3931,7 +3822,7 @@ type AutomationsFile_Task struct {
 
 func (x *AutomationsFile_Task) Reset() {
 	*x = AutomationsFile_Task{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[63]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3943,7 +3834,7 @@ func (x *AutomationsFile_Task) String() string {
 func (*AutomationsFile_Task) ProtoMessage() {}
 
 func (x *AutomationsFile_Task) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[63]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4022,7 +3913,7 @@ type ListTasksRequest_Filter struct {
 
 func (x *ListTasksRequest_Filter) Reset() {
 	*x = ListTasksRequest_Filter{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[66]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4034,7 +3925,7 @@ func (x *ListTasksRequest_Filter) String() string {
 func (*ListTasksRequest_Filter) ProtoMessage() {}
 
 func (x *ListTasksRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[66]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4080,7 +3971,7 @@ type UpdateTaskRequest_AutomationTriggerUpdate struct {
 
 func (x *UpdateTaskRequest_AutomationTriggerUpdate) Reset() {
 	*x = UpdateTaskRequest_AutomationTriggerUpdate{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[67]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4092,7 +3983,7 @@ func (x *UpdateTaskRequest_AutomationTriggerUpdate) String() string {
 func (*UpdateTaskRequest_AutomationTriggerUpdate) ProtoMessage() {}
 
 func (x *UpdateTaskRequest_AutomationTriggerUpdate) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[67]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4126,7 +4017,7 @@ type UpdateTaskRequest_TaskMetadata struct {
 
 func (x *UpdateTaskRequest_TaskMetadata) Reset() {
 	*x = UpdateTaskRequest_TaskMetadata{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[68]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4138,7 +4029,7 @@ func (x *UpdateTaskRequest_TaskMetadata) String() string {
 func (*UpdateTaskRequest_TaskMetadata) ProtoMessage() {}
 
 func (x *UpdateTaskRequest_TaskMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[68]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4187,7 +4078,7 @@ type UpdateTaskRequest_TaskSpec struct {
 
 func (x *UpdateTaskRequest_TaskSpec) Reset() {
 	*x = UpdateTaskRequest_TaskSpec{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[69]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4199,7 +4090,7 @@ func (x *UpdateTaskRequest_TaskSpec) String() string {
 func (*UpdateTaskRequest_TaskSpec) ProtoMessage() {}
 
 func (x *UpdateTaskRequest_TaskSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[69]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4259,7 +4150,7 @@ type ListTaskExecutionsRequest_Filter struct {
 
 func (x *ListTaskExecutionsRequest_Filter) Reset() {
 	*x = ListTaskExecutionsRequest_Filter{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[70]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4271,7 +4162,7 @@ func (x *ListTaskExecutionsRequest_Filter) String() string {
 func (*ListTaskExecutionsRequest_Filter) ProtoMessage() {}
 
 func (x *ListTaskExecutionsRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[70]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4325,7 +4216,7 @@ type RunsOn_Docker struct {
 
 func (x *RunsOn_Docker) Reset() {
 	*x = RunsOn_Docker{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[71]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4337,7 +4228,7 @@ func (x *RunsOn_Docker) String() string {
 func (*RunsOn_Docker) ProtoMessage() {}
 
 func (x *RunsOn_Docker) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[71]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4350,7 +4241,7 @@ func (x *RunsOn_Docker) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunsOn_Docker.ProtoReflect.Descriptor instead.
 func (*RunsOn_Docker) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{44, 0}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{42, 0}
 }
 
 func (x *RunsOn_Docker) GetImage() string {
@@ -4376,7 +4267,7 @@ type RunsOn_Machine struct {
 
 func (x *RunsOn_Machine) Reset() {
 	*x = RunsOn_Machine{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[72]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4388,7 +4279,7 @@ func (x *RunsOn_Machine) String() string {
 func (*RunsOn_Machine) ProtoMessage() {}
 
 func (x *RunsOn_Machine) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[72]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4401,7 +4292,7 @@ func (x *RunsOn_Machine) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunsOn_Machine.ProtoReflect.Descriptor instead.
 func (*RunsOn_Machine) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{44, 1}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{42, 1}
 }
 
 type TaskExecutionSpec_Task struct {
@@ -4414,7 +4305,7 @@ type TaskExecutionSpec_Task struct {
 
 func (x *TaskExecutionSpec_Task) Reset() {
 	*x = TaskExecutionSpec_Task{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[73]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4426,7 +4317,7 @@ func (x *TaskExecutionSpec_Task) String() string {
 func (*TaskExecutionSpec_Task) ProtoMessage() {}
 
 func (x *TaskExecutionSpec_Task) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[73]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4439,7 +4330,7 @@ func (x *TaskExecutionSpec_Task) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskExecutionSpec_Task.ProtoReflect.Descriptor instead.
 func (*TaskExecutionSpec_Task) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{50, 0}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{48, 0}
 }
 
 func (x *TaskExecutionSpec_Task) GetId() string {
@@ -4473,7 +4364,7 @@ type TaskExecutionSpec_Step struct {
 
 func (x *TaskExecutionSpec_Step) Reset() {
 	*x = TaskExecutionSpec_Step{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[74]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4485,7 +4376,7 @@ func (x *TaskExecutionSpec_Step) String() string {
 func (*TaskExecutionSpec_Step) ProtoMessage() {}
 
 func (x *TaskExecutionSpec_Step) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[74]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4498,7 +4389,7 @@ func (x *TaskExecutionSpec_Step) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskExecutionSpec_Step.ProtoReflect.Descriptor instead.
 func (*TaskExecutionSpec_Step) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{50, 1}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{48, 1}
 }
 
 func (x *TaskExecutionSpec_Step) GetId() string {
@@ -4572,7 +4463,7 @@ type TaskExecutionSpec_Group struct {
 
 func (x *TaskExecutionSpec_Group) Reset() {
 	*x = TaskExecutionSpec_Group{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[75]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4584,7 +4475,7 @@ func (x *TaskExecutionSpec_Group) String() string {
 func (*TaskExecutionSpec_Group) ProtoMessage() {}
 
 func (x *TaskExecutionSpec_Group) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[75]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4597,7 +4488,7 @@ func (x *TaskExecutionSpec_Group) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskExecutionSpec_Group.ProtoReflect.Descriptor instead.
 func (*TaskExecutionSpec_Group) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{50, 2}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{48, 2}
 }
 
 func (x *TaskExecutionSpec_Group) GetSteps() []*TaskExecutionSpec_Step {
@@ -4625,7 +4516,7 @@ type TaskExecutionStatus_Step struct {
 
 func (x *TaskExecutionStatus_Step) Reset() {
 	*x = TaskExecutionStatus_Step{}
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[76]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4637,7 +4528,7 @@ func (x *TaskExecutionStatus_Step) String() string {
 func (*TaskExecutionStatus_Step) ProtoMessage() {}
 
 func (x *TaskExecutionStatus_Step) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[76]
+	mi := &file_gitpod_v1_environment_automation_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4650,7 +4541,7 @@ func (x *TaskExecutionStatus_Step) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskExecutionStatus_Step.ProtoReflect.Descriptor instead.
 func (*TaskExecutionStatus_Step) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{51, 0}
+	return file_gitpod_v1_environment_automation_proto_rawDescGZIP(), []int{49, 0}
 }
 
 func (x *TaskExecutionStatus_Step) GetId() string {
@@ -4685,7 +4576,7 @@ var File_gitpod_v1_environment_automation_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\n" +
-	"&gitpod/v1/environment_automation.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe3\x02\n" +
+	"&gitpod/v1/environment_automation.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe3\x02\n" +
 	"\x0fServiceMetadata\x12;\n" +
 	"\treference\x18\x01 \x01(\tB\x1d\xbaH\x1ar\x182\x16^[a-zA-Z0-9_-]{1,128}$R\treference\x12\x1b\n" +
 	"\x04name\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x04name\x12 \n" +
@@ -4716,56 +4607,44 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\x06output\x18\x06 \x03(\v2$.gitpod.v1.ServiceStatus.OutputEntryB\x18\xbaH\x15\x9a\x01\x12\"\ar\x05\x10\x01\x18\x80\x01*\ar\x05\x10\x00\x18\x80 R\x06output\x1a9\n" +
 	"\vOutputEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xa9\x02\n" +
-	"\aService\x12(\n" +
-	"\x02id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"service.idR\x02id\x12C\n" +
-	"\x0eenvironment_id\x18\x02 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x126\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x85\x02\n" +
+	"\aService\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12/\n" +
+	"\x0eenvironment_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x126\n" +
 	"\bmetadata\x18\x03 \x01(\v2\x1a.gitpod.v1.ServiceMetadataR\bmetadata\x12*\n" +
 	"\x04spec\x18\x04 \x01(\v2\x16.gitpod.v1.ServiceSpecR\x04spec\x120\n" +
-	"\x06status\x18\x05 \x01(\v2\x18.gitpod.v1.ServiceStatusR\x06status:\x19\xbaG\x16\xba\x01\x02id\xba\x01\x0eenvironment_id\"\xbf\x01\n" +
-	"\x14CreateServiceRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x126\n" +
+	"\x06status\x18\x05 \x01(\v2\x18.gitpod.v1.ServiceStatusR\x06status:\x19\xbaG\x16\xba\x01\x02id\xba\x01\x0eenvironment_id\"\xab\x01\n" +
+	"\x14CreateServiceRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x126\n" +
 	"\bmetadata\x18\x02 \x01(\v2\x1a.gitpod.v1.ServiceMetadataR\bmetadata\x12*\n" +
 	"\x04spec\x18\x03 \x01(\v2\x16.gitpod.v1.ServiceSpecR\x04spec\"M\n" +
 	"\x15CreateServiceResponse\x124\n" +
-	"\aservice\x18\x01 \x01(\v2\x12.gitpod.v1.ServiceB\x06\xbaH\x03\xc8\x01\x01R\aservice\"=\n" +
-	"\x11GetServiceRequest\x12(\n" +
-	"\x02id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"service.idR\x02id\"J\n" +
+	"\aservice\x18\x01 \x01(\v2\x12.gitpod.v1.ServiceB\x06\xbaH\x03\xc8\x01\x01R\aservice\"-\n" +
+	"\x11GetServiceRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"J\n" +
 	"\x12GetServiceResponse\x124\n" +
-	"\aservice\x18\x01 \x01(\v2\x12.gitpod.v1.ServiceB\x06\xbaH\x03\xc8\x01\x01R\aservice\"\xdd\x03\n" +
+	"\aservice\x18\x01 \x01(\v2\x12.gitpod.v1.ServiceB\x06\xbaH\x03\xc8\x01\x01R\aservice\"\x80\x03\n" +
 	"\x13ListServicesRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12=\n" +
-	"\x06filter\x18\x02 \x01(\v2%.gitpod.v1.ListServicesRequest.FilterR\x06filter\x1a\xc8\x02\n" +
-	"\x06Filter\x12V\n" +
-	"\x0fenvironment_ids\x18\x01 \x03(\tB-\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x18\n" +
-	"\x16filter.environment_idsR\x0eenvironmentIds\x12G\n" +
+	"\x06filter\x18\x02 \x01(\v2%.gitpod.v1.ListServicesRequest.FilterR\x06filter\x1a\xeb\x01\n" +
+	"\x06Filter\x12:\n" +
+	"\x0fenvironment_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\x0eenvironmentIds\x120\n" +
 	"\n" +
-	"references\x18\x02 \x03(\tB'\xbaH\r\x92\x01\n" +
-	"\b\x00\x10\x19\"\x04r\x02\x10\x01\xa2\xab\x1e\x13\n" +
-	"\x11filter.referencesR\n" +
-	"references\x12J\n" +
-	"\vservice_ids\x18\x03 \x03(\tB)\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12filter.service_idsR\n" +
-	"serviceIds\x12Q\n" +
-	"\x05roles\x18\x04 \x03(\x0e2\x16.gitpod.v1.ServiceRoleB#\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\x0e\n" +
-	"\ffilter.rolesR\x05roles\"\x85\x01\n" +
+	"references\x18\x02 \x03(\tB\x10\xbaH\r\x92\x01\n" +
+	"\b\x00\x10\x19\"\x04r\x02\x10\x01R\n" +
+	"references\x122\n" +
+	"\vservice_ids\x18\x03 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\n" +
+	"serviceIds\x12?\n" +
+	"\x05roles\x18\x04 \x03(\x0e2\x16.gitpod.v1.ServiceRoleB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05\x82\x01\x02\x10\x01R\x05roles\"\x85\x01\n" +
 	"\x14ListServicesResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12.\n" +
-	"\bservices\x18\x02 \x03(\v2\x12.gitpod.v1.ServiceR\bservices\"\xc8\v\n" +
-	"\x14UpdateServiceRequest\x12(\n" +
-	"\x02id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"service.idR\x02id\x12K\n" +
+	"\bservices\x18\x02 \x03(\v2\x12.gitpod.v1.ServiceR\bservices\"\xb0\v\n" +
+	"\x14UpdateServiceRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12K\n" +
 	"\bmetadata\x18\x02 \x01(\v2/.gitpod.v1.UpdateServiceRequest.ServiceMetadataR\bmetadata\x12?\n" +
 	"\x04spec\x18\x03 \x01(\v2+.gitpod.v1.UpdateServiceRequest.ServiceSpecR\x04spec\x12E\n" +
 	"\x06status\x18\x04 \x01(\v2-.gitpod.v1.UpdateServiceRequest.ServiceStatusR\x06status\x1aQ\n" +
@@ -4779,16 +4658,16 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\x0f\n" +
 	"\r_triggered_byB\a\n" +
-	"\x05_role\x1a\xbc\x03\n" +
+	"\x05_role\x1a\xb4\x03\n" +
 	"\vServiceSpec\x12U\n" +
 	"\bcommands\x18\x01 \x01(\v24.gitpod.v1.UpdateServiceRequest.ServiceSpec.CommandsH\x00R\bcommands\x88\x01\x01\x12/\n" +
 	"\aruns_on\x18\x02 \x01(\v2\x11.gitpod.v1.RunsOnH\x01R\x06runsOn\x88\x01\x01\x124\n" +
 	"\x03env\x18\x03 \x03(\v2\".gitpod.v1.EnvironmentVariableItemR\x03env\x12V\n" +
-	"\x11readiness_timeout\x18\x04 \x01(\v2\x19.google.protobuf.DurationB\x0e\xbaH\v\xaa\x01\b\"\x04\b\x80\xa3\x052\x00R\x10readinessTimeout\x1a~\n" +
+	"\x11readiness_timeout\x18\x04 \x01(\v2\x19.google.protobuf.DurationB\x0e\xbaH\v\xaa\x01\b\"\x04\b\x80\xa3\x052\x00R\x10readinessTimeout\x1av\n" +
 	"\bCommands\x12\x19\n" +
 	"\x05start\x18\x01 \x01(\tH\x00R\x05start\x88\x01\x01\x12\x19\n" +
 	"\x05ready\x18\x02 \x01(\tH\x01R\x05ready\x88\x01\x01\x12\x17\n" +
-	"\x04stop\x18\x03 \x01(\tH\x02R\x04stop\x88\x01\x01:\x06\xba\xab\x1e\x02\x18\x01B\b\n" +
+	"\x04stop\x18\x03 \x01(\tH\x02R\x04stop\x88\x01\x01B\b\n" +
 	"\x06_startB\b\n" +
 	"\x06_readyB\a\n" +
 	"\x05_stopB\v\n" +
@@ -4810,26 +4689,19 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\b_log_urlB\n" +
 	"\n" +
 	"\b_session\"\x17\n" +
-	"\x15UpdateServiceResponse\"V\n" +
-	"\x14DeleteServiceRequest\x12(\n" +
-	"\x02id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"service.idR\x02id\x12\x14\n" +
+	"\x15UpdateServiceResponse\"F\n" +
+	"\x14DeleteServiceRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12\x14\n" +
 	"\x05force\x18\x02 \x01(\bR\x05force\"\x17\n" +
-	"\x15DeleteServiceResponse\"?\n" +
-	"\x13StartServiceRequest\x12(\n" +
-	"\x02id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"service.idR\x02id\"\x16\n" +
-	"\x14StartServiceResponse\">\n" +
-	"\x12StopServiceRequest\x12(\n" +
-	"\x02id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"service.idR\x02id\"\x15\n" +
-	"\x13StopServiceResponse\"\xaa\x01\n" +
-	"\x1cUpsertAutomationsFileRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x12E\n" +
+	"\x15DeleteServiceResponse\"/\n" +
+	"\x13StartServiceRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\x16\n" +
+	"\x14StartServiceResponse\".\n" +
+	"\x12StopServiceRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\x15\n" +
+	"\x13StopServiceResponse\"\x96\x01\n" +
+	"\x1cUpsertAutomationsFileRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x12E\n" +
 	"\x10automations_file\x18\x02 \x01(\v2\x1a.gitpod.v1.AutomationsFileR\x0fautomationsFile\"y\n" +
 	"\x1dUpsertAutomationsFileResponse\x12.\n" +
 	"\x13updated_service_ids\x18\x01 \x03(\tR\x11updatedServiceIds\x12(\n" +
@@ -4862,45 +4734,39 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\n" +
 	"TasksEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x125\n" +
-	"\x05value\x18\x02 \x01(\v2\x1f.gitpod.v1.AutomationsFile.TaskR\x05value:\x028\x01\"\xe4\x01\n" +
-	"\x11CreateTaskRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x123\n" +
+	"\x05value\x18\x02 \x01(\v2\x1f.gitpod.v1.AutomationsFile.TaskR\x05value:\x028\x01\"\xd0\x01\n" +
+	"\x11CreateTaskRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x123\n" +
 	"\bmetadata\x18\x02 \x01(\v2\x17.gitpod.v1.TaskMetadataR\bmetadata\x12'\n" +
 	"\x04spec\x18\x03 \x01(\v2\x13.gitpod.v1.TaskSpecR\x04spec\x12,\n" +
 	"\n" +
 	"depends_on\x18\x04 \x03(\tB\r\xbaH\n" +
 	"\x92\x01\a\"\x05r\x03\xb0\x01\x01R\tdependsOn\"A\n" +
 	"\x12CreateTaskResponse\x12+\n" +
-	"\x04task\x18\x01 \x01(\v2\x0f.gitpod.v1.TaskB\x06\xbaH\x03\xc8\x01\x01R\x04task\"7\n" +
-	"\x0eGetTaskRequest\x12%\n" +
-	"\x02id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\atask.idR\x02id\">\n" +
+	"\x04task\x18\x01 \x01(\v2\x0f.gitpod.v1.TaskB\x06\xbaH\x03\xc8\x01\x01R\x04task\"*\n" +
+	"\x0eGetTaskRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\">\n" +
 	"\x0fGetTaskResponse\x12+\n" +
-	"\x04task\x18\x01 \x01(\v2\x0f.gitpod.v1.TaskB\x06\xbaH\x03\xc8\x01\x01R\x04task\"\xfb\x02\n" +
+	"\x04task\x18\x01 \x01(\v2\x0f.gitpod.v1.TaskB\x06\xbaH\x03\xc8\x01\x01R\x04task\"\xb3\x02\n" +
 	"\x10ListTasksRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12:\n" +
-	"\x06filter\x18\x02 \x01(\v2\".gitpod.v1.ListTasksRequest.FilterR\x06filter\x1a\xec\x01\n" +
-	"\x06Filter\x12V\n" +
-	"\x0fenvironment_ids\x18\x01 \x03(\tB-\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x18\n" +
-	"\x16filter.environment_idsR\x0eenvironmentIds\x12G\n" +
+	"\x06filter\x18\x02 \x01(\v2\".gitpod.v1.ListTasksRequest.FilterR\x06filter\x1a\xa4\x01\n" +
+	"\x06Filter\x12:\n" +
+	"\x0fenvironment_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\x0eenvironmentIds\x120\n" +
 	"\n" +
-	"references\x18\x02 \x03(\tB'\xbaH\r\x92\x01\n" +
-	"\b\x00\x10\x19\"\x04r\x02\x10\x01\xa2\xab\x1e\x13\n" +
-	"\x11filter.referencesR\n" +
-	"references\x12A\n" +
-	"\btask_ids\x18\x03 \x03(\tB&\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0ffilter.task_idsR\ataskIds\"y\n" +
+	"references\x18\x02 \x03(\tB\x10\xbaH\r\x92\x01\n" +
+	"\b\x00\x10\x19\"\x04r\x02\x10\x01R\n" +
+	"references\x12,\n" +
+	"\btask_ids\x18\x03 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\ataskIds\"y\n" +
 	"\x11ListTasksResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12%\n" +
-	"\x05tasks\x18\x02 \x03(\v2\x0f.gitpod.v1.TaskR\x05tasks\"\xa9\x06\n" +
-	"\x11UpdateTaskRequest\x12%\n" +
-	"\x02id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\atask.idR\x02id\x12E\n" +
+	"\x05tasks\x18\x02 \x03(\v2\x0f.gitpod.v1.TaskR\x05tasks\"\x9c\x06\n" +
+	"\x11UpdateTaskRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12E\n" +
 	"\bmetadata\x18\x02 \x01(\v2).gitpod.v1.UpdateTaskRequest.TaskMetadataR\bmetadata\x129\n" +
 	"\x04spec\x18\x03 \x01(\v2%.gitpod.v1.UpdateTaskRequest.TaskSpecR\x04spec\x12,\n" +
 	"\n" +
@@ -4925,54 +4791,38 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\n" +
 	"\b_runs_onB\x1c\n" +
 	"\x1a_prebuild_requires_success\"\x14\n" +
-	"\x12UpdateTaskResponse\":\n" +
-	"\x11DeleteTaskRequest\x12%\n" +
-	"\x02id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\atask.idR\x02id\"\x14\n" +
-	"\x12DeleteTaskResponse\"9\n" +
-	"\x10StartTaskRequest\x12%\n" +
-	"\x02id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\atask.idR\x02id\"\\\n" +
+	"\x12UpdateTaskResponse\"-\n" +
+	"\x11DeleteTaskRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\x14\n" +
+	"\x12DeleteTaskResponse\",\n" +
+	"\x10StartTaskRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\\\n" +
 	"\x11StartTaskResponse\x12G\n" +
-	"\x0etask_execution\x18\x01 \x01(\v2\x18.gitpod.v1.TaskExecutionB\x06\xbaH\x03\xc8\x01\x01R\rtaskExecution\"\xeb\x03\n" +
+	"\x0etask_execution\x18\x01 \x01(\v2\x18.gitpod.v1.TaskExecutionB\x06\xbaH\x03\xc8\x01\x01R\rtaskExecution\"\x8b\x03\n" +
 	"\x19ListTaskExecutionsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12C\n" +
-	"\x06filter\x18\x02 \x01(\v2+.gitpod.v1.ListTaskExecutionsRequest.FilterR\x06filter\x1a\xca\x02\n" +
-	"\x06Filter\x12A\n" +
-	"\btask_ids\x18\x01 \x03(\tB&\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0ffilter.task_idsR\ataskIds\x12O\n" +
-	"\x0ftask_references\x18\x02 \x03(\tB&\xbaH\a\x92\x01\x04\b\x00\x10\x19\xa2\xab\x1e\x18\n" +
-	"\x16filter.task_referencesR\x0etaskReferences\x12V\n" +
-	"\x0fenvironment_ids\x18\x03 \x03(\tB-\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x18\n" +
-	"\x16filter.environment_idsR\x0eenvironmentIds\x12T\n" +
-	"\x06phases\x18\x04 \x03(\x0e2\x1d.gitpod.v1.TaskExecutionPhaseB\x1d\xbaH\a\x92\x01\x04\b\x00\x10\x19\xa2\xab\x1e\x0f\n" +
-	"\rfilter.phasesR\x06phases\"\x9e\x01\n" +
+	"\x06filter\x18\x02 \x01(\v2+.gitpod.v1.ListTaskExecutionsRequest.FilterR\x06filter\x1a\xea\x01\n" +
+	"\x06Filter\x12,\n" +
+	"\btask_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\ataskIds\x123\n" +
+	"\x0ftask_references\x18\x02 \x03(\tB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\x19R\x0etaskReferences\x12:\n" +
+	"\x0fenvironment_ids\x18\x03 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\x0eenvironmentIds\x12A\n" +
+	"\x06phases\x18\x04 \x03(\x0e2\x1d.gitpod.v1.TaskExecutionPhaseB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\x19R\x06phases\"\x9e\x01\n" +
 	"\x1aListTaskExecutionsResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12A\n" +
-	"\x0ftask_executions\x18\x02 \x03(\v2\x18.gitpod.v1.TaskExecutionR\x0etaskExecutions\"J\n" +
-	"\x17GetTaskExecutionRequest\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11task_execution.idR\x02id\"c\n" +
+	"\x0ftask_executions\x18\x02 \x03(\v2\x18.gitpod.v1.TaskExecutionR\x0etaskExecutions\"3\n" +
+	"\x17GetTaskExecutionRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"c\n" +
 	"\x18GetTaskExecutionResponse\x12G\n" +
-	"\x0etask_execution\x18\x01 \x01(\v2\x18.gitpod.v1.TaskExecutionB\x06\xbaH\x03\xc8\x01\x01R\rtaskExecution\"K\n" +
-	"\x18StopTaskExecutionRequest\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11task_execution.idR\x02id\"\x1b\n" +
-	"\x19StopTaskExecutionResponse\"\xfa\x01\n" +
-	" UpdateTaskExecutionStatusRequest\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11task_execution.idR\x02id\x129\n" +
-	"\x05steps\x18\x02 \x03(\v2#.gitpod.v1.TaskExecutionStatus.StepR\x05steps\x12,\n" +
-	"\x0ffailure_message\x18\x03 \x01(\tH\x00R\x0efailureMessage\x88\x01\x01\x12\x1c\n" +
-	"\alog_url\x18\x04 \x01(\tH\x01R\x06logUrl\x88\x01\x01B\x12\n" +
-	"\x10_failure_messageB\n" +
-	"\n" +
-	"\b_log_url\"#\n" +
-	"!UpdateTaskExecutionStatusResponse\"\xc3\x02\n" +
+	"\x0etask_execution\x18\x01 \x01(\v2\x18.gitpod.v1.TaskExecutionB\x06\xbaH\x03\xc8\x01\x01R\rtaskExecution\"4\n" +
+	"\x18StopTaskExecutionRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\x1b\n" +
+	"\x19StopTaskExecutionResponse\"\xb4\x02\n" +
 	"\fTaskMetadata\x12;\n" +
 	"\treference\x18\x01 \x01(\tB\x1d\xbaH\x1ar\x182\x16^[a-zA-Z0-9_-]{1,128}$R\treference\x12\x1b\n" +
 	"\x04name\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x04name\x12 \n" +
@@ -4980,25 +4830,20 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12,\n" +
 	"\acreator\x18\x05 \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x12?\n" +
-	"\ftriggered_by\x18\x06 \x03(\v2\x1c.gitpod.v1.AutomationTriggerR\vtriggeredBy:\r\xba\xab\x1e\t\n" +
-	"\a$shared\"\xd1\x01\n" +
+	"\ftriggered_by\x18\x06 \x03(\v2\x1c.gitpod.v1.AutomationTriggerR\vtriggeredBy\"\xc2\x01\n" +
 	"\bTaskSpec\x12\x18\n" +
 	"\acommand\x18\x01 \x01(\tR\acommand\x12*\n" +
 	"\aruns_on\x18\x02 \x01(\v2\x11.gitpod.v1.RunsOnR\x06runsOn\x124\n" +
 	"\x03env\x18\x03 \x03(\v2\".gitpod.v1.EnvironmentVariableItemR\x03env\x12:\n" +
-	"\x19prebuild_requires_success\x18\x04 \x01(\bR\x17prebuildRequiresSuccess:\r\xba\xab\x1e\t\n" +
-	"\a$shared\"\xa6\x02\n" +
-	"\x04Task\x12%\n" +
-	"\x02id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\atask.idR\x02id\x12C\n" +
-	"\x0eenvironment_id\x18\x02 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x123\n" +
+	"\x19prebuild_requires_success\x18\x04 \x01(\bR\x17prebuildRequiresSuccess\"\xf8\x01\n" +
+	"\x04Task\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12/\n" +
+	"\x0eenvironment_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x123\n" +
 	"\bmetadata\x18\x03 \x01(\v2\x17.gitpod.v1.TaskMetadataR\bmetadata\x12'\n" +
 	"\x04spec\x18\x04 \x01(\v2\x13.gitpod.v1.TaskSpecR\x04spec\x12,\n" +
 	"\n" +
 	"depends_on\x18\x05 \x03(\tB\r\xbaH\n" +
-	"\x92\x01\a\"\x05r\x03\xb0\x01\x01R\tdependsOn:&\xbaG\x16\xba\x01\x02id\xba\x01\x0eenvironment_id\xba\xab\x1e\t\n" +
-	"\a$shared\"\xe3\x01\n" +
+	"\x92\x01\a\"\x05r\x03\xb0\x01\x01R\tdependsOn:\x19\xbaG\x16\xba\x01\x02id\xba\x01\x0eenvironment_id\"\xe3\x01\n" +
 	"\x06RunsOn\x122\n" +
 	"\x06docker\x18\n" +
 	" \x01(\v2\x18.gitpod.v1.RunsOn.DockerH\x00R\x06docker\x125\n" +
@@ -5019,18 +4864,15 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"secret_ref\x18\x01 \x01(\v2\x14.gitpod.v1.SecretRefH\x00R\tsecretRefB\b\n" +
 	"\x06source\"%\n" +
 	"\tSecretRef\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\xf2\x01\n" +
-	"\rTaskExecution\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11task_execution.idR\x02id\x12<\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\xdb\x01\n" +
+	"\rTaskExecution\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12<\n" +
 	"\bmetadata\x18\x02 \x01(\v2 .gitpod.v1.TaskExecutionMetadataR\bmetadata\x120\n" +
 	"\x04spec\x18\x03 \x01(\v2\x1c.gitpod.v1.TaskExecutionSpecR\x04spec\x126\n" +
-	"\x06status\x18\x04 \x01(\v2\x1e.gitpod.v1.TaskExecutionStatusR\x06status:\b\xbaG\x05\xba\x01\x02id\"\x8e\x03\n" +
-	"\x15TaskExecutionMetadata\x12.\n" +
-	"\atask_id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\atask.idR\x06taskId\x12C\n" +
-	"\x0eenvironment_id\x18\x02 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x129\n" +
+	"\x06status\x18\x04 \x01(\v2\x1e.gitpod.v1.TaskExecutionStatusR\x06status:\b\xbaG\x05\xba\x01\x02id\"\xed\x02\n" +
+	"\x15TaskExecutionMetadata\x12!\n" +
+	"\atask_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06taskId\x12/\n" +
+	"\x0eenvironment_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x129\n" +
 	"\n" +
 	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12,\n" +
 	"\acreator\x18\x04 \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x12\x1d\n" +
@@ -5100,47 +4942,29 @@ const file_gitpod_v1_environment_automation_proto_rawDesc = "" +
 	"\x1cTASK_EXECUTION_PHASE_RUNNING\x10\x02\x12\"\n" +
 	"\x1eTASK_EXECUTION_PHASE_SUCCEEDED\x10\x03\x12\x1f\n" +
 	"\x1bTASK_EXECUTION_PHASE_FAILED\x10\x04\x12 \n" +
-	"\x1cTASK_EXECUTION_PHASE_STOPPED\x10\x052\xe5\x12\n" +
-	"\x1cEnvironmentAutomationService\x12\x83\x01\n" +
-	"\rCreateService\x12\x1f.gitpod.v1.CreateServiceRequest\x1a .gitpod.v1.CreateServiceResponse\"/\xb2\xab\x1e+\n" +
-	"!environments.automations.services\x12\x06create\x12\x7f\n" +
+	"\x1cTASK_EXECUTION_PHASE_STOPPED\x10\x052\xc8\v\n" +
+	"\x1cEnvironmentAutomationService\x12T\n" +
+	"\rCreateService\x12\x1f.gitpod.v1.CreateServiceRequest\x1a .gitpod.v1.CreateServiceResponse\"\x00\x12N\n" +
 	"\n" +
-	"GetService\x12\x1c.gitpod.v1.GetServiceRequest\x1a\x1d.gitpod.v1.GetServiceResponse\"4\xb2\xab\x1e-\n" +
-	"!environments.automations.services\x12\bretrieve\x90\x02\x01\x12\x81\x01\n" +
-	"\fListServices\x12\x1e.gitpod.v1.ListServicesRequest\x1a\x1f.gitpod.v1.ListServicesResponse\"0\xb2\xab\x1e)\n" +
-	"!environments.automations.services\x12\x04list\x90\x02\x01\x12\x83\x01\n" +
-	"\rUpdateService\x12\x1f.gitpod.v1.UpdateServiceRequest\x1a .gitpod.v1.UpdateServiceResponse\"/\xb2\xab\x1e+\n" +
-	"!environments.automations.services\x12\x06update\x12\x83\x01\n" +
-	"\rDeleteService\x12\x1f.gitpod.v1.DeleteServiceRequest\x1a .gitpod.v1.DeleteServiceResponse\"/\xb2\xab\x1e+\n" +
-	"!environments.automations.services\x12\x06delete\x12\x7f\n" +
-	"\fStartService\x12\x1e.gitpod.v1.StartServiceRequest\x1a\x1f.gitpod.v1.StartServiceResponse\".\xb2\xab\x1e*\n" +
-	"!environments.automations.services\x12\x05start\x12{\n" +
-	"\vStopService\x12\x1d.gitpod.v1.StopServiceRequest\x1a\x1e.gitpod.v1.StopServiceResponse\"-\xb2\xab\x1e)\n" +
-	"!environments.automations.services\x12\x04stop\x12x\n" +
-	"\x15UpsertAutomationsFile\x12'.gitpod.v1.UpsertAutomationsFileRequest\x1a(.gitpod.v1.UpsertAutomationsFileResponse\"\f\xb2\xab\x1e\b\x12\x06upsert\x12w\n" +
+	"GetService\x12\x1c.gitpod.v1.GetServiceRequest\x1a\x1d.gitpod.v1.GetServiceResponse\"\x03\x90\x02\x01\x12T\n" +
+	"\fListServices\x12\x1e.gitpod.v1.ListServicesRequest\x1a\x1f.gitpod.v1.ListServicesResponse\"\x03\x90\x02\x01\x12T\n" +
+	"\rUpdateService\x12\x1f.gitpod.v1.UpdateServiceRequest\x1a .gitpod.v1.UpdateServiceResponse\"\x00\x12T\n" +
+	"\rDeleteService\x12\x1f.gitpod.v1.DeleteServiceRequest\x1a .gitpod.v1.DeleteServiceResponse\"\x00\x12Q\n" +
+	"\fStartService\x12\x1e.gitpod.v1.StartServiceRequest\x1a\x1f.gitpod.v1.StartServiceResponse\"\x00\x12N\n" +
+	"\vStopService\x12\x1d.gitpod.v1.StopServiceRequest\x1a\x1e.gitpod.v1.StopServiceResponse\"\x00\x12l\n" +
+	"\x15UpsertAutomationsFile\x12'.gitpod.v1.UpsertAutomationsFileRequest\x1a(.gitpod.v1.UpsertAutomationsFileResponse\"\x00\x12K\n" +
 	"\n" +
-	"CreateTask\x12\x1c.gitpod.v1.CreateTaskRequest\x1a\x1d.gitpod.v1.CreateTaskResponse\",\xb2\xab\x1e(\n" +
-	"\x1eenvironments.automations.tasks\x12\x06create\x12s\n" +
-	"\aGetTask\x12\x19.gitpod.v1.GetTaskRequest\x1a\x1a.gitpod.v1.GetTaskResponse\"1\xb2\xab\x1e*\n" +
-	"\x1eenvironments.automations.tasks\x12\bretrieve\x90\x02\x01\x12u\n" +
-	"\tListTasks\x12\x1b.gitpod.v1.ListTasksRequest\x1a\x1c.gitpod.v1.ListTasksResponse\"-\xb2\xab\x1e&\n" +
-	"\x1eenvironments.automations.tasks\x12\x04list\x90\x02\x01\x12w\n" +
+	"CreateTask\x12\x1c.gitpod.v1.CreateTaskRequest\x1a\x1d.gitpod.v1.CreateTaskResponse\"\x00\x12E\n" +
+	"\aGetTask\x12\x19.gitpod.v1.GetTaskRequest\x1a\x1a.gitpod.v1.GetTaskResponse\"\x03\x90\x02\x01\x12K\n" +
+	"\tListTasks\x12\x1b.gitpod.v1.ListTasksRequest\x1a\x1c.gitpod.v1.ListTasksResponse\"\x03\x90\x02\x01\x12K\n" +
 	"\n" +
-	"UpdateTask\x12\x1c.gitpod.v1.UpdateTaskRequest\x1a\x1d.gitpod.v1.UpdateTaskResponse\",\xb2\xab\x1e(\n" +
-	"\x1eenvironments.automations.tasks\x12\x06update\x12w\n" +
+	"UpdateTask\x12\x1c.gitpod.v1.UpdateTaskRequest\x1a\x1d.gitpod.v1.UpdateTaskResponse\"\x00\x12K\n" +
 	"\n" +
-	"DeleteTask\x12\x1c.gitpod.v1.DeleteTaskRequest\x1a\x1d.gitpod.v1.DeleteTaskResponse\",\xb2\xab\x1e(\n" +
-	"\x1eenvironments.automations.tasks\x12\x06delete\x12s\n" +
-	"\tStartTask\x12\x1b.gitpod.v1.StartTaskRequest\x1a\x1c.gitpod.v1.StartTaskResponse\"+\xb2\xab\x1e'\n" +
-	"\x1eenvironments.automations.tasks\x12\x05start\x12\x9b\x01\n" +
-	"\x12ListTaskExecutions\x12$.gitpod.v1.ListTaskExecutionsRequest\x1a%.gitpod.v1.ListTaskExecutionsResponse\"8\xb2\xab\x1e1\n" +
-	")environments.automations.tasks.executions\x12\x04list\x90\x02\x01\x12\x99\x01\n" +
-	"\x10GetTaskExecution\x12\".gitpod.v1.GetTaskExecutionRequest\x1a#.gitpod.v1.GetTaskExecutionResponse\"<\xb2\xab\x1e5\n" +
-	")environments.automations.tasks.executions\x12\bretrieve\x90\x02\x01\x12\x95\x01\n" +
-	"\x11StopTaskExecution\x12#.gitpod.v1.StopTaskExecutionRequest\x1a$.gitpod.v1.StopTaskExecutionResponse\"5\xb2\xab\x1e1\n" +
-	")environments.automations.tasks.executions\x12\x04stop\x12x\n" +
-	"\x19UpdateTaskExecutionStatus\x12+.gitpod.v1.UpdateTaskExecutionStatusRequest\x1a,.gitpod.v1.UpdateTaskExecutionStatusResponse\"\x00\x1a\x1e\xaa\xab\x1e\x1a\n" +
-	"\x18environments.automationsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"DeleteTask\x12\x1c.gitpod.v1.DeleteTaskRequest\x1a\x1d.gitpod.v1.DeleteTaskResponse\"\x00\x12H\n" +
+	"\tStartTask\x12\x1b.gitpod.v1.StartTaskRequest\x1a\x1c.gitpod.v1.StartTaskResponse\"\x00\x12f\n" +
+	"\x12ListTaskExecutions\x12$.gitpod.v1.ListTaskExecutionsRequest\x1a%.gitpod.v1.ListTaskExecutionsResponse\"\x03\x90\x02\x01\x12`\n" +
+	"\x10GetTaskExecution\x12\".gitpod.v1.GetTaskExecutionRequest\x1a#.gitpod.v1.GetTaskExecutionResponse\"\x03\x90\x02\x01\x12`\n" +
+	"\x11StopTaskExecution\x12#.gitpod.v1.StopTaskExecutionRequest\x1a$.gitpod.v1.StopTaskExecutionResponse\"\x00B'Z%github.com/gitpod-io/gitpod-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_environment_automation_proto_rawDescOnce sync.Once
@@ -5155,7 +4979,7 @@ func file_gitpod_v1_environment_automation_proto_rawDescGZIP() []byte {
 }
 
 var file_gitpod_v1_environment_automation_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_gitpod_v1_environment_automation_proto_msgTypes = make([]protoimpl.MessageInfo, 78)
+var file_gitpod_v1_environment_automation_proto_msgTypes = make([]protoimpl.MessageInfo, 76)
 var file_gitpod_v1_environment_automation_proto_goTypes = []any{
 	(ServicePhase)(0),                                    // 0: gitpod.v1.ServicePhase
 	(ServiceRole)(0),                                     // 1: gitpod.v1.ServiceRole
@@ -5199,63 +5023,61 @@ var file_gitpod_v1_environment_automation_proto_goTypes = []any{
 	(*GetTaskExecutionResponse)(nil),                     // 39: gitpod.v1.GetTaskExecutionResponse
 	(*StopTaskExecutionRequest)(nil),                     // 40: gitpod.v1.StopTaskExecutionRequest
 	(*StopTaskExecutionResponse)(nil),                    // 41: gitpod.v1.StopTaskExecutionResponse
-	(*UpdateTaskExecutionStatusRequest)(nil),             // 42: gitpod.v1.UpdateTaskExecutionStatusRequest
-	(*UpdateTaskExecutionStatusResponse)(nil),            // 43: gitpod.v1.UpdateTaskExecutionStatusResponse
-	(*TaskMetadata)(nil),                                 // 44: gitpod.v1.TaskMetadata
-	(*TaskSpec)(nil),                                     // 45: gitpod.v1.TaskSpec
-	(*Task)(nil),                                         // 46: gitpod.v1.Task
-	(*RunsOn)(nil),                                       // 47: gitpod.v1.RunsOn
-	(*EnvironmentVariableItem)(nil),                      // 48: gitpod.v1.EnvironmentVariableItem
-	(*EnvironmentVariableSource)(nil),                    // 49: gitpod.v1.EnvironmentVariableSource
-	(*SecretRef)(nil),                                    // 50: gitpod.v1.SecretRef
-	(*TaskExecution)(nil),                                // 51: gitpod.v1.TaskExecution
-	(*TaskExecutionMetadata)(nil),                        // 52: gitpod.v1.TaskExecutionMetadata
-	(*TaskExecutionSpec)(nil),                            // 53: gitpod.v1.TaskExecutionSpec
-	(*TaskExecutionStatus)(nil),                          // 54: gitpod.v1.TaskExecutionStatus
-	(*AutomationTrigger)(nil),                            // 55: gitpod.v1.AutomationTrigger
-	(*ServiceSpec_Commands)(nil),                         // 56: gitpod.v1.ServiceSpec.Commands
-	nil,                                                  // 57: gitpod.v1.ServiceStatus.OutputEntry
-	(*ListServicesRequest_Filter)(nil),                   // 58: gitpod.v1.ListServicesRequest.Filter
-	(*UpdateServiceRequest_AutomationTriggerUpdate)(nil), // 59: gitpod.v1.UpdateServiceRequest.AutomationTriggerUpdate
-	(*UpdateServiceRequest_ServiceMetadata)(nil),         // 60: gitpod.v1.UpdateServiceRequest.ServiceMetadata
-	(*UpdateServiceRequest_ServiceSpec)(nil),             // 61: gitpod.v1.UpdateServiceRequest.ServiceSpec
-	(*UpdateServiceRequest_ServiceStatus)(nil),           // 62: gitpod.v1.UpdateServiceRequest.ServiceStatus
-	(*UpdateServiceRequest_ServiceSpec_Commands)(nil),    // 63: gitpod.v1.UpdateServiceRequest.ServiceSpec.Commands
-	nil,                             // 64: gitpod.v1.UpdateServiceRequest.ServiceStatus.OutputEntry
-	(*AutomationsFile_Service)(nil), // 65: gitpod.v1.AutomationsFile.Service
-	(*AutomationsFile_Task)(nil),    // 66: gitpod.v1.AutomationsFile.Task
-	nil,                             // 67: gitpod.v1.AutomationsFile.ServicesEntry
-	nil,                             // 68: gitpod.v1.AutomationsFile.TasksEntry
-	(*ListTasksRequest_Filter)(nil), // 69: gitpod.v1.ListTasksRequest.Filter
-	(*UpdateTaskRequest_AutomationTriggerUpdate)(nil), // 70: gitpod.v1.UpdateTaskRequest.AutomationTriggerUpdate
-	(*UpdateTaskRequest_TaskMetadata)(nil),            // 71: gitpod.v1.UpdateTaskRequest.TaskMetadata
-	(*UpdateTaskRequest_TaskSpec)(nil),                // 72: gitpod.v1.UpdateTaskRequest.TaskSpec
-	(*ListTaskExecutionsRequest_Filter)(nil),          // 73: gitpod.v1.ListTaskExecutionsRequest.Filter
-	(*RunsOn_Docker)(nil),                             // 74: gitpod.v1.RunsOn.Docker
-	(*RunsOn_Machine)(nil),                            // 75: gitpod.v1.RunsOn.Machine
-	(*TaskExecutionSpec_Task)(nil),                    // 76: gitpod.v1.TaskExecutionSpec.Task
-	(*TaskExecutionSpec_Step)(nil),                    // 77: gitpod.v1.TaskExecutionSpec.Step
-	(*TaskExecutionSpec_Group)(nil),                   // 78: gitpod.v1.TaskExecutionSpec.Group
-	(*TaskExecutionStatus_Step)(nil),                  // 79: gitpod.v1.TaskExecutionStatus.Step
-	nil,                                               // 80: gitpod.v1.TaskExecutionStatus.Step.OutputEntry
-	(*timestamppb.Timestamp)(nil),                     // 81: google.protobuf.Timestamp
-	(*Subject)(nil),                                   // 82: gitpod.v1.Subject
-	(*durationpb.Duration)(nil),                       // 83: google.protobuf.Duration
-	(*PaginationRequest)(nil),                         // 84: gitpod.v1.PaginationRequest
-	(*PaginationResponse)(nil),                        // 85: gitpod.v1.PaginationResponse
+	(*TaskMetadata)(nil),                                 // 42: gitpod.v1.TaskMetadata
+	(*TaskSpec)(nil),                                     // 43: gitpod.v1.TaskSpec
+	(*Task)(nil),                                         // 44: gitpod.v1.Task
+	(*RunsOn)(nil),                                       // 45: gitpod.v1.RunsOn
+	(*EnvironmentVariableItem)(nil),                      // 46: gitpod.v1.EnvironmentVariableItem
+	(*EnvironmentVariableSource)(nil),                    // 47: gitpod.v1.EnvironmentVariableSource
+	(*SecretRef)(nil),                                    // 48: gitpod.v1.SecretRef
+	(*TaskExecution)(nil),                                // 49: gitpod.v1.TaskExecution
+	(*TaskExecutionMetadata)(nil),                        // 50: gitpod.v1.TaskExecutionMetadata
+	(*TaskExecutionSpec)(nil),                            // 51: gitpod.v1.TaskExecutionSpec
+	(*TaskExecutionStatus)(nil),                          // 52: gitpod.v1.TaskExecutionStatus
+	(*AutomationTrigger)(nil),                            // 53: gitpod.v1.AutomationTrigger
+	(*ServiceSpec_Commands)(nil),                         // 54: gitpod.v1.ServiceSpec.Commands
+	nil,                                                  // 55: gitpod.v1.ServiceStatus.OutputEntry
+	(*ListServicesRequest_Filter)(nil),                   // 56: gitpod.v1.ListServicesRequest.Filter
+	(*UpdateServiceRequest_AutomationTriggerUpdate)(nil), // 57: gitpod.v1.UpdateServiceRequest.AutomationTriggerUpdate
+	(*UpdateServiceRequest_ServiceMetadata)(nil),         // 58: gitpod.v1.UpdateServiceRequest.ServiceMetadata
+	(*UpdateServiceRequest_ServiceSpec)(nil),             // 59: gitpod.v1.UpdateServiceRequest.ServiceSpec
+	(*UpdateServiceRequest_ServiceStatus)(nil),           // 60: gitpod.v1.UpdateServiceRequest.ServiceStatus
+	(*UpdateServiceRequest_ServiceSpec_Commands)(nil),    // 61: gitpod.v1.UpdateServiceRequest.ServiceSpec.Commands
+	nil,                             // 62: gitpod.v1.UpdateServiceRequest.ServiceStatus.OutputEntry
+	(*AutomationsFile_Service)(nil), // 63: gitpod.v1.AutomationsFile.Service
+	(*AutomationsFile_Task)(nil),    // 64: gitpod.v1.AutomationsFile.Task
+	nil,                             // 65: gitpod.v1.AutomationsFile.ServicesEntry
+	nil,                             // 66: gitpod.v1.AutomationsFile.TasksEntry
+	(*ListTasksRequest_Filter)(nil), // 67: gitpod.v1.ListTasksRequest.Filter
+	(*UpdateTaskRequest_AutomationTriggerUpdate)(nil), // 68: gitpod.v1.UpdateTaskRequest.AutomationTriggerUpdate
+	(*UpdateTaskRequest_TaskMetadata)(nil),            // 69: gitpod.v1.UpdateTaskRequest.TaskMetadata
+	(*UpdateTaskRequest_TaskSpec)(nil),                // 70: gitpod.v1.UpdateTaskRequest.TaskSpec
+	(*ListTaskExecutionsRequest_Filter)(nil),          // 71: gitpod.v1.ListTaskExecutionsRequest.Filter
+	(*RunsOn_Docker)(nil),                             // 72: gitpod.v1.RunsOn.Docker
+	(*RunsOn_Machine)(nil),                            // 73: gitpod.v1.RunsOn.Machine
+	(*TaskExecutionSpec_Task)(nil),                    // 74: gitpod.v1.TaskExecutionSpec.Task
+	(*TaskExecutionSpec_Step)(nil),                    // 75: gitpod.v1.TaskExecutionSpec.Step
+	(*TaskExecutionSpec_Group)(nil),                   // 76: gitpod.v1.TaskExecutionSpec.Group
+	(*TaskExecutionStatus_Step)(nil),                  // 77: gitpod.v1.TaskExecutionStatus.Step
+	nil,                                               // 78: gitpod.v1.TaskExecutionStatus.Step.OutputEntry
+	(*timestamppb.Timestamp)(nil),                     // 79: google.protobuf.Timestamp
+	(*Subject)(nil),                                   // 80: gitpod.v1.Subject
+	(*durationpb.Duration)(nil),                       // 81: google.protobuf.Duration
+	(*PaginationRequest)(nil),                         // 82: gitpod.v1.PaginationRequest
+	(*PaginationResponse)(nil),                        // 83: gitpod.v1.PaginationResponse
 }
 var file_gitpod_v1_environment_automation_proto_depIdxs = []int32{
-	81,  // 0: gitpod.v1.ServiceMetadata.created_at:type_name -> google.protobuf.Timestamp
-	82,  // 1: gitpod.v1.ServiceMetadata.creator:type_name -> gitpod.v1.Subject
-	55,  // 2: gitpod.v1.ServiceMetadata.triggered_by:type_name -> gitpod.v1.AutomationTrigger
+	79,  // 0: gitpod.v1.ServiceMetadata.created_at:type_name -> google.protobuf.Timestamp
+	80,  // 1: gitpod.v1.ServiceMetadata.creator:type_name -> gitpod.v1.Subject
+	53,  // 2: gitpod.v1.ServiceMetadata.triggered_by:type_name -> gitpod.v1.AutomationTrigger
 	1,   // 3: gitpod.v1.ServiceMetadata.role:type_name -> gitpod.v1.ServiceRole
 	0,   // 4: gitpod.v1.ServiceSpec.desired_phase:type_name -> gitpod.v1.ServicePhase
-	56,  // 5: gitpod.v1.ServiceSpec.commands:type_name -> gitpod.v1.ServiceSpec.Commands
-	47,  // 6: gitpod.v1.ServiceSpec.runs_on:type_name -> gitpod.v1.RunsOn
-	48,  // 7: gitpod.v1.ServiceSpec.env:type_name -> gitpod.v1.EnvironmentVariableItem
-	83,  // 8: gitpod.v1.ServiceSpec.readiness_timeout:type_name -> google.protobuf.Duration
+	54,  // 5: gitpod.v1.ServiceSpec.commands:type_name -> gitpod.v1.ServiceSpec.Commands
+	45,  // 6: gitpod.v1.ServiceSpec.runs_on:type_name -> gitpod.v1.RunsOn
+	46,  // 7: gitpod.v1.ServiceSpec.env:type_name -> gitpod.v1.EnvironmentVariableItem
+	81,  // 8: gitpod.v1.ServiceSpec.readiness_timeout:type_name -> google.protobuf.Duration
 	0,   // 9: gitpod.v1.ServiceStatus.phase:type_name -> gitpod.v1.ServicePhase
-	57,  // 10: gitpod.v1.ServiceStatus.output:type_name -> gitpod.v1.ServiceStatus.OutputEntry
+	55,  // 10: gitpod.v1.ServiceStatus.output:type_name -> gitpod.v1.ServiceStatus.OutputEntry
 	3,   // 11: gitpod.v1.Service.metadata:type_name -> gitpod.v1.ServiceMetadata
 	4,   // 12: gitpod.v1.Service.spec:type_name -> gitpod.v1.ServiceSpec
 	5,   // 13: gitpod.v1.Service.status:type_name -> gitpod.v1.ServiceStatus
@@ -5263,122 +5085,119 @@ var file_gitpod_v1_environment_automation_proto_depIdxs = []int32{
 	4,   // 15: gitpod.v1.CreateServiceRequest.spec:type_name -> gitpod.v1.ServiceSpec
 	6,   // 16: gitpod.v1.CreateServiceResponse.service:type_name -> gitpod.v1.Service
 	6,   // 17: gitpod.v1.GetServiceResponse.service:type_name -> gitpod.v1.Service
-	84,  // 18: gitpod.v1.ListServicesRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	58,  // 19: gitpod.v1.ListServicesRequest.filter:type_name -> gitpod.v1.ListServicesRequest.Filter
-	85,  // 20: gitpod.v1.ListServicesResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	82,  // 18: gitpod.v1.ListServicesRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	56,  // 19: gitpod.v1.ListServicesRequest.filter:type_name -> gitpod.v1.ListServicesRequest.Filter
+	83,  // 20: gitpod.v1.ListServicesResponse.pagination:type_name -> gitpod.v1.PaginationResponse
 	6,   // 21: gitpod.v1.ListServicesResponse.services:type_name -> gitpod.v1.Service
-	60,  // 22: gitpod.v1.UpdateServiceRequest.metadata:type_name -> gitpod.v1.UpdateServiceRequest.ServiceMetadata
-	61,  // 23: gitpod.v1.UpdateServiceRequest.spec:type_name -> gitpod.v1.UpdateServiceRequest.ServiceSpec
-	62,  // 24: gitpod.v1.UpdateServiceRequest.status:type_name -> gitpod.v1.UpdateServiceRequest.ServiceStatus
+	58,  // 22: gitpod.v1.UpdateServiceRequest.metadata:type_name -> gitpod.v1.UpdateServiceRequest.ServiceMetadata
+	59,  // 23: gitpod.v1.UpdateServiceRequest.spec:type_name -> gitpod.v1.UpdateServiceRequest.ServiceSpec
+	60,  // 24: gitpod.v1.UpdateServiceRequest.status:type_name -> gitpod.v1.UpdateServiceRequest.ServiceStatus
 	23,  // 25: gitpod.v1.UpsertAutomationsFileRequest.automations_file:type_name -> gitpod.v1.AutomationsFile
-	67,  // 26: gitpod.v1.AutomationsFile.services:type_name -> gitpod.v1.AutomationsFile.ServicesEntry
-	68,  // 27: gitpod.v1.AutomationsFile.tasks:type_name -> gitpod.v1.AutomationsFile.TasksEntry
-	44,  // 28: gitpod.v1.CreateTaskRequest.metadata:type_name -> gitpod.v1.TaskMetadata
-	45,  // 29: gitpod.v1.CreateTaskRequest.spec:type_name -> gitpod.v1.TaskSpec
-	46,  // 30: gitpod.v1.CreateTaskResponse.task:type_name -> gitpod.v1.Task
-	46,  // 31: gitpod.v1.GetTaskResponse.task:type_name -> gitpod.v1.Task
-	84,  // 32: gitpod.v1.ListTasksRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	69,  // 33: gitpod.v1.ListTasksRequest.filter:type_name -> gitpod.v1.ListTasksRequest.Filter
-	85,  // 34: gitpod.v1.ListTasksResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	46,  // 35: gitpod.v1.ListTasksResponse.tasks:type_name -> gitpod.v1.Task
-	71,  // 36: gitpod.v1.UpdateTaskRequest.metadata:type_name -> gitpod.v1.UpdateTaskRequest.TaskMetadata
-	72,  // 37: gitpod.v1.UpdateTaskRequest.spec:type_name -> gitpod.v1.UpdateTaskRequest.TaskSpec
-	51,  // 38: gitpod.v1.StartTaskResponse.task_execution:type_name -> gitpod.v1.TaskExecution
-	84,  // 39: gitpod.v1.ListTaskExecutionsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	73,  // 40: gitpod.v1.ListTaskExecutionsRequest.filter:type_name -> gitpod.v1.ListTaskExecutionsRequest.Filter
-	85,  // 41: gitpod.v1.ListTaskExecutionsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	51,  // 42: gitpod.v1.ListTaskExecutionsResponse.task_executions:type_name -> gitpod.v1.TaskExecution
-	51,  // 43: gitpod.v1.GetTaskExecutionResponse.task_execution:type_name -> gitpod.v1.TaskExecution
-	79,  // 44: gitpod.v1.UpdateTaskExecutionStatusRequest.steps:type_name -> gitpod.v1.TaskExecutionStatus.Step
-	81,  // 45: gitpod.v1.TaskMetadata.created_at:type_name -> google.protobuf.Timestamp
-	82,  // 46: gitpod.v1.TaskMetadata.creator:type_name -> gitpod.v1.Subject
-	55,  // 47: gitpod.v1.TaskMetadata.triggered_by:type_name -> gitpod.v1.AutomationTrigger
-	47,  // 48: gitpod.v1.TaskSpec.runs_on:type_name -> gitpod.v1.RunsOn
-	48,  // 49: gitpod.v1.TaskSpec.env:type_name -> gitpod.v1.EnvironmentVariableItem
-	44,  // 50: gitpod.v1.Task.metadata:type_name -> gitpod.v1.TaskMetadata
-	45,  // 51: gitpod.v1.Task.spec:type_name -> gitpod.v1.TaskSpec
-	74,  // 52: gitpod.v1.RunsOn.docker:type_name -> gitpod.v1.RunsOn.Docker
-	75,  // 53: gitpod.v1.RunsOn.machine:type_name -> gitpod.v1.RunsOn.Machine
-	49,  // 54: gitpod.v1.EnvironmentVariableItem.value_from:type_name -> gitpod.v1.EnvironmentVariableSource
-	50,  // 55: gitpod.v1.EnvironmentVariableSource.secret_ref:type_name -> gitpod.v1.SecretRef
-	52,  // 56: gitpod.v1.TaskExecution.metadata:type_name -> gitpod.v1.TaskExecutionMetadata
-	53,  // 57: gitpod.v1.TaskExecution.spec:type_name -> gitpod.v1.TaskExecutionSpec
-	54,  // 58: gitpod.v1.TaskExecution.status:type_name -> gitpod.v1.TaskExecutionStatus
-	81,  // 59: gitpod.v1.TaskExecutionMetadata.created_at:type_name -> google.protobuf.Timestamp
-	82,  // 60: gitpod.v1.TaskExecutionMetadata.creator:type_name -> gitpod.v1.Subject
-	81,  // 61: gitpod.v1.TaskExecutionMetadata.started_at:type_name -> google.protobuf.Timestamp
-	81,  // 62: gitpod.v1.TaskExecutionMetadata.completed_at:type_name -> google.protobuf.Timestamp
-	78,  // 63: gitpod.v1.TaskExecutionSpec.plan:type_name -> gitpod.v1.TaskExecutionSpec.Group
-	2,   // 64: gitpod.v1.TaskExecutionSpec.desired_phase:type_name -> gitpod.v1.TaskExecutionPhase
-	2,   // 65: gitpod.v1.TaskExecutionStatus.phase:type_name -> gitpod.v1.TaskExecutionPhase
-	79,  // 66: gitpod.v1.TaskExecutionStatus.steps:type_name -> gitpod.v1.TaskExecutionStatus.Step
-	1,   // 67: gitpod.v1.ListServicesRequest.Filter.roles:type_name -> gitpod.v1.ServiceRole
-	55,  // 68: gitpod.v1.UpdateServiceRequest.AutomationTriggerUpdate.trigger:type_name -> gitpod.v1.AutomationTrigger
-	59,  // 69: gitpod.v1.UpdateServiceRequest.ServiceMetadata.triggered_by:type_name -> gitpod.v1.UpdateServiceRequest.AutomationTriggerUpdate
-	1,   // 70: gitpod.v1.UpdateServiceRequest.ServiceMetadata.role:type_name -> gitpod.v1.ServiceRole
-	63,  // 71: gitpod.v1.UpdateServiceRequest.ServiceSpec.commands:type_name -> gitpod.v1.UpdateServiceRequest.ServiceSpec.Commands
-	47,  // 72: gitpod.v1.UpdateServiceRequest.ServiceSpec.runs_on:type_name -> gitpod.v1.RunsOn
-	48,  // 73: gitpod.v1.UpdateServiceRequest.ServiceSpec.env:type_name -> gitpod.v1.EnvironmentVariableItem
-	83,  // 74: gitpod.v1.UpdateServiceRequest.ServiceSpec.readiness_timeout:type_name -> google.protobuf.Duration
-	0,   // 75: gitpod.v1.UpdateServiceRequest.ServiceStatus.phase:type_name -> gitpod.v1.ServicePhase
-	64,  // 76: gitpod.v1.UpdateServiceRequest.ServiceStatus.output:type_name -> gitpod.v1.UpdateServiceRequest.ServiceStatus.OutputEntry
-	56,  // 77: gitpod.v1.AutomationsFile.Service.commands:type_name -> gitpod.v1.ServiceSpec.Commands
-	47,  // 78: gitpod.v1.AutomationsFile.Service.runs_on:type_name -> gitpod.v1.RunsOn
-	83,  // 79: gitpod.v1.AutomationsFile.Service.readiness_timeout:type_name -> google.protobuf.Duration
-	47,  // 80: gitpod.v1.AutomationsFile.Task.runs_on:type_name -> gitpod.v1.RunsOn
-	65,  // 81: gitpod.v1.AutomationsFile.ServicesEntry.value:type_name -> gitpod.v1.AutomationsFile.Service
-	66,  // 82: gitpod.v1.AutomationsFile.TasksEntry.value:type_name -> gitpod.v1.AutomationsFile.Task
-	55,  // 83: gitpod.v1.UpdateTaskRequest.AutomationTriggerUpdate.trigger:type_name -> gitpod.v1.AutomationTrigger
-	70,  // 84: gitpod.v1.UpdateTaskRequest.TaskMetadata.triggered_by:type_name -> gitpod.v1.UpdateTaskRequest.AutomationTriggerUpdate
-	47,  // 85: gitpod.v1.UpdateTaskRequest.TaskSpec.runs_on:type_name -> gitpod.v1.RunsOn
-	48,  // 86: gitpod.v1.UpdateTaskRequest.TaskSpec.env:type_name -> gitpod.v1.EnvironmentVariableItem
-	2,   // 87: gitpod.v1.ListTaskExecutionsRequest.Filter.phases:type_name -> gitpod.v1.TaskExecutionPhase
-	45,  // 88: gitpod.v1.TaskExecutionSpec.Task.spec:type_name -> gitpod.v1.TaskSpec
-	76,  // 89: gitpod.v1.TaskExecutionSpec.Step.task:type_name -> gitpod.v1.TaskExecutionSpec.Task
-	77,  // 90: gitpod.v1.TaskExecutionSpec.Group.steps:type_name -> gitpod.v1.TaskExecutionSpec.Step
-	2,   // 91: gitpod.v1.TaskExecutionStatus.Step.phase:type_name -> gitpod.v1.TaskExecutionPhase
-	80,  // 92: gitpod.v1.TaskExecutionStatus.Step.output:type_name -> gitpod.v1.TaskExecutionStatus.Step.OutputEntry
-	7,   // 93: gitpod.v1.EnvironmentAutomationService.CreateService:input_type -> gitpod.v1.CreateServiceRequest
-	9,   // 94: gitpod.v1.EnvironmentAutomationService.GetService:input_type -> gitpod.v1.GetServiceRequest
-	11,  // 95: gitpod.v1.EnvironmentAutomationService.ListServices:input_type -> gitpod.v1.ListServicesRequest
-	13,  // 96: gitpod.v1.EnvironmentAutomationService.UpdateService:input_type -> gitpod.v1.UpdateServiceRequest
-	15,  // 97: gitpod.v1.EnvironmentAutomationService.DeleteService:input_type -> gitpod.v1.DeleteServiceRequest
-	17,  // 98: gitpod.v1.EnvironmentAutomationService.StartService:input_type -> gitpod.v1.StartServiceRequest
-	19,  // 99: gitpod.v1.EnvironmentAutomationService.StopService:input_type -> gitpod.v1.StopServiceRequest
-	21,  // 100: gitpod.v1.EnvironmentAutomationService.UpsertAutomationsFile:input_type -> gitpod.v1.UpsertAutomationsFileRequest
-	24,  // 101: gitpod.v1.EnvironmentAutomationService.CreateTask:input_type -> gitpod.v1.CreateTaskRequest
-	26,  // 102: gitpod.v1.EnvironmentAutomationService.GetTask:input_type -> gitpod.v1.GetTaskRequest
-	28,  // 103: gitpod.v1.EnvironmentAutomationService.ListTasks:input_type -> gitpod.v1.ListTasksRequest
-	30,  // 104: gitpod.v1.EnvironmentAutomationService.UpdateTask:input_type -> gitpod.v1.UpdateTaskRequest
-	32,  // 105: gitpod.v1.EnvironmentAutomationService.DeleteTask:input_type -> gitpod.v1.DeleteTaskRequest
-	34,  // 106: gitpod.v1.EnvironmentAutomationService.StartTask:input_type -> gitpod.v1.StartTaskRequest
-	36,  // 107: gitpod.v1.EnvironmentAutomationService.ListTaskExecutions:input_type -> gitpod.v1.ListTaskExecutionsRequest
-	38,  // 108: gitpod.v1.EnvironmentAutomationService.GetTaskExecution:input_type -> gitpod.v1.GetTaskExecutionRequest
-	40,  // 109: gitpod.v1.EnvironmentAutomationService.StopTaskExecution:input_type -> gitpod.v1.StopTaskExecutionRequest
-	42,  // 110: gitpod.v1.EnvironmentAutomationService.UpdateTaskExecutionStatus:input_type -> gitpod.v1.UpdateTaskExecutionStatusRequest
-	8,   // 111: gitpod.v1.EnvironmentAutomationService.CreateService:output_type -> gitpod.v1.CreateServiceResponse
-	10,  // 112: gitpod.v1.EnvironmentAutomationService.GetService:output_type -> gitpod.v1.GetServiceResponse
-	12,  // 113: gitpod.v1.EnvironmentAutomationService.ListServices:output_type -> gitpod.v1.ListServicesResponse
-	14,  // 114: gitpod.v1.EnvironmentAutomationService.UpdateService:output_type -> gitpod.v1.UpdateServiceResponse
-	16,  // 115: gitpod.v1.EnvironmentAutomationService.DeleteService:output_type -> gitpod.v1.DeleteServiceResponse
-	18,  // 116: gitpod.v1.EnvironmentAutomationService.StartService:output_type -> gitpod.v1.StartServiceResponse
-	20,  // 117: gitpod.v1.EnvironmentAutomationService.StopService:output_type -> gitpod.v1.StopServiceResponse
-	22,  // 118: gitpod.v1.EnvironmentAutomationService.UpsertAutomationsFile:output_type -> gitpod.v1.UpsertAutomationsFileResponse
-	25,  // 119: gitpod.v1.EnvironmentAutomationService.CreateTask:output_type -> gitpod.v1.CreateTaskResponse
-	27,  // 120: gitpod.v1.EnvironmentAutomationService.GetTask:output_type -> gitpod.v1.GetTaskResponse
-	29,  // 121: gitpod.v1.EnvironmentAutomationService.ListTasks:output_type -> gitpod.v1.ListTasksResponse
-	31,  // 122: gitpod.v1.EnvironmentAutomationService.UpdateTask:output_type -> gitpod.v1.UpdateTaskResponse
-	33,  // 123: gitpod.v1.EnvironmentAutomationService.DeleteTask:output_type -> gitpod.v1.DeleteTaskResponse
-	35,  // 124: gitpod.v1.EnvironmentAutomationService.StartTask:output_type -> gitpod.v1.StartTaskResponse
-	37,  // 125: gitpod.v1.EnvironmentAutomationService.ListTaskExecutions:output_type -> gitpod.v1.ListTaskExecutionsResponse
-	39,  // 126: gitpod.v1.EnvironmentAutomationService.GetTaskExecution:output_type -> gitpod.v1.GetTaskExecutionResponse
-	41,  // 127: gitpod.v1.EnvironmentAutomationService.StopTaskExecution:output_type -> gitpod.v1.StopTaskExecutionResponse
-	43,  // 128: gitpod.v1.EnvironmentAutomationService.UpdateTaskExecutionStatus:output_type -> gitpod.v1.UpdateTaskExecutionStatusResponse
-	111, // [111:129] is the sub-list for method output_type
-	93,  // [93:111] is the sub-list for method input_type
-	93,  // [93:93] is the sub-list for extension type_name
-	93,  // [93:93] is the sub-list for extension extendee
-	0,   // [0:93] is the sub-list for field type_name
+	65,  // 26: gitpod.v1.AutomationsFile.services:type_name -> gitpod.v1.AutomationsFile.ServicesEntry
+	66,  // 27: gitpod.v1.AutomationsFile.tasks:type_name -> gitpod.v1.AutomationsFile.TasksEntry
+	42,  // 28: gitpod.v1.CreateTaskRequest.metadata:type_name -> gitpod.v1.TaskMetadata
+	43,  // 29: gitpod.v1.CreateTaskRequest.spec:type_name -> gitpod.v1.TaskSpec
+	44,  // 30: gitpod.v1.CreateTaskResponse.task:type_name -> gitpod.v1.Task
+	44,  // 31: gitpod.v1.GetTaskResponse.task:type_name -> gitpod.v1.Task
+	82,  // 32: gitpod.v1.ListTasksRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	67,  // 33: gitpod.v1.ListTasksRequest.filter:type_name -> gitpod.v1.ListTasksRequest.Filter
+	83,  // 34: gitpod.v1.ListTasksResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	44,  // 35: gitpod.v1.ListTasksResponse.tasks:type_name -> gitpod.v1.Task
+	69,  // 36: gitpod.v1.UpdateTaskRequest.metadata:type_name -> gitpod.v1.UpdateTaskRequest.TaskMetadata
+	70,  // 37: gitpod.v1.UpdateTaskRequest.spec:type_name -> gitpod.v1.UpdateTaskRequest.TaskSpec
+	49,  // 38: gitpod.v1.StartTaskResponse.task_execution:type_name -> gitpod.v1.TaskExecution
+	82,  // 39: gitpod.v1.ListTaskExecutionsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	71,  // 40: gitpod.v1.ListTaskExecutionsRequest.filter:type_name -> gitpod.v1.ListTaskExecutionsRequest.Filter
+	83,  // 41: gitpod.v1.ListTaskExecutionsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	49,  // 42: gitpod.v1.ListTaskExecutionsResponse.task_executions:type_name -> gitpod.v1.TaskExecution
+	49,  // 43: gitpod.v1.GetTaskExecutionResponse.task_execution:type_name -> gitpod.v1.TaskExecution
+	79,  // 44: gitpod.v1.TaskMetadata.created_at:type_name -> google.protobuf.Timestamp
+	80,  // 45: gitpod.v1.TaskMetadata.creator:type_name -> gitpod.v1.Subject
+	53,  // 46: gitpod.v1.TaskMetadata.triggered_by:type_name -> gitpod.v1.AutomationTrigger
+	45,  // 47: gitpod.v1.TaskSpec.runs_on:type_name -> gitpod.v1.RunsOn
+	46,  // 48: gitpod.v1.TaskSpec.env:type_name -> gitpod.v1.EnvironmentVariableItem
+	42,  // 49: gitpod.v1.Task.metadata:type_name -> gitpod.v1.TaskMetadata
+	43,  // 50: gitpod.v1.Task.spec:type_name -> gitpod.v1.TaskSpec
+	72,  // 51: gitpod.v1.RunsOn.docker:type_name -> gitpod.v1.RunsOn.Docker
+	73,  // 52: gitpod.v1.RunsOn.machine:type_name -> gitpod.v1.RunsOn.Machine
+	47,  // 53: gitpod.v1.EnvironmentVariableItem.value_from:type_name -> gitpod.v1.EnvironmentVariableSource
+	48,  // 54: gitpod.v1.EnvironmentVariableSource.secret_ref:type_name -> gitpod.v1.SecretRef
+	50,  // 55: gitpod.v1.TaskExecution.metadata:type_name -> gitpod.v1.TaskExecutionMetadata
+	51,  // 56: gitpod.v1.TaskExecution.spec:type_name -> gitpod.v1.TaskExecutionSpec
+	52,  // 57: gitpod.v1.TaskExecution.status:type_name -> gitpod.v1.TaskExecutionStatus
+	79,  // 58: gitpod.v1.TaskExecutionMetadata.created_at:type_name -> google.protobuf.Timestamp
+	80,  // 59: gitpod.v1.TaskExecutionMetadata.creator:type_name -> gitpod.v1.Subject
+	79,  // 60: gitpod.v1.TaskExecutionMetadata.started_at:type_name -> google.protobuf.Timestamp
+	79,  // 61: gitpod.v1.TaskExecutionMetadata.completed_at:type_name -> google.protobuf.Timestamp
+	76,  // 62: gitpod.v1.TaskExecutionSpec.plan:type_name -> gitpod.v1.TaskExecutionSpec.Group
+	2,   // 63: gitpod.v1.TaskExecutionSpec.desired_phase:type_name -> gitpod.v1.TaskExecutionPhase
+	2,   // 64: gitpod.v1.TaskExecutionStatus.phase:type_name -> gitpod.v1.TaskExecutionPhase
+	77,  // 65: gitpod.v1.TaskExecutionStatus.steps:type_name -> gitpod.v1.TaskExecutionStatus.Step
+	1,   // 66: gitpod.v1.ListServicesRequest.Filter.roles:type_name -> gitpod.v1.ServiceRole
+	53,  // 67: gitpod.v1.UpdateServiceRequest.AutomationTriggerUpdate.trigger:type_name -> gitpod.v1.AutomationTrigger
+	57,  // 68: gitpod.v1.UpdateServiceRequest.ServiceMetadata.triggered_by:type_name -> gitpod.v1.UpdateServiceRequest.AutomationTriggerUpdate
+	1,   // 69: gitpod.v1.UpdateServiceRequest.ServiceMetadata.role:type_name -> gitpod.v1.ServiceRole
+	61,  // 70: gitpod.v1.UpdateServiceRequest.ServiceSpec.commands:type_name -> gitpod.v1.UpdateServiceRequest.ServiceSpec.Commands
+	45,  // 71: gitpod.v1.UpdateServiceRequest.ServiceSpec.runs_on:type_name -> gitpod.v1.RunsOn
+	46,  // 72: gitpod.v1.UpdateServiceRequest.ServiceSpec.env:type_name -> gitpod.v1.EnvironmentVariableItem
+	81,  // 73: gitpod.v1.UpdateServiceRequest.ServiceSpec.readiness_timeout:type_name -> google.protobuf.Duration
+	0,   // 74: gitpod.v1.UpdateServiceRequest.ServiceStatus.phase:type_name -> gitpod.v1.ServicePhase
+	62,  // 75: gitpod.v1.UpdateServiceRequest.ServiceStatus.output:type_name -> gitpod.v1.UpdateServiceRequest.ServiceStatus.OutputEntry
+	54,  // 76: gitpod.v1.AutomationsFile.Service.commands:type_name -> gitpod.v1.ServiceSpec.Commands
+	45,  // 77: gitpod.v1.AutomationsFile.Service.runs_on:type_name -> gitpod.v1.RunsOn
+	81,  // 78: gitpod.v1.AutomationsFile.Service.readiness_timeout:type_name -> google.protobuf.Duration
+	45,  // 79: gitpod.v1.AutomationsFile.Task.runs_on:type_name -> gitpod.v1.RunsOn
+	63,  // 80: gitpod.v1.AutomationsFile.ServicesEntry.value:type_name -> gitpod.v1.AutomationsFile.Service
+	64,  // 81: gitpod.v1.AutomationsFile.TasksEntry.value:type_name -> gitpod.v1.AutomationsFile.Task
+	53,  // 82: gitpod.v1.UpdateTaskRequest.AutomationTriggerUpdate.trigger:type_name -> gitpod.v1.AutomationTrigger
+	68,  // 83: gitpod.v1.UpdateTaskRequest.TaskMetadata.triggered_by:type_name -> gitpod.v1.UpdateTaskRequest.AutomationTriggerUpdate
+	45,  // 84: gitpod.v1.UpdateTaskRequest.TaskSpec.runs_on:type_name -> gitpod.v1.RunsOn
+	46,  // 85: gitpod.v1.UpdateTaskRequest.TaskSpec.env:type_name -> gitpod.v1.EnvironmentVariableItem
+	2,   // 86: gitpod.v1.ListTaskExecutionsRequest.Filter.phases:type_name -> gitpod.v1.TaskExecutionPhase
+	43,  // 87: gitpod.v1.TaskExecutionSpec.Task.spec:type_name -> gitpod.v1.TaskSpec
+	74,  // 88: gitpod.v1.TaskExecutionSpec.Step.task:type_name -> gitpod.v1.TaskExecutionSpec.Task
+	75,  // 89: gitpod.v1.TaskExecutionSpec.Group.steps:type_name -> gitpod.v1.TaskExecutionSpec.Step
+	2,   // 90: gitpod.v1.TaskExecutionStatus.Step.phase:type_name -> gitpod.v1.TaskExecutionPhase
+	78,  // 91: gitpod.v1.TaskExecutionStatus.Step.output:type_name -> gitpod.v1.TaskExecutionStatus.Step.OutputEntry
+	7,   // 92: gitpod.v1.EnvironmentAutomationService.CreateService:input_type -> gitpod.v1.CreateServiceRequest
+	9,   // 93: gitpod.v1.EnvironmentAutomationService.GetService:input_type -> gitpod.v1.GetServiceRequest
+	11,  // 94: gitpod.v1.EnvironmentAutomationService.ListServices:input_type -> gitpod.v1.ListServicesRequest
+	13,  // 95: gitpod.v1.EnvironmentAutomationService.UpdateService:input_type -> gitpod.v1.UpdateServiceRequest
+	15,  // 96: gitpod.v1.EnvironmentAutomationService.DeleteService:input_type -> gitpod.v1.DeleteServiceRequest
+	17,  // 97: gitpod.v1.EnvironmentAutomationService.StartService:input_type -> gitpod.v1.StartServiceRequest
+	19,  // 98: gitpod.v1.EnvironmentAutomationService.StopService:input_type -> gitpod.v1.StopServiceRequest
+	21,  // 99: gitpod.v1.EnvironmentAutomationService.UpsertAutomationsFile:input_type -> gitpod.v1.UpsertAutomationsFileRequest
+	24,  // 100: gitpod.v1.EnvironmentAutomationService.CreateTask:input_type -> gitpod.v1.CreateTaskRequest
+	26,  // 101: gitpod.v1.EnvironmentAutomationService.GetTask:input_type -> gitpod.v1.GetTaskRequest
+	28,  // 102: gitpod.v1.EnvironmentAutomationService.ListTasks:input_type -> gitpod.v1.ListTasksRequest
+	30,  // 103: gitpod.v1.EnvironmentAutomationService.UpdateTask:input_type -> gitpod.v1.UpdateTaskRequest
+	32,  // 104: gitpod.v1.EnvironmentAutomationService.DeleteTask:input_type -> gitpod.v1.DeleteTaskRequest
+	34,  // 105: gitpod.v1.EnvironmentAutomationService.StartTask:input_type -> gitpod.v1.StartTaskRequest
+	36,  // 106: gitpod.v1.EnvironmentAutomationService.ListTaskExecutions:input_type -> gitpod.v1.ListTaskExecutionsRequest
+	38,  // 107: gitpod.v1.EnvironmentAutomationService.GetTaskExecution:input_type -> gitpod.v1.GetTaskExecutionRequest
+	40,  // 108: gitpod.v1.EnvironmentAutomationService.StopTaskExecution:input_type -> gitpod.v1.StopTaskExecutionRequest
+	8,   // 109: gitpod.v1.EnvironmentAutomationService.CreateService:output_type -> gitpod.v1.CreateServiceResponse
+	10,  // 110: gitpod.v1.EnvironmentAutomationService.GetService:output_type -> gitpod.v1.GetServiceResponse
+	12,  // 111: gitpod.v1.EnvironmentAutomationService.ListServices:output_type -> gitpod.v1.ListServicesResponse
+	14,  // 112: gitpod.v1.EnvironmentAutomationService.UpdateService:output_type -> gitpod.v1.UpdateServiceResponse
+	16,  // 113: gitpod.v1.EnvironmentAutomationService.DeleteService:output_type -> gitpod.v1.DeleteServiceResponse
+	18,  // 114: gitpod.v1.EnvironmentAutomationService.StartService:output_type -> gitpod.v1.StartServiceResponse
+	20,  // 115: gitpod.v1.EnvironmentAutomationService.StopService:output_type -> gitpod.v1.StopServiceResponse
+	22,  // 116: gitpod.v1.EnvironmentAutomationService.UpsertAutomationsFile:output_type -> gitpod.v1.UpsertAutomationsFileResponse
+	25,  // 117: gitpod.v1.EnvironmentAutomationService.CreateTask:output_type -> gitpod.v1.CreateTaskResponse
+	27,  // 118: gitpod.v1.EnvironmentAutomationService.GetTask:output_type -> gitpod.v1.GetTaskResponse
+	29,  // 119: gitpod.v1.EnvironmentAutomationService.ListTasks:output_type -> gitpod.v1.ListTasksResponse
+	31,  // 120: gitpod.v1.EnvironmentAutomationService.UpdateTask:output_type -> gitpod.v1.UpdateTaskResponse
+	33,  // 121: gitpod.v1.EnvironmentAutomationService.DeleteTask:output_type -> gitpod.v1.DeleteTaskResponse
+	35,  // 122: gitpod.v1.EnvironmentAutomationService.StartTask:output_type -> gitpod.v1.StartTaskResponse
+	37,  // 123: gitpod.v1.EnvironmentAutomationService.ListTaskExecutions:output_type -> gitpod.v1.ListTaskExecutionsResponse
+	39,  // 124: gitpod.v1.EnvironmentAutomationService.GetTaskExecution:output_type -> gitpod.v1.GetTaskExecutionResponse
+	41,  // 125: gitpod.v1.EnvironmentAutomationService.StopTaskExecution:output_type -> gitpod.v1.StopTaskExecutionResponse
+	109, // [109:126] is the sub-list for method output_type
+	92,  // [92:109] is the sub-list for method input_type
+	92,  // [92:92] is the sub-list for extension type_name
+	92,  // [92:92] is the sub-list for extension extendee
+	0,   // [0:92] is the sub-list for field type_name
 }
 
 func init() { file_gitpod_v1_environment_automation_proto_init() }
@@ -5388,19 +5207,18 @@ func file_gitpod_v1_environment_automation_proto_init() {
 	}
 	file_gitpod_v1_identity_proto_init()
 	file_gitpod_v1_pagination_proto_init()
-	file_gitpod_v1_environment_automation_proto_msgTypes[39].OneofWrappers = []any{}
-	file_gitpod_v1_environment_automation_proto_msgTypes[44].OneofWrappers = []any{
+	file_gitpod_v1_environment_automation_proto_msgTypes[42].OneofWrappers = []any{
 		(*RunsOn_Docker_)(nil),
 		(*RunsOn_Machine_)(nil),
 	}
-	file_gitpod_v1_environment_automation_proto_msgTypes[45].OneofWrappers = []any{
+	file_gitpod_v1_environment_automation_proto_msgTypes[43].OneofWrappers = []any{
 		(*EnvironmentVariableItem_Value)(nil),
 		(*EnvironmentVariableItem_ValueFrom)(nil),
 	}
-	file_gitpod_v1_environment_automation_proto_msgTypes[46].OneofWrappers = []any{
+	file_gitpod_v1_environment_automation_proto_msgTypes[44].OneofWrappers = []any{
 		(*EnvironmentVariableSource_SecretRef)(nil),
 	}
-	file_gitpod_v1_environment_automation_proto_msgTypes[52].OneofWrappers = []any{
+	file_gitpod_v1_environment_automation_proto_msgTypes[50].OneofWrappers = []any{
 		(*AutomationTrigger_Manual)(nil),
 		(*AutomationTrigger_PostMachineStart)(nil),
 		(*AutomationTrigger_PostEnvironmentStart)(nil),
@@ -5408,13 +5226,13 @@ func file_gitpod_v1_environment_automation_proto_init() {
 		(*AutomationTrigger_Prebuild)(nil),
 		(*AutomationTrigger_BeforeSnapshot)(nil),
 	}
+	file_gitpod_v1_environment_automation_proto_msgTypes[55].OneofWrappers = []any{}
+	file_gitpod_v1_environment_automation_proto_msgTypes[56].OneofWrappers = []any{}
 	file_gitpod_v1_environment_automation_proto_msgTypes[57].OneofWrappers = []any{}
 	file_gitpod_v1_environment_automation_proto_msgTypes[58].OneofWrappers = []any{}
-	file_gitpod_v1_environment_automation_proto_msgTypes[59].OneofWrappers = []any{}
-	file_gitpod_v1_environment_automation_proto_msgTypes[60].OneofWrappers = []any{}
-	file_gitpod_v1_environment_automation_proto_msgTypes[68].OneofWrappers = []any{}
-	file_gitpod_v1_environment_automation_proto_msgTypes[69].OneofWrappers = []any{}
-	file_gitpod_v1_environment_automation_proto_msgTypes[74].OneofWrappers = []any{
+	file_gitpod_v1_environment_automation_proto_msgTypes[66].OneofWrappers = []any{}
+	file_gitpod_v1_environment_automation_proto_msgTypes[67].OneofWrappers = []any{}
+	file_gitpod_v1_environment_automation_proto_msgTypes[72].OneofWrappers = []any{
 		(*TaskExecutionSpec_Step_Task)(nil),
 		(*TaskExecutionSpec_Step_ServiceId)(nil),
 	}
@@ -5424,7 +5242,7 @@ func file_gitpod_v1_environment_automation_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gitpod_v1_environment_automation_proto_rawDesc), len(file_gitpod_v1_environment_automation_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   78,
+			NumMessages:   76,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
