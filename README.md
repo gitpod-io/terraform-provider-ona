@@ -17,7 +17,7 @@ is intended for platform, identity, and security teams that administer Ona
 projects, runners, access controls, policies, secrets, and automations.
 
 The provider is currently beta software. The current published release is
-`0.3.0-beta.5`.
+`0.3.0-beta.37`.
 
 - [Terraform Registry provider documentation](https://registry.terraform.io/providers/gitpod-io/ona/latest/docs)
 - [Ona documentation](https://ona.com/docs/ona/getting-started)
@@ -44,7 +44,7 @@ terraform {
   required_providers {
     ona = {
       source  = "gitpod-io/ona"
-      version = "= 0.3.0-beta.5"
+      version = "= 0.3.0-beta.37"
     }
   }
 }

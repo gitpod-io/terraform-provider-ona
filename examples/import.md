@@ -105,7 +105,7 @@ terraform {
   required_providers {
     ona = {
       source  = "gitpod-io/ona"
-      version = "~> 0.1"
+      version = "= 0.3.0-beta.37"
     }
   }
 }
