@@ -14,6 +14,7 @@ It covers:
 - `ona_project`
 - `ona_warm_pool`
 - `ona_scim_configuration`
+- `ona_security_policy`
 - `ona_secret`
 - `ona_service_account`
 
