@@ -177,6 +177,7 @@ func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResou
 	return []func() list.ListResource{
 		organization.NewCustomDomainListResource,
 		organization.NewOIDCConfigListResource,
+		organization.NewPoliciesListResource,
 		organization.NewSCIMConfigurationListResource,
 		organization.NewSSOConfigurationListResource,
 		project.NewListResource,

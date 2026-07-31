@@ -11,6 +11,7 @@ It covers:
 - `ona_custom_domain`
 - `ona_sso_configuration`
 - `ona_oidc_config`
+- `ona_organization_policies`
 - `ona_project`
 - `ona_warm_pool`
 - `ona_scim_configuration`

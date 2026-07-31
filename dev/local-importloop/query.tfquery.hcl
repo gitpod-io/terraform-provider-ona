@@ -33,6 +33,11 @@ list "ona_oidc_config" "all" {
   include_resource = true
 }
 
+list "ona_organization_policies" "all" {
+  provider         = ona
+  include_resource = true
+}
+
 list "ona_project" "all" {
   provider         = ona
   include_resource = true

@@ -105,6 +105,30 @@ func TestAccPolicyResourcesLifecycle(t *testing.T) {
 				},
 			},
 			{
+				ResourceName:    "ona_organization_policies.test",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				Config: strings.NewReplacer(
+					`"24h"`, `"24h0m0s"`,
+					`"30m"`, `"30m0s"`,
+					`"720h"`, `"720h0m0s"`,
+					`    allowed_agent_ids             = ["ona"]`, `    allowed_agent_ids             = ["ona"]
+    codex_model_states            = { CODEX_OPEN_AI_MODEL_GPT_5_4 = "disabled" }`,
+				).Replace(testAccPolicyConfig(server.URL, "baseline", "24h", "organization")),
+				ImportStateCheck: func(states []*terraform.InstanceState) error {
+					if len(states) != 1 {
+						return fmt.Errorf("expected one imported organization policies state, got %d", len(states))
+					}
+					if got := states[0].Attributes["id"]; got != "org-1" {
+						return fmt.Errorf("expected imported organization policies id org-1, got %q", got)
+					}
+					if got := states[0].Attributes["organization_id"]; got != "org-1" {
+						return fmt.Errorf("expected imported organization_id org-1, got %q", got)
+					}
+					return nil
+				},
+			},
+			{
 				Config: testAccPolicyConfig(server.URL, "baseline-updated", "48h", "creator_only"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
@@ -657,6 +681,7 @@ func (s *fakeSecurityService) policyDeleted(id string) bool {
 
 type fakeOrganizationService struct {
 	v1connect.UnimplementedOrganizationServiceHandler
+	v1connect.UnimplementedIdentityServiceHandler
 
 	mu       sync.Mutex
 	policies *v1.OrganizationPolicies
