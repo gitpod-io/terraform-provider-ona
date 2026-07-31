@@ -8,9 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -2299,8 +2296,6 @@ type WorkflowStep_PullRequest_ struct {
 }
 
 type WorkflowStep_Report_ struct {
-	// Skipped from SDK: OutputSpec's two oneof fields produce an allOf in the OpenAPI spec,
-	// which Stainless's Python codegen cannot handle (generates empty classes)
 	Report *WorkflowStep_Report `protobuf:"bytes,4,opt,name=report,proto3,oneof"`
 }
 
@@ -4670,11 +4665,15 @@ type WorkflowExecution_Status struct {
 	StoppedActionCount int32                  `protobuf:"varint,18,opt,name=stopped_action_count,json=stoppedActionCount,proto3" json:"stopped_action_count,omitempty"`
 	// FailureMessage summarises why the workflow execution failed to operate. If this is non-empty
 	// the workflow execution has failed to operate and will likely transition to a stopped state.
-	// Deprecated: Use errors field instead for structured error information.
+	// Deprecated: Use failures instead for structured error information.
+	//
+	// Deprecated: Marked as deprecated in gitpod/v1/workflow.proto.
 	FailureMessage string `protobuf:"bytes,14,opt,name=failure_message,json=failureMessage,proto3" json:"failure_message,omitempty"`
 	// WarningMessage summarises why the workflow execution is in a warning state. If this is non-empty
 	// the workflow execution is in a warning state and likely does not match the users expectations.
 	// Deprecated: Use warnings field instead for structured warning information.
+	//
+	// Deprecated: Marked as deprecated in gitpod/v1/workflow.proto.
 	WarningMessage string `protobuf:"bytes,15,opt,name=warning_message,json=warningMessage,proto3" json:"warning_message,omitempty"`
 	// Structured failures that caused the workflow execution to fail.
 	// Provides detailed error codes, messages, and retry information.
@@ -4765,6 +4764,7 @@ func (x *WorkflowExecution_Status) GetStoppedActionCount() int32 {
 	return 0
 }
 
+// Deprecated: Marked as deprecated in gitpod/v1/workflow.proto.
 func (x *WorkflowExecution_Status) GetFailureMessage() string {
 	if x != nil {
 		return x.FailureMessage
@@ -4772,6 +4772,7 @@ func (x *WorkflowExecution_Status) GetFailureMessage() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in gitpod/v1/workflow.proto.
 func (x *WorkflowExecution_Status) GetWarningMessage() string {
 	if x != nil {
 		return x.WarningMessage
@@ -4956,11 +4957,15 @@ type WorkflowExecutionAction_Status struct {
 	AgentExecutionId string                                       `protobuf:"bytes,12,opt,name=agent_execution_id,json=agentExecutionId,proto3" json:"agent_execution_id,omitempty"`
 	// FailureMessage summarises why the workflow execution action failed to operate. If this is non-empty
 	// the workflow execution action has failed to operate and will likely transition to a stopped state.
-	// Deprecated: Use errors field instead for structured error information.
+	// Deprecated: Use failures instead for structured error information.
+	//
+	// Deprecated: Marked as deprecated in gitpod/v1/workflow.proto.
 	FailureMessage string `protobuf:"bytes,11,opt,name=failure_message,json=failureMessage,proto3" json:"failure_message,omitempty"`
 	// WarningMessage summarises why the workflow execution action is in a warning state. If this is non-empty
 	// the workflow execution action is in a warning state and likely does not match the users expectations.
 	// Deprecated: Use warnings field instead for structured warning information.
+	//
+	// Deprecated: Marked as deprecated in gitpod/v1/workflow.proto.
 	WarningMessage string `protobuf:"bytes,13,opt,name=warning_message,json=warningMessage,proto3" json:"warning_message,omitempty"`
 	// Structured failures that caused the workflow execution action to fail.
 	// Provides detailed error codes, messages, and retry information.
@@ -5037,6 +5042,7 @@ func (x *WorkflowExecutionAction_Status) GetAgentExecutionId() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in gitpod/v1/workflow.proto.
 func (x *WorkflowExecutionAction_Status) GetFailureMessage() string {
 	if x != nil {
 		return x.FailureMessage
@@ -5044,6 +5050,7 @@ func (x *WorkflowExecutionAction_Status) GetFailureMessage() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in gitpod/v1/workflow.proto.
 func (x *WorkflowExecutionAction_Status) GetWarningMessage() string {
 	if x != nil {
 		return x.WarningMessage
@@ -5071,6 +5078,8 @@ type WorkflowExecutionAction_Status_StepStatus struct {
 	StepIndex int32                                               `protobuf:"varint,1,opt,name=step_index,json=stepIndex,proto3" json:"step_index,omitempty"` // Index of the step in the workflow action steps array
 	Phase     WorkflowExecutionAction_Status_StepStatus_StepPhase `protobuf:"varint,2,opt,name=phase,proto3,enum=gitpod.v1.WorkflowExecutionAction_Status_StepStatus_StepPhase" json:"phase,omitempty"`
 	// Deprecated: Use error field instead for structured error information.
+	//
+	// Deprecated: Marked as deprecated in gitpod/v1/workflow.proto.
 	FailureMessage string                 `protobuf:"bytes,3,opt,name=failure_message,json=failureMessage,proto3" json:"failure_message,omitempty"`
 	StartedAt      *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
 	FinishedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=finished_at,json=finishedAt,proto3" json:"finished_at,omitempty"`
@@ -5128,6 +5137,7 @@ func (x *WorkflowExecutionAction_Status_StepStatus) GetPhase() WorkflowExecution
 	return WorkflowExecutionAction_Status_StepStatus_STEP_PHASE_UNSPECIFIED
 }
 
+// Deprecated: Marked as deprecated in gitpod/v1/workflow.proto.
 func (x *WorkflowExecutionAction_Status_StepStatus) GetFailureMessage() string {
 	if x != nil {
 		return x.FailureMessage
@@ -5317,46 +5327,43 @@ var File_gitpod_v1_workflow_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_workflow_proto_rawDesc = "" +
 	"\n" +
-	"\x18gitpod/v1/workflow.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x15gitpod/v1/agent.proto\x1a\x15gitpod/v1/count.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x15gitpod/v1/usage.proto\x1a\x1egitpod/v1/workflow_error.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xef\x05\n" +
-	"\x15CreateWorkflowRequest\x12z\n" +
-	"\x04name\x18\x01 \x01(\tBf\xbaH_\xba\x01\\\n" +
-	"\vname_length\x12(Name must be between 1 and 80 characters\x1a#size(this) >= 1 && size(this) <= 80ګ\x1e\x00R\x04name\x12\x7f\n" +
-	"\vdescription\x18\x02 \x01(\tB]\xbaHV\xba\x01S\n" +
-	"\x12description_length\x12*Description must be at most 500 characters\x1a\x11size(this) <= 500ګ\x1e\x00R\vdescription\x12\xa7\x01\n" +
-	"\btriggers\x18\x03 \x03(\v2\x1a.gitpod.v1.WorkflowTriggerBo\xbaHh\xba\x01e\n" +
-	"\x0etriggers_count\x12.Automation must have between 1 and 10 triggers\x1a#size(this) >= 1 && size(this) <= 10ګ\x1e\x00R\btriggers\x12=\n" +
-	"\x06action\x18\x04 \x01(\v2\x19.gitpod.v1.WorkflowActionB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x06action\x121\n" +
-	"\x06report\x18\x05 \x01(\v2\x19.gitpod.v1.WorkflowActionR\x06report\x129\n" +
-	"\bexecutor\x18\x06 \x01(\v2\x12.gitpod.v1.SubjectB\x04ګ\x1e\x00H\x00R\bexecutor\x88\x01\x01\x12,\n" +
-	"\bagent_id\x18\a \x01(\tB\x11\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01ʫ\x1e\x02\b\x01R\aagentId\x12G\n" +
-	"\x0ecodex_settings\x18\b \x01(\v2\x18.gitpod.v1.CodexSettingsB\x06ʫ\x1e\x02\b\x01R\rcodexSettingsB\v\n" +
+	"\x18gitpod/v1/workflow.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x15gitpod/v1/agent.proto\x1a\x15gitpod/v1/count.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x15gitpod/v1/usage.proto\x1a\x1egitpod/v1/workflow_error.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xcb\x05\n" +
+	"\x15CreateWorkflowRequest\x12v\n" +
+	"\x04name\x18\x01 \x01(\tBb\xbaH_\xba\x01\\\n" +
+	"\vname_length\x12(Name must be between 1 and 80 characters\x1a#size(this) >= 1 && size(this) <= 80R\x04name\x12{\n" +
+	"\vdescription\x18\x02 \x01(\tBY\xbaHV\xba\x01S\n" +
+	"\x12description_length\x12*Description must be at most 500 characters\x1a\x11size(this) <= 500R\vdescription\x12\xa3\x01\n" +
+	"\btriggers\x18\x03 \x03(\v2\x1a.gitpod.v1.WorkflowTriggerBk\xbaHh\xba\x01e\n" +
+	"\x0etriggers_count\x12.Automation must have between 1 and 10 triggers\x1a#size(this) >= 1 && size(this) <= 10R\btriggers\x129\n" +
+	"\x06action\x18\x04 \x01(\v2\x19.gitpod.v1.WorkflowActionB\x06\xbaH\x03\xc8\x01\x01R\x06action\x121\n" +
+	"\x06report\x18\x05 \x01(\v2\x19.gitpod.v1.WorkflowActionR\x06report\x123\n" +
+	"\bexecutor\x18\x06 \x01(\v2\x12.gitpod.v1.SubjectH\x00R\bexecutor\x88\x01\x01\x12&\n" +
+	"\bagent_id\x18\a \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\aagentId\x12?\n" +
+	"\x0ecodex_settings\x18\b \x01(\v2\x18.gitpod.v1.CodexSettingsR\rcodexSettingsB\v\n" +
 	"\t_executor\"I\n" +
 	"\x16CreateWorkflowResponse\x12/\n" +
-	"\bworkflow\x18\x01 \x01(\v2\x13.gitpod.v1.WorkflowR\bworkflow\"P\n" +
-	"\x12GetWorkflowRequest\x12:\n" +
-	"\vworkflow_id\x18\x01 \x01(\tB\x19\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vworkflow.idR\n" +
+	"\bworkflow\x18\x01 \x01(\v2\x13.gitpod.v1.WorkflowR\bworkflow\"?\n" +
+	"\x12GetWorkflowRequest\x12)\n" +
+	"\vworkflow_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"workflowId\"F\n" +
 	"\x13GetWorkflowResponse\x12/\n" +
-	"\bworkflow\x18\x01 \x01(\v2\x13.gitpod.v1.WorkflowR\bworkflow\"\xa6\a\n" +
-	"\x15UpdateWorkflowRequest\x12>\n" +
-	"\vworkflow_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vworkflow.idګ\x1e\x00R\n" +
-	"workflowId\x12\x7f\n" +
-	"\x04name\x18\x02 \x01(\tBf\xbaH_\xba\x01\\\n" +
-	"\vname_length\x12(Name must be between 1 and 80 characters\x1a#size(this) >= 1 && size(this) <= 80ګ\x1e\x00H\x00R\x04name\x88\x01\x01\x12\x84\x01\n" +
-	"\vdescription\x18\x03 \x01(\tB]\xbaHV\xba\x01S\n" +
-	"\x12description_length\x12*Description must be at most 500 characters\x1a\x11size(this) <= 500ګ\x1e\x00H\x01R\vdescription\x88\x01\x01\x12\x8d\x01\n" +
-	"\btriggers\x18\x04 \x03(\v2\x1a.gitpod.v1.WorkflowTriggerBU\xbaHN\xba\x01K\n" +
-	"\x0etriggers_count\x12'Automation can have at most 10 triggers\x1a\x10size(this) <= 10ګ\x1e\x00R\btriggers\x12<\n" +
-	"\x06action\x18\x05 \x01(\v2\x19.gitpod.v1.WorkflowActionB\x04ګ\x1e\x00H\x02R\x06action\x88\x01\x01\x126\n" +
-	"\x06report\x18\x06 \x01(\v2\x19.gitpod.v1.WorkflowActionH\x03R\x06report\x88\x01\x01\x129\n" +
-	"\bexecutor\x18\a \x01(\v2\x12.gitpod.v1.SubjectB\x04ګ\x1e\x00H\x04R\bexecutor\x88\x01\x01\x12%\n" +
-	"\bdisabled\x18\b \x01(\bB\x04ګ\x1e\x00H\x05R\bdisabled\x88\x01\x01\x12&\n" +
-	"\bagent_id\x18\t \x01(\tB\x06ʫ\x1e\x02\b\x01H\x06R\aagentId\x88\x01\x01\x12L\n" +
+	"\bworkflow\x18\x01 \x01(\v2\x13.gitpod.v1.WorkflowR\bworkflow\"\xe3\x06\n" +
+	"\x15UpdateWorkflowRequest\x12)\n" +
+	"\vworkflow_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
+	"workflowId\x12{\n" +
+	"\x04name\x18\x02 \x01(\tBb\xbaH_\xba\x01\\\n" +
+	"\vname_length\x12(Name must be between 1 and 80 characters\x1a#size(this) >= 1 && size(this) <= 80H\x00R\x04name\x88\x01\x01\x12\x80\x01\n" +
+	"\vdescription\x18\x03 \x01(\tBY\xbaHV\xba\x01S\n" +
+	"\x12description_length\x12*Description must be at most 500 characters\x1a\x11size(this) <= 500H\x01R\vdescription\x88\x01\x01\x12\x89\x01\n" +
+	"\btriggers\x18\x04 \x03(\v2\x1a.gitpod.v1.WorkflowTriggerBQ\xbaHN\xba\x01K\n" +
+	"\x0etriggers_count\x12'Automation can have at most 10 triggers\x1a\x10size(this) <= 10R\btriggers\x126\n" +
+	"\x06action\x18\x05 \x01(\v2\x19.gitpod.v1.WorkflowActionH\x02R\x06action\x88\x01\x01\x126\n" +
+	"\x06report\x18\x06 \x01(\v2\x19.gitpod.v1.WorkflowActionH\x03R\x06report\x88\x01\x01\x123\n" +
+	"\bexecutor\x18\a \x01(\v2\x12.gitpod.v1.SubjectH\x04R\bexecutor\x88\x01\x01\x12\x1f\n" +
+	"\bdisabled\x18\b \x01(\bH\x05R\bdisabled\x88\x01\x01\x12\x1e\n" +
+	"\bagent_id\x18\t \x01(\tH\x06R\aagentId\x88\x01\x01\x12D\n" +
 	"\x0ecodex_settings\x18\n" +
-	" \x01(\v2\x18.gitpod.v1.CodexSettingsB\x06ʫ\x1e\x02\b\x01H\aR\rcodexSettings\x88\x01\x01B\a\n" +
+	" \x01(\v2\x18.gitpod.v1.CodexSettingsH\aR\rcodexSettings\x88\x01\x01B\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\t\n" +
 	"\a_actionB\t\n" +
@@ -5366,29 +5373,25 @@ const file_gitpod_v1_workflow_proto_rawDesc = "" +
 	"\t_agent_idB\x11\n" +
 	"\x0f_codex_settings\"I\n" +
 	"\x16UpdateWorkflowResponse\x12/\n" +
-	"\bworkflow\x18\x01 \x01(\v2\x13.gitpod.v1.WorkflowR\bworkflow\"\xdf\a\n" +
+	"\bworkflow\x18\x01 \x01(\v2\x13.gitpod.v1.WorkflowR\bworkflow\"\xc5\x06\n" +
 	"\x14ListWorkflowsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12>\n" +
 	"\x06filter\x18\x02 \x01(\v2&.gitpod.v1.ListWorkflowsRequest.FilterR\x06filter\x128\n" +
-	"\x04sort\x18\x03 \x01(\v2$.gitpod.v1.ListWorkflowsRequest.SortR\x04sort\x125\n" +
-	"\x05count\x18\x04 \x01(\v2\x17.gitpod.v1.CountRequestB\x06ʫ\x1e\x02\b\x01R\x05count\x1a\x81\x04\n" +
-	"\x06Filter\x12K\n" +
-	"\fworkflow_ids\x18\x01 \x03(\tB(\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x15\n" +
-	"\x13filter.workflow_idsR\vworkflowIds\x12\"\n" +
+	"\x04sort\x18\x03 \x01(\v2$.gitpod.v1.ListWorkflowsRequest.SortR\x04sort\x12-\n" +
+	"\x05count\x18\x04 \x01(\v2\x17.gitpod.v1.CountRequestR\x05count\x1a\xef\x02\n" +
+	"\x06Filter\x122\n" +
+	"\fworkflow_ids\x18\x01 \x03(\tB\x0f\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01R\vworkflowIds\x12\"\n" +
 	"\x06search\x18\x02 \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x00\x18\x80\x02R\x06search\x12J\n" +
-	"\vcreator_ids\x18\x03 \x03(\tB)\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x14\n" +
-	"\x12filter.creator_idsR\n" +
-	"creatorIds\x12l\n" +
-	"\rstatus_phases\x18\x04 \x03(\x0e2!.gitpod.v1.WorkflowExecutionPhaseB$\xbaH\a\x92\x01\x04\b\x00\x10\n" +
-	"\xa2\xab\x1e\x16\n" +
-	"\x14filter.status_phasesR\fstatusPhases\x12\x80\x01\n" +
-	"\x1ahas_failed_execution_since\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB'\xa2\xab\x1e#\n" +
-	"!filter.has_failed_execution_sinceR\x17hasFailedExecutionSince\x12<\n" +
-	"\bdisabled\x18\x06 \x01(\bB\x1b\xa2\xab\x1e\x11\n" +
-	"\x0ffilter.disabledʫ\x1e\x02\b\x01H\x00R\bdisabled\x88\x01\x01B\v\n" +
+	"\xbaH\ar\x05\x10\x00\x18\x80\x02R\x06search\x122\n" +
+	"\vcreator_ids\x18\x03 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\n" +
+	"creatorIds\x12R\n" +
+	"\rstatus_phases\x18\x04 \x03(\x0e2!.gitpod.v1.WorkflowExecutionPhaseB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\n" +
+	"R\fstatusPhases\x12W\n" +
+	"\x1ahas_failed_execution_since\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x17hasFailedExecutionSince\x12\x1f\n" +
+	"\bdisabled\x18\x06 \x01(\bH\x00R\bdisabled\x88\x01\x01B\v\n" +
 	"\t_disabled\x1as\n" +
 	"\x04Sort\x12?\n" +
 	"\x05field\x18\x01 \x01(\x0e2).gitpod.v1.ListWorkflowsRequest.SortFieldR\x05field\x12*\n" +
@@ -5396,34 +5399,30 @@ const file_gitpod_v1_workflow_proto_rawDesc = "" +
 	"\tSortField\x12\x1a\n" +
 	"\x16SORT_FIELD_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fSORT_FIELD_NAME\x10\x01\x12!\n" +
-	"\x1dSORT_FIELD_RECENTLY_COMPLETED\x10\x02\"\xc1\x01\n" +
+	"\x1dSORT_FIELD_RECENTLY_COMPLETED\x10\x02\"\xb9\x01\n" +
 	"\x15ListWorkflowsResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x121\n" +
-	"\tworkflows\x18\x02 \x03(\v2\x13.gitpod.v1.WorkflowR\tworkflows\x126\n" +
-	"\x05count\x18\x03 \x01(\v2\x18.gitpod.v1.CountResponseB\x06ʫ\x1e\x02\b\x01R\x05count\"i\n" +
-	"\x15DeleteWorkflowRequest\x12:\n" +
-	"\vworkflow_id\x18\x01 \x01(\tB\x19\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vworkflow.idR\n" +
+	"\tworkflows\x18\x02 \x03(\v2\x13.gitpod.v1.WorkflowR\tworkflows\x12.\n" +
+	"\x05count\x18\x03 \x01(\v2\x18.gitpod.v1.CountResponseR\x05count\"X\n" +
+	"\x15DeleteWorkflowRequest\x12)\n" +
+	"\vworkflow_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"workflowId\x12\x14\n" +
 	"\x05force\x18\x02 \x01(\bR\x05force\"\x18\n" +
-	"\x16DeleteWorkflowResponse\"]\n" +
-	"\x1fGetWorkflowWebhookSecretRequest\x12:\n" +
-	"\vworkflow_id\x18\x01 \x01(\tB\x19\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vworkflow.idR\n" +
+	"\x16DeleteWorkflowResponse\"L\n" +
+	"\x1fGetWorkflowWebhookSecretRequest\x12)\n" +
+	"\vworkflow_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"workflowId\":\n" +
 	" GetWorkflowWebhookSecretResponse\x12\x16\n" +
-	"\x06secret\x18\x01 \x01(\tR\x06secret\"`\n" +
-	"\"RotateWorkflowWebhookSecretRequest\x12:\n" +
-	"\vworkflow_id\x18\x01 \x01(\tB\x19\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vworkflow.idR\n" +
+	"\x06secret\x18\x01 \x01(\tR\x06secret\"O\n" +
+	"\"RotateWorkflowWebhookSecretRequest\x12)\n" +
+	"\vworkflow_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"workflowId\"=\n" +
 	"#RotateWorkflowWebhookSecretResponse\x12\x16\n" +
-	"\x06secret\x18\x01 \x01(\tR\x06secret\"\xf2\x02\n" +
-	"\x14StartWorkflowRequest\x12:\n" +
-	"\vworkflow_id\x18\x01 \x01(\tB\x19\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vworkflow.idR\n" +
+	"\x06secret\x18\x01 \x01(\tR\x06secret\"\xe1\x02\n" +
+	"\x14StartWorkflowRequest\x12)\n" +
+	"\vworkflow_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"workflowId\x12Q\n" +
 	"\x10context_override\x18\x02 \x01(\v2!.gitpod.v1.WorkflowTriggerContextH\x00R\x0fcontextOverride\x88\x01\x01\x12w\n" +
 	"\n" +
@@ -5435,23 +5434,20 @@ const file_gitpod_v1_workflow_proto_rawDesc = "" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x13\n" +
 	"\x11_context_override\"d\n" +
 	"\x15StartWorkflowResponse\x12K\n" +
-	"\x12workflow_execution\x18\x01 \x01(\v2\x1c.gitpod.v1.WorkflowExecutionR\x11workflowExecution\"\x8a\x05\n" +
+	"\x12workflow_execution\x18\x01 \x01(\v2\x1c.gitpod.v1.WorkflowExecutionR\x11workflowExecution\"\x93\x04\n" +
 	"\x1dListWorkflowExecutionsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12G\n" +
 	"\x06filter\x18\x02 \x01(\v2/.gitpod.v1.ListWorkflowExecutionsRequest.FilterR\x06filter\x12#\n" +
-	"\x04sort\x18\x03 \x01(\v2\x0f.gitpod.v1.SortR\x04sort\x1a\xbc\x03\n" +
-	"\x06Filter\x12h\n" +
-	"\x16workflow_execution_ids\x18\x01 \x03(\tB2\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1f\n" +
-	"\x1dfilter.workflow_execution_idsR\x14workflowExecutionIds\x12K\n" +
-	"\fworkflow_ids\x18\x02 \x03(\tB(\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x15\n" +
-	"\x13filter.workflow_idsR\vworkflowIds\x12l\n" +
-	"\rstatus_phases\x18\x03 \x03(\x0e2!.gitpod.v1.WorkflowExecutionPhaseB$\xbaH\a\x92\x01\x04\b\x00\x10\n" +
-	"\xa2\xab\x1e\x16\n" +
-	"\x14filter.status_phasesR\fstatusPhases\x12R\n" +
-	"\x12has_failed_actions\x18\x04 \x01(\bB\x1f\xa2\xab\x1e\x1b\n" +
-	"\x19filter.has_failed_actionsH\x00R\x10hasFailedActions\x88\x01\x01\x12\"\n" +
+	"\x04sort\x18\x03 \x01(\v2\x0f.gitpod.v1.SortR\x04sort\x1a\xc5\x02\n" +
+	"\x06Filter\x12E\n" +
+	"\x16workflow_execution_ids\x18\x01 \x03(\tB\x0f\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01R\x14workflowExecutionIds\x122\n" +
+	"\fworkflow_ids\x18\x02 \x03(\tB\x0f\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01R\vworkflowIds\x12R\n" +
+	"\rstatus_phases\x18\x03 \x03(\x0e2!.gitpod.v1.WorkflowExecutionPhaseB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\n" +
+	"R\fstatusPhases\x121\n" +
+	"\x12has_failed_actions\x18\x04 \x01(\bH\x00R\x10hasFailedActions\x88\x01\x01\x12\"\n" +
 	"\x06search\x18\x05 \x01(\tB\n" +
 	"\xbaH\ar\x05\x10\x00\x18\x80\x02R\x06searchB\x15\n" +
 	"\x13_has_failed_actions\"\xae\x01\n" +
@@ -5459,85 +5455,74 @@ const file_gitpod_v1_workflow_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12M\n" +
-	"\x13workflow_executions\x18\x02 \x03(\v2\x1c.gitpod.v1.WorkflowExecutionR\x12workflowExecutions\"v\n" +
-	"\x1bGetWorkflowExecutionRequest\x12W\n" +
-	"\x15workflow_execution_id\x18\x01 \x01(\tB#\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x17\n" +
-	"\x15workflow_execution.idR\x13workflowExecutionId\"k\n" +
+	"\x13workflow_executions\x18\x02 \x03(\v2\x1c.gitpod.v1.WorkflowExecutionR\x12workflowExecutions\"[\n" +
+	"\x1bGetWorkflowExecutionRequest\x12<\n" +
+	"\x15workflow_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x13workflowExecutionId\"k\n" +
 	"\x1cGetWorkflowExecutionResponse\x12K\n" +
-	"\x12workflow_execution\x18\x01 \x01(\v2\x1c.gitpod.v1.WorkflowExecutionR\x11workflowExecution\"y\n" +
-	"\x1eCancelWorkflowExecutionRequest\x12W\n" +
-	"\x15workflow_execution_id\x18\x01 \x01(\tB#\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x17\n" +
-	"\x15workflow_execution.idR\x13workflowExecutionId\"!\n" +
-	"\x1fCancelWorkflowExecutionResponse\"\xbd\x04\n" +
+	"\x12workflow_execution\x18\x01 \x01(\v2\x1c.gitpod.v1.WorkflowExecutionR\x11workflowExecution\"^\n" +
+	"\x1eCancelWorkflowExecutionRequest\x12<\n" +
+	"\x15workflow_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x13workflowExecutionId\"!\n" +
+	"\x1fCancelWorkflowExecutionResponse\"\xd7\x03\n" +
 	"#ListWorkflowExecutionActionsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12M\n" +
-	"\x06filter\x18\x02 \x01(\v25.gitpod.v1.ListWorkflowExecutionActionsRequest.FilterR\x06filter\x1a\x88\x03\n" +
-	"\x06Filter\x12|\n" +
-	"\x1dworkflow_execution_action_ids\x18\x01 \x03(\tB9\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e&\n" +
-	"$filter.workflow_execution_action_idsR\x1aworkflowExecutionActionIds\x12h\n" +
-	"\x16workflow_execution_ids\x18\x02 \x03(\tB2\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1f\n" +
-	"\x1dfilter.workflow_execution_idsR\x14workflowExecutionIds\x12K\n" +
-	"\fworkflow_ids\x18\x03 \x03(\tB(\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x15\n" +
-	"\x13filter.workflow_idsR\vworkflowIds\x12I\n" +
+	"\x06filter\x18\x02 \x01(\v25.gitpod.v1.ListWorkflowExecutionActionsRequest.FilterR\x06filter\x1a\xa2\x02\n" +
+	"\x06Filter\x12R\n" +
+	"\x1dworkflow_execution_action_ids\x18\x01 \x03(\tB\x0f\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01R\x1aworkflowExecutionActionIds\x12E\n" +
+	"\x16workflow_execution_ids\x18\x02 \x03(\tB\x0f\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01R\x14workflowExecutionIds\x122\n" +
+	"\fworkflow_ids\x18\x03 \x03(\tB\x0f\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01R\vworkflowIds\x12I\n" +
 	"\x06phases\x18\x04 \x03(\x0e2'.gitpod.v1.WorkflowExecutionActionPhaseB\b\xbaH\x05\x92\x01\x02\x10\n" +
 	"R\x06phases\"\xc7\x01\n" +
 	"$ListWorkflowExecutionActionsResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12`\n" +
-	"\x1aworkflow_execution_actions\x18\x02 \x03(\v2\".gitpod.v1.WorkflowExecutionActionR\x18workflowExecutionActions\"\x90\x01\n" +
-	"!GetWorkflowExecutionActionRequest\x12k\n" +
-	"\x1cworkflow_execution_action_id\x18\x01 \x01(\tB*\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1e\n" +
-	"\x1cworkflow_execution_action.idR\x19workflowExecutionActionId\"\x84\x01\n" +
+	"\x1aworkflow_execution_actions\x18\x02 \x03(\v2\".gitpod.v1.WorkflowExecutionActionR\x18workflowExecutionActions\"n\n" +
+	"!GetWorkflowExecutionActionRequest\x12I\n" +
+	"\x1cworkflow_execution_action_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x19workflowExecutionActionId\"\x84\x01\n" +
 	"\"GetWorkflowExecutionActionResponse\x12^\n" +
-	"\x19workflow_execution_action\x18\x01 \x01(\v2\".gitpod.v1.WorkflowExecutionActionR\x17workflowExecutionAction\"\x93\x01\n" +
-	"$CancelWorkflowExecutionActionRequest\x12k\n" +
-	"\x1cworkflow_execution_action_id\x18\x01 \x01(\tB*\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1e\n" +
-	"\x1cworkflow_execution_action.idR\x19workflowExecutionActionId\"'\n" +
-	"%CancelWorkflowExecutionActionResponse\"\x89\a\n" +
-	"\bWorkflow\x12-\n" +
-	"\x02id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vworkflow.idګ\x1e\x00R\x02id\x128\n" +
+	"\x19workflow_execution_action\x18\x01 \x01(\v2\".gitpod.v1.WorkflowExecutionActionR\x17workflowExecutionAction\"q\n" +
+	"$CancelWorkflowExecutionActionRequest\x12I\n" +
+	"\x1cworkflow_execution_action_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x19workflowExecutionActionId\"'\n" +
+	"%CancelWorkflowExecutionActionResponse\"\x94\x06\n" +
+	"\bWorkflow\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x128\n" +
 	"\bmetadata\x18\x02 \x01(\v2\x1c.gitpod.v1.Workflow.MetadataR\bmetadata\x12,\n" +
-	"\x04spec\x18\x03 \x01(\v2\x18.gitpod.v1.Workflow.SpecR\x04spec\x12%\n" +
-	"\vwebhook_url\x18\x04 \x01(\tB\x04ګ\x1e\x00R\n" +
-	"webhookUrl\x1a\xc9\x02\n" +
-	"\bMetadata\x12!\n" +
-	"\x04name\x18\x01 \x01(\tB\r\xbaH\x06r\x04\x10\x01\x18Pګ\x1e\x00R\x04name\x12.\n" +
-	"\vdescription\x18\x02 \x01(\tB\f\xbaH\x05r\x03\x18\xf4\x03ګ\x1e\x00R\vdescription\x122\n" +
-	"\acreator\x18\x03 \x01(\v2\x12.gitpod.v1.SubjectB\x04ګ\x1e\x00R\acreator\x124\n" +
-	"\bexecutor\x18\x06 \x01(\v2\x12.gitpod.v1.SubjectB\x04ګ\x1e\x00R\bexecutor\x12?\n" +
+	"\x04spec\x18\x03 \x01(\v2\x18.gitpod.v1.Workflow.SpecR\x04spec\x12\x1f\n" +
+	"\vwebhook_url\x18\x04 \x01(\tR\n" +
+	"webhookUrl\x1a\xa9\x02\n" +
+	"\bMetadata\x12\x1d\n" +
+	"\x04name\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18PR\x04name\x12*\n" +
+	"\vdescription\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03R\vdescription\x12,\n" +
+	"\acreator\x18\x03 \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x12.\n" +
+	"\bexecutor\x18\x06 \x01(\v2\x12.gitpod.v1.SubjectR\bexecutor\x129\n" +
 	"\n" +
-	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tcreatedAt\x12?\n" +
+	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x04ګ\x1e\x00R\tupdatedAt\x1a\xec\x02\n" +
-	"\x04Spec\x12<\n" +
-	"\btriggers\x18\x03 \x03(\v2\x1a.gitpod.v1.WorkflowTriggerB\x04ګ\x1e\x00R\btriggers\x127\n" +
-	"\x06action\x18\x04 \x01(\v2\x19.gitpod.v1.WorkflowActionB\x04ګ\x1e\x00R\x06action\x121\n" +
-	"\x06report\x18\x05 \x01(\v2\x19.gitpod.v1.WorkflowActionR\x06report\x12&\n" +
-	"\bdeleting\x18\x06 \x01(\bB\n" +
-	"ʫ\x1e\x02\b\x01ګ\x1e\x00R\bdeleting\x12&\n" +
-	"\bdisabled\x18\a \x01(\bB\n" +
-	"ʫ\x1e\x02\b\x01ګ\x1e\x00R\bdisabled\x12!\n" +
-	"\bagent_id\x18\b \x01(\tB\x06ʫ\x1e\x02\b\x01R\aagentId\x12G\n" +
-	"\x0ecodex_settings\x18\t \x01(\v2\x18.gitpod.v1.CodexSettingsB\x06ʫ\x1e\x02\b\x01R\rcodexSettings:\x04ҫ\x1e\x00\"\x97\b\n" +
-	"\x0fWorkflowTrigger\x12A\n" +
-	"\x06manual\x18\x01 \x01(\v2!.gitpod.v1.WorkflowTrigger.ManualB\x04ګ\x1e\x00H\x00R\x06manual\x12;\n" +
-	"\x04time\x18\x02 \x01(\v2\x1f.gitpod.v1.WorkflowTrigger.TimeB\x04ګ\x1e\x00H\x00R\x04time\x12Q\n" +
-	"\fpull_request\x18\x03 \x01(\v2&.gitpod.v1.WorkflowTrigger.PullRequestB\x04ګ\x1e\x00H\x00R\vpullRequest\x12G\n" +
-	"\acontext\x18\x04 \x01(\v2!.gitpod.v1.WorkflowTriggerContextB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\acontext\x1a\b\n" +
-	"\x06Manual\x1a\xb0\x01\n" +
-	"\x04Time\x12\xa7\x01\n" +
-	"\x0fcron_expression\x18\x01 \x01(\tB~\xbaHw\xba\x01t\n" +
-	"\x16cron_expression_length\x124Cron expression must be between 1 and 100 characters\x1a$size(this) >= 1 && size(this) <= 100ګ\x1e\x00R\x0ecronExpression\x1a\xe6\x01\n" +
-	"\vPullRequest\x12I\n" +
-	"\x06events\x18\x01 \x03(\x0e2+.gitpod.v1.WorkflowTrigger.PullRequestEventB\x04ګ\x1e\x00R\x06events\x120\n" +
+	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x1a\xb8\x02\n" +
+	"\x04Spec\x126\n" +
+	"\btriggers\x18\x03 \x03(\v2\x1a.gitpod.v1.WorkflowTriggerR\btriggers\x121\n" +
+	"\x06action\x18\x04 \x01(\v2\x19.gitpod.v1.WorkflowActionR\x06action\x121\n" +
+	"\x06report\x18\x05 \x01(\v2\x19.gitpod.v1.WorkflowActionR\x06report\x12\x1a\n" +
+	"\bdeleting\x18\x06 \x01(\bR\bdeleting\x12\x1a\n" +
+	"\bdisabled\x18\a \x01(\bR\bdisabled\x12\x19\n" +
+	"\bagent_id\x18\b \x01(\tR\aagentId\x12?\n" +
+	"\x0ecodex_settings\x18\t \x01(\v2\x18.gitpod.v1.CodexSettingsR\rcodexSettings\"\xef\a\n" +
+	"\x0fWorkflowTrigger\x12;\n" +
+	"\x06manual\x18\x01 \x01(\v2!.gitpod.v1.WorkflowTrigger.ManualH\x00R\x06manual\x125\n" +
+	"\x04time\x18\x02 \x01(\v2\x1f.gitpod.v1.WorkflowTrigger.TimeH\x00R\x04time\x12K\n" +
+	"\fpull_request\x18\x03 \x01(\v2&.gitpod.v1.WorkflowTrigger.PullRequestH\x00R\vpullRequest\x12C\n" +
+	"\acontext\x18\x04 \x01(\v2!.gitpod.v1.WorkflowTriggerContextB\x06\xbaH\x03\xc8\x01\x01R\acontext\x1a\b\n" +
+	"\x06Manual\x1a\xac\x01\n" +
+	"\x04Time\x12\xa3\x01\n" +
+	"\x0fcron_expression\x18\x01 \x01(\tBz\xbaHw\xba\x01t\n" +
+	"\x16cron_expression_length\x124Cron expression must be between 1 and 100 characters\x1a$size(this) >= 1 && size(this) <= 100R\x0ecronExpression\x1a\xd8\x01\n" +
+	"\vPullRequest\x12C\n" +
+	"\x06events\x18\x01 \x03(\x0e2+.gitpod.v1.WorkflowTrigger.PullRequestEventR\x06events\x12,\n" +
 	"\n" +
-	"webhook_id\x18\x02 \x01(\tB\f\xbaH\x05r\x03\xb0\x01\x01ګ\x1e\x00H\x00R\twebhookId\x88\x01\x01\x128\n" +
-	"\x0eintegration_id\x18\x03 \x01(\tB\f\xbaH\x05r\x03\xb0\x01\x01ګ\x1e\x00H\x01R\rintegrationId\x88\x01\x01B\r\n" +
+	"webhook_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\twebhookId\x88\x01\x01\x124\n" +
+	"\x0eintegration_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x01R\rintegrationId\x88\x01\x01B\r\n" +
 	"\v_webhook_idB\x11\n" +
 	"\x0f_integration_id\"\xa6\x02\n" +
 	"\x10PullRequestEvent\x12\"\n" +
@@ -5549,66 +5534,63 @@ const file_gitpod_v1_workflow_proto_rawDesc = "" +
 	"\x19PULL_REQUEST_EVENT_CLOSED\x10\x05\x12'\n" +
 	"#PULL_REQUEST_EVENT_READY_FOR_REVIEW\x10\x06\x12'\n" +
 	"#PULL_REQUEST_EVENT_REVIEW_REQUESTED\x10\aB\t\n" +
-	"\atriggerJ\x04\b\x05\x10\x06R\bincident\"\x97\t\n" +
-	"\x16WorkflowTriggerContext\x12N\n" +
-	"\bprojects\x18\x01 \x01(\v2*.gitpod.v1.WorkflowTriggerContext.ProjectsB\x04ګ\x1e\x00H\x00R\bprojects\x12Z\n" +
-	"\frepositories\x18\x02 \x01(\v2..gitpod.v1.WorkflowTriggerContext.RepositoriesB\x04ګ\x1e\x00H\x00R\frepositories\x12E\n" +
-	"\x05agent\x18\x03 \x01(\v2'.gitpod.v1.WorkflowTriggerContext.AgentB\x04ګ\x1e\x00H\x00R\x05agent\x12X\n" +
-	"\ffrom_trigger\x18\x04 \x01(\v2-.gitpod.v1.WorkflowTriggerContext.FromTriggerB\x04ګ\x1e\x00H\x00R\vfromTrigger\x1aS\n" +
-	"\bProjects\x12G\n" +
-	"\vproject_ids\x18\x01 \x03(\tB&\xbaH\r\x92\x01\n" +
-	"\x10\xf4\x03\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x0e\n" +
-	"\fprojects.idsګ\x1e\x00R\n" +
-	"projectIds\x1a\x9e\x04\n" +
-	"\fRepositories\x12n\n" +
-	"\x0frepository_urls\x18\x01 \x01(\v2=.gitpod.v1.WorkflowTriggerContext.Repositories.RepositoryURLsB\x04ګ\x1e\x00H\x00R\x0erepositoryUrls\x12n\n" +
-	"\rrepo_selector\x18\x02 \x01(\v2A.gitpod.v1.WorkflowTriggerContext.Repositories.RepositorySelectorB\x04ګ\x1e\x00H\x00R\frepoSelector\x12X\n" +
-	"\x14environment_class_id\x18\x03 \x01(\tB&\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x16\n" +
-	"\x14environment_class.idګ\x1e\x00R\x12environmentClassId\x1aD\n" +
-	"\x0eRepositoryURLs\x122\n" +
-	"\trepo_urls\x18\x01 \x03(\tB\x15\xbaH\x0e\x92\x01\v\b\x01\x10\xf4\x03\"\x04r\x02\x10\x01ګ\x1e\x00R\brepoUrls\x1aw\n" +
-	"\x12RepositorySelector\x129\n" +
-	"\x12repo_search_string\x18\x01 \x01(\tB\v\xbaH\x04r\x02\x10\x01ګ\x1e\x00R\x10repoSearchString\x12&\n" +
-	"\bscm_host\x18\x02 \x01(\tB\v\xbaH\x04r\x02\x10\x01ګ\x1e\x00R\ascmHostB\x15\n" +
-	"\x13repository_selector\x1a\x9f\x01\n" +
-	"\x05Agent\x12\x95\x01\n" +
-	"\x06prompt\x18\x01 \x01(\tB}\xbaHv\xba\x01s\n" +
-	"\x13agent_prompt_length\x124Agent prompt must be between 1 and 20,000 characters\x1a&size(this) >= 1 && size(this) <= 20000ګ\x1e\x00R\x06prompt\x1a\r\n" +
+	"\atriggerJ\x04\b\x05\x10\x06R\bincident\"\xaf\b\n" +
+	"\x16WorkflowTriggerContext\x12H\n" +
+	"\bprojects\x18\x01 \x01(\v2*.gitpod.v1.WorkflowTriggerContext.ProjectsH\x00R\bprojects\x12T\n" +
+	"\frepositories\x18\x02 \x01(\v2..gitpod.v1.WorkflowTriggerContext.RepositoriesH\x00R\frepositories\x12?\n" +
+	"\x05agent\x18\x03 \x01(\v2'.gitpod.v1.WorkflowTriggerContext.AgentH\x00R\x05agent\x12R\n" +
+	"\ffrom_trigger\x18\x04 \x01(\v2-.gitpod.v1.WorkflowTriggerContext.FromTriggerH\x00R\vfromTrigger\x1a=\n" +
+	"\bProjects\x121\n" +
+	"\vproject_ids\x18\x01 \x03(\tB\x10\xbaH\r\x92\x01\n" +
+	"\x10\xf4\x03\"\x05r\x03\xb0\x01\x01R\n" +
+	"projectIds\x1a\xe8\x03\n" +
+	"\fRepositories\x12h\n" +
+	"\x0frepository_urls\x18\x01 \x01(\v2=.gitpod.v1.WorkflowTriggerContext.Repositories.RepositoryURLsH\x00R\x0erepositoryUrls\x12h\n" +
+	"\rrepo_selector\x18\x02 \x01(\v2A.gitpod.v1.WorkflowTriggerContext.Repositories.RepositorySelectorH\x00R\frepoSelector\x12:\n" +
+	"\x14environment_class_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x12environmentClassId\x1a@\n" +
+	"\x0eRepositoryURLs\x12.\n" +
+	"\trepo_urls\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x01\x10\xf4\x03\"\x04r\x02\x10\x01R\brepoUrls\x1ao\n" +
+	"\x12RepositorySelector\x125\n" +
+	"\x12repo_search_string\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x10repoSearchString\x12\"\n" +
+	"\bscm_host\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\ascmHostB\x15\n" +
+	"\x13repository_selector\x1a\x9b\x01\n" +
+	"\x05Agent\x12\x91\x01\n" +
+	"\x06prompt\x18\x01 \x01(\tBy\xbaHv\xba\x01s\n" +
+	"\x13agent_prompt_length\x124Agent prompt must be between 1 and 20,000 characters\x1a&size(this) >= 1 && size(this) <= 20000R\x06prompt\x1a\r\n" +
 	"\vFromTriggerB\t\n" +
-	"\acontext\"\xb7\x06\n" +
-	"\x0eWorkflowAction\x12D\n" +
-	"\x06limits\x18\x01 \x01(\v2 .gitpod.v1.WorkflowAction.LimitsB\n" +
-	"\xbaH\x03\xc8\x01\x01ګ\x1e\x00R\x06limits\x12\x98\x01\n" +
-	"\x05steps\x18\x02 \x03(\v2\x17.gitpod.v1.WorkflowStepBi\xbaHb\xba\x01_\n" +
-	"\vsteps_count\x12+Automation must have between 1 and 50 steps\x1a#size(this) >= 1 && size(this) <= 50ګ\x1e\x00R\x05steps\x1a\xc3\x04\n" +
-	"\x06Limits\x12\x8d\x01\n" +
-	"\fmax_parallel\x18\x01 \x01(\x05Bj\xbaHc\xba\x01`\n" +
-	"\x12max_parallel_range\x121Maximum parallel actions must be between 1 and 25\x1a\x17this >= 1 && this <= 25ګ\x1e\x00R\vmaxParallel\x12\x83\x01\n" +
-	"\tmax_total\x18\x02 \x01(\x05Bf\xbaH_\xba\x01\\\n" +
-	"\x0fmax_total_range\x12/Maximum total actions must be between 1 and 100\x1a\x18this >= 1 && this <= 100ګ\x1e\x00R\bmaxTotal\x12R\n" +
-	"\rper_execution\x18\x03 \x01(\v2-.gitpod.v1.WorkflowAction.Limits.PerExecutionR\fperExecution\x1aJ\n" +
-	"\fPerExecution\x12:\n" +
-	"\bmax_time\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\x04ګ\x1e\x00R\amaxTime:\x82\x01\xbaH\x7f\x1a}\n" +
-	"\x1amax_parallel_lte_max_total\x12:Concurrent actions limit cannot exceed total actions limit\x1a#this.max_parallel <= this.max_total\"\xf4\x13\n" +
-	"\fWorkflowStep\x128\n" +
-	"\x04task\x18\x01 \x01(\v2\x1c.gitpod.v1.WorkflowStep.TaskB\x04ګ\x1e\x00H\x00R\x04task\x12;\n" +
-	"\x05agent\x18\x02 \x01(\v2\x1d.gitpod.v1.WorkflowStep.AgentB\x04ګ\x1e\x00H\x00R\x05agent\x12N\n" +
-	"\fpull_request\x18\x03 \x01(\v2#.gitpod.v1.WorkflowStep.PullRequestB\x04ګ\x1e\x00H\x00R\vpullRequest\x12@\n" +
-	"\x06report\x18\x04 \x01(\v2\x1e.gitpod.v1.WorkflowStep.ReportB\x06ʫ\x1e\x02\b\x01H\x00R\x06report\x1a\x96\x01\n" +
-	"\x04Task\x12\x8d\x01\n" +
-	"\acommand\x18\x01 \x01(\tBs\xbaHl\xba\x01i\n" +
-	"\x0ecommand_length\x12/Command must be between 1 and 20,000 characters\x1a&size(this) >= 1 && size(this) <= 20000ګ\x1e\x00R\acommand\x1a\x93\x01\n" +
-	"\x05Agent\x12\x89\x01\n" +
-	"\x06prompt\x18\x01 \x01(\tBq\xbaHj\xba\x01g\n" +
-	"\rprompt_length\x12.Prompt must be between 1 and 20,000 characters\x1a&size(this) >= 1 && size(this) <= 20000ګ\x1e\x00R\x06prompt\x1a\xc2\x03\n" +
-	"\vPullRequest\x12\x80\x01\n" +
-	"\x05title\x18\x01 \x01(\tBj\xbaHc\xba\x01`\n" +
-	"\ftitle_length\x12*Title must be between 1 and 500 characters\x1a$size(this) >= 1 && size(this) <= 500ګ\x1e\x00R\x05title\x12\x87\x01\n" +
-	"\vdescription\x18\x02 \x01(\tBe\xbaH^\xba\x01[\n" +
-	"\x15pr_description_length\x12-Description must be at most 20,000 characters\x1a\x13size(this) <= 20000ګ\x1e\x00R\vdescription\x12\x89\x01\n" +
-	"\x06branch\x18\x03 \x01(\tBq\xbaHj\xba\x01g\n" +
-	"\rbranch_length\x120Branch name must be between 1 and 255 characters\x1a$size(this) >= 1 && size(this) <= 255ګ\x1e\x00R\x06branch\x12\x1a\n" +
-	"\x05draft\x18\x04 \x01(\bB\x04ګ\x1e\x00R\x05draft\x1a\xde\v\n" +
+	"\acontext\"\xa0\x06\n" +
+	"\x0eWorkflowAction\x12@\n" +
+	"\x06limits\x18\x01 \x01(\v2 .gitpod.v1.WorkflowAction.LimitsB\x06\xbaH\x03\xc8\x01\x01R\x06limits\x12\x94\x01\n" +
+	"\x05steps\x18\x02 \x03(\v2\x17.gitpod.v1.WorkflowStepBe\xbaHb\xba\x01_\n" +
+	"\vsteps_count\x12+Automation must have between 1 and 50 steps\x1a#size(this) >= 1 && size(this) <= 50R\x05steps\x1a\xb4\x04\n" +
+	"\x06Limits\x12\x89\x01\n" +
+	"\fmax_parallel\x18\x01 \x01(\x05Bf\xbaHc\xba\x01`\n" +
+	"\x12max_parallel_range\x121Maximum parallel actions must be between 1 and 25\x1a\x17this >= 1 && this <= 25R\vmaxParallel\x12\x7f\n" +
+	"\tmax_total\x18\x02 \x01(\x05Bb\xbaH_\xba\x01\\\n" +
+	"\x0fmax_total_range\x12/Maximum total actions must be between 1 and 100\x1a\x18this >= 1 && this <= 100R\bmaxTotal\x12R\n" +
+	"\rper_execution\x18\x03 \x01(\v2-.gitpod.v1.WorkflowAction.Limits.PerExecutionR\fperExecution\x1aD\n" +
+	"\fPerExecution\x124\n" +
+	"\bmax_time\x18\x01 \x01(\v2\x19.google.protobuf.DurationR\amaxTime:\x82\x01\xbaH\x7f\x1a}\n" +
+	"\x1amax_parallel_lte_max_total\x12:Concurrent actions limit cannot exceed total actions limit\x1a#this.max_parallel <= this.max_total\"\xbf\x13\n" +
+	"\fWorkflowStep\x122\n" +
+	"\x04task\x18\x01 \x01(\v2\x1c.gitpod.v1.WorkflowStep.TaskH\x00R\x04task\x125\n" +
+	"\x05agent\x18\x02 \x01(\v2\x1d.gitpod.v1.WorkflowStep.AgentH\x00R\x05agent\x12H\n" +
+	"\fpull_request\x18\x03 \x01(\v2#.gitpod.v1.WorkflowStep.PullRequestH\x00R\vpullRequest\x128\n" +
+	"\x06report\x18\x04 \x01(\v2\x1e.gitpod.v1.WorkflowStep.ReportH\x00R\x06report\x1a\x92\x01\n" +
+	"\x04Task\x12\x89\x01\n" +
+	"\acommand\x18\x01 \x01(\tBo\xbaHl\xba\x01i\n" +
+	"\x0ecommand_length\x12/Command must be between 1 and 20,000 characters\x1a&size(this) >= 1 && size(this) <= 20000R\acommand\x1a\x8f\x01\n" +
+	"\x05Agent\x12\x85\x01\n" +
+	"\x06prompt\x18\x01 \x01(\tBm\xbaHj\xba\x01g\n" +
+	"\rprompt_length\x12.Prompt must be between 1 and 20,000 characters\x1a&size(this) >= 1 && size(this) <= 20000R\x06prompt\x1a\xaf\x03\n" +
+	"\vPullRequest\x12|\n" +
+	"\x05title\x18\x01 \x01(\tBf\xbaHc\xba\x01`\n" +
+	"\ftitle_length\x12*Title must be between 1 and 500 characters\x1a$size(this) >= 1 && size(this) <= 500R\x05title\x12\x83\x01\n" +
+	"\vdescription\x18\x02 \x01(\tBa\xbaH^\xba\x01[\n" +
+	"\x15pr_description_length\x12-Description must be at most 20,000 characters\x1a\x13size(this) <= 20000R\vdescription\x12\x85\x01\n" +
+	"\x06branch\x18\x03 \x01(\tBm\xbaHj\xba\x01g\n" +
+	"\rbranch_length\x120Branch name must be between 1 and 255 characters\x1a$size(this) >= 1 && size(this) <= 255R\x06branch\x12\x14\n" +
+	"\x05draft\x18\x04 \x01(\bR\x05draft\x1a\xde\v\n" +
 	"\x06Report\x12\x91\x01\n" +
 	"\aoutputs\x18\x01 \x03(\v2).gitpod.v1.WorkflowStep.Report.OutputSpecBL\xbaHI\xba\x01F\n" +
 	"\routputs_count\x12$Report must have at least one output\x1a\x0fsize(this) >= 1R\aoutputs\x1a(\n" +
@@ -5655,85 +5637,78 @@ const file_gitpod_v1_workflow_proto_rawDesc = "" +
 	"\x06Manual\x1aE\n" +
 	"\x04Time\x12=\n" +
 	"\ftriggered_at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\vtriggeredAtB\t\n" +
-	"\atriggerJ\x04\b\x05\x10\x06R\bincident\"\xe4\n" +
+	"\atriggerJ\x04\b\x05\x10\x06R\bincident\"\x98\n" +
 	"\n" +
-	"\x11WorkflowExecution\x123\n" +
-	"\x02id\x18\x01 \x01(\tB#\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x17\n" +
-	"\x15workflow_execution.idR\x02id\x12A\n" +
+	"\x11WorkflowExecution\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12A\n" +
 	"\bmetadata\x18\x02 \x01(\v2%.gitpod.v1.WorkflowExecution.MetadataR\bmetadata\x125\n" +
 	"\x04spec\x18\x03 \x01(\v2!.gitpod.v1.WorkflowExecution.SpecR\x04spec\x12;\n" +
-	"\x06status\x18\x04 \x01(\v2#.gitpod.v1.WorkflowExecution.StatusR\x06status\x1a\x9c\x02\n" +
-	"\bMetadata\x12:\n" +
-	"\vworkflow_id\x18\x01 \x01(\tB\x19\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vworkflow.idR\n" +
+	"\x06status\x18\x04 \x01(\v2#.gitpod.v1.WorkflowExecution.StatusR\x06status\x1a\x8b\x02\n" +
+	"\bMetadata\x12)\n" +
+	"\vworkflow_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"workflowId\x129\n" +
 	"\n" +
 	"started_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tstartedAt\x12;\n" +
 	"\vfinished_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"finishedAt\x12,\n" +
 	"\acreator\x18\x04 \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x12.\n" +
-	"\bexecutor\x18\x05 \x01(\v2\x12.gitpod.v1.SubjectR\bexecutor\x1a\x9d\x02\n" +
-	"\x04Spec\x12 \n" +
-	"\asession\x18\x01 \x01(\tB\x06ʫ\x1e\x02\b\x01R\asession\x12N\n" +
-	"\rdesired_phase\x18\x02 \x01(\x0e2!.gitpod.v1.WorkflowExecutionPhaseB\x06ʫ\x1e\x02\b\x01R\fdesiredPhase\x12=\n" +
+	"\bexecutor\x18\x05 \x01(\v2\x12.gitpod.v1.SubjectR\bexecutor\x1a\x8d\x02\n" +
+	"\x04Spec\x12\x18\n" +
+	"\asession\x18\x01 \x01(\tR\asession\x12F\n" +
+	"\rdesired_phase\x18\x02 \x01(\x0e2!.gitpod.v1.WorkflowExecutionPhaseR\fdesiredPhase\x12=\n" +
 	"\atrigger\x18\x03 \x01(\v2#.gitpod.v1.WorkflowExecutionTriggerR\atrigger\x121\n" +
 	"\x06action\x18\x04 \x01(\v2\x19.gitpod.v1.WorkflowActionR\x06action\x121\n" +
-	"\x06report\x18\x05 \x01(\v2\x19.gitpod.v1.WorkflowActionR\x06report\x1a\xa3\x04\n" +
-	"\x06Status\x12 \n" +
-	"\asession\x18\x01 \x01(\tB\x06ʫ\x1e\x02\b\x01R\asession\x127\n" +
+	"\x06report\x18\x05 \x01(\v2\x19.gitpod.v1.WorkflowActionR\x06report\x1a\x93\x04\n" +
+	"\x06Status\x12\x18\n" +
+	"\asession\x18\x01 \x01(\tR\asession\x127\n" +
 	"\x05phase\x18\x02 \x01(\x0e2!.gitpod.v1.WorkflowExecutionPhaseR\x05phase\x120\n" +
 	"\x14pending_action_count\x18\n" +
 	" \x01(\x05R\x12pendingActionCount\x120\n" +
 	"\x14running_action_count\x18\v \x01(\x05R\x12runningActionCount\x12.\n" +
 	"\x13failed_action_count\x18\f \x01(\x05R\x11failedActionCount\x12*\n" +
 	"\x11done_action_count\x18\r \x01(\x05R\x0fdoneActionCount\x120\n" +
-	"\x14stopped_action_count\x18\x12 \x01(\x05R\x12stoppedActionCount\x12/\n" +
-	"\x0ffailure_message\x18\x0e \x01(\tB\x06ʫ\x1e\x02\b\x01R\x0efailureMessage\x12/\n" +
-	"\x0fwarning_message\x18\x0f \x01(\tB\x06ʫ\x1e\x02\b\x01R\x0ewarningMessage\x124\n" +
+	"\x14stopped_action_count\x18\x12 \x01(\x05R\x12stoppedActionCount\x12+\n" +
+	"\x0ffailure_message\x18\x0e \x01(\tB\x02\x18\x01R\x0efailureMessage\x12+\n" +
+	"\x0fwarning_message\x18\x0f \x01(\tB\x02\x18\x01R\x0ewarningMessage\x124\n" +
 	"\bfailures\x18\x10 \x03(\v2\x18.gitpod.v1.WorkflowErrorR\bfailures\x124\n" +
-	"\bwarnings\x18\x11 \x03(\v2\x18.gitpod.v1.WorkflowErrorR\bwarnings\"\xa7\x0f\n" +
-	"\x17WorkflowExecutionAction\x12:\n" +
-	"\x02id\x18\x01 \x01(\tB*\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1e\n" +
-	"\x1cworkflow_execution_action.idR\x02id\x12G\n" +
+	"\bwarnings\x18\x11 \x03(\v2\x18.gitpod.v1.WorkflowErrorR\bwarnings\"\x87\x0e\n" +
+	"\x17WorkflowExecutionAction\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12G\n" +
 	"\bmetadata\x18\x02 \x01(\v2+.gitpod.v1.WorkflowExecutionAction.MetadataR\bmetadata\x12;\n" +
 	"\x04spec\x18\x03 \x01(\v2'.gitpod.v1.WorkflowExecutionAction.SpecR\x04spec\x12A\n" +
-	"\x06status\x18\x04 \x01(\v2).gitpod.v1.WorkflowExecutionAction.StatusR\x06status\x1a\xb8\x02\n" +
-	"\bMetadata\x12W\n" +
-	"\x15workflow_execution_id\x18\x01 \x01(\tB#\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x17\n" +
-	"\x15workflow_execution.idR\x13workflowExecutionId\x12:\n" +
-	"\vworkflow_id\x18\x02 \x01(\tB\x19\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vworkflow.idR\n" +
+	"\x06status\x18\x04 \x01(\v2).gitpod.v1.WorkflowExecutionAction.StatusR\x06status\x1a\x8c\x02\n" +
+	"\bMetadata\x12<\n" +
+	"\x15workflow_execution_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x13workflowExecutionId\x12)\n" +
+	"\vworkflow_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"workflowId\x129\n" +
 	"\n" +
 	"started_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tstartedAt\x12;\n" +
 	"\vfinished_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"finishedAt\x12\x1f\n" +
 	"\vaction_name\x18\x05 \x01(\tR\n" +
-	"actionName\x1a\xfc\x01\n" +
-	"\x04Spec\x12 \n" +
-	"\asession\x18\x01 \x01(\tB\x06ʫ\x1e\x02\b\x01R\asession\x12T\n" +
-	"\rdesired_phase\x18\x02 \x01(\x0e2'.gitpod.v1.WorkflowExecutionActionPhaseB\x06ʫ\x1e\x02\b\x01R\fdesiredPhase\x125\n" +
+	"actionName\x1a\xec\x01\n" +
+	"\x04Spec\x12\x18\n" +
+	"\asession\x18\x01 \x01(\tR\asession\x12L\n" +
+	"\rdesired_phase\x18\x02 \x01(\x0e2'.gitpod.v1.WorkflowExecutionActionPhaseR\fdesiredPhase\x125\n" +
 	"\acontext\x18\x03 \x01(\v2\x1b.gitpod.v1.AgentCodeContextR\acontext\x12E\n" +
-	"\x06limits\x18\x04 \x01(\v2-.gitpod.v1.WorkflowAction.Limits.PerExecutionR\x06limits\x1a\xcc\b\n" +
-	"\x06Status\x12 \n" +
-	"\asession\x18\x01 \x01(\tB\x06ʫ\x1e\x02\b\x01R\asession\x12=\n" +
+	"\x06limits\x18\x04 \x01(\v2-.gitpod.v1.WorkflowAction.Limits.PerExecutionR\x06limits\x1a\x8a\b\n" +
+	"\x06Status\x12\x18\n" +
+	"\asession\x18\x01 \x01(\tR\asession\x12=\n" +
 	"\x05phase\x18\x02 \x01(\x0e2'.gitpod.v1.WorkflowExecutionActionPhaseR\x05phase\x12Y\n" +
-	"\rstep_statuses\x18\x03 \x03(\v24.gitpod.v1.WorkflowExecutionAction.Status.StepStatusR\fstepStatuses\x12F\n" +
+	"\rstep_statuses\x18\x03 \x03(\v24.gitpod.v1.WorkflowExecutionAction.Status.StepStatusR\fstepStatuses\x122\n" +
 	"\x0eenvironment_id\x18\n" +
-	" \x01(\tB\x1f\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x12F\n" +
-	"\x12agent_execution_id\x18\f \x01(\tB\x18\xa2\xab\x1e\x14\n" +
-	"\x12agent_execution.idR\x10agentExecutionId\x12/\n" +
-	"\x0ffailure_message\x18\v \x01(\tB\x06ʫ\x1e\x02\b\x01R\x0efailureMessage\x12/\n" +
-	"\x0fwarning_message\x18\r \x01(\tB\x06ʫ\x1e\x02\b\x01R\x0ewarningMessage\x124\n" +
+	" \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\renvironmentId\x12,\n" +
+	"\x12agent_execution_id\x18\f \x01(\tR\x10agentExecutionId\x12+\n" +
+	"\x0ffailure_message\x18\v \x01(\tB\x02\x18\x01R\x0efailureMessage\x12+\n" +
+	"\x0fwarning_message\x18\r \x01(\tB\x02\x18\x01R\x0ewarningMessage\x124\n" +
 	"\bfailures\x18\x0e \x03(\v2\x18.gitpod.v1.WorkflowErrorR\bfailures\x124\n" +
-	"\bwarnings\x18\x0f \x03(\v2\x18.gitpod.v1.WorkflowErrorR\bwarnings\x1a\xa7\x04\n" +
+	"\bwarnings\x18\x0f \x03(\v2\x18.gitpod.v1.WorkflowErrorR\bwarnings\x1a\xa3\x04\n" +
 	"\n" +
 	"StepStatus\x12\x1d\n" +
 	"\n" +
 	"step_index\x18\x01 \x01(\x05R\tstepIndex\x12T\n" +
-	"\x05phase\x18\x02 \x01(\x0e2>.gitpod.v1.WorkflowExecutionAction.Status.StepStatus.StepPhaseR\x05phase\x12/\n" +
-	"\x0ffailure_message\x18\x03 \x01(\tB\x06ʫ\x1e\x02\b\x01R\x0efailureMessage\x129\n" +
+	"\x05phase\x18\x02 \x01(\x0e2>.gitpod.v1.WorkflowExecutionAction.Status.StepStatus.StepPhaseR\x05phase\x12+\n" +
+	"\x0ffailure_message\x18\x03 \x01(\tB\x02\x18\x01R\x0efailureMessage\x129\n" +
 	"\n" +
 	"started_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tstartedAt\x12;\n" +
 	"\vfinished_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
@@ -5746,15 +5721,14 @@ const file_gitpod_v1_workflow_proto_rawDesc = "" +
 	"\x12STEP_PHASE_RUNNING\x10\x02\x12\x13\n" +
 	"\x0fSTEP_PHASE_DONE\x10\x03\x12\x15\n" +
 	"\x11STEP_PHASE_FAILED\x10\x04\x12\x18\n" +
-	"\x14STEP_PHASE_CANCELLED\x10\x05\"\xa6\x02\n" +
+	"\x14STEP_PHASE_CANCELLED\x10\x05\"\x83\x02\n" +
 	"#ListWorkflowExecutionOutputsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12M\n" +
-	"\x06filter\x18\x02 \x01(\v25.gitpod.v1.ListWorkflowExecutionOutputsRequest.FilterR\x06filter\x1ar\n" +
-	"\x06Filter\x12h\n" +
-	"\x16workflow_execution_ids\x18\x01 \x03(\tB2\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1f\n" +
-	"\x1dfilter.workflow_execution_idsR\x14workflowExecutionIds\"\xb6\x03\n" +
+	"\x06filter\x18\x02 \x01(\v25.gitpod.v1.ListWorkflowExecutionOutputsRequest.FilterR\x06filter\x1aO\n" +
+	"\x06Filter\x12E\n" +
+	"\x16workflow_execution_ids\x18\x01 \x03(\tB\x0f\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01R\x14workflowExecutionIds\"\xb6\x03\n" +
 	"$ListWorkflowExecutionOutputsResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
@@ -5765,20 +5739,19 @@ const file_gitpod_v1_workflow_proto_rawDesc = "" +
 	"\x06values\x18\x02 \x03(\v2H.gitpod.v1.ListWorkflowExecutionOutputsResponse.ActionOutput.ValuesEntryR\x06values\x1ag\n" +
 	"\vValuesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12B\n" +
-	"\x05value\x18\x02 \x01(\v2,.gitpod.v1.AgentExecution.Status.OutputValueR\x05value:\x028\x01\"\x8f\x02\n" +
+	"\x05value\x18\x02 \x01(\v2,.gitpod.v1.AgentExecution.Status.OutputValueR\x05value:\x028\x01\"\xf5\x01\n" +
 	"\"GetWorkflowExecutionSummaryRequest\x12T\n" +
-	"\x06filter\x18\x01 \x01(\v24.gitpod.v1.GetWorkflowExecutionSummaryRequest.FilterB\x06\xbaH\x03\xc8\x01\x01R\x06filter\x1a\x92\x01\n" +
+	"\x06filter\x18\x01 \x01(\v24.gitpod.v1.GetWorkflowExecutionSummaryRequest.FilterB\x06\xbaH\x03\xc8\x01\x01R\x06filter\x1ay\n" +
 	"\x06Filter\x12;\n" +
 	"\n" +
-	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12K\n" +
-	"\fworkflow_ids\x18\x02 \x03(\tB(\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x15\n" +
-	"\x13filter.workflow_idsR\vworkflowIds\"\xdb\x01\n" +
+	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x122\n" +
+	"\fworkflow_ids\x18\x02 \x03(\tB\x0f\xbaH\f\x92\x01\t\x10\x19\"\x05r\x03\xb0\x01\x01R\vworkflowIds\"\xdb\x01\n" +
 	"#GetWorkflowExecutionSummaryResponse\x12)\n" +
 	"\x10successful_count\x18\x01 \x01(\x03R\x0fsuccessfulCount\x12!\n" +
 	"\ffailed_count\x18\x02 \x01(\x03R\vfailedCount\x12\x1f\n" +
 	"\vtotal_count\x18\x03 \x01(\x03R\n" +
 	"totalCount\x12E\n" +
-	"\x1ftotal_workflows_in_organization\x18\x04 \x01(\x03R\x1ctotalWorkflowsInOrganization*\xe3\x02\n" +
+	"\x1ftotal_workflows_in_organization\x18\x04 \x01(\x03R\x1ctotalWorkflowsInOrganization*\xd0\x02\n" +
 	"\x16WorkflowExecutionPhase\x12(\n" +
 	"$WORKFLOW_EXECUTION_PHASE_UNSPECIFIED\x10\x00\x12$\n" +
 	" WORKFLOW_EXECUTION_PHASE_PENDING\x10\x01\x12$\n" +
@@ -5787,8 +5760,7 @@ const file_gitpod_v1_workflow_proto_rawDesc = "" +
 	" WORKFLOW_EXECUTION_PHASE_STOPPED\x10\x04\x12%\n" +
 	"!WORKFLOW_EXECUTION_PHASE_DELETING\x10\x05\x12$\n" +
 	" WORKFLOW_EXECUTION_PHASE_DELETED\x10\x06\x12&\n" +
-	"\"WORKFLOW_EXECUTION_PHASE_COMPLETED\x10\a\x1a\x11«\x1e\r\n" +
-	"\vautomations*\x9c\x03\n" +
+	"\"WORKFLOW_EXECUTION_PHASE_COMPLETED\x10\a*\x89\x03\n" +
 	"\x1cWorkflowExecutionActionPhase\x12/\n" +
 	"+WORKFLOW_EXECUTION_ACTION_PHASE_UNSPECIFIED\x10\x00\x12+\n" +
 	"'WORKFLOW_EXECUTION_ACTION_PHASE_PENDING\x10\x01\x12+\n" +
@@ -5797,27 +5769,24 @@ const file_gitpod_v1_workflow_proto_rawDesc = "" +
 	"'WORKFLOW_EXECUTION_ACTION_PHASE_STOPPED\x10\x04\x12,\n" +
 	"(WORKFLOW_EXECUTION_ACTION_PHASE_DELETING\x10\x05\x12+\n" +
 	"'WORKFLOW_EXECUTION_ACTION_PHASE_DELETED\x10\x06\x12(\n" +
-	"$WORKFLOW_EXECUTION_ACTION_PHASE_DONE\x10\a\x1a\x11«\x1e\r\n" +
-	"\vautomations2\xa6\x10\n" +
-	"\x0fWorkflowService\x12c\n" +
-	"\x0eCreateWorkflow\x12 .gitpod.v1.CreateWorkflowRequest\x1a!.gitpod.v1.CreateWorkflowResponse\"\f\xb2\xab\x1e\b\x12\x06create\x12_\n" +
-	"\vGetWorkflow\x12\x1d.gitpod.v1.GetWorkflowRequest\x1a\x1e.gitpod.v1.GetWorkflowResponse\"\x11\xb2\xab\x1e\n" +
-	"\x12\bretrieve\x90\x02\x01\x12c\n" +
-	"\x0eUpdateWorkflow\x12 .gitpod.v1.UpdateWorkflowRequest\x1a!.gitpod.v1.UpdateWorkflowResponse\"\f\xb2\xab\x1e\b\x12\x06update\x12a\n" +
-	"\rListWorkflows\x12\x1f.gitpod.v1.ListWorkflowsRequest\x1a .gitpod.v1.ListWorkflowsResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x12c\n" +
-	"\x0eDeleteWorkflow\x12 .gitpod.v1.DeleteWorkflowRequest\x1a!.gitpod.v1.DeleteWorkflowResponse\"\f\xb2\xab\x1e\b\x12\x06delete\x12i\n" +
-	"\rStartWorkflow\x12\x1f.gitpod.v1.StartWorkflowRequest\x1a .gitpod.v1.StartWorkflowResponse\"\x15\xb2\xab\x1e\x11\x12\x0fstart_execution\x12\x87\x01\n" +
-	"\x16ListWorkflowExecutions\x12(.gitpod.v1.ListWorkflowExecutionsRequest\x1a).gitpod.v1.ListWorkflowExecutionsResponse\"\x18\xb2\xab\x1e\x11\x12\x0flist_executions\x90\x02\x01\x12\x84\x01\n" +
-	"\x14GetWorkflowExecution\x12&.gitpod.v1.GetWorkflowExecutionRequest\x1a'.gitpod.v1.GetWorkflowExecutionResponse\"\x1b\xb2\xab\x1e\x14\x12\x12retrieve_execution\x90\x02\x01\x12\x88\x01\n" +
-	"\x17CancelWorkflowExecution\x12).gitpod.v1.CancelWorkflowExecutionRequest\x1a*.gitpod.v1.CancelWorkflowExecutionResponse\"\x16\xb2\xab\x1e\x12\x12\x10cancel_execution\x12\xa0\x01\n" +
-	"\x1cListWorkflowExecutionActions\x12..gitpod.v1.ListWorkflowExecutionActionsRequest\x1a/.gitpod.v1.ListWorkflowExecutionActionsResponse\"\x1f\xb2\xab\x1e\x18\x12\x16list_execution_actions\x90\x02\x01\x12\xa0\x01\n" +
-	"\x1cListWorkflowExecutionOutputs\x12..gitpod.v1.ListWorkflowExecutionOutputsRequest\x1a/.gitpod.v1.ListWorkflowExecutionOutputsResponse\"\x1f\xb2\xab\x1e\x18\x12\x16list_execution_outputs\x90\x02\x01\x12\x9d\x01\n" +
-	"\x1aGetWorkflowExecutionAction\x12,.gitpod.v1.GetWorkflowExecutionActionRequest\x1a-.gitpod.v1.GetWorkflowExecutionActionResponse\"\"\xb2\xab\x1e\x1b\x12\x19retrieve_execution_action\x90\x02\x01\x12\xa1\x01\n" +
-	"\x1dCancelWorkflowExecutionAction\x12/.gitpod.v1.CancelWorkflowExecutionActionRequest\x1a0.gitpod.v1.CancelWorkflowExecutionActionResponse\"\x1d\xb2\xab\x1e\x19\x12\x17cancel_execution_action\x12x\n" +
+	"$WORKFLOW_EXECUTION_ACTION_PHASE_DONE\x10\a2\x87\x0e\n" +
+	"\x0fWorkflowService\x12W\n" +
+	"\x0eCreateWorkflow\x12 .gitpod.v1.CreateWorkflowRequest\x1a!.gitpod.v1.CreateWorkflowResponse\"\x00\x12Q\n" +
+	"\vGetWorkflow\x12\x1d.gitpod.v1.GetWorkflowRequest\x1a\x1e.gitpod.v1.GetWorkflowResponse\"\x03\x90\x02\x01\x12W\n" +
+	"\x0eUpdateWorkflow\x12 .gitpod.v1.UpdateWorkflowRequest\x1a!.gitpod.v1.UpdateWorkflowResponse\"\x00\x12W\n" +
+	"\rListWorkflows\x12\x1f.gitpod.v1.ListWorkflowsRequest\x1a .gitpod.v1.ListWorkflowsResponse\"\x03\x90\x02\x01\x12W\n" +
+	"\x0eDeleteWorkflow\x12 .gitpod.v1.DeleteWorkflowRequest\x1a!.gitpod.v1.DeleteWorkflowResponse\"\x00\x12T\n" +
+	"\rStartWorkflow\x12\x1f.gitpod.v1.StartWorkflowRequest\x1a .gitpod.v1.StartWorkflowResponse\"\x00\x12r\n" +
+	"\x16ListWorkflowExecutions\x12(.gitpod.v1.ListWorkflowExecutionsRequest\x1a).gitpod.v1.ListWorkflowExecutionsResponse\"\x03\x90\x02\x01\x12l\n" +
+	"\x14GetWorkflowExecution\x12&.gitpod.v1.GetWorkflowExecutionRequest\x1a'.gitpod.v1.GetWorkflowExecutionResponse\"\x03\x90\x02\x01\x12r\n" +
+	"\x17CancelWorkflowExecution\x12).gitpod.v1.CancelWorkflowExecutionRequest\x1a*.gitpod.v1.CancelWorkflowExecutionResponse\"\x00\x12\x84\x01\n" +
+	"\x1cListWorkflowExecutionActions\x12..gitpod.v1.ListWorkflowExecutionActionsRequest\x1a/.gitpod.v1.ListWorkflowExecutionActionsResponse\"\x03\x90\x02\x01\x12\x84\x01\n" +
+	"\x1cListWorkflowExecutionOutputs\x12..gitpod.v1.ListWorkflowExecutionOutputsRequest\x1a/.gitpod.v1.ListWorkflowExecutionOutputsResponse\"\x03\x90\x02\x01\x12~\n" +
+	"\x1aGetWorkflowExecutionAction\x12,.gitpod.v1.GetWorkflowExecutionActionRequest\x1a-.gitpod.v1.GetWorkflowExecutionActionResponse\"\x03\x90\x02\x01\x12\x84\x01\n" +
+	"\x1dCancelWorkflowExecutionAction\x12/.gitpod.v1.CancelWorkflowExecutionActionRequest\x1a0.gitpod.v1.CancelWorkflowExecutionActionResponse\"\x00\x12x\n" +
 	"\x18GetWorkflowWebhookSecret\x12*.gitpod.v1.GetWorkflowWebhookSecretRequest\x1a+.gitpod.v1.GetWorkflowWebhookSecretResponse\"\x03\x90\x02\x01\x12~\n" +
 	"\x1bRotateWorkflowWebhookSecret\x12-.gitpod.v1.RotateWorkflowWebhookSecretRequest\x1a..gitpod.v1.RotateWorkflowWebhookSecretResponse\"\x00\x12\x81\x01\n" +
-	"\x1bGetWorkflowExecutionSummary\x12-.gitpod.v1.GetWorkflowExecutionSummaryRequest\x1a..gitpod.v1.GetWorkflowExecutionSummaryResponse\"\x03\x90\x02\x01\x1a\x11\xaa\xab\x1e\r\n" +
-	"\vautomationsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x1bGetWorkflowExecutionSummary\x12-.gitpod.v1.GetWorkflowExecutionSummaryRequest\x1a..gitpod.v1.GetWorkflowExecutionSummaryResponse\"\x03\x90\x02\x01B'Z%github.com/gitpod-io/gitpod-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_workflow_proto_rawDescOnce sync.Once

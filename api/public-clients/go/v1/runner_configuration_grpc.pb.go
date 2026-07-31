@@ -19,28 +19,27 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	RunnerConfigurationService_CreateHostAuthenticationToken_FullMethodName         = "/gitpod.v1.RunnerConfigurationService/CreateHostAuthenticationToken"
-	RunnerConfigurationService_GetHostAuthenticationToken_FullMethodName            = "/gitpod.v1.RunnerConfigurationService/GetHostAuthenticationToken"
-	RunnerConfigurationService_ListHostAuthenticationTokens_FullMethodName          = "/gitpod.v1.RunnerConfigurationService/ListHostAuthenticationTokens"
-	RunnerConfigurationService_UpdateHostAuthenticationToken_FullMethodName         = "/gitpod.v1.RunnerConfigurationService/UpdateHostAuthenticationToken"
-	RunnerConfigurationService_UpdateHostAuthenticationTokenMetadata_FullMethodName = "/gitpod.v1.RunnerConfigurationService/UpdateHostAuthenticationTokenMetadata"
-	RunnerConfigurationService_DeleteHostAuthenticationToken_FullMethodName         = "/gitpod.v1.RunnerConfigurationService/DeleteHostAuthenticationToken"
-	RunnerConfigurationService_GetRunnerConfigurationSchema_FullMethodName          = "/gitpod.v1.RunnerConfigurationService/GetRunnerConfigurationSchema"
-	RunnerConfigurationService_CreateSCMIntegration_FullMethodName                  = "/gitpod.v1.RunnerConfigurationService/CreateSCMIntegration"
-	RunnerConfigurationService_GetSCMIntegration_FullMethodName                     = "/gitpod.v1.RunnerConfigurationService/GetSCMIntegration"
-	RunnerConfigurationService_ListSCMIntegrations_FullMethodName                   = "/gitpod.v1.RunnerConfigurationService/ListSCMIntegrations"
-	RunnerConfigurationService_UpdateSCMIntegration_FullMethodName                  = "/gitpod.v1.RunnerConfigurationService/UpdateSCMIntegration"
-	RunnerConfigurationService_DeleteSCMIntegration_FullMethodName                  = "/gitpod.v1.RunnerConfigurationService/DeleteSCMIntegration"
-	RunnerConfigurationService_CreateEnvironmentClass_FullMethodName                = "/gitpod.v1.RunnerConfigurationService/CreateEnvironmentClass"
-	RunnerConfigurationService_GetEnvironmentClass_FullMethodName                   = "/gitpod.v1.RunnerConfigurationService/GetEnvironmentClass"
-	RunnerConfigurationService_ListEnvironmentClasses_FullMethodName                = "/gitpod.v1.RunnerConfigurationService/ListEnvironmentClasses"
-	RunnerConfigurationService_UpdateEnvironmentClass_FullMethodName                = "/gitpod.v1.RunnerConfigurationService/UpdateEnvironmentClass"
-	RunnerConfigurationService_ValidateRunnerConfiguration_FullMethodName           = "/gitpod.v1.RunnerConfigurationService/ValidateRunnerConfiguration"
-	RunnerConfigurationService_CreateLLMIntegration_FullMethodName                  = "/gitpod.v1.RunnerConfigurationService/CreateLLMIntegration"
-	RunnerConfigurationService_GetLLMIntegration_FullMethodName                     = "/gitpod.v1.RunnerConfigurationService/GetLLMIntegration"
-	RunnerConfigurationService_ListLLMIntegrations_FullMethodName                   = "/gitpod.v1.RunnerConfigurationService/ListLLMIntegrations"
-	RunnerConfigurationService_UpdateLLMIntegration_FullMethodName                  = "/gitpod.v1.RunnerConfigurationService/UpdateLLMIntegration"
-	RunnerConfigurationService_DeleteLLMIntegration_FullMethodName                  = "/gitpod.v1.RunnerConfigurationService/DeleteLLMIntegration"
+	RunnerConfigurationService_CreateHostAuthenticationToken_FullMethodName = "/gitpod.v1.RunnerConfigurationService/CreateHostAuthenticationToken"
+	RunnerConfigurationService_GetHostAuthenticationToken_FullMethodName    = "/gitpod.v1.RunnerConfigurationService/GetHostAuthenticationToken"
+	RunnerConfigurationService_ListHostAuthenticationTokens_FullMethodName  = "/gitpod.v1.RunnerConfigurationService/ListHostAuthenticationTokens"
+	RunnerConfigurationService_UpdateHostAuthenticationToken_FullMethodName = "/gitpod.v1.RunnerConfigurationService/UpdateHostAuthenticationToken"
+	RunnerConfigurationService_DeleteHostAuthenticationToken_FullMethodName = "/gitpod.v1.RunnerConfigurationService/DeleteHostAuthenticationToken"
+	RunnerConfigurationService_GetRunnerConfigurationSchema_FullMethodName  = "/gitpod.v1.RunnerConfigurationService/GetRunnerConfigurationSchema"
+	RunnerConfigurationService_CreateSCMIntegration_FullMethodName          = "/gitpod.v1.RunnerConfigurationService/CreateSCMIntegration"
+	RunnerConfigurationService_GetSCMIntegration_FullMethodName             = "/gitpod.v1.RunnerConfigurationService/GetSCMIntegration"
+	RunnerConfigurationService_ListSCMIntegrations_FullMethodName           = "/gitpod.v1.RunnerConfigurationService/ListSCMIntegrations"
+	RunnerConfigurationService_UpdateSCMIntegration_FullMethodName          = "/gitpod.v1.RunnerConfigurationService/UpdateSCMIntegration"
+	RunnerConfigurationService_DeleteSCMIntegration_FullMethodName          = "/gitpod.v1.RunnerConfigurationService/DeleteSCMIntegration"
+	RunnerConfigurationService_CreateEnvironmentClass_FullMethodName        = "/gitpod.v1.RunnerConfigurationService/CreateEnvironmentClass"
+	RunnerConfigurationService_GetEnvironmentClass_FullMethodName           = "/gitpod.v1.RunnerConfigurationService/GetEnvironmentClass"
+	RunnerConfigurationService_ListEnvironmentClasses_FullMethodName        = "/gitpod.v1.RunnerConfigurationService/ListEnvironmentClasses"
+	RunnerConfigurationService_UpdateEnvironmentClass_FullMethodName        = "/gitpod.v1.RunnerConfigurationService/UpdateEnvironmentClass"
+	RunnerConfigurationService_ValidateRunnerConfiguration_FullMethodName   = "/gitpod.v1.RunnerConfigurationService/ValidateRunnerConfiguration"
+	RunnerConfigurationService_CreateLLMIntegration_FullMethodName          = "/gitpod.v1.RunnerConfigurationService/CreateLLMIntegration"
+	RunnerConfigurationService_GetLLMIntegration_FullMethodName             = "/gitpod.v1.RunnerConfigurationService/GetLLMIntegration"
+	RunnerConfigurationService_ListLLMIntegrations_FullMethodName           = "/gitpod.v1.RunnerConfigurationService/ListLLMIntegrations"
+	RunnerConfigurationService_UpdateLLMIntegration_FullMethodName          = "/gitpod.v1.RunnerConfigurationService/UpdateLLMIntegration"
+	RunnerConfigurationService_DeleteLLMIntegration_FullMethodName          = "/gitpod.v1.RunnerConfigurationService/DeleteLLMIntegration"
 )
 
 // RunnerConfigurationServiceClient is the client API for RunnerConfigurationService service.
@@ -136,24 +135,6 @@ type RunnerConfigurationServiceClient interface {
 	//	refreshToken: "ghr_xxxxxxxxxxxx"
 	//	```
 	UpdateHostAuthenticationToken(ctx context.Context, in *UpdateHostAuthenticationTokenRequest, opts ...grpc.CallOption) (*UpdateHostAuthenticationTokenResponse, error)
-	// Updates metadata for an existing host authentication token.
-	//
-	// Use this method to:
-	// - Persist provider-derived identity metadata
-	// - Attach external user mappings used by webhook handling
-	//
-	// ### Examples
-	//
-	// - Update external user ID:
-	//
-	//	Persists the provider user ID associated with the token.
-	//
-	//	```yaml
-	//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
-	//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
-	//	externalUserId: "12345678"
-	//	```
-	UpdateHostAuthenticationTokenMetadata(ctx context.Context, in *UpdateHostAuthenticationTokenMetadataRequest, opts ...grpc.CallOption) (*UpdateHostAuthenticationTokenMetadataResponse, error)
 	// Deletes a host authentication token.
 	//
 	// Use this method to:
@@ -526,16 +507,6 @@ func (c *runnerConfigurationServiceClient) UpdateHostAuthenticationToken(ctx con
 	return out, nil
 }
 
-func (c *runnerConfigurationServiceClient) UpdateHostAuthenticationTokenMetadata(ctx context.Context, in *UpdateHostAuthenticationTokenMetadataRequest, opts ...grpc.CallOption) (*UpdateHostAuthenticationTokenMetadataResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateHostAuthenticationTokenMetadataResponse)
-	err := c.cc.Invoke(ctx, RunnerConfigurationService_UpdateHostAuthenticationTokenMetadata_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *runnerConfigurationServiceClient) DeleteHostAuthenticationToken(ctx context.Context, in *DeleteHostAuthenticationTokenRequest, opts ...grpc.CallOption) (*DeleteHostAuthenticationTokenResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteHostAuthenticationTokenResponse)
@@ -799,24 +770,6 @@ type RunnerConfigurationServiceServer interface {
 	//	refreshToken: "ghr_xxxxxxxxxxxx"
 	//	```
 	UpdateHostAuthenticationToken(context.Context, *UpdateHostAuthenticationTokenRequest) (*UpdateHostAuthenticationTokenResponse, error)
-	// Updates metadata for an existing host authentication token.
-	//
-	// Use this method to:
-	// - Persist provider-derived identity metadata
-	// - Attach external user mappings used by webhook handling
-	//
-	// ### Examples
-	//
-	// - Update external user ID:
-	//
-	//	Persists the provider user ID associated with the token.
-	//
-	//	```yaml
-	//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
-	//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
-	//	externalUserId: "12345678"
-	//	```
-	UpdateHostAuthenticationTokenMetadata(context.Context, *UpdateHostAuthenticationTokenMetadataRequest) (*UpdateHostAuthenticationTokenMetadataResponse, error)
 	// Deletes a host authentication token.
 	//
 	// Use this method to:
@@ -1161,9 +1114,6 @@ func (UnimplementedRunnerConfigurationServiceServer) ListHostAuthenticationToken
 func (UnimplementedRunnerConfigurationServiceServer) UpdateHostAuthenticationToken(context.Context, *UpdateHostAuthenticationTokenRequest) (*UpdateHostAuthenticationTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateHostAuthenticationToken not implemented")
 }
-func (UnimplementedRunnerConfigurationServiceServer) UpdateHostAuthenticationTokenMetadata(context.Context, *UpdateHostAuthenticationTokenMetadataRequest) (*UpdateHostAuthenticationTokenMetadataResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateHostAuthenticationTokenMetadata not implemented")
-}
 func (UnimplementedRunnerConfigurationServiceServer) DeleteHostAuthenticationToken(context.Context, *DeleteHostAuthenticationTokenRequest) (*DeleteHostAuthenticationTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteHostAuthenticationToken not implemented")
 }
@@ -1305,24 +1255,6 @@ func _RunnerConfigurationService_UpdateHostAuthenticationToken_Handler(srv inter
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RunnerConfigurationServiceServer).UpdateHostAuthenticationToken(ctx, req.(*UpdateHostAuthenticationTokenRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RunnerConfigurationService_UpdateHostAuthenticationTokenMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateHostAuthenticationTokenMetadataRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RunnerConfigurationServiceServer).UpdateHostAuthenticationTokenMetadata(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RunnerConfigurationService_UpdateHostAuthenticationTokenMetadata_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RunnerConfigurationServiceServer).UpdateHostAuthenticationTokenMetadata(ctx, req.(*UpdateHostAuthenticationTokenMetadataRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1655,10 +1587,6 @@ var RunnerConfigurationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateHostAuthenticationToken",
 			Handler:    _RunnerConfigurationService_UpdateHostAuthenticationToken_Handler,
-		},
-		{
-			MethodName: "UpdateHostAuthenticationTokenMetadata",
-			Handler:    _RunnerConfigurationService_UpdateHostAuthenticationTokenMetadata_Handler,
 		},
 		{
 			MethodName: "DeleteHostAuthenticationToken",
