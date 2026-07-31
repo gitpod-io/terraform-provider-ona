@@ -23,6 +23,7 @@ import (
 
 var _ resource.Resource = &GroupResource{}
 var _ resource.ResourceWithConfigure = &GroupResource{}
+var _ resource.ResourceWithIdentity = &GroupResource{}
 var _ resource.ResourceWithImportState = &GroupResource{}
 var _ resource.ResourceWithValidateConfig = &GroupResource{}
 
@@ -124,6 +125,7 @@ func (r *GroupResource) Create(ctx context.Context, req resource.CreateRequest, 
 	}
 
 	data.ID = types.StringValue(result.Msg.GetGroup().GetId())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, GroupIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -172,6 +174,7 @@ func (r *GroupResource) Read(ctx context.Context, req resource.ReadRequest, resp
 
 	data = GroupModel{}
 	populateGroupModel(&data, group)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, GroupIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -206,6 +209,7 @@ func (r *GroupResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	planned := data
 	populateGroupModel(&data, result.Msg.GetGroup())
 	preserveGroupPlannedInputs(&data, planned)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, GroupIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -232,7 +236,7 @@ func (r *GroupResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 }
 
 func (r *GroupResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("id"), req, resp)
 }
 
 func (r *GroupResource) getGroup(ctx context.Context, id string) (*v1.Group, error) {
