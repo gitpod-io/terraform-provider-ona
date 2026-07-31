@@ -798,6 +798,53 @@ func TestAccOrganizationRoleAssignmentResourceLifecycle(t *testing.T) {
 	})
 }
 
+func TestOrganizationRoleAssignmentResourceImports(t *testing.T) {
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seedGroup()
+
+	resource.UnitTest(t, resource.TestCase{
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBelow(tfversion.Version1_12_0),
+		},
+		PreCheck:                 func() {},
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccOrganizationRoleAssignmentResourceConfig(server.URL, "runners_admin"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_organization_role_assignment.test", "id", accessControlAssignmentID),
+				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectIdentity("ona_organization_role_assignment.test", map[string]knownvalue.Check{
+						"group_id":        knownvalue.StringExact(accessControlGroupID),
+						"organization_id": knownvalue.StringExact(accessControlOrgID),
+						"role":            knownvalue.StringExact("runners_admin"),
+					}),
+				},
+			},
+			{
+				ResourceName:      "ona_organization_role_assignment.test",
+				ImportState:       true,
+				ImportStateId:     accessControlGroupID + "/runners_admin",
+				ImportStateVerify: true,
+			},
+			{
+				ResourceName:    "ona_organization_role_assignment.test",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportPlanChecks: resource.ImportPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectKnownValue("ona_organization_role_assignment.test", tfjsonpath.New("id"), knownvalue.StringExact(accessControlAssignmentID)),
+						plancheck.ExpectKnownValue("ona_organization_role_assignment.test", tfjsonpath.New("group_id"), knownvalue.StringExact(accessControlGroupID)),
+						plancheck.ExpectKnownValue("ona_organization_role_assignment.test", tfjsonpath.New("role"), knownvalue.StringExact("runners_admin")),
+					},
+				},
+			},
+		},
+	})
+}
+
 func TestAccOrganizationRoleAssignmentResourceReadRemovesMissingAssignment(t *testing.T) {
 	t.Parallel()
 
