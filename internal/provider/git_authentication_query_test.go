@@ -34,6 +34,25 @@ func TestAccGitAuthenticationQuery(t *testing.T) {
 	}))
 }
 
+func TestAccGitAuthenticationQueryIdentityOnly(t *testing.T) {
+	t.Parallel()
+
+	server := newGitAuthenticationQueryAPIServer(t)
+	t.Cleanup(server.Close)
+
+	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+		Query:  true,
+		Config: gitAuthenticationIdentityQueryConfig(),
+		QueryResultChecks: []querycheck.QueryResultCheck{
+			expectGitAuthenticationQueryResults{Expected: []gitAuthenticationQueryResult{{
+				Address:     "list.ona_git_authentication.all",
+				DisplayName: "github.com (service-account-1)",
+				ID:          "git-auth-1",
+			}}},
+		},
+	}))
+}
+
 func TestAccGitAuthenticationQueryFilters(t *testing.T) {
 	t.Parallel()
 
@@ -125,6 +144,15 @@ list "ona_git_authentication" "all" {
   provider         = ona
   include_resource = true
   limit            = 1
+}
+`
+}
+
+func gitAuthenticationIdentityQueryConfig() string {
+	return `
+list "ona_git_authentication" "all" {
+  provider         = ona
+  include_resource = false
 }
 `
 }
