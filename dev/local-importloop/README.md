@@ -5,6 +5,7 @@ Query and imports the discovered objects into disposable local Terraform state.
 It covers:
 
 - `ona_runner`
+- `ona_runner_policy`
 - `ona_scm_integration`
 - `ona_environment_class`
 - `ona_custom_domain`
