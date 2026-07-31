@@ -11,6 +11,7 @@ import (
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -108,10 +109,9 @@ func (d *UserCollectionDataSource) listMembers(ctx context.Context, organization
 		if nextToken == "" {
 			return members, nil
 		}
-		if _, ok := seenTokens[nextToken]; ok {
-			return nil, fmt.Errorf("list organization members: Ona returned repeated pagination token %q", nextToken)
+		if err := listutil.NextPageToken(seenTokens, nextToken); err != nil {
+			return nil, fmt.Errorf("list organization members: %w", err)
 		}
-		seenTokens[nextToken] = struct{}{}
 		token = nextToken
 	}
 }

@@ -58,6 +58,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 		}
 
 		var token string
+		seenTokens := make(map[string]struct{})
 		var emitted int64
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.RunnerService().ListRunners(ctx, connect.NewRequest(&v1.ListRunnersRequest{
@@ -103,10 +104,15 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 				emitted++
 			}
 
-			token = result.Msg.GetPagination().GetNextToken()
-			if token == "" {
+			nextToken := result.Msg.GetPagination().GetNextToken()
+			if err := listutil.NextPageToken(seenTokens, nextToken); err != nil {
+				push(listutil.Error("Unable to List Ona Runners", err))
 				return
 			}
+			if nextToken == "" {
+				return
+			}
+			token = nextToken
 		}
 	}
 }

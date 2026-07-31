@@ -5,6 +5,7 @@ package listutil
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/list"
@@ -63,4 +64,15 @@ func PageSize(limit, emitted int64) int32 {
 		return int32(remaining)
 	}
 	return DefaultPageSize
+}
+
+func NextPageToken(seen map[string]struct{}, token string) error {
+	if token == "" {
+		return nil
+	}
+	if _, ok := seen[token]; ok {
+		return fmt.Errorf("ona API returned repeated pagination token %q", token)
+	}
+	seen[token] = struct{}{}
+	return nil
 }

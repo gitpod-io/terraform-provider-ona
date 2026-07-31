@@ -12,6 +12,7 @@ import (
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/google/uuid"
@@ -76,6 +77,7 @@ func (d *CollectionDataSource) Read(ctx context.Context, req datasource.ReadRequ
 func (d *CollectionDataSource) listWorkflows(ctx context.Context, filter *v1.ListWorkflowsRequest_Filter) ([]*v1.Workflow, error) {
 	var workflows []*v1.Workflow
 	var token string
+	seenTokens := make(map[string]struct{})
 	for {
 		result, err := d.client.WorkflowService().ListWorkflows(ctx, connect.NewRequest(&v1.ListWorkflowsRequest{
 			Pagination: &v1.PaginationRequest{PageSize: 100, Token: token},
@@ -85,10 +87,14 @@ func (d *CollectionDataSource) listWorkflows(ctx context.Context, filter *v1.Lis
 			return nil, fmt.Errorf("list workflows: %w", err)
 		}
 		workflows = append(workflows, result.Msg.GetWorkflows()...)
-		token = result.Msg.GetPagination().GetNextToken()
-		if token == "" {
+		nextToken := result.Msg.GetPagination().GetNextToken()
+		if err := listutil.NextPageToken(seenTokens, nextToken); err != nil {
+			return nil, fmt.Errorf("list workflows: %w", err)
+		}
+		if nextToken == "" {
 			return workflows, nil
 		}
+		token = nextToken
 	}
 }
 

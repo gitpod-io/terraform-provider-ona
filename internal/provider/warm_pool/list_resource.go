@@ -66,6 +66,7 @@ func (r *WarmPoolResource) List(ctx context.Context, req list.ListRequest, resp 
 		}
 
 		var token string
+		seenTokens := make(map[string]struct{})
 		var emitted int64
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.PrebuildService().ListWarmPools(ctx, connect.NewRequest(&v1.ListWarmPoolsRequest{
@@ -111,10 +112,15 @@ func (r *WarmPoolResource) List(ctx context.Context, req list.ListRequest, resp 
 				emitted++
 			}
 
-			token = result.Msg.GetPagination().GetNextToken()
-			if token == "" {
+			nextToken := result.Msg.GetPagination().GetNextToken()
+			if err := listutil.NextPageToken(seenTokens, nextToken); err != nil {
+				push(listutil.Error("Unable to List Ona Warm Pools", err))
 				return
 			}
+			if nextToken == "" {
+				return
+			}
+			token = nextToken
 		}
 	}
 }

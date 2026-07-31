@@ -7,6 +7,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-framework/list"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -73,6 +74,54 @@ func TestLimitHelpers(t *testing.T) {
 			}
 			if got := PageSize(tc.limit, tc.emitted); got != tc.pageSize {
 				t.Errorf("PageSize(%d, %d) = %d, want %d", tc.limit, tc.emitted, got, tc.pageSize)
+			}
+		})
+	}
+}
+
+func TestNextPageToken(t *testing.T) {
+	t.Parallel()
+
+	type Expectation struct {
+		Errors []string
+		Seen   map[string]struct{}
+	}
+
+	tests := []struct {
+		name     string
+		tokens   []string
+		expected Expectation
+	}{
+		{
+			name:     "records_unique_non_empty_tokens",
+			tokens:   []string{"first", "second", ""},
+			expected: Expectation{Seen: map[string]struct{}{"first": {}, "second": {}}},
+		},
+		{
+			name:   "reports_repeated_token",
+			tokens: []string{"first", "first"},
+			expected: Expectation{
+				Errors: []string{`ona API returned repeated pagination token "first"`},
+				Seen:   map[string]struct{}{"first": {}},
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			seen := make(map[string]struct{})
+			var errors []string
+			for _, token := range tc.tokens {
+				if err := NextPageToken(seen, token); err != nil {
+					errors = append(errors, err.Error())
+				}
+			}
+			got := Expectation{Errors: errors, Seen: seen}
+
+			if diff := cmp.Diff(tc.expected, got); diff != "" {
+				t.Errorf("NextPageToken() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
