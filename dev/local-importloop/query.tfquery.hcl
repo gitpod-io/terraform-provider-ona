@@ -23,6 +23,15 @@ list "ona_environment_class" "all" {
   include_resource = true
 }
 
+list "ona_group_membership" "all" {
+  provider         = ona
+  include_resource = true
+
+  config {
+    group_id = var.group_membership_group_id
+  }
+}
+
 list "ona_custom_domain" "all" {
   provider         = ona
   include_resource = true

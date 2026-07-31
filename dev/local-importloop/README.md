@@ -9,6 +9,7 @@ It covers:
 - `ona_runner_policy`
 - `ona_scm_integration`
 - `ona_environment_class`
+- `ona_group_membership`
 - `ona_custom_domain`
 - `ona_group`
 - `ona_sso_configuration`
@@ -61,9 +62,11 @@ plans, or Terraform state.
 ## Discover and Import Every Supported Type
 
 Run Query to generate resource blocks and identity-based import blocks for all
-registered list resources:
+registered list resources. Set `TF_VAR_group_membership_group_id` to a
+customer-managed group whose service-account memberships should be included:
 
 ```shell
+export TF_VAR_group_membership_group_id="<group-id>"
 terraform -chdir=dev/local-importloop query \
   -generate-config-out=generated.tf
 ```
