@@ -42,12 +42,6 @@ const (
 	// InsightsServiceGetProjectInsightsStatusProcedure is the fully-qualified name of the
 	// InsightsService's GetProjectInsightsStatus RPC.
 	InsightsServiceGetProjectInsightsStatusProcedure = "/gitpod.v1.InsightsService/GetProjectInsightsStatus"
-	// InsightsServiceReportInsightsBatchProcedure is the fully-qualified name of the InsightsService's
-	// ReportInsightsBatch RPC.
-	InsightsServiceReportInsightsBatchProcedure = "/gitpod.v1.InsightsService/ReportInsightsBatch"
-	// InsightsServiceReportAgentTraceProcedure is the fully-qualified name of the InsightsService's
-	// ReportAgentTrace RPC.
-	InsightsServiceReportAgentTraceProcedure = "/gitpod.v1.InsightsService/ReportAgentTrace"
 	// InsightsServiceGetInsightsSummaryProcedure is the fully-qualified name of the InsightsService's
 	// GetInsightsSummary RPC.
 	InsightsServiceGetInsightsSummaryProcedure = "/gitpod.v1.InsightsService/GetInsightsSummary"
@@ -62,17 +56,6 @@ type InsightsServiceClient interface {
 	DisableProjectInsights(context.Context, *connect.Request[v1.DisableProjectInsightsRequest]) (*connect.Response[v1.DisableProjectInsightsResponse], error)
 	// Returns whether co-author insights is enabled for a project.
 	GetProjectInsightsStatus(context.Context, *connect.Request[v1.GetProjectInsightsStatusRequest]) (*connect.Response[v1.GetProjectInsightsStatusResponse], error)
-	// Reports a single batch containing both co-author and PR stats for a
-	// window, and advances project_insights_settings.data_collected_through
-	// in the same transaction as the upserts.
-	//
-	// Empty coauthor_stats and empty pr_stats with collected_through set is
-	// valid: it records an empty window so it is not re-fetched on the next
-	// run.
-	ReportInsightsBatch(context.Context, *connect.Request[v1.ReportInsightsBatchRequest]) (*connect.Response[v1.ReportInsightsBatchResponse], error)
-	// Reports an agent trace session for a project environment.
-	// Stores the raw trace alongside denormalized line-change totals.
-	ReportAgentTrace(context.Context, *connect.Request[v1.ReportAgentTraceRequest]) (*connect.Response[v1.ReportAgentTraceResponse], error)
 	// Returns how many projects have insights enabled vs total projects in the org.
 	GetInsightsSummary(context.Context, *connect.Request[v1.GetInsightsSummaryRequest]) (*connect.Response[v1.GetInsightsSummaryResponse], error)
 }
@@ -107,18 +90,6 @@ func NewInsightsServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
-		reportInsightsBatch: connect.NewClient[v1.ReportInsightsBatchRequest, v1.ReportInsightsBatchResponse](
-			httpClient,
-			baseURL+InsightsServiceReportInsightsBatchProcedure,
-			connect.WithSchema(insightsServiceMethods.ByName("ReportInsightsBatch")),
-			connect.WithClientOptions(opts...),
-		),
-		reportAgentTrace: connect.NewClient[v1.ReportAgentTraceRequest, v1.ReportAgentTraceResponse](
-			httpClient,
-			baseURL+InsightsServiceReportAgentTraceProcedure,
-			connect.WithSchema(insightsServiceMethods.ByName("ReportAgentTrace")),
-			connect.WithClientOptions(opts...),
-		),
 		getInsightsSummary: connect.NewClient[v1.GetInsightsSummaryRequest, v1.GetInsightsSummaryResponse](
 			httpClient,
 			baseURL+InsightsServiceGetInsightsSummaryProcedure,
@@ -134,8 +105,6 @@ type insightsServiceClient struct {
 	enableProjectInsights    *connect.Client[v1.EnableProjectInsightsRequest, v1.EnableProjectInsightsResponse]
 	disableProjectInsights   *connect.Client[v1.DisableProjectInsightsRequest, v1.DisableProjectInsightsResponse]
 	getProjectInsightsStatus *connect.Client[v1.GetProjectInsightsStatusRequest, v1.GetProjectInsightsStatusResponse]
-	reportInsightsBatch      *connect.Client[v1.ReportInsightsBatchRequest, v1.ReportInsightsBatchResponse]
-	reportAgentTrace         *connect.Client[v1.ReportAgentTraceRequest, v1.ReportAgentTraceResponse]
 	getInsightsSummary       *connect.Client[v1.GetInsightsSummaryRequest, v1.GetInsightsSummaryResponse]
 }
 
@@ -154,16 +123,6 @@ func (c *insightsServiceClient) GetProjectInsightsStatus(ctx context.Context, re
 	return c.getProjectInsightsStatus.CallUnary(ctx, req)
 }
 
-// ReportInsightsBatch calls gitpod.v1.InsightsService.ReportInsightsBatch.
-func (c *insightsServiceClient) ReportInsightsBatch(ctx context.Context, req *connect.Request[v1.ReportInsightsBatchRequest]) (*connect.Response[v1.ReportInsightsBatchResponse], error) {
-	return c.reportInsightsBatch.CallUnary(ctx, req)
-}
-
-// ReportAgentTrace calls gitpod.v1.InsightsService.ReportAgentTrace.
-func (c *insightsServiceClient) ReportAgentTrace(ctx context.Context, req *connect.Request[v1.ReportAgentTraceRequest]) (*connect.Response[v1.ReportAgentTraceResponse], error) {
-	return c.reportAgentTrace.CallUnary(ctx, req)
-}
-
 // GetInsightsSummary calls gitpod.v1.InsightsService.GetInsightsSummary.
 func (c *insightsServiceClient) GetInsightsSummary(ctx context.Context, req *connect.Request[v1.GetInsightsSummaryRequest]) (*connect.Response[v1.GetInsightsSummaryResponse], error) {
 	return c.getInsightsSummary.CallUnary(ctx, req)
@@ -178,17 +137,6 @@ type InsightsServiceHandler interface {
 	DisableProjectInsights(context.Context, *connect.Request[v1.DisableProjectInsightsRequest]) (*connect.Response[v1.DisableProjectInsightsResponse], error)
 	// Returns whether co-author insights is enabled for a project.
 	GetProjectInsightsStatus(context.Context, *connect.Request[v1.GetProjectInsightsStatusRequest]) (*connect.Response[v1.GetProjectInsightsStatusResponse], error)
-	// Reports a single batch containing both co-author and PR stats for a
-	// window, and advances project_insights_settings.data_collected_through
-	// in the same transaction as the upserts.
-	//
-	// Empty coauthor_stats and empty pr_stats with collected_through set is
-	// valid: it records an empty window so it is not re-fetched on the next
-	// run.
-	ReportInsightsBatch(context.Context, *connect.Request[v1.ReportInsightsBatchRequest]) (*connect.Response[v1.ReportInsightsBatchResponse], error)
-	// Reports an agent trace session for a project environment.
-	// Stores the raw trace alongside denormalized line-change totals.
-	ReportAgentTrace(context.Context, *connect.Request[v1.ReportAgentTraceRequest]) (*connect.Response[v1.ReportAgentTraceResponse], error)
 	// Returns how many projects have insights enabled vs total projects in the org.
 	GetInsightsSummary(context.Context, *connect.Request[v1.GetInsightsSummaryRequest]) (*connect.Response[v1.GetInsightsSummaryResponse], error)
 }
@@ -219,18 +167,6 @@ func NewInsightsServiceHandler(svc InsightsServiceHandler, opts ...connect.Handl
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
-	insightsServiceReportInsightsBatchHandler := connect.NewUnaryHandler(
-		InsightsServiceReportInsightsBatchProcedure,
-		svc.ReportInsightsBatch,
-		connect.WithSchema(insightsServiceMethods.ByName("ReportInsightsBatch")),
-		connect.WithHandlerOptions(opts...),
-	)
-	insightsServiceReportAgentTraceHandler := connect.NewUnaryHandler(
-		InsightsServiceReportAgentTraceProcedure,
-		svc.ReportAgentTrace,
-		connect.WithSchema(insightsServiceMethods.ByName("ReportAgentTrace")),
-		connect.WithHandlerOptions(opts...),
-	)
 	insightsServiceGetInsightsSummaryHandler := connect.NewUnaryHandler(
 		InsightsServiceGetInsightsSummaryProcedure,
 		svc.GetInsightsSummary,
@@ -246,10 +182,6 @@ func NewInsightsServiceHandler(svc InsightsServiceHandler, opts ...connect.Handl
 			insightsServiceDisableProjectInsightsHandler.ServeHTTP(w, r)
 		case InsightsServiceGetProjectInsightsStatusProcedure:
 			insightsServiceGetProjectInsightsStatusHandler.ServeHTTP(w, r)
-		case InsightsServiceReportInsightsBatchProcedure:
-			insightsServiceReportInsightsBatchHandler.ServeHTTP(w, r)
-		case InsightsServiceReportAgentTraceProcedure:
-			insightsServiceReportAgentTraceHandler.ServeHTTP(w, r)
 		case InsightsServiceGetInsightsSummaryProcedure:
 			insightsServiceGetInsightsSummaryHandler.ServeHTTP(w, r)
 		default:
@@ -271,14 +203,6 @@ func (UnimplementedInsightsServiceHandler) DisableProjectInsights(context.Contex
 
 func (UnimplementedInsightsServiceHandler) GetProjectInsightsStatus(context.Context, *connect.Request[v1.GetProjectInsightsStatusRequest]) (*connect.Response[v1.GetProjectInsightsStatusResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.InsightsService.GetProjectInsightsStatus is not implemented"))
-}
-
-func (UnimplementedInsightsServiceHandler) ReportInsightsBatch(context.Context, *connect.Request[v1.ReportInsightsBatchRequest]) (*connect.Response[v1.ReportInsightsBatchResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.InsightsService.ReportInsightsBatch is not implemented"))
-}
-
-func (UnimplementedInsightsServiceHandler) ReportAgentTrace(context.Context, *connect.Request[v1.ReportAgentTraceRequest]) (*connect.Response[v1.ReportAgentTraceResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.InsightsService.ReportAgentTrace is not implemented"))
 }
 
 func (UnimplementedInsightsServiceHandler) GetInsightsSummary(context.Context, *connect.Request[v1.GetInsightsSummaryRequest]) (*connect.Response[v1.GetInsightsSummaryResponse], error) {
