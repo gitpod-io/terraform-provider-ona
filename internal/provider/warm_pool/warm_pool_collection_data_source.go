@@ -11,6 +11,7 @@ import (
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -81,6 +82,7 @@ func (d *WarmPoolCollectionDataSource) listWarmPools(ctx context.Context, data W
 
 	var warmPools []*v1.WarmPool
 	var token string
+	seenTokens := make(map[string]struct{})
 	for {
 		result, err := d.client.PrebuildService().ListWarmPools(ctx, connect.NewRequest(&v1.ListWarmPoolsRequest{
 			Pagination: &v1.PaginationRequest{
@@ -94,10 +96,14 @@ func (d *WarmPoolCollectionDataSource) listWarmPools(ctx context.Context, data W
 		}
 
 		warmPools = append(warmPools, result.Msg.GetWarmPools()...)
-		token = result.Msg.GetPagination().GetNextToken()
-		if token == "" {
+		nextToken := result.Msg.GetPagination().GetNextToken()
+		if err := listutil.NextPageToken(seenTokens, nextToken); err != nil {
+			return nil, fmt.Errorf("list warm pools: %w", err)
+		}
+		if nextToken == "" {
 			break
 		}
+		token = nextToken
 	}
 
 	sort.SliceStable(warmPools, func(i, j int) bool {

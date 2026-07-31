@@ -76,6 +76,7 @@ func (r *EnvironmentClassResource) List(ctx context.Context, req list.ListReques
 		}
 
 		var token string
+		seenTokens := make(map[string]struct{})
 		var emitted int64
 		displayNames := newEnvironmentClassDisplayNames()
 		for listutil.HasCapacity(req.Limit, emitted) {
@@ -115,10 +116,15 @@ func (r *EnvironmentClassResource) List(ctx context.Context, req list.ListReques
 				emitted++
 			}
 
-			token = result.Msg.GetPagination().GetNextToken()
-			if token == "" {
+			nextToken := result.Msg.GetPagination().GetNextToken()
+			if err := listutil.NextPageToken(seenTokens, nextToken); err != nil {
+				push(listutil.Error("Unable to List Ona Environment Classes", err))
 				return
 			}
+			if nextToken == "" {
+				return
+			}
+			token = nextToken
 		}
 	}
 }
@@ -126,6 +132,7 @@ func (r *EnvironmentClassResource) List(ctx context.Context, req list.ListReques
 func (r *EnvironmentClassResource) environmentClassRunnerNames(ctx context.Context, providers []v1.RunnerProvider) (map[string]string, error) {
 	result := map[string]string{}
 	var token string
+	seenTokens := make(map[string]struct{})
 	for {
 		resp, err := r.client.RunnerService().ListRunners(ctx, connect.NewRequest(&v1.ListRunnersRequest{
 			Pagination: &v1.PaginationRequest{PageSize: listutil.DefaultPageSize, Token: token},
@@ -144,10 +151,14 @@ func (r *EnvironmentClassResource) environmentClassRunnerNames(ctx context.Conte
 			result[runner.GetRunnerId()] = runner.GetName()
 		}
 
-		token = resp.Msg.GetPagination().GetNextToken()
-		if token == "" {
+		nextToken := resp.Msg.GetPagination().GetNextToken()
+		if err := listutil.NextPageToken(seenTokens, nextToken); err != nil {
+			return nil, fmt.Errorf("list runners: %w", err)
+		}
+		if nextToken == "" {
 			return result, nil
 		}
+		token = nextToken
 	}
 }
 

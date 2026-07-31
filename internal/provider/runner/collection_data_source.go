@@ -11,6 +11,7 @@ import (
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -73,6 +74,7 @@ func (d *CollectionDataSource) Read(ctx context.Context, req datasource.ReadRequ
 func (d *CollectionDataSource) listRunners(ctx context.Context) ([]*v1.Runner, error) {
 	var runners []*v1.Runner
 	var token string
+	seenTokens := make(map[string]struct{})
 
 	for {
 		result, err := d.client.RunnerService().ListRunners(ctx, connect.NewRequest(&v1.ListRunnersRequest{
@@ -86,10 +88,14 @@ func (d *CollectionDataSource) listRunners(ctx context.Context) ([]*v1.Runner, e
 		}
 
 		runners = append(runners, result.Msg.GetRunners()...)
-		token = result.Msg.GetPagination().GetNextToken()
-		if token == "" {
+		nextToken := result.Msg.GetPagination().GetNextToken()
+		if err := listutil.NextPageToken(seenTokens, nextToken); err != nil {
+			return nil, fmt.Errorf("list runners: %w", err)
+		}
+		if nextToken == "" {
 			break
 		}
+		token = nextToken
 	}
 
 	sort.SliceStable(runners, func(i, j int) bool {

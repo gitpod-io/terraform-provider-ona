@@ -62,6 +62,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 			return
 		}
 		var token string
+		seenTokens := make(map[string]struct{})
 		var emitted int64
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.SecretService().ListSecrets(ctx, connect.NewRequest(&v1.ListSecretsRequest{Pagination: &v1.PaginationRequest{PageSize: listutil.PageSize(req.Limit, emitted), Token: token}, Filter: &v1.ListSecretsRequest_Filter{Scope: resolved.Scope}}))
@@ -95,10 +96,15 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 				}
 				emitted++
 			}
-			token = result.Msg.GetPagination().GetNextToken()
-			if token == "" {
+			nextToken := result.Msg.GetPagination().GetNextToken()
+			if err := listutil.NextPageToken(seenTokens, nextToken); err != nil {
+				push(listutil.Error("Unable to List Ona Secrets", err))
 				return
 			}
+			if nextToken == "" {
+				return
+			}
+			token = nextToken
 		}
 	}
 }

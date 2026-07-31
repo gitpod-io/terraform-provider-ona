@@ -49,6 +49,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 			return
 		}
 		var token string
+		seenTokens := make(map[string]struct{})
 		var emitted int64
 		displayNames := newProjectDisplayNames()
 		for listutil.HasCapacity(req.Limit, emitted) {
@@ -101,10 +102,15 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 				}
 				emitted++
 			}
-			token = result.Msg.GetPagination().GetNextToken()
-			if token == "" {
+			nextToken := result.Msg.GetPagination().GetNextToken()
+			if err := listutil.NextPageToken(seenTokens, nextToken); err != nil {
+				push(listutil.Error("Unable to List Ona Projects", err))
 				return
 			}
+			if nextToken == "" {
+				return
+			}
+			token = nextToken
 		}
 	}
 }
@@ -112,6 +118,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 func (r *Resource) listProjectEnvironmentClasses(ctx context.Context, projectID string) ([]*v1.ProjectEnvironmentClass, error) {
 	var classes []*v1.ProjectEnvironmentClass
 	var token string
+	seenTokens := make(map[string]struct{})
 	for {
 		result, err := r.client.ProjectService().ListProjectEnvironmentClasses(ctx, connect.NewRequest(&v1.ListProjectEnvironmentClassesRequest{
 			Pagination: &v1.PaginationRequest{PageSize: listutil.DefaultPageSize, Token: token},
@@ -121,10 +128,14 @@ func (r *Resource) listProjectEnvironmentClasses(ctx context.Context, projectID 
 			return nil, fmt.Errorf("list project environment classes: %w", err)
 		}
 		classes = append(classes, result.Msg.GetProjectEnvironmentClasses()...)
-		token = result.Msg.GetPagination().GetNextToken()
-		if token == "" {
+		nextToken := result.Msg.GetPagination().GetNextToken()
+		if err := listutil.NextPageToken(seenTokens, nextToken); err != nil {
+			return nil, fmt.Errorf("list project environment classes: %w", err)
+		}
+		if nextToken == "" {
 			return classes, nil
 		}
+		token = nextToken
 	}
 }
 
