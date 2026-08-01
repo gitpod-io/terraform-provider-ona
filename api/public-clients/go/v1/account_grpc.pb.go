@@ -25,10 +25,8 @@ const (
 	AccountService_ListSSOLogins_FullMethodName             = "/gitpod.v1.AccountService/ListSSOLogins"
 	AccountService_ListLoginProviders_FullMethodName        = "/gitpod.v1.AccountService/ListLoginProviders"
 	AccountService_ListJoinableOrganizations_FullMethodName = "/gitpod.v1.AccountService/ListJoinableOrganizations"
-	AccountService_CreateMagicLink_FullMethodName           = "/gitpod.v1.AccountService/CreateMagicLink"
 	AccountService_BlockAccount_FullMethodName              = "/gitpod.v1.AccountService/BlockAccount"
 	AccountService_UnblockAccount_FullMethodName            = "/gitpod.v1.AccountService/UnblockAccount"
-	AccountService_GetChatIdentityToken_FullMethodName      = "/gitpod.v1.AccountService/GetChatIdentityToken"
 )
 
 // AccountServiceClient is the client API for AccountService service.
@@ -145,7 +143,6 @@ type AccountServiceClient interface {
 	//	{}
 	//	```
 	ListJoinableOrganizations(ctx context.Context, in *ListJoinableOrganizationsRequest, opts ...grpc.CallOption) (*ListJoinableOrganizationsResponse, error)
-	CreateMagicLink(ctx context.Context, in *CreateMagicLinkRequest, opts ...grpc.CallOption) (*CreateMagicLinkResponse, error)
 	// Blocks an account, preventing all API access.
 	//
 	// Use this method to:
@@ -190,25 +187,6 @@ type AccountServiceClient interface {
 	//	accountId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
 	//	```
 	UnblockAccount(ctx context.Context, in *UnblockAccountRequest, opts ...grpc.CallOption) (*UnblockAccountResponse, error)
-	// Gets the chat identity token for the currently authenticated account.
-	//
-	// Use this method to:
-	// - Obtain a verification hash for in-app chat identity verification
-	// - Secure chat sessions against impersonation
-	//
-	// The returned hash is an HMAC-SHA256 signature of the account's email,
-	// used by the chat widget to verify user identity.
-	//
-	// ### Examples
-	//
-	// - Get chat identity token:
-	//
-	//	Retrieves the identity verification hash for the authenticated account.
-	//
-	//	```yaml
-	//	{}
-	//	```
-	GetChatIdentityToken(ctx context.Context, in *GetChatIdentityTokenRequest, opts ...grpc.CallOption) (*GetChatIdentityTokenResponse, error)
 }
 
 type accountServiceClient struct {
@@ -279,16 +257,6 @@ func (c *accountServiceClient) ListJoinableOrganizations(ctx context.Context, in
 	return out, nil
 }
 
-func (c *accountServiceClient) CreateMagicLink(ctx context.Context, in *CreateMagicLinkRequest, opts ...grpc.CallOption) (*CreateMagicLinkResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateMagicLinkResponse)
-	err := c.cc.Invoke(ctx, AccountService_CreateMagicLink_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *accountServiceClient) BlockAccount(ctx context.Context, in *BlockAccountRequest, opts ...grpc.CallOption) (*BlockAccountResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(BlockAccountResponse)
@@ -303,16 +271,6 @@ func (c *accountServiceClient) UnblockAccount(ctx context.Context, in *UnblockAc
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UnblockAccountResponse)
 	err := c.cc.Invoke(ctx, AccountService_UnblockAccount_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *accountServiceClient) GetChatIdentityToken(ctx context.Context, in *GetChatIdentityTokenRequest, opts ...grpc.CallOption) (*GetChatIdentityTokenResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetChatIdentityTokenResponse)
-	err := c.cc.Invoke(ctx, AccountService_GetChatIdentityToken_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -433,7 +391,6 @@ type AccountServiceServer interface {
 	//	{}
 	//	```
 	ListJoinableOrganizations(context.Context, *ListJoinableOrganizationsRequest) (*ListJoinableOrganizationsResponse, error)
-	CreateMagicLink(context.Context, *CreateMagicLinkRequest) (*CreateMagicLinkResponse, error)
 	// Blocks an account, preventing all API access.
 	//
 	// Use this method to:
@@ -478,25 +435,6 @@ type AccountServiceServer interface {
 	//	accountId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
 	//	```
 	UnblockAccount(context.Context, *UnblockAccountRequest) (*UnblockAccountResponse, error)
-	// Gets the chat identity token for the currently authenticated account.
-	//
-	// Use this method to:
-	// - Obtain a verification hash for in-app chat identity verification
-	// - Secure chat sessions against impersonation
-	//
-	// The returned hash is an HMAC-SHA256 signature of the account's email,
-	// used by the chat widget to verify user identity.
-	//
-	// ### Examples
-	//
-	// - Get chat identity token:
-	//
-	//	Retrieves the identity verification hash for the authenticated account.
-	//
-	//	```yaml
-	//	{}
-	//	```
-	GetChatIdentityToken(context.Context, *GetChatIdentityTokenRequest) (*GetChatIdentityTokenResponse, error)
 	mustEmbedUnimplementedAccountServiceServer()
 }
 
@@ -525,17 +463,11 @@ func (UnimplementedAccountServiceServer) ListLoginProviders(context.Context, *Li
 func (UnimplementedAccountServiceServer) ListJoinableOrganizations(context.Context, *ListJoinableOrganizationsRequest) (*ListJoinableOrganizationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListJoinableOrganizations not implemented")
 }
-func (UnimplementedAccountServiceServer) CreateMagicLink(context.Context, *CreateMagicLinkRequest) (*CreateMagicLinkResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateMagicLink not implemented")
-}
 func (UnimplementedAccountServiceServer) BlockAccount(context.Context, *BlockAccountRequest) (*BlockAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BlockAccount not implemented")
 }
 func (UnimplementedAccountServiceServer) UnblockAccount(context.Context, *UnblockAccountRequest) (*UnblockAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnblockAccount not implemented")
-}
-func (UnimplementedAccountServiceServer) GetChatIdentityToken(context.Context, *GetChatIdentityTokenRequest) (*GetChatIdentityTokenResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetChatIdentityToken not implemented")
 }
 func (UnimplementedAccountServiceServer) mustEmbedUnimplementedAccountServiceServer() {}
 func (UnimplementedAccountServiceServer) testEmbeddedByValue()                        {}
@@ -666,24 +598,6 @@ func _AccountService_ListJoinableOrganizations_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AccountService_CreateMagicLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateMagicLinkRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AccountServiceServer).CreateMagicLink(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AccountService_CreateMagicLink_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServiceServer).CreateMagicLink(ctx, req.(*CreateMagicLinkRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _AccountService_BlockAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BlockAccountRequest)
 	if err := dec(in); err != nil {
@@ -720,24 +634,6 @@ func _AccountService_UnblockAccount_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AccountService_GetChatIdentityToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetChatIdentityTokenRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AccountServiceServer).GetChatIdentityToken(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AccountService_GetChatIdentityToken_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServiceServer).GetChatIdentityToken(ctx, req.(*GetChatIdentityTokenRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // AccountService_ServiceDesc is the grpc.ServiceDesc for AccountService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -770,20 +666,12 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AccountService_ListJoinableOrganizations_Handler,
 		},
 		{
-			MethodName: "CreateMagicLink",
-			Handler:    _AccountService_CreateMagicLink_Handler,
-		},
-		{
 			MethodName: "BlockAccount",
 			Handler:    _AccountService_BlockAccount_Handler,
 		},
 		{
 			MethodName: "UnblockAccount",
 			Handler:    _AccountService_UnblockAccount_Handler,
-		},
-		{
-			MethodName: "GetChatIdentityToken",
-			Handler:    _AccountService_GetChatIdentityToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

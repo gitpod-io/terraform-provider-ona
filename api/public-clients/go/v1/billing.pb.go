@@ -8,8 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -861,7 +859,7 @@ func (x MetricConsumptionTimeSeries_Kind) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use MetricConsumptionTimeSeries_Kind.Descriptor instead.
 func (MetricConsumptionTimeSeries_Kind) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{57, 0}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{13, 0}
 }
 
 type ListEnterpriseAIUserUsageRequest_SortField int32
@@ -920,7 +918,7 @@ func (x ListEnterpriseAIUserUsageRequest_SortField) Number() protoreflect.EnumNu
 
 // Deprecated: Use ListEnterpriseAIUserUsageRequest_SortField.Descriptor instead.
 func (ListEnterpriseAIUserUsageRequest_SortField) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{90, 0}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{40, 0}
 }
 
 type ListEnterpriseUserCreditUsageRequest_SortField int32
@@ -979,7 +977,7 @@ func (x ListEnterpriseUserCreditUsageRequest_SortField) Number() protoreflect.En
 
 // Deprecated: Use ListEnterpriseUserCreditUsageRequest_SortField.Descriptor instead.
 func (ListEnterpriseUserCreditUsageRequest_SortField) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{124, 0}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{62, 0}
 }
 
 type BillingRecord struct {
@@ -1429,742 +1427,6 @@ func (x *PaymentMethodVerificationStatus) GetError() string {
 	return ""
 }
 
-type GetBillingRecordRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// billing_record_id specifies the billing record identifier
-	BillingRecordId string `protobuf:"bytes,1,opt,name=billing_record_id,json=billingRecordId,proto3" json:"billing_record_id,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
-
-func (x *GetBillingRecordRequest) Reset() {
-	*x = GetBillingRecordRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetBillingRecordRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetBillingRecordRequest) ProtoMessage() {}
-
-func (x *GetBillingRecordRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetBillingRecordRequest.ProtoReflect.Descriptor instead.
-func (*GetBillingRecordRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *GetBillingRecordRequest) GetBillingRecordId() string {
-	if x != nil {
-		return x.BillingRecordId
-	}
-	return ""
-}
-
-type GetBillingRecordResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	BillingRecord *BillingRecord         `protobuf:"bytes,1,opt,name=billing_record,json=billingRecord,proto3" json:"billing_record,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetBillingRecordResponse) Reset() {
-	*x = GetBillingRecordResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[8]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetBillingRecordResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetBillingRecordResponse) ProtoMessage() {}
-
-func (x *GetBillingRecordResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[8]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetBillingRecordResponse.ProtoReflect.Descriptor instead.
-func (*GetBillingRecordResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *GetBillingRecordResponse) GetBillingRecord() *BillingRecord {
-	if x != nil {
-		return x.BillingRecord
-	}
-	return nil
-}
-
-type UpdateBillingRecordRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// billing_record_id is the ID of the billing record to update
-	BillingRecordId string `protobuf:"bytes,1,opt,name=billing_record_id,json=billingRecordId,proto3" json:"billing_record_id,omitempty"`
-	// kind contains the kind of plan
-	Kind *BillingPlanKind `protobuf:"varint,2,opt,name=kind,proto3,enum=gitpod.v1.BillingPlanKind,oneof" json:"kind,omitempty"`
-	// amount_cents contains the amount of cents to charge the organization
-	AmountCentsUsd *int64 `protobuf:"varint,3,opt,name=amount_cents_usd,json=amountCentsUsd,proto3,oneof" json:"amount_cents_usd,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *UpdateBillingRecordRequest) Reset() {
-	*x = UpdateBillingRecordRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[9]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateBillingRecordRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateBillingRecordRequest) ProtoMessage() {}
-
-func (x *UpdateBillingRecordRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[9]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateBillingRecordRequest.ProtoReflect.Descriptor instead.
-func (*UpdateBillingRecordRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *UpdateBillingRecordRequest) GetBillingRecordId() string {
-	if x != nil {
-		return x.BillingRecordId
-	}
-	return ""
-}
-
-func (x *UpdateBillingRecordRequest) GetKind() BillingPlanKind {
-	if x != nil && x.Kind != nil {
-		return *x.Kind
-	}
-	return BillingPlanKind_BILLING_PLAN_KIND_UNSPECIFIED
-}
-
-func (x *UpdateBillingRecordRequest) GetAmountCentsUsd() int64 {
-	if x != nil && x.AmountCentsUsd != nil {
-		return *x.AmountCentsUsd
-	}
-	return 0
-}
-
-type UpdateBillingRecordResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateBillingRecordResponse) Reset() {
-	*x = UpdateBillingRecordResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[10]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateBillingRecordResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateBillingRecordResponse) ProtoMessage() {}
-
-func (x *UpdateBillingRecordResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[10]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateBillingRecordResponse.ProtoReflect.Descriptor instead.
-func (*UpdateBillingRecordResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{10}
-}
-
-type SetupBillingRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization to update
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	// amount_cents is the intended first-month subscription amount in cents. When
-	// set, the server authorizes this amount in-session (a manual-capture
-	// PaymentIntent hold) instead of a zero-amount SetupIntent, so the charge can
-	// be captured asynchronously after the subscription is granted. When unset,
-	// the server falls back to a SetupIntent (the existing card-on-file flow).
-	AmountCents *int64 `protobuf:"varint,2,opt,name=amount_cents,json=amountCents,proto3,oneof" json:"amount_cents,omitempty"`
-	// coupon_code is an optional coupon to apply when computing the in-session
-	// authorization amount. Only meaningful when amount_cents is set.
-	CouponCode *string `protobuf:"bytes,3,opt,name=coupon_code,json=couponCode,proto3,oneof" json:"coupon_code,omitempty"`
-	// intent_id, when provided, identifies an existing PaymentIntent to update
-	// in place with the new amount_cents instead of creating a new one. This lets
-	// the client adjust the authorized amount as the user changes their selection
-	// without churning a new PaymentIntent (and its hold) on every change. Only
-	// meaningful when amount_cents is set; ignored on the SetupIntent fallback.
-	IntentId      *string `protobuf:"bytes,4,opt,name=intent_id,json=intentId,proto3,oneof" json:"intent_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetupBillingRequest) Reset() {
-	*x = SetupBillingRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetupBillingRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetupBillingRequest) ProtoMessage() {}
-
-func (x *SetupBillingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetupBillingRequest.ProtoReflect.Descriptor instead.
-func (*SetupBillingRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *SetupBillingRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-func (x *SetupBillingRequest) GetAmountCents() int64 {
-	if x != nil && x.AmountCents != nil {
-		return *x.AmountCents
-	}
-	return 0
-}
-
-func (x *SetupBillingRequest) GetCouponCode() string {
-	if x != nil && x.CouponCode != nil {
-		return *x.CouponCode
-	}
-	return ""
-}
-
-func (x *SetupBillingRequest) GetIntentId() string {
-	if x != nil && x.IntentId != nil {
-		return *x.IntentId
-	}
-	return ""
-}
-
-type SetupBillingResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// setup_intent_client_secret is the client secret for the Stripe SetupIntent
-	SetupIntentClientSecret string `protobuf:"bytes,1,opt,name=setup_intent_client_secret,json=setupIntentClientSecret,proto3" json:"setup_intent_client_secret,omitempty"`
-	// customer_session_client_secret is the client secret for the Stripe CustomerSession
-	CustomerSessionClientSecret string `protobuf:"bytes,2,opt,name=customer_session_client_secret,json=customerSessionClientSecret,proto3" json:"customer_session_client_secret,omitempty"`
-	unknownFields               protoimpl.UnknownFields
-	sizeCache                   protoimpl.SizeCache
-}
-
-func (x *SetupBillingResponse) Reset() {
-	*x = SetupBillingResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[12]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetupBillingResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetupBillingResponse) ProtoMessage() {}
-
-func (x *SetupBillingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[12]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetupBillingResponse.ProtoReflect.Descriptor instead.
-func (*SetupBillingResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *SetupBillingResponse) GetSetupIntentClientSecret() string {
-	if x != nil {
-		return x.SetupIntentClientSecret
-	}
-	return ""
-}
-
-func (x *SetupBillingResponse) GetCustomerSessionClientSecret() string {
-	if x != nil {
-		return x.CustomerSessionClientSecret
-	}
-	return ""
-}
-
-type CompleteBillingSetupRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization to complete billing setup for
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	// setup_intent_id is the Stripe SetupIntent ID to verify completion
-	SetupIntentId string `protobuf:"bytes,2,opt,name=setup_intent_id,json=setupIntentId,proto3" json:"setup_intent_id,omitempty"`
-	// subscribe optionally creates a Core subscription atomically after saving
-	// the card. When set, the handler verifies the SetupIntent, saves the payment
-	// method, creates the free contract (without trial credits), and creates the
-	// subscription — all in one RPC. This eliminates the intermediate state where
-	// the card is saved but no subscription exists.
-	Subscribe     *CompleteBillingSetupRequest_Subscribe `protobuf:"bytes,3,opt,name=subscribe,proto3,oneof" json:"subscribe,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CompleteBillingSetupRequest) Reset() {
-	*x = CompleteBillingSetupRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CompleteBillingSetupRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CompleteBillingSetupRequest) ProtoMessage() {}
-
-func (x *CompleteBillingSetupRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CompleteBillingSetupRequest.ProtoReflect.Descriptor instead.
-func (*CompleteBillingSetupRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{13}
-}
-
-func (x *CompleteBillingSetupRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-func (x *CompleteBillingSetupRequest) GetSetupIntentId() string {
-	if x != nil {
-		return x.SetupIntentId
-	}
-	return ""
-}
-
-func (x *CompleteBillingSetupRequest) GetSubscribe() *CompleteBillingSetupRequest_Subscribe {
-	if x != nil {
-		return x.Subscribe
-	}
-	return nil
-}
-
-type CompleteBillingSetupResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// contract_id is the Metronome contract ID created for the organization
-	ContractId string `protobuf:"bytes,1,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
-	// trial_granted indicates whether a free trial was successfully granted
-	TrialGranted bool `protobuf:"varint,2,opt,name=trial_granted,json=trialGranted,proto3" json:"trial_granted,omitempty"`
-	// trial_amount_credits is the amount of trial credits granted in Gitpod Credits
-	TrialAmountCredits float64 `protobuf:"fixed64,3,opt,name=trial_amount_credits,json=trialAmountCredits,proto3" json:"trial_amount_credits,omitempty"`
-	// trial_expires_at is when the trial credits expire
-	TrialExpiresAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=trial_expires_at,json=trialExpiresAt,proto3" json:"trial_expires_at,omitempty"`
-	// subscription is set when the subscribe field was provided in the request
-	// and the subscription was created successfully.
-	Subscription  *Subscription `protobuf:"bytes,5,opt,name=subscription,proto3" json:"subscription,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CompleteBillingSetupResponse) Reset() {
-	*x = CompleteBillingSetupResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[14]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CompleteBillingSetupResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CompleteBillingSetupResponse) ProtoMessage() {}
-
-func (x *CompleteBillingSetupResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[14]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CompleteBillingSetupResponse.ProtoReflect.Descriptor instead.
-func (*CompleteBillingSetupResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{14}
-}
-
-func (x *CompleteBillingSetupResponse) GetContractId() string {
-	if x != nil {
-		return x.ContractId
-	}
-	return ""
-}
-
-func (x *CompleteBillingSetupResponse) GetTrialGranted() bool {
-	if x != nil {
-		return x.TrialGranted
-	}
-	return false
-}
-
-func (x *CompleteBillingSetupResponse) GetTrialAmountCredits() float64 {
-	if x != nil {
-		return x.TrialAmountCredits
-	}
-	return 0
-}
-
-func (x *CompleteBillingSetupResponse) GetTrialExpiresAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.TrialExpiresAt
-	}
-	return nil
-}
-
-func (x *CompleteBillingSetupResponse) GetSubscription() *Subscription {
-	if x != nil {
-		return x.Subscription
-	}
-	return nil
-}
-
-type GetBillingInfoRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization to get billing info for
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *GetBillingInfoRequest) Reset() {
-	*x = GetBillingInfoRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[15]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetBillingInfoRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetBillingInfoRequest) ProtoMessage() {}
-
-func (x *GetBillingInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[15]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetBillingInfoRequest.ProtoReflect.Descriptor instead.
-func (*GetBillingInfoRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{15}
-}
-
-func (x *GetBillingInfoRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-type GetBillingInfoResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// total_credits is the total amount of credits granted to the organization
-	TotalCredits float64 `protobuf:"fixed64,1,opt,name=total_credits,json=totalCredits,proto3" json:"total_credits,omitempty"`
-	// available_credits is the remaining credits available for use
-	AvailableCredits float64 `protobuf:"fixed64,2,opt,name=available_credits,json=availableCredits,proto3" json:"available_credits,omitempty"`
-	// used_credits is the amount of credits already consumed
-	UsedCredits float64 `protobuf:"fixed64,3,opt,name=used_credits,json=usedCredits,proto3" json:"used_credits,omitempty"`
-	// payment_method_status indicates the status of the payment method
-	PaymentMethodStatus PaymentMethodStatus `protobuf:"varint,5,opt,name=payment_method_status,json=paymentMethodStatus,proto3,enum=gitpod.v1.PaymentMethodStatus" json:"payment_method_status,omitempty"`
-	// credit_status indicates the status of the credit balance
-	CreditStatus CreditStatus `protobuf:"varint,6,opt,name=credit_status,json=creditStatus,proto3,enum=gitpod.v1.CreditStatus" json:"credit_status,omitempty"`
-	// payment_failure contains information about payment failures if any
-	PaymentFailure *PaymentFailureInfo `protobuf:"bytes,10,opt,name=payment_failure,json=paymentFailure,proto3" json:"payment_failure,omitempty"`
-	// topup_payment_failure contains information about topup payment failures if any
-	TopupPaymentFailure *TopupPaymentFailureInfo `protobuf:"bytes,11,opt,name=topup_payment_failure,json=topupPaymentFailure,proto3" json:"topup_payment_failure,omitempty"`
-	// auto_topup_settings contains the current auto-topup configuration
-	AutoTopupSettings *AutoTopupSettings `protobuf:"bytes,12,opt,name=auto_topup_settings,json=autoTopupSettings,proto3" json:"auto_topup_settings,omitempty"`
-	// last_auto_topup_at is the timestamp of the most recent automatic top-up, if any.
-	LastAutoTopupAt *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=last_auto_topup_at,json=lastAutoTopupAt,proto3" json:"last_auto_topup_at,omitempty"`
-	// monthly_commitment_cents is the monthly subscription amount in USD cents.
-	// 0 means the organization is on a free Core plan. Only set for Core tier organizations
-	// with an active contract.
-	MonthlyCommitmentCents int64 `protobuf:"varint,14,opt,name=monthly_commitment_cents,json=monthlyCommitmentCents,proto3" json:"monthly_commitment_cents,omitempty"`
-	// credit_grant is the contracted credit grant for the organization, in whole credits.
-	// Only set for enterprise UBB organizations. 0 means no grant has been configured.
-	CreditGrant   int64 `protobuf:"varint,16,opt,name=credit_grant,json=creditGrant,proto3" json:"credit_grant,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetBillingInfoResponse) Reset() {
-	*x = GetBillingInfoResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[16]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetBillingInfoResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetBillingInfoResponse) ProtoMessage() {}
-
-func (x *GetBillingInfoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[16]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetBillingInfoResponse.ProtoReflect.Descriptor instead.
-func (*GetBillingInfoResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{16}
-}
-
-func (x *GetBillingInfoResponse) GetTotalCredits() float64 {
-	if x != nil {
-		return x.TotalCredits
-	}
-	return 0
-}
-
-func (x *GetBillingInfoResponse) GetAvailableCredits() float64 {
-	if x != nil {
-		return x.AvailableCredits
-	}
-	return 0
-}
-
-func (x *GetBillingInfoResponse) GetUsedCredits() float64 {
-	if x != nil {
-		return x.UsedCredits
-	}
-	return 0
-}
-
-func (x *GetBillingInfoResponse) GetPaymentMethodStatus() PaymentMethodStatus {
-	if x != nil {
-		return x.PaymentMethodStatus
-	}
-	return PaymentMethodStatus_PAYMENT_METHOD_STATUS_UNSPECIFIED
-}
-
-func (x *GetBillingInfoResponse) GetCreditStatus() CreditStatus {
-	if x != nil {
-		return x.CreditStatus
-	}
-	return CreditStatus_CREDIT_STATUS_UNSPECIFIED
-}
-
-func (x *GetBillingInfoResponse) GetPaymentFailure() *PaymentFailureInfo {
-	if x != nil {
-		return x.PaymentFailure
-	}
-	return nil
-}
-
-func (x *GetBillingInfoResponse) GetTopupPaymentFailure() *TopupPaymentFailureInfo {
-	if x != nil {
-		return x.TopupPaymentFailure
-	}
-	return nil
-}
-
-func (x *GetBillingInfoResponse) GetAutoTopupSettings() *AutoTopupSettings {
-	if x != nil {
-		return x.AutoTopupSettings
-	}
-	return nil
-}
-
-func (x *GetBillingInfoResponse) GetLastAutoTopupAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.LastAutoTopupAt
-	}
-	return nil
-}
-
-func (x *GetBillingInfoResponse) GetMonthlyCommitmentCents() int64 {
-	if x != nil {
-		return x.MonthlyCommitmentCents
-	}
-	return 0
-}
-
-func (x *GetBillingInfoResponse) GetCreditGrant() int64 {
-	if x != nil {
-		return x.CreditGrant
-	}
-	return 0
-}
-
-type ReconcileBillingRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization to reconcile billing for
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *ReconcileBillingRequest) Reset() {
-	*x = ReconcileBillingRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[17]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ReconcileBillingRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReconcileBillingRequest) ProtoMessage() {}
-
-func (x *ReconcileBillingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[17]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReconcileBillingRequest.ProtoReflect.Descriptor instead.
-func (*ReconcileBillingRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{17}
-}
-
-func (x *ReconcileBillingRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-type ReconcileBillingResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ReconcileBillingResponse) Reset() {
-	*x = ReconcileBillingResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[18]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ReconcileBillingResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReconcileBillingResponse) ProtoMessage() {}
-
-func (x *ReconcileBillingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[18]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReconcileBillingResponse.ProtoReflect.Descriptor instead.
-func (*ReconcileBillingResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{18}
-}
-
 // TopupPaymentFailureInfo contains information about a failed topup payment
 type TopupPaymentFailureInfo struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -2178,7 +1440,7 @@ type TopupPaymentFailureInfo struct {
 
 func (x *TopupPaymentFailureInfo) Reset() {
 	*x = TopupPaymentFailureInfo{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[19]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2190,7 +1452,7 @@ func (x *TopupPaymentFailureInfo) String() string {
 func (*TopupPaymentFailureInfo) ProtoMessage() {}
 
 func (x *TopupPaymentFailureInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[19]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2203,7 +1465,7 @@ func (x *TopupPaymentFailureInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TopupPaymentFailureInfo.ProtoReflect.Descriptor instead.
 func (*TopupPaymentFailureInfo) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{19}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *TopupPaymentFailureInfo) GetFailedAt() *timestamppb.Timestamp {
@@ -2236,7 +1498,7 @@ type PaymentFailureInfo struct {
 
 func (x *PaymentFailureInfo) Reset() {
 	*x = PaymentFailureInfo{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[20]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2248,7 +1510,7 @@ func (x *PaymentFailureInfo) String() string {
 func (*PaymentFailureInfo) ProtoMessage() {}
 
 func (x *PaymentFailureInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[20]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2261,7 +1523,7 @@ func (x *PaymentFailureInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PaymentFailureInfo.ProtoReflect.Descriptor instead.
 func (*PaymentFailureInfo) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{20}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *PaymentFailureInfo) GetState() PaymentFailureState {
@@ -2292,355 +1554,6 @@ func (x *PaymentFailureInfo) GetFailureReason() string {
 	return ""
 }
 
-type CreateSubscriptionRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization to create subscription for
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	// subscription_type specifies the type of subscription to create
-	SubscriptionType SubscriptionType `protobuf:"varint,2,opt,name=subscription_type,json=subscriptionType,proto3,enum=gitpod.v1.SubscriptionType" json:"subscription_type,omitempty"`
-	// amount_cents is the amount of cents to charge the organization
-	AmountCents int64 `protobuf:"varint,3,opt,name=amount_cents,json=amountCents,proto3" json:"amount_cents,omitempty"`
-	// coupon_code is the code of the coupon to apply to the subscription
-	CouponCode    string `protobuf:"bytes,4,opt,name=coupon_code,json=couponCode,proto3" json:"coupon_code,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateSubscriptionRequest) Reset() {
-	*x = CreateSubscriptionRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[21]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateSubscriptionRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateSubscriptionRequest) ProtoMessage() {}
-
-func (x *CreateSubscriptionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[21]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateSubscriptionRequest.ProtoReflect.Descriptor instead.
-func (*CreateSubscriptionRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{21}
-}
-
-func (x *CreateSubscriptionRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-func (x *CreateSubscriptionRequest) GetSubscriptionType() SubscriptionType {
-	if x != nil {
-		return x.SubscriptionType
-	}
-	return SubscriptionType_SUBSCRIPTION_TYPE_UNSPECIFIED
-}
-
-func (x *CreateSubscriptionRequest) GetAmountCents() int64 {
-	if x != nil {
-		return x.AmountCents
-	}
-	return 0
-}
-
-func (x *CreateSubscriptionRequest) GetCouponCode() string {
-	if x != nil {
-		return x.CouponCode
-	}
-	return ""
-}
-
-type CreateSubscriptionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Subscription  *Subscription          `protobuf:"bytes,1,opt,name=subscription,proto3" json:"subscription,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateSubscriptionResponse) Reset() {
-	*x = CreateSubscriptionResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[22]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateSubscriptionResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateSubscriptionResponse) ProtoMessage() {}
-
-func (x *CreateSubscriptionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[22]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateSubscriptionResponse.ProtoReflect.Descriptor instead.
-func (*CreateSubscriptionResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{22}
-}
-
-func (x *CreateSubscriptionResponse) GetSubscription() *Subscription {
-	if x != nil {
-		return x.Subscription
-	}
-	return nil
-}
-
-type CancelSubscriptionRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// subscription_id is the ID of the subscription to cancel
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	// subscription_type specifies the type of subscription to cancel
-	SubscriptionType SubscriptionType `protobuf:"varint,2,opt,name=subscription_type,json=subscriptionType,proto3,enum=gitpod.v1.SubscriptionType" json:"subscription_type,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
-}
-
-func (x *CancelSubscriptionRequest) Reset() {
-	*x = CancelSubscriptionRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[23]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CancelSubscriptionRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CancelSubscriptionRequest) ProtoMessage() {}
-
-func (x *CancelSubscriptionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[23]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CancelSubscriptionRequest.ProtoReflect.Descriptor instead.
-func (*CancelSubscriptionRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{23}
-}
-
-func (x *CancelSubscriptionRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-func (x *CancelSubscriptionRequest) GetSubscriptionType() SubscriptionType {
-	if x != nil {
-		return x.SubscriptionType
-	}
-	return SubscriptionType_SUBSCRIPTION_TYPE_UNSPECIFIED
-}
-
-type CancelSubscriptionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CancelSubscriptionResponse) Reset() {
-	*x = CancelSubscriptionResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[24]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CancelSubscriptionResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CancelSubscriptionResponse) ProtoMessage() {}
-
-func (x *CancelSubscriptionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[24]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CancelSubscriptionResponse.ProtoReflect.Descriptor instead.
-func (*CancelSubscriptionResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{24}
-}
-
-type UpdateSubscriptionRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization whose subscription to update
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	// new_amount_cents is the new amount in cents to charge the organization
-	NewAmountCents int64 `protobuf:"varint,2,opt,name=new_amount_cents,json=newAmountCents,proto3" json:"new_amount_cents,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *UpdateSubscriptionRequest) Reset() {
-	*x = UpdateSubscriptionRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[25]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateSubscriptionRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateSubscriptionRequest) ProtoMessage() {}
-
-func (x *UpdateSubscriptionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[25]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateSubscriptionRequest.ProtoReflect.Descriptor instead.
-func (*UpdateSubscriptionRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{25}
-}
-
-func (x *UpdateSubscriptionRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-func (x *UpdateSubscriptionRequest) GetNewAmountCents() int64 {
-	if x != nil {
-		return x.NewAmountCents
-	}
-	return 0
-}
-
-type UpdateSubscriptionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Subscription  *Subscription          `protobuf:"bytes,1,opt,name=subscription,proto3" json:"subscription,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateSubscriptionResponse) Reset() {
-	*x = UpdateSubscriptionResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[26]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateSubscriptionResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateSubscriptionResponse) ProtoMessage() {}
-
-func (x *UpdateSubscriptionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[26]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateSubscriptionResponse.ProtoReflect.Descriptor instead.
-func (*UpdateSubscriptionResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{26}
-}
-
-func (x *UpdateSubscriptionResponse) GetSubscription() *Subscription {
-	if x != nil {
-		return x.Subscription
-	}
-	return nil
-}
-
-type ListSubscriptionsRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization to list subscriptions for
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *ListSubscriptionsRequest) Reset() {
-	*x = ListSubscriptionsRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[27]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListSubscriptionsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListSubscriptionsRequest) ProtoMessage() {}
-
-func (x *ListSubscriptionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[27]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListSubscriptionsRequest.ProtoReflect.Descriptor instead.
-func (*ListSubscriptionsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{27}
-}
-
-func (x *ListSubscriptionsRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
 type Subscription struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// contract_id is the unique identifier for the contract
@@ -2663,7 +1576,7 @@ type Subscription struct {
 
 func (x *Subscription) Reset() {
 	*x = Subscription{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[28]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2675,7 +1588,7 @@ func (x *Subscription) String() string {
 func (*Subscription) ProtoMessage() {}
 
 func (x *Subscription) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[28]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2688,7 +1601,7 @@ func (x *Subscription) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Subscription.ProtoReflect.Descriptor instead.
 func (*Subscription) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{28}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *Subscription) GetContractId() string {
@@ -2740,530 +1653,6 @@ func (x *Subscription) GetEndsAt() *timestamppb.Timestamp {
 	return nil
 }
 
-type ListSubscriptionsResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// subscriptions is the list of subscriptions for the organization
-	Subscriptions []*Subscription `protobuf:"bytes,1,rep,name=subscriptions,proto3" json:"subscriptions,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListSubscriptionsResponse) Reset() {
-	*x = ListSubscriptionsResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[29]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListSubscriptionsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListSubscriptionsResponse) ProtoMessage() {}
-
-func (x *ListSubscriptionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[29]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListSubscriptionsResponse.ProtoReflect.Descriptor instead.
-func (*ListSubscriptionsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{29}
-}
-
-func (x *ListSubscriptionsResponse) GetSubscriptions() []*Subscription {
-	if x != nil {
-		return x.Subscriptions
-	}
-	return nil
-}
-
-type GrantCreditsRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization to grant credits to
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	// credits_amount is the amount of credits to grant (must be >= 40)
-	CreditsAmount float64 `protobuf:"fixed64,2,opt,name=credits_amount,json=creditsAmount,proto3" json:"credits_amount,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GrantCreditsRequest) Reset() {
-	*x = GrantCreditsRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[30]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GrantCreditsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GrantCreditsRequest) ProtoMessage() {}
-
-func (x *GrantCreditsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[30]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GrantCreditsRequest.ProtoReflect.Descriptor instead.
-func (*GrantCreditsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{30}
-}
-
-func (x *GrantCreditsRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-func (x *GrantCreditsRequest) GetCreditsAmount() float64 {
-	if x != nil {
-		return x.CreditsAmount
-	}
-	return 0
-}
-
-type GrantCreditsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GrantCreditsResponse) Reset() {
-	*x = GrantCreditsResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[31]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GrantCreditsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GrantCreditsResponse) ProtoMessage() {}
-
-func (x *GrantCreditsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[31]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GrantCreditsResponse.ProtoReflect.Descriptor instead.
-func (*GrantCreditsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{31}
-}
-
-type GetStripePublishableKeyRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization to get the publishable key for
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *GetStripePublishableKeyRequest) Reset() {
-	*x = GetStripePublishableKeyRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[32]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetStripePublishableKeyRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetStripePublishableKeyRequest) ProtoMessage() {}
-
-func (x *GetStripePublishableKeyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[32]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetStripePublishableKeyRequest.ProtoReflect.Descriptor instead.
-func (*GetStripePublishableKeyRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{32}
-}
-
-func (x *GetStripePublishableKeyRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-type GetStripePublishableKeyResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// publishable_key is the Stripe publishable key for the organization's billing realm
-	PublishableKey string `protobuf:"bytes,1,opt,name=publishable_key,json=publishableKey,proto3" json:"publishable_key,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *GetStripePublishableKeyResponse) Reset() {
-	*x = GetStripePublishableKeyResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[33]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetStripePublishableKeyResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetStripePublishableKeyResponse) ProtoMessage() {}
-
-func (x *GetStripePublishableKeyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[33]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetStripePublishableKeyResponse.ProtoReflect.Descriptor instead.
-func (*GetStripePublishableKeyResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{33}
-}
-
-func (x *GetStripePublishableKeyResponse) GetPublishableKey() string {
-	if x != nil {
-		return x.PublishableKey
-	}
-	return ""
-}
-
-type SetBillingRealmRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization to update
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	// realm is the new billing realm to set for the organization
-	Realm         BillingRealm `protobuf:"varint,2,opt,name=realm,proto3,enum=gitpod.v1.BillingRealm" json:"realm,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetBillingRealmRequest) Reset() {
-	*x = SetBillingRealmRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[34]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetBillingRealmRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetBillingRealmRequest) ProtoMessage() {}
-
-func (x *SetBillingRealmRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[34]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetBillingRealmRequest.ProtoReflect.Descriptor instead.
-func (*SetBillingRealmRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{34}
-}
-
-func (x *SetBillingRealmRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-func (x *SetBillingRealmRequest) GetRealm() BillingRealm {
-	if x != nil {
-		return x.Realm
-	}
-	return BillingRealm_BILLING_REALM_UNSPECIFIED
-}
-
-type SetBillingRealmResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetBillingRealmResponse) Reset() {
-	*x = SetBillingRealmResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[35]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetBillingRealmResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetBillingRealmResponse) ProtoMessage() {}
-
-func (x *SetBillingRealmResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[35]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetBillingRealmResponse.ProtoReflect.Descriptor instead.
-func (*SetBillingRealmResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{35}
-}
-
-type CreateCardVerificationRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// email is the exact email address of the account
-	Email string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	// organization_id is the specific organization to verify (required if user has multiple orgs or already has a verified org)
-	OrganizationId *string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3,oneof" json:"organization_id,omitempty"`
-	// reason is an optional description of why this email is being approved
-	// (e.g., "Ona for Open Source - Project X")
-	Reason *string `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	// free_credits is the number of free credits to grant when the user's Core
-	// subscription is provisioned. If zero or unset, the default amount is used.
-	FreeCredits   *int32 `protobuf:"varint,4,opt,name=free_credits,json=freeCredits,proto3,oneof" json:"free_credits,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateCardVerificationRequest) Reset() {
-	*x = CreateCardVerificationRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[36]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateCardVerificationRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateCardVerificationRequest) ProtoMessage() {}
-
-func (x *CreateCardVerificationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[36]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateCardVerificationRequest.ProtoReflect.Descriptor instead.
-func (*CreateCardVerificationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{36}
-}
-
-func (x *CreateCardVerificationRequest) GetEmail() string {
-	if x != nil {
-		return x.Email
-	}
-	return ""
-}
-
-func (x *CreateCardVerificationRequest) GetOrganizationId() string {
-	if x != nil && x.OrganizationId != nil {
-		return *x.OrganizationId
-	}
-	return ""
-}
-
-func (x *CreateCardVerificationRequest) GetReason() string {
-	if x != nil && x.Reason != nil {
-		return *x.Reason
-	}
-	return ""
-}
-
-func (x *CreateCardVerificationRequest) GetFreeCredits() int32 {
-	if x != nil && x.FreeCredits != nil {
-		return *x.FreeCredits
-	}
-	return 0
-}
-
-type CreateCardVerificationResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateCardVerificationResponse) Reset() {
-	*x = CreateCardVerificationResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[37]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateCardVerificationResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateCardVerificationResponse) ProtoMessage() {}
-
-func (x *CreateCardVerificationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[37]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateCardVerificationResponse.ProtoReflect.Descriptor instead.
-func (*CreateCardVerificationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{37}
-}
-
-type SetTaxIDRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization to set tax ID for
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	// tax_id_type is the type of tax ID (e.g., "eu_vat", "us_ein", "gb_vat")
-	TaxIdType string `protobuf:"bytes,2,opt,name=tax_id_type,json=taxIdType,proto3" json:"tax_id_type,omitempty"`
-	// tax_id_value is the tax ID value
-	TaxIdValue    string `protobuf:"bytes,3,opt,name=tax_id_value,json=taxIdValue,proto3" json:"tax_id_value,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetTaxIDRequest) Reset() {
-	*x = SetTaxIDRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[38]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetTaxIDRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetTaxIDRequest) ProtoMessage() {}
-
-func (x *SetTaxIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[38]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetTaxIDRequest.ProtoReflect.Descriptor instead.
-func (*SetTaxIDRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{38}
-}
-
-func (x *SetTaxIDRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-func (x *SetTaxIDRequest) GetTaxIdType() string {
-	if x != nil {
-		return x.TaxIdType
-	}
-	return ""
-}
-
-func (x *SetTaxIDRequest) GetTaxIdValue() string {
-	if x != nil {
-		return x.TaxIdValue
-	}
-	return ""
-}
-
-type SetTaxIDResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetTaxIDResponse) Reset() {
-	*x = SetTaxIDResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[39]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetTaxIDResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetTaxIDResponse) ProtoMessage() {}
-
-func (x *SetTaxIDResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[39]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetTaxIDResponse.ProtoReflect.Descriptor instead.
-func (*SetTaxIDResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{39}
-}
-
 // Coupon represents a promotional code that can be redeemed for credits
 type Coupon struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -3291,7 +1680,7 @@ type Coupon struct {
 
 func (x *Coupon) Reset() {
 	*x = Coupon{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[40]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3303,7 +1692,7 @@ func (x *Coupon) String() string {
 func (*Coupon) ProtoMessage() {}
 
 func (x *Coupon) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[40]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3316,7 +1705,7 @@ func (x *Coupon) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Coupon.ProtoReflect.Descriptor instead.
 func (*Coupon) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{40}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *Coupon) GetId() string {
@@ -3382,96 +1771,6 @@ func (x *Coupon) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-type CreateCouponRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// code is the unique coupon code that customers will redeem
-	Code string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
-	// config is the configuration for this coupon
-	Config *CouponConfig `protobuf:"bytes,2,opt,name=config,proto3" json:"config,omitempty"`
-	// max_uses is the maximum number of times this coupon can be redeemed
-	MaxUses int32 `protobuf:"varint,3,opt,name=max_uses,json=maxUses,proto3" json:"max_uses,omitempty"`
-	// max_uses_per_org is the maximum number of times this coupon can be redeemed per organization
-	MaxUsesPerOrg *int32 `protobuf:"varint,4,opt,name=max_uses_per_org,json=maxUsesPerOrg,proto3,oneof" json:"max_uses_per_org,omitempty"`
-	// expires_at is when this coupon expires (optional)
-	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
-	// description is a human-readable description of the coupon
-	Description   *string `protobuf:"bytes,6,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateCouponRequest) Reset() {
-	*x = CreateCouponRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[41]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateCouponRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateCouponRequest) ProtoMessage() {}
-
-func (x *CreateCouponRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[41]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateCouponRequest.ProtoReflect.Descriptor instead.
-func (*CreateCouponRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{41}
-}
-
-func (x *CreateCouponRequest) GetCode() string {
-	if x != nil {
-		return x.Code
-	}
-	return ""
-}
-
-func (x *CreateCouponRequest) GetConfig() *CouponConfig {
-	if x != nil {
-		return x.Config
-	}
-	return nil
-}
-
-func (x *CreateCouponRequest) GetMaxUses() int32 {
-	if x != nil {
-		return x.MaxUses
-	}
-	return 0
-}
-
-func (x *CreateCouponRequest) GetMaxUsesPerOrg() int32 {
-	if x != nil && x.MaxUsesPerOrg != nil {
-		return *x.MaxUsesPerOrg
-	}
-	return 0
-}
-
-func (x *CreateCouponRequest) GetExpiresAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.ExpiresAt
-	}
-	return nil
-}
-
-func (x *CreateCouponRequest) GetDescription() string {
-	if x != nil && x.Description != nil {
-		return *x.Description
-	}
-	return ""
-}
-
 type CouponConfig struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// one_time_ocu_grant is the amount of OCU this coupon grants
@@ -3488,7 +1787,7 @@ type CouponConfig struct {
 
 func (x *CouponConfig) Reset() {
 	*x = CouponConfig{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[42]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3500,7 +1799,7 @@ func (x *CouponConfig) String() string {
 func (*CouponConfig) ProtoMessage() {}
 
 func (x *CouponConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[42]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3513,7 +1812,7 @@ func (x *CouponConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CouponConfig.ProtoReflect.Descriptor instead.
 func (*CouponConfig) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{42}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *CouponConfig) GetOneTimeOcuGrant() int64 {
@@ -3544,254 +1843,6 @@ func (x *CouponConfig) GetAutoTerminate() bool {
 	return false
 }
 
-type CreateCouponResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Coupon        *Coupon                `protobuf:"bytes,1,opt,name=coupon,proto3" json:"coupon,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateCouponResponse) Reset() {
-	*x = CreateCouponResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[43]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateCouponResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateCouponResponse) ProtoMessage() {}
-
-func (x *CreateCouponResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[43]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateCouponResponse.ProtoReflect.Descriptor instead.
-func (*CreateCouponResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{43}
-}
-
-func (x *CreateCouponResponse) GetCoupon() *Coupon {
-	if x != nil {
-		return x.Coupon
-	}
-	return nil
-}
-
-type ListCouponsRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// pagination contains the pagination options for listing coupons
-	Pagination    *PaginationRequest         `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Filter        *ListCouponsRequest_Filter `protobuf:"bytes,2,opt,name=filter,proto3" json:"filter,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListCouponsRequest) Reset() {
-	*x = ListCouponsRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[44]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListCouponsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListCouponsRequest) ProtoMessage() {}
-
-func (x *ListCouponsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[44]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListCouponsRequest.ProtoReflect.Descriptor instead.
-func (*ListCouponsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{44}
-}
-
-func (x *ListCouponsRequest) GetPagination() *PaginationRequest {
-	if x != nil {
-		return x.Pagination
-	}
-	return nil
-}
-
-func (x *ListCouponsRequest) GetFilter() *ListCouponsRequest_Filter {
-	if x != nil {
-		return x.Filter
-	}
-	return nil
-}
-
-type ListCouponsResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// pagination contains the pagination response
-	Pagination    *PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Coupons       []*Coupon           `protobuf:"bytes,2,rep,name=coupons,proto3" json:"coupons,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListCouponsResponse) Reset() {
-	*x = ListCouponsResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[45]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListCouponsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListCouponsResponse) ProtoMessage() {}
-
-func (x *ListCouponsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[45]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListCouponsResponse.ProtoReflect.Descriptor instead.
-func (*ListCouponsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{45}
-}
-
-func (x *ListCouponsResponse) GetPagination() *PaginationResponse {
-	if x != nil {
-		return x.Pagination
-	}
-	return nil
-}
-
-func (x *ListCouponsResponse) GetCoupons() []*Coupon {
-	if x != nil {
-		return x.Coupons
-	}
-	return nil
-}
-
-type GetCouponRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// coupon_code is the code of the coupon to retrieve
-	CouponCode string `protobuf:"bytes,1,opt,name=coupon_code,json=couponCode,proto3" json:"coupon_code,omitempty"`
-	// organization_id is the organization context for per-organization validation
-	OrganizationId string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *GetCouponRequest) Reset() {
-	*x = GetCouponRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[46]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetCouponRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetCouponRequest) ProtoMessage() {}
-
-func (x *GetCouponRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[46]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetCouponRequest.ProtoReflect.Descriptor instead.
-func (*GetCouponRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{46}
-}
-
-func (x *GetCouponRequest) GetCouponCode() string {
-	if x != nil {
-		return x.CouponCode
-	}
-	return ""
-}
-
-func (x *GetCouponRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-type GetCouponResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Coupon        *Coupon                `protobuf:"bytes,1,opt,name=coupon,proto3" json:"coupon,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetCouponResponse) Reset() {
-	*x = GetCouponResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[47]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetCouponResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetCouponResponse) ProtoMessage() {}
-
-func (x *GetCouponResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[47]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetCouponResponse.ProtoReflect.Descriptor instead.
-func (*GetCouponResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{47}
-}
-
-func (x *GetCouponResponse) GetCoupon() *Coupon {
-	if x != nil {
-		return x.Coupon
-	}
-	return nil
-}
-
 // BillingAddress represents a billing address for an organization
 type BillingAddress struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -3813,7 +1864,7 @@ type BillingAddress struct {
 
 func (x *BillingAddress) Reset() {
 	*x = BillingAddress{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[48]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3825,7 +1876,7 @@ func (x *BillingAddress) String() string {
 func (*BillingAddress) ProtoMessage() {}
 
 func (x *BillingAddress) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[48]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3838,7 +1889,7 @@ func (x *BillingAddress) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BillingAddress.ProtoReflect.Descriptor instead.
 func (*BillingAddress) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{48}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *BillingAddress) GetLine1() string {
@@ -3883,375 +1934,6 @@ func (x *BillingAddress) GetCountry() string {
 	return ""
 }
 
-type SetBillingAddressRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization to set billing address for
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	// name is the name associated with the billing address
-	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	// address is the billing address details
-	Address       *BillingAddress `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetBillingAddressRequest) Reset() {
-	*x = SetBillingAddressRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[49]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetBillingAddressRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetBillingAddressRequest) ProtoMessage() {}
-
-func (x *SetBillingAddressRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[49]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetBillingAddressRequest.ProtoReflect.Descriptor instead.
-func (*SetBillingAddressRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{49}
-}
-
-func (x *SetBillingAddressRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-func (x *SetBillingAddressRequest) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *SetBillingAddressRequest) GetAddress() *BillingAddress {
-	if x != nil {
-		return x.Address
-	}
-	return nil
-}
-
-type SetBillingAddressResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetBillingAddressResponse) Reset() {
-	*x = SetBillingAddressResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[50]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetBillingAddressResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetBillingAddressResponse) ProtoMessage() {}
-
-func (x *SetBillingAddressResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[50]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetBillingAddressResponse.ProtoReflect.Descriptor instead.
-func (*SetBillingAddressResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{50}
-}
-
-type GetStripePortalUrlRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization to get the Stripe portal URL for
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *GetStripePortalUrlRequest) Reset() {
-	*x = GetStripePortalUrlRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[51]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetStripePortalUrlRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetStripePortalUrlRequest) ProtoMessage() {}
-
-func (x *GetStripePortalUrlRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[51]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetStripePortalUrlRequest.ProtoReflect.Descriptor instead.
-func (*GetStripePortalUrlRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{51}
-}
-
-func (x *GetStripePortalUrlRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-type GetStripePortalUrlResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// portal_url is the URL to the Stripe Customer Portal for billing management
-	PortalUrl     string `protobuf:"bytes,1,opt,name=portal_url,json=portalUrl,proto3" json:"portal_url,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetStripePortalUrlResponse) Reset() {
-	*x = GetStripePortalUrlResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[52]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetStripePortalUrlResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetStripePortalUrlResponse) ProtoMessage() {}
-
-func (x *GetStripePortalUrlResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[52]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetStripePortalUrlResponse.ProtoReflect.Descriptor instead.
-func (*GetStripePortalUrlResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{52}
-}
-
-func (x *GetStripePortalUrlResponse) GetPortalUrl() string {
-	if x != nil {
-		return x.PortalUrl
-	}
-	return ""
-}
-
-type ClearTopupFailureRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization to clear the topup failure for
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *ClearTopupFailureRequest) Reset() {
-	*x = ClearTopupFailureRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[53]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ClearTopupFailureRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ClearTopupFailureRequest) ProtoMessage() {}
-
-func (x *ClearTopupFailureRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[53]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ClearTopupFailureRequest.ProtoReflect.Descriptor instead.
-func (*ClearTopupFailureRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{53}
-}
-
-func (x *ClearTopupFailureRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-type ClearTopupFailureResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ClearTopupFailureResponse) Reset() {
-	*x = ClearTopupFailureResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[54]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ClearTopupFailureResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ClearTopupFailureResponse) ProtoMessage() {}
-
-func (x *ClearTopupFailureResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[54]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ClearTopupFailureResponse.ProtoReflect.Descriptor instead.
-func (*ClearTopupFailureResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{54}
-}
-
-type GetCreditConsumptionTimeSeriesRequest struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	// Date range for the consumption query. Optional; defaults to the last 7 days.
-	// The range must not exceed 30 days, and end_time must not be in the future.
-	DateRange     *DateRange `protobuf:"bytes,3,opt,name=date_range,json=dateRange,proto3" json:"date_range,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetCreditConsumptionTimeSeriesRequest) Reset() {
-	*x = GetCreditConsumptionTimeSeriesRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[55]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetCreditConsumptionTimeSeriesRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetCreditConsumptionTimeSeriesRequest) ProtoMessage() {}
-
-func (x *GetCreditConsumptionTimeSeriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[55]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetCreditConsumptionTimeSeriesRequest.ProtoReflect.Descriptor instead.
-func (*GetCreditConsumptionTimeSeriesRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{55}
-}
-
-func (x *GetCreditConsumptionTimeSeriesRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-func (x *GetCreditConsumptionTimeSeriesRequest) GetDateRange() *DateRange {
-	if x != nil {
-		return x.DateRange
-	}
-	return nil
-}
-
-type GetCreditConsumptionTimeSeriesResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Per-metric OCU consumption time series, plus a total entry with kind ALL.
-	Metrics       []*MetricConsumptionTimeSeries `protobuf:"bytes,1,rep,name=metrics,proto3" json:"metrics,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetCreditConsumptionTimeSeriesResponse) Reset() {
-	*x = GetCreditConsumptionTimeSeriesResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[56]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetCreditConsumptionTimeSeriesResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetCreditConsumptionTimeSeriesResponse) ProtoMessage() {}
-
-func (x *GetCreditConsumptionTimeSeriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[56]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetCreditConsumptionTimeSeriesResponse.ProtoReflect.Descriptor instead.
-func (*GetCreditConsumptionTimeSeriesResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{56}
-}
-
-func (x *GetCreditConsumptionTimeSeriesResponse) GetMetrics() []*MetricConsumptionTimeSeries {
-	if x != nil {
-		return x.Metrics
-	}
-	return nil
-}
-
 // Daily OCU consumption for a single metric category.
 type MetricConsumptionTimeSeries struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -4267,7 +1949,7 @@ type MetricConsumptionTimeSeries struct {
 
 func (x *MetricConsumptionTimeSeries) Reset() {
 	*x = MetricConsumptionTimeSeries{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[57]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4279,7 +1961,7 @@ func (x *MetricConsumptionTimeSeries) String() string {
 func (*MetricConsumptionTimeSeries) ProtoMessage() {}
 
 func (x *MetricConsumptionTimeSeries) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[57]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4292,7 +1974,7 @@ func (x *MetricConsumptionTimeSeries) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MetricConsumptionTimeSeries.ProtoReflect.Descriptor instead.
 func (*MetricConsumptionTimeSeries) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{57}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *MetricConsumptionTimeSeries) GetDisplayName() string {
@@ -4329,7 +2011,7 @@ type CreditUsageDataPoint struct {
 
 func (x *CreditUsageDataPoint) Reset() {
 	*x = CreditUsageDataPoint{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[58]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4341,7 +2023,7 @@ func (x *CreditUsageDataPoint) String() string {
 func (*CreditUsageDataPoint) ProtoMessage() {}
 
 func (x *CreditUsageDataPoint) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[58]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4354,7 +2036,7 @@ func (x *CreditUsageDataPoint) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreditUsageDataPoint.ProtoReflect.Descriptor instead.
 func (*CreditUsageDataPoint) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{58}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *CreditUsageDataPoint) GetTime() *timestamppb.Timestamp {
@@ -4369,134 +2051,6 @@ func (x *CreditUsageDataPoint) GetOcu() float64 {
 		return x.Ocu
 	}
 	return 0
-}
-
-type SetupEnterpriseBillingRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization to set up enterprise billing for
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	// sandbox selects the sandbox billing environment. If false or unset, production is used.
-	Sandbox bool `protobuf:"varint,2,opt,name=sandbox,proto3" json:"sandbox,omitempty"`
-	// set_enterprise_tier also sets the organization tier to Enterprise.
-	// If false or unset, the organization must already be on Enterprise tier.
-	SetEnterpriseTier bool `protobuf:"varint,3,opt,name=set_enterprise_tier,json=setEnterpriseTier,proto3" json:"set_enterprise_tier,omitempty"`
-	// email is the email address for the Stripe customer (optional)
-	Email *string `protobuf:"bytes,4,opt,name=email,proto3,oneof" json:"email,omitempty"`
-	// contract_start_date is the date from which usage data should be shown/exported.
-	// Usage events before this date are still recorded but excluded from reports and Stripe sync.
-	ContractStartDate *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=contract_start_date,json=contractStartDate,proto3,oneof" json:"contract_start_date,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
-}
-
-func (x *SetupEnterpriseBillingRequest) Reset() {
-	*x = SetupEnterpriseBillingRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[59]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetupEnterpriseBillingRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetupEnterpriseBillingRequest) ProtoMessage() {}
-
-func (x *SetupEnterpriseBillingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[59]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetupEnterpriseBillingRequest.ProtoReflect.Descriptor instead.
-func (*SetupEnterpriseBillingRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{59}
-}
-
-func (x *SetupEnterpriseBillingRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-func (x *SetupEnterpriseBillingRequest) GetSandbox() bool {
-	if x != nil {
-		return x.Sandbox
-	}
-	return false
-}
-
-func (x *SetupEnterpriseBillingRequest) GetSetEnterpriseTier() bool {
-	if x != nil {
-		return x.SetEnterpriseTier
-	}
-	return false
-}
-
-func (x *SetupEnterpriseBillingRequest) GetEmail() string {
-	if x != nil && x.Email != nil {
-		return *x.Email
-	}
-	return ""
-}
-
-func (x *SetupEnterpriseBillingRequest) GetContractStartDate() *timestamppb.Timestamp {
-	if x != nil {
-		return x.ContractStartDate
-	}
-	return nil
-}
-
-type SetupEnterpriseBillingResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// stripe_customer_id is the created or existing Stripe customer ID
-	StripeCustomerId string `protobuf:"bytes,1,opt,name=stripe_customer_id,json=stripeCustomerId,proto3" json:"stripe_customer_id,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
-}
-
-func (x *SetupEnterpriseBillingResponse) Reset() {
-	*x = SetupEnterpriseBillingResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[60]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetupEnterpriseBillingResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetupEnterpriseBillingResponse) ProtoMessage() {}
-
-func (x *SetupEnterpriseBillingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[60]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetupEnterpriseBillingResponse.ProtoReflect.Descriptor instead.
-func (*SetupEnterpriseBillingResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{60}
-}
-
-func (x *SetupEnterpriseBillingResponse) GetStripeCustomerId() string {
-	if x != nil {
-		return x.StripeCustomerId
-	}
-	return ""
 }
 
 // AutoTopupSettings configures automatic credit top-ups for an organization.
@@ -4514,7 +2068,7 @@ type AutoTopupSettings struct {
 
 func (x *AutoTopupSettings) Reset() {
 	*x = AutoTopupSettings{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[61]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4526,7 +2080,7 @@ func (x *AutoTopupSettings) String() string {
 func (*AutoTopupSettings) ProtoMessage() {}
 
 func (x *AutoTopupSettings) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[61]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4539,7 +2093,7 @@ func (x *AutoTopupSettings) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AutoTopupSettings.ProtoReflect.Descriptor instead.
 func (*AutoTopupSettings) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{61}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *AutoTopupSettings) GetEnabled() bool {
@@ -4561,195 +2115,6 @@ func (x *AutoTopupSettings) GetMaxDailyTopups() int32 {
 		return x.MaxDailyTopups
 	}
 	return 0
-}
-
-type UpdateAutoTopupSettingsRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization to update auto-topup settings for
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	// settings contains the new auto-topup configuration
-	Settings      *AutoTopupSettings `protobuf:"bytes,2,opt,name=settings,proto3" json:"settings,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateAutoTopupSettingsRequest) Reset() {
-	*x = UpdateAutoTopupSettingsRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[62]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateAutoTopupSettingsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateAutoTopupSettingsRequest) ProtoMessage() {}
-
-func (x *UpdateAutoTopupSettingsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[62]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateAutoTopupSettingsRequest.ProtoReflect.Descriptor instead.
-func (*UpdateAutoTopupSettingsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{62}
-}
-
-func (x *UpdateAutoTopupSettingsRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-func (x *UpdateAutoTopupSettingsRequest) GetSettings() *AutoTopupSettings {
-	if x != nil {
-		return x.Settings
-	}
-	return nil
-}
-
-type UpdateAutoTopupSettingsResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// settings contains the updated auto-topup configuration
-	Settings      *AutoTopupSettings `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateAutoTopupSettingsResponse) Reset() {
-	*x = UpdateAutoTopupSettingsResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[63]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateAutoTopupSettingsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateAutoTopupSettingsResponse) ProtoMessage() {}
-
-func (x *UpdateAutoTopupSettingsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[63]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateAutoTopupSettingsResponse.ProtoReflect.Descriptor instead.
-func (*UpdateAutoTopupSettingsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{63}
-}
-
-func (x *UpdateAutoTopupSettingsResponse) GetSettings() *AutoTopupSettings {
-	if x != nil {
-		return x.Settings
-	}
-	return nil
-}
-
-type GetAutoTopupSettingsRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// organization_id is the ID of the organization to get auto-topup settings for
-	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *GetAutoTopupSettingsRequest) Reset() {
-	*x = GetAutoTopupSettingsRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[64]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetAutoTopupSettingsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetAutoTopupSettingsRequest) ProtoMessage() {}
-
-func (x *GetAutoTopupSettingsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[64]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetAutoTopupSettingsRequest.ProtoReflect.Descriptor instead.
-func (*GetAutoTopupSettingsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{64}
-}
-
-func (x *GetAutoTopupSettingsRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-type GetAutoTopupSettingsResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// settings contains the current auto-topup configuration
-	Settings      *AutoTopupSettings `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetAutoTopupSettingsResponse) Reset() {
-	*x = GetAutoTopupSettingsResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[65]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetAutoTopupSettingsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetAutoTopupSettingsResponse) ProtoMessage() {}
-
-func (x *GetAutoTopupSettingsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[65]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetAutoTopupSettingsResponse.ProtoReflect.Descriptor instead.
-func (*GetAutoTopupSettingsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{65}
-}
-
-func (x *GetAutoTopupSettingsResponse) GetSettings() *AutoTopupSettings {
-	if x != nil {
-		return x.Settings
-	}
-	return nil
 }
 
 // CreditUsageReportFilter narrows the data returned by GetCreditUsageReport.
@@ -4777,7 +2142,7 @@ type CreditUsageReportFilter struct {
 
 func (x *CreditUsageReportFilter) Reset() {
 	*x = CreditUsageReportFilter{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[66]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4789,7 +2154,7 @@ func (x *CreditUsageReportFilter) String() string {
 func (*CreditUsageReportFilter) ProtoMessage() {}
 
 func (x *CreditUsageReportFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[66]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4802,7 +2167,7 @@ func (x *CreditUsageReportFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreditUsageReportFilter.ProtoReflect.Descriptor instead.
 func (*CreditUsageReportFilter) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{66}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *CreditUsageReportFilter) GetSubject() *Subject {
@@ -4832,7 +2197,7 @@ type GetCreditUsageReportRequest struct {
 
 func (x *GetCreditUsageReportRequest) Reset() {
 	*x = GetCreditUsageReportRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[67]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4844,7 +2209,7 @@ func (x *GetCreditUsageReportRequest) String() string {
 func (*GetCreditUsageReportRequest) ProtoMessage() {}
 
 func (x *GetCreditUsageReportRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[67]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4857,7 +2222,7 @@ func (x *GetCreditUsageReportRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCreditUsageReportRequest.ProtoReflect.Descriptor instead.
 func (*GetCreditUsageReportRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{67}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetCreditUsageReportRequest) GetOrganizationId() string {
@@ -4903,7 +2268,7 @@ type GetCreditUsageReportResponse struct {
 
 func (x *GetCreditUsageReportResponse) Reset() {
 	*x = GetCreditUsageReportResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[68]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4915,7 +2280,7 @@ func (x *GetCreditUsageReportResponse) String() string {
 func (*GetCreditUsageReportResponse) ProtoMessage() {}
 
 func (x *GetCreditUsageReportResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[68]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4928,7 +2293,7 @@ func (x *GetCreditUsageReportResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCreditUsageReportResponse.ProtoReflect.Descriptor instead.
 func (*GetCreditUsageReportResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{68}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetCreditUsageReportResponse) GetUpdatedAt() *timestamppb.Timestamp {
@@ -4978,7 +2343,7 @@ type DailyCreditUsage struct {
 
 func (x *DailyCreditUsage) Reset() {
 	*x = DailyCreditUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[69]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4990,7 +2355,7 @@ func (x *DailyCreditUsage) String() string {
 func (*DailyCreditUsage) ProtoMessage() {}
 
 func (x *DailyCreditUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[69]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5003,7 +2368,7 @@ func (x *DailyCreditUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DailyCreditUsage.ProtoReflect.Descriptor instead.
 func (*DailyCreditUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{69}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *DailyCreditUsage) GetDate() *timestamppb.Timestamp {
@@ -5066,7 +2431,7 @@ type CreditsByType struct {
 
 func (x *CreditsByType) Reset() {
 	*x = CreditsByType{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[70]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5078,7 +2443,7 @@ func (x *CreditsByType) String() string {
 func (*CreditsByType) ProtoMessage() {}
 
 func (x *CreditsByType) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[70]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5091,7 +2456,7 @@ func (x *CreditsByType) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreditsByType.ProtoReflect.Descriptor instead.
 func (*CreditsByType) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{70}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *CreditsByType) GetUsageType() UsageType {
@@ -5123,7 +2488,7 @@ type UserCreditUsage struct {
 
 func (x *UserCreditUsage) Reset() {
 	*x = UserCreditUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[71]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5135,7 +2500,7 @@ func (x *UserCreditUsage) String() string {
 func (*UserCreditUsage) ProtoMessage() {}
 
 func (x *UserCreditUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[71]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5148,7 +2513,7 @@ func (x *UserCreditUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserCreditUsage.ProtoReflect.Descriptor instead.
 func (*UserCreditUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{71}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *UserCreditUsage) GetUserId() string {
@@ -5192,7 +2557,7 @@ type TeamCreditUsage struct {
 
 func (x *TeamCreditUsage) Reset() {
 	*x = TeamCreditUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[72]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5204,7 +2569,7 @@ func (x *TeamCreditUsage) String() string {
 func (*TeamCreditUsage) ProtoMessage() {}
 
 func (x *TeamCreditUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[72]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5217,7 +2582,7 @@ func (x *TeamCreditUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TeamCreditUsage.ProtoReflect.Descriptor instead.
 func (*TeamCreditUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{72}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *TeamCreditUsage) GetTeamId() string {
@@ -5254,7 +2619,7 @@ type EnvironmentCreditUsage struct {
 
 func (x *EnvironmentCreditUsage) Reset() {
 	*x = EnvironmentCreditUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[73]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5266,7 +2631,7 @@ func (x *EnvironmentCreditUsage) String() string {
 func (*EnvironmentCreditUsage) ProtoMessage() {}
 
 func (x *EnvironmentCreditUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[73]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5279,7 +2644,7 @@ func (x *EnvironmentCreditUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnvironmentCreditUsage.ProtoReflect.Descriptor instead.
 func (*EnvironmentCreditUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{73}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *EnvironmentCreditUsage) GetEnvironmentId() string {
@@ -5316,7 +2681,7 @@ type AgentExecutionCreditUsage struct {
 
 func (x *AgentExecutionCreditUsage) Reset() {
 	*x = AgentExecutionCreditUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[74]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5328,7 +2693,7 @@ func (x *AgentExecutionCreditUsage) String() string {
 func (*AgentExecutionCreditUsage) ProtoMessage() {}
 
 func (x *AgentExecutionCreditUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[74]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5341,7 +2706,7 @@ func (x *AgentExecutionCreditUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentExecutionCreditUsage.ProtoReflect.Descriptor instead.
 func (*AgentExecutionCreditUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{74}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *AgentExecutionCreditUsage) GetAgentExecutionId() string {
@@ -5379,7 +2744,7 @@ type GetCreditUsageExportRequest struct {
 
 func (x *GetCreditUsageExportRequest) Reset() {
 	*x = GetCreditUsageExportRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[75]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5391,7 +2756,7 @@ func (x *GetCreditUsageExportRequest) String() string {
 func (*GetCreditUsageExportRequest) ProtoMessage() {}
 
 func (x *GetCreditUsageExportRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[75]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5404,7 +2769,7 @@ func (x *GetCreditUsageExportRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCreditUsageExportRequest.ProtoReflect.Descriptor instead.
 func (*GetCreditUsageExportRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{75}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetCreditUsageExportRequest) GetOrganizationId() string {
@@ -5439,7 +2804,7 @@ type GetCreditUsageExportResponse struct {
 
 func (x *GetCreditUsageExportResponse) Reset() {
 	*x = GetCreditUsageExportResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[76]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5451,7 +2816,7 @@ func (x *GetCreditUsageExportResponse) String() string {
 func (*GetCreditUsageExportResponse) ProtoMessage() {}
 
 func (x *GetCreditUsageExportResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[76]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5464,7 +2829,7 @@ func (x *GetCreditUsageExportResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCreditUsageExportResponse.ProtoReflect.Descriptor instead.
 func (*GetCreditUsageExportResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{76}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *GetCreditUsageExportResponse) GetDownloadUrl() string {
@@ -5486,7 +2851,7 @@ type EnterpriseAITokenUsage struct {
 
 func (x *EnterpriseAITokenUsage) Reset() {
 	*x = EnterpriseAITokenUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[77]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5498,7 +2863,7 @@ func (x *EnterpriseAITokenUsage) String() string {
 func (*EnterpriseAITokenUsage) ProtoMessage() {}
 
 func (x *EnterpriseAITokenUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[77]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5511,7 +2876,7 @@ func (x *EnterpriseAITokenUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnterpriseAITokenUsage.ProtoReflect.Descriptor instead.
 func (*EnterpriseAITokenUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{77}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *EnterpriseAITokenUsage) GetInputTokens() int64 {
@@ -5554,7 +2919,7 @@ type EnterpriseAIUsage struct {
 
 func (x *EnterpriseAIUsage) Reset() {
 	*x = EnterpriseAIUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[78]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5566,7 +2931,7 @@ func (x *EnterpriseAIUsage) String() string {
 func (*EnterpriseAIUsage) ProtoMessage() {}
 
 func (x *EnterpriseAIUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[78]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5579,7 +2944,7 @@ func (x *EnterpriseAIUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnterpriseAIUsage.ProtoReflect.Descriptor instead.
 func (*EnterpriseAIUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{78}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *EnterpriseAIUsage) GetCredits() float64 {
@@ -5624,7 +2989,7 @@ type EnterpriseAIUsageBudget struct {
 
 func (x *EnterpriseAIUsageBudget) Reset() {
 	*x = EnterpriseAIUsageBudget{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[79]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5636,7 +3001,7 @@ func (x *EnterpriseAIUsageBudget) String() string {
 func (*EnterpriseAIUsageBudget) ProtoMessage() {}
 
 func (x *EnterpriseAIUsageBudget) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[79]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5649,7 +3014,7 @@ func (x *EnterpriseAIUsageBudget) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnterpriseAIUsageBudget.ProtoReflect.Descriptor instead.
 func (*EnterpriseAIUsageBudget) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{79}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *EnterpriseAIUsageBudget) GetSource() EnterpriseAIUsageBudgetSource {
@@ -5704,7 +3069,7 @@ type EnterpriseAIUsageByTokenType struct {
 
 func (x *EnterpriseAIUsageByTokenType) Reset() {
 	*x = EnterpriseAIUsageByTokenType{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[80]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5716,7 +3081,7 @@ func (x *EnterpriseAIUsageByTokenType) String() string {
 func (*EnterpriseAIUsageByTokenType) ProtoMessage() {}
 
 func (x *EnterpriseAIUsageByTokenType) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[80]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5729,7 +3094,7 @@ func (x *EnterpriseAIUsageByTokenType) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnterpriseAIUsageByTokenType.ProtoReflect.Descriptor instead.
 func (*EnterpriseAIUsageByTokenType) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{80}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *EnterpriseAIUsageByTokenType) GetTokenType() BYOKRateCardTokenType {
@@ -5760,7 +3125,7 @@ type EnterpriseAIUsageByModel struct {
 
 func (x *EnterpriseAIUsageByModel) Reset() {
 	*x = EnterpriseAIUsageByModel{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[81]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5772,7 +3137,7 @@ func (x *EnterpriseAIUsageByModel) String() string {
 func (*EnterpriseAIUsageByModel) ProtoMessage() {}
 
 func (x *EnterpriseAIUsageByModel) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[81]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5785,7 +3150,7 @@ func (x *EnterpriseAIUsageByModel) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnterpriseAIUsageByModel.ProtoReflect.Descriptor instead.
 func (*EnterpriseAIUsageByModel) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{81}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *EnterpriseAIUsageByModel) GetModel() string {
@@ -5837,7 +3202,7 @@ type TeamEnterpriseAIUsage struct {
 
 func (x *TeamEnterpriseAIUsage) Reset() {
 	*x = TeamEnterpriseAIUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[82]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5849,7 +3214,7 @@ func (x *TeamEnterpriseAIUsage) String() string {
 func (*TeamEnterpriseAIUsage) ProtoMessage() {}
 
 func (x *TeamEnterpriseAIUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[82]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5862,7 +3227,7 @@ func (x *TeamEnterpriseAIUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TeamEnterpriseAIUsage.ProtoReflect.Descriptor instead.
 func (*TeamEnterpriseAIUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{82}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *TeamEnterpriseAIUsage) GetTeamId() string {
@@ -5912,7 +3277,7 @@ type UserEnterpriseAIUsage struct {
 
 func (x *UserEnterpriseAIUsage) Reset() {
 	*x = UserEnterpriseAIUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[83]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5924,7 +3289,7 @@ func (x *UserEnterpriseAIUsage) String() string {
 func (*UserEnterpriseAIUsage) ProtoMessage() {}
 
 func (x *UserEnterpriseAIUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[83]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5937,7 +3302,7 @@ func (x *UserEnterpriseAIUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserEnterpriseAIUsage.ProtoReflect.Descriptor instead.
 func (*UserEnterpriseAIUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{83}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *UserEnterpriseAIUsage) GetUserId() string {
@@ -5981,7 +3346,7 @@ type UserCostBudgetUsage struct {
 
 func (x *UserCostBudgetUsage) Reset() {
 	*x = UserCostBudgetUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[84]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5993,7 +3358,7 @@ func (x *UserCostBudgetUsage) String() string {
 func (*UserCostBudgetUsage) ProtoMessage() {}
 
 func (x *UserCostBudgetUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[84]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6006,7 +3371,7 @@ func (x *UserCostBudgetUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserCostBudgetUsage.ProtoReflect.Descriptor instead.
 func (*UserCostBudgetUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{84}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *UserCostBudgetUsage) GetUserId() string {
@@ -6096,7 +3461,7 @@ type DailyEnterpriseAIUsage struct {
 
 func (x *DailyEnterpriseAIUsage) Reset() {
 	*x = DailyEnterpriseAIUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[85]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6108,7 +3473,7 @@ func (x *DailyEnterpriseAIUsage) String() string {
 func (*DailyEnterpriseAIUsage) ProtoMessage() {}
 
 func (x *DailyEnterpriseAIUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[85]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6121,7 +3486,7 @@ func (x *DailyEnterpriseAIUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DailyEnterpriseAIUsage.ProtoReflect.Descriptor instead.
 func (*DailyEnterpriseAIUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{85}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *DailyEnterpriseAIUsage) GetDate() *timestamppb.Timestamp {
@@ -6180,7 +3545,7 @@ type GetEnterpriseAIUsageSummaryRequest struct {
 
 func (x *GetEnterpriseAIUsageSummaryRequest) Reset() {
 	*x = GetEnterpriseAIUsageSummaryRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[86]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6192,7 +3557,7 @@ func (x *GetEnterpriseAIUsageSummaryRequest) String() string {
 func (*GetEnterpriseAIUsageSummaryRequest) ProtoMessage() {}
 
 func (x *GetEnterpriseAIUsageSummaryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[86]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6205,7 +3570,7 @@ func (x *GetEnterpriseAIUsageSummaryRequest) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use GetEnterpriseAIUsageSummaryRequest.ProtoReflect.Descriptor instead.
 func (*GetEnterpriseAIUsageSummaryRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{86}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *GetEnterpriseAIUsageSummaryRequest) GetOrganizationId() string {
@@ -6244,7 +3609,7 @@ type GetEnterpriseAIUsageSummaryResponse struct {
 
 func (x *GetEnterpriseAIUsageSummaryResponse) Reset() {
 	*x = GetEnterpriseAIUsageSummaryResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[87]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6256,7 +3621,7 @@ func (x *GetEnterpriseAIUsageSummaryResponse) String() string {
 func (*GetEnterpriseAIUsageSummaryResponse) ProtoMessage() {}
 
 func (x *GetEnterpriseAIUsageSummaryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[87]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6269,7 +3634,7 @@ func (x *GetEnterpriseAIUsageSummaryResponse) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use GetEnterpriseAIUsageSummaryResponse.ProtoReflect.Descriptor instead.
 func (*GetEnterpriseAIUsageSummaryResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{87}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *GetEnterpriseAIUsageSummaryResponse) GetCalculatedAt() *timestamppb.Timestamp {
@@ -6316,7 +3681,7 @@ type ListEnterpriseAITeamUsageRequest struct {
 
 func (x *ListEnterpriseAITeamUsageRequest) Reset() {
 	*x = ListEnterpriseAITeamUsageRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[88]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6328,7 +3693,7 @@ func (x *ListEnterpriseAITeamUsageRequest) String() string {
 func (*ListEnterpriseAITeamUsageRequest) ProtoMessage() {}
 
 func (x *ListEnterpriseAITeamUsageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[88]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6341,7 +3706,7 @@ func (x *ListEnterpriseAITeamUsageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEnterpriseAITeamUsageRequest.ProtoReflect.Descriptor instead.
 func (*ListEnterpriseAITeamUsageRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{88}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *ListEnterpriseAITeamUsageRequest) GetPagination() *PaginationRequest {
@@ -6392,7 +3757,7 @@ type ListEnterpriseAITeamUsageResponse struct {
 
 func (x *ListEnterpriseAITeamUsageResponse) Reset() {
 	*x = ListEnterpriseAITeamUsageResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[89]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6404,7 +3769,7 @@ func (x *ListEnterpriseAITeamUsageResponse) String() string {
 func (*ListEnterpriseAITeamUsageResponse) ProtoMessage() {}
 
 func (x *ListEnterpriseAITeamUsageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[89]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6417,7 +3782,7 @@ func (x *ListEnterpriseAITeamUsageResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ListEnterpriseAITeamUsageResponse.ProtoReflect.Descriptor instead.
 func (*ListEnterpriseAITeamUsageResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{89}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *ListEnterpriseAITeamUsageResponse) GetPagination() *PaginationResponse {
@@ -6461,7 +3826,7 @@ type ListEnterpriseAIUserUsageRequest struct {
 
 func (x *ListEnterpriseAIUserUsageRequest) Reset() {
 	*x = ListEnterpriseAIUserUsageRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[90]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6473,7 +3838,7 @@ func (x *ListEnterpriseAIUserUsageRequest) String() string {
 func (*ListEnterpriseAIUserUsageRequest) ProtoMessage() {}
 
 func (x *ListEnterpriseAIUserUsageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[90]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6486,7 +3851,7 @@ func (x *ListEnterpriseAIUserUsageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEnterpriseAIUserUsageRequest.ProtoReflect.Descriptor instead.
 func (*ListEnterpriseAIUserUsageRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{90}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *ListEnterpriseAIUserUsageRequest) GetPagination() *PaginationRequest {
@@ -6546,7 +3911,7 @@ type ListEnterpriseAIUserUsageResponse struct {
 
 func (x *ListEnterpriseAIUserUsageResponse) Reset() {
 	*x = ListEnterpriseAIUserUsageResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[91]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6558,7 +3923,7 @@ func (x *ListEnterpriseAIUserUsageResponse) String() string {
 func (*ListEnterpriseAIUserUsageResponse) ProtoMessage() {}
 
 func (x *ListEnterpriseAIUserUsageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[91]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6571,7 +3936,7 @@ func (x *ListEnterpriseAIUserUsageResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ListEnterpriseAIUserUsageResponse.ProtoReflect.Descriptor instead.
 func (*ListEnterpriseAIUserUsageResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{91}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *ListEnterpriseAIUserUsageResponse) GetPagination() *PaginationResponse {
@@ -6617,7 +3982,7 @@ type GetEnterpriseAIUsageTimeSeriesRequest struct {
 
 func (x *GetEnterpriseAIUsageTimeSeriesRequest) Reset() {
 	*x = GetEnterpriseAIUsageTimeSeriesRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[92]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6629,7 +3994,7 @@ func (x *GetEnterpriseAIUsageTimeSeriesRequest) String() string {
 func (*GetEnterpriseAIUsageTimeSeriesRequest) ProtoMessage() {}
 
 func (x *GetEnterpriseAIUsageTimeSeriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[92]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6642,7 +4007,7 @@ func (x *GetEnterpriseAIUsageTimeSeriesRequest) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use GetEnterpriseAIUsageTimeSeriesRequest.ProtoReflect.Descriptor instead.
 func (*GetEnterpriseAIUsageTimeSeriesRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{92}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *GetEnterpriseAIUsageTimeSeriesRequest) GetOrganizationId() string {
@@ -6683,7 +4048,7 @@ type EnterpriseAIUsageTimeSeriesFilter struct {
 
 func (x *EnterpriseAIUsageTimeSeriesFilter) Reset() {
 	*x = EnterpriseAIUsageTimeSeriesFilter{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[93]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6695,7 +4060,7 @@ func (x *EnterpriseAIUsageTimeSeriesFilter) String() string {
 func (*EnterpriseAIUsageTimeSeriesFilter) ProtoMessage() {}
 
 func (x *EnterpriseAIUsageTimeSeriesFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[93]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6708,7 +4073,7 @@ func (x *EnterpriseAIUsageTimeSeriesFilter) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use EnterpriseAIUsageTimeSeriesFilter.ProtoReflect.Descriptor instead.
 func (*EnterpriseAIUsageTimeSeriesFilter) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{93}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *EnterpriseAIUsageTimeSeriesFilter) GetSubject() *Subject {
@@ -6730,7 +4095,7 @@ type GetEnterpriseAIUsageTimeSeriesResponse struct {
 
 func (x *GetEnterpriseAIUsageTimeSeriesResponse) Reset() {
 	*x = GetEnterpriseAIUsageTimeSeriesResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[94]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6742,7 +4107,7 @@ func (x *GetEnterpriseAIUsageTimeSeriesResponse) String() string {
 func (*GetEnterpriseAIUsageTimeSeriesResponse) ProtoMessage() {}
 
 func (x *GetEnterpriseAIUsageTimeSeriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[94]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6755,7 +4120,7 @@ func (x *GetEnterpriseAIUsageTimeSeriesResponse) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use GetEnterpriseAIUsageTimeSeriesResponse.ProtoReflect.Descriptor instead.
 func (*GetEnterpriseAIUsageTimeSeriesResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{94}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *GetEnterpriseAIUsageTimeSeriesResponse) GetCalculatedAt() *timestamppb.Timestamp {
@@ -6772,104 +4137,6 @@ func (x *GetEnterpriseAIUsageTimeSeriesResponse) GetDailyUsage() []*DailyEnterpr
 	return nil
 }
 
-type CorrectUsageEventsRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Idempotency keys of events to correct.
-	IdempotencyKeys []string `protobuf:"bytes,1,rep,name=idempotency_keys,json=idempotencyKeys,proto3" json:"idempotency_keys,omitempty"`
-	// Why these events are being corrected (stored in cancel_reason and correction payload).
-	Reason        string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CorrectUsageEventsRequest) Reset() {
-	*x = CorrectUsageEventsRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[95]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CorrectUsageEventsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CorrectUsageEventsRequest) ProtoMessage() {}
-
-func (x *CorrectUsageEventsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[95]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CorrectUsageEventsRequest.ProtoReflect.Descriptor instead.
-func (*CorrectUsageEventsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{95}
-}
-
-func (x *CorrectUsageEventsRequest) GetIdempotencyKeys() []string {
-	if x != nil {
-		return x.IdempotencyKeys
-	}
-	return nil
-}
-
-func (x *CorrectUsageEventsRequest) GetReason() string {
-	if x != nil {
-		return x.Reason
-	}
-	return ""
-}
-
-type CorrectUsageEventsResponse struct {
-	state         protoimpl.MessageState        `protogen:"open.v1"`
-	Results       []*UsageEventCorrectionResult `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CorrectUsageEventsResponse) Reset() {
-	*x = CorrectUsageEventsResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[96]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CorrectUsageEventsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CorrectUsageEventsResponse) ProtoMessage() {}
-
-func (x *CorrectUsageEventsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[96]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CorrectUsageEventsResponse.ProtoReflect.Descriptor instead.
-func (*CorrectUsageEventsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{96}
-}
-
-func (x *CorrectUsageEventsResponse) GetResults() []*UsageEventCorrectionResult {
-	if x != nil {
-		return x.Results
-	}
-	return nil
-}
-
 type UsageEventCorrectionResult struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	IdempotencyKey string                 `protobuf:"bytes,1,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
@@ -6882,7 +4149,7 @@ type UsageEventCorrectionResult struct {
 
 func (x *UsageEventCorrectionResult) Reset() {
 	*x = UsageEventCorrectionResult{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[97]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6894,7 +4161,7 @@ func (x *UsageEventCorrectionResult) String() string {
 func (*UsageEventCorrectionResult) ProtoMessage() {}
 
 func (x *UsageEventCorrectionResult) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[97]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6907,7 +4174,7 @@ func (x *UsageEventCorrectionResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UsageEventCorrectionResult.ProtoReflect.Descriptor instead.
 func (*UsageEventCorrectionResult) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{97}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *UsageEventCorrectionResult) GetIdempotencyKey() string {
@@ -6931,70 +4198,6 @@ func (x *UsageEventCorrectionResult) GetError() string {
 	return ""
 }
 
-type InsertUsageEventsRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Events to insert.
-	Events []*UsageEventInput `protobuf:"bytes,1,rep,name=events,proto3" json:"events,omitempty"`
-	// Why these events are being inserted (stored in audit log and event payload).
-	Reason string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
-	// If true, allow events with timestamps older than 35 days.
-	// By default, old events are rejected because Stripe cannot accept them.
-	IgnoreAgeCheck bool `protobuf:"varint,3,opt,name=ignore_age_check,json=ignoreAgeCheck,proto3" json:"ignore_age_check,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *InsertUsageEventsRequest) Reset() {
-	*x = InsertUsageEventsRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[98]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *InsertUsageEventsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*InsertUsageEventsRequest) ProtoMessage() {}
-
-func (x *InsertUsageEventsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[98]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use InsertUsageEventsRequest.ProtoReflect.Descriptor instead.
-func (*InsertUsageEventsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{98}
-}
-
-func (x *InsertUsageEventsRequest) GetEvents() []*UsageEventInput {
-	if x != nil {
-		return x.Events
-	}
-	return nil
-}
-
-func (x *InsertUsageEventsRequest) GetReason() string {
-	if x != nil {
-		return x.Reason
-	}
-	return ""
-}
-
-func (x *InsertUsageEventsRequest) GetIgnoreAgeCheck() bool {
-	if x != nil {
-		return x.IgnoreAgeCheck
-	}
-	return false
-}
-
 type UsageEventInput struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
@@ -7013,7 +4216,7 @@ type UsageEventInput struct {
 
 func (x *UsageEventInput) Reset() {
 	*x = UsageEventInput{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[99]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7025,7 +4228,7 @@ func (x *UsageEventInput) String() string {
 func (*UsageEventInput) ProtoMessage() {}
 
 func (x *UsageEventInput) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[99]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7038,7 +4241,7 @@ func (x *UsageEventInput) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UsageEventInput.ProtoReflect.Descriptor instead.
 func (*UsageEventInput) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{99}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *UsageEventInput) GetOrganizationId() string {
@@ -7083,78 +4286,6 @@ func (x *UsageEventInput) GetPayloadJson() string {
 	return ""
 }
 
-type InsertUsageEventsResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// One result per input event, in the same order as the request.
-	// Each result echoes the original input fields plus status columns,
-	// so the CLI can write the response directly to stdout as CSV.
-	Results []*UsageEventInsertResult `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"`
-	// Summary counts.
-	InsertedCount int32 `protobuf:"varint,2,opt,name=inserted_count,json=insertedCount,proto3" json:"inserted_count,omitempty"`
-	SkippedCount  int32 `protobuf:"varint,3,opt,name=skipped_count,json=skippedCount,proto3" json:"skipped_count,omitempty"`
-	ErrorCount    int32 `protobuf:"varint,4,opt,name=error_count,json=errorCount,proto3" json:"error_count,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *InsertUsageEventsResponse) Reset() {
-	*x = InsertUsageEventsResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[100]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *InsertUsageEventsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*InsertUsageEventsResponse) ProtoMessage() {}
-
-func (x *InsertUsageEventsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[100]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use InsertUsageEventsResponse.ProtoReflect.Descriptor instead.
-func (*InsertUsageEventsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{100}
-}
-
-func (x *InsertUsageEventsResponse) GetResults() []*UsageEventInsertResult {
-	if x != nil {
-		return x.Results
-	}
-	return nil
-}
-
-func (x *InsertUsageEventsResponse) GetInsertedCount() int32 {
-	if x != nil {
-		return x.InsertedCount
-	}
-	return 0
-}
-
-func (x *InsertUsageEventsResponse) GetSkippedCount() int32 {
-	if x != nil {
-		return x.SkippedCount
-	}
-	return 0
-}
-
-func (x *InsertUsageEventsResponse) GetErrorCount() int32 {
-	if x != nil {
-		return x.ErrorCount
-	}
-	return 0
-}
-
 type UsageEventInsertResult struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Original input fields echoed back.
@@ -7177,7 +4308,7 @@ type UsageEventInsertResult struct {
 
 func (x *UsageEventInsertResult) Reset() {
 	*x = UsageEventInsertResult{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[101]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7189,7 +4320,7 @@ func (x *UsageEventInsertResult) String() string {
 func (*UsageEventInsertResult) ProtoMessage() {}
 
 func (x *UsageEventInsertResult) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[101]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7202,7 +4333,7 @@ func (x *UsageEventInsertResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UsageEventInsertResult.ProtoReflect.Descriptor instead.
 func (*UsageEventInsertResult) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{101}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *UsageEventInsertResult) GetOrganizationId() string {
@@ -7268,94 +4399,6 @@ func (x *UsageEventInsertResult) GetMessage() string {
 	return ""
 }
 
-type GetEnterpriseBillingInfoRequest struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *GetEnterpriseBillingInfoRequest) Reset() {
-	*x = GetEnterpriseBillingInfoRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[102]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetEnterpriseBillingInfoRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetEnterpriseBillingInfoRequest) ProtoMessage() {}
-
-func (x *GetEnterpriseBillingInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[102]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetEnterpriseBillingInfoRequest.ProtoReflect.Descriptor instead.
-func (*GetEnterpriseBillingInfoRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{102}
-}
-
-func (x *GetEnterpriseBillingInfoRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-type GetEnterpriseBillingInfoResponse struct {
-	state              protoimpl.MessageState `protogen:"open.v1"`
-	CreditUsageEnabled bool                   `protobuf:"varint,1,opt,name=credit_usage_enabled,json=creditUsageEnabled,proto3" json:"credit_usage_enabled,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *GetEnterpriseBillingInfoResponse) Reset() {
-	*x = GetEnterpriseBillingInfoResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[103]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetEnterpriseBillingInfoResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetEnterpriseBillingInfoResponse) ProtoMessage() {}
-
-func (x *GetEnterpriseBillingInfoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[103]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetEnterpriseBillingInfoResponse.ProtoReflect.Descriptor instead.
-func (*GetEnterpriseBillingInfoResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{103}
-}
-
-func (x *GetEnterpriseBillingInfoResponse) GetCreditUsageEnabled() bool {
-	if x != nil {
-		return x.CreditUsageEnabled
-	}
-	return false
-}
-
 type BYOKRateCardRate struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -7374,7 +4417,7 @@ type BYOKRateCardRate struct {
 
 func (x *BYOKRateCardRate) Reset() {
 	*x = BYOKRateCardRate{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[104]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7386,7 +4429,7 @@ func (x *BYOKRateCardRate) String() string {
 func (*BYOKRateCardRate) ProtoMessage() {}
 
 func (x *BYOKRateCardRate) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[104]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7399,7 +4442,7 @@ func (x *BYOKRateCardRate) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BYOKRateCardRate.ProtoReflect.Descriptor instead.
 func (*BYOKRateCardRate) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{104}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *BYOKRateCardRate) GetId() string {
@@ -7458,232 +4501,6 @@ func (x *BYOKRateCardRate) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-type ListBYOKRateCardRatesRequest struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	// as_of selects rates effective at or before this timestamp. Defaults to now.
-	AsOf          *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=as_of,json=asOf,proto3" json:"as_of,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListBYOKRateCardRatesRequest) Reset() {
-	*x = ListBYOKRateCardRatesRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[105]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListBYOKRateCardRatesRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListBYOKRateCardRatesRequest) ProtoMessage() {}
-
-func (x *ListBYOKRateCardRatesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[105]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListBYOKRateCardRatesRequest.ProtoReflect.Descriptor instead.
-func (*ListBYOKRateCardRatesRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{105}
-}
-
-func (x *ListBYOKRateCardRatesRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-func (x *ListBYOKRateCardRatesRequest) GetAsOf() *timestamppb.Timestamp {
-	if x != nil {
-		return x.AsOf
-	}
-	return nil
-}
-
-type ListBYOKRateCardRatesResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Rates         []*BYOKRateCardRate    `protobuf:"bytes,1,rep,name=rates,proto3" json:"rates,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListBYOKRateCardRatesResponse) Reset() {
-	*x = ListBYOKRateCardRatesResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[106]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListBYOKRateCardRatesResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListBYOKRateCardRatesResponse) ProtoMessage() {}
-
-func (x *ListBYOKRateCardRatesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[106]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListBYOKRateCardRatesResponse.ProtoReflect.Descriptor instead.
-func (*ListBYOKRateCardRatesResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{106}
-}
-
-func (x *ListBYOKRateCardRatesResponse) GetRates() []*BYOKRateCardRate {
-	if x != nil {
-		return x.Rates
-	}
-	return nil
-}
-
-type SetBYOKRateCardRateRequest struct {
-	state                          protoimpl.MessageState `protogen:"open.v1"`
-	OrganizationId                 string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	Model                          string                 `protobuf:"bytes,2,opt,name=model,proto3" json:"model,omitempty"`
-	TokenType                      BYOKRateCardTokenType  `protobuf:"varint,3,opt,name=token_type,json=tokenType,proto3,enum=gitpod.v1.BYOKRateCardTokenType" json:"token_type,omitempty"`
-	RateMicrounitsPerMillionTokens int64                  `protobuf:"varint,4,opt,name=rate_microunits_per_million_tokens,json=rateMicrounitsPerMillionTokens,proto3" json:"rate_microunits_per_million_tokens,omitempty"`
-	Currency                       BillingCurrency        `protobuf:"varint,5,opt,name=currency,proto3,enum=gitpod.v1.BillingCurrency" json:"currency,omitempty"`
-	// effective_at defaults to now when unset.
-	EffectiveAt   *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=effective_at,json=effectiveAt,proto3" json:"effective_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetBYOKRateCardRateRequest) Reset() {
-	*x = SetBYOKRateCardRateRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[107]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetBYOKRateCardRateRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetBYOKRateCardRateRequest) ProtoMessage() {}
-
-func (x *SetBYOKRateCardRateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[107]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetBYOKRateCardRateRequest.ProtoReflect.Descriptor instead.
-func (*SetBYOKRateCardRateRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{107}
-}
-
-func (x *SetBYOKRateCardRateRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-func (x *SetBYOKRateCardRateRequest) GetModel() string {
-	if x != nil {
-		return x.Model
-	}
-	return ""
-}
-
-func (x *SetBYOKRateCardRateRequest) GetTokenType() BYOKRateCardTokenType {
-	if x != nil {
-		return x.TokenType
-	}
-	return BYOKRateCardTokenType_BYOK_RATE_CARD_TOKEN_TYPE_UNSPECIFIED
-}
-
-func (x *SetBYOKRateCardRateRequest) GetRateMicrounitsPerMillionTokens() int64 {
-	if x != nil {
-		return x.RateMicrounitsPerMillionTokens
-	}
-	return 0
-}
-
-func (x *SetBYOKRateCardRateRequest) GetCurrency() BillingCurrency {
-	if x != nil {
-		return x.Currency
-	}
-	return BillingCurrency_BILLING_CURRENCY_UNSPECIFIED
-}
-
-func (x *SetBYOKRateCardRateRequest) GetEffectiveAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.EffectiveAt
-	}
-	return nil
-}
-
-type SetBYOKRateCardRateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Rate          *BYOKRateCardRate      `protobuf:"bytes,1,opt,name=rate,proto3" json:"rate,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetBYOKRateCardRateResponse) Reset() {
-	*x = SetBYOKRateCardRateResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[108]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetBYOKRateCardRateResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetBYOKRateCardRateResponse) ProtoMessage() {}
-
-func (x *SetBYOKRateCardRateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[108]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetBYOKRateCardRateResponse.ProtoReflect.Descriptor instead.
-func (*SetBYOKRateCardRateResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{108}
-}
-
-func (x *SetBYOKRateCardRateResponse) GetRate() *BYOKRateCardRate {
-	if x != nil {
-		return x.Rate
-	}
-	return nil
-}
-
 type EnterpriseAIUserBudgetPolicy struct {
 	state          protoimpl.MessageState     `protogen:"open.v1"`
 	Id             string                     `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -7704,7 +4521,7 @@ type EnterpriseAIUserBudgetPolicy struct {
 
 func (x *EnterpriseAIUserBudgetPolicy) Reset() {
 	*x = EnterpriseAIUserBudgetPolicy{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[109]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7716,7 +4533,7 @@ func (x *EnterpriseAIUserBudgetPolicy) String() string {
 func (*EnterpriseAIUserBudgetPolicy) ProtoMessage() {}
 
 func (x *EnterpriseAIUserBudgetPolicy) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[109]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7729,7 +4546,7 @@ func (x *EnterpriseAIUserBudgetPolicy) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnterpriseAIUserBudgetPolicy.ProtoReflect.Descriptor instead.
 func (*EnterpriseAIUserBudgetPolicy) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{109}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *EnterpriseAIUserBudgetPolicy) GetId() string {
@@ -7812,7 +4629,7 @@ type EffectiveEnterpriseAIUserBudgetPolicy struct {
 
 func (x *EffectiveEnterpriseAIUserBudgetPolicy) Reset() {
 	*x = EffectiveEnterpriseAIUserBudgetPolicy{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[110]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7824,7 +4641,7 @@ func (x *EffectiveEnterpriseAIUserBudgetPolicy) String() string {
 func (*EffectiveEnterpriseAIUserBudgetPolicy) ProtoMessage() {}
 
 func (x *EffectiveEnterpriseAIUserBudgetPolicy) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[110]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7837,7 +4654,7 @@ func (x *EffectiveEnterpriseAIUserBudgetPolicy) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use EffectiveEnterpriseAIUserBudgetPolicy.ProtoReflect.Descriptor instead.
 func (*EffectiveEnterpriseAIUserBudgetPolicy) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{110}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *EffectiveEnterpriseAIUserBudgetPolicy) GetSource() EnterpriseAIUserBudgetPolicySource {
@@ -7854,126 +4671,6 @@ func (x *EffectiveEnterpriseAIUserBudgetPolicy) GetPolicy() *EnterpriseAIUserBud
 	return nil
 }
 
-type ListEnterpriseAIUserBudgetPoliciesRequest struct {
-	state          protoimpl.MessageState     `protogen:"open.v1"`
-	Pagination     *PaginationRequest         `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	OrganizationId string                     `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	Mode           EnterpriseAIUserBudgetMode `protobuf:"varint,3,opt,name=mode,proto3,enum=gitpod.v1.EnterpriseAIUserBudgetMode" json:"mode,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *ListEnterpriseAIUserBudgetPoliciesRequest) Reset() {
-	*x = ListEnterpriseAIUserBudgetPoliciesRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[111]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListEnterpriseAIUserBudgetPoliciesRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListEnterpriseAIUserBudgetPoliciesRequest) ProtoMessage() {}
-
-func (x *ListEnterpriseAIUserBudgetPoliciesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[111]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListEnterpriseAIUserBudgetPoliciesRequest.ProtoReflect.Descriptor instead.
-func (*ListEnterpriseAIUserBudgetPoliciesRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{111}
-}
-
-func (x *ListEnterpriseAIUserBudgetPoliciesRequest) GetPagination() *PaginationRequest {
-	if x != nil {
-		return x.Pagination
-	}
-	return nil
-}
-
-func (x *ListEnterpriseAIUserBudgetPoliciesRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-func (x *ListEnterpriseAIUserBudgetPoliciesRequest) GetMode() EnterpriseAIUserBudgetMode {
-	if x != nil {
-		return x.Mode
-	}
-	return EnterpriseAIUserBudgetMode_ENTERPRISE_AI_USER_BUDGET_MODE_UNSPECIFIED
-}
-
-type ListEnterpriseAIUserBudgetPoliciesResponse struct {
-	state              protoimpl.MessageState          `protogen:"open.v1"`
-	OrganizationPolicy *EnterpriseAIUserBudgetPolicy   `protobuf:"bytes,1,opt,name=organization_policy,json=organizationPolicy,proto3" json:"organization_policy,omitempty"`
-	UserPolicies       []*EnterpriseAIUserBudgetPolicy `protobuf:"bytes,2,rep,name=user_policies,json=userPolicies,proto3" json:"user_policies,omitempty"`
-	Pagination         *PaginationResponse             `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *ListEnterpriseAIUserBudgetPoliciesResponse) Reset() {
-	*x = ListEnterpriseAIUserBudgetPoliciesResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[112]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListEnterpriseAIUserBudgetPoliciesResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListEnterpriseAIUserBudgetPoliciesResponse) ProtoMessage() {}
-
-func (x *ListEnterpriseAIUserBudgetPoliciesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[112]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListEnterpriseAIUserBudgetPoliciesResponse.ProtoReflect.Descriptor instead.
-func (*ListEnterpriseAIUserBudgetPoliciesResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{112}
-}
-
-func (x *ListEnterpriseAIUserBudgetPoliciesResponse) GetOrganizationPolicy() *EnterpriseAIUserBudgetPolicy {
-	if x != nil {
-		return x.OrganizationPolicy
-	}
-	return nil
-}
-
-func (x *ListEnterpriseAIUserBudgetPoliciesResponse) GetUserPolicies() []*EnterpriseAIUserBudgetPolicy {
-	if x != nil {
-		return x.UserPolicies
-	}
-	return nil
-}
-
-func (x *ListEnterpriseAIUserBudgetPoliciesResponse) GetPagination() *PaginationResponse {
-	if x != nil {
-		return x.Pagination
-	}
-	return nil
-}
-
 type GetEnterpriseAIUserBudgetPolicyRequest struct {
 	state          protoimpl.MessageState     `protogen:"open.v1"`
 	OrganizationId string                     `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
@@ -7985,7 +4682,7 @@ type GetEnterpriseAIUserBudgetPolicyRequest struct {
 
 func (x *GetEnterpriseAIUserBudgetPolicyRequest) Reset() {
 	*x = GetEnterpriseAIUserBudgetPolicyRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[113]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7997,7 +4694,7 @@ func (x *GetEnterpriseAIUserBudgetPolicyRequest) String() string {
 func (*GetEnterpriseAIUserBudgetPolicyRequest) ProtoMessage() {}
 
 func (x *GetEnterpriseAIUserBudgetPolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[113]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8010,7 +4707,7 @@ func (x *GetEnterpriseAIUserBudgetPolicyRequest) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use GetEnterpriseAIUserBudgetPolicyRequest.ProtoReflect.Descriptor instead.
 func (*GetEnterpriseAIUserBudgetPolicyRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{113}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *GetEnterpriseAIUserBudgetPolicyRequest) GetOrganizationId() string {
@@ -8044,7 +4741,7 @@ type GetEnterpriseAIUserBudgetPolicyResponse struct {
 
 func (x *GetEnterpriseAIUserBudgetPolicyResponse) Reset() {
 	*x = GetEnterpriseAIUserBudgetPolicyResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[114]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8056,7 +4753,7 @@ func (x *GetEnterpriseAIUserBudgetPolicyResponse) String() string {
 func (*GetEnterpriseAIUserBudgetPolicyResponse) ProtoMessage() {}
 
 func (x *GetEnterpriseAIUserBudgetPolicyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[114]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8069,7 +4766,7 @@ func (x *GetEnterpriseAIUserBudgetPolicyResponse) ProtoReflect() protoreflect.Me
 
 // Deprecated: Use GetEnterpriseAIUserBudgetPolicyResponse.ProtoReflect.Descriptor instead.
 func (*GetEnterpriseAIUserBudgetPolicyResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{114}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *GetEnterpriseAIUserBudgetPolicyResponse) GetPolicy() *EnterpriseAIUserBudgetPolicy {
@@ -8103,7 +4800,7 @@ type SetEnterpriseAIUserBudgetPolicyRequest struct {
 
 func (x *SetEnterpriseAIUserBudgetPolicyRequest) Reset() {
 	*x = SetEnterpriseAIUserBudgetPolicyRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[115]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8115,7 +4812,7 @@ func (x *SetEnterpriseAIUserBudgetPolicyRequest) String() string {
 func (*SetEnterpriseAIUserBudgetPolicyRequest) ProtoMessage() {}
 
 func (x *SetEnterpriseAIUserBudgetPolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[115]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8128,7 +4825,7 @@ func (x *SetEnterpriseAIUserBudgetPolicyRequest) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use SetEnterpriseAIUserBudgetPolicyRequest.ProtoReflect.Descriptor instead.
 func (*SetEnterpriseAIUserBudgetPolicyRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{115}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *SetEnterpriseAIUserBudgetPolicyRequest) GetOrganizationId() string {
@@ -8189,7 +4886,7 @@ type SetEnterpriseAIUserBudgetPolicyResponse struct {
 
 func (x *SetEnterpriseAIUserBudgetPolicyResponse) Reset() {
 	*x = SetEnterpriseAIUserBudgetPolicyResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[116]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8201,7 +4898,7 @@ func (x *SetEnterpriseAIUserBudgetPolicyResponse) String() string {
 func (*SetEnterpriseAIUserBudgetPolicyResponse) ProtoMessage() {}
 
 func (x *SetEnterpriseAIUserBudgetPolicyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[116]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8214,7 +4911,7 @@ func (x *SetEnterpriseAIUserBudgetPolicyResponse) ProtoReflect() protoreflect.Me
 
 // Deprecated: Use SetEnterpriseAIUserBudgetPolicyResponse.ProtoReflect.Descriptor instead.
 func (*SetEnterpriseAIUserBudgetPolicyResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{116}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *SetEnterpriseAIUserBudgetPolicyResponse) GetPolicy() *EnterpriseAIUserBudgetPolicy {
@@ -8235,7 +4932,7 @@ type DeleteEnterpriseAIUserBudgetPolicyRequest struct {
 
 func (x *DeleteEnterpriseAIUserBudgetPolicyRequest) Reset() {
 	*x = DeleteEnterpriseAIUserBudgetPolicyRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[117]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8247,7 +4944,7 @@ func (x *DeleteEnterpriseAIUserBudgetPolicyRequest) String() string {
 func (*DeleteEnterpriseAIUserBudgetPolicyRequest) ProtoMessage() {}
 
 func (x *DeleteEnterpriseAIUserBudgetPolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[117]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8260,7 +4957,7 @@ func (x *DeleteEnterpriseAIUserBudgetPolicyRequest) ProtoReflect() protoreflect.
 
 // Deprecated: Use DeleteEnterpriseAIUserBudgetPolicyRequest.ProtoReflect.Descriptor instead.
 func (*DeleteEnterpriseAIUserBudgetPolicyRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{117}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *DeleteEnterpriseAIUserBudgetPolicyRequest) GetOrganizationId() string {
@@ -8292,7 +4989,7 @@ type DeleteEnterpriseAIUserBudgetPolicyResponse struct {
 
 func (x *DeleteEnterpriseAIUserBudgetPolicyResponse) Reset() {
 	*x = DeleteEnterpriseAIUserBudgetPolicyResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[118]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8304,7 +5001,7 @@ func (x *DeleteEnterpriseAIUserBudgetPolicyResponse) String() string {
 func (*DeleteEnterpriseAIUserBudgetPolicyResponse) ProtoMessage() {}
 
 func (x *DeleteEnterpriseAIUserBudgetPolicyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[118]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8317,7 +5014,7 @@ func (x *DeleteEnterpriseAIUserBudgetPolicyResponse) ProtoReflect() protoreflect
 
 // Deprecated: Use DeleteEnterpriseAIUserBudgetPolicyResponse.ProtoReflect.Descriptor instead.
 func (*DeleteEnterpriseAIUserBudgetPolicyResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{118}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{56}
 }
 
 type GetCumulativeCreditUsageRequest struct {
@@ -8333,7 +5030,7 @@ type GetCumulativeCreditUsageRequest struct {
 
 func (x *GetCumulativeCreditUsageRequest) Reset() {
 	*x = GetCumulativeCreditUsageRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[119]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8345,7 +5042,7 @@ func (x *GetCumulativeCreditUsageRequest) String() string {
 func (*GetCumulativeCreditUsageRequest) ProtoMessage() {}
 
 func (x *GetCumulativeCreditUsageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[119]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8358,7 +5055,7 @@ func (x *GetCumulativeCreditUsageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCumulativeCreditUsageRequest.ProtoReflect.Descriptor instead.
 func (*GetCumulativeCreditUsageRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{119}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *GetCumulativeCreditUsageRequest) GetOrganizationId() string {
@@ -8398,7 +5095,7 @@ type GetCumulativeCreditUsageResponse struct {
 
 func (x *GetCumulativeCreditUsageResponse) Reset() {
 	*x = GetCumulativeCreditUsageResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[120]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8410,7 +5107,7 @@ func (x *GetCumulativeCreditUsageResponse) String() string {
 func (*GetCumulativeCreditUsageResponse) ProtoMessage() {}
 
 func (x *GetCumulativeCreditUsageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[120]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8423,7 +5120,7 @@ func (x *GetCumulativeCreditUsageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCumulativeCreditUsageResponse.ProtoReflect.Descriptor instead.
 func (*GetCumulativeCreditUsageResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{120}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *GetCumulativeCreditUsageResponse) GetOrgUsage() *CumulativeCreditUsage {
@@ -8474,7 +5171,7 @@ type CumulativeCreditUsage struct {
 
 func (x *CumulativeCreditUsage) Reset() {
 	*x = CumulativeCreditUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[121]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8486,7 +5183,7 @@ func (x *CumulativeCreditUsage) String() string {
 func (*CumulativeCreditUsage) ProtoMessage() {}
 
 func (x *CumulativeCreditUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[121]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8499,7 +5196,7 @@ func (x *CumulativeCreditUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CumulativeCreditUsage.ProtoReflect.Descriptor instead.
 func (*CumulativeCreditUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{121}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *CumulativeCreditUsage) GetTotalCredits() float64 {
@@ -8532,7 +5229,7 @@ type TeamCumulativeCreditUsage struct {
 
 func (x *TeamCumulativeCreditUsage) Reset() {
 	*x = TeamCumulativeCreditUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[122]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8544,7 +5241,7 @@ func (x *TeamCumulativeCreditUsage) String() string {
 func (*TeamCumulativeCreditUsage) ProtoMessage() {}
 
 func (x *TeamCumulativeCreditUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[122]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8557,7 +5254,7 @@ func (x *TeamCumulativeCreditUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TeamCumulativeCreditUsage.ProtoReflect.Descriptor instead.
 func (*TeamCumulativeCreditUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{122}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *TeamCumulativeCreditUsage) GetTeamId() string {
@@ -8609,7 +5306,7 @@ type UserCreditBudgetUsage struct {
 
 func (x *UserCreditBudgetUsage) Reset() {
 	*x = UserCreditBudgetUsage{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[123]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8621,7 +5318,7 @@ func (x *UserCreditBudgetUsage) String() string {
 func (*UserCreditBudgetUsage) ProtoMessage() {}
 
 func (x *UserCreditBudgetUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[123]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8634,7 +5331,7 @@ func (x *UserCreditBudgetUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserCreditBudgetUsage.ProtoReflect.Descriptor instead.
 func (*UserCreditBudgetUsage) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{123}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *UserCreditBudgetUsage) GetUserId() string {
@@ -8723,7 +5420,7 @@ type ListEnterpriseUserCreditUsageRequest struct {
 
 func (x *ListEnterpriseUserCreditUsageRequest) Reset() {
 	*x = ListEnterpriseUserCreditUsageRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[124]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8735,7 +5432,7 @@ func (x *ListEnterpriseUserCreditUsageRequest) String() string {
 func (*ListEnterpriseUserCreditUsageRequest) ProtoMessage() {}
 
 func (x *ListEnterpriseUserCreditUsageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[124]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8748,7 +5445,7 @@ func (x *ListEnterpriseUserCreditUsageRequest) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use ListEnterpriseUserCreditUsageRequest.ProtoReflect.Descriptor instead.
 func (*ListEnterpriseUserCreditUsageRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{124}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *ListEnterpriseUserCreditUsageRequest) GetPagination() *PaginationRequest {
@@ -8793,7 +5490,7 @@ type ListEnterpriseUserCreditUsageResponse struct {
 
 func (x *ListEnterpriseUserCreditUsageResponse) Reset() {
 	*x = ListEnterpriseUserCreditUsageResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[125]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8805,7 +5502,7 @@ func (x *ListEnterpriseUserCreditUsageResponse) String() string {
 func (*ListEnterpriseUserCreditUsageResponse) ProtoMessage() {}
 
 func (x *ListEnterpriseUserCreditUsageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[125]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8818,7 +5515,7 @@ func (x *ListEnterpriseUserCreditUsageResponse) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use ListEnterpriseUserCreditUsageResponse.ProtoReflect.Descriptor instead.
 func (*ListEnterpriseUserCreditUsageResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{125}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *ListEnterpriseUserCreditUsageResponse) GetUserUsage() []*UserCreditBudgetUsage {
@@ -8861,7 +5558,7 @@ type TeamCreditAllocationInfo struct {
 
 func (x *TeamCreditAllocationInfo) Reset() {
 	*x = TeamCreditAllocationInfo{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[126]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8873,7 +5570,7 @@ func (x *TeamCreditAllocationInfo) String() string {
 func (*TeamCreditAllocationInfo) ProtoMessage() {}
 
 func (x *TeamCreditAllocationInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[126]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8886,7 +5583,7 @@ func (x *TeamCreditAllocationInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TeamCreditAllocationInfo.ProtoReflect.Descriptor instead.
 func (*TeamCreditAllocationInfo) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{126}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *TeamCreditAllocationInfo) GetId() string {
@@ -8960,7 +5657,7 @@ type CreateTeamCreditAllocationRequest struct {
 
 func (x *CreateTeamCreditAllocationRequest) Reset() {
 	*x = CreateTeamCreditAllocationRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[127]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8972,7 +5669,7 @@ func (x *CreateTeamCreditAllocationRequest) String() string {
 func (*CreateTeamCreditAllocationRequest) ProtoMessage() {}
 
 func (x *CreateTeamCreditAllocationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[127]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8985,7 +5682,7 @@ func (x *CreateTeamCreditAllocationRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use CreateTeamCreditAllocationRequest.ProtoReflect.Descriptor instead.
 func (*CreateTeamCreditAllocationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{127}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *CreateTeamCreditAllocationRequest) GetOrganizationId() string {
@@ -9032,7 +5729,7 @@ type CreateTeamCreditAllocationResponse struct {
 
 func (x *CreateTeamCreditAllocationResponse) Reset() {
 	*x = CreateTeamCreditAllocationResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[128]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9044,7 +5741,7 @@ func (x *CreateTeamCreditAllocationResponse) String() string {
 func (*CreateTeamCreditAllocationResponse) ProtoMessage() {}
 
 func (x *CreateTeamCreditAllocationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[128]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9057,7 +5754,7 @@ func (x *CreateTeamCreditAllocationResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use CreateTeamCreditAllocationResponse.ProtoReflect.Descriptor instead.
 func (*CreateTeamCreditAllocationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{128}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *CreateTeamCreditAllocationResponse) GetAllocation() *TeamCreditAllocationInfo {
@@ -9077,7 +5774,7 @@ type GetTeamCreditAllocationRequest struct {
 
 func (x *GetTeamCreditAllocationRequest) Reset() {
 	*x = GetTeamCreditAllocationRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[129]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9089,7 +5786,7 @@ func (x *GetTeamCreditAllocationRequest) String() string {
 func (*GetTeamCreditAllocationRequest) ProtoMessage() {}
 
 func (x *GetTeamCreditAllocationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[129]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9102,7 +5799,7 @@ func (x *GetTeamCreditAllocationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTeamCreditAllocationRequest.ProtoReflect.Descriptor instead.
 func (*GetTeamCreditAllocationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{129}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *GetTeamCreditAllocationRequest) GetOrganizationId() string {
@@ -9128,7 +5825,7 @@ type GetTeamCreditAllocationResponse struct {
 
 func (x *GetTeamCreditAllocationResponse) Reset() {
 	*x = GetTeamCreditAllocationResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[130]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9140,7 +5837,7 @@ func (x *GetTeamCreditAllocationResponse) String() string {
 func (*GetTeamCreditAllocationResponse) ProtoMessage() {}
 
 func (x *GetTeamCreditAllocationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[130]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9153,7 +5850,7 @@ func (x *GetTeamCreditAllocationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTeamCreditAllocationResponse.ProtoReflect.Descriptor instead.
 func (*GetTeamCreditAllocationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{130}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *GetTeamCreditAllocationResponse) GetAllocation() *TeamCreditAllocationInfo {
@@ -9182,7 +5879,7 @@ type UpdateTeamCreditAllocationRequest struct {
 
 func (x *UpdateTeamCreditAllocationRequest) Reset() {
 	*x = UpdateTeamCreditAllocationRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[131]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9194,7 +5891,7 @@ func (x *UpdateTeamCreditAllocationRequest) String() string {
 func (*UpdateTeamCreditAllocationRequest) ProtoMessage() {}
 
 func (x *UpdateTeamCreditAllocationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[131]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9207,7 +5904,7 @@ func (x *UpdateTeamCreditAllocationRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use UpdateTeamCreditAllocationRequest.ProtoReflect.Descriptor instead.
 func (*UpdateTeamCreditAllocationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{131}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *UpdateTeamCreditAllocationRequest) GetOrganizationId() string {
@@ -9268,7 +5965,7 @@ type UpdateTeamCreditAllocationResponse struct {
 
 func (x *UpdateTeamCreditAllocationResponse) Reset() {
 	*x = UpdateTeamCreditAllocationResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[132]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9280,7 +5977,7 @@ func (x *UpdateTeamCreditAllocationResponse) String() string {
 func (*UpdateTeamCreditAllocationResponse) ProtoMessage() {}
 
 func (x *UpdateTeamCreditAllocationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[132]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9293,7 +5990,7 @@ func (x *UpdateTeamCreditAllocationResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use UpdateTeamCreditAllocationResponse.ProtoReflect.Descriptor instead.
 func (*UpdateTeamCreditAllocationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{132}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *UpdateTeamCreditAllocationResponse) GetAllocation() *TeamCreditAllocationInfo {
@@ -9313,7 +6010,7 @@ type DeleteTeamCreditAllocationRequest struct {
 
 func (x *DeleteTeamCreditAllocationRequest) Reset() {
 	*x = DeleteTeamCreditAllocationRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[133]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9325,7 +6022,7 @@ func (x *DeleteTeamCreditAllocationRequest) String() string {
 func (*DeleteTeamCreditAllocationRequest) ProtoMessage() {}
 
 func (x *DeleteTeamCreditAllocationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[133]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9338,7 +6035,7 @@ func (x *DeleteTeamCreditAllocationRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use DeleteTeamCreditAllocationRequest.ProtoReflect.Descriptor instead.
 func (*DeleteTeamCreditAllocationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{133}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *DeleteTeamCreditAllocationRequest) GetOrganizationId() string {
@@ -9363,7 +6060,7 @@ type DeleteTeamCreditAllocationResponse struct {
 
 func (x *DeleteTeamCreditAllocationResponse) Reset() {
 	*x = DeleteTeamCreditAllocationResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[134]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9375,7 +6072,7 @@ func (x *DeleteTeamCreditAllocationResponse) String() string {
 func (*DeleteTeamCreditAllocationResponse) ProtoMessage() {}
 
 func (x *DeleteTeamCreditAllocationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[134]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9388,96 +6085,7 @@ func (x *DeleteTeamCreditAllocationResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use DeleteTeamCreditAllocationResponse.ProtoReflect.Descriptor instead.
 func (*DeleteTeamCreditAllocationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{134}
-}
-
-type SetOrganizationCreditGrantRequest struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	// credit_grant is the contracted credit grant in whole credits. Must be >= 0.
-	CreditGrant   int64 `protobuf:"varint,2,opt,name=credit_grant,json=creditGrant,proto3" json:"credit_grant,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetOrganizationCreditGrantRequest) Reset() {
-	*x = SetOrganizationCreditGrantRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[135]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetOrganizationCreditGrantRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetOrganizationCreditGrantRequest) ProtoMessage() {}
-
-func (x *SetOrganizationCreditGrantRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[135]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetOrganizationCreditGrantRequest.ProtoReflect.Descriptor instead.
-func (*SetOrganizationCreditGrantRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{135}
-}
-
-func (x *SetOrganizationCreditGrantRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
-func (x *SetOrganizationCreditGrantRequest) GetCreditGrant() int64 {
-	if x != nil {
-		return x.CreditGrant
-	}
-	return 0
-}
-
-type SetOrganizationCreditGrantResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetOrganizationCreditGrantResponse) Reset() {
-	*x = SetOrganizationCreditGrantResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[136]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetOrganizationCreditGrantResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetOrganizationCreditGrantResponse) ProtoMessage() {}
-
-func (x *SetOrganizationCreditGrantResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[136]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetOrganizationCreditGrantResponse.ProtoReflect.Descriptor instead.
-func (*SetOrganizationCreditGrantResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{136}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{72}
 }
 
 // Specifies a single environment and the time range of events to correct.
@@ -9500,7 +6108,7 @@ type EnvironmentCorrectionSpec struct {
 
 func (x *EnvironmentCorrectionSpec) Reset() {
 	*x = EnvironmentCorrectionSpec{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[137]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9512,7 +6120,7 @@ func (x *EnvironmentCorrectionSpec) String() string {
 func (*EnvironmentCorrectionSpec) ProtoMessage() {}
 
 func (x *EnvironmentCorrectionSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[137]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9525,7 +6133,7 @@ func (x *EnvironmentCorrectionSpec) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnvironmentCorrectionSpec.ProtoReflect.Descriptor instead.
 func (*EnvironmentCorrectionSpec) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{137}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{73}
 }
 
 func (x *EnvironmentCorrectionSpec) GetEnvironmentId() string {
@@ -9556,160 +6164,6 @@ func (x *EnvironmentCorrectionSpec) GetOrganizationId() string {
 	return ""
 }
 
-type CorrectEnvironmentUsageEventsRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Per-environment correction specs. Each entry identifies an environment
-	// and the time window of usage events to correct.
-	Corrections []*EnvironmentCorrectionSpec `protobuf:"bytes,1,rep,name=corrections,proto3" json:"corrections,omitempty"`
-	// Why these events are being corrected.
-	Reason string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
-	// If true, only report what would be corrected without making changes.
-	DryRun        bool `protobuf:"varint,5,opt,name=dry_run,json=dryRun,proto3" json:"dry_run,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CorrectEnvironmentUsageEventsRequest) Reset() {
-	*x = CorrectEnvironmentUsageEventsRequest{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[138]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CorrectEnvironmentUsageEventsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CorrectEnvironmentUsageEventsRequest) ProtoMessage() {}
-
-func (x *CorrectEnvironmentUsageEventsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[138]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CorrectEnvironmentUsageEventsRequest.ProtoReflect.Descriptor instead.
-func (*CorrectEnvironmentUsageEventsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{138}
-}
-
-func (x *CorrectEnvironmentUsageEventsRequest) GetCorrections() []*EnvironmentCorrectionSpec {
-	if x != nil {
-		return x.Corrections
-	}
-	return nil
-}
-
-func (x *CorrectEnvironmentUsageEventsRequest) GetReason() string {
-	if x != nil {
-		return x.Reason
-	}
-	return ""
-}
-
-func (x *CorrectEnvironmentUsageEventsRequest) GetDryRun() bool {
-	if x != nil {
-		return x.DryRun
-	}
-	return false
-}
-
-type CorrectEnvironmentUsageEventsResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Per-event correction results (empty in dry-run mode).
-	Results []*UsageEventCorrectionResult `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"`
-	// Total number of correctable events found.
-	TotalEvents int32 `protobuf:"varint,2,opt,name=total_events,json=totalEvents,proto3" json:"total_events,omitempty"`
-	// Total value (seconds) across all correctable events.
-	TotalValue int64 `protobuf:"varint,3,opt,name=total_value,json=totalValue,proto3" json:"total_value,omitempty"`
-	// Number of events with timestamps older than 35 days (beyond Stripe's limit).
-	BeyondStripeLimitCount int32 `protobuf:"varint,4,opt,name=beyond_stripe_limit_count,json=beyondStripeLimitCount,proto3" json:"beyond_stripe_limit_count,omitempty"`
-	// Total value of events beyond the 35-day Stripe limit.
-	BeyondStripeLimitValue int64 `protobuf:"varint,5,opt,name=beyond_stripe_limit_value,json=beyondStripeLimitValue,proto3" json:"beyond_stripe_limit_value,omitempty"`
-	// Per-environment summary.
-	EnvironmentSummaries []*EnvironmentUsageSummary `protobuf:"bytes,6,rep,name=environment_summaries,json=environmentSummaries,proto3" json:"environment_summaries,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
-}
-
-func (x *CorrectEnvironmentUsageEventsResponse) Reset() {
-	*x = CorrectEnvironmentUsageEventsResponse{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[139]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CorrectEnvironmentUsageEventsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CorrectEnvironmentUsageEventsResponse) ProtoMessage() {}
-
-func (x *CorrectEnvironmentUsageEventsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[139]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CorrectEnvironmentUsageEventsResponse.ProtoReflect.Descriptor instead.
-func (*CorrectEnvironmentUsageEventsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{139}
-}
-
-func (x *CorrectEnvironmentUsageEventsResponse) GetResults() []*UsageEventCorrectionResult {
-	if x != nil {
-		return x.Results
-	}
-	return nil
-}
-
-func (x *CorrectEnvironmentUsageEventsResponse) GetTotalEvents() int32 {
-	if x != nil {
-		return x.TotalEvents
-	}
-	return 0
-}
-
-func (x *CorrectEnvironmentUsageEventsResponse) GetTotalValue() int64 {
-	if x != nil {
-		return x.TotalValue
-	}
-	return 0
-}
-
-func (x *CorrectEnvironmentUsageEventsResponse) GetBeyondStripeLimitCount() int32 {
-	if x != nil {
-		return x.BeyondStripeLimitCount
-	}
-	return 0
-}
-
-func (x *CorrectEnvironmentUsageEventsResponse) GetBeyondStripeLimitValue() int64 {
-	if x != nil {
-		return x.BeyondStripeLimitValue
-	}
-	return 0
-}
-
-func (x *CorrectEnvironmentUsageEventsResponse) GetEnvironmentSummaries() []*EnvironmentUsageSummary {
-	if x != nil {
-		return x.EnvironmentSummaries
-	}
-	return nil
-}
-
 type EnvironmentUsageSummary struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EnvironmentId string                 `protobuf:"bytes,1,opt,name=environment_id,json=environmentId,proto3" json:"environment_id,omitempty"`
@@ -9721,7 +6175,7 @@ type EnvironmentUsageSummary struct {
 
 func (x *EnvironmentUsageSummary) Reset() {
 	*x = EnvironmentUsageSummary{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[140]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9733,7 +6187,7 @@ func (x *EnvironmentUsageSummary) String() string {
 func (*EnvironmentUsageSummary) ProtoMessage() {}
 
 func (x *EnvironmentUsageSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[140]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9746,7 +6200,7 @@ func (x *EnvironmentUsageSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnvironmentUsageSummary.ProtoReflect.Descriptor instead.
 func (*EnvironmentUsageSummary) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{140}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{74}
 }
 
 func (x *EnvironmentUsageSummary) GetEnvironmentId() string {
@@ -9770,133 +6224,6 @@ func (x *EnvironmentUsageSummary) GetTotalValue() int64 {
 	return 0
 }
 
-// Subscribe carries the same parameters as CreateSubscriptionRequest.
-type CompleteBillingSetupRequest_Subscribe struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// amount_cents is the subscription amount in cents
-	AmountCents int64 `protobuf:"varint,1,opt,name=amount_cents,json=amountCents,proto3" json:"amount_cents,omitempty"`
-	// coupon_code is an optional coupon to apply to the subscription
-	CouponCode    string `protobuf:"bytes,2,opt,name=coupon_code,json=couponCode,proto3" json:"coupon_code,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CompleteBillingSetupRequest_Subscribe) Reset() {
-	*x = CompleteBillingSetupRequest_Subscribe{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[141]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CompleteBillingSetupRequest_Subscribe) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CompleteBillingSetupRequest_Subscribe) ProtoMessage() {}
-
-func (x *CompleteBillingSetupRequest_Subscribe) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[141]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CompleteBillingSetupRequest_Subscribe.ProtoReflect.Descriptor instead.
-func (*CompleteBillingSetupRequest_Subscribe) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{13, 0}
-}
-
-func (x *CompleteBillingSetupRequest_Subscribe) GetAmountCents() int64 {
-	if x != nil {
-		return x.AmountCents
-	}
-	return 0
-}
-
-func (x *CompleteBillingSetupRequest_Subscribe) GetCouponCode() string {
-	if x != nil {
-		return x.CouponCode
-	}
-	return ""
-}
-
-type ListCouponsRequest_Filter struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// coupon_ids filters the response to only coupons with these IDs
-	CouponIds []string `protobuf:"bytes,1,rep,name=coupon_ids,json=couponIds,proto3" json:"coupon_ids,omitempty"`
-	// code filters coupons by exact code match
-	Code *string `protobuf:"bytes,4,opt,name=code,proto3,oneof" json:"code,omitempty"`
-	// expires_before filters coupons that expire before this timestamp
-	ExpiresBefore *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=expires_before,json=expiresBefore,proto3,oneof" json:"expires_before,omitempty"`
-	// expires_after filters coupons that expire after this timestamp
-	ExpiresAfter  *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=expires_after,json=expiresAfter,proto3,oneof" json:"expires_after,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListCouponsRequest_Filter) Reset() {
-	*x = ListCouponsRequest_Filter{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[142]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListCouponsRequest_Filter) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListCouponsRequest_Filter) ProtoMessage() {}
-
-func (x *ListCouponsRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[142]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListCouponsRequest_Filter.ProtoReflect.Descriptor instead.
-func (*ListCouponsRequest_Filter) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{44, 0}
-}
-
-func (x *ListCouponsRequest_Filter) GetCouponIds() []string {
-	if x != nil {
-		return x.CouponIds
-	}
-	return nil
-}
-
-func (x *ListCouponsRequest_Filter) GetCode() string {
-	if x != nil && x.Code != nil {
-		return *x.Code
-	}
-	return ""
-}
-
-func (x *ListCouponsRequest_Filter) GetExpiresBefore() *timestamppb.Timestamp {
-	if x != nil {
-		return x.ExpiresBefore
-	}
-	return nil
-}
-
-func (x *ListCouponsRequest_Filter) GetExpiresAfter() *timestamppb.Timestamp {
-	if x != nil {
-		return x.ExpiresAfter
-	}
-	return nil
-}
-
 type ListEnterpriseAITeamUsageRequest_Filter struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TeamIds       []string               `protobuf:"bytes,1,rep,name=team_ids,json=teamIds,proto3" json:"team_ids,omitempty"`
@@ -9906,7 +6233,7 @@ type ListEnterpriseAITeamUsageRequest_Filter struct {
 
 func (x *ListEnterpriseAITeamUsageRequest_Filter) Reset() {
 	*x = ListEnterpriseAITeamUsageRequest_Filter{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[143]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9918,7 +6245,7 @@ func (x *ListEnterpriseAITeamUsageRequest_Filter) String() string {
 func (*ListEnterpriseAITeamUsageRequest_Filter) ProtoMessage() {}
 
 func (x *ListEnterpriseAITeamUsageRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[143]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9931,7 +6258,7 @@ func (x *ListEnterpriseAITeamUsageRequest_Filter) ProtoReflect() protoreflect.Me
 
 // Deprecated: Use ListEnterpriseAITeamUsageRequest_Filter.ProtoReflect.Descriptor instead.
 func (*ListEnterpriseAITeamUsageRequest_Filter) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{88, 0}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{38, 0}
 }
 
 func (x *ListEnterpriseAITeamUsageRequest_Filter) GetTeamIds() []string {
@@ -9951,7 +6278,7 @@ type ListEnterpriseAIUserUsageRequest_Sort struct {
 
 func (x *ListEnterpriseAIUserUsageRequest_Sort) Reset() {
 	*x = ListEnterpriseAIUserUsageRequest_Sort{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[144]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9963,7 +6290,7 @@ func (x *ListEnterpriseAIUserUsageRequest_Sort) String() string {
 func (*ListEnterpriseAIUserUsageRequest_Sort) ProtoMessage() {}
 
 func (x *ListEnterpriseAIUserUsageRequest_Sort) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[144]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9976,7 +6303,7 @@ func (x *ListEnterpriseAIUserUsageRequest_Sort) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use ListEnterpriseAIUserUsageRequest_Sort.ProtoReflect.Descriptor instead.
 func (*ListEnterpriseAIUserUsageRequest_Sort) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{90, 0}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{40, 0}
 }
 
 func (x *ListEnterpriseAIUserUsageRequest_Sort) GetField() ListEnterpriseAIUserUsageRequest_SortField {
@@ -10005,7 +6332,7 @@ type ListEnterpriseAIUserUsageRequest_Filter struct {
 
 func (x *ListEnterpriseAIUserUsageRequest_Filter) Reset() {
 	*x = ListEnterpriseAIUserUsageRequest_Filter{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[145]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10017,7 +6344,7 @@ func (x *ListEnterpriseAIUserUsageRequest_Filter) String() string {
 func (*ListEnterpriseAIUserUsageRequest_Filter) ProtoMessage() {}
 
 func (x *ListEnterpriseAIUserUsageRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[145]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10030,7 +6357,7 @@ func (x *ListEnterpriseAIUserUsageRequest_Filter) ProtoReflect() protoreflect.Me
 
 // Deprecated: Use ListEnterpriseAIUserUsageRequest_Filter.ProtoReflect.Descriptor instead.
 func (*ListEnterpriseAIUserUsageRequest_Filter) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{90, 1}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{40, 1}
 }
 
 func (x *ListEnterpriseAIUserUsageRequest_Filter) GetSubject() *Subject {
@@ -10050,7 +6377,7 @@ type ListEnterpriseUserCreditUsageRequest_Sort struct {
 
 func (x *ListEnterpriseUserCreditUsageRequest_Sort) Reset() {
 	*x = ListEnterpriseUserCreditUsageRequest_Sort{}
-	mi := &file_gitpod_v1_billing_proto_msgTypes[146]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10062,7 +6389,7 @@ func (x *ListEnterpriseUserCreditUsageRequest_Sort) String() string {
 func (*ListEnterpriseUserCreditUsageRequest_Sort) ProtoMessage() {}
 
 func (x *ListEnterpriseUserCreditUsageRequest_Sort) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_billing_proto_msgTypes[146]
+	mi := &file_gitpod_v1_billing_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10075,7 +6402,7 @@ func (x *ListEnterpriseUserCreditUsageRequest_Sort) ProtoReflect() protoreflect.
 
 // Deprecated: Use ListEnterpriseUserCreditUsageRequest_Sort.ProtoReflect.Descriptor instead.
 func (*ListEnterpriseUserCreditUsageRequest_Sort) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{124, 0}
+	return file_gitpod_v1_billing_proto_rawDescGZIP(), []int{62, 0}
 }
 
 func (x *ListEnterpriseUserCreditUsageRequest_Sort) GetField() ListEnterpriseUserCreditUsageRequest_SortField {
@@ -10096,16 +6423,14 @@ var File_gitpod_v1_billing_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\n" +
-	"\x17gitpod/v1/billing.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x15gitpod/v1/usage.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe8\x01\n" +
-	"\rBillingRecord\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11billing_record.idR\x02id\x12<\n" +
+	"\x17gitpod/v1/billing.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x15gitpod/v1/usage.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd1\x01\n" +
+	"\rBillingRecord\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12<\n" +
 	"\bmetadata\x18\x02 \x01(\v2 .gitpod.v1.BillingRecordMetadataR\bmetadata\x120\n" +
 	"\x04spec\x18\x03 \x01(\v2\x1c.gitpod.v1.BillingRecordSpecR\x04spec\x126\n" +
-	"\x06status\x18\x04 \x01(\v2\x1e.gitpod.v1.BillingRecordStatusR\x06status\"\x8e\x02\n" +
-	"\x15BillingRecordMetadata\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x127\n" +
+	"\x06status\x18\x04 \x01(\v2\x1e.gitpod.v1.BillingRecordStatusR\x06status\"\xf9\x01\n" +
+	"\x15BillingRecordMetadata\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x127\n" +
 	"\x05realm\x18\x02 \x01(\x0e2\x17.gitpod.v1.BillingRealmB\b\xbaH\x05\x82\x01\x02\x10\x01R\x05realm\x129\n" +
 	"\n" +
 	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
@@ -10133,73 +6458,7 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x1fPaymentMethodVerificationStatus\x12k\n" +
 	"\x18card_verification_status\x18\x01 \x01(\x0e2'.gitpod.v1.CreditCardVerificationStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\x16cardVerificationStatus\x12 \n" +
 	"\x05error\x18\x02 \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x01\x18\x80\bR\x05error\"f\n" +
-	"\x17GetBillingRecordRequest\x12K\n" +
-	"\x11billing_record_id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11billing_record.idR\x0fbillingRecordId\"[\n" +
-	"\x18GetBillingRecordResponse\x12?\n" +
-	"\x0ebilling_record\x18\x01 \x01(\v2\x18.gitpod.v1.BillingRecordR\rbillingRecord\"\x80\x02\n" +
-	"\x1aUpdateBillingRecordRequest\x12N\n" +
-	"\x11billing_record_id\x18\x01 \x01(\tB\"\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11billing_record.idR\x0fbillingRecordId\x12=\n" +
-	"\x04kind\x18\x02 \x01(\x0e2\x1a.gitpod.v1.BillingPlanKindB\b\xbaH\x05\x82\x01\x02\x10\x01H\x00R\x04kind\x88\x01\x01\x125\n" +
-	"\x10amount_cents_usd\x18\x03 \x01(\x03B\x06\xbaH\x03\xc8\x01\x01H\x01R\x0eamountCentsUsd\x88\x01\x01B\a\n" +
-	"\x05_kindB\x13\n" +
-	"\x11_amount_cents_usd\"\x1d\n" +
-	"\x1bUpdateBillingRecordResponse\"\x97\x02\n" +
-	"\x13SetupBillingRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12>\n" +
-	"\famount_cents\x18\x02 \x01(\x03B\x16\xbaH\x13\"\x110\xd0\x0f0\x88'0\x90N0\xa0\x9c\x010І\x03H\x00R\vamountCents\x88\x01\x01\x12$\n" +
-	"\vcoupon_code\x18\x03 \x01(\tH\x01R\n" +
-	"couponCode\x88\x01\x01\x12 \n" +
-	"\tintent_id\x18\x04 \x01(\tH\x02R\bintentId\x88\x01\x01B\x0f\n" +
-	"\r_amount_centsB\x0e\n" +
-	"\f_coupon_codeB\f\n" +
-	"\n" +
-	"_intent_id\"\xa8\x01\n" +
-	"\x14SetupBillingResponse\x12C\n" +
-	"\x1asetup_intent_client_secret\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x17setupIntentClientSecret\x12K\n" +
-	"\x1ecustomer_session_client_secret\x18\x02 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x1bcustomerSessionClientSecret\"\x87\x03\n" +
-	"\x1bCompleteBillingSetupRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12N\n" +
-	"\x0fsetup_intent_id\x18\x02 \x01(\tB&\xbaH\a\xc8\x01\x01r\x02\x10\x01\xa2\xab\x1e\x18\n" +
-	"\x16stripe.setup_intent_idR\rsetupIntentId\x12S\n" +
-	"\tsubscribe\x18\x03 \x01(\v20.gitpod.v1.CompleteBillingSetupRequest.SubscribeH\x00R\tsubscribe\x88\x01\x01\x1aj\n" +
-	"\tSubscribe\x12<\n" +
-	"\famount_cents\x18\x01 \x01(\x03B\x19\xbaH\x16\xc8\x01\x01\"\x110\xd0\x0f0\x88'0\x90N0\xa0\x9c\x010І\x03R\vamountCents\x12\x1f\n" +
-	"\vcoupon_code\x18\x02 \x01(\tR\n" +
-	"couponCodeB\f\n" +
-	"\n" +
-	"_subscribe\"\x99\x02\n" +
-	"\x1cCompleteBillingSetupResponse\x12\x1f\n" +
-	"\vcontract_id\x18\x01 \x01(\tR\n" +
-	"contractId\x12#\n" +
-	"\rtrial_granted\x18\x02 \x01(\bR\ftrialGranted\x120\n" +
-	"\x14trial_amount_credits\x18\x03 \x01(\x01R\x12trialAmountCredits\x12D\n" +
-	"\x10trial_expires_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x0etrialExpiresAt\x12;\n" +
-	"\fsubscription\x18\x05 \x01(\v2\x17.gitpod.v1.SubscriptionR\fsubscription\"b\n" +
-	"\x15GetBillingInfoRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\xf0\x05\n" +
-	"\x16GetBillingInfoResponse\x12#\n" +
-	"\rtotal_credits\x18\x01 \x01(\x01R\ftotalCredits\x12+\n" +
-	"\x11available_credits\x18\x02 \x01(\x01R\x10availableCredits\x12!\n" +
-	"\fused_credits\x18\x03 \x01(\x01R\vusedCredits\x12R\n" +
-	"\x15payment_method_status\x18\x05 \x01(\x0e2\x1e.gitpod.v1.PaymentMethodStatusR\x13paymentMethodStatus\x12<\n" +
-	"\rcredit_status\x18\x06 \x01(\x0e2\x17.gitpod.v1.CreditStatusR\fcreditStatus\x12F\n" +
-	"\x0fpayment_failure\x18\n" +
-	" \x01(\v2\x1d.gitpod.v1.PaymentFailureInfoR\x0epaymentFailure\x12V\n" +
-	"\x15topup_payment_failure\x18\v \x01(\v2\".gitpod.v1.TopupPaymentFailureInfoR\x13topupPaymentFailure\x12L\n" +
-	"\x13auto_topup_settings\x18\f \x01(\v2\x1c.gitpod.v1.AutoTopupSettingsR\x11autoTopupSettings\x12G\n" +
-	"\x12last_auto_topup_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\x0flastAutoTopupAt\x128\n" +
-	"\x18monthly_commitment_cents\x18\x0e \x01(\x03R\x16monthlyCommitmentCents\x12!\n" +
-	"\fcredit_grant\x18\x10 \x01(\x03R\vcreditGrantJ\x04\b\x04\x10\x05J\x04\b\x0f\x10\x10R\x13customer_portal_urlR\x1arecovery_credit_granted_at\"d\n" +
-	"\x17ReconcileBillingRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\x1a\n" +
-	"\x18ReconcileBillingResponse\"w\n" +
+	"\xbaH\ar\x05\x10\x01\x18\x80\bR\x05error\"w\n" +
 	"\x17TopupPaymentFailureInfo\x127\n" +
 	"\tfailed_at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\bfailedAt\x12#\n" +
 	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\"\xf7\x01\n" +
@@ -10207,30 +6466,7 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x05state\x18\x01 \x01(\x0e2\x1e.gitpod.v1.PaymentFailureStateR\x05state\x12K\n" +
 	"\x14grace_period_ends_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x11gracePeriodEndsAt\x127\n" +
 	"\tfailed_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\bfailedAt\x12%\n" +
-	"\x0efailure_reason\x18\x04 \x01(\tR\rfailureReason\"\x97\x02\n" +
-	"\x19CreateSubscriptionRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12P\n" +
-	"\x11subscription_type\x18\x02 \x01(\x0e2\x1b.gitpod.v1.SubscriptionTypeB\x06\xbaH\x03\xc8\x01\x01R\x10subscriptionType\x12<\n" +
-	"\famount_cents\x18\x03 \x01(\x03B\x19\xbaH\x16\xc8\x01\x01\"\x110\xd0\x0f0\x88'0\x90N0\xa0\x9c\x010І\x03R\vamountCents\x12\x1f\n" +
-	"\vcoupon_code\x18\x04 \x01(\tR\n" +
-	"couponCode\"Y\n" +
-	"\x1aCreateSubscriptionResponse\x12;\n" +
-	"\fsubscription\x18\x01 \x01(\v2\x17.gitpod.v1.SubscriptionR\fsubscription\"\xa2\x01\n" +
-	"\x19CancelSubscriptionRequest\x123\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\n" +
-	"\xbaH\a\xc8\x01\x01r\x02\x10\x01R\x0eorganizationId\x12P\n" +
-	"\x11subscription_type\x18\x02 \x01(\x0e2\x1b.gitpod.v1.SubscriptionTypeB\x06\xbaH\x03\xc8\x01\x01R\x10subscriptionType\"\x1c\n" +
-	"\x1aCancelSubscriptionResponse\"\xab\x01\n" +
-	"\x19UpdateSubscriptionRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12C\n" +
-	"\x10new_amount_cents\x18\x02 \x01(\x03B\x19\xbaH\x16\xc8\x01\x01\"\x110\xd0\x0f0\x88'0\x90N0\xa0\x9c\x010І\x03R\x0enewAmountCents\"Y\n" +
-	"\x1aUpdateSubscriptionResponse\x12;\n" +
-	"\fsubscription\x18\x01 \x01(\v2\x17.gitpod.v1.SubscriptionR\fsubscription\"e\n" +
-	"\x18ListSubscriptionsRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\x86\x03\n" +
+	"\x0efailure_reason\x18\x04 \x01(\tR\rfailureReason\"\x86\x03\n" +
 	"\fSubscription\x12\x1f\n" +
 	"\vcontract_id\x18\x01 \x01(\tR\n" +
 	"contractId\x12'\n" +
@@ -10239,50 +6475,10 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x06status\x18\x04 \x01(\x0e2\x1d.gitpod.v1.SubscriptionStatusR\x06status\x127\n" +
 	"\tstarts_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\bstartsAt\x12=\n" +
 	"\fcancelled_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\vcancelledAt\x123\n" +
-	"\aends_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\x06endsAt\"Z\n" +
-	"\x19ListSubscriptionsResponse\x12=\n" +
-	"\rsubscriptions\x18\x01 \x03(\v2\x17.gitpod.v1.SubscriptionR\rsubscriptions\"\x9a\x01\n" +
-	"\x13GrantCreditsRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x128\n" +
-	"\x0ecredits_amount\x18\x02 \x01(\x01B\x11\xbaH\x0e\xc8\x01\x01\x12\t)\x00\x00\x00\x00\x00\x00D@R\rcreditsAmount\"\x16\n" +
-	"\x14GrantCreditsResponse\"k\n" +
-	"\x1eGetStripePublishableKeyRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"R\n" +
-	"\x1fGetStripePublishableKeyResponse\x12/\n" +
-	"\x0fpublishable_key\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x0epublishableKey\"\xb2\x01\n" +
-	"\x16SetBillingRealmRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12M\n" +
-	"\x05realm\x18\x02 \x01(\x0e2\x17.gitpod.v1.BillingRealmB\x1e\xbaH\b\xc8\x01\x01\x82\x01\x02\x10\x01\xa2\xab\x1e\x0f\n" +
-	"\rbilling.realmR\x05realm\"\x19\n" +
-	"\x17SetBillingRealmResponse\"\xae\x02\n" +
-	"\x1dCreateCardVerificationRequest\x128\n" +
-	"\x05email\x18\x01 \x01(\tB\"\xbaH\f\xc8\x01\x01r\a\x10\x01\x18\xff\x01`\x01\xa2\xab\x1e\x0f\n" +
-	"\raccount.emailR\x05email\x12K\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idH\x00R\x0eorganizationId\x88\x01\x01\x12%\n" +
-	"\x06reason\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\x80\bH\x01R\x06reason\x88\x01\x01\x12/\n" +
-	"\ffree_credits\x18\x04 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x02R\vfreeCredits\x88\x01\x01B\x12\n" +
-	"\x10_organization_idB\t\n" +
-	"\a_reasonB\x0f\n" +
-	"\r_free_credits\" \n" +
-	"\x1eCreateCardVerificationResponse\"\xd9\x01\n" +
-	"\x0fSetTaxIDRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12;\n" +
-	"\vtax_id_type\x18\x02 \x01(\tB\x1b\xbaH\a\xc8\x01\x01r\x02\x10\x01\xa2\xab\x1e\r\n" +
-	"\vtax.id_typeR\ttaxIdType\x12>\n" +
-	"\ftax_id_value\x18\x03 \x01(\tB\x1c\xbaH\a\xc8\x01\x01r\x02\x10\x01\xa2\xab\x1e\x0e\n" +
-	"\ftax.id_valueR\n" +
-	"taxIdValue\"\x12\n" +
-	"\x10SetTaxIDResponse\"\xf5\x03\n" +
-	"\x06Coupon\x12'\n" +
-	"\x02id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\tcoupon.idR\x02id\x12%\n" +
-	"\x04code\x18\x02 \x01(\tB\x11\xa2\xab\x1e\r\n" +
-	"\vcoupon.codeR\x04code\x12/\n" +
+	"\aends_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\x06endsAt\"\xd3\x03\n" +
+	"\x06Coupon\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12\x12\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\x12/\n" +
 	"\x06config\x18\x03 \x01(\v2\x17.gitpod.v1.CouponConfigR\x06config\x12\"\n" +
 	"\bmax_uses\x18\x04 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\amaxUses\x125\n" +
 	"\x10max_uses_per_org\x18\x05 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x00R\rmaxUsesPerOrg\x88\x01\x01\x12>\n" +
@@ -10295,19 +6491,6 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\x13\n" +
 	"\x11_max_uses_per_orgB\r\n" +
 	"\v_expires_atB\x0e\n" +
-	"\f_description\"\xfc\x02\n" +
-	"\x13CreateCouponRequest\x121\n" +
-	"\x04code\x18\x01 \x01(\tB\x1d\xbaH\t\xc8\x01\x01r\x04\x10\x03\x182\xa2\xab\x1e\r\n" +
-	"\vcoupon.codeR\x04code\x12/\n" +
-	"\x06config\x18\x02 \x01(\v2\x17.gitpod.v1.CouponConfigR\x06config\x12%\n" +
-	"\bmax_uses\x18\x03 \x01(\x05B\n" +
-	"\xbaH\a\xc8\x01\x01\x1a\x02 \x00R\amaxUses\x125\n" +
-	"\x10max_uses_per_org\x18\x04 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x00R\rmaxUsesPerOrg\x88\x01\x01\x12>\n" +
-	"\n" +
-	"expires_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\texpiresAt\x88\x01\x01\x12/\n" +
-	"\vdescription\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03H\x02R\vdescription\x88\x01\x01B\x13\n" +
-	"\x11_max_uses_per_orgB\r\n" +
-	"\v_expires_atB\x0e\n" +
 	"\f_description\"\x9a\x02\n" +
 	"\fCouponConfig\x129\n" +
 	"\x12one_time_ocu_grant\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02(\x00H\x00R\x0foneTimeOcuGrant\x88\x01\x01\x123\n" +
@@ -10316,38 +6499,7 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x0eauto_terminate\x18\x04 \x01(\bR\rautoTerminateB\x15\n" +
 	"\x13_one_time_ocu_grantB\x11\n" +
 	"\x0f_percentage_offB\x12\n" +
-	"\x10_duration_months\"A\n" +
-	"\x14CreateCouponResponse\x12)\n" +
-	"\x06coupon\x18\x01 \x01(\v2\x11.gitpod.v1.CouponR\x06coupon\"\xcc\x03\n" +
-	"\x12ListCouponsRequest\x12<\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x12<\n" +
-	"\x06filter\x18\x02 \x01(\v2$.gitpod.v1.ListCouponsRequest.FilterR\x06filter\x1a\xb9\x02\n" +
-	"\x06Filter\x12G\n" +
-	"\n" +
-	"coupon_ids\x18\x01 \x03(\tB(\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11filter.coupon_idsR\tcouponIds\x12*\n" +
-	"\x04code\x18\x04 \x01(\tB\x11\xa2\xab\x1e\r\n" +
-	"\vfilter.codeH\x00R\x04code\x88\x01\x01\x12F\n" +
-	"\x0eexpires_before\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\rexpiresBefore\x88\x01\x01\x12D\n" +
-	"\rexpires_after\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x02R\fexpiresAfter\x88\x01\x01B\a\n" +
-	"\x05_codeB\x11\n" +
-	"\x0f_expires_beforeB\x10\n" +
-	"\x0e_expires_after\"\x81\x01\n" +
-	"\x13ListCouponsResponse\x12=\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
-	"pagination\x12+\n" +
-	"\acoupons\x18\x02 \x03(\v2\x11.gitpod.v1.CouponR\acoupons\"\x9d\x01\n" +
-	"\x10GetCouponRequest\x12>\n" +
-	"\vcoupon_code\x18\x01 \x01(\tB\x1d\xbaH\t\xc8\x01\x01r\x04\x10\x03\x182\xa2\xab\x1e\r\n" +
-	"\vcoupon.codeR\n" +
-	"couponCode\x12I\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\">\n" +
-	"\x11GetCouponResponse\x12)\n" +
-	"\x06coupon\x18\x01 \x01(\v2\x11.gitpod.v1.CouponR\x06coupon\"\xf8\x01\n" +
+	"\x10_duration_months\"\xf8\x01\n" +
 	"\x0eBillingAddress\x12#\n" +
 	"\x05line1\x18\x01 \x01(\tB\r\xbaH\n" +
 	"\xc8\x01\x01r\x05\x10\x01\x18\xff\x01R\x05line1\x12\x1e\n" +
@@ -10357,31 +6509,7 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\vpostal_code\x18\x05 \x01(\tB\f\xbaH\t\xc8\x01\x01r\x04\x10\x01\x18\x14R\n" +
 	"postalCode\x121\n" +
 	"\acountry\x18\x06 \x01(\tB\x17\xbaH\x14\xc8\x01\x01r\x0f2\n" +
-	"^[A-Z]{2}$\x98\x01\x02R\acountry\"\xc5\x01\n" +
-	"\x18SetBillingAddressRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12!\n" +
-	"\x04name\x18\x02 \x01(\tB\r\xbaH\n" +
-	"\xc8\x01\x01r\x05\x10\x01\x18\xff\x01R\x04name\x12;\n" +
-	"\aaddress\x18\x03 \x01(\v2\x19.gitpod.v1.BillingAddressB\x06\xbaH\x03\xc8\x01\x01R\aaddress\"\x1b\n" +
-	"\x19SetBillingAddressResponse\"f\n" +
-	"\x19GetStripePortalUrlRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"C\n" +
-	"\x1aGetStripePortalUrlResponse\x12%\n" +
-	"\n" +
-	"portal_url\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\tportalUrl\"e\n" +
-	"\x18ClearTopupFailureRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\x1b\n" +
-	"\x19ClearTopupFailureResponse\"\xa7\x01\n" +
-	"%GetCreditConsumptionTimeSeriesRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x123\n" +
-	"\n" +
-	"date_range\x18\x03 \x01(\v2\x14.gitpod.v1.DateRangeR\tdateRange\"j\n" +
-	"&GetCreditConsumptionTimeSeriesResponse\x12@\n" +
-	"\ametrics\x18\x01 \x03(\v2&.gitpod.v1.MetricConsumptionTimeSeriesR\ametrics\"\x8a\x02\n" +
+	"^[A-Z]{2}$\x98\x01\x02R\acountry\"\x8a\x02\n" +
 	"\x1bMetricConsumptionTimeSeries\x12!\n" +
 	"\fdisplay_name\x18\x01 \x01(\tR\vdisplayName\x12?\n" +
 	"\x04kind\x18\x02 \x01(\x0e2+.gitpod.v1.MetricConsumptionTimeSeries.KindR\x04kind\x127\n" +
@@ -10393,41 +6521,17 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\bKIND_LLM\x10\x03\"X\n" +
 	"\x14CreditUsageDataPoint\x12.\n" +
 	"\x04time\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x04time\x12\x10\n" +
-	"\x03ocu\x18\x02 \x01(\x01R\x03ocu\"\xe6\x02\n" +
-	"\x1dSetupEnterpriseBillingRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\x18\n" +
-	"\asandbox\x18\x02 \x01(\bR\asandbox\x12.\n" +
-	"\x13set_enterprise_tier\x18\x03 \x01(\bR\x11setEnterpriseTier\x12=\n" +
-	"\x05email\x18\x04 \x01(\tB\"\xbaH\x04r\x02`\x01\xa2\xab\x1e\x17\n" +
-	"\x15stripe.customer_emailH\x00R\x05email\x88\x01\x01\x12O\n" +
-	"\x13contract_start_date\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\x11contractStartDate\x88\x01\x01B\b\n" +
-	"\x06_emailB\x16\n" +
-	"\x14_contract_start_date\"V\n" +
-	"\x1eSetupEnterpriseBillingResponse\x124\n" +
-	"\x12stripe_customer_id\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x10stripeCustomerId\"~\n" +
+	"\x03ocu\x18\x02 \x01(\x01R\x03ocu\"~\n" +
 	"\x11AutoTopupSettings\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12%\n" +
 	"\x0eamount_credits\x18\x02 \x01(\x01R\ramountCredits\x12(\n" +
-	"\x10max_daily_topups\x18\x03 \x01(\x05R\x0emaxDailyTopups\"\xad\x01\n" +
-	"\x1eUpdateAutoTopupSettingsRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12@\n" +
-	"\bsettings\x18\x02 \x01(\v2\x1c.gitpod.v1.AutoTopupSettingsB\x06\xbaH\x03\xc8\x01\x01R\bsettings\"[\n" +
-	"\x1fUpdateAutoTopupSettingsResponse\x128\n" +
-	"\bsettings\x18\x01 \x01(\v2\x1c.gitpod.v1.AutoTopupSettingsR\bsettings\"h\n" +
-	"\x1bGetAutoTopupSettingsRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"X\n" +
-	"\x1cGetAutoTopupSettingsResponse\x128\n" +
-	"\bsettings\x18\x01 \x01(\v2\x1c.gitpod.v1.AutoTopupSettingsR\bsettings\"X\n" +
+	"\x10max_daily_topups\x18\x03 \x01(\x05R\x0emaxDailyTopups\"X\n" +
 	"\x17CreditUsageReportFilter\x121\n" +
 	"\asubject\x18\x01 \x01(\v2\x12.gitpod.v1.SubjectH\x00R\asubject\x88\x01\x01B\n" +
 	"\n" +
-	"\b_subject\"\xfd\x01\n" +
-	"\x1bGetCreditUsageReportRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12;\n" +
+	"\b_subject\"\xe8\x01\n" +
+	"\x1bGetCreditUsageReportRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12;\n" +
 	"\n" +
 	"date_range\x18\x02 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x1a\n" +
 	"\btimezone\x18\x03 \x01(\tR\btimezone\x12:\n" +
@@ -10469,10 +6573,9 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x19AgentExecutionCreditUsage\x12,\n" +
 	"\x12agent_execution_id\x18\x01 \x01(\tR\x10agentExecutionId\x12!\n" +
 	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12.\n" +
-	"\x05usage\x18\x03 \x03(\v2\x18.gitpod.v1.CreditsByTypeR\x05usage\"\xe5\x01\n" +
-	"\x1bGetCreditUsageExportRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12;\n" +
+	"\x05usage\x18\x03 \x03(\v2\x18.gitpod.v1.CreditsByTypeR\x05usage\"\xd0\x01\n" +
+	"\x1bGetCreditUsageExportRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12;\n" +
 	"\n" +
 	"date_range\x18\x02 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12>\n" +
 	"\bgroup_by\x18\x03 \x01(\x0e2#.gitpod.v1.CreditUsageExportGroupByR\agroupBy\"A\n" +
@@ -10508,10 +6611,9 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x05usage\x18\x02 \x01(\v2\x1c.gitpod.v1.EnterpriseAIUsageR\x05usage\x12V\n" +
 	"\x13usage_by_token_type\x18\x03 \x03(\v2'.gitpod.v1.EnterpriseAIUsageByTokenTypeR\x10usageByTokenType\x12C\n" +
 	"\x0eunpriced_usage\x18\x04 \x01(\v2\x1c.gitpod.v1.EnterpriseAIUsageR\runpricedUsage\x12g\n" +
-	"\x1cunpriced_usage_by_token_type\x18\x05 \x03(\v2'.gitpod.v1.EnterpriseAIUsageByTokenTypeR\x18unpricedUsageByTokenType\"\xb2\x02\n" +
-	"\x15TeamEnterpriseAIUsage\x12.\n" +
-	"\ateam_id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\x12!\n" +
+	"\x1cunpriced_usage_by_token_type\x18\x05 \x03(\v2'.gitpod.v1.EnterpriseAIUsageByTokenTypeR\x18unpricedUsageByTokenType\"\xa5\x02\n" +
+	"\x15TeamEnterpriseAIUsage\x12!\n" +
+	"\ateam_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06teamId\x12!\n" +
 	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x122\n" +
 	"\x05usage\x18\x03 \x01(\v2\x1c.gitpod.v1.EnterpriseAIUsageR\x05usage\x12:\n" +
 	"\x06budget\x18\x04 \x01(\v2\".gitpod.v1.EnterpriseAIUsageBudgetR\x06budget\x12V\n" +
@@ -10542,10 +6644,9 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"user_usage\x18\x04 \x03(\v2 .gitpod.v1.UserEnterpriseAIUsageR\tuserUsage\x12?\n" +
 	"\n" +
 	"team_usage\x18\x05 \x03(\v2 .gitpod.v1.TeamEnterpriseAIUsageR\tteamUsage\x12I\n" +
-	"\x0eusage_by_model\x18\x06 \x03(\v2#.gitpod.v1.EnterpriseAIUsageByModelR\fusageByModel\"\xd1\x01\n" +
-	"\"GetEnterpriseAIUsageSummaryRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12;\n" +
+	"\x0eusage_by_model\x18\x06 \x03(\v2#.gitpod.v1.EnterpriseAIUsageByModelR\fusageByModel\"\xbc\x01\n" +
+	"\"GetEnterpriseAIUsageSummaryRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12;\n" +
 	"\n" +
 	"date_range\x18\x02 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12#\n" +
 	"\btimezone\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18@R\btimezone\"\xa1\x02\n" +
@@ -10553,13 +6654,12 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\rcalculated_at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\fcalculatedAt\x122\n" +
 	"\x05usage\x18\x02 \x01(\v2\x1c.gitpod.v1.EnterpriseAIUsageR\x05usage\x12:\n" +
 	"\x06budget\x18\x03 \x01(\v2\".gitpod.v1.EnterpriseAIUsageBudgetR\x06budget\x12I\n" +
-	"\x0eusage_by_model\x18\x04 \x03(\v2#.gitpod.v1.EnterpriseAIUsageByModelR\fusageByModel\"\x8f\x03\n" +
+	"\x0eusage_by_model\x18\x04 \x03(\v2#.gitpod.v1.EnterpriseAIUsageByModelR\fusageByModel\"\xfa\x02\n" +
 	" ListEnterpriseAITeamUsageRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x12I\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12;\n" +
+	"pagination\x124\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12;\n" +
 	"\n" +
 	"date_range\x18\x03 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12#\n" +
 	"\btimezone\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18@R\btimezone\x12J\n" +
@@ -10572,13 +6672,12 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"pagination\x12?\n" +
 	"\n" +
 	"team_usage\x18\x02 \x03(\v2 .gitpod.v1.TeamEnterpriseAIUsageR\tteamUsage\x12?\n" +
-	"\rcalculated_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\fcalculatedAt\"\xf9\x05\n" +
+	"\rcalculated_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\fcalculatedAt\"\xe4\x05\n" +
 	" ListEnterpriseAIUserUsageRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x12I\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12;\n" +
+	"pagination\x124\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12;\n" +
 	"\n" +
 	"date_range\x18\x03 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12#\n" +
 	"\btimezone\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18@R\btimezone\x12D\n" +
@@ -10605,10 +6704,9 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"user_usage\x18\x02 \x03(\v2\x1e.gitpod.v1.UserCostBudgetUsageR\tuserUsage\x12\x1f\n" +
 	"\vtotal_count\x18\x03 \x01(\x05R\n" +
 	"totalCount\x12?\n" +
-	"\rcalculated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\fcalculatedAt\"\x9a\x02\n" +
-	"%GetEnterpriseAIUsageTimeSeriesRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12;\n" +
+	"\rcalculated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\fcalculatedAt\"\x85\x02\n" +
+	"%GetEnterpriseAIUsageTimeSeriesRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12;\n" +
 	"\n" +
 	"date_range\x18\x02 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12#\n" +
 	"\btimezone\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18@R\btimezone\x12D\n" +
@@ -10620,20 +6718,11 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"&GetEnterpriseAIUsageTimeSeriesResponse\x12?\n" +
 	"\rcalculated_at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\fcalculatedAt\x12B\n" +
 	"\vdaily_usage\x18\x02 \x03(\v2!.gitpod.v1.DailyEnterpriseAIUsageR\n" +
-	"dailyUsage\"q\n" +
-	"\x19CorrectUsageEventsRequest\x123\n" +
-	"\x10idempotency_keys\x18\x01 \x03(\tB\b\xbaH\x05\x92\x01\x02\b\x01R\x0fidempotencyKeys\x12\x1f\n" +
-	"\x06reason\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x06reason\"]\n" +
-	"\x1aCorrectUsageEventsResponse\x12?\n" +
-	"\aresults\x18\x01 \x03(\v2%.gitpod.v1.UsageEventCorrectionResultR\aresults\"u\n" +
+	"dailyUsage\"u\n" +
 	"\x1aUsageEventCorrectionResult\x12'\n" +
 	"\x0fidempotency_key\x18\x01 \x01(\tR\x0eidempotencyKey\x12\x18\n" +
 	"\asuccess\x18\x02 \x01(\bR\asuccess\x12\x14\n" +
-	"\x05error\x18\x03 \x01(\tR\x05error\"\xa6\x01\n" +
-	"\x18InsertUsageEventsRequest\x12?\n" +
-	"\x06events\x18\x01 \x03(\v2\x1a.gitpod.v1.UsageEventInputB\v\xbaH\b\x92\x01\x05\b\x01\x10\xe8\aR\x06events\x12\x1f\n" +
-	"\x06reason\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x06reason\x12(\n" +
-	"\x10ignore_age_check\x18\x03 \x01(\bR\x0eignoreAgeCheck\"\xf6\x01\n" +
+	"\x05error\x18\x03 \x01(\tR\x05error\"\xf6\x01\n" +
 	"\x0fUsageEventInput\x121\n" +
 	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12&\n" +
 	"\n" +
@@ -10643,13 +6732,7 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\auser_id\x18\x05 \x01(\tH\x00R\x06userId\x88\x01\x01\x12!\n" +
 	"\fpayload_json\x18\x06 \x01(\tR\vpayloadJsonB\n" +
 	"\n" +
-	"\b_user_id\"\xc5\x01\n" +
-	"\x19InsertUsageEventsResponse\x12;\n" +
-	"\aresults\x18\x01 \x03(\v2!.gitpod.v1.UsageEventInsertResultR\aresults\x12%\n" +
-	"\x0einserted_count\x18\x02 \x01(\x05R\rinsertedCount\x12#\n" +
-	"\rskipped_count\x18\x03 \x01(\x05R\fskippedCount\x12\x1f\n" +
-	"\verror_count\x18\x04 \x01(\x05R\n" +
-	"errorCount\"\xab\x02\n" +
+	"\b_user_id\"\xab\x02\n" +
 	"\x16UsageEventInsertResult\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1d\n" +
 	"\n" +
@@ -10660,17 +6743,10 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\fpayload_json\x18\x06 \x01(\tR\vpayloadJson\x12\x16\n" +
 	"\x06status\x18\a \x01(\tR\x06status\x12'\n" +
 	"\x0fidempotency_key\x18\b \x01(\tR\x0eidempotencyKey\x12\x18\n" +
-	"\amessage\x18\t \x01(\tR\amessage\"l\n" +
-	"\x1fGetEnterpriseBillingInfoRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"T\n" +
-	" GetEnterpriseBillingInfoResponse\x120\n" +
-	"\x14credit_usage_enabled\x18\x01 \x01(\bR\x12creditUsageEnabled\"\xe0\x03\n" +
-	"\x10BYOKRateCardRate\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11byok_rate_card.idR\x02id\x12F\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\x14\n" +
+	"\amessage\x18\t \x01(\tR\amessage\"\xb4\x03\n" +
+	"\x10BYOKRateCardRate\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x121\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12\x14\n" +
 	"\x05model\x18\x03 \x01(\tR\x05model\x12?\n" +
 	"\n" +
 	"token_type\x18\x04 \x01(\x0e2 .gitpod.v1.BYOKRateCardTokenTypeR\ttokenType\x12J\n" +
@@ -10678,34 +6754,12 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\bcurrency\x18\x06 \x01(\x0e2\x1a.gitpod.v1.BillingCurrencyR\bcurrency\x12=\n" +
 	"\feffective_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\veffectiveAt\x129\n" +
 	"\n" +
-	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x9a\x01\n" +
-	"\x1cListBYOKRateCardRatesRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12/\n" +
-	"\x05as_of\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x04asOf\"R\n" +
-	"\x1dListBYOKRateCardRatesResponse\x121\n" +
-	"\x05rates\x18\x01 \x03(\v2\x1b.gitpod.v1.BYOKRateCardRateR\x05rates\"\xb6\x03\n" +
-	"\x1aSetBYOKRateCardRateRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12#\n" +
-	"\x05model\x18\x02 \x01(\tB\r\xbaH\n" +
-	"\xc8\x01\x01r\x05\x10\x01\x18\xff\x01R\x05model\x12L\n" +
-	"\n" +
-	"token_type\x18\x03 \x01(\x0e2 .gitpod.v1.BYOKRateCardTokenTypeB\v\xbaH\b\xc8\x01\x01\x82\x01\x02\x10\x01R\ttokenType\x12V\n" +
-	"\"rate_microunits_per_million_tokens\x18\x04 \x01(\x03B\n" +
-	"\xbaH\a\xc8\x01\x01\"\x02(\x00R\x1erateMicrounitsPerMillionTokens\x12C\n" +
-	"\bcurrency\x18\x05 \x01(\x0e2\x1a.gitpod.v1.BillingCurrencyB\v\xbaH\b\xc8\x01\x01\x82\x01\x02\x10\x01R\bcurrency\x12=\n" +
-	"\feffective_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\veffectiveAt\"N\n" +
-	"\x1bSetBYOKRateCardRateResponse\x12/\n" +
-	"\x04rate\x18\x01 \x01(\v2\x1b.gitpod.v1.BYOKRateCardRateR\x04rate\"\xca\x05\n" +
-	"\x1cEnterpriseAIUserBudgetPolicy\x12A\n" +
-	"\x02id\x18\x01 \x01(\tB1\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e%\n" +
-	"#enterprise_ai_user_budget_policy.idR\x02id\x12F\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12C\n" +
-	"\x04mode\x18\x03 \x01(\x0e2%.gitpod.v1.EnterpriseAIUserBudgetModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04mode\x123\n" +
-	"\auser_id\x18\x04 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idH\x00R\x06userId\x88\x01\x01\x12>\n" +
+	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xff\x04\n" +
+	"\x1cEnterpriseAIUserBudgetPolicy\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x121\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12C\n" +
+	"\x04mode\x18\x03 \x01(\x0e2%.gitpod.v1.EnterpriseAIUserBudgetModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04mode\x12&\n" +
+	"\auser_id\x18\x04 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\x06userId\x88\x01\x01\x12>\n" +
 	"\x14monthly_credit_limit\x18\x05 \x01(\x03B\a\xbaH\x04\"\x02(\x00H\x01R\x12monthlyCreditLimit\x88\x01\x01\x12O\n" +
 	"\x1dmonthly_cost_limit_microunits\x18\x06 \x01(\x03B\a\xbaH\x04\"\x02(\x00H\x02R\x1amonthlyCostLimitMicrounits\x88\x01\x01\x12@\n" +
 	"\bcurrency\x18\a \x01(\x0e2\x1a.gitpod.v1.BillingCurrencyB\b\xbaH\x05\x82\x01\x02\x10\x01R\bcurrency\x12\x15\n" +
@@ -10721,40 +6775,22 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x1e_monthly_cost_limit_microunits\"\xb9\x01\n" +
 	"%EffectiveEnterpriseAIUserBudgetPolicy\x12O\n" +
 	"\x06source\x18\x01 \x01(\x0e2-.gitpod.v1.EnterpriseAIUserBudgetPolicySourceB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06source\x12?\n" +
-	"\x06policy\x18\x02 \x01(\v2'.gitpod.v1.EnterpriseAIUserBudgetPolicyR\x06policy\"\xfe\x01\n" +
-	")ListEnterpriseAIUserBudgetPoliciesRequest\x12<\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x12I\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12H\n" +
-	"\x04mode\x18\x03 \x01(\x0e2%.gitpod.v1.EnterpriseAIUserBudgetModeB\r\xbaH\n" +
-	"\xc8\x01\x01\x82\x01\x04\x10\x01 \x00R\x04mode\"\x93\x02\n" +
-	"*ListEnterpriseAIUserBudgetPoliciesResponse\x12X\n" +
-	"\x13organization_policy\x18\x01 \x01(\v2'.gitpod.v1.EnterpriseAIUserBudgetPolicyR\x12organizationPolicy\x12L\n" +
-	"\ruser_policies\x18\x02 \x03(\v2'.gitpod.v1.EnterpriseAIUserBudgetPolicyR\fuserPolicies\x12=\n" +
-	"\n" +
-	"pagination\x18\x03 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
-	"pagination\"\xfe\x01\n" +
-	"&GetEnterpriseAIUserBudgetPolicyRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12H\n" +
+	"\x06policy\x18\x02 \x01(\v2'.gitpod.v1.EnterpriseAIUserBudgetPolicyR\x06policy\"\xdc\x01\n" +
+	"&GetEnterpriseAIUserBudgetPolicyRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12H\n" +
 	"\x04mode\x18\x02 \x01(\x0e2%.gitpod.v1.EnterpriseAIUserBudgetModeB\r\xbaH\n" +
-	"\xc8\x01\x01\x82\x01\x04\x10\x01 \x00R\x04mode\x123\n" +
-	"\auser_id\x18\x03 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idH\x00R\x06userId\x88\x01\x01B\n" +
+	"\xc8\x01\x01\x82\x01\x04\x10\x01 \x00R\x04mode\x12&\n" +
+	"\auser_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\x06userId\x88\x01\x01B\n" +
 	"\n" +
 	"\b_user_id\"\xc7\x01\n" +
 	"'GetEnterpriseAIUserBudgetPolicyResponse\x12?\n" +
 	"\x06policy\x18\x01 \x01(\v2'.gitpod.v1.EnterpriseAIUserBudgetPolicyR\x06policy\x12[\n" +
-	"\x10effective_policy\x18\x02 \x01(\v20.gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicyR\x0feffectivePolicy\"\xa3\x04\n" +
-	"&SetEnterpriseAIUserBudgetPolicyRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12H\n" +
+	"\x10effective_policy\x18\x02 \x01(\v20.gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicyR\x0feffectivePolicy\"\x81\x04\n" +
+	"&SetEnterpriseAIUserBudgetPolicyRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12H\n" +
 	"\x04mode\x18\x02 \x01(\x0e2%.gitpod.v1.EnterpriseAIUserBudgetModeB\r\xbaH\n" +
-	"\xc8\x01\x01\x82\x01\x04\x10\x01 \x00R\x04mode\x123\n" +
-	"\auser_id\x18\x03 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idH\x00R\x06userId\x88\x01\x01\x12>\n" +
+	"\xc8\x01\x01\x82\x01\x04\x10\x01 \x00R\x04mode\x12&\n" +
+	"\auser_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\x06userId\x88\x01\x01\x12>\n" +
 	"\x14monthly_credit_limit\x18\x04 \x01(\x03B\a\xbaH\x04\"\x02(\x00H\x01R\x12monthlyCreditLimit\x88\x01\x01\x12O\n" +
 	"\x1dmonthly_cost_limit_microunits\x18\x05 \x01(\x03B\a\xbaH\x04\"\x02(\x00H\x02R\x1amonthlyCostLimitMicrounits\x88\x01\x01\x12@\n" +
 	"\bcurrency\x18\x06 \x01(\x0e2\x1a.gitpod.v1.BillingCurrencyB\b\xbaH\x05\x82\x01\x02\x10\x01R\bcurrency\x12\x15\n" +
@@ -10764,20 +6800,17 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x15_monthly_credit_limitB \n" +
 	"\x1e_monthly_cost_limit_microunits\"j\n" +
 	"'SetEnterpriseAIUserBudgetPolicyResponse\x12?\n" +
-	"\x06policy\x18\x01 \x01(\v2'.gitpod.v1.EnterpriseAIUserBudgetPolicyR\x06policy\"\x81\x02\n" +
-	")DeleteEnterpriseAIUserBudgetPolicyRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12H\n" +
+	"\x06policy\x18\x01 \x01(\v2'.gitpod.v1.EnterpriseAIUserBudgetPolicyR\x06policy\"\xdf\x01\n" +
+	")DeleteEnterpriseAIUserBudgetPolicyRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12H\n" +
 	"\x04mode\x18\x02 \x01(\x0e2%.gitpod.v1.EnterpriseAIUserBudgetModeB\r\xbaH\n" +
-	"\xc8\x01\x01\x82\x01\x04\x10\x01 \x00R\x04mode\x123\n" +
-	"\auser_id\x18\x03 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idH\x00R\x06userId\x88\x01\x01B\n" +
+	"\xc8\x01\x01\x82\x01\x04\x10\x01 \x00R\x04mode\x12&\n" +
+	"\auser_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01H\x00R\x06userId\x88\x01\x01B\n" +
 	"\n" +
 	"\b_user_id\",\n" +
-	"*DeleteEnterpriseAIUserBudgetPolicyResponse\"\xac\x01\n" +
-	"\x1fGetCumulativeCreditUsageRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x124\n" +
+	"*DeleteEnterpriseAIUserBudgetPolicyResponse\"\x97\x01\n" +
+	"\x1fGetCumulativeCreditUsageRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x124\n" +
 	"\x05as_of\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\x04asOf\x88\x01\x01B\b\n" +
 	"\x06_as_of\"\xef\x02\n" +
 	" GetCumulativeCreditUsageResponse\x12=\n" +
@@ -10810,13 +6843,12 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\x12is_service_account\x18\t \x01(\bR\x10isServiceAccount\x12I\n" +
 	"\x0eusage_by_model\x18\n" +
 	" \x03(\v2#.gitpod.v1.EnterpriseAIUsageByModelR\fusageByModelB\x10\n" +
-	"\x0e_credit_budget\"\xcf\x04\n" +
+	"\x0e_credit_budget\"\xba\x04\n" +
 	"$ListEnterpriseUserCreditUsageRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x12I\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x124\n" +
+	"pagination\x124\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x124\n" +
 	"\x05as_of\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\x04asOf\x88\x01\x01\x12H\n" +
 	"\x04sort\x18\x04 \x01(\v24.gitpod.v1.ListEnterpriseUserCreditUsageRequest.SortR\x04sort\x1a\x83\x01\n" +
 	"\x04Sort\x12O\n" +
@@ -10836,14 +6868,11 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"pagination\x18\x02 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12\x1f\n" +
 	"\vtotal_count\x18\x03 \x01(\x05R\n" +
-	"totalCount\"\x8a\x04\n" +
-	"\x18TeamCreditAllocationInfo\x127\n" +
-	"\x02id\x18\x01 \x01(\tB'\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x1b\n" +
-	"\x19team_credit_allocation.idR\x02id\x12.\n" +
-	"\ateam_id\x18\x02 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\x12F\n" +
-	"\x0forganization_id\x18\x03 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12#\n" +
+	"totalCount\"\xc9\x03\n" +
+	"\x18TeamCreditAllocationInfo\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12!\n" +
+	"\ateam_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06teamId\x121\n" +
+	"\x0forganization_id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12#\n" +
 	"\rcredit_budget\x18\x04 \x01(\x03R\fcreditBudget\x129\n" +
 	"\n" +
 	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
@@ -10851,12 +6880,10 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x129\n" +
 	"\x16cost_budget_microunits\x18\a \x01(\x03H\x00R\x14costBudgetMicrounits\x88\x01\x01\x12L\n" +
 	"\x14cost_budget_currency\x18\b \x01(\x0e2\x1a.gitpod.v1.BillingCurrencyR\x12costBudgetCurrencyB\x19\n" +
-	"\x17_cost_budget_microunits\"\x86\x03\n" +
-	"!CreateTeamCreditAllocationRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x121\n" +
-	"\ateam_id\x18\x02 \x01(\tB\x18\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\x12,\n" +
+	"\x17_cost_budget_microunits\"\xe4\x02\n" +
+	"!CreateTeamCreditAllocationRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12$\n" +
+	"\ateam_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x06teamId\x12,\n" +
 	"\rcredit_budget\x18\x03 \x01(\x03B\a\xbaH\x04\"\x02(\x00R\fcreditBudget\x12B\n" +
 	"\x16cost_budget_microunits\x18\x04 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\x14costBudgetMicrounits\x88\x01\x01\x12V\n" +
 	"\x14cost_budget_currency\x18\x05 \x01(\x0e2\x1a.gitpod.v1.BillingCurrencyB\b\xbaH\x05\x82\x01\x02\x10\x01R\x12costBudgetCurrencyB\x19\n" +
@@ -10864,21 +6891,17 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\"CreateTeamCreditAllocationResponse\x12C\n" +
 	"\n" +
 	"allocation\x18\x01 \x01(\v2#.gitpod.v1.TeamCreditAllocationInfoR\n" +
-	"allocation\"\x9e\x01\n" +
-	"\x1eGetTeamCreditAllocationRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x121\n" +
-	"\ateam_id\x18\x02 \x01(\tB\x18\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"f\n" +
+	"allocation\"|\n" +
+	"\x1eGetTeamCreditAllocationRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12$\n" +
+	"\ateam_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x06teamId\"f\n" +
 	"\x1fGetTeamCreditAllocationResponse\x12C\n" +
 	"\n" +
 	"allocation\x18\x01 \x01(\v2#.gitpod.v1.TeamCreditAllocationInfoR\n" +
-	"allocation\"\xe8\x03\n" +
-	"!UpdateTeamCreditAllocationRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x121\n" +
-	"\ateam_id\x18\x02 \x01(\tB\x18\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\x12,\n" +
+	"allocation\"\xc6\x03\n" +
+	"!UpdateTeamCreditAllocationRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12$\n" +
+	"\ateam_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x06teamId\x12,\n" +
 	"\rcredit_budget\x18\x03 \x01(\x03B\a\xbaH\x04\"\x02(\x00R\fcreditBudget\x12B\n" +
 	"\x16cost_budget_microunits\x18\x04 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\x14costBudgetMicrounits\x88\x01\x01\x12V\n" +
 	"\x14cost_budget_currency\x18\x05 \x01(\x0e2\x1a.gitpod.v1.BillingCurrencyB\b\xbaH\x05\x82\x01\x02\x10\x01R\x12costBudgetCurrency\x12*\n" +
@@ -10888,37 +6911,17 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"\"UpdateTeamCreditAllocationResponse\x12C\n" +
 	"\n" +
 	"allocation\x18\x01 \x01(\v2#.gitpod.v1.TeamCreditAllocationInfoR\n" +
-	"allocation\"\xa1\x01\n" +
-	"!DeleteTeamCreditAllocationRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x121\n" +
-	"\ateam_id\x18\x02 \x01(\tB\x18\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"$\n" +
-	"\"DeleteTeamCreditAllocationResponse\"\x9d\x01\n" +
-	"!SetOrganizationCreditGrantRequest\x12I\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB \xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12-\n" +
-	"\fcredit_grant\x18\x02 \x01(\x03B\n" +
-	"\xbaH\a\xc8\x01\x01\"\x02(\x00R\vcreditGrant\"$\n" +
-	"\"SetOrganizationCreditGrantResponse\"\x81\x02\n" +
+	"allocation\"\x7f\n" +
+	"!DeleteTeamCreditAllocationRequest\x124\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12$\n" +
+	"\ateam_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x06teamId\"$\n" +
+	"\"DeleteTeamCreditAllocationResponse\"\x81\x02\n" +
 	"\x19EnvironmentCorrectionSpec\x12/\n" +
 	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x12A\n" +
 	"\n" +
 	"start_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\tstartTime\x12=\n" +
 	"\bend_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\aendTime\x121\n" +
-	"\x0forganization_id\x18\x04 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\"\xb5\x01\n" +
-	"$CorrectEnvironmentUsageEventsRequest\x12S\n" +
-	"\vcorrections\x18\x01 \x03(\v2$.gitpod.v1.EnvironmentCorrectionSpecB\v\xbaH\b\x92\x01\x05\b\x01\x10\xe8\aR\vcorrections\x12\x1f\n" +
-	"\x06reason\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x06reason\x12\x17\n" +
-	"\adry_run\x18\x05 \x01(\bR\x06dryRun\"\xfb\x02\n" +
-	"%CorrectEnvironmentUsageEventsResponse\x12?\n" +
-	"\aresults\x18\x01 \x03(\v2%.gitpod.v1.UsageEventCorrectionResultR\aresults\x12!\n" +
-	"\ftotal_events\x18\x02 \x01(\x05R\vtotalEvents\x12\x1f\n" +
-	"\vtotal_value\x18\x03 \x01(\x03R\n" +
-	"totalValue\x129\n" +
-	"\x19beyond_stripe_limit_count\x18\x04 \x01(\x05R\x16beyondStripeLimitCount\x129\n" +
-	"\x19beyond_stripe_limit_value\x18\x05 \x01(\x03R\x16beyondStripeLimitValue\x12W\n" +
-	"\x15environment_summaries\x18\x06 \x03(\v2\".gitpod.v1.EnvironmentUsageSummaryR\x14environmentSummaries\"\x82\x01\n" +
+	"\x0forganization_id\x18\x04 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\"\x82\x01\n" +
 	"\x17EnvironmentUsageSummary\x12%\n" +
 	"\x0eenvironment_id\x18\x01 \x01(\tR\renvironmentId\x12\x1f\n" +
 	"\vevent_count\x18\x02 \x01(\x05R\n" +
@@ -10999,57 +7002,23 @@ const file_gitpod_v1_billing_proto_rawDesc = "" +
 	"3ENTERPRISE_AI_USER_BUDGET_POLICY_SOURCE_UNSPECIFIED\x10\x00\x120\n" +
 	",ENTERPRISE_AI_USER_BUDGET_POLICY_SOURCE_NONE\x10\x01\x128\n" +
 	"4ENTERPRISE_AI_USER_BUDGET_POLICY_SOURCE_ORGANIZATION\x10\x02\x120\n" +
-	",ENTERPRISE_AI_USER_BUDGET_POLICY_SOURCE_USER\x10\x032\xab,\n" +
-	"\x0eBillingService\x12Q\n" +
-	"\fSetupBilling\x12\x1e.gitpod.v1.SetupBillingRequest\x1a\x1f.gitpod.v1.SetupBillingResponse\"\x00\x12i\n" +
-	"\x14CompleteBillingSetup\x12&.gitpod.v1.CompleteBillingSetupRequest\x1a'.gitpod.v1.CompleteBillingSetupResponse\"\x00\x12W\n" +
-	"\x0eGetBillingInfo\x12 .gitpod.v1.GetBillingInfoRequest\x1a!.gitpod.v1.GetBillingInfoResponse\"\x00\x12]\n" +
-	"\x10ReconcileBilling\x12\".gitpod.v1.ReconcileBillingRequest\x1a#.gitpod.v1.ReconcileBillingResponse\"\x00\x12c\n" +
-	"\x12CreateSubscription\x12$.gitpod.v1.CreateSubscriptionRequest\x1a%.gitpod.v1.CreateSubscriptionResponse\"\x00\x12c\n" +
-	"\x12CancelSubscription\x12$.gitpod.v1.CancelSubscriptionRequest\x1a%.gitpod.v1.CancelSubscriptionResponse\"\x00\x12c\n" +
-	"\x12UpdateSubscription\x12$.gitpod.v1.UpdateSubscriptionRequest\x1a%.gitpod.v1.UpdateSubscriptionResponse\"\x00\x12`\n" +
-	"\x11ListSubscriptions\x12#.gitpod.v1.ListSubscriptionsRequest\x1a$.gitpod.v1.ListSubscriptionsResponse\"\x00\x12Q\n" +
-	"\fGrantCredits\x12\x1e.gitpod.v1.GrantCreditsRequest\x1a\x1f.gitpod.v1.GrantCreditsResponse\"\x00\x12r\n" +
-	"\x17GetStripePublishableKey\x12).gitpod.v1.GetStripePublishableKeyRequest\x1a*.gitpod.v1.GetStripePublishableKeyResponse\"\x00\x12Z\n" +
-	"\x0fSetBillingRealm\x12!.gitpod.v1.SetBillingRealmRequest\x1a\".gitpod.v1.SetBillingRealmResponse\"\x00\x12o\n" +
-	"\x16CreateCardVerification\x12(.gitpod.v1.CreateCardVerificationRequest\x1a).gitpod.v1.CreateCardVerificationResponse\"\x00\x12E\n" +
-	"\bSetTaxID\x12\x1a.gitpod.v1.SetTaxIDRequest\x1a\x1b.gitpod.v1.SetTaxIDResponse\"\x00\x12`\n" +
-	"\x10GetBillingRecord\x12\".gitpod.v1.GetBillingRecordRequest\x1a#.gitpod.v1.GetBillingRecordResponse\"\x03\x90\x02\x01\x12f\n" +
-	"\x13UpdateBillingRecord\x12%.gitpod.v1.UpdateBillingRecordRequest\x1a&.gitpod.v1.UpdateBillingRecordResponse\"\x00\x12Q\n" +
-	"\fCreateCoupon\x12\x1e.gitpod.v1.CreateCouponRequest\x1a\x1f.gitpod.v1.CreateCouponResponse\"\x00\x12Q\n" +
-	"\vListCoupons\x12\x1d.gitpod.v1.ListCouponsRequest\x1a\x1e.gitpod.v1.ListCouponsResponse\"\x03\x90\x02\x01\x12K\n" +
-	"\tGetCoupon\x12\x1b.gitpod.v1.GetCouponRequest\x1a\x1c.gitpod.v1.GetCouponResponse\"\x03\x90\x02\x01\x12`\n" +
-	"\x11SetBillingAddress\x12#.gitpod.v1.SetBillingAddressRequest\x1a$.gitpod.v1.SetBillingAddressResponse\"\x00\x12f\n" +
-	"\x12GetStripePortalUrl\x12$.gitpod.v1.GetStripePortalUrlRequest\x1a%.gitpod.v1.GetStripePortalUrlResponse\"\x03\x90\x02\x01\x12`\n" +
-	"\x11ClearTopupFailure\x12#.gitpod.v1.ClearTopupFailureRequest\x1a$.gitpod.v1.ClearTopupFailureResponse\"\x00\x12\x8a\x01\n" +
-	"\x1eGetCreditConsumptionTimeSeries\x120.gitpod.v1.GetCreditConsumptionTimeSeriesRequest\x1a1.gitpod.v1.GetCreditConsumptionTimeSeriesResponse\"\x03\x90\x02\x01\x12r\n" +
-	"\x16SetupEnterpriseBilling\x12(.gitpod.v1.SetupEnterpriseBillingRequest\x1a).gitpod.v1.SetupEnterpriseBillingResponse\"\x03\x90\x02\x02\x12r\n" +
-	"\x17UpdateAutoTopupSettings\x12).gitpod.v1.UpdateAutoTopupSettingsRequest\x1a*.gitpod.v1.UpdateAutoTopupSettingsResponse\"\x00\x12l\n" +
-	"\x14GetAutoTopupSettings\x12&.gitpod.v1.GetAutoTopupSettingsRequest\x1a'.gitpod.v1.GetAutoTopupSettingsResponse\"\x03\x90\x02\x01\x12\x89\x01\n" +
-	"\x14GetCreditUsageReport\x12&.gitpod.v1.GetCreditUsageReportRequest\x1a'.gitpod.v1.GetCreditUsageReportResponse\" \xb2\xab\x1e\x19\x12\x17get_credit_usage_report\x90\x02\x01\x12\x89\x01\n" +
-	"\x14GetCreditUsageExport\x12&.gitpod.v1.GetCreditUsageExportRequest\x1a'.gitpod.v1.GetCreditUsageExportResponse\" \xb2\xab\x1e\x19\x12\x17get_credit_usage_export\x90\x02\x01\x12\xa6\x01\n" +
-	"\x1bGetEnterpriseAIUsageSummary\x12-.gitpod.v1.GetEnterpriseAIUsageSummaryRequest\x1a..gitpod.v1.GetEnterpriseAIUsageSummaryResponse\"(\xb2\xab\x1e!\x12\x1fget_enterprise_ai_usage_summary\x90\x02\x01\x12\x9e\x01\n" +
-	"\x19ListEnterpriseAITeamUsage\x12+.gitpod.v1.ListEnterpriseAITeamUsageRequest\x1a,.gitpod.v1.ListEnterpriseAITeamUsageResponse\"&\xb2\xab\x1e\x1f\x12\x1dlist_enterprise_ai_team_usage\x90\x02\x01\x12\x9e\x01\n" +
-	"\x19ListEnterpriseAIUserUsage\x12+.gitpod.v1.ListEnterpriseAIUserUsageRequest\x1a,.gitpod.v1.ListEnterpriseAIUserUsageResponse\"&\xb2\xab\x1e\x1f\x12\x1dlist_enterprise_ai_user_usage\x90\x02\x01\x12\xb3\x01\n" +
-	"\x1eGetEnterpriseAIUsageTimeSeries\x120.gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest\x1a1.gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse\",\xb2\xab\x1e%\x12#get_enterprise_ai_usage_time_series\x90\x02\x01\x12c\n" +
-	"\x12CorrectUsageEvents\x12$.gitpod.v1.CorrectUsageEventsRequest\x1a%.gitpod.v1.CorrectUsageEventsResponse\"\x00\x12`\n" +
-	"\x11InsertUsageEvents\x12#.gitpod.v1.InsertUsageEventsRequest\x1a$.gitpod.v1.InsertUsageEventsResponse\"\x00\x12\x84\x01\n" +
-	"\x1dCorrectEnvironmentUsageEvents\x12/.gitpod.v1.CorrectEnvironmentUsageEventsRequest\x1a0.gitpod.v1.CorrectEnvironmentUsageEventsResponse\"\x00\x12x\n" +
-	"\x18GetEnterpriseBillingInfo\x12*.gitpod.v1.GetEnterpriseBillingInfoRequest\x1a+.gitpod.v1.GetEnterpriseBillingInfoResponse\"\x03\x90\x02\x01\x12o\n" +
-	"\x15ListBYOKRateCardRates\x12'.gitpod.v1.ListBYOKRateCardRatesRequest\x1a(.gitpod.v1.ListBYOKRateCardRatesResponse\"\x03\x90\x02\x01\x12f\n" +
-	"\x13SetBYOKRateCardRate\x12%.gitpod.v1.SetBYOKRateCardRateRequest\x1a&.gitpod.v1.SetBYOKRateCardRateResponse\"\x00\x12\x96\x01\n" +
-	"\"ListEnterpriseAIUserBudgetPolicies\x124.gitpod.v1.ListEnterpriseAIUserBudgetPoliciesRequest\x1a5.gitpod.v1.ListEnterpriseAIUserBudgetPoliciesResponse\"\x03\x90\x02\x01\x12\x8d\x01\n" +
+	",ENTERPRISE_AI_USER_BUDGET_POLICY_SOURCE_USER\x10\x032\x9c\x0f\n" +
+	"\x0eBillingService\x12l\n" +
+	"\x14GetCreditUsageReport\x12&.gitpod.v1.GetCreditUsageReportRequest\x1a'.gitpod.v1.GetCreditUsageReportResponse\"\x03\x90\x02\x01\x12l\n" +
+	"\x14GetCreditUsageExport\x12&.gitpod.v1.GetCreditUsageExportRequest\x1a'.gitpod.v1.GetCreditUsageExportResponse\"\x03\x90\x02\x01\x12\x81\x01\n" +
+	"\x1bGetEnterpriseAIUsageSummary\x12-.gitpod.v1.GetEnterpriseAIUsageSummaryRequest\x1a..gitpod.v1.GetEnterpriseAIUsageSummaryResponse\"\x03\x90\x02\x01\x12{\n" +
+	"\x19ListEnterpriseAITeamUsage\x12+.gitpod.v1.ListEnterpriseAITeamUsageRequest\x1a,.gitpod.v1.ListEnterpriseAITeamUsageResponse\"\x03\x90\x02\x01\x12{\n" +
+	"\x19ListEnterpriseAIUserUsage\x12+.gitpod.v1.ListEnterpriseAIUserUsageRequest\x1a,.gitpod.v1.ListEnterpriseAIUserUsageResponse\"\x03\x90\x02\x01\x12\x8a\x01\n" +
+	"\x1eGetEnterpriseAIUsageTimeSeries\x120.gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest\x1a1.gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse\"\x03\x90\x02\x01\x12\x8d\x01\n" +
 	"\x1fGetEnterpriseAIUserBudgetPolicy\x121.gitpod.v1.GetEnterpriseAIUserBudgetPolicyRequest\x1a2.gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse\"\x03\x90\x02\x01\x12\x8a\x01\n" +
 	"\x1fSetEnterpriseAIUserBudgetPolicy\x121.gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest\x1a2.gitpod.v1.SetEnterpriseAIUserBudgetPolicyResponse\"\x00\x12\x93\x01\n" +
-	"\"DeleteEnterpriseAIUserBudgetPolicy\x124.gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest\x1a5.gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyResponse\"\x00\x12\x99\x01\n" +
-	"\x18GetCumulativeCreditUsage\x12*.gitpod.v1.GetCumulativeCreditUsageRequest\x1a+.gitpod.v1.GetCumulativeCreditUsageResponse\"$\xb2\xab\x1e\x1d\x12\x1bget_cumulative_credit_usage\x90\x02\x01\x12\xae\x01\n" +
-	"\x1dListEnterpriseUserCreditUsage\x12/.gitpod.v1.ListEnterpriseUserCreditUsageRequest\x1a0.gitpod.v1.ListEnterpriseUserCreditUsageResponse\"*\xb2\xab\x1e#\x12!list_enterprise_user_credit_usage\x90\x02\x01\x12{\n" +
+	"\"DeleteEnterpriseAIUserBudgetPolicy\x124.gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest\x1a5.gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyResponse\"\x00\x12x\n" +
+	"\x18GetCumulativeCreditUsage\x12*.gitpod.v1.GetCumulativeCreditUsageRequest\x1a+.gitpod.v1.GetCumulativeCreditUsageResponse\"\x03\x90\x02\x01\x12\x87\x01\n" +
+	"\x1dListEnterpriseUserCreditUsage\x12/.gitpod.v1.ListEnterpriseUserCreditUsageRequest\x1a0.gitpod.v1.ListEnterpriseUserCreditUsageResponse\"\x03\x90\x02\x01\x12{\n" +
 	"\x1aCreateTeamCreditAllocation\x12,.gitpod.v1.CreateTeamCreditAllocationRequest\x1a-.gitpod.v1.CreateTeamCreditAllocationResponse\"\x00\x12u\n" +
 	"\x17GetTeamCreditAllocation\x12).gitpod.v1.GetTeamCreditAllocationRequest\x1a*.gitpod.v1.GetTeamCreditAllocationResponse\"\x03\x90\x02\x01\x12{\n" +
 	"\x1aUpdateTeamCreditAllocation\x12,.gitpod.v1.UpdateTeamCreditAllocationRequest\x1a-.gitpod.v1.UpdateTeamCreditAllocationResponse\"\x00\x12{\n" +
-	"\x1aDeleteTeamCreditAllocation\x12,.gitpod.v1.DeleteTeamCreditAllocationRequest\x1a-.gitpod.v1.DeleteTeamCreditAllocationResponse\"\x00\x12{\n" +
-	"\x1aSetOrganizationCreditGrant\x12,.gitpod.v1.SetOrganizationCreditGrantRequest\x1a-.gitpod.v1.SetOrganizationCreditGrantResponse\"\x00\x1a\r\xaa\xab\x1e\t\n" +
-	"\abillingB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x1aDeleteTeamCreditAllocation\x12,.gitpod.v1.DeleteTeamCreditAllocationRequest\x1a-.gitpod.v1.DeleteTeamCreditAllocationResponse\"\x00B'Z%github.com/gitpod-io/gitpod-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_billing_proto_rawDescOnce sync.Once
@@ -11064,7 +7033,7 @@ func file_gitpod_v1_billing_proto_rawDescGZIP() []byte {
 }
 
 var file_gitpod_v1_billing_proto_enumTypes = make([]protoimpl.EnumInfo, 18)
-var file_gitpod_v1_billing_proto_msgTypes = make([]protoimpl.MessageInfo, 147)
+var file_gitpod_v1_billing_proto_msgTypes = make([]protoimpl.MessageInfo, 79)
 var file_gitpod_v1_billing_proto_goTypes = []any{
 	(BillingPlanKind)(0),                                // 0: gitpod.v1.BillingPlanKind
 	(CreditCardVerificationStatus)(0),                   // 1: gitpod.v1.CreditCardVerificationStatus
@@ -11091,452 +7060,267 @@ var file_gitpod_v1_billing_proto_goTypes = []any{
 	(*BillingRecordStatus)(nil),                         // 22: gitpod.v1.BillingRecordStatus
 	(*BillingPlanStatus)(nil),                           // 23: gitpod.v1.BillingPlanStatus
 	(*PaymentMethodVerificationStatus)(nil),             // 24: gitpod.v1.PaymentMethodVerificationStatus
-	(*GetBillingRecordRequest)(nil),                     // 25: gitpod.v1.GetBillingRecordRequest
-	(*GetBillingRecordResponse)(nil),                    // 26: gitpod.v1.GetBillingRecordResponse
-	(*UpdateBillingRecordRequest)(nil),                  // 27: gitpod.v1.UpdateBillingRecordRequest
-	(*UpdateBillingRecordResponse)(nil),                 // 28: gitpod.v1.UpdateBillingRecordResponse
-	(*SetupBillingRequest)(nil),                         // 29: gitpod.v1.SetupBillingRequest
-	(*SetupBillingResponse)(nil),                        // 30: gitpod.v1.SetupBillingResponse
-	(*CompleteBillingSetupRequest)(nil),                 // 31: gitpod.v1.CompleteBillingSetupRequest
-	(*CompleteBillingSetupResponse)(nil),                // 32: gitpod.v1.CompleteBillingSetupResponse
-	(*GetBillingInfoRequest)(nil),                       // 33: gitpod.v1.GetBillingInfoRequest
-	(*GetBillingInfoResponse)(nil),                      // 34: gitpod.v1.GetBillingInfoResponse
-	(*ReconcileBillingRequest)(nil),                     // 35: gitpod.v1.ReconcileBillingRequest
-	(*ReconcileBillingResponse)(nil),                    // 36: gitpod.v1.ReconcileBillingResponse
-	(*TopupPaymentFailureInfo)(nil),                     // 37: gitpod.v1.TopupPaymentFailureInfo
-	(*PaymentFailureInfo)(nil),                          // 38: gitpod.v1.PaymentFailureInfo
-	(*CreateSubscriptionRequest)(nil),                   // 39: gitpod.v1.CreateSubscriptionRequest
-	(*CreateSubscriptionResponse)(nil),                  // 40: gitpod.v1.CreateSubscriptionResponse
-	(*CancelSubscriptionRequest)(nil),                   // 41: gitpod.v1.CancelSubscriptionRequest
-	(*CancelSubscriptionResponse)(nil),                  // 42: gitpod.v1.CancelSubscriptionResponse
-	(*UpdateSubscriptionRequest)(nil),                   // 43: gitpod.v1.UpdateSubscriptionRequest
-	(*UpdateSubscriptionResponse)(nil),                  // 44: gitpod.v1.UpdateSubscriptionResponse
-	(*ListSubscriptionsRequest)(nil),                    // 45: gitpod.v1.ListSubscriptionsRequest
-	(*Subscription)(nil),                                // 46: gitpod.v1.Subscription
-	(*ListSubscriptionsResponse)(nil),                   // 47: gitpod.v1.ListSubscriptionsResponse
-	(*GrantCreditsRequest)(nil),                         // 48: gitpod.v1.GrantCreditsRequest
-	(*GrantCreditsResponse)(nil),                        // 49: gitpod.v1.GrantCreditsResponse
-	(*GetStripePublishableKeyRequest)(nil),              // 50: gitpod.v1.GetStripePublishableKeyRequest
-	(*GetStripePublishableKeyResponse)(nil),             // 51: gitpod.v1.GetStripePublishableKeyResponse
-	(*SetBillingRealmRequest)(nil),                      // 52: gitpod.v1.SetBillingRealmRequest
-	(*SetBillingRealmResponse)(nil),                     // 53: gitpod.v1.SetBillingRealmResponse
-	(*CreateCardVerificationRequest)(nil),               // 54: gitpod.v1.CreateCardVerificationRequest
-	(*CreateCardVerificationResponse)(nil),              // 55: gitpod.v1.CreateCardVerificationResponse
-	(*SetTaxIDRequest)(nil),                             // 56: gitpod.v1.SetTaxIDRequest
-	(*SetTaxIDResponse)(nil),                            // 57: gitpod.v1.SetTaxIDResponse
-	(*Coupon)(nil),                                      // 58: gitpod.v1.Coupon
-	(*CreateCouponRequest)(nil),                         // 59: gitpod.v1.CreateCouponRequest
-	(*CouponConfig)(nil),                                // 60: gitpod.v1.CouponConfig
-	(*CreateCouponResponse)(nil),                        // 61: gitpod.v1.CreateCouponResponse
-	(*ListCouponsRequest)(nil),                          // 62: gitpod.v1.ListCouponsRequest
-	(*ListCouponsResponse)(nil),                         // 63: gitpod.v1.ListCouponsResponse
-	(*GetCouponRequest)(nil),                            // 64: gitpod.v1.GetCouponRequest
-	(*GetCouponResponse)(nil),                           // 65: gitpod.v1.GetCouponResponse
-	(*BillingAddress)(nil),                              // 66: gitpod.v1.BillingAddress
-	(*SetBillingAddressRequest)(nil),                    // 67: gitpod.v1.SetBillingAddressRequest
-	(*SetBillingAddressResponse)(nil),                   // 68: gitpod.v1.SetBillingAddressResponse
-	(*GetStripePortalUrlRequest)(nil),                   // 69: gitpod.v1.GetStripePortalUrlRequest
-	(*GetStripePortalUrlResponse)(nil),                  // 70: gitpod.v1.GetStripePortalUrlResponse
-	(*ClearTopupFailureRequest)(nil),                    // 71: gitpod.v1.ClearTopupFailureRequest
-	(*ClearTopupFailureResponse)(nil),                   // 72: gitpod.v1.ClearTopupFailureResponse
-	(*GetCreditConsumptionTimeSeriesRequest)(nil),       // 73: gitpod.v1.GetCreditConsumptionTimeSeriesRequest
-	(*GetCreditConsumptionTimeSeriesResponse)(nil),      // 74: gitpod.v1.GetCreditConsumptionTimeSeriesResponse
-	(*MetricConsumptionTimeSeries)(nil),                 // 75: gitpod.v1.MetricConsumptionTimeSeries
-	(*CreditUsageDataPoint)(nil),                        // 76: gitpod.v1.CreditUsageDataPoint
-	(*SetupEnterpriseBillingRequest)(nil),               // 77: gitpod.v1.SetupEnterpriseBillingRequest
-	(*SetupEnterpriseBillingResponse)(nil),              // 78: gitpod.v1.SetupEnterpriseBillingResponse
-	(*AutoTopupSettings)(nil),                           // 79: gitpod.v1.AutoTopupSettings
-	(*UpdateAutoTopupSettingsRequest)(nil),              // 80: gitpod.v1.UpdateAutoTopupSettingsRequest
-	(*UpdateAutoTopupSettingsResponse)(nil),             // 81: gitpod.v1.UpdateAutoTopupSettingsResponse
-	(*GetAutoTopupSettingsRequest)(nil),                 // 82: gitpod.v1.GetAutoTopupSettingsRequest
-	(*GetAutoTopupSettingsResponse)(nil),                // 83: gitpod.v1.GetAutoTopupSettingsResponse
-	(*CreditUsageReportFilter)(nil),                     // 84: gitpod.v1.CreditUsageReportFilter
-	(*GetCreditUsageReportRequest)(nil),                 // 85: gitpod.v1.GetCreditUsageReportRequest
-	(*GetCreditUsageReportResponse)(nil),                // 86: gitpod.v1.GetCreditUsageReportResponse
-	(*DailyCreditUsage)(nil),                            // 87: gitpod.v1.DailyCreditUsage
-	(*CreditsByType)(nil),                               // 88: gitpod.v1.CreditsByType
-	(*UserCreditUsage)(nil),                             // 89: gitpod.v1.UserCreditUsage
-	(*TeamCreditUsage)(nil),                             // 90: gitpod.v1.TeamCreditUsage
-	(*EnvironmentCreditUsage)(nil),                      // 91: gitpod.v1.EnvironmentCreditUsage
-	(*AgentExecutionCreditUsage)(nil),                   // 92: gitpod.v1.AgentExecutionCreditUsage
-	(*GetCreditUsageExportRequest)(nil),                 // 93: gitpod.v1.GetCreditUsageExportRequest
-	(*GetCreditUsageExportResponse)(nil),                // 94: gitpod.v1.GetCreditUsageExportResponse
-	(*EnterpriseAITokenUsage)(nil),                      // 95: gitpod.v1.EnterpriseAITokenUsage
-	(*EnterpriseAIUsage)(nil),                           // 96: gitpod.v1.EnterpriseAIUsage
-	(*EnterpriseAIUsageBudget)(nil),                     // 97: gitpod.v1.EnterpriseAIUsageBudget
-	(*EnterpriseAIUsageByTokenType)(nil),                // 98: gitpod.v1.EnterpriseAIUsageByTokenType
-	(*EnterpriseAIUsageByModel)(nil),                    // 99: gitpod.v1.EnterpriseAIUsageByModel
-	(*TeamEnterpriseAIUsage)(nil),                       // 100: gitpod.v1.TeamEnterpriseAIUsage
-	(*UserEnterpriseAIUsage)(nil),                       // 101: gitpod.v1.UserEnterpriseAIUsage
-	(*UserCostBudgetUsage)(nil),                         // 102: gitpod.v1.UserCostBudgetUsage
-	(*DailyEnterpriseAIUsage)(nil),                      // 103: gitpod.v1.DailyEnterpriseAIUsage
-	(*GetEnterpriseAIUsageSummaryRequest)(nil),          // 104: gitpod.v1.GetEnterpriseAIUsageSummaryRequest
-	(*GetEnterpriseAIUsageSummaryResponse)(nil),         // 105: gitpod.v1.GetEnterpriseAIUsageSummaryResponse
-	(*ListEnterpriseAITeamUsageRequest)(nil),            // 106: gitpod.v1.ListEnterpriseAITeamUsageRequest
-	(*ListEnterpriseAITeamUsageResponse)(nil),           // 107: gitpod.v1.ListEnterpriseAITeamUsageResponse
-	(*ListEnterpriseAIUserUsageRequest)(nil),            // 108: gitpod.v1.ListEnterpriseAIUserUsageRequest
-	(*ListEnterpriseAIUserUsageResponse)(nil),           // 109: gitpod.v1.ListEnterpriseAIUserUsageResponse
-	(*GetEnterpriseAIUsageTimeSeriesRequest)(nil),       // 110: gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest
-	(*EnterpriseAIUsageTimeSeriesFilter)(nil),           // 111: gitpod.v1.EnterpriseAIUsageTimeSeriesFilter
-	(*GetEnterpriseAIUsageTimeSeriesResponse)(nil),      // 112: gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse
-	(*CorrectUsageEventsRequest)(nil),                   // 113: gitpod.v1.CorrectUsageEventsRequest
-	(*CorrectUsageEventsResponse)(nil),                  // 114: gitpod.v1.CorrectUsageEventsResponse
-	(*UsageEventCorrectionResult)(nil),                  // 115: gitpod.v1.UsageEventCorrectionResult
-	(*InsertUsageEventsRequest)(nil),                    // 116: gitpod.v1.InsertUsageEventsRequest
-	(*UsageEventInput)(nil),                             // 117: gitpod.v1.UsageEventInput
-	(*InsertUsageEventsResponse)(nil),                   // 118: gitpod.v1.InsertUsageEventsResponse
-	(*UsageEventInsertResult)(nil),                      // 119: gitpod.v1.UsageEventInsertResult
-	(*GetEnterpriseBillingInfoRequest)(nil),             // 120: gitpod.v1.GetEnterpriseBillingInfoRequest
-	(*GetEnterpriseBillingInfoResponse)(nil),            // 121: gitpod.v1.GetEnterpriseBillingInfoResponse
-	(*BYOKRateCardRate)(nil),                            // 122: gitpod.v1.BYOKRateCardRate
-	(*ListBYOKRateCardRatesRequest)(nil),                // 123: gitpod.v1.ListBYOKRateCardRatesRequest
-	(*ListBYOKRateCardRatesResponse)(nil),               // 124: gitpod.v1.ListBYOKRateCardRatesResponse
-	(*SetBYOKRateCardRateRequest)(nil),                  // 125: gitpod.v1.SetBYOKRateCardRateRequest
-	(*SetBYOKRateCardRateResponse)(nil),                 // 126: gitpod.v1.SetBYOKRateCardRateResponse
-	(*EnterpriseAIUserBudgetPolicy)(nil),                // 127: gitpod.v1.EnterpriseAIUserBudgetPolicy
-	(*EffectiveEnterpriseAIUserBudgetPolicy)(nil),       // 128: gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicy
-	(*ListEnterpriseAIUserBudgetPoliciesRequest)(nil),   // 129: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesRequest
-	(*ListEnterpriseAIUserBudgetPoliciesResponse)(nil),  // 130: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesResponse
-	(*GetEnterpriseAIUserBudgetPolicyRequest)(nil),      // 131: gitpod.v1.GetEnterpriseAIUserBudgetPolicyRequest
-	(*GetEnterpriseAIUserBudgetPolicyResponse)(nil),     // 132: gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse
-	(*SetEnterpriseAIUserBudgetPolicyRequest)(nil),      // 133: gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest
-	(*SetEnterpriseAIUserBudgetPolicyResponse)(nil),     // 134: gitpod.v1.SetEnterpriseAIUserBudgetPolicyResponse
-	(*DeleteEnterpriseAIUserBudgetPolicyRequest)(nil),   // 135: gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest
-	(*DeleteEnterpriseAIUserBudgetPolicyResponse)(nil),  // 136: gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyResponse
-	(*GetCumulativeCreditUsageRequest)(nil),             // 137: gitpod.v1.GetCumulativeCreditUsageRequest
-	(*GetCumulativeCreditUsageResponse)(nil),            // 138: gitpod.v1.GetCumulativeCreditUsageResponse
-	(*CumulativeCreditUsage)(nil),                       // 139: gitpod.v1.CumulativeCreditUsage
-	(*TeamCumulativeCreditUsage)(nil),                   // 140: gitpod.v1.TeamCumulativeCreditUsage
-	(*UserCreditBudgetUsage)(nil),                       // 141: gitpod.v1.UserCreditBudgetUsage
-	(*ListEnterpriseUserCreditUsageRequest)(nil),        // 142: gitpod.v1.ListEnterpriseUserCreditUsageRequest
-	(*ListEnterpriseUserCreditUsageResponse)(nil),       // 143: gitpod.v1.ListEnterpriseUserCreditUsageResponse
-	(*TeamCreditAllocationInfo)(nil),                    // 144: gitpod.v1.TeamCreditAllocationInfo
-	(*CreateTeamCreditAllocationRequest)(nil),           // 145: gitpod.v1.CreateTeamCreditAllocationRequest
-	(*CreateTeamCreditAllocationResponse)(nil),          // 146: gitpod.v1.CreateTeamCreditAllocationResponse
-	(*GetTeamCreditAllocationRequest)(nil),              // 147: gitpod.v1.GetTeamCreditAllocationRequest
-	(*GetTeamCreditAllocationResponse)(nil),             // 148: gitpod.v1.GetTeamCreditAllocationResponse
-	(*UpdateTeamCreditAllocationRequest)(nil),           // 149: gitpod.v1.UpdateTeamCreditAllocationRequest
-	(*UpdateTeamCreditAllocationResponse)(nil),          // 150: gitpod.v1.UpdateTeamCreditAllocationResponse
-	(*DeleteTeamCreditAllocationRequest)(nil),           // 151: gitpod.v1.DeleteTeamCreditAllocationRequest
-	(*DeleteTeamCreditAllocationResponse)(nil),          // 152: gitpod.v1.DeleteTeamCreditAllocationResponse
-	(*SetOrganizationCreditGrantRequest)(nil),           // 153: gitpod.v1.SetOrganizationCreditGrantRequest
-	(*SetOrganizationCreditGrantResponse)(nil),          // 154: gitpod.v1.SetOrganizationCreditGrantResponse
-	(*EnvironmentCorrectionSpec)(nil),                   // 155: gitpod.v1.EnvironmentCorrectionSpec
-	(*CorrectEnvironmentUsageEventsRequest)(nil),        // 156: gitpod.v1.CorrectEnvironmentUsageEventsRequest
-	(*CorrectEnvironmentUsageEventsResponse)(nil),       // 157: gitpod.v1.CorrectEnvironmentUsageEventsResponse
-	(*EnvironmentUsageSummary)(nil),                     // 158: gitpod.v1.EnvironmentUsageSummary
-	(*CompleteBillingSetupRequest_Subscribe)(nil),       // 159: gitpod.v1.CompleteBillingSetupRequest.Subscribe
-	(*ListCouponsRequest_Filter)(nil),                   // 160: gitpod.v1.ListCouponsRequest.Filter
-	(*ListEnterpriseAITeamUsageRequest_Filter)(nil),     // 161: gitpod.v1.ListEnterpriseAITeamUsageRequest.Filter
-	(*ListEnterpriseAIUserUsageRequest_Sort)(nil),       // 162: gitpod.v1.ListEnterpriseAIUserUsageRequest.Sort
-	(*ListEnterpriseAIUserUsageRequest_Filter)(nil),     // 163: gitpod.v1.ListEnterpriseAIUserUsageRequest.Filter
-	(*ListEnterpriseUserCreditUsageRequest_Sort)(nil),   // 164: gitpod.v1.ListEnterpriseUserCreditUsageRequest.Sort
-	(*timestamppb.Timestamp)(nil),                       // 165: google.protobuf.Timestamp
-	(*PaginationRequest)(nil),                           // 166: gitpod.v1.PaginationRequest
-	(*PaginationResponse)(nil),                          // 167: gitpod.v1.PaginationResponse
-	(*DateRange)(nil),                                   // 168: gitpod.v1.DateRange
-	(*Subject)(nil),                                     // 169: gitpod.v1.Subject
-	(SortOrder)(0),                                      // 170: gitpod.v1.SortOrder
+	(*TopupPaymentFailureInfo)(nil),                     // 25: gitpod.v1.TopupPaymentFailureInfo
+	(*PaymentFailureInfo)(nil),                          // 26: gitpod.v1.PaymentFailureInfo
+	(*Subscription)(nil),                                // 27: gitpod.v1.Subscription
+	(*Coupon)(nil),                                      // 28: gitpod.v1.Coupon
+	(*CouponConfig)(nil),                                // 29: gitpod.v1.CouponConfig
+	(*BillingAddress)(nil),                              // 30: gitpod.v1.BillingAddress
+	(*MetricConsumptionTimeSeries)(nil),                 // 31: gitpod.v1.MetricConsumptionTimeSeries
+	(*CreditUsageDataPoint)(nil),                        // 32: gitpod.v1.CreditUsageDataPoint
+	(*AutoTopupSettings)(nil),                           // 33: gitpod.v1.AutoTopupSettings
+	(*CreditUsageReportFilter)(nil),                     // 34: gitpod.v1.CreditUsageReportFilter
+	(*GetCreditUsageReportRequest)(nil),                 // 35: gitpod.v1.GetCreditUsageReportRequest
+	(*GetCreditUsageReportResponse)(nil),                // 36: gitpod.v1.GetCreditUsageReportResponse
+	(*DailyCreditUsage)(nil),                            // 37: gitpod.v1.DailyCreditUsage
+	(*CreditsByType)(nil),                               // 38: gitpod.v1.CreditsByType
+	(*UserCreditUsage)(nil),                             // 39: gitpod.v1.UserCreditUsage
+	(*TeamCreditUsage)(nil),                             // 40: gitpod.v1.TeamCreditUsage
+	(*EnvironmentCreditUsage)(nil),                      // 41: gitpod.v1.EnvironmentCreditUsage
+	(*AgentExecutionCreditUsage)(nil),                   // 42: gitpod.v1.AgentExecutionCreditUsage
+	(*GetCreditUsageExportRequest)(nil),                 // 43: gitpod.v1.GetCreditUsageExportRequest
+	(*GetCreditUsageExportResponse)(nil),                // 44: gitpod.v1.GetCreditUsageExportResponse
+	(*EnterpriseAITokenUsage)(nil),                      // 45: gitpod.v1.EnterpriseAITokenUsage
+	(*EnterpriseAIUsage)(nil),                           // 46: gitpod.v1.EnterpriseAIUsage
+	(*EnterpriseAIUsageBudget)(nil),                     // 47: gitpod.v1.EnterpriseAIUsageBudget
+	(*EnterpriseAIUsageByTokenType)(nil),                // 48: gitpod.v1.EnterpriseAIUsageByTokenType
+	(*EnterpriseAIUsageByModel)(nil),                    // 49: gitpod.v1.EnterpriseAIUsageByModel
+	(*TeamEnterpriseAIUsage)(nil),                       // 50: gitpod.v1.TeamEnterpriseAIUsage
+	(*UserEnterpriseAIUsage)(nil),                       // 51: gitpod.v1.UserEnterpriseAIUsage
+	(*UserCostBudgetUsage)(nil),                         // 52: gitpod.v1.UserCostBudgetUsage
+	(*DailyEnterpriseAIUsage)(nil),                      // 53: gitpod.v1.DailyEnterpriseAIUsage
+	(*GetEnterpriseAIUsageSummaryRequest)(nil),          // 54: gitpod.v1.GetEnterpriseAIUsageSummaryRequest
+	(*GetEnterpriseAIUsageSummaryResponse)(nil),         // 55: gitpod.v1.GetEnterpriseAIUsageSummaryResponse
+	(*ListEnterpriseAITeamUsageRequest)(nil),            // 56: gitpod.v1.ListEnterpriseAITeamUsageRequest
+	(*ListEnterpriseAITeamUsageResponse)(nil),           // 57: gitpod.v1.ListEnterpriseAITeamUsageResponse
+	(*ListEnterpriseAIUserUsageRequest)(nil),            // 58: gitpod.v1.ListEnterpriseAIUserUsageRequest
+	(*ListEnterpriseAIUserUsageResponse)(nil),           // 59: gitpod.v1.ListEnterpriseAIUserUsageResponse
+	(*GetEnterpriseAIUsageTimeSeriesRequest)(nil),       // 60: gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest
+	(*EnterpriseAIUsageTimeSeriesFilter)(nil),           // 61: gitpod.v1.EnterpriseAIUsageTimeSeriesFilter
+	(*GetEnterpriseAIUsageTimeSeriesResponse)(nil),      // 62: gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse
+	(*UsageEventCorrectionResult)(nil),                  // 63: gitpod.v1.UsageEventCorrectionResult
+	(*UsageEventInput)(nil),                             // 64: gitpod.v1.UsageEventInput
+	(*UsageEventInsertResult)(nil),                      // 65: gitpod.v1.UsageEventInsertResult
+	(*BYOKRateCardRate)(nil),                            // 66: gitpod.v1.BYOKRateCardRate
+	(*EnterpriseAIUserBudgetPolicy)(nil),                // 67: gitpod.v1.EnterpriseAIUserBudgetPolicy
+	(*EffectiveEnterpriseAIUserBudgetPolicy)(nil),       // 68: gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicy
+	(*GetEnterpriseAIUserBudgetPolicyRequest)(nil),      // 69: gitpod.v1.GetEnterpriseAIUserBudgetPolicyRequest
+	(*GetEnterpriseAIUserBudgetPolicyResponse)(nil),     // 70: gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse
+	(*SetEnterpriseAIUserBudgetPolicyRequest)(nil),      // 71: gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest
+	(*SetEnterpriseAIUserBudgetPolicyResponse)(nil),     // 72: gitpod.v1.SetEnterpriseAIUserBudgetPolicyResponse
+	(*DeleteEnterpriseAIUserBudgetPolicyRequest)(nil),   // 73: gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest
+	(*DeleteEnterpriseAIUserBudgetPolicyResponse)(nil),  // 74: gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyResponse
+	(*GetCumulativeCreditUsageRequest)(nil),             // 75: gitpod.v1.GetCumulativeCreditUsageRequest
+	(*GetCumulativeCreditUsageResponse)(nil),            // 76: gitpod.v1.GetCumulativeCreditUsageResponse
+	(*CumulativeCreditUsage)(nil),                       // 77: gitpod.v1.CumulativeCreditUsage
+	(*TeamCumulativeCreditUsage)(nil),                   // 78: gitpod.v1.TeamCumulativeCreditUsage
+	(*UserCreditBudgetUsage)(nil),                       // 79: gitpod.v1.UserCreditBudgetUsage
+	(*ListEnterpriseUserCreditUsageRequest)(nil),        // 80: gitpod.v1.ListEnterpriseUserCreditUsageRequest
+	(*ListEnterpriseUserCreditUsageResponse)(nil),       // 81: gitpod.v1.ListEnterpriseUserCreditUsageResponse
+	(*TeamCreditAllocationInfo)(nil),                    // 82: gitpod.v1.TeamCreditAllocationInfo
+	(*CreateTeamCreditAllocationRequest)(nil),           // 83: gitpod.v1.CreateTeamCreditAllocationRequest
+	(*CreateTeamCreditAllocationResponse)(nil),          // 84: gitpod.v1.CreateTeamCreditAllocationResponse
+	(*GetTeamCreditAllocationRequest)(nil),              // 85: gitpod.v1.GetTeamCreditAllocationRequest
+	(*GetTeamCreditAllocationResponse)(nil),             // 86: gitpod.v1.GetTeamCreditAllocationResponse
+	(*UpdateTeamCreditAllocationRequest)(nil),           // 87: gitpod.v1.UpdateTeamCreditAllocationRequest
+	(*UpdateTeamCreditAllocationResponse)(nil),          // 88: gitpod.v1.UpdateTeamCreditAllocationResponse
+	(*DeleteTeamCreditAllocationRequest)(nil),           // 89: gitpod.v1.DeleteTeamCreditAllocationRequest
+	(*DeleteTeamCreditAllocationResponse)(nil),          // 90: gitpod.v1.DeleteTeamCreditAllocationResponse
+	(*EnvironmentCorrectionSpec)(nil),                   // 91: gitpod.v1.EnvironmentCorrectionSpec
+	(*EnvironmentUsageSummary)(nil),                     // 92: gitpod.v1.EnvironmentUsageSummary
+	(*ListEnterpriseAITeamUsageRequest_Filter)(nil),     // 93: gitpod.v1.ListEnterpriseAITeamUsageRequest.Filter
+	(*ListEnterpriseAIUserUsageRequest_Sort)(nil),       // 94: gitpod.v1.ListEnterpriseAIUserUsageRequest.Sort
+	(*ListEnterpriseAIUserUsageRequest_Filter)(nil),     // 95: gitpod.v1.ListEnterpriseAIUserUsageRequest.Filter
+	(*ListEnterpriseUserCreditUsageRequest_Sort)(nil),   // 96: gitpod.v1.ListEnterpriseUserCreditUsageRequest.Sort
+	(*timestamppb.Timestamp)(nil),                       // 97: google.protobuf.Timestamp
+	(*Subject)(nil),                                     // 98: gitpod.v1.Subject
+	(*DateRange)(nil),                                   // 99: gitpod.v1.DateRange
+	(*PaginationRequest)(nil),                           // 100: gitpod.v1.PaginationRequest
+	(*PaginationResponse)(nil),                          // 101: gitpod.v1.PaginationResponse
+	(SortOrder)(0),                                      // 102: gitpod.v1.SortOrder
 }
 var file_gitpod_v1_billing_proto_depIdxs = []int32{
 	19,  // 0: gitpod.v1.BillingRecord.metadata:type_name -> gitpod.v1.BillingRecordMetadata
 	20,  // 1: gitpod.v1.BillingRecord.spec:type_name -> gitpod.v1.BillingRecordSpec
 	22,  // 2: gitpod.v1.BillingRecord.status:type_name -> gitpod.v1.BillingRecordStatus
 	5,   // 3: gitpod.v1.BillingRecordMetadata.realm:type_name -> gitpod.v1.BillingRealm
-	165, // 4: gitpod.v1.BillingRecordMetadata.created_at:type_name -> google.protobuf.Timestamp
-	165, // 5: gitpod.v1.BillingRecordMetadata.updated_at:type_name -> google.protobuf.Timestamp
+	97,  // 4: gitpod.v1.BillingRecordMetadata.created_at:type_name -> google.protobuf.Timestamp
+	97,  // 5: gitpod.v1.BillingRecordMetadata.updated_at:type_name -> google.protobuf.Timestamp
 	21,  // 6: gitpod.v1.BillingRecordSpec.plan:type_name -> gitpod.v1.BillingPlanSpec
 	0,   // 7: gitpod.v1.BillingPlanSpec.kind:type_name -> gitpod.v1.BillingPlanKind
 	23,  // 8: gitpod.v1.BillingRecordStatus.plan:type_name -> gitpod.v1.BillingPlanStatus
 	24,  // 9: gitpod.v1.BillingRecordStatus.payment_method_verification:type_name -> gitpod.v1.PaymentMethodVerificationStatus
 	3,   // 10: gitpod.v1.BillingRecordStatus.credit:type_name -> gitpod.v1.CreditStatus
 	0,   // 11: gitpod.v1.BillingPlanStatus.kind:type_name -> gitpod.v1.BillingPlanKind
-	165, // 12: gitpod.v1.BillingPlanStatus.ending_at:type_name -> google.protobuf.Timestamp
+	97,  // 12: gitpod.v1.BillingPlanStatus.ending_at:type_name -> google.protobuf.Timestamp
 	1,   // 13: gitpod.v1.PaymentMethodVerificationStatus.card_verification_status:type_name -> gitpod.v1.CreditCardVerificationStatus
-	18,  // 14: gitpod.v1.GetBillingRecordResponse.billing_record:type_name -> gitpod.v1.BillingRecord
-	0,   // 15: gitpod.v1.UpdateBillingRecordRequest.kind:type_name -> gitpod.v1.BillingPlanKind
-	159, // 16: gitpod.v1.CompleteBillingSetupRequest.subscribe:type_name -> gitpod.v1.CompleteBillingSetupRequest.Subscribe
-	165, // 17: gitpod.v1.CompleteBillingSetupResponse.trial_expires_at:type_name -> google.protobuf.Timestamp
-	46,  // 18: gitpod.v1.CompleteBillingSetupResponse.subscription:type_name -> gitpod.v1.Subscription
-	4,   // 19: gitpod.v1.GetBillingInfoResponse.payment_method_status:type_name -> gitpod.v1.PaymentMethodStatus
-	3,   // 20: gitpod.v1.GetBillingInfoResponse.credit_status:type_name -> gitpod.v1.CreditStatus
-	38,  // 21: gitpod.v1.GetBillingInfoResponse.payment_failure:type_name -> gitpod.v1.PaymentFailureInfo
-	37,  // 22: gitpod.v1.GetBillingInfoResponse.topup_payment_failure:type_name -> gitpod.v1.TopupPaymentFailureInfo
-	79,  // 23: gitpod.v1.GetBillingInfoResponse.auto_topup_settings:type_name -> gitpod.v1.AutoTopupSettings
-	165, // 24: gitpod.v1.GetBillingInfoResponse.last_auto_topup_at:type_name -> google.protobuf.Timestamp
-	165, // 25: gitpod.v1.TopupPaymentFailureInfo.failed_at:type_name -> google.protobuf.Timestamp
-	2,   // 26: gitpod.v1.PaymentFailureInfo.state:type_name -> gitpod.v1.PaymentFailureState
-	165, // 27: gitpod.v1.PaymentFailureInfo.grace_period_ends_at:type_name -> google.protobuf.Timestamp
-	165, // 28: gitpod.v1.PaymentFailureInfo.failed_at:type_name -> google.protobuf.Timestamp
-	6,   // 29: gitpod.v1.CreateSubscriptionRequest.subscription_type:type_name -> gitpod.v1.SubscriptionType
-	46,  // 30: gitpod.v1.CreateSubscriptionResponse.subscription:type_name -> gitpod.v1.Subscription
-	6,   // 31: gitpod.v1.CancelSubscriptionRequest.subscription_type:type_name -> gitpod.v1.SubscriptionType
-	46,  // 32: gitpod.v1.UpdateSubscriptionResponse.subscription:type_name -> gitpod.v1.Subscription
-	6,   // 33: gitpod.v1.Subscription.subscription_type:type_name -> gitpod.v1.SubscriptionType
-	7,   // 34: gitpod.v1.Subscription.status:type_name -> gitpod.v1.SubscriptionStatus
-	165, // 35: gitpod.v1.Subscription.starts_at:type_name -> google.protobuf.Timestamp
-	165, // 36: gitpod.v1.Subscription.cancelled_at:type_name -> google.protobuf.Timestamp
-	165, // 37: gitpod.v1.Subscription.ends_at:type_name -> google.protobuf.Timestamp
-	46,  // 38: gitpod.v1.ListSubscriptionsResponse.subscriptions:type_name -> gitpod.v1.Subscription
-	5,   // 39: gitpod.v1.SetBillingRealmRequest.realm:type_name -> gitpod.v1.BillingRealm
-	60,  // 40: gitpod.v1.Coupon.config:type_name -> gitpod.v1.CouponConfig
-	165, // 41: gitpod.v1.Coupon.expires_at:type_name -> google.protobuf.Timestamp
-	165, // 42: gitpod.v1.Coupon.created_at:type_name -> google.protobuf.Timestamp
-	165, // 43: gitpod.v1.Coupon.updated_at:type_name -> google.protobuf.Timestamp
-	60,  // 44: gitpod.v1.CreateCouponRequest.config:type_name -> gitpod.v1.CouponConfig
-	165, // 45: gitpod.v1.CreateCouponRequest.expires_at:type_name -> google.protobuf.Timestamp
-	58,  // 46: gitpod.v1.CreateCouponResponse.coupon:type_name -> gitpod.v1.Coupon
-	166, // 47: gitpod.v1.ListCouponsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	160, // 48: gitpod.v1.ListCouponsRequest.filter:type_name -> gitpod.v1.ListCouponsRequest.Filter
-	167, // 49: gitpod.v1.ListCouponsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	58,  // 50: gitpod.v1.ListCouponsResponse.coupons:type_name -> gitpod.v1.Coupon
-	58,  // 51: gitpod.v1.GetCouponResponse.coupon:type_name -> gitpod.v1.Coupon
-	66,  // 52: gitpod.v1.SetBillingAddressRequest.address:type_name -> gitpod.v1.BillingAddress
-	168, // 53: gitpod.v1.GetCreditConsumptionTimeSeriesRequest.date_range:type_name -> gitpod.v1.DateRange
-	75,  // 54: gitpod.v1.GetCreditConsumptionTimeSeriesResponse.metrics:type_name -> gitpod.v1.MetricConsumptionTimeSeries
-	15,  // 55: gitpod.v1.MetricConsumptionTimeSeries.kind:type_name -> gitpod.v1.MetricConsumptionTimeSeries.Kind
-	76,  // 56: gitpod.v1.MetricConsumptionTimeSeries.series:type_name -> gitpod.v1.CreditUsageDataPoint
-	165, // 57: gitpod.v1.CreditUsageDataPoint.time:type_name -> google.protobuf.Timestamp
-	165, // 58: gitpod.v1.SetupEnterpriseBillingRequest.contract_start_date:type_name -> google.protobuf.Timestamp
-	79,  // 59: gitpod.v1.UpdateAutoTopupSettingsRequest.settings:type_name -> gitpod.v1.AutoTopupSettings
-	79,  // 60: gitpod.v1.UpdateAutoTopupSettingsResponse.settings:type_name -> gitpod.v1.AutoTopupSettings
-	79,  // 61: gitpod.v1.GetAutoTopupSettingsResponse.settings:type_name -> gitpod.v1.AutoTopupSettings
-	169, // 62: gitpod.v1.CreditUsageReportFilter.subject:type_name -> gitpod.v1.Subject
-	168, // 63: gitpod.v1.GetCreditUsageReportRequest.date_range:type_name -> gitpod.v1.DateRange
-	84,  // 64: gitpod.v1.GetCreditUsageReportRequest.filter:type_name -> gitpod.v1.CreditUsageReportFilter
-	165, // 65: gitpod.v1.GetCreditUsageReportResponse.updated_at:type_name -> google.protobuf.Timestamp
-	87,  // 66: gitpod.v1.GetCreditUsageReportResponse.daily_usage:type_name -> gitpod.v1.DailyCreditUsage
-	165, // 67: gitpod.v1.GetCreditUsageReportResponse.period_start:type_name -> google.protobuf.Timestamp
-	165, // 68: gitpod.v1.DailyCreditUsage.date:type_name -> google.protobuf.Timestamp
-	88,  // 69: gitpod.v1.DailyCreditUsage.org_usage:type_name -> gitpod.v1.CreditsByType
-	89,  // 70: gitpod.v1.DailyCreditUsage.user_usage:type_name -> gitpod.v1.UserCreditUsage
-	90,  // 71: gitpod.v1.DailyCreditUsage.team_usage:type_name -> gitpod.v1.TeamCreditUsage
-	91,  // 72: gitpod.v1.DailyCreditUsage.environment_usage:type_name -> gitpod.v1.EnvironmentCreditUsage
-	92,  // 73: gitpod.v1.DailyCreditUsage.conversation_usage:type_name -> gitpod.v1.AgentExecutionCreditUsage
-	99,  // 74: gitpod.v1.DailyCreditUsage.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
-	8,   // 75: gitpod.v1.CreditsByType.usage_type:type_name -> gitpod.v1.UsageType
-	88,  // 76: gitpod.v1.UserCreditUsage.usage:type_name -> gitpod.v1.CreditsByType
-	99,  // 77: gitpod.v1.UserCreditUsage.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
-	88,  // 78: gitpod.v1.TeamCreditUsage.usage:type_name -> gitpod.v1.CreditsByType
-	88,  // 79: gitpod.v1.EnvironmentCreditUsage.usage:type_name -> gitpod.v1.CreditsByType
-	88,  // 80: gitpod.v1.AgentExecutionCreditUsage.usage:type_name -> gitpod.v1.CreditsByType
-	168, // 81: gitpod.v1.GetCreditUsageExportRequest.date_range:type_name -> gitpod.v1.DateRange
-	9,   // 82: gitpod.v1.GetCreditUsageExportRequest.group_by:type_name -> gitpod.v1.CreditUsageExportGroupBy
-	12,  // 83: gitpod.v1.EnterpriseAIUsage.currency:type_name -> gitpod.v1.BillingCurrency
-	95,  // 84: gitpod.v1.EnterpriseAIUsage.tokens:type_name -> gitpod.v1.EnterpriseAITokenUsage
-	10,  // 85: gitpod.v1.EnterpriseAIUsageBudget.source:type_name -> gitpod.v1.EnterpriseAIUsageBudgetSource
-	12,  // 86: gitpod.v1.EnterpriseAIUsageBudget.currency:type_name -> gitpod.v1.BillingCurrency
-	96,  // 87: gitpod.v1.EnterpriseAIUsageBudget.month_to_date_usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	11,  // 88: gitpod.v1.EnterpriseAIUsageByTokenType.token_type:type_name -> gitpod.v1.BYOKRateCardTokenType
-	96,  // 89: gitpod.v1.EnterpriseAIUsageByTokenType.usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	96,  // 90: gitpod.v1.EnterpriseAIUsageByModel.usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	98,  // 91: gitpod.v1.EnterpriseAIUsageByModel.usage_by_token_type:type_name -> gitpod.v1.EnterpriseAIUsageByTokenType
-	96,  // 92: gitpod.v1.EnterpriseAIUsageByModel.unpriced_usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	98,  // 93: gitpod.v1.EnterpriseAIUsageByModel.unpriced_usage_by_token_type:type_name -> gitpod.v1.EnterpriseAIUsageByTokenType
-	96,  // 94: gitpod.v1.TeamEnterpriseAIUsage.usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	97,  // 95: gitpod.v1.TeamEnterpriseAIUsage.budget:type_name -> gitpod.v1.EnterpriseAIUsageBudget
-	98,  // 96: gitpod.v1.TeamEnterpriseAIUsage.usage_by_token_type:type_name -> gitpod.v1.EnterpriseAIUsageByTokenType
-	96,  // 97: gitpod.v1.UserEnterpriseAIUsage.usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	96,  // 98: gitpod.v1.UserCostBudgetUsage.month_to_date_usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	12,  // 99: gitpod.v1.UserCostBudgetUsage.currency:type_name -> gitpod.v1.BillingCurrency
-	14,  // 100: gitpod.v1.UserCostBudgetUsage.budget_source:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicySource
-	165, // 101: gitpod.v1.DailyEnterpriseAIUsage.date:type_name -> google.protobuf.Timestamp
-	96,  // 102: gitpod.v1.DailyEnterpriseAIUsage.usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	97,  // 103: gitpod.v1.DailyEnterpriseAIUsage.budget:type_name -> gitpod.v1.EnterpriseAIUsageBudget
-	101, // 104: gitpod.v1.DailyEnterpriseAIUsage.user_usage:type_name -> gitpod.v1.UserEnterpriseAIUsage
-	100, // 105: gitpod.v1.DailyEnterpriseAIUsage.team_usage:type_name -> gitpod.v1.TeamEnterpriseAIUsage
-	99,  // 106: gitpod.v1.DailyEnterpriseAIUsage.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
-	168, // 107: gitpod.v1.GetEnterpriseAIUsageSummaryRequest.date_range:type_name -> gitpod.v1.DateRange
-	165, // 108: gitpod.v1.GetEnterpriseAIUsageSummaryResponse.calculated_at:type_name -> google.protobuf.Timestamp
-	96,  // 109: gitpod.v1.GetEnterpriseAIUsageSummaryResponse.usage:type_name -> gitpod.v1.EnterpriseAIUsage
-	97,  // 110: gitpod.v1.GetEnterpriseAIUsageSummaryResponse.budget:type_name -> gitpod.v1.EnterpriseAIUsageBudget
-	99,  // 111: gitpod.v1.GetEnterpriseAIUsageSummaryResponse.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
-	166, // 112: gitpod.v1.ListEnterpriseAITeamUsageRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	168, // 113: gitpod.v1.ListEnterpriseAITeamUsageRequest.date_range:type_name -> gitpod.v1.DateRange
-	161, // 114: gitpod.v1.ListEnterpriseAITeamUsageRequest.filter:type_name -> gitpod.v1.ListEnterpriseAITeamUsageRequest.Filter
-	167, // 115: gitpod.v1.ListEnterpriseAITeamUsageResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	100, // 116: gitpod.v1.ListEnterpriseAITeamUsageResponse.team_usage:type_name -> gitpod.v1.TeamEnterpriseAIUsage
-	165, // 117: gitpod.v1.ListEnterpriseAITeamUsageResponse.calculated_at:type_name -> google.protobuf.Timestamp
-	166, // 118: gitpod.v1.ListEnterpriseAIUserUsageRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	168, // 119: gitpod.v1.ListEnterpriseAIUserUsageRequest.date_range:type_name -> gitpod.v1.DateRange
-	162, // 120: gitpod.v1.ListEnterpriseAIUserUsageRequest.sort:type_name -> gitpod.v1.ListEnterpriseAIUserUsageRequest.Sort
-	163, // 121: gitpod.v1.ListEnterpriseAIUserUsageRequest.filter:type_name -> gitpod.v1.ListEnterpriseAIUserUsageRequest.Filter
-	167, // 122: gitpod.v1.ListEnterpriseAIUserUsageResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	102, // 123: gitpod.v1.ListEnterpriseAIUserUsageResponse.user_usage:type_name -> gitpod.v1.UserCostBudgetUsage
-	165, // 124: gitpod.v1.ListEnterpriseAIUserUsageResponse.calculated_at:type_name -> google.protobuf.Timestamp
-	168, // 125: gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest.date_range:type_name -> gitpod.v1.DateRange
-	111, // 126: gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest.filter:type_name -> gitpod.v1.EnterpriseAIUsageTimeSeriesFilter
-	169, // 127: gitpod.v1.EnterpriseAIUsageTimeSeriesFilter.subject:type_name -> gitpod.v1.Subject
-	165, // 128: gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse.calculated_at:type_name -> google.protobuf.Timestamp
-	103, // 129: gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse.daily_usage:type_name -> gitpod.v1.DailyEnterpriseAIUsage
-	115, // 130: gitpod.v1.CorrectUsageEventsResponse.results:type_name -> gitpod.v1.UsageEventCorrectionResult
-	117, // 131: gitpod.v1.InsertUsageEventsRequest.events:type_name -> gitpod.v1.UsageEventInput
-	119, // 132: gitpod.v1.InsertUsageEventsResponse.results:type_name -> gitpod.v1.UsageEventInsertResult
-	11,  // 133: gitpod.v1.BYOKRateCardRate.token_type:type_name -> gitpod.v1.BYOKRateCardTokenType
-	12,  // 134: gitpod.v1.BYOKRateCardRate.currency:type_name -> gitpod.v1.BillingCurrency
-	165, // 135: gitpod.v1.BYOKRateCardRate.effective_at:type_name -> google.protobuf.Timestamp
-	165, // 136: gitpod.v1.BYOKRateCardRate.created_at:type_name -> google.protobuf.Timestamp
-	165, // 137: gitpod.v1.ListBYOKRateCardRatesRequest.as_of:type_name -> google.protobuf.Timestamp
-	122, // 138: gitpod.v1.ListBYOKRateCardRatesResponse.rates:type_name -> gitpod.v1.BYOKRateCardRate
-	11,  // 139: gitpod.v1.SetBYOKRateCardRateRequest.token_type:type_name -> gitpod.v1.BYOKRateCardTokenType
-	12,  // 140: gitpod.v1.SetBYOKRateCardRateRequest.currency:type_name -> gitpod.v1.BillingCurrency
-	165, // 141: gitpod.v1.SetBYOKRateCardRateRequest.effective_at:type_name -> google.protobuf.Timestamp
-	122, // 142: gitpod.v1.SetBYOKRateCardRateResponse.rate:type_name -> gitpod.v1.BYOKRateCardRate
-	13,  // 143: gitpod.v1.EnterpriseAIUserBudgetPolicy.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
-	12,  // 144: gitpod.v1.EnterpriseAIUserBudgetPolicy.currency:type_name -> gitpod.v1.BillingCurrency
-	165, // 145: gitpod.v1.EnterpriseAIUserBudgetPolicy.created_at:type_name -> google.protobuf.Timestamp
-	165, // 146: gitpod.v1.EnterpriseAIUserBudgetPolicy.updated_at:type_name -> google.protobuf.Timestamp
-	14,  // 147: gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicy.source:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicySource
-	127, // 148: gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicy.policy:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
-	166, // 149: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	13,  // 150: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesRequest.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
-	127, // 151: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesResponse.organization_policy:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
-	127, // 152: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesResponse.user_policies:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
-	167, // 153: gitpod.v1.ListEnterpriseAIUserBudgetPoliciesResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	13,  // 154: gitpod.v1.GetEnterpriseAIUserBudgetPolicyRequest.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
-	127, // 155: gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse.policy:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
-	128, // 156: gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse.effective_policy:type_name -> gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicy
-	13,  // 157: gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
-	12,  // 158: gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest.currency:type_name -> gitpod.v1.BillingCurrency
-	127, // 159: gitpod.v1.SetEnterpriseAIUserBudgetPolicyResponse.policy:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
-	13,  // 160: gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
-	165, // 161: gitpod.v1.GetCumulativeCreditUsageRequest.as_of:type_name -> google.protobuf.Timestamp
-	139, // 162: gitpod.v1.GetCumulativeCreditUsageResponse.org_usage:type_name -> gitpod.v1.CumulativeCreditUsage
-	140, // 163: gitpod.v1.GetCumulativeCreditUsageResponse.team_usage:type_name -> gitpod.v1.TeamCumulativeCreditUsage
-	139, // 164: gitpod.v1.GetCumulativeCreditUsageResponse.unteamed_usage:type_name -> gitpod.v1.CumulativeCreditUsage
-	165, // 165: gitpod.v1.GetCumulativeCreditUsageResponse.period_start:type_name -> google.protobuf.Timestamp
-	141, // 166: gitpod.v1.GetCumulativeCreditUsageResponse.user_usage:type_name -> gitpod.v1.UserCreditBudgetUsage
-	88,  // 167: gitpod.v1.CumulativeCreditUsage.usage_by_type:type_name -> gitpod.v1.CreditsByType
-	139, // 168: gitpod.v1.TeamCumulativeCreditUsage.usage:type_name -> gitpod.v1.CumulativeCreditUsage
-	139, // 169: gitpod.v1.UserCreditBudgetUsage.month_to_date_usage:type_name -> gitpod.v1.CumulativeCreditUsage
-	14,  // 170: gitpod.v1.UserCreditBudgetUsage.budget_source:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicySource
-	99,  // 171: gitpod.v1.UserCreditBudgetUsage.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
-	166, // 172: gitpod.v1.ListEnterpriseUserCreditUsageRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	165, // 173: gitpod.v1.ListEnterpriseUserCreditUsageRequest.as_of:type_name -> google.protobuf.Timestamp
-	164, // 174: gitpod.v1.ListEnterpriseUserCreditUsageRequest.sort:type_name -> gitpod.v1.ListEnterpriseUserCreditUsageRequest.Sort
-	141, // 175: gitpod.v1.ListEnterpriseUserCreditUsageResponse.user_usage:type_name -> gitpod.v1.UserCreditBudgetUsage
-	167, // 176: gitpod.v1.ListEnterpriseUserCreditUsageResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	165, // 177: gitpod.v1.TeamCreditAllocationInfo.created_at:type_name -> google.protobuf.Timestamp
-	165, // 178: gitpod.v1.TeamCreditAllocationInfo.updated_at:type_name -> google.protobuf.Timestamp
-	12,  // 179: gitpod.v1.TeamCreditAllocationInfo.cost_budget_currency:type_name -> gitpod.v1.BillingCurrency
-	12,  // 180: gitpod.v1.CreateTeamCreditAllocationRequest.cost_budget_currency:type_name -> gitpod.v1.BillingCurrency
-	144, // 181: gitpod.v1.CreateTeamCreditAllocationResponse.allocation:type_name -> gitpod.v1.TeamCreditAllocationInfo
-	144, // 182: gitpod.v1.GetTeamCreditAllocationResponse.allocation:type_name -> gitpod.v1.TeamCreditAllocationInfo
-	12,  // 183: gitpod.v1.UpdateTeamCreditAllocationRequest.cost_budget_currency:type_name -> gitpod.v1.BillingCurrency
-	144, // 184: gitpod.v1.UpdateTeamCreditAllocationResponse.allocation:type_name -> gitpod.v1.TeamCreditAllocationInfo
-	165, // 185: gitpod.v1.EnvironmentCorrectionSpec.start_time:type_name -> google.protobuf.Timestamp
-	165, // 186: gitpod.v1.EnvironmentCorrectionSpec.end_time:type_name -> google.protobuf.Timestamp
-	155, // 187: gitpod.v1.CorrectEnvironmentUsageEventsRequest.corrections:type_name -> gitpod.v1.EnvironmentCorrectionSpec
-	115, // 188: gitpod.v1.CorrectEnvironmentUsageEventsResponse.results:type_name -> gitpod.v1.UsageEventCorrectionResult
-	158, // 189: gitpod.v1.CorrectEnvironmentUsageEventsResponse.environment_summaries:type_name -> gitpod.v1.EnvironmentUsageSummary
-	165, // 190: gitpod.v1.ListCouponsRequest.Filter.expires_before:type_name -> google.protobuf.Timestamp
-	165, // 191: gitpod.v1.ListCouponsRequest.Filter.expires_after:type_name -> google.protobuf.Timestamp
-	16,  // 192: gitpod.v1.ListEnterpriseAIUserUsageRequest.Sort.field:type_name -> gitpod.v1.ListEnterpriseAIUserUsageRequest.SortField
-	170, // 193: gitpod.v1.ListEnterpriseAIUserUsageRequest.Sort.order:type_name -> gitpod.v1.SortOrder
-	169, // 194: gitpod.v1.ListEnterpriseAIUserUsageRequest.Filter.subject:type_name -> gitpod.v1.Subject
-	17,  // 195: gitpod.v1.ListEnterpriseUserCreditUsageRequest.Sort.field:type_name -> gitpod.v1.ListEnterpriseUserCreditUsageRequest.SortField
-	170, // 196: gitpod.v1.ListEnterpriseUserCreditUsageRequest.Sort.order:type_name -> gitpod.v1.SortOrder
-	29,  // 197: gitpod.v1.BillingService.SetupBilling:input_type -> gitpod.v1.SetupBillingRequest
-	31,  // 198: gitpod.v1.BillingService.CompleteBillingSetup:input_type -> gitpod.v1.CompleteBillingSetupRequest
-	33,  // 199: gitpod.v1.BillingService.GetBillingInfo:input_type -> gitpod.v1.GetBillingInfoRequest
-	35,  // 200: gitpod.v1.BillingService.ReconcileBilling:input_type -> gitpod.v1.ReconcileBillingRequest
-	39,  // 201: gitpod.v1.BillingService.CreateSubscription:input_type -> gitpod.v1.CreateSubscriptionRequest
-	41,  // 202: gitpod.v1.BillingService.CancelSubscription:input_type -> gitpod.v1.CancelSubscriptionRequest
-	43,  // 203: gitpod.v1.BillingService.UpdateSubscription:input_type -> gitpod.v1.UpdateSubscriptionRequest
-	45,  // 204: gitpod.v1.BillingService.ListSubscriptions:input_type -> gitpod.v1.ListSubscriptionsRequest
-	48,  // 205: gitpod.v1.BillingService.GrantCredits:input_type -> gitpod.v1.GrantCreditsRequest
-	50,  // 206: gitpod.v1.BillingService.GetStripePublishableKey:input_type -> gitpod.v1.GetStripePublishableKeyRequest
-	52,  // 207: gitpod.v1.BillingService.SetBillingRealm:input_type -> gitpod.v1.SetBillingRealmRequest
-	54,  // 208: gitpod.v1.BillingService.CreateCardVerification:input_type -> gitpod.v1.CreateCardVerificationRequest
-	56,  // 209: gitpod.v1.BillingService.SetTaxID:input_type -> gitpod.v1.SetTaxIDRequest
-	25,  // 210: gitpod.v1.BillingService.GetBillingRecord:input_type -> gitpod.v1.GetBillingRecordRequest
-	27,  // 211: gitpod.v1.BillingService.UpdateBillingRecord:input_type -> gitpod.v1.UpdateBillingRecordRequest
-	59,  // 212: gitpod.v1.BillingService.CreateCoupon:input_type -> gitpod.v1.CreateCouponRequest
-	62,  // 213: gitpod.v1.BillingService.ListCoupons:input_type -> gitpod.v1.ListCouponsRequest
-	64,  // 214: gitpod.v1.BillingService.GetCoupon:input_type -> gitpod.v1.GetCouponRequest
-	67,  // 215: gitpod.v1.BillingService.SetBillingAddress:input_type -> gitpod.v1.SetBillingAddressRequest
-	69,  // 216: gitpod.v1.BillingService.GetStripePortalUrl:input_type -> gitpod.v1.GetStripePortalUrlRequest
-	71,  // 217: gitpod.v1.BillingService.ClearTopupFailure:input_type -> gitpod.v1.ClearTopupFailureRequest
-	73,  // 218: gitpod.v1.BillingService.GetCreditConsumptionTimeSeries:input_type -> gitpod.v1.GetCreditConsumptionTimeSeriesRequest
-	77,  // 219: gitpod.v1.BillingService.SetupEnterpriseBilling:input_type -> gitpod.v1.SetupEnterpriseBillingRequest
-	80,  // 220: gitpod.v1.BillingService.UpdateAutoTopupSettings:input_type -> gitpod.v1.UpdateAutoTopupSettingsRequest
-	82,  // 221: gitpod.v1.BillingService.GetAutoTopupSettings:input_type -> gitpod.v1.GetAutoTopupSettingsRequest
-	85,  // 222: gitpod.v1.BillingService.GetCreditUsageReport:input_type -> gitpod.v1.GetCreditUsageReportRequest
-	93,  // 223: gitpod.v1.BillingService.GetCreditUsageExport:input_type -> gitpod.v1.GetCreditUsageExportRequest
-	104, // 224: gitpod.v1.BillingService.GetEnterpriseAIUsageSummary:input_type -> gitpod.v1.GetEnterpriseAIUsageSummaryRequest
-	106, // 225: gitpod.v1.BillingService.ListEnterpriseAITeamUsage:input_type -> gitpod.v1.ListEnterpriseAITeamUsageRequest
-	108, // 226: gitpod.v1.BillingService.ListEnterpriseAIUserUsage:input_type -> gitpod.v1.ListEnterpriseAIUserUsageRequest
-	110, // 227: gitpod.v1.BillingService.GetEnterpriseAIUsageTimeSeries:input_type -> gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest
-	113, // 228: gitpod.v1.BillingService.CorrectUsageEvents:input_type -> gitpod.v1.CorrectUsageEventsRequest
-	116, // 229: gitpod.v1.BillingService.InsertUsageEvents:input_type -> gitpod.v1.InsertUsageEventsRequest
-	156, // 230: gitpod.v1.BillingService.CorrectEnvironmentUsageEvents:input_type -> gitpod.v1.CorrectEnvironmentUsageEventsRequest
-	120, // 231: gitpod.v1.BillingService.GetEnterpriseBillingInfo:input_type -> gitpod.v1.GetEnterpriseBillingInfoRequest
-	123, // 232: gitpod.v1.BillingService.ListBYOKRateCardRates:input_type -> gitpod.v1.ListBYOKRateCardRatesRequest
-	125, // 233: gitpod.v1.BillingService.SetBYOKRateCardRate:input_type -> gitpod.v1.SetBYOKRateCardRateRequest
-	129, // 234: gitpod.v1.BillingService.ListEnterpriseAIUserBudgetPolicies:input_type -> gitpod.v1.ListEnterpriseAIUserBudgetPoliciesRequest
-	131, // 235: gitpod.v1.BillingService.GetEnterpriseAIUserBudgetPolicy:input_type -> gitpod.v1.GetEnterpriseAIUserBudgetPolicyRequest
-	133, // 236: gitpod.v1.BillingService.SetEnterpriseAIUserBudgetPolicy:input_type -> gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest
-	135, // 237: gitpod.v1.BillingService.DeleteEnterpriseAIUserBudgetPolicy:input_type -> gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest
-	137, // 238: gitpod.v1.BillingService.GetCumulativeCreditUsage:input_type -> gitpod.v1.GetCumulativeCreditUsageRequest
-	142, // 239: gitpod.v1.BillingService.ListEnterpriseUserCreditUsage:input_type -> gitpod.v1.ListEnterpriseUserCreditUsageRequest
-	145, // 240: gitpod.v1.BillingService.CreateTeamCreditAllocation:input_type -> gitpod.v1.CreateTeamCreditAllocationRequest
-	147, // 241: gitpod.v1.BillingService.GetTeamCreditAllocation:input_type -> gitpod.v1.GetTeamCreditAllocationRequest
-	149, // 242: gitpod.v1.BillingService.UpdateTeamCreditAllocation:input_type -> gitpod.v1.UpdateTeamCreditAllocationRequest
-	151, // 243: gitpod.v1.BillingService.DeleteTeamCreditAllocation:input_type -> gitpod.v1.DeleteTeamCreditAllocationRequest
-	153, // 244: gitpod.v1.BillingService.SetOrganizationCreditGrant:input_type -> gitpod.v1.SetOrganizationCreditGrantRequest
-	30,  // 245: gitpod.v1.BillingService.SetupBilling:output_type -> gitpod.v1.SetupBillingResponse
-	32,  // 246: gitpod.v1.BillingService.CompleteBillingSetup:output_type -> gitpod.v1.CompleteBillingSetupResponse
-	34,  // 247: gitpod.v1.BillingService.GetBillingInfo:output_type -> gitpod.v1.GetBillingInfoResponse
-	36,  // 248: gitpod.v1.BillingService.ReconcileBilling:output_type -> gitpod.v1.ReconcileBillingResponse
-	40,  // 249: gitpod.v1.BillingService.CreateSubscription:output_type -> gitpod.v1.CreateSubscriptionResponse
-	42,  // 250: gitpod.v1.BillingService.CancelSubscription:output_type -> gitpod.v1.CancelSubscriptionResponse
-	44,  // 251: gitpod.v1.BillingService.UpdateSubscription:output_type -> gitpod.v1.UpdateSubscriptionResponse
-	47,  // 252: gitpod.v1.BillingService.ListSubscriptions:output_type -> gitpod.v1.ListSubscriptionsResponse
-	49,  // 253: gitpod.v1.BillingService.GrantCredits:output_type -> gitpod.v1.GrantCreditsResponse
-	51,  // 254: gitpod.v1.BillingService.GetStripePublishableKey:output_type -> gitpod.v1.GetStripePublishableKeyResponse
-	53,  // 255: gitpod.v1.BillingService.SetBillingRealm:output_type -> gitpod.v1.SetBillingRealmResponse
-	55,  // 256: gitpod.v1.BillingService.CreateCardVerification:output_type -> gitpod.v1.CreateCardVerificationResponse
-	57,  // 257: gitpod.v1.BillingService.SetTaxID:output_type -> gitpod.v1.SetTaxIDResponse
-	26,  // 258: gitpod.v1.BillingService.GetBillingRecord:output_type -> gitpod.v1.GetBillingRecordResponse
-	28,  // 259: gitpod.v1.BillingService.UpdateBillingRecord:output_type -> gitpod.v1.UpdateBillingRecordResponse
-	61,  // 260: gitpod.v1.BillingService.CreateCoupon:output_type -> gitpod.v1.CreateCouponResponse
-	63,  // 261: gitpod.v1.BillingService.ListCoupons:output_type -> gitpod.v1.ListCouponsResponse
-	65,  // 262: gitpod.v1.BillingService.GetCoupon:output_type -> gitpod.v1.GetCouponResponse
-	68,  // 263: gitpod.v1.BillingService.SetBillingAddress:output_type -> gitpod.v1.SetBillingAddressResponse
-	70,  // 264: gitpod.v1.BillingService.GetStripePortalUrl:output_type -> gitpod.v1.GetStripePortalUrlResponse
-	72,  // 265: gitpod.v1.BillingService.ClearTopupFailure:output_type -> gitpod.v1.ClearTopupFailureResponse
-	74,  // 266: gitpod.v1.BillingService.GetCreditConsumptionTimeSeries:output_type -> gitpod.v1.GetCreditConsumptionTimeSeriesResponse
-	78,  // 267: gitpod.v1.BillingService.SetupEnterpriseBilling:output_type -> gitpod.v1.SetupEnterpriseBillingResponse
-	81,  // 268: gitpod.v1.BillingService.UpdateAutoTopupSettings:output_type -> gitpod.v1.UpdateAutoTopupSettingsResponse
-	83,  // 269: gitpod.v1.BillingService.GetAutoTopupSettings:output_type -> gitpod.v1.GetAutoTopupSettingsResponse
-	86,  // 270: gitpod.v1.BillingService.GetCreditUsageReport:output_type -> gitpod.v1.GetCreditUsageReportResponse
-	94,  // 271: gitpod.v1.BillingService.GetCreditUsageExport:output_type -> gitpod.v1.GetCreditUsageExportResponse
-	105, // 272: gitpod.v1.BillingService.GetEnterpriseAIUsageSummary:output_type -> gitpod.v1.GetEnterpriseAIUsageSummaryResponse
-	107, // 273: gitpod.v1.BillingService.ListEnterpriseAITeamUsage:output_type -> gitpod.v1.ListEnterpriseAITeamUsageResponse
-	109, // 274: gitpod.v1.BillingService.ListEnterpriseAIUserUsage:output_type -> gitpod.v1.ListEnterpriseAIUserUsageResponse
-	112, // 275: gitpod.v1.BillingService.GetEnterpriseAIUsageTimeSeries:output_type -> gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse
-	114, // 276: gitpod.v1.BillingService.CorrectUsageEvents:output_type -> gitpod.v1.CorrectUsageEventsResponse
-	118, // 277: gitpod.v1.BillingService.InsertUsageEvents:output_type -> gitpod.v1.InsertUsageEventsResponse
-	157, // 278: gitpod.v1.BillingService.CorrectEnvironmentUsageEvents:output_type -> gitpod.v1.CorrectEnvironmentUsageEventsResponse
-	121, // 279: gitpod.v1.BillingService.GetEnterpriseBillingInfo:output_type -> gitpod.v1.GetEnterpriseBillingInfoResponse
-	124, // 280: gitpod.v1.BillingService.ListBYOKRateCardRates:output_type -> gitpod.v1.ListBYOKRateCardRatesResponse
-	126, // 281: gitpod.v1.BillingService.SetBYOKRateCardRate:output_type -> gitpod.v1.SetBYOKRateCardRateResponse
-	130, // 282: gitpod.v1.BillingService.ListEnterpriseAIUserBudgetPolicies:output_type -> gitpod.v1.ListEnterpriseAIUserBudgetPoliciesResponse
-	132, // 283: gitpod.v1.BillingService.GetEnterpriseAIUserBudgetPolicy:output_type -> gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse
-	134, // 284: gitpod.v1.BillingService.SetEnterpriseAIUserBudgetPolicy:output_type -> gitpod.v1.SetEnterpriseAIUserBudgetPolicyResponse
-	136, // 285: gitpod.v1.BillingService.DeleteEnterpriseAIUserBudgetPolicy:output_type -> gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyResponse
-	138, // 286: gitpod.v1.BillingService.GetCumulativeCreditUsage:output_type -> gitpod.v1.GetCumulativeCreditUsageResponse
-	143, // 287: gitpod.v1.BillingService.ListEnterpriseUserCreditUsage:output_type -> gitpod.v1.ListEnterpriseUserCreditUsageResponse
-	146, // 288: gitpod.v1.BillingService.CreateTeamCreditAllocation:output_type -> gitpod.v1.CreateTeamCreditAllocationResponse
-	148, // 289: gitpod.v1.BillingService.GetTeamCreditAllocation:output_type -> gitpod.v1.GetTeamCreditAllocationResponse
-	150, // 290: gitpod.v1.BillingService.UpdateTeamCreditAllocation:output_type -> gitpod.v1.UpdateTeamCreditAllocationResponse
-	152, // 291: gitpod.v1.BillingService.DeleteTeamCreditAllocation:output_type -> gitpod.v1.DeleteTeamCreditAllocationResponse
-	154, // 292: gitpod.v1.BillingService.SetOrganizationCreditGrant:output_type -> gitpod.v1.SetOrganizationCreditGrantResponse
-	245, // [245:293] is the sub-list for method output_type
-	197, // [197:245] is the sub-list for method input_type
-	197, // [197:197] is the sub-list for extension type_name
-	197, // [197:197] is the sub-list for extension extendee
-	0,   // [0:197] is the sub-list for field type_name
+	97,  // 14: gitpod.v1.TopupPaymentFailureInfo.failed_at:type_name -> google.protobuf.Timestamp
+	2,   // 15: gitpod.v1.PaymentFailureInfo.state:type_name -> gitpod.v1.PaymentFailureState
+	97,  // 16: gitpod.v1.PaymentFailureInfo.grace_period_ends_at:type_name -> google.protobuf.Timestamp
+	97,  // 17: gitpod.v1.PaymentFailureInfo.failed_at:type_name -> google.protobuf.Timestamp
+	6,   // 18: gitpod.v1.Subscription.subscription_type:type_name -> gitpod.v1.SubscriptionType
+	7,   // 19: gitpod.v1.Subscription.status:type_name -> gitpod.v1.SubscriptionStatus
+	97,  // 20: gitpod.v1.Subscription.starts_at:type_name -> google.protobuf.Timestamp
+	97,  // 21: gitpod.v1.Subscription.cancelled_at:type_name -> google.protobuf.Timestamp
+	97,  // 22: gitpod.v1.Subscription.ends_at:type_name -> google.protobuf.Timestamp
+	29,  // 23: gitpod.v1.Coupon.config:type_name -> gitpod.v1.CouponConfig
+	97,  // 24: gitpod.v1.Coupon.expires_at:type_name -> google.protobuf.Timestamp
+	97,  // 25: gitpod.v1.Coupon.created_at:type_name -> google.protobuf.Timestamp
+	97,  // 26: gitpod.v1.Coupon.updated_at:type_name -> google.protobuf.Timestamp
+	15,  // 27: gitpod.v1.MetricConsumptionTimeSeries.kind:type_name -> gitpod.v1.MetricConsumptionTimeSeries.Kind
+	32,  // 28: gitpod.v1.MetricConsumptionTimeSeries.series:type_name -> gitpod.v1.CreditUsageDataPoint
+	97,  // 29: gitpod.v1.CreditUsageDataPoint.time:type_name -> google.protobuf.Timestamp
+	98,  // 30: gitpod.v1.CreditUsageReportFilter.subject:type_name -> gitpod.v1.Subject
+	99,  // 31: gitpod.v1.GetCreditUsageReportRequest.date_range:type_name -> gitpod.v1.DateRange
+	34,  // 32: gitpod.v1.GetCreditUsageReportRequest.filter:type_name -> gitpod.v1.CreditUsageReportFilter
+	97,  // 33: gitpod.v1.GetCreditUsageReportResponse.updated_at:type_name -> google.protobuf.Timestamp
+	37,  // 34: gitpod.v1.GetCreditUsageReportResponse.daily_usage:type_name -> gitpod.v1.DailyCreditUsage
+	97,  // 35: gitpod.v1.GetCreditUsageReportResponse.period_start:type_name -> google.protobuf.Timestamp
+	97,  // 36: gitpod.v1.DailyCreditUsage.date:type_name -> google.protobuf.Timestamp
+	38,  // 37: gitpod.v1.DailyCreditUsage.org_usage:type_name -> gitpod.v1.CreditsByType
+	39,  // 38: gitpod.v1.DailyCreditUsage.user_usage:type_name -> gitpod.v1.UserCreditUsage
+	40,  // 39: gitpod.v1.DailyCreditUsage.team_usage:type_name -> gitpod.v1.TeamCreditUsage
+	41,  // 40: gitpod.v1.DailyCreditUsage.environment_usage:type_name -> gitpod.v1.EnvironmentCreditUsage
+	42,  // 41: gitpod.v1.DailyCreditUsage.conversation_usage:type_name -> gitpod.v1.AgentExecutionCreditUsage
+	49,  // 42: gitpod.v1.DailyCreditUsage.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
+	8,   // 43: gitpod.v1.CreditsByType.usage_type:type_name -> gitpod.v1.UsageType
+	38,  // 44: gitpod.v1.UserCreditUsage.usage:type_name -> gitpod.v1.CreditsByType
+	49,  // 45: gitpod.v1.UserCreditUsage.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
+	38,  // 46: gitpod.v1.TeamCreditUsage.usage:type_name -> gitpod.v1.CreditsByType
+	38,  // 47: gitpod.v1.EnvironmentCreditUsage.usage:type_name -> gitpod.v1.CreditsByType
+	38,  // 48: gitpod.v1.AgentExecutionCreditUsage.usage:type_name -> gitpod.v1.CreditsByType
+	99,  // 49: gitpod.v1.GetCreditUsageExportRequest.date_range:type_name -> gitpod.v1.DateRange
+	9,   // 50: gitpod.v1.GetCreditUsageExportRequest.group_by:type_name -> gitpod.v1.CreditUsageExportGroupBy
+	12,  // 51: gitpod.v1.EnterpriseAIUsage.currency:type_name -> gitpod.v1.BillingCurrency
+	45,  // 52: gitpod.v1.EnterpriseAIUsage.tokens:type_name -> gitpod.v1.EnterpriseAITokenUsage
+	10,  // 53: gitpod.v1.EnterpriseAIUsageBudget.source:type_name -> gitpod.v1.EnterpriseAIUsageBudgetSource
+	12,  // 54: gitpod.v1.EnterpriseAIUsageBudget.currency:type_name -> gitpod.v1.BillingCurrency
+	46,  // 55: gitpod.v1.EnterpriseAIUsageBudget.month_to_date_usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	11,  // 56: gitpod.v1.EnterpriseAIUsageByTokenType.token_type:type_name -> gitpod.v1.BYOKRateCardTokenType
+	46,  // 57: gitpod.v1.EnterpriseAIUsageByTokenType.usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	46,  // 58: gitpod.v1.EnterpriseAIUsageByModel.usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	48,  // 59: gitpod.v1.EnterpriseAIUsageByModel.usage_by_token_type:type_name -> gitpod.v1.EnterpriseAIUsageByTokenType
+	46,  // 60: gitpod.v1.EnterpriseAIUsageByModel.unpriced_usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	48,  // 61: gitpod.v1.EnterpriseAIUsageByModel.unpriced_usage_by_token_type:type_name -> gitpod.v1.EnterpriseAIUsageByTokenType
+	46,  // 62: gitpod.v1.TeamEnterpriseAIUsage.usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	47,  // 63: gitpod.v1.TeamEnterpriseAIUsage.budget:type_name -> gitpod.v1.EnterpriseAIUsageBudget
+	48,  // 64: gitpod.v1.TeamEnterpriseAIUsage.usage_by_token_type:type_name -> gitpod.v1.EnterpriseAIUsageByTokenType
+	46,  // 65: gitpod.v1.UserEnterpriseAIUsage.usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	46,  // 66: gitpod.v1.UserCostBudgetUsage.month_to_date_usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	12,  // 67: gitpod.v1.UserCostBudgetUsage.currency:type_name -> gitpod.v1.BillingCurrency
+	14,  // 68: gitpod.v1.UserCostBudgetUsage.budget_source:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicySource
+	97,  // 69: gitpod.v1.DailyEnterpriseAIUsage.date:type_name -> google.protobuf.Timestamp
+	46,  // 70: gitpod.v1.DailyEnterpriseAIUsage.usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	47,  // 71: gitpod.v1.DailyEnterpriseAIUsage.budget:type_name -> gitpod.v1.EnterpriseAIUsageBudget
+	51,  // 72: gitpod.v1.DailyEnterpriseAIUsage.user_usage:type_name -> gitpod.v1.UserEnterpriseAIUsage
+	50,  // 73: gitpod.v1.DailyEnterpriseAIUsage.team_usage:type_name -> gitpod.v1.TeamEnterpriseAIUsage
+	49,  // 74: gitpod.v1.DailyEnterpriseAIUsage.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
+	99,  // 75: gitpod.v1.GetEnterpriseAIUsageSummaryRequest.date_range:type_name -> gitpod.v1.DateRange
+	97,  // 76: gitpod.v1.GetEnterpriseAIUsageSummaryResponse.calculated_at:type_name -> google.protobuf.Timestamp
+	46,  // 77: gitpod.v1.GetEnterpriseAIUsageSummaryResponse.usage:type_name -> gitpod.v1.EnterpriseAIUsage
+	47,  // 78: gitpod.v1.GetEnterpriseAIUsageSummaryResponse.budget:type_name -> gitpod.v1.EnterpriseAIUsageBudget
+	49,  // 79: gitpod.v1.GetEnterpriseAIUsageSummaryResponse.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
+	100, // 80: gitpod.v1.ListEnterpriseAITeamUsageRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	99,  // 81: gitpod.v1.ListEnterpriseAITeamUsageRequest.date_range:type_name -> gitpod.v1.DateRange
+	93,  // 82: gitpod.v1.ListEnterpriseAITeamUsageRequest.filter:type_name -> gitpod.v1.ListEnterpriseAITeamUsageRequest.Filter
+	101, // 83: gitpod.v1.ListEnterpriseAITeamUsageResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	50,  // 84: gitpod.v1.ListEnterpriseAITeamUsageResponse.team_usage:type_name -> gitpod.v1.TeamEnterpriseAIUsage
+	97,  // 85: gitpod.v1.ListEnterpriseAITeamUsageResponse.calculated_at:type_name -> google.protobuf.Timestamp
+	100, // 86: gitpod.v1.ListEnterpriseAIUserUsageRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	99,  // 87: gitpod.v1.ListEnterpriseAIUserUsageRequest.date_range:type_name -> gitpod.v1.DateRange
+	94,  // 88: gitpod.v1.ListEnterpriseAIUserUsageRequest.sort:type_name -> gitpod.v1.ListEnterpriseAIUserUsageRequest.Sort
+	95,  // 89: gitpod.v1.ListEnterpriseAIUserUsageRequest.filter:type_name -> gitpod.v1.ListEnterpriseAIUserUsageRequest.Filter
+	101, // 90: gitpod.v1.ListEnterpriseAIUserUsageResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	52,  // 91: gitpod.v1.ListEnterpriseAIUserUsageResponse.user_usage:type_name -> gitpod.v1.UserCostBudgetUsage
+	97,  // 92: gitpod.v1.ListEnterpriseAIUserUsageResponse.calculated_at:type_name -> google.protobuf.Timestamp
+	99,  // 93: gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest.date_range:type_name -> gitpod.v1.DateRange
+	61,  // 94: gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest.filter:type_name -> gitpod.v1.EnterpriseAIUsageTimeSeriesFilter
+	98,  // 95: gitpod.v1.EnterpriseAIUsageTimeSeriesFilter.subject:type_name -> gitpod.v1.Subject
+	97,  // 96: gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse.calculated_at:type_name -> google.protobuf.Timestamp
+	53,  // 97: gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse.daily_usage:type_name -> gitpod.v1.DailyEnterpriseAIUsage
+	11,  // 98: gitpod.v1.BYOKRateCardRate.token_type:type_name -> gitpod.v1.BYOKRateCardTokenType
+	12,  // 99: gitpod.v1.BYOKRateCardRate.currency:type_name -> gitpod.v1.BillingCurrency
+	97,  // 100: gitpod.v1.BYOKRateCardRate.effective_at:type_name -> google.protobuf.Timestamp
+	97,  // 101: gitpod.v1.BYOKRateCardRate.created_at:type_name -> google.protobuf.Timestamp
+	13,  // 102: gitpod.v1.EnterpriseAIUserBudgetPolicy.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
+	12,  // 103: gitpod.v1.EnterpriseAIUserBudgetPolicy.currency:type_name -> gitpod.v1.BillingCurrency
+	97,  // 104: gitpod.v1.EnterpriseAIUserBudgetPolicy.created_at:type_name -> google.protobuf.Timestamp
+	97,  // 105: gitpod.v1.EnterpriseAIUserBudgetPolicy.updated_at:type_name -> google.protobuf.Timestamp
+	14,  // 106: gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicy.source:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicySource
+	67,  // 107: gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicy.policy:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
+	13,  // 108: gitpod.v1.GetEnterpriseAIUserBudgetPolicyRequest.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
+	67,  // 109: gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse.policy:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
+	68,  // 110: gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse.effective_policy:type_name -> gitpod.v1.EffectiveEnterpriseAIUserBudgetPolicy
+	13,  // 111: gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
+	12,  // 112: gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest.currency:type_name -> gitpod.v1.BillingCurrency
+	67,  // 113: gitpod.v1.SetEnterpriseAIUserBudgetPolicyResponse.policy:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicy
+	13,  // 114: gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest.mode:type_name -> gitpod.v1.EnterpriseAIUserBudgetMode
+	97,  // 115: gitpod.v1.GetCumulativeCreditUsageRequest.as_of:type_name -> google.protobuf.Timestamp
+	77,  // 116: gitpod.v1.GetCumulativeCreditUsageResponse.org_usage:type_name -> gitpod.v1.CumulativeCreditUsage
+	78,  // 117: gitpod.v1.GetCumulativeCreditUsageResponse.team_usage:type_name -> gitpod.v1.TeamCumulativeCreditUsage
+	77,  // 118: gitpod.v1.GetCumulativeCreditUsageResponse.unteamed_usage:type_name -> gitpod.v1.CumulativeCreditUsage
+	97,  // 119: gitpod.v1.GetCumulativeCreditUsageResponse.period_start:type_name -> google.protobuf.Timestamp
+	79,  // 120: gitpod.v1.GetCumulativeCreditUsageResponse.user_usage:type_name -> gitpod.v1.UserCreditBudgetUsage
+	38,  // 121: gitpod.v1.CumulativeCreditUsage.usage_by_type:type_name -> gitpod.v1.CreditsByType
+	77,  // 122: gitpod.v1.TeamCumulativeCreditUsage.usage:type_name -> gitpod.v1.CumulativeCreditUsage
+	77,  // 123: gitpod.v1.UserCreditBudgetUsage.month_to_date_usage:type_name -> gitpod.v1.CumulativeCreditUsage
+	14,  // 124: gitpod.v1.UserCreditBudgetUsage.budget_source:type_name -> gitpod.v1.EnterpriseAIUserBudgetPolicySource
+	49,  // 125: gitpod.v1.UserCreditBudgetUsage.usage_by_model:type_name -> gitpod.v1.EnterpriseAIUsageByModel
+	100, // 126: gitpod.v1.ListEnterpriseUserCreditUsageRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	97,  // 127: gitpod.v1.ListEnterpriseUserCreditUsageRequest.as_of:type_name -> google.protobuf.Timestamp
+	96,  // 128: gitpod.v1.ListEnterpriseUserCreditUsageRequest.sort:type_name -> gitpod.v1.ListEnterpriseUserCreditUsageRequest.Sort
+	79,  // 129: gitpod.v1.ListEnterpriseUserCreditUsageResponse.user_usage:type_name -> gitpod.v1.UserCreditBudgetUsage
+	101, // 130: gitpod.v1.ListEnterpriseUserCreditUsageResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	97,  // 131: gitpod.v1.TeamCreditAllocationInfo.created_at:type_name -> google.protobuf.Timestamp
+	97,  // 132: gitpod.v1.TeamCreditAllocationInfo.updated_at:type_name -> google.protobuf.Timestamp
+	12,  // 133: gitpod.v1.TeamCreditAllocationInfo.cost_budget_currency:type_name -> gitpod.v1.BillingCurrency
+	12,  // 134: gitpod.v1.CreateTeamCreditAllocationRequest.cost_budget_currency:type_name -> gitpod.v1.BillingCurrency
+	82,  // 135: gitpod.v1.CreateTeamCreditAllocationResponse.allocation:type_name -> gitpod.v1.TeamCreditAllocationInfo
+	82,  // 136: gitpod.v1.GetTeamCreditAllocationResponse.allocation:type_name -> gitpod.v1.TeamCreditAllocationInfo
+	12,  // 137: gitpod.v1.UpdateTeamCreditAllocationRequest.cost_budget_currency:type_name -> gitpod.v1.BillingCurrency
+	82,  // 138: gitpod.v1.UpdateTeamCreditAllocationResponse.allocation:type_name -> gitpod.v1.TeamCreditAllocationInfo
+	97,  // 139: gitpod.v1.EnvironmentCorrectionSpec.start_time:type_name -> google.protobuf.Timestamp
+	97,  // 140: gitpod.v1.EnvironmentCorrectionSpec.end_time:type_name -> google.protobuf.Timestamp
+	16,  // 141: gitpod.v1.ListEnterpriseAIUserUsageRequest.Sort.field:type_name -> gitpod.v1.ListEnterpriseAIUserUsageRequest.SortField
+	102, // 142: gitpod.v1.ListEnterpriseAIUserUsageRequest.Sort.order:type_name -> gitpod.v1.SortOrder
+	98,  // 143: gitpod.v1.ListEnterpriseAIUserUsageRequest.Filter.subject:type_name -> gitpod.v1.Subject
+	17,  // 144: gitpod.v1.ListEnterpriseUserCreditUsageRequest.Sort.field:type_name -> gitpod.v1.ListEnterpriseUserCreditUsageRequest.SortField
+	102, // 145: gitpod.v1.ListEnterpriseUserCreditUsageRequest.Sort.order:type_name -> gitpod.v1.SortOrder
+	35,  // 146: gitpod.v1.BillingService.GetCreditUsageReport:input_type -> gitpod.v1.GetCreditUsageReportRequest
+	43,  // 147: gitpod.v1.BillingService.GetCreditUsageExport:input_type -> gitpod.v1.GetCreditUsageExportRequest
+	54,  // 148: gitpod.v1.BillingService.GetEnterpriseAIUsageSummary:input_type -> gitpod.v1.GetEnterpriseAIUsageSummaryRequest
+	56,  // 149: gitpod.v1.BillingService.ListEnterpriseAITeamUsage:input_type -> gitpod.v1.ListEnterpriseAITeamUsageRequest
+	58,  // 150: gitpod.v1.BillingService.ListEnterpriseAIUserUsage:input_type -> gitpod.v1.ListEnterpriseAIUserUsageRequest
+	60,  // 151: gitpod.v1.BillingService.GetEnterpriseAIUsageTimeSeries:input_type -> gitpod.v1.GetEnterpriseAIUsageTimeSeriesRequest
+	69,  // 152: gitpod.v1.BillingService.GetEnterpriseAIUserBudgetPolicy:input_type -> gitpod.v1.GetEnterpriseAIUserBudgetPolicyRequest
+	71,  // 153: gitpod.v1.BillingService.SetEnterpriseAIUserBudgetPolicy:input_type -> gitpod.v1.SetEnterpriseAIUserBudgetPolicyRequest
+	73,  // 154: gitpod.v1.BillingService.DeleteEnterpriseAIUserBudgetPolicy:input_type -> gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyRequest
+	75,  // 155: gitpod.v1.BillingService.GetCumulativeCreditUsage:input_type -> gitpod.v1.GetCumulativeCreditUsageRequest
+	80,  // 156: gitpod.v1.BillingService.ListEnterpriseUserCreditUsage:input_type -> gitpod.v1.ListEnterpriseUserCreditUsageRequest
+	83,  // 157: gitpod.v1.BillingService.CreateTeamCreditAllocation:input_type -> gitpod.v1.CreateTeamCreditAllocationRequest
+	85,  // 158: gitpod.v1.BillingService.GetTeamCreditAllocation:input_type -> gitpod.v1.GetTeamCreditAllocationRequest
+	87,  // 159: gitpod.v1.BillingService.UpdateTeamCreditAllocation:input_type -> gitpod.v1.UpdateTeamCreditAllocationRequest
+	89,  // 160: gitpod.v1.BillingService.DeleteTeamCreditAllocation:input_type -> gitpod.v1.DeleteTeamCreditAllocationRequest
+	36,  // 161: gitpod.v1.BillingService.GetCreditUsageReport:output_type -> gitpod.v1.GetCreditUsageReportResponse
+	44,  // 162: gitpod.v1.BillingService.GetCreditUsageExport:output_type -> gitpod.v1.GetCreditUsageExportResponse
+	55,  // 163: gitpod.v1.BillingService.GetEnterpriseAIUsageSummary:output_type -> gitpod.v1.GetEnterpriseAIUsageSummaryResponse
+	57,  // 164: gitpod.v1.BillingService.ListEnterpriseAITeamUsage:output_type -> gitpod.v1.ListEnterpriseAITeamUsageResponse
+	59,  // 165: gitpod.v1.BillingService.ListEnterpriseAIUserUsage:output_type -> gitpod.v1.ListEnterpriseAIUserUsageResponse
+	62,  // 166: gitpod.v1.BillingService.GetEnterpriseAIUsageTimeSeries:output_type -> gitpod.v1.GetEnterpriseAIUsageTimeSeriesResponse
+	70,  // 167: gitpod.v1.BillingService.GetEnterpriseAIUserBudgetPolicy:output_type -> gitpod.v1.GetEnterpriseAIUserBudgetPolicyResponse
+	72,  // 168: gitpod.v1.BillingService.SetEnterpriseAIUserBudgetPolicy:output_type -> gitpod.v1.SetEnterpriseAIUserBudgetPolicyResponse
+	74,  // 169: gitpod.v1.BillingService.DeleteEnterpriseAIUserBudgetPolicy:output_type -> gitpod.v1.DeleteEnterpriseAIUserBudgetPolicyResponse
+	76,  // 170: gitpod.v1.BillingService.GetCumulativeCreditUsage:output_type -> gitpod.v1.GetCumulativeCreditUsageResponse
+	81,  // 171: gitpod.v1.BillingService.ListEnterpriseUserCreditUsage:output_type -> gitpod.v1.ListEnterpriseUserCreditUsageResponse
+	84,  // 172: gitpod.v1.BillingService.CreateTeamCreditAllocation:output_type -> gitpod.v1.CreateTeamCreditAllocationResponse
+	86,  // 173: gitpod.v1.BillingService.GetTeamCreditAllocation:output_type -> gitpod.v1.GetTeamCreditAllocationResponse
+	88,  // 174: gitpod.v1.BillingService.UpdateTeamCreditAllocation:output_type -> gitpod.v1.UpdateTeamCreditAllocationResponse
+	90,  // 175: gitpod.v1.BillingService.DeleteTeamCreditAllocation:output_type -> gitpod.v1.DeleteTeamCreditAllocationResponse
+	161, // [161:176] is the sub-list for method output_type
+	146, // [146:161] is the sub-list for method input_type
+	146, // [146:146] is the sub-list for extension type_name
+	146, // [146:146] is the sub-list for extension extendee
+	0,   // [0:146] is the sub-list for field type_name
 }
 
 func init() { file_gitpod_v1_billing_proto_init() }
@@ -11547,40 +7331,33 @@ func file_gitpod_v1_billing_proto_init() {
 	file_gitpod_v1_identity_proto_init()
 	file_gitpod_v1_pagination_proto_init()
 	file_gitpod_v1_usage_proto_init()
-	file_gitpod_v1_billing_proto_msgTypes[9].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[10].OneofWrappers = []any{}
 	file_gitpod_v1_billing_proto_msgTypes[11].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[13].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[36].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[40].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[41].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[42].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[59].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[66].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[68].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[79].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[84].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[93].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[99].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[109].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[113].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[115].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[117].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[119].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[122].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[123].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[124].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[126].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[127].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[131].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[142].OneofWrappers = []any{}
-	file_gitpod_v1_billing_proto_msgTypes[145].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[16].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[18].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[29].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[34].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[43].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[46].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[49].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[51].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[53].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[55].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[57].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[60].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[61].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[62].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[64].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[65].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[69].OneofWrappers = []any{}
+	file_gitpod_v1_billing_proto_msgTypes[77].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gitpod_v1_billing_proto_rawDesc), len(file_gitpod_v1_billing_proto_rawDesc)),
 			NumEnums:      18,
-			NumMessages:   147,
+			NumMessages:   79,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
