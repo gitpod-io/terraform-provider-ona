@@ -8,9 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/terraform"
 	_ "github.com/google/gnostic/openapiv3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -222,6 +219,61 @@ func (RunnerProvider) EnumDescriptor() ([]byte, []int) {
 	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{2}
 }
 
+// LLMIntegrationRequestHeaderType describes how an LLM integration request
+// header value is resolved.
+type LLMIntegrationRequestHeaderType int32
+
+const (
+	// Existing untyped headers are literal values.
+	LLMIntegrationRequestHeaderType_LLM_INTEGRATION_REQUEST_HEADER_TYPE_UNSPECIFIED LLMIntegrationRequestHeaderType = 0
+	// The configured value is sent as-is when the request does not already
+	// contain the header.
+	LLMIntegrationRequestHeaderType_LLM_INTEGRATION_REQUEST_HEADER_TYPE_LITERAL LLMIntegrationRequestHeaderType = 1
+	// The configured value is a CEL expression evaluated by a supported agent.
+	LLMIntegrationRequestHeaderType_LLM_INTEGRATION_REQUEST_HEADER_TYPE_CEL_EXPRESSION LLMIntegrationRequestHeaderType = 2
+)
+
+// Enum value maps for LLMIntegrationRequestHeaderType.
+var (
+	LLMIntegrationRequestHeaderType_name = map[int32]string{
+		0: "LLM_INTEGRATION_REQUEST_HEADER_TYPE_UNSPECIFIED",
+		1: "LLM_INTEGRATION_REQUEST_HEADER_TYPE_LITERAL",
+		2: "LLM_INTEGRATION_REQUEST_HEADER_TYPE_CEL_EXPRESSION",
+	}
+	LLMIntegrationRequestHeaderType_value = map[string]int32{
+		"LLM_INTEGRATION_REQUEST_HEADER_TYPE_UNSPECIFIED":    0,
+		"LLM_INTEGRATION_REQUEST_HEADER_TYPE_LITERAL":        1,
+		"LLM_INTEGRATION_REQUEST_HEADER_TYPE_CEL_EXPRESSION": 2,
+	}
+)
+
+func (x LLMIntegrationRequestHeaderType) Enum() *LLMIntegrationRequestHeaderType {
+	p := new(LLMIntegrationRequestHeaderType)
+	*p = x
+	return p
+}
+
+func (x LLMIntegrationRequestHeaderType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (LLMIntegrationRequestHeaderType) Descriptor() protoreflect.EnumDescriptor {
+	return file_gitpod_v1_runner_configuration_proto_enumTypes[3].Descriptor()
+}
+
+func (LLMIntegrationRequestHeaderType) Type() protoreflect.EnumType {
+	return &file_gitpod_v1_runner_configuration_proto_enumTypes[3]
+}
+
+func (x LLMIntegrationRequestHeaderType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use LLMIntegrationRequestHeaderType.Descriptor instead.
+func (LLMIntegrationRequestHeaderType) EnumDescriptor() ([]byte, []int) {
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{3}
+}
+
 type LLMProvider int32
 
 const (
@@ -258,11 +310,11 @@ func (x LLMProvider) String() string {
 }
 
 func (LLMProvider) Descriptor() protoreflect.EnumDescriptor {
-	return file_gitpod_v1_runner_configuration_proto_enumTypes[3].Descriptor()
+	return file_gitpod_v1_runner_configuration_proto_enumTypes[4].Descriptor()
 }
 
 func (LLMProvider) Type() protoreflect.EnumType {
-	return &file_gitpod_v1_runner_configuration_proto_enumTypes[3]
+	return &file_gitpod_v1_runner_configuration_proto_enumTypes[4]
 }
 
 func (x LLMProvider) Number() protoreflect.EnumNumber {
@@ -271,7 +323,7 @@ func (x LLMProvider) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use LLMProvider.Descriptor instead.
 func (LLMProvider) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{3}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{4}
 }
 
 type CreateHostAuthenticationTokenRequest struct {
@@ -857,102 +909,6 @@ func (*UpdateHostAuthenticationTokenResponse) Descriptor() ([]byte, []int) {
 	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{8}
 }
 
-type UpdateHostAuthenticationTokenMetadataRequest struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	RunnerId       string                 `protobuf:"bytes,1,opt,name=runner_id,json=runnerId,proto3" json:"runner_id,omitempty"`
-	Id             string                 `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
-	ExternalUserId *string                `protobuf:"bytes,3,opt,name=external_user_id,json=externalUserId,proto3,oneof" json:"external_user_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *UpdateHostAuthenticationTokenMetadataRequest) Reset() {
-	*x = UpdateHostAuthenticationTokenMetadataRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[9]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateHostAuthenticationTokenMetadataRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateHostAuthenticationTokenMetadataRequest) ProtoMessage() {}
-
-func (x *UpdateHostAuthenticationTokenMetadataRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[9]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateHostAuthenticationTokenMetadataRequest.ProtoReflect.Descriptor instead.
-func (*UpdateHostAuthenticationTokenMetadataRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *UpdateHostAuthenticationTokenMetadataRequest) GetRunnerId() string {
-	if x != nil {
-		return x.RunnerId
-	}
-	return ""
-}
-
-func (x *UpdateHostAuthenticationTokenMetadataRequest) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *UpdateHostAuthenticationTokenMetadataRequest) GetExternalUserId() string {
-	if x != nil && x.ExternalUserId != nil {
-		return *x.ExternalUserId
-	}
-	return ""
-}
-
-type UpdateHostAuthenticationTokenMetadataResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateHostAuthenticationTokenMetadataResponse) Reset() {
-	*x = UpdateHostAuthenticationTokenMetadataResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[10]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateHostAuthenticationTokenMetadataResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateHostAuthenticationTokenMetadataResponse) ProtoMessage() {}
-
-func (x *UpdateHostAuthenticationTokenMetadataResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[10]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateHostAuthenticationTokenMetadataResponse.ProtoReflect.Descriptor instead.
-func (*UpdateHostAuthenticationTokenMetadataResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{10}
-}
-
 type DeleteHostAuthenticationTokenRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -962,7 +918,7 @@ type DeleteHostAuthenticationTokenRequest struct {
 
 func (x *DeleteHostAuthenticationTokenRequest) Reset() {
 	*x = DeleteHostAuthenticationTokenRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[11]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -974,7 +930,7 @@ func (x *DeleteHostAuthenticationTokenRequest) String() string {
 func (*DeleteHostAuthenticationTokenRequest) ProtoMessage() {}
 
 func (x *DeleteHostAuthenticationTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[11]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -987,7 +943,7 @@ func (x *DeleteHostAuthenticationTokenRequest) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use DeleteHostAuthenticationTokenRequest.ProtoReflect.Descriptor instead.
 func (*DeleteHostAuthenticationTokenRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{11}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *DeleteHostAuthenticationTokenRequest) GetId() string {
@@ -1005,7 +961,7 @@ type DeleteHostAuthenticationTokenResponse struct {
 
 func (x *DeleteHostAuthenticationTokenResponse) Reset() {
 	*x = DeleteHostAuthenticationTokenResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[12]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1017,7 +973,7 @@ func (x *DeleteHostAuthenticationTokenResponse) String() string {
 func (*DeleteHostAuthenticationTokenResponse) ProtoMessage() {}
 
 func (x *DeleteHostAuthenticationTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[12]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1030,7 +986,7 @@ func (x *DeleteHostAuthenticationTokenResponse) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use DeleteHostAuthenticationTokenResponse.ProtoReflect.Descriptor instead.
 func (*DeleteHostAuthenticationTokenResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{12}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{10}
 }
 
 type FieldValue struct {
@@ -1043,7 +999,7 @@ type FieldValue struct {
 
 func (x *FieldValue) Reset() {
 	*x = FieldValue{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[13]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1055,7 +1011,7 @@ func (x *FieldValue) String() string {
 func (*FieldValue) ProtoMessage() {}
 
 func (x *FieldValue) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[13]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1068,7 +1024,7 @@ func (x *FieldValue) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FieldValue.ProtoReflect.Descriptor instead.
 func (*FieldValue) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{13}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *FieldValue) GetKey() string {
@@ -1097,7 +1053,7 @@ type FieldValueUpdate struct {
 
 func (x *FieldValueUpdate) Reset() {
 	*x = FieldValueUpdate{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[14]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1109,7 +1065,7 @@ func (x *FieldValueUpdate) String() string {
 func (*FieldValueUpdate) ProtoMessage() {}
 
 func (x *FieldValueUpdate) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[14]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1122,7 +1078,7 @@ func (x *FieldValueUpdate) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FieldValueUpdate.ProtoReflect.Descriptor instead.
 func (*FieldValueUpdate) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{14}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *FieldValueUpdate) GetKey() string {
@@ -1148,7 +1104,7 @@ type GetRunnerConfigurationSchemaRequest struct {
 
 func (x *GetRunnerConfigurationSchemaRequest) Reset() {
 	*x = GetRunnerConfigurationSchemaRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[15]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1160,7 +1116,7 @@ func (x *GetRunnerConfigurationSchemaRequest) String() string {
 func (*GetRunnerConfigurationSchemaRequest) ProtoMessage() {}
 
 func (x *GetRunnerConfigurationSchemaRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[15]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1173,7 +1129,7 @@ func (x *GetRunnerConfigurationSchemaRequest) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use GetRunnerConfigurationSchemaRequest.ProtoReflect.Descriptor instead.
 func (*GetRunnerConfigurationSchemaRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{15}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *GetRunnerConfigurationSchemaRequest) GetRunnerId() string {
@@ -1192,7 +1148,7 @@ type GetRunnerConfigurationSchemaResponse struct {
 
 func (x *GetRunnerConfigurationSchemaResponse) Reset() {
 	*x = GetRunnerConfigurationSchemaResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[16]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1204,7 +1160,7 @@ func (x *GetRunnerConfigurationSchemaResponse) String() string {
 func (*GetRunnerConfigurationSchemaResponse) ProtoMessage() {}
 
 func (x *GetRunnerConfigurationSchemaResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[16]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1217,7 +1173,7 @@ func (x *GetRunnerConfigurationSchemaResponse) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use GetRunnerConfigurationSchemaResponse.ProtoReflect.Descriptor instead.
 func (*GetRunnerConfigurationSchemaResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{16}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetRunnerConfigurationSchemaResponse) GetSchema() *RunnerConfigurationSchema {
@@ -1252,7 +1208,7 @@ type CreateSCMIntegrationRequest struct {
 
 func (x *CreateSCMIntegrationRequest) Reset() {
 	*x = CreateSCMIntegrationRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[17]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1264,7 +1220,7 @@ func (x *CreateSCMIntegrationRequest) String() string {
 func (*CreateSCMIntegrationRequest) ProtoMessage() {}
 
 func (x *CreateSCMIntegrationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[17]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1277,7 +1233,7 @@ func (x *CreateSCMIntegrationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSCMIntegrationRequest.ProtoReflect.Descriptor instead.
 func (*CreateSCMIntegrationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{17}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *CreateSCMIntegrationRequest) GetRunnerId() string {
@@ -1346,7 +1302,7 @@ type CreateSCMIntegrationResponse struct {
 
 func (x *CreateSCMIntegrationResponse) Reset() {
 	*x = CreateSCMIntegrationResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[18]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1358,7 +1314,7 @@ func (x *CreateSCMIntegrationResponse) String() string {
 func (*CreateSCMIntegrationResponse) ProtoMessage() {}
 
 func (x *CreateSCMIntegrationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[18]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1371,7 +1327,7 @@ func (x *CreateSCMIntegrationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSCMIntegrationResponse.ProtoReflect.Descriptor instead.
 func (*CreateSCMIntegrationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{18}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *CreateSCMIntegrationResponse) GetId() string {
@@ -1397,7 +1353,7 @@ type SCMIntegrationOAuthConfig struct {
 
 func (x *SCMIntegrationOAuthConfig) Reset() {
 	*x = SCMIntegrationOAuthConfig{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[19]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1409,7 +1365,7 @@ func (x *SCMIntegrationOAuthConfig) String() string {
 func (*SCMIntegrationOAuthConfig) ProtoMessage() {}
 
 func (x *SCMIntegrationOAuthConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[19]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1422,7 +1378,7 @@ func (x *SCMIntegrationOAuthConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SCMIntegrationOAuthConfig.ProtoReflect.Descriptor instead.
 func (*SCMIntegrationOAuthConfig) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{19}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *SCMIntegrationOAuthConfig) GetClientId() string {
@@ -1466,7 +1422,7 @@ type SCMIntegration struct {
 
 func (x *SCMIntegration) Reset() {
 	*x = SCMIntegration{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[20]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1478,7 +1434,7 @@ func (x *SCMIntegration) String() string {
 func (*SCMIntegration) ProtoMessage() {}
 
 func (x *SCMIntegration) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[20]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1491,7 +1447,7 @@ func (x *SCMIntegration) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SCMIntegration.ProtoReflect.Descriptor instead.
 func (*SCMIntegration) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{20}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *SCMIntegration) GetId() string {
@@ -1552,7 +1508,7 @@ type GetSCMIntegrationRequest struct {
 
 func (x *GetSCMIntegrationRequest) Reset() {
 	*x = GetSCMIntegrationRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[21]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1564,7 +1520,7 @@ func (x *GetSCMIntegrationRequest) String() string {
 func (*GetSCMIntegrationRequest) ProtoMessage() {}
 
 func (x *GetSCMIntegrationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[21]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1577,7 +1533,7 @@ func (x *GetSCMIntegrationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSCMIntegrationRequest.ProtoReflect.Descriptor instead.
 func (*GetSCMIntegrationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{21}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *GetSCMIntegrationRequest) GetId() string {
@@ -1596,7 +1552,7 @@ type GetSCMIntegrationResponse struct {
 
 func (x *GetSCMIntegrationResponse) Reset() {
 	*x = GetSCMIntegrationResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[22]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1608,7 +1564,7 @@ func (x *GetSCMIntegrationResponse) String() string {
 func (*GetSCMIntegrationResponse) ProtoMessage() {}
 
 func (x *GetSCMIntegrationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[22]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1621,7 +1577,7 @@ func (x *GetSCMIntegrationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSCMIntegrationResponse.ProtoReflect.Descriptor instead.
 func (*GetSCMIntegrationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{22}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *GetSCMIntegrationResponse) GetIntegration() *SCMIntegration {
@@ -1642,7 +1598,7 @@ type ListSCMIntegrationsRequest struct {
 
 func (x *ListSCMIntegrationsRequest) Reset() {
 	*x = ListSCMIntegrationsRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[23]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1654,7 +1610,7 @@ func (x *ListSCMIntegrationsRequest) String() string {
 func (*ListSCMIntegrationsRequest) ProtoMessage() {}
 
 func (x *ListSCMIntegrationsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[23]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1667,7 +1623,7 @@ func (x *ListSCMIntegrationsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSCMIntegrationsRequest.ProtoReflect.Descriptor instead.
 func (*ListSCMIntegrationsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{23}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ListSCMIntegrationsRequest) GetPagination() *PaginationRequest {
@@ -1695,7 +1651,7 @@ type ListSCMIntegrationsResponse struct {
 
 func (x *ListSCMIntegrationsResponse) Reset() {
 	*x = ListSCMIntegrationsResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[24]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1707,7 +1663,7 @@ func (x *ListSCMIntegrationsResponse) String() string {
 func (*ListSCMIntegrationsResponse) ProtoMessage() {}
 
 func (x *ListSCMIntegrationsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[24]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1720,7 +1676,7 @@ func (x *ListSCMIntegrationsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSCMIntegrationsResponse.ProtoReflect.Descriptor instead.
 func (*ListSCMIntegrationsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{24}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ListSCMIntegrationsResponse) GetPagination() *PaginationResponse {
@@ -1766,7 +1722,7 @@ type UpdateSCMIntegrationRequest struct {
 
 func (x *UpdateSCMIntegrationRequest) Reset() {
 	*x = UpdateSCMIntegrationRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[25]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1778,7 +1734,7 @@ func (x *UpdateSCMIntegrationRequest) String() string {
 func (*UpdateSCMIntegrationRequest) ProtoMessage() {}
 
 func (x *UpdateSCMIntegrationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[25]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1791,7 +1747,7 @@ func (x *UpdateSCMIntegrationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSCMIntegrationRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSCMIntegrationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{25}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *UpdateSCMIntegrationRequest) GetId() string {
@@ -1844,7 +1800,7 @@ type UpdateSCMIntegrationResponse struct {
 
 func (x *UpdateSCMIntegrationResponse) Reset() {
 	*x = UpdateSCMIntegrationResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[26]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1856,7 +1812,7 @@ func (x *UpdateSCMIntegrationResponse) String() string {
 func (*UpdateSCMIntegrationResponse) ProtoMessage() {}
 
 func (x *UpdateSCMIntegrationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[26]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1869,7 +1825,7 @@ func (x *UpdateSCMIntegrationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSCMIntegrationResponse.ProtoReflect.Descriptor instead.
 func (*UpdateSCMIntegrationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{26}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{24}
 }
 
 type DeleteSCMIntegrationRequest struct {
@@ -1881,7 +1837,7 @@ type DeleteSCMIntegrationRequest struct {
 
 func (x *DeleteSCMIntegrationRequest) Reset() {
 	*x = DeleteSCMIntegrationRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[27]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1893,7 +1849,7 @@ func (x *DeleteSCMIntegrationRequest) String() string {
 func (*DeleteSCMIntegrationRequest) ProtoMessage() {}
 
 func (x *DeleteSCMIntegrationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[27]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1906,7 +1862,7 @@ func (x *DeleteSCMIntegrationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSCMIntegrationRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSCMIntegrationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{27}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *DeleteSCMIntegrationRequest) GetId() string {
@@ -1924,7 +1880,7 @@ type DeleteSCMIntegrationResponse struct {
 
 func (x *DeleteSCMIntegrationResponse) Reset() {
 	*x = DeleteSCMIntegrationResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[28]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1936,7 +1892,7 @@ func (x *DeleteSCMIntegrationResponse) String() string {
 func (*DeleteSCMIntegrationResponse) ProtoMessage() {}
 
 func (x *DeleteSCMIntegrationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[28]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1949,7 +1905,7 @@ func (x *DeleteSCMIntegrationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSCMIntegrationResponse.ProtoReflect.Descriptor instead.
 func (*DeleteSCMIntegrationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{28}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{26}
 }
 
 type EnvironmentClass struct {
@@ -1973,7 +1929,7 @@ type EnvironmentClass struct {
 
 func (x *EnvironmentClass) Reset() {
 	*x = EnvironmentClass{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[29]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1985,7 +1941,7 @@ func (x *EnvironmentClass) String() string {
 func (*EnvironmentClass) ProtoMessage() {}
 
 func (x *EnvironmentClass) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[29]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1998,7 +1954,7 @@ func (x *EnvironmentClass) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnvironmentClass.ProtoReflect.Descriptor instead.
 func (*EnvironmentClass) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{29}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *EnvironmentClass) GetId() string {
@@ -2055,7 +2011,7 @@ type CreateEnvironmentClassRequest struct {
 
 func (x *CreateEnvironmentClassRequest) Reset() {
 	*x = CreateEnvironmentClassRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[30]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2067,7 +2023,7 @@ func (x *CreateEnvironmentClassRequest) String() string {
 func (*CreateEnvironmentClassRequest) ProtoMessage() {}
 
 func (x *CreateEnvironmentClassRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[30]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2080,7 +2036,7 @@ func (x *CreateEnvironmentClassRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateEnvironmentClassRequest.ProtoReflect.Descriptor instead.
 func (*CreateEnvironmentClassRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{30}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *CreateEnvironmentClassRequest) GetRunnerId() string {
@@ -2120,7 +2076,7 @@ type CreateEnvironmentClassResponse struct {
 
 func (x *CreateEnvironmentClassResponse) Reset() {
 	*x = CreateEnvironmentClassResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[31]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2132,7 +2088,7 @@ func (x *CreateEnvironmentClassResponse) String() string {
 func (*CreateEnvironmentClassResponse) ProtoMessage() {}
 
 func (x *CreateEnvironmentClassResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[31]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2145,7 +2101,7 @@ func (x *CreateEnvironmentClassResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateEnvironmentClassResponse.ProtoReflect.Descriptor instead.
 func (*CreateEnvironmentClassResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{31}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *CreateEnvironmentClassResponse) GetId() string {
@@ -2164,7 +2120,7 @@ type GetEnvironmentClassRequest struct {
 
 func (x *GetEnvironmentClassRequest) Reset() {
 	*x = GetEnvironmentClassRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[32]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2176,7 +2132,7 @@ func (x *GetEnvironmentClassRequest) String() string {
 func (*GetEnvironmentClassRequest) ProtoMessage() {}
 
 func (x *GetEnvironmentClassRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[32]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2189,7 +2145,7 @@ func (x *GetEnvironmentClassRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEnvironmentClassRequest.ProtoReflect.Descriptor instead.
 func (*GetEnvironmentClassRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{32}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *GetEnvironmentClassRequest) GetEnvironmentClassId() string {
@@ -2208,7 +2164,7 @@ type GetEnvironmentClassResponse struct {
 
 func (x *GetEnvironmentClassResponse) Reset() {
 	*x = GetEnvironmentClassResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[33]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2220,7 +2176,7 @@ func (x *GetEnvironmentClassResponse) String() string {
 func (*GetEnvironmentClassResponse) ProtoMessage() {}
 
 func (x *GetEnvironmentClassResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[33]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2233,7 +2189,7 @@ func (x *GetEnvironmentClassResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEnvironmentClassResponse.ProtoReflect.Descriptor instead.
 func (*GetEnvironmentClassResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{33}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *GetEnvironmentClassResponse) GetEnvironmentClass() *EnvironmentClass {
@@ -2254,7 +2210,7 @@ type ListEnvironmentClassesRequest struct {
 
 func (x *ListEnvironmentClassesRequest) Reset() {
 	*x = ListEnvironmentClassesRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[34]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2266,7 +2222,7 @@ func (x *ListEnvironmentClassesRequest) String() string {
 func (*ListEnvironmentClassesRequest) ProtoMessage() {}
 
 func (x *ListEnvironmentClassesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[34]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2279,7 +2235,7 @@ func (x *ListEnvironmentClassesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEnvironmentClassesRequest.ProtoReflect.Descriptor instead.
 func (*ListEnvironmentClassesRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{34}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *ListEnvironmentClassesRequest) GetPagination() *PaginationRequest {
@@ -2307,7 +2263,7 @@ type ListEnvironmentClassesResponse struct {
 
 func (x *ListEnvironmentClassesResponse) Reset() {
 	*x = ListEnvironmentClassesResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[35]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2319,7 +2275,7 @@ func (x *ListEnvironmentClassesResponse) String() string {
 func (*ListEnvironmentClassesResponse) ProtoMessage() {}
 
 func (x *ListEnvironmentClassesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[35]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2332,7 +2288,7 @@ func (x *ListEnvironmentClassesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEnvironmentClassesResponse.ProtoReflect.Descriptor instead.
 func (*ListEnvironmentClassesResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{35}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *ListEnvironmentClassesResponse) GetPagination() *PaginationResponse {
@@ -2361,7 +2317,7 @@ type UpdateEnvironmentClassRequest struct {
 
 func (x *UpdateEnvironmentClassRequest) Reset() {
 	*x = UpdateEnvironmentClassRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[36]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2373,7 +2329,7 @@ func (x *UpdateEnvironmentClassRequest) String() string {
 func (*UpdateEnvironmentClassRequest) ProtoMessage() {}
 
 func (x *UpdateEnvironmentClassRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[36]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2386,7 +2342,7 @@ func (x *UpdateEnvironmentClassRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateEnvironmentClassRequest.ProtoReflect.Descriptor instead.
 func (*UpdateEnvironmentClassRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{36}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *UpdateEnvironmentClassRequest) GetEnvironmentClassId() string {
@@ -2425,7 +2381,7 @@ type UpdateEnvironmentClassResponse struct {
 
 func (x *UpdateEnvironmentClassResponse) Reset() {
 	*x = UpdateEnvironmentClassResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[37]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2437,7 +2393,7 @@ func (x *UpdateEnvironmentClassResponse) String() string {
 func (*UpdateEnvironmentClassResponse) ProtoMessage() {}
 
 func (x *UpdateEnvironmentClassResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[37]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2450,7 +2406,7 @@ func (x *UpdateEnvironmentClassResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateEnvironmentClassResponse.ProtoReflect.Descriptor instead.
 func (*UpdateEnvironmentClassResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{37}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{35}
 }
 
 type ValidateRunnerConfigurationRequest struct {
@@ -2467,7 +2423,7 @@ type ValidateRunnerConfigurationRequest struct {
 
 func (x *ValidateRunnerConfigurationRequest) Reset() {
 	*x = ValidateRunnerConfigurationRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[38]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2479,7 +2435,7 @@ func (x *ValidateRunnerConfigurationRequest) String() string {
 func (*ValidateRunnerConfigurationRequest) ProtoMessage() {}
 
 func (x *ValidateRunnerConfigurationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[38]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2492,7 +2448,7 @@ func (x *ValidateRunnerConfigurationRequest) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use ValidateRunnerConfigurationRequest.ProtoReflect.Descriptor instead.
 func (*ValidateRunnerConfigurationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{38}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *ValidateRunnerConfigurationRequest) GetRunnerId() string {
@@ -2555,7 +2511,7 @@ type FieldValidationError struct {
 
 func (x *FieldValidationError) Reset() {
 	*x = FieldValidationError{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[39]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2567,7 +2523,7 @@ func (x *FieldValidationError) String() string {
 func (*FieldValidationError) ProtoMessage() {}
 
 func (x *FieldValidationError) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[39]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2580,7 +2536,7 @@ func (x *FieldValidationError) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FieldValidationError.ProtoReflect.Descriptor instead.
 func (*FieldValidationError) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{39}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *FieldValidationError) GetKey() string {
@@ -2609,7 +2565,7 @@ type EnvironmentClassValidationResult struct {
 
 func (x *EnvironmentClassValidationResult) Reset() {
 	*x = EnvironmentClassValidationResult{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[40]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2621,7 +2577,7 @@ func (x *EnvironmentClassValidationResult) String() string {
 func (*EnvironmentClassValidationResult) ProtoMessage() {}
 
 func (x *EnvironmentClassValidationResult) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[40]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2634,7 +2590,7 @@ func (x *EnvironmentClassValidationResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnvironmentClassValidationResult.ProtoReflect.Descriptor instead.
 func (*EnvironmentClassValidationResult) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{40}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *EnvironmentClassValidationResult) GetValid() bool {
@@ -2678,7 +2634,7 @@ type SCMIntegrationValidationResult struct {
 
 func (x *SCMIntegrationValidationResult) Reset() {
 	*x = SCMIntegrationValidationResult{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[41]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2690,7 +2646,7 @@ func (x *SCMIntegrationValidationResult) String() string {
 func (*SCMIntegrationValidationResult) ProtoMessage() {}
 
 func (x *SCMIntegrationValidationResult) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[41]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2703,7 +2659,7 @@ func (x *SCMIntegrationValidationResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SCMIntegrationValidationResult.ProtoReflect.Descriptor instead.
 func (*SCMIntegrationValidationResult) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{41}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *SCMIntegrationValidationResult) GetValid() bool {
@@ -2754,7 +2710,7 @@ type ValidateRunnerConfigurationResponse struct {
 
 func (x *ValidateRunnerConfigurationResponse) Reset() {
 	*x = ValidateRunnerConfigurationResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[42]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2766,7 +2722,7 @@ func (x *ValidateRunnerConfigurationResponse) String() string {
 func (*ValidateRunnerConfigurationResponse) ProtoMessage() {}
 
 func (x *ValidateRunnerConfigurationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[42]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2779,7 +2735,7 @@ func (x *ValidateRunnerConfigurationResponse) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use ValidateRunnerConfigurationResponse.ProtoReflect.Descriptor instead.
 func (*ValidateRunnerConfigurationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{42}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *ValidateRunnerConfigurationResponse) GetResult() isValidateRunnerConfigurationResponse_Result {
@@ -2838,7 +2794,7 @@ type RunnerConfigurationSchema struct {
 
 func (x *RunnerConfigurationSchema) Reset() {
 	*x = RunnerConfigurationSchema{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[43]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2850,7 +2806,7 @@ func (x *RunnerConfigurationSchema) String() string {
 func (*RunnerConfigurationSchema) ProtoMessage() {}
 
 func (x *RunnerConfigurationSchema) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[43]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2863,7 +2819,7 @@ func (x *RunnerConfigurationSchema) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunnerConfigurationSchema.ProtoReflect.Descriptor instead.
 func (*RunnerConfigurationSchema) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{43}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *RunnerConfigurationSchema) GetVersion() string {
@@ -2899,16 +2855,19 @@ func (x *RunnerConfigurationSchema) GetScm() []*RunnerConfigurationSchema_SCMCon
 // - Plain text values in update requests (will be encrypted server-side).
 // - Encrypted binary values on read requests (decrypt directly to get original value).
 type LLMIntegrationRequestHeader struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	Value         []byte                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Key   string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Value []byte                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	// header_type controls how value is interpreted. Unspecified values are
+	// treated as literals for backward compatibility.
+	HeaderType    LLMIntegrationRequestHeaderType `protobuf:"varint,3,opt,name=header_type,json=headerType,proto3,enum=gitpod.v1.LLMIntegrationRequestHeaderType" json:"header_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *LLMIntegrationRequestHeader) Reset() {
 	*x = LLMIntegrationRequestHeader{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[44]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2920,7 +2879,7 @@ func (x *LLMIntegrationRequestHeader) String() string {
 func (*LLMIntegrationRequestHeader) ProtoMessage() {}
 
 func (x *LLMIntegrationRequestHeader) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[44]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2933,7 +2892,7 @@ func (x *LLMIntegrationRequestHeader) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LLMIntegrationRequestHeader.ProtoReflect.Descriptor instead.
 func (*LLMIntegrationRequestHeader) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{44}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *LLMIntegrationRequestHeader) GetKey() string {
@@ -2948,6 +2907,13 @@ func (x *LLMIntegrationRequestHeader) GetValue() []byte {
 		return x.Value
 	}
 	return nil
+}
+
+func (x *LLMIntegrationRequestHeader) GetHeaderType() LLMIntegrationRequestHeaderType {
+	if x != nil {
+		return x.HeaderType
+	}
+	return LLMIntegrationRequestHeaderType_LLM_INTEGRATION_REQUEST_HEADER_TYPE_UNSPECIFIED
 }
 
 type LLMIntegration struct {
@@ -2976,7 +2942,7 @@ type LLMIntegration struct {
 
 func (x *LLMIntegration) Reset() {
 	*x = LLMIntegration{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[45]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2988,7 +2954,7 @@ func (x *LLMIntegration) String() string {
 func (*LLMIntegration) ProtoMessage() {}
 
 func (x *LLMIntegration) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[45]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3001,7 +2967,7 @@ func (x *LLMIntegration) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LLMIntegration.ProtoReflect.Descriptor instead.
 func (*LLMIntegration) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{45}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *LLMIntegration) GetId() string {
@@ -3091,7 +3057,7 @@ type CreateLLMIntegrationRequest struct {
 
 func (x *CreateLLMIntegrationRequest) Reset() {
 	*x = CreateLLMIntegrationRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[46]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3103,7 +3069,7 @@ func (x *CreateLLMIntegrationRequest) String() string {
 func (*CreateLLMIntegrationRequest) ProtoMessage() {}
 
 func (x *CreateLLMIntegrationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[46]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3116,7 +3082,7 @@ func (x *CreateLLMIntegrationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateLLMIntegrationRequest.ProtoReflect.Descriptor instead.
 func (*CreateLLMIntegrationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{46}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *CreateLLMIntegrationRequest) GetRunnerId() string {
@@ -3164,7 +3130,7 @@ type CreateLLMIntegrationResponse struct {
 
 func (x *CreateLLMIntegrationResponse) Reset() {
 	*x = CreateLLMIntegrationResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[47]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3176,7 +3142,7 @@ func (x *CreateLLMIntegrationResponse) String() string {
 func (*CreateLLMIntegrationResponse) ProtoMessage() {}
 
 func (x *CreateLLMIntegrationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[47]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3189,7 +3155,7 @@ func (x *CreateLLMIntegrationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateLLMIntegrationResponse.ProtoReflect.Descriptor instead.
 func (*CreateLLMIntegrationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{47}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *CreateLLMIntegrationResponse) GetId() string {
@@ -3208,7 +3174,7 @@ type GetLLMIntegrationRequest struct {
 
 func (x *GetLLMIntegrationRequest) Reset() {
 	*x = GetLLMIntegrationRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[48]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3220,7 +3186,7 @@ func (x *GetLLMIntegrationRequest) String() string {
 func (*GetLLMIntegrationRequest) ProtoMessage() {}
 
 func (x *GetLLMIntegrationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[48]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3233,7 +3199,7 @@ func (x *GetLLMIntegrationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLLMIntegrationRequest.ProtoReflect.Descriptor instead.
 func (*GetLLMIntegrationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{48}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *GetLLMIntegrationRequest) GetId() string {
@@ -3252,7 +3218,7 @@ type GetLLMIntegrationResponse struct {
 
 func (x *GetLLMIntegrationResponse) Reset() {
 	*x = GetLLMIntegrationResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[49]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3264,7 +3230,7 @@ func (x *GetLLMIntegrationResponse) String() string {
 func (*GetLLMIntegrationResponse) ProtoMessage() {}
 
 func (x *GetLLMIntegrationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[49]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3277,7 +3243,7 @@ func (x *GetLLMIntegrationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLLMIntegrationResponse.ProtoReflect.Descriptor instead.
 func (*GetLLMIntegrationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{49}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *GetLLMIntegrationResponse) GetIntegration() *LLMIntegration {
@@ -3298,7 +3264,7 @@ type ListLLMIntegrationsRequest struct {
 
 func (x *ListLLMIntegrationsRequest) Reset() {
 	*x = ListLLMIntegrationsRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[50]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3310,7 +3276,7 @@ func (x *ListLLMIntegrationsRequest) String() string {
 func (*ListLLMIntegrationsRequest) ProtoMessage() {}
 
 func (x *ListLLMIntegrationsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[50]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3323,7 +3289,7 @@ func (x *ListLLMIntegrationsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListLLMIntegrationsRequest.ProtoReflect.Descriptor instead.
 func (*ListLLMIntegrationsRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{50}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *ListLLMIntegrationsRequest) GetPagination() *PaginationRequest {
@@ -3359,7 +3325,7 @@ type ListLLMIntegrationsResponse struct {
 
 func (x *ListLLMIntegrationsResponse) Reset() {
 	*x = ListLLMIntegrationsResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[51]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3371,7 +3337,7 @@ func (x *ListLLMIntegrationsResponse) String() string {
 func (*ListLLMIntegrationsResponse) ProtoMessage() {}
 
 func (x *ListLLMIntegrationsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[51]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3384,7 +3350,7 @@ func (x *ListLLMIntegrationsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListLLMIntegrationsResponse.ProtoReflect.Descriptor instead.
 func (*ListLLMIntegrationsResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{51}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *ListLLMIntegrationsResponse) GetPagination() *PaginationResponse {
@@ -3439,7 +3405,7 @@ type UpdateLLMIntegrationRequest struct {
 
 func (x *UpdateLLMIntegrationRequest) Reset() {
 	*x = UpdateLLMIntegrationRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[52]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3451,7 +3417,7 @@ func (x *UpdateLLMIntegrationRequest) String() string {
 func (*UpdateLLMIntegrationRequest) ProtoMessage() {}
 
 func (x *UpdateLLMIntegrationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[52]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3464,7 +3430,7 @@ func (x *UpdateLLMIntegrationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateLLMIntegrationRequest.ProtoReflect.Descriptor instead.
 func (*UpdateLLMIntegrationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{52}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *UpdateLLMIntegrationRequest) GetId() string {
@@ -3524,7 +3490,7 @@ type UpdateLLMIntegrationResponse struct {
 
 func (x *UpdateLLMIntegrationResponse) Reset() {
 	*x = UpdateLLMIntegrationResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[53]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3536,7 +3502,7 @@ func (x *UpdateLLMIntegrationResponse) String() string {
 func (*UpdateLLMIntegrationResponse) ProtoMessage() {}
 
 func (x *UpdateLLMIntegrationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[53]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3549,7 +3515,7 @@ func (x *UpdateLLMIntegrationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateLLMIntegrationResponse.ProtoReflect.Descriptor instead.
 func (*UpdateLLMIntegrationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{53}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{51}
 }
 
 type DeleteLLMIntegrationRequest struct {
@@ -3564,7 +3530,7 @@ type DeleteLLMIntegrationRequest struct {
 
 func (x *DeleteLLMIntegrationRequest) Reset() {
 	*x = DeleteLLMIntegrationRequest{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[54]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3576,7 +3542,7 @@ func (x *DeleteLLMIntegrationRequest) String() string {
 func (*DeleteLLMIntegrationRequest) ProtoMessage() {}
 
 func (x *DeleteLLMIntegrationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[54]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3589,7 +3555,7 @@ func (x *DeleteLLMIntegrationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteLLMIntegrationRequest.ProtoReflect.Descriptor instead.
 func (*DeleteLLMIntegrationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{54}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *DeleteLLMIntegrationRequest) GetId() string {
@@ -3614,7 +3580,7 @@ type DeleteLLMIntegrationResponse struct {
 
 func (x *DeleteLLMIntegrationResponse) Reset() {
 	*x = DeleteLLMIntegrationResponse{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[55]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3626,7 +3592,7 @@ func (x *DeleteLLMIntegrationResponse) String() string {
 func (*DeleteLLMIntegrationResponse) ProtoMessage() {}
 
 func (x *DeleteLLMIntegrationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[55]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3639,7 +3605,7 @@ func (x *DeleteLLMIntegrationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteLLMIntegrationResponse.ProtoReflect.Descriptor instead.
 func (*DeleteLLMIntegrationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{55}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{53}
 }
 
 type ListHostAuthenticationTokensRequest_Filter struct {
@@ -3657,7 +3623,7 @@ type ListHostAuthenticationTokensRequest_Filter struct {
 
 func (x *ListHostAuthenticationTokensRequest_Filter) Reset() {
 	*x = ListHostAuthenticationTokensRequest_Filter{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[56]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3669,7 +3635,7 @@ func (x *ListHostAuthenticationTokensRequest_Filter) String() string {
 func (*ListHostAuthenticationTokensRequest_Filter) ProtoMessage() {}
 
 func (x *ListHostAuthenticationTokensRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[56]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3717,7 +3683,7 @@ type ListSCMIntegrationsRequest_Filter struct {
 
 func (x *ListSCMIntegrationsRequest_Filter) Reset() {
 	*x = ListSCMIntegrationsRequest_Filter{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[57]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3729,7 +3695,7 @@ func (x *ListSCMIntegrationsRequest_Filter) String() string {
 func (*ListSCMIntegrationsRequest_Filter) ProtoMessage() {}
 
 func (x *ListSCMIntegrationsRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[57]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3742,7 +3708,7 @@ func (x *ListSCMIntegrationsRequest_Filter) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ListSCMIntegrationsRequest_Filter.ProtoReflect.Descriptor instead.
 func (*ListSCMIntegrationsRequest_Filter) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{23, 0}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{21, 0}
 }
 
 func (x *ListSCMIntegrationsRequest_Filter) GetRunnerIds() []string {
@@ -3773,7 +3739,7 @@ type ListEnvironmentClassesRequest_Filter struct {
 
 func (x *ListEnvironmentClassesRequest_Filter) Reset() {
 	*x = ListEnvironmentClassesRequest_Filter{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[58]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3785,7 +3751,7 @@ func (x *ListEnvironmentClassesRequest_Filter) String() string {
 func (*ListEnvironmentClassesRequest_Filter) ProtoMessage() {}
 
 func (x *ListEnvironmentClassesRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[58]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3798,7 +3764,7 @@ func (x *ListEnvironmentClassesRequest_Filter) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use ListEnvironmentClassesRequest_Filter.ProtoReflect.Descriptor instead.
 func (*ListEnvironmentClassesRequest_Filter) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{34, 0}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{32, 0}
 }
 
 func (x *ListEnvironmentClassesRequest_Filter) GetRunnerIds() []string {
@@ -3864,7 +3830,7 @@ type ValidateRunnerConfigurationRequest_ValidateSCMIntegration struct {
 
 func (x *ValidateRunnerConfigurationRequest_ValidateSCMIntegration) Reset() {
 	*x = ValidateRunnerConfigurationRequest_ValidateSCMIntegration{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[59]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3876,7 +3842,7 @@ func (x *ValidateRunnerConfigurationRequest_ValidateSCMIntegration) String() str
 func (*ValidateRunnerConfigurationRequest_ValidateSCMIntegration) ProtoMessage() {}
 
 func (x *ValidateRunnerConfigurationRequest_ValidateSCMIntegration) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[59]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3889,7 +3855,7 @@ func (x *ValidateRunnerConfigurationRequest_ValidateSCMIntegration) ProtoReflect
 
 // Deprecated: Use ValidateRunnerConfigurationRequest_ValidateSCMIntegration.ProtoReflect.Descriptor instead.
 func (*ValidateRunnerConfigurationRequest_ValidateSCMIntegration) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{38, 0}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{36, 0}
 }
 
 func (x *ValidateRunnerConfigurationRequest_ValidateSCMIntegration) GetId() string {
@@ -4000,7 +3966,7 @@ type RunnerConfigurationSchema_StringField struct {
 
 func (x *RunnerConfigurationSchema_StringField) Reset() {
 	*x = RunnerConfigurationSchema_StringField{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[60]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4012,7 +3978,7 @@ func (x *RunnerConfigurationSchema_StringField) String() string {
 func (*RunnerConfigurationSchema_StringField) ProtoMessage() {}
 
 func (x *RunnerConfigurationSchema_StringField) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[60]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4025,7 +3991,7 @@ func (x *RunnerConfigurationSchema_StringField) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use RunnerConfigurationSchema_StringField.ProtoReflect.Descriptor instead.
 func (*RunnerConfigurationSchema_StringField) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{43, 0}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{41, 0}
 }
 
 func (x *RunnerConfigurationSchema_StringField) GetDefault() string {
@@ -4051,7 +4017,7 @@ type RunnerConfigurationSchema_BoolField struct {
 
 func (x *RunnerConfigurationSchema_BoolField) Reset() {
 	*x = RunnerConfigurationSchema_BoolField{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[61]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4063,7 +4029,7 @@ func (x *RunnerConfigurationSchema_BoolField) String() string {
 func (*RunnerConfigurationSchema_BoolField) ProtoMessage() {}
 
 func (x *RunnerConfigurationSchema_BoolField) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[61]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4076,7 +4042,7 @@ func (x *RunnerConfigurationSchema_BoolField) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use RunnerConfigurationSchema_BoolField.ProtoReflect.Descriptor instead.
 func (*RunnerConfigurationSchema_BoolField) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{43, 1}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{41, 1}
 }
 
 func (x *RunnerConfigurationSchema_BoolField) GetDefault() bool {
@@ -4097,7 +4063,7 @@ type RunnerConfigurationSchema_IntField struct {
 
 func (x *RunnerConfigurationSchema_IntField) Reset() {
 	*x = RunnerConfigurationSchema_IntField{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[62]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4109,7 +4075,7 @@ func (x *RunnerConfigurationSchema_IntField) String() string {
 func (*RunnerConfigurationSchema_IntField) ProtoMessage() {}
 
 func (x *RunnerConfigurationSchema_IntField) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[62]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4122,7 +4088,7 @@ func (x *RunnerConfigurationSchema_IntField) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use RunnerConfigurationSchema_IntField.ProtoReflect.Descriptor instead.
 func (*RunnerConfigurationSchema_IntField) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{43, 2}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{41, 2}
 }
 
 func (x *RunnerConfigurationSchema_IntField) GetDefault() int32 {
@@ -4164,7 +4130,7 @@ type RunnerConfigurationSchema_EnumField struct {
 
 func (x *RunnerConfigurationSchema_EnumField) Reset() {
 	*x = RunnerConfigurationSchema_EnumField{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[63]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4176,7 +4142,7 @@ func (x *RunnerConfigurationSchema_EnumField) String() string {
 func (*RunnerConfigurationSchema_EnumField) ProtoMessage() {}
 
 func (x *RunnerConfigurationSchema_EnumField) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[63]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4189,7 +4155,7 @@ func (x *RunnerConfigurationSchema_EnumField) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use RunnerConfigurationSchema_EnumField.ProtoReflect.Descriptor instead.
 func (*RunnerConfigurationSchema_EnumField) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{43, 3}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{41, 3}
 }
 
 // Deprecated: Marked as deprecated in gitpod/v1/runner_configuration.proto.
@@ -4231,7 +4197,7 @@ type RunnerConfigurationSchema_DisplayField struct {
 
 func (x *RunnerConfigurationSchema_DisplayField) Reset() {
 	*x = RunnerConfigurationSchema_DisplayField{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[64]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4243,7 +4209,7 @@ func (x *RunnerConfigurationSchema_DisplayField) String() string {
 func (*RunnerConfigurationSchema_DisplayField) ProtoMessage() {}
 
 func (x *RunnerConfigurationSchema_DisplayField) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[64]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4256,7 +4222,7 @@ func (x *RunnerConfigurationSchema_DisplayField) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use RunnerConfigurationSchema_DisplayField.ProtoReflect.Descriptor instead.
 func (*RunnerConfigurationSchema_DisplayField) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{43, 4}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{41, 4}
 }
 
 func (x *RunnerConfigurationSchema_DisplayField) GetDefault() string {
@@ -4287,7 +4253,7 @@ type RunnerConfigurationSchema_Field struct {
 
 func (x *RunnerConfigurationSchema_Field) Reset() {
 	*x = RunnerConfigurationSchema_Field{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[65]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4299,7 +4265,7 @@ func (x *RunnerConfigurationSchema_Field) String() string {
 func (*RunnerConfigurationSchema_Field) ProtoMessage() {}
 
 func (x *RunnerConfigurationSchema_Field) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[65]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4312,7 +4278,7 @@ func (x *RunnerConfigurationSchema_Field) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunnerConfigurationSchema_Field.ProtoReflect.Descriptor instead.
 func (*RunnerConfigurationSchema_Field) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{43, 5}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{41, 5}
 }
 
 func (x *RunnerConfigurationSchema_Field) GetId() string {
@@ -4446,7 +4412,7 @@ type RunnerConfigurationSchema_OAuth struct {
 
 func (x *RunnerConfigurationSchema_OAuth) Reset() {
 	*x = RunnerConfigurationSchema_OAuth{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[66]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4458,7 +4424,7 @@ func (x *RunnerConfigurationSchema_OAuth) String() string {
 func (*RunnerConfigurationSchema_OAuth) ProtoMessage() {}
 
 func (x *RunnerConfigurationSchema_OAuth) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[66]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4471,7 +4437,7 @@ func (x *RunnerConfigurationSchema_OAuth) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunnerConfigurationSchema_OAuth.ProtoReflect.Descriptor instead.
 func (*RunnerConfigurationSchema_OAuth) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{43, 6}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{41, 6}
 }
 
 func (x *RunnerConfigurationSchema_OAuth) GetCallbackUrl() string {
@@ -4493,7 +4459,7 @@ type RunnerConfigurationSchema_PersonalAccessToken struct {
 
 func (x *RunnerConfigurationSchema_PersonalAccessToken) Reset() {
 	*x = RunnerConfigurationSchema_PersonalAccessToken{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[67]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4505,7 +4471,7 @@ func (x *RunnerConfigurationSchema_PersonalAccessToken) String() string {
 func (*RunnerConfigurationSchema_PersonalAccessToken) ProtoMessage() {}
 
 func (x *RunnerConfigurationSchema_PersonalAccessToken) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[67]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4518,7 +4484,7 @@ func (x *RunnerConfigurationSchema_PersonalAccessToken) ProtoReflect() protorefl
 
 // Deprecated: Use RunnerConfigurationSchema_PersonalAccessToken.ProtoReflect.Descriptor instead.
 func (*RunnerConfigurationSchema_PersonalAccessToken) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{43, 7}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{41, 7}
 }
 
 func (x *RunnerConfigurationSchema_PersonalAccessToken) GetDescription() string {
@@ -4548,7 +4514,7 @@ type RunnerConfigurationSchema_SCMConfigSchema struct {
 
 func (x *RunnerConfigurationSchema_SCMConfigSchema) Reset() {
 	*x = RunnerConfigurationSchema_SCMConfigSchema{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[68]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4560,7 +4526,7 @@ func (x *RunnerConfigurationSchema_SCMConfigSchema) String() string {
 func (*RunnerConfigurationSchema_SCMConfigSchema) ProtoMessage() {}
 
 func (x *RunnerConfigurationSchema_SCMConfigSchema) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[68]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4573,7 +4539,7 @@ func (x *RunnerConfigurationSchema_SCMConfigSchema) ProtoReflect() protoreflect.
 
 // Deprecated: Use RunnerConfigurationSchema_SCMConfigSchema.ProtoReflect.Descriptor instead.
 func (*RunnerConfigurationSchema_SCMConfigSchema) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{43, 8}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{41, 8}
 }
 
 func (x *RunnerConfigurationSchema_SCMConfigSchema) GetScmId() string {
@@ -4622,7 +4588,7 @@ type RunnerConfigurationSchema_EnumField_Value struct {
 
 func (x *RunnerConfigurationSchema_EnumField_Value) Reset() {
 	*x = RunnerConfigurationSchema_EnumField_Value{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[69]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4634,7 +4600,7 @@ func (x *RunnerConfigurationSchema_EnumField_Value) String() string {
 func (*RunnerConfigurationSchema_EnumField_Value) ProtoMessage() {}
 
 func (x *RunnerConfigurationSchema_EnumField_Value) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[69]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4647,7 +4613,7 @@ func (x *RunnerConfigurationSchema_EnumField_Value) ProtoReflect() protoreflect.
 
 // Deprecated: Use RunnerConfigurationSchema_EnumField_Value.ProtoReflect.Descriptor instead.
 func (*RunnerConfigurationSchema_EnumField_Value) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{43, 3, 0}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{41, 3, 0}
 }
 
 func (x *RunnerConfigurationSchema_EnumField_Value) GetTitle() string {
@@ -4681,7 +4647,7 @@ type ListLLMIntegrationsRequest_Filter struct {
 
 func (x *ListLLMIntegrationsRequest_Filter) Reset() {
 	*x = ListLLMIntegrationsRequest_Filter{}
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[70]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4693,7 +4659,7 @@ func (x *ListLLMIntegrationsRequest_Filter) String() string {
 func (*ListLLMIntegrationsRequest_Filter) ProtoMessage() {}
 
 func (x *ListLLMIntegrationsRequest_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[70]
+	mi := &file_gitpod_v1_runner_configuration_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4706,7 +4672,7 @@ func (x *ListLLMIntegrationsRequest_Filter) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ListLLMIntegrationsRequest_Filter.ProtoReflect.Descriptor instead.
 func (*ListLLMIntegrationsRequest_Filter) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{50, 0}
+	return file_gitpod_v1_runner_configuration_proto_rawDescGZIP(), []int{48, 0}
 }
 
 func (x *ListLLMIntegrationsRequest_Filter) GetRunnerIds() []string {
@@ -4720,20 +4686,17 @@ var File_gitpod_v1_runner_configuration_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\n" +
-	"$gitpod/v1/runner_configuration.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x18gitpod/v1/identity.proto\x1a\x15gitpod/v1/model.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x99\x04\n" +
-	"$CreateHostAuthenticationTokenRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x123\n" +
-	"\auser_id\x18\x02 \x01(\tB\x1a\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.id\x18\x01R\x06userId\x12\x1b\n" +
+	"$gitpod/v1/runner_configuration.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x18gitpod/v1/identity.proto\x1a\x15gitpod/v1/model.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe9\x03\n" +
+	"$CreateHostAuthenticationTokenRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12&\n" +
+	"\auser_id\x18\x02 \x01(\tB\r\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01\x18\x01R\x06userId\x12\x1b\n" +
 	"\x04host\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x04host\x12\x1d\n" +
 	"\x05token\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x05token\x12J\n" +
 	"\x06source\x18\x05 \x01(\x0e2(.gitpod.v1.HostAuthenticationTokenSourceB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06source\x129\n" +
 	"\n" +
 	"expires_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12#\n" +
-	"\rrefresh_token\x18\a \x01(\tR\frefreshToken\x12F\n" +
-	"\x0eintegration_id\x18\b \x01(\tB\x1f\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eintegration.idR\rintegrationId\x12 \n" +
+	"\rrefresh_token\x18\a \x01(\tR\frefreshToken\x122\n" +
+	"\x0eintegration_id\x18\b \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\rintegrationId\x12 \n" +
 	"\x06scopes\x18\t \x03(\tB\b\xbaH\x05\x92\x01\x02\x10eR\x06scopes\x124\n" +
 	"\asubject\x18\n" +
 	" \x01(\v2\x12.gitpod.v1.SubjectB\x06\xbaH\x03\xd8\x01\x01R\asubject\"i\n" +
@@ -4785,13 +4748,7 @@ const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\x06_tokenB\r\n" +
 	"\v_expires_atB\x10\n" +
 	"\x0e_refresh_token\"'\n" +
-	"%UpdateHostAuthenticationTokenResponse\"\xbc\x01\n" +
-	",UpdateHostAuthenticationTokenMetadataRequest\x12%\n" +
-	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12\x18\n" +
-	"\x02id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x126\n" +
-	"\x10external_user_id\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01H\x00R\x0eexternalUserId\x88\x01\x01B\x13\n" +
-	"\x11_external_user_id\"/\n" +
-	"-UpdateHostAuthenticationTokenMetadataResponse\"@\n" +
+	"%UpdateHostAuthenticationTokenResponse\"@\n" +
 	"$DeleteHostAuthenticationTokenRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"'\n" +
 	"%DeleteHostAuthenticationTokenResponse\"4\n" +
@@ -4802,20 +4759,17 @@ const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\x10FieldValueUpdate\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x19\n" +
 	"\x05value\x18\x02 \x01(\tH\x00R\x05value\x88\x01\x01B\b\n" +
-	"\x06_value\"[\n" +
-	"#GetRunnerConfigurationSchemaRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\"d\n" +
+	"\x06_value\"L\n" +
+	"#GetRunnerConfigurationSchemaRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\"d\n" +
 	"$GetRunnerConfigurationSchemaResponse\x12<\n" +
-	"\x06schema\x18\x01 \x01(\v2$.gitpod.v1.RunnerConfigurationSchemaR\x06schema\"\xca\x03\n" +
-	"\x1bCreateSCMIntegrationRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12#\n" +
-	"\x06scm_id\x18\x02 \x01(\tB\f\xa2\xab\x1e\b\n" +
-	"\x06scm.idR\x05scmId\x12\x12\n" +
+	"\x06schema\x18\x01 \x01(\v2$.gitpod.v1.RunnerConfigurationSchemaR\x06schema\"\xa7\x03\n" +
+	"\x1bCreateSCMIntegrationRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12\x15\n" +
+	"\x06scm_id\x18\x02 \x01(\tR\x05scmId\x12\x12\n" +
 	"\x04host\x18\x03 \x01(\tR\x04host\x12+\n" +
-	"\x0foauth_client_id\x18\x04 \x01(\tH\x00R\roauthClientId\x88\x01\x01\x12L\n" +
-	"\x1doauth_plaintext_client_secret\x18\x05 \x01(\tB\x04ګ\x1e\x00H\x01R\x1aoauthPlaintextClientSecret\x88\x01\x01\x12\x10\n" +
+	"\x0foauth_client_id\x18\x04 \x01(\tH\x00R\roauthClientId\x88\x01\x01\x12F\n" +
+	"\x1doauth_plaintext_client_secret\x18\x05 \x01(\tH\x01R\x1aoauthPlaintextClientSecret\x88\x01\x01\x12\x10\n" +
 	"\x03pat\x18\x06 \x01(\bR\x03pat\x12\"\n" +
 	"\n" +
 	"issuer_url\x18\a \x01(\tH\x02R\tissuerUrl\x88\x01\x01\x120\n" +
@@ -4823,52 +4777,45 @@ const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\x10_oauth_client_idB \n" +
 	"\x1e_oauth_plaintext_client_secretB\r\n" +
 	"\v_issuer_urlB\x14\n" +
-	"\x12_virtual_directory\"O\n" +
-	"\x1cCreateSCMIntegrationResponse\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11scmintegration.idR\x02id\"\x9b\x01\n" +
-	"\x19SCMIntegrationOAuthConfig\x12!\n" +
-	"\tclient_id\x18\x01 \x01(\tB\x04ګ\x1e\x00R\bclientId\x126\n" +
-	"\x17encrypted_client_secret\x18\x02 \x01(\fR\x15encryptedClientSecret\x12#\n" +
+	"\x12_virtual_directory\"8\n" +
+	"\x1cCreateSCMIntegrationResponse\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\x8f\x01\n" +
+	"\x19SCMIntegrationOAuthConfig\x12\x1b\n" +
+	"\tclient_id\x18\x01 \x01(\tR\bclientId\x126\n" +
+	"\x17encrypted_client_secret\x18\x02 \x01(\fR\x15encryptedClientSecret\x12\x1d\n" +
 	"\n" +
-	"issuer_url\x18\x03 \x01(\tB\x04ګ\x1e\x00R\tissuerUrl\"\xef\x02\n" +
-	"\x0eSCMIntegration\x12+\n" +
-	"\x02id\x18\x01 \x01(\tB\x1b\xa2\xab\x1e\x13\n" +
-	"\x11scmintegration.idګ\x1e\x00R\x02id\x12'\n" +
-	"\x06scm_id\x18\x02 \x01(\tB\x10\xa2\xab\x1e\b\n" +
-	"\x06scm.idګ\x1e\x00R\x05scmId\x12\x18\n" +
-	"\x04host\x18\x03 \x01(\tB\x04ګ\x1e\x00R\x04host\x12E\n" +
-	"\x05oauth\x18\x04 \x01(\v2$.gitpod.v1.SCMIntegrationOAuthConfigB\x04ګ\x1e\x00H\x00R\x05oauth\x88\x01\x01\x12\x16\n" +
-	"\x03pat\x18\x05 \x01(\bB\x04ګ\x1e\x00R\x03pat\x120\n" +
-	"\trunner_id\x18\x06 \x01(\tB\x13\xa2\xab\x1e\v\n" +
-	"\trunner.idګ\x1e\x00R\brunnerId\x126\n" +
-	"\x11virtual_directory\x18\a \x01(\tB\x04ګ\x1e\x00H\x01R\x10virtualDirectory\x88\x01\x01:\x04ҫ\x1e\x00B\b\n" +
+	"issuer_url\x18\x03 \x01(\tR\tissuerUrl\"\x8d\x02\n" +
+	"\x0eSCMIntegration\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
+	"\x06scm_id\x18\x02 \x01(\tR\x05scmId\x12\x12\n" +
+	"\x04host\x18\x03 \x01(\tR\x04host\x12?\n" +
+	"\x05oauth\x18\x04 \x01(\v2$.gitpod.v1.SCMIntegrationOAuthConfigH\x00R\x05oauth\x88\x01\x01\x12\x10\n" +
+	"\x03pat\x18\x05 \x01(\bR\x03pat\x12\x1b\n" +
+	"\trunner_id\x18\x06 \x01(\tR\brunnerId\x120\n" +
+	"\x11virtual_directory\x18\a \x01(\tH\x01R\x10virtualDirectory\x88\x01\x01B\b\n" +
 	"\x06_oauthB\x14\n" +
-	"\x12_virtual_directory\"K\n" +
-	"\x18GetSCMIntegrationRequest\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11scmintegration.idR\x02id\"X\n" +
+	"\x12_virtual_directory\"4\n" +
+	"\x18GetSCMIntegrationRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"X\n" +
 	"\x19GetSCMIntegrationResponse\x12;\n" +
-	"\vintegration\x18\x01 \x01(\v2\x19.gitpod.v1.SCMIntegrationR\vintegration\"\xf3\x01\n" +
+	"\vintegration\x18\x01 \x01(\v2\x19.gitpod.v1.SCMIntegrationR\vintegration\"\xdc\x01\n" +
 	"\x1aListSCMIntegrationsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12D\n" +
-	"\x06filter\x18\x02 \x01(\v2,.gitpod.v1.ListSCMIntegrationsRequest.FilterR\x06filter\x1aQ\n" +
-	"\x06Filter\x12G\n" +
+	"\x06filter\x18\x02 \x01(\v2,.gitpod.v1.ListSCMIntegrationsRequest.FilterR\x06filter\x1a:\n" +
+	"\x06Filter\x120\n" +
 	"\n" +
-	"runner_ids\x18\x01 \x03(\tB(\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11filter.runner_idsR\trunnerIds\"\x9b\x01\n" +
+	"runner_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\trunnerIds\"\x9b\x01\n" +
 	"\x1bListSCMIntegrationsResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12=\n" +
-	"\fintegrations\x18\x02 \x03(\v2\x19.gitpod.v1.SCMIntegrationR\fintegrations\"\x99\x03\n" +
-	"\x1bUpdateSCMIntegrationRequest\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11scmintegration.idR\x02id\x12+\n" +
-	"\x0foauth_client_id\x18\x02 \x01(\tH\x00R\roauthClientId\x88\x01\x01\x12L\n" +
-	"\x1doauth_plaintext_client_secret\x18\x03 \x01(\tB\x04ګ\x1e\x00H\x01R\x1aoauthPlaintextClientSecret\x88\x01\x01\x12\x15\n" +
+	"\fintegrations\x18\x02 \x03(\v2\x19.gitpod.v1.SCMIntegrationR\fintegrations\"\xfc\x02\n" +
+	"\x1bUpdateSCMIntegrationRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12+\n" +
+	"\x0foauth_client_id\x18\x02 \x01(\tH\x00R\roauthClientId\x88\x01\x01\x12F\n" +
+	"\x1doauth_plaintext_client_secret\x18\x03 \x01(\tH\x01R\x1aoauthPlaintextClientSecret\x88\x01\x01\x12\x15\n" +
 	"\x03pat\x18\x04 \x01(\bH\x02R\x03pat\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"issuer_url\x18\x05 \x01(\tH\x03R\tissuerUrl\x88\x01\x01\x120\n" +
@@ -4878,51 +4825,44 @@ const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\x04_patB\r\n" +
 	"\v_issuer_urlB\x14\n" +
 	"\x12_virtual_directory\"\x1e\n" +
-	"\x1cUpdateSCMIntegrationResponse\"N\n" +
-	"\x1bDeleteSCMIntegrationRequest\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11scmintegration.idR\x02id\"\x1e\n" +
-	"\x1cDeleteSCMIntegrationResponse\"\xcb\x02\n" +
-	"\x10EnvironmentClass\x12%\n" +
-	"\x02id\x18\x01 \x01(\tB\x15\xa2\xab\x1e\r\n" +
-	"\venvclass.idګ\x1e\x00R\x02id\x120\n" +
-	"\fdisplay_name\x18\x02 \x01(\tB\r\xbaH\x06r\x04\x10\x03\x18\x7fګ\x1e\x00R\vdisplayName\x120\n" +
-	"\vdescription\x18\x03 \x01(\tB\x0e\xbaH\ar\x05\x10\x03\x18\xc8\x01ګ\x1e\x00R\vdescription\x12A\n" +
-	"\rconfiguration\x18\x04 \x03(\v2\x15.gitpod.v1.FieldValueB\x04ګ\x1e\x00R\rconfiguration\x120\n" +
-	"\trunner_id\x18\x05 \x01(\tB\x13\xa2\xab\x1e\v\n" +
-	"\trunner.idګ\x1e\x00R\brunnerId\x12\x1e\n" +
-	"\aenabled\x18\x06 \x01(\bB\x04ګ\x1e\x00R\aenabled:\x17\xbaG\x10\xba\x01\x02id\xba\x01\brunnerIdҫ\x1e\x00\"\xee\x01\n" +
-	"\x1dCreateEnvironmentClassRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12,\n" +
+	"\x1cUpdateSCMIntegrationResponse\"7\n" +
+	"\x1bDeleteSCMIntegrationRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\x1e\n" +
+	"\x1cDeleteSCMIntegrationResponse\"\x87\x02\n" +
+	"\x10EnvironmentClass\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12,\n" +
+	"\fdisplay_name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18\x7fR\vdisplayName\x12,\n" +
+	"\vdescription\x18\x03 \x01(\tB\n" +
+	"\xbaH\ar\x05\x10\x03\x18\xc8\x01R\vdescription\x12;\n" +
+	"\rconfiguration\x18\x04 \x03(\v2\x15.gitpod.v1.FieldValueR\rconfiguration\x12\x1b\n" +
+	"\trunner_id\x18\x05 \x01(\tR\brunnerId\x12\x18\n" +
+	"\aenabled\x18\x06 \x01(\bR\aenabled:\x13\xbaG\x10\xba\x01\x02id\xba\x01\brunnerId\"\xdf\x01\n" +
+	"\x1dCreateEnvironmentClassRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12,\n" +
 	"\fdisplay_name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18\x7fR\vdisplayName\x12,\n" +
 	"\vdescription\x18\x03 \x01(\tB\n" +
 	"\xbaH\ar\x05\x10\x03\x18\xc8\x01R\vdescription\x12;\n" +
 	"\rconfiguration\x18\x04 \x03(\v2\x15.gitpod.v1.FieldValueR\rconfiguration\"0\n" +
 	"\x1eCreateEnvironmentClassResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"r\n" +
-	"\x1aGetEnvironmentClassRequest\x12T\n" +
-	"\x14environment_class_id\x18\x02 \x01(\tB\"\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x16\n" +
-	"\x14environment_class.idR\x12environmentClassId\"g\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"X\n" +
+	"\x1aGetEnvironmentClassRequest\x12:\n" +
+	"\x14environment_class_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x12environmentClassId\"g\n" +
 	"\x1bGetEnvironmentClassResponse\x12H\n" +
-	"\x11environment_class\x18\x01 \x01(\v2\x1b.gitpod.v1.EnvironmentClassR\x10environmentClass\"\x87\x05\n" +
+	"\x11environment_class\x18\x01 \x01(\v2\x1b.gitpod.v1.EnvironmentClassR\x10environmentClass\"\xff\x03\n" +
 	"\x1dListEnvironmentClassesRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12G\n" +
-	"\x06filter\x18\x02 \x01(\v2/.gitpod.v1.ListEnvironmentClassesRequest.FilterR\x06filter\x1a\xde\x03\n" +
-	"\x06Filter\x12G\n" +
+	"\x06filter\x18\x02 \x01(\v2/.gitpod.v1.ListEnvironmentClassesRequest.FilterR\x06filter\x1a\xd6\x02\n" +
+	"\x06Filter\x120\n" +
 	"\n" +
-	"runner_ids\x18\x01 \x03(\tB(\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11filter.runner_idsR\trunnerIds\x123\n" +
-	"\aenabled\x18\x02 \x01(\bB\x14\xa2\xab\x1e\x10\n" +
-	"\x0efilter.enabledH\x00R\aenabled\x88\x01\x01\x12a\n" +
-	"\x17can_create_environments\x18\x03 \x01(\bB$\xa2\xab\x1e \n" +
-	"\x1efilter.can_create_environmentsH\x01R\x15canCreateEnvironments\x88\x01\x01\x12\\\n" +
-	"\frunner_kinds\x18\x04 \x03(\x0e2\x15.gitpod.v1.RunnerKindB\"\xbaH\a\x92\x01\x04\b\x00\x10\x19\xa2\xab\x1e\x14\n" +
-	"\x12filter.runner_kindR\vrunnerKinds\x12m\n" +
-	"\x10runner_providers\x18\x05 \x03(\x0e2\x19.gitpod.v1.RunnerProviderB'\xbaH\a\x92\x01\x04\b\x00\x10\x19\xa2\xab\x1e\x19\n" +
-	"\x17filter.runner_providersR\x0frunnerProvidersB\n" +
+	"runner_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\trunnerIds\x12\x1d\n" +
+	"\aenabled\x18\x02 \x01(\bH\x00R\aenabled\x88\x01\x01\x12;\n" +
+	"\x17can_create_environments\x18\x03 \x01(\bH\x01R\x15canCreateEnvironments\x88\x01\x01\x12D\n" +
+	"\frunner_kinds\x18\x04 \x03(\x0e2\x15.gitpod.v1.RunnerKindB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\x19R\vrunnerKinds\x12P\n" +
+	"\x10runner_providers\x18\x05 \x03(\x0e2\x19.gitpod.v1.RunnerProviderB\n" +
+	"\xbaH\a\x92\x01\x04\b\x00\x10\x19R\x0frunnerProvidersB\n" +
 	"\n" +
 	"\b_enabledB\x1a\n" +
 	"\x18_can_create_environments\"\xad\x01\n" +
@@ -4930,10 +4870,9 @@ const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12L\n" +
-	"\x13environment_classes\x18\x02 \x03(\v2\x1b.gitpod.v1.EnvironmentClassR\x12environmentClasses\"\xa7\x02\n" +
-	"\x1dUpdateEnvironmentClassRequest\x12T\n" +
-	"\x14environment_class_id\x18\x01 \x01(\tB\"\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x16\n" +
-	"\x14environment_class.idR\x12environmentClassId\x121\n" +
+	"\x13environment_classes\x18\x02 \x03(\v2\x1b.gitpod.v1.EnvironmentClassR\x12environmentClasses\"\x8d\x02\n" +
+	"\x1dUpdateEnvironmentClassRequest\x12:\n" +
+	"\x14environment_class_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x12environmentClassId\x121\n" +
 	"\fdisplay_name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18\x7fH\x00R\vdisplayName\x88\x01\x01\x121\n" +
 	"\vdescription\x18\x03 \x01(\tB\n" +
 	"\xbaH\ar\x05\x10\x03\x18\xc8\x01H\x01R\vdescription\x88\x01\x01\x12\x1d\n" +
@@ -4942,17 +4881,14 @@ const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\f_descriptionB\n" +
 	"\n" +
 	"\b_enabled\" \n" +
-	"\x1eUpdateEnvironmentClassResponse\"\x94\x06\n" +
-	"\"ValidateRunnerConfigurationRequest\x124\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x17\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idR\brunnerId\x12J\n" +
+	"\x1eUpdateEnvironmentClassResponse\"\xde\x05\n" +
+	"\"ValidateRunnerConfigurationRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12J\n" +
 	"\x11environment_class\x18\x02 \x01(\v2\x1b.gitpod.v1.EnvironmentClassH\x00R\x10environmentClass\x12o\n" +
-	"\x0fscm_integration\x18\x03 \x01(\v2D.gitpod.v1.ValidateRunnerConfigurationRequest.ValidateSCMIntegrationH\x00R\x0escmIntegration\x1a\xe9\x03\n" +
-	"\x16ValidateSCMIntegration\x12'\n" +
-	"\x02id\x18\x01 \x01(\tB\x17\xa2\xab\x1e\x13\n" +
-	"\x11scmintegration.idR\x02id\x12#\n" +
-	"\x06scm_id\x18\x02 \x01(\tB\f\xa2\xab\x1e\b\n" +
-	"\x06scm.idR\x05scmId\x12\x12\n" +
+	"\x0fscm_integration\x18\x03 \x01(\v2D.gitpod.v1.ValidateRunnerConfigurationRequest.ValidateSCMIntegrationH\x00R\x0escmIntegration\x1a\xc2\x03\n" +
+	"\x16ValidateSCMIntegration\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
+	"\x06scm_id\x18\x02 \x01(\tR\x05scmId\x12\x12\n" +
 	"\x04host\x18\x03 \x01(\tR\x04host\x12+\n" +
 	"\x0foauth_client_id\x18\x04 \x01(\tH\x01R\roauthClientId\x88\x01\x01\x12C\n" +
 	"\x1doauth_plaintext_client_secret\x18\x05 \x01(\tH\x00R\x1aoauthPlaintextClientSecret\x12C\n" +
@@ -5042,79 +4978,71 @@ const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12#\n" +
 	"\rdefault_hosts\x18\x03 \x03(\tR\fdefaultHosts\x12@\n" +
 	"\x05oauth\x18\x04 \x01(\v2*.gitpod.v1.RunnerConfigurationSchema.OAuthR\x05oauth\x12J\n" +
-	"\x03pat\x18\x05 \x01(\v28.gitpod.v1.RunnerConfigurationSchema.PersonalAccessTokenR\x03pat\"E\n" +
+	"\x03pat\x18\x05 \x01(\v28.gitpod.v1.RunnerConfigurationSchema.PersonalAccessTokenR\x03pat\"\x9c\x01\n" +
 	"\x1bLLMIntegrationRequestHeader\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\fR\x05value\"\xa8\x04\n" +
-	"\x0eLLMIntegration\x12+\n" +
-	"\x02id\x18\x01 \x01(\tB\x1b\xa2\xab\x1e\x13\n" +
-	"\x11llmintegration.idګ\x1e\x00R\x02id\x120\n" +
-	"\trunner_id\x18\x02 \x01(\tB\x13\xa2\xab\x1e\v\n" +
-	"\trunner.idګ\x1e\x00R\brunnerId\x12H\n" +
-	"\x06models\x18\x03 \x03(\x0e2\x19.gitpod.v1.SupportedModelB\x15\xa2\xab\x1e\r\n" +
-	"\vmodel.namesګ\x1e\x00R\x06models\x12 \n" +
-	"\bendpoint\x18\x04 \x01(\tB\x04ګ\x1e\x00R\bendpoint\x12*\n" +
-	"\x11encrypted_api_key\x18\x05 \x01(\fR\x0fencryptedApiKey\x12#\n" +
+	"\x05value\x18\x02 \x01(\fR\x05value\x12U\n" +
+	"\vheader_type\x18\x03 \x01(\x0e2*.gitpod.v1.LLMIntegrationRequestHeaderTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\n" +
+	"headerType\"\xbb\x03\n" +
+	"\x0eLLMIntegration\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
+	"\trunner_id\x18\x02 \x01(\tR\brunnerId\x121\n" +
+	"\x06models\x18\x03 \x03(\x0e2\x19.gitpod.v1.SupportedModelR\x06models\x12\x1a\n" +
+	"\bendpoint\x18\x04 \x01(\tR\bendpoint\x12*\n" +
+	"\x11encrypted_api_key\x18\x05 \x01(\fR\x0fencryptedApiKey\x12\x1d\n" +
 	"\n" +
-	"max_tokens\x18\x06 \x01(\x04B\x04ګ\x1e\x00R\tmaxTokens\x12:\n" +
-	"\x05phase\x18\a \x01(\x0e2\x1e.gitpod.v1.LLMIntegrationPhaseB\x04ګ\x1e\x00R\x05phase\x12'\n" +
-	"\fphase_reason\x18\b \x01(\tB\x04ګ\x1e\x00R\vphaseReason\x12O\n" +
-	"\x0frequest_headers\x18\t \x03(\v2&.gitpod.v1.LLMIntegrationRequestHeaderR\x0erequestHeaders\x128\n" +
-	"\bprovider\x18\v \x01(\x0e2\x16.gitpod.v1.LLMProviderB\x04ګ\x1e\x00R\bprovider:\x04ҫ\x1e\x00J\x04\b\n" +
-	"\x10\v\"\x96\x02\n" +
-	"\x1bCreateLLMIntegrationRequest\x128\n" +
-	"\trunner_id\x18\x01 \x01(\tB\x1b\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idګ\x1e\x00R\brunnerId\x12W\n" +
-	"\x06models\x18\x02 \x03(\x0e2\x19.gitpod.v1.SupportedModelB$\xbaH\f\x92\x01\t\b\x01\"\x05\x82\x01\x02\x10\x01\xa2\xab\x1e\r\n" +
-	"\vmodel.namesګ\x1e\x00R\x06models\x12 \n" +
-	"\bendpoint\x18\x03 \x01(\tB\x04ګ\x1e\x00R\bendpoint\x12\x1d\n" +
-	"\aapi_key\x18\x04 \x01(\tB\x04ګ\x1e\x00R\x06apiKey\x12#\n" +
+	"max_tokens\x18\x06 \x01(\x04R\tmaxTokens\x124\n" +
+	"\x05phase\x18\a \x01(\x0e2\x1e.gitpod.v1.LLMIntegrationPhaseR\x05phase\x12!\n" +
+	"\fphase_reason\x18\b \x01(\tR\vphaseReason\x12O\n" +
+	"\x0frequest_headers\x18\t \x03(\v2&.gitpod.v1.LLMIntegrationRequestHeaderR\x0erequestHeaders\x122\n" +
+	"\bprovider\x18\v \x01(\x0e2\x16.gitpod.v1.LLMProviderR\bproviderJ\x04\b\n" +
+	"\x10\v\"\xdc\x01\n" +
+	"\x1bCreateLLMIntegrationRequest\x12%\n" +
+	"\trunner_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\brunnerId\x12B\n" +
+	"\x06models\x18\x02 \x03(\x0e2\x19.gitpod.v1.SupportedModelB\x0f\xbaH\f\x92\x01\t\b\x01\"\x05\x82\x01\x02\x10\x01R\x06models\x12\x1a\n" +
+	"\bendpoint\x18\x03 \x01(\tR\bendpoint\x12\x17\n" +
+	"\aapi_key\x18\x04 \x01(\tR\x06apiKey\x12\x1d\n" +
 	"\n" +
-	"max_tokens\x18\x05 \x01(\x04B\x04ګ\x1e\x00R\tmaxTokens\"S\n" +
-	"\x1cCreateLLMIntegrationResponse\x123\n" +
-	"\x02id\x18\x01 \x01(\tB#\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11llmintegration.idګ\x1e\x00R\x02id\"K\n" +
-	"\x18GetLLMIntegrationRequest\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11llmintegration.idR\x02id\"X\n" +
+	"max_tokens\x18\x05 \x01(\x04R\tmaxTokens\"8\n" +
+	"\x1cCreateLLMIntegrationResponse\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"4\n" +
+	"\x18GetLLMIntegrationRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"X\n" +
 	"\x19GetLLMIntegrationResponse\x12;\n" +
-	"\vintegration\x18\x01 \x01(\v2\x19.gitpod.v1.LLMIntegrationR\vintegration\"\xf3\x01\n" +
+	"\vintegration\x18\x01 \x01(\v2\x19.gitpod.v1.LLMIntegrationR\vintegration\"\xdc\x01\n" +
 	"\x1aListLLMIntegrationsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12D\n" +
-	"\x06filter\x18\x02 \x01(\v2,.gitpod.v1.ListLLMIntegrationsRequest.FilterR\x06filter\x1aQ\n" +
-	"\x06Filter\x12G\n" +
+	"\x06filter\x18\x02 \x01(\v2,.gitpod.v1.ListLLMIntegrationsRequest.FilterR\x06filter\x1a:\n" +
+	"\x06Filter\x120\n" +
 	"\n" +
-	"runner_ids\x18\x01 \x03(\tB(\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11filter.runner_idsR\trunnerIds\"\xa2\x02\n" +
+	"runner_ids\x18\x01 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\trunnerIds\"\xa2\x02\n" +
 	"\x1bListLLMIntegrationsResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12=\n" +
 	"\fintegrations\x18\x02 \x03(\v2\x19.gitpod.v1.LLMIntegrationR\fintegrations\x12/\n" +
 	"\x12llm_managed_by_ona\x18\x03 \x01(\bB\x02\x18\x01R\x0fllmManagedByOna\x12T\n" +
-	"\x1aona_intelligence_providers\x18\x04 \x03(\x0e2\x16.gitpod.v1.LLMProviderR\x18onaIntelligenceProviders\"\xcd\x03\n" +
-	"\x1bUpdateLLMIntegrationRequest\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11llmintegration.idR\x02id\x12%\n" +
-	"\bendpoint\x18\x02 \x01(\tB\x04ګ\x1e\x00H\x00R\bendpoint\x88\x01\x01\x12D\n" +
-	"\x06models\x18\x03 \x03(\x0e2\x19.gitpod.v1.SupportedModelB\x11\xbaH\n" +
-	"\x92\x01\a\"\x05\x82\x01\x02\x10\x01ګ\x1e\x00R\x06models\x12\"\n" +
-	"\aapi_key\x18\x04 \x01(\tB\x04ګ\x1e\x00H\x01R\x06apiKey\x88\x01\x01\x12(\n" +
+	"\x1aona_intelligence_providers\x18\x04 \x03(\x0e2\x16.gitpod.v1.LLMProviderR\x18onaIntelligenceProviders\"\x9a\x03\n" +
+	"\x1bUpdateLLMIntegrationRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12\x1f\n" +
+	"\bendpoint\x18\x02 \x01(\tH\x00R\bendpoint\x88\x01\x01\x12@\n" +
+	"\x06models\x18\x03 \x03(\x0e2\x19.gitpod.v1.SupportedModelB\r\xbaH\n" +
+	"\x92\x01\a\"\x05\x82\x01\x02\x10\x01R\x06models\x12\x1c\n" +
+	"\aapi_key\x18\x04 \x01(\tH\x01R\x06apiKey\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"max_tokens\x18\x05 \x01(\x04B\x04ګ\x1e\x00H\x02R\tmaxTokens\x88\x01\x01\x12?\n" +
-	"\x05phase\x18\x06 \x01(\x0e2\x1e.gitpod.v1.LLMIntegrationPhaseB\x04ګ\x1e\x00H\x03R\x05phase\x88\x01\x01\x12O\n" +
+	"max_tokens\x18\x05 \x01(\x04H\x02R\tmaxTokens\x88\x01\x01\x129\n" +
+	"\x05phase\x18\x06 \x01(\x0e2\x1e.gitpod.v1.LLMIntegrationPhaseH\x03R\x05phase\x88\x01\x01\x12O\n" +
 	"\x0frequest_headers\x18\a \x03(\v2&.gitpod.v1.LLMIntegrationRequestHeaderR\x0erequestHeadersB\v\n" +
 	"\t_endpointB\n" +
 	"\n" +
 	"\b_api_keyB\r\n" +
 	"\v_max_tokensB\b\n" +
 	"\x06_phase\"\x1e\n" +
-	"\x1cUpdateLLMIntegrationResponse\"d\n" +
-	"\x1bDeleteLLMIntegrationRequest\x12/\n" +
-	"\x02id\x18\x01 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11llmintegration.idR\x02id\x12\x14\n" +
+	"\x1cUpdateLLMIntegrationResponse\"M\n" +
+	"\x1bDeleteLLMIntegrationRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12\x14\n" +
 	"\x05force\x18\x02 \x01(\bR\x05force\"\x1e\n" +
 	"\x1cDeleteLLMIntegrationResponse*\xa7\x01\n" +
 	"\x1dHostAuthenticationTokenSource\x120\n" +
@@ -5134,51 +5062,37 @@ const file_gitpod_v1_runner_configuration_proto_rawDesc = "" +
 	"\x1bRUNNER_PROVIDER_DESKTOP_MAC\x10\x03\x1a\x02\b\x01\x12\x1b\n" +
 	"\x17RUNNER_PROVIDER_MANAGED\x10\x04\x12\x17\n" +
 	"\x13RUNNER_PROVIDER_GCP\x10\x05\x12\x1d\n" +
-	"\x19RUNNER_PROVIDER_DEV_AGENT\x10\x06*`\n" +
+	"\x19RUNNER_PROVIDER_DEV_AGENT\x10\x06*\xbf\x01\n" +
+	"\x1fLLMIntegrationRequestHeaderType\x123\n" +
+	"/LLM_INTEGRATION_REQUEST_HEADER_TYPE_UNSPECIFIED\x10\x00\x12/\n" +
+	"+LLM_INTEGRATION_REQUEST_HEADER_TYPE_LITERAL\x10\x01\x126\n" +
+	"2LLM_INTEGRATION_REQUEST_HEADER_TYPE_CEL_EXPRESSION\x10\x02*`\n" +
 	"\vLLMProvider\x12\x1c\n" +
 	"\x18LLM_PROVIDER_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16LLM_PROVIDER_ANTHROPIC\x10\x01\x12\x17\n" +
-	"\x13LLM_PROVIDER_OPENAI\x10\x022\xe1\x1b\n" +
-	"\x1aRunnerConfigurationService\x12\xc3\x01\n" +
-	"\x1dCreateHostAuthenticationToken\x12/.gitpod.v1.CreateHostAuthenticationTokenRequest\x1a0.gitpod.v1.CreateHostAuthenticationTokenResponse\"?\xb2\xab\x1e;\n" +
-	"1runners.configurations.host_authentication_tokens\x12\x06create\x12\xbf\x01\n" +
-	"\x1aGetHostAuthenticationToken\x12,.gitpod.v1.GetHostAuthenticationTokenRequest\x1a-.gitpod.v1.GetHostAuthenticationTokenResponse\"D\xb2\xab\x1e=\n" +
-	"1runners.configurations.host_authentication_tokens\x12\bretrieve\x90\x02\x01\x12\xc1\x01\n" +
-	"\x1cListHostAuthenticationTokens\x12..gitpod.v1.ListHostAuthenticationTokensRequest\x1a/.gitpod.v1.ListHostAuthenticationTokensResponse\"@\xb2\xab\x1e9\n" +
-	"1runners.configurations.host_authentication_tokens\x12\x04list\x90\x02\x01\x12\xc3\x01\n" +
-	"\x1dUpdateHostAuthenticationToken\x12/.gitpod.v1.UpdateHostAuthenticationTokenRequest\x1a0.gitpod.v1.UpdateHostAuthenticationTokenResponse\"?\xb2\xab\x1e;\n" +
-	"1runners.configurations.host_authentication_tokens\x12\x06update\x12\x9c\x01\n" +
-	"%UpdateHostAuthenticationTokenMetadata\x127.gitpod.v1.UpdateHostAuthenticationTokenMetadataRequest\x1a8.gitpod.v1.UpdateHostAuthenticationTokenMetadataResponse\"\x00\x12\xc3\x01\n" +
-	"\x1dDeleteHostAuthenticationToken\x12/.gitpod.v1.DeleteHostAuthenticationTokenRequest\x1a0.gitpod.v1.DeleteHostAuthenticationTokenResponse\"?\xb2\xab\x1e;\n" +
-	"1runners.configurations.host_authentication_tokens\x12\x06delete\x12\xb1\x01\n" +
-	"\x1cGetRunnerConfigurationSchema\x12..gitpod.v1.GetRunnerConfigurationSchemaRequest\x1a/.gitpod.v1.GetRunnerConfigurationSchemaResponse\"0\xb2\xab\x1e)\n" +
-	"\x1drunners.configurations.schema\x12\bretrieve\x90\x02\x01\x12\x9e\x01\n" +
-	"\x14CreateSCMIntegration\x12&.gitpod.v1.CreateSCMIntegrationRequest\x1a'.gitpod.v1.CreateSCMIntegrationResponse\"5\xb2\xab\x1e1\n" +
-	"'runners.configurations.scm_integrations\x12\x06create\x12\x9a\x01\n" +
-	"\x11GetSCMIntegration\x12#.gitpod.v1.GetSCMIntegrationRequest\x1a$.gitpod.v1.GetSCMIntegrationResponse\":\xb2\xab\x1e3\n" +
-	"'runners.configurations.scm_integrations\x12\bretrieve\x90\x02\x01\x12\x9c\x01\n" +
-	"\x13ListSCMIntegrations\x12%.gitpod.v1.ListSCMIntegrationsRequest\x1a&.gitpod.v1.ListSCMIntegrationsResponse\"6\xb2\xab\x1e/\n" +
-	"'runners.configurations.scm_integrations\x12\x04list\x90\x02\x01\x12\x9e\x01\n" +
-	"\x14UpdateSCMIntegration\x12&.gitpod.v1.UpdateSCMIntegrationRequest\x1a'.gitpod.v1.UpdateSCMIntegrationResponse\"5\xb2\xab\x1e1\n" +
-	"'runners.configurations.scm_integrations\x12\x06update\x12\x9e\x01\n" +
-	"\x14DeleteSCMIntegration\x12&.gitpod.v1.DeleteSCMIntegrationRequest\x1a'.gitpod.v1.DeleteSCMIntegrationResponse\"5\xb2\xab\x1e1\n" +
-	"'runners.configurations.scm_integrations\x12\x06delete\x12\xa7\x01\n" +
-	"\x16CreateEnvironmentClass\x12(.gitpod.v1.CreateEnvironmentClassRequest\x1a).gitpod.v1.CreateEnvironmentClassResponse\"8\xb2\xab\x1e4\n" +
-	"*runners.configurations.environment_classes\x12\x06create\x12\xa3\x01\n" +
-	"\x13GetEnvironmentClass\x12%.gitpod.v1.GetEnvironmentClassRequest\x1a&.gitpod.v1.GetEnvironmentClassResponse\"=\xb2\xab\x1e6\n" +
-	"*runners.configurations.environment_classes\x12\bretrieve\x90\x02\x01\x12\xa8\x01\n" +
-	"\x16ListEnvironmentClasses\x12(.gitpod.v1.ListEnvironmentClassesRequest\x1a).gitpod.v1.ListEnvironmentClassesResponse\"9\xb2\xab\x1e2\n" +
-	"*runners.configurations.environment_classes\x12\x04list\x90\x02\x01\x12\xa7\x01\n" +
-	"\x16UpdateEnvironmentClass\x12(.gitpod.v1.UpdateEnvironmentClassRequest\x1a).gitpod.v1.UpdateEnvironmentClassResponse\"8\xb2\xab\x1e4\n" +
-	"*runners.configurations.environment_classes\x12\x06update\x12\xa4\x01\n" +
-	"\x1bValidateRunnerConfiguration\x12-.gitpod.v1.ValidateRunnerConfigurationRequest\x1a..gitpod.v1.ValidateRunnerConfigurationResponse\"&\xb2\xab\x1e\"\n" +
-	"\x16runners.configurations\x12\bvalidate\x12i\n" +
+	"\x13LLM_PROVIDER_OPENAI\x10\x022\xa2\x13\n" +
+	"\x1aRunnerConfigurationService\x12\x84\x01\n" +
+	"\x1dCreateHostAuthenticationToken\x12/.gitpod.v1.CreateHostAuthenticationTokenRequest\x1a0.gitpod.v1.CreateHostAuthenticationTokenResponse\"\x00\x12~\n" +
+	"\x1aGetHostAuthenticationToken\x12,.gitpod.v1.GetHostAuthenticationTokenRequest\x1a-.gitpod.v1.GetHostAuthenticationTokenResponse\"\x03\x90\x02\x01\x12\x84\x01\n" +
+	"\x1cListHostAuthenticationTokens\x12..gitpod.v1.ListHostAuthenticationTokensRequest\x1a/.gitpod.v1.ListHostAuthenticationTokensResponse\"\x03\x90\x02\x01\x12\x84\x01\n" +
+	"\x1dUpdateHostAuthenticationToken\x12/.gitpod.v1.UpdateHostAuthenticationTokenRequest\x1a0.gitpod.v1.UpdateHostAuthenticationTokenResponse\"\x00\x12\x84\x01\n" +
+	"\x1dDeleteHostAuthenticationToken\x12/.gitpod.v1.DeleteHostAuthenticationTokenRequest\x1a0.gitpod.v1.DeleteHostAuthenticationTokenResponse\"\x00\x12\x84\x01\n" +
+	"\x1cGetRunnerConfigurationSchema\x12..gitpod.v1.GetRunnerConfigurationSchemaRequest\x1a/.gitpod.v1.GetRunnerConfigurationSchemaResponse\"\x03\x90\x02\x01\x12i\n" +
+	"\x14CreateSCMIntegration\x12&.gitpod.v1.CreateSCMIntegrationRequest\x1a'.gitpod.v1.CreateSCMIntegrationResponse\"\x00\x12c\n" +
+	"\x11GetSCMIntegration\x12#.gitpod.v1.GetSCMIntegrationRequest\x1a$.gitpod.v1.GetSCMIntegrationResponse\"\x03\x90\x02\x01\x12i\n" +
+	"\x13ListSCMIntegrations\x12%.gitpod.v1.ListSCMIntegrationsRequest\x1a&.gitpod.v1.ListSCMIntegrationsResponse\"\x03\x90\x02\x01\x12i\n" +
+	"\x14UpdateSCMIntegration\x12&.gitpod.v1.UpdateSCMIntegrationRequest\x1a'.gitpod.v1.UpdateSCMIntegrationResponse\"\x00\x12i\n" +
+	"\x14DeleteSCMIntegration\x12&.gitpod.v1.DeleteSCMIntegrationRequest\x1a'.gitpod.v1.DeleteSCMIntegrationResponse\"\x00\x12o\n" +
+	"\x16CreateEnvironmentClass\x12(.gitpod.v1.CreateEnvironmentClassRequest\x1a).gitpod.v1.CreateEnvironmentClassResponse\"\x00\x12i\n" +
+	"\x13GetEnvironmentClass\x12%.gitpod.v1.GetEnvironmentClassRequest\x1a&.gitpod.v1.GetEnvironmentClassResponse\"\x03\x90\x02\x01\x12r\n" +
+	"\x16ListEnvironmentClasses\x12(.gitpod.v1.ListEnvironmentClassesRequest\x1a).gitpod.v1.ListEnvironmentClassesResponse\"\x03\x90\x02\x01\x12o\n" +
+	"\x16UpdateEnvironmentClass\x12(.gitpod.v1.UpdateEnvironmentClassRequest\x1a).gitpod.v1.UpdateEnvironmentClassResponse\"\x00\x12~\n" +
+	"\x1bValidateRunnerConfiguration\x12-.gitpod.v1.ValidateRunnerConfigurationRequest\x1a..gitpod.v1.ValidateRunnerConfigurationResponse\"\x00\x12i\n" +
 	"\x14CreateLLMIntegration\x12&.gitpod.v1.CreateLLMIntegrationRequest\x1a'.gitpod.v1.CreateLLMIntegrationResponse\"\x00\x12c\n" +
 	"\x11GetLLMIntegration\x12#.gitpod.v1.GetLLMIntegrationRequest\x1a$.gitpod.v1.GetLLMIntegrationResponse\"\x03\x90\x02\x01\x12i\n" +
 	"\x13ListLLMIntegrations\x12%.gitpod.v1.ListLLMIntegrationsRequest\x1a&.gitpod.v1.ListLLMIntegrationsResponse\"\x03\x90\x02\x01\x12i\n" +
 	"\x14UpdateLLMIntegration\x12&.gitpod.v1.UpdateLLMIntegrationRequest\x1a'.gitpod.v1.UpdateLLMIntegrationResponse\"\x00\x12i\n" +
-	"\x14DeleteLLMIntegration\x12&.gitpod.v1.DeleteLLMIntegrationRequest\x1a'.gitpod.v1.DeleteLLMIntegrationResponse\"\x00\x1a\x1c\xaa\xab\x1e\x18\n" +
-	"\x16runners.configurationsB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x14DeleteLLMIntegration\x12&.gitpod.v1.DeleteLLMIntegrationRequest\x1a'.gitpod.v1.DeleteLLMIntegrationResponse\"\x00B'Z%github.com/gitpod-io/gitpod-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_runner_configuration_proto_rawDescOnce sync.Once
@@ -5192,201 +5106,199 @@ func file_gitpod_v1_runner_configuration_proto_rawDescGZIP() []byte {
 	return file_gitpod_v1_runner_configuration_proto_rawDescData
 }
 
-var file_gitpod_v1_runner_configuration_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_gitpod_v1_runner_configuration_proto_msgTypes = make([]protoimpl.MessageInfo, 71)
+var file_gitpod_v1_runner_configuration_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
+var file_gitpod_v1_runner_configuration_proto_msgTypes = make([]protoimpl.MessageInfo, 69)
 var file_gitpod_v1_runner_configuration_proto_goTypes = []any{
 	(HostAuthenticationTokenSource)(0),                                // 0: gitpod.v1.HostAuthenticationTokenSource
 	(RunnerKind)(0),                                                   // 1: gitpod.v1.RunnerKind
 	(RunnerProvider)(0),                                               // 2: gitpod.v1.RunnerProvider
-	(LLMProvider)(0),                                                  // 3: gitpod.v1.LLMProvider
-	(*CreateHostAuthenticationTokenRequest)(nil),                      // 4: gitpod.v1.CreateHostAuthenticationTokenRequest
-	(*CreateHostAuthenticationTokenResponse)(nil),                     // 5: gitpod.v1.CreateHostAuthenticationTokenResponse
-	(*HostAuthenticationToken)(nil),                                   // 6: gitpod.v1.HostAuthenticationToken
-	(*GetHostAuthenticationTokenRequest)(nil),                         // 7: gitpod.v1.GetHostAuthenticationTokenRequest
-	(*GetHostAuthenticationTokenResponse)(nil),                        // 8: gitpod.v1.GetHostAuthenticationTokenResponse
-	(*ListHostAuthenticationTokensRequest)(nil),                       // 9: gitpod.v1.ListHostAuthenticationTokensRequest
-	(*ListHostAuthenticationTokensResponse)(nil),                      // 10: gitpod.v1.ListHostAuthenticationTokensResponse
-	(*UpdateHostAuthenticationTokenRequest)(nil),                      // 11: gitpod.v1.UpdateHostAuthenticationTokenRequest
-	(*UpdateHostAuthenticationTokenResponse)(nil),                     // 12: gitpod.v1.UpdateHostAuthenticationTokenResponse
-	(*UpdateHostAuthenticationTokenMetadataRequest)(nil),              // 13: gitpod.v1.UpdateHostAuthenticationTokenMetadataRequest
-	(*UpdateHostAuthenticationTokenMetadataResponse)(nil),             // 14: gitpod.v1.UpdateHostAuthenticationTokenMetadataResponse
-	(*DeleteHostAuthenticationTokenRequest)(nil),                      // 15: gitpod.v1.DeleteHostAuthenticationTokenRequest
-	(*DeleteHostAuthenticationTokenResponse)(nil),                     // 16: gitpod.v1.DeleteHostAuthenticationTokenResponse
-	(*FieldValue)(nil),                                                // 17: gitpod.v1.FieldValue
-	(*FieldValueUpdate)(nil),                                          // 18: gitpod.v1.FieldValueUpdate
-	(*GetRunnerConfigurationSchemaRequest)(nil),                       // 19: gitpod.v1.GetRunnerConfigurationSchemaRequest
-	(*GetRunnerConfigurationSchemaResponse)(nil),                      // 20: gitpod.v1.GetRunnerConfigurationSchemaResponse
-	(*CreateSCMIntegrationRequest)(nil),                               // 21: gitpod.v1.CreateSCMIntegrationRequest
-	(*CreateSCMIntegrationResponse)(nil),                              // 22: gitpod.v1.CreateSCMIntegrationResponse
-	(*SCMIntegrationOAuthConfig)(nil),                                 // 23: gitpod.v1.SCMIntegrationOAuthConfig
-	(*SCMIntegration)(nil),                                            // 24: gitpod.v1.SCMIntegration
-	(*GetSCMIntegrationRequest)(nil),                                  // 25: gitpod.v1.GetSCMIntegrationRequest
-	(*GetSCMIntegrationResponse)(nil),                                 // 26: gitpod.v1.GetSCMIntegrationResponse
-	(*ListSCMIntegrationsRequest)(nil),                                // 27: gitpod.v1.ListSCMIntegrationsRequest
-	(*ListSCMIntegrationsResponse)(nil),                               // 28: gitpod.v1.ListSCMIntegrationsResponse
-	(*UpdateSCMIntegrationRequest)(nil),                               // 29: gitpod.v1.UpdateSCMIntegrationRequest
-	(*UpdateSCMIntegrationResponse)(nil),                              // 30: gitpod.v1.UpdateSCMIntegrationResponse
-	(*DeleteSCMIntegrationRequest)(nil),                               // 31: gitpod.v1.DeleteSCMIntegrationRequest
-	(*DeleteSCMIntegrationResponse)(nil),                              // 32: gitpod.v1.DeleteSCMIntegrationResponse
-	(*EnvironmentClass)(nil),                                          // 33: gitpod.v1.EnvironmentClass
-	(*CreateEnvironmentClassRequest)(nil),                             // 34: gitpod.v1.CreateEnvironmentClassRequest
-	(*CreateEnvironmentClassResponse)(nil),                            // 35: gitpod.v1.CreateEnvironmentClassResponse
-	(*GetEnvironmentClassRequest)(nil),                                // 36: gitpod.v1.GetEnvironmentClassRequest
-	(*GetEnvironmentClassResponse)(nil),                               // 37: gitpod.v1.GetEnvironmentClassResponse
-	(*ListEnvironmentClassesRequest)(nil),                             // 38: gitpod.v1.ListEnvironmentClassesRequest
-	(*ListEnvironmentClassesResponse)(nil),                            // 39: gitpod.v1.ListEnvironmentClassesResponse
-	(*UpdateEnvironmentClassRequest)(nil),                             // 40: gitpod.v1.UpdateEnvironmentClassRequest
-	(*UpdateEnvironmentClassResponse)(nil),                            // 41: gitpod.v1.UpdateEnvironmentClassResponse
-	(*ValidateRunnerConfigurationRequest)(nil),                        // 42: gitpod.v1.ValidateRunnerConfigurationRequest
-	(*FieldValidationError)(nil),                                      // 43: gitpod.v1.FieldValidationError
-	(*EnvironmentClassValidationResult)(nil),                          // 44: gitpod.v1.EnvironmentClassValidationResult
-	(*SCMIntegrationValidationResult)(nil),                            // 45: gitpod.v1.SCMIntegrationValidationResult
-	(*ValidateRunnerConfigurationResponse)(nil),                       // 46: gitpod.v1.ValidateRunnerConfigurationResponse
-	(*RunnerConfigurationSchema)(nil),                                 // 47: gitpod.v1.RunnerConfigurationSchema
-	(*LLMIntegrationRequestHeader)(nil),                               // 48: gitpod.v1.LLMIntegrationRequestHeader
-	(*LLMIntegration)(nil),                                            // 49: gitpod.v1.LLMIntegration
-	(*CreateLLMIntegrationRequest)(nil),                               // 50: gitpod.v1.CreateLLMIntegrationRequest
-	(*CreateLLMIntegrationResponse)(nil),                              // 51: gitpod.v1.CreateLLMIntegrationResponse
-	(*GetLLMIntegrationRequest)(nil),                                  // 52: gitpod.v1.GetLLMIntegrationRequest
-	(*GetLLMIntegrationResponse)(nil),                                 // 53: gitpod.v1.GetLLMIntegrationResponse
-	(*ListLLMIntegrationsRequest)(nil),                                // 54: gitpod.v1.ListLLMIntegrationsRequest
-	(*ListLLMIntegrationsResponse)(nil),                               // 55: gitpod.v1.ListLLMIntegrationsResponse
-	(*UpdateLLMIntegrationRequest)(nil),                               // 56: gitpod.v1.UpdateLLMIntegrationRequest
-	(*UpdateLLMIntegrationResponse)(nil),                              // 57: gitpod.v1.UpdateLLMIntegrationResponse
-	(*DeleteLLMIntegrationRequest)(nil),                               // 58: gitpod.v1.DeleteLLMIntegrationRequest
-	(*DeleteLLMIntegrationResponse)(nil),                              // 59: gitpod.v1.DeleteLLMIntegrationResponse
-	(*ListHostAuthenticationTokensRequest_Filter)(nil),                // 60: gitpod.v1.ListHostAuthenticationTokensRequest.Filter
-	(*ListSCMIntegrationsRequest_Filter)(nil),                         // 61: gitpod.v1.ListSCMIntegrationsRequest.Filter
-	(*ListEnvironmentClassesRequest_Filter)(nil),                      // 62: gitpod.v1.ListEnvironmentClassesRequest.Filter
-	(*ValidateRunnerConfigurationRequest_ValidateSCMIntegration)(nil), // 63: gitpod.v1.ValidateRunnerConfigurationRequest.ValidateSCMIntegration
-	(*RunnerConfigurationSchema_StringField)(nil),                     // 64: gitpod.v1.RunnerConfigurationSchema.StringField
-	(*RunnerConfigurationSchema_BoolField)(nil),                       // 65: gitpod.v1.RunnerConfigurationSchema.BoolField
-	(*RunnerConfigurationSchema_IntField)(nil),                        // 66: gitpod.v1.RunnerConfigurationSchema.IntField
-	(*RunnerConfigurationSchema_EnumField)(nil),                       // 67: gitpod.v1.RunnerConfigurationSchema.EnumField
-	(*RunnerConfigurationSchema_DisplayField)(nil),                    // 68: gitpod.v1.RunnerConfigurationSchema.DisplayField
-	(*RunnerConfigurationSchema_Field)(nil),                           // 69: gitpod.v1.RunnerConfigurationSchema.Field
-	(*RunnerConfigurationSchema_OAuth)(nil),                           // 70: gitpod.v1.RunnerConfigurationSchema.OAuth
-	(*RunnerConfigurationSchema_PersonalAccessToken)(nil),             // 71: gitpod.v1.RunnerConfigurationSchema.PersonalAccessToken
-	(*RunnerConfigurationSchema_SCMConfigSchema)(nil),                 // 72: gitpod.v1.RunnerConfigurationSchema.SCMConfigSchema
-	(*RunnerConfigurationSchema_EnumField_Value)(nil),                 // 73: gitpod.v1.RunnerConfigurationSchema.EnumField.Value
-	(*ListLLMIntegrationsRequest_Filter)(nil),                         // 74: gitpod.v1.ListLLMIntegrationsRequest.Filter
-	(*timestamppb.Timestamp)(nil),                                     // 75: google.protobuf.Timestamp
-	(*Subject)(nil),                                                   // 76: gitpod.v1.Subject
-	(*PaginationRequest)(nil),                                         // 77: gitpod.v1.PaginationRequest
-	(*PaginationResponse)(nil),                                        // 78: gitpod.v1.PaginationResponse
-	(SupportedModel)(0),                                               // 79: gitpod.v1.SupportedModel
-	(LLMIntegrationPhase)(0),                                          // 80: gitpod.v1.LLMIntegrationPhase
+	(LLMIntegrationRequestHeaderType)(0),                              // 3: gitpod.v1.LLMIntegrationRequestHeaderType
+	(LLMProvider)(0),                                                  // 4: gitpod.v1.LLMProvider
+	(*CreateHostAuthenticationTokenRequest)(nil),                      // 5: gitpod.v1.CreateHostAuthenticationTokenRequest
+	(*CreateHostAuthenticationTokenResponse)(nil),                     // 6: gitpod.v1.CreateHostAuthenticationTokenResponse
+	(*HostAuthenticationToken)(nil),                                   // 7: gitpod.v1.HostAuthenticationToken
+	(*GetHostAuthenticationTokenRequest)(nil),                         // 8: gitpod.v1.GetHostAuthenticationTokenRequest
+	(*GetHostAuthenticationTokenResponse)(nil),                        // 9: gitpod.v1.GetHostAuthenticationTokenResponse
+	(*ListHostAuthenticationTokensRequest)(nil),                       // 10: gitpod.v1.ListHostAuthenticationTokensRequest
+	(*ListHostAuthenticationTokensResponse)(nil),                      // 11: gitpod.v1.ListHostAuthenticationTokensResponse
+	(*UpdateHostAuthenticationTokenRequest)(nil),                      // 12: gitpod.v1.UpdateHostAuthenticationTokenRequest
+	(*UpdateHostAuthenticationTokenResponse)(nil),                     // 13: gitpod.v1.UpdateHostAuthenticationTokenResponse
+	(*DeleteHostAuthenticationTokenRequest)(nil),                      // 14: gitpod.v1.DeleteHostAuthenticationTokenRequest
+	(*DeleteHostAuthenticationTokenResponse)(nil),                     // 15: gitpod.v1.DeleteHostAuthenticationTokenResponse
+	(*FieldValue)(nil),                                                // 16: gitpod.v1.FieldValue
+	(*FieldValueUpdate)(nil),                                          // 17: gitpod.v1.FieldValueUpdate
+	(*GetRunnerConfigurationSchemaRequest)(nil),                       // 18: gitpod.v1.GetRunnerConfigurationSchemaRequest
+	(*GetRunnerConfigurationSchemaResponse)(nil),                      // 19: gitpod.v1.GetRunnerConfigurationSchemaResponse
+	(*CreateSCMIntegrationRequest)(nil),                               // 20: gitpod.v1.CreateSCMIntegrationRequest
+	(*CreateSCMIntegrationResponse)(nil),                              // 21: gitpod.v1.CreateSCMIntegrationResponse
+	(*SCMIntegrationOAuthConfig)(nil),                                 // 22: gitpod.v1.SCMIntegrationOAuthConfig
+	(*SCMIntegration)(nil),                                            // 23: gitpod.v1.SCMIntegration
+	(*GetSCMIntegrationRequest)(nil),                                  // 24: gitpod.v1.GetSCMIntegrationRequest
+	(*GetSCMIntegrationResponse)(nil),                                 // 25: gitpod.v1.GetSCMIntegrationResponse
+	(*ListSCMIntegrationsRequest)(nil),                                // 26: gitpod.v1.ListSCMIntegrationsRequest
+	(*ListSCMIntegrationsResponse)(nil),                               // 27: gitpod.v1.ListSCMIntegrationsResponse
+	(*UpdateSCMIntegrationRequest)(nil),                               // 28: gitpod.v1.UpdateSCMIntegrationRequest
+	(*UpdateSCMIntegrationResponse)(nil),                              // 29: gitpod.v1.UpdateSCMIntegrationResponse
+	(*DeleteSCMIntegrationRequest)(nil),                               // 30: gitpod.v1.DeleteSCMIntegrationRequest
+	(*DeleteSCMIntegrationResponse)(nil),                              // 31: gitpod.v1.DeleteSCMIntegrationResponse
+	(*EnvironmentClass)(nil),                                          // 32: gitpod.v1.EnvironmentClass
+	(*CreateEnvironmentClassRequest)(nil),                             // 33: gitpod.v1.CreateEnvironmentClassRequest
+	(*CreateEnvironmentClassResponse)(nil),                            // 34: gitpod.v1.CreateEnvironmentClassResponse
+	(*GetEnvironmentClassRequest)(nil),                                // 35: gitpod.v1.GetEnvironmentClassRequest
+	(*GetEnvironmentClassResponse)(nil),                               // 36: gitpod.v1.GetEnvironmentClassResponse
+	(*ListEnvironmentClassesRequest)(nil),                             // 37: gitpod.v1.ListEnvironmentClassesRequest
+	(*ListEnvironmentClassesResponse)(nil),                            // 38: gitpod.v1.ListEnvironmentClassesResponse
+	(*UpdateEnvironmentClassRequest)(nil),                             // 39: gitpod.v1.UpdateEnvironmentClassRequest
+	(*UpdateEnvironmentClassResponse)(nil),                            // 40: gitpod.v1.UpdateEnvironmentClassResponse
+	(*ValidateRunnerConfigurationRequest)(nil),                        // 41: gitpod.v1.ValidateRunnerConfigurationRequest
+	(*FieldValidationError)(nil),                                      // 42: gitpod.v1.FieldValidationError
+	(*EnvironmentClassValidationResult)(nil),                          // 43: gitpod.v1.EnvironmentClassValidationResult
+	(*SCMIntegrationValidationResult)(nil),                            // 44: gitpod.v1.SCMIntegrationValidationResult
+	(*ValidateRunnerConfigurationResponse)(nil),                       // 45: gitpod.v1.ValidateRunnerConfigurationResponse
+	(*RunnerConfigurationSchema)(nil),                                 // 46: gitpod.v1.RunnerConfigurationSchema
+	(*LLMIntegrationRequestHeader)(nil),                               // 47: gitpod.v1.LLMIntegrationRequestHeader
+	(*LLMIntegration)(nil),                                            // 48: gitpod.v1.LLMIntegration
+	(*CreateLLMIntegrationRequest)(nil),                               // 49: gitpod.v1.CreateLLMIntegrationRequest
+	(*CreateLLMIntegrationResponse)(nil),                              // 50: gitpod.v1.CreateLLMIntegrationResponse
+	(*GetLLMIntegrationRequest)(nil),                                  // 51: gitpod.v1.GetLLMIntegrationRequest
+	(*GetLLMIntegrationResponse)(nil),                                 // 52: gitpod.v1.GetLLMIntegrationResponse
+	(*ListLLMIntegrationsRequest)(nil),                                // 53: gitpod.v1.ListLLMIntegrationsRequest
+	(*ListLLMIntegrationsResponse)(nil),                               // 54: gitpod.v1.ListLLMIntegrationsResponse
+	(*UpdateLLMIntegrationRequest)(nil),                               // 55: gitpod.v1.UpdateLLMIntegrationRequest
+	(*UpdateLLMIntegrationResponse)(nil),                              // 56: gitpod.v1.UpdateLLMIntegrationResponse
+	(*DeleteLLMIntegrationRequest)(nil),                               // 57: gitpod.v1.DeleteLLMIntegrationRequest
+	(*DeleteLLMIntegrationResponse)(nil),                              // 58: gitpod.v1.DeleteLLMIntegrationResponse
+	(*ListHostAuthenticationTokensRequest_Filter)(nil),                // 59: gitpod.v1.ListHostAuthenticationTokensRequest.Filter
+	(*ListSCMIntegrationsRequest_Filter)(nil),                         // 60: gitpod.v1.ListSCMIntegrationsRequest.Filter
+	(*ListEnvironmentClassesRequest_Filter)(nil),                      // 61: gitpod.v1.ListEnvironmentClassesRequest.Filter
+	(*ValidateRunnerConfigurationRequest_ValidateSCMIntegration)(nil), // 62: gitpod.v1.ValidateRunnerConfigurationRequest.ValidateSCMIntegration
+	(*RunnerConfigurationSchema_StringField)(nil),                     // 63: gitpod.v1.RunnerConfigurationSchema.StringField
+	(*RunnerConfigurationSchema_BoolField)(nil),                       // 64: gitpod.v1.RunnerConfigurationSchema.BoolField
+	(*RunnerConfigurationSchema_IntField)(nil),                        // 65: gitpod.v1.RunnerConfigurationSchema.IntField
+	(*RunnerConfigurationSchema_EnumField)(nil),                       // 66: gitpod.v1.RunnerConfigurationSchema.EnumField
+	(*RunnerConfigurationSchema_DisplayField)(nil),                    // 67: gitpod.v1.RunnerConfigurationSchema.DisplayField
+	(*RunnerConfigurationSchema_Field)(nil),                           // 68: gitpod.v1.RunnerConfigurationSchema.Field
+	(*RunnerConfigurationSchema_OAuth)(nil),                           // 69: gitpod.v1.RunnerConfigurationSchema.OAuth
+	(*RunnerConfigurationSchema_PersonalAccessToken)(nil),             // 70: gitpod.v1.RunnerConfigurationSchema.PersonalAccessToken
+	(*RunnerConfigurationSchema_SCMConfigSchema)(nil),                 // 71: gitpod.v1.RunnerConfigurationSchema.SCMConfigSchema
+	(*RunnerConfigurationSchema_EnumField_Value)(nil),                 // 72: gitpod.v1.RunnerConfigurationSchema.EnumField.Value
+	(*ListLLMIntegrationsRequest_Filter)(nil),                         // 73: gitpod.v1.ListLLMIntegrationsRequest.Filter
+	(*timestamppb.Timestamp)(nil),                                     // 74: google.protobuf.Timestamp
+	(*Subject)(nil),                                                   // 75: gitpod.v1.Subject
+	(*PaginationRequest)(nil),                                         // 76: gitpod.v1.PaginationRequest
+	(*PaginationResponse)(nil),                                        // 77: gitpod.v1.PaginationResponse
+	(SupportedModel)(0),                                               // 78: gitpod.v1.SupportedModel
+	(LLMIntegrationPhase)(0),                                          // 79: gitpod.v1.LLMIntegrationPhase
 }
 var file_gitpod_v1_runner_configuration_proto_depIdxs = []int32{
 	0,  // 0: gitpod.v1.CreateHostAuthenticationTokenRequest.source:type_name -> gitpod.v1.HostAuthenticationTokenSource
-	75, // 1: gitpod.v1.CreateHostAuthenticationTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
-	76, // 2: gitpod.v1.CreateHostAuthenticationTokenRequest.subject:type_name -> gitpod.v1.Subject
-	6,  // 3: gitpod.v1.CreateHostAuthenticationTokenResponse.token:type_name -> gitpod.v1.HostAuthenticationToken
+	74, // 1: gitpod.v1.CreateHostAuthenticationTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
+	75, // 2: gitpod.v1.CreateHostAuthenticationTokenRequest.subject:type_name -> gitpod.v1.Subject
+	7,  // 3: gitpod.v1.CreateHostAuthenticationTokenResponse.token:type_name -> gitpod.v1.HostAuthenticationToken
 	0,  // 4: gitpod.v1.HostAuthenticationToken.source:type_name -> gitpod.v1.HostAuthenticationTokenSource
-	75, // 5: gitpod.v1.HostAuthenticationToken.expires_at:type_name -> google.protobuf.Timestamp
-	76, // 6: gitpod.v1.HostAuthenticationToken.subject:type_name -> gitpod.v1.Subject
-	6,  // 7: gitpod.v1.GetHostAuthenticationTokenResponse.token:type_name -> gitpod.v1.HostAuthenticationToken
-	77, // 8: gitpod.v1.ListHostAuthenticationTokensRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	60, // 9: gitpod.v1.ListHostAuthenticationTokensRequest.filter:type_name -> gitpod.v1.ListHostAuthenticationTokensRequest.Filter
-	78, // 10: gitpod.v1.ListHostAuthenticationTokensResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	6,  // 11: gitpod.v1.ListHostAuthenticationTokensResponse.tokens:type_name -> gitpod.v1.HostAuthenticationToken
-	75, // 12: gitpod.v1.UpdateHostAuthenticationTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
-	47, // 13: gitpod.v1.GetRunnerConfigurationSchemaResponse.schema:type_name -> gitpod.v1.RunnerConfigurationSchema
-	23, // 14: gitpod.v1.SCMIntegration.oauth:type_name -> gitpod.v1.SCMIntegrationOAuthConfig
-	24, // 15: gitpod.v1.GetSCMIntegrationResponse.integration:type_name -> gitpod.v1.SCMIntegration
-	77, // 16: gitpod.v1.ListSCMIntegrationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	61, // 17: gitpod.v1.ListSCMIntegrationsRequest.filter:type_name -> gitpod.v1.ListSCMIntegrationsRequest.Filter
-	78, // 18: gitpod.v1.ListSCMIntegrationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	24, // 19: gitpod.v1.ListSCMIntegrationsResponse.integrations:type_name -> gitpod.v1.SCMIntegration
-	17, // 20: gitpod.v1.EnvironmentClass.configuration:type_name -> gitpod.v1.FieldValue
-	17, // 21: gitpod.v1.CreateEnvironmentClassRequest.configuration:type_name -> gitpod.v1.FieldValue
-	33, // 22: gitpod.v1.GetEnvironmentClassResponse.environment_class:type_name -> gitpod.v1.EnvironmentClass
-	77, // 23: gitpod.v1.ListEnvironmentClassesRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	62, // 24: gitpod.v1.ListEnvironmentClassesRequest.filter:type_name -> gitpod.v1.ListEnvironmentClassesRequest.Filter
-	78, // 25: gitpod.v1.ListEnvironmentClassesResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	33, // 26: gitpod.v1.ListEnvironmentClassesResponse.environment_classes:type_name -> gitpod.v1.EnvironmentClass
-	33, // 27: gitpod.v1.ValidateRunnerConfigurationRequest.environment_class:type_name -> gitpod.v1.EnvironmentClass
-	63, // 28: gitpod.v1.ValidateRunnerConfigurationRequest.scm_integration:type_name -> gitpod.v1.ValidateRunnerConfigurationRequest.ValidateSCMIntegration
-	43, // 29: gitpod.v1.EnvironmentClassValidationResult.configuration_errors:type_name -> gitpod.v1.FieldValidationError
-	44, // 30: gitpod.v1.ValidateRunnerConfigurationResponse.environment_class:type_name -> gitpod.v1.EnvironmentClassValidationResult
-	45, // 31: gitpod.v1.ValidateRunnerConfigurationResponse.scm_integration:type_name -> gitpod.v1.SCMIntegrationValidationResult
-	69, // 32: gitpod.v1.RunnerConfigurationSchema.runner_config:type_name -> gitpod.v1.RunnerConfigurationSchema.Field
-	69, // 33: gitpod.v1.RunnerConfigurationSchema.environment_classes:type_name -> gitpod.v1.RunnerConfigurationSchema.Field
-	72, // 34: gitpod.v1.RunnerConfigurationSchema.scm:type_name -> gitpod.v1.RunnerConfigurationSchema.SCMConfigSchema
-	79, // 35: gitpod.v1.LLMIntegration.models:type_name -> gitpod.v1.SupportedModel
-	80, // 36: gitpod.v1.LLMIntegration.phase:type_name -> gitpod.v1.LLMIntegrationPhase
-	48, // 37: gitpod.v1.LLMIntegration.request_headers:type_name -> gitpod.v1.LLMIntegrationRequestHeader
-	3,  // 38: gitpod.v1.LLMIntegration.provider:type_name -> gitpod.v1.LLMProvider
-	79, // 39: gitpod.v1.CreateLLMIntegrationRequest.models:type_name -> gitpod.v1.SupportedModel
-	49, // 40: gitpod.v1.GetLLMIntegrationResponse.integration:type_name -> gitpod.v1.LLMIntegration
-	77, // 41: gitpod.v1.ListLLMIntegrationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	74, // 42: gitpod.v1.ListLLMIntegrationsRequest.filter:type_name -> gitpod.v1.ListLLMIntegrationsRequest.Filter
-	78, // 43: gitpod.v1.ListLLMIntegrationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	49, // 44: gitpod.v1.ListLLMIntegrationsResponse.integrations:type_name -> gitpod.v1.LLMIntegration
-	3,  // 45: gitpod.v1.ListLLMIntegrationsResponse.ona_intelligence_providers:type_name -> gitpod.v1.LLMProvider
-	79, // 46: gitpod.v1.UpdateLLMIntegrationRequest.models:type_name -> gitpod.v1.SupportedModel
-	80, // 47: gitpod.v1.UpdateLLMIntegrationRequest.phase:type_name -> gitpod.v1.LLMIntegrationPhase
-	48, // 48: gitpod.v1.UpdateLLMIntegrationRequest.request_headers:type_name -> gitpod.v1.LLMIntegrationRequestHeader
-	1,  // 49: gitpod.v1.ListEnvironmentClassesRequest.Filter.runner_kinds:type_name -> gitpod.v1.RunnerKind
-	2,  // 50: gitpod.v1.ListEnvironmentClassesRequest.Filter.runner_providers:type_name -> gitpod.v1.RunnerProvider
-	73, // 51: gitpod.v1.RunnerConfigurationSchema.EnumField.default_value:type_name -> gitpod.v1.RunnerConfigurationSchema.EnumField.Value
-	73, // 52: gitpod.v1.RunnerConfigurationSchema.EnumField.possible_values:type_name -> gitpod.v1.RunnerConfigurationSchema.EnumField.Value
-	64, // 53: gitpod.v1.RunnerConfigurationSchema.Field.string:type_name -> gitpod.v1.RunnerConfigurationSchema.StringField
-	65, // 54: gitpod.v1.RunnerConfigurationSchema.Field.bool:type_name -> gitpod.v1.RunnerConfigurationSchema.BoolField
-	66, // 55: gitpod.v1.RunnerConfigurationSchema.Field.int:type_name -> gitpod.v1.RunnerConfigurationSchema.IntField
-	67, // 56: gitpod.v1.RunnerConfigurationSchema.Field.enum:type_name -> gitpod.v1.RunnerConfigurationSchema.EnumField
-	68, // 57: gitpod.v1.RunnerConfigurationSchema.Field.display:type_name -> gitpod.v1.RunnerConfigurationSchema.DisplayField
-	70, // 58: gitpod.v1.RunnerConfigurationSchema.SCMConfigSchema.oauth:type_name -> gitpod.v1.RunnerConfigurationSchema.OAuth
-	71, // 59: gitpod.v1.RunnerConfigurationSchema.SCMConfigSchema.pat:type_name -> gitpod.v1.RunnerConfigurationSchema.PersonalAccessToken
-	4,  // 60: gitpod.v1.RunnerConfigurationService.CreateHostAuthenticationToken:input_type -> gitpod.v1.CreateHostAuthenticationTokenRequest
-	7,  // 61: gitpod.v1.RunnerConfigurationService.GetHostAuthenticationToken:input_type -> gitpod.v1.GetHostAuthenticationTokenRequest
-	9,  // 62: gitpod.v1.RunnerConfigurationService.ListHostAuthenticationTokens:input_type -> gitpod.v1.ListHostAuthenticationTokensRequest
-	11, // 63: gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationToken:input_type -> gitpod.v1.UpdateHostAuthenticationTokenRequest
-	13, // 64: gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationTokenMetadata:input_type -> gitpod.v1.UpdateHostAuthenticationTokenMetadataRequest
-	15, // 65: gitpod.v1.RunnerConfigurationService.DeleteHostAuthenticationToken:input_type -> gitpod.v1.DeleteHostAuthenticationTokenRequest
-	19, // 66: gitpod.v1.RunnerConfigurationService.GetRunnerConfigurationSchema:input_type -> gitpod.v1.GetRunnerConfigurationSchemaRequest
-	21, // 67: gitpod.v1.RunnerConfigurationService.CreateSCMIntegration:input_type -> gitpod.v1.CreateSCMIntegrationRequest
-	25, // 68: gitpod.v1.RunnerConfigurationService.GetSCMIntegration:input_type -> gitpod.v1.GetSCMIntegrationRequest
-	27, // 69: gitpod.v1.RunnerConfigurationService.ListSCMIntegrations:input_type -> gitpod.v1.ListSCMIntegrationsRequest
-	29, // 70: gitpod.v1.RunnerConfigurationService.UpdateSCMIntegration:input_type -> gitpod.v1.UpdateSCMIntegrationRequest
-	31, // 71: gitpod.v1.RunnerConfigurationService.DeleteSCMIntegration:input_type -> gitpod.v1.DeleteSCMIntegrationRequest
-	34, // 72: gitpod.v1.RunnerConfigurationService.CreateEnvironmentClass:input_type -> gitpod.v1.CreateEnvironmentClassRequest
-	36, // 73: gitpod.v1.RunnerConfigurationService.GetEnvironmentClass:input_type -> gitpod.v1.GetEnvironmentClassRequest
-	38, // 74: gitpod.v1.RunnerConfigurationService.ListEnvironmentClasses:input_type -> gitpod.v1.ListEnvironmentClassesRequest
-	40, // 75: gitpod.v1.RunnerConfigurationService.UpdateEnvironmentClass:input_type -> gitpod.v1.UpdateEnvironmentClassRequest
-	42, // 76: gitpod.v1.RunnerConfigurationService.ValidateRunnerConfiguration:input_type -> gitpod.v1.ValidateRunnerConfigurationRequest
-	50, // 77: gitpod.v1.RunnerConfigurationService.CreateLLMIntegration:input_type -> gitpod.v1.CreateLLMIntegrationRequest
-	52, // 78: gitpod.v1.RunnerConfigurationService.GetLLMIntegration:input_type -> gitpod.v1.GetLLMIntegrationRequest
-	54, // 79: gitpod.v1.RunnerConfigurationService.ListLLMIntegrations:input_type -> gitpod.v1.ListLLMIntegrationsRequest
-	56, // 80: gitpod.v1.RunnerConfigurationService.UpdateLLMIntegration:input_type -> gitpod.v1.UpdateLLMIntegrationRequest
-	58, // 81: gitpod.v1.RunnerConfigurationService.DeleteLLMIntegration:input_type -> gitpod.v1.DeleteLLMIntegrationRequest
-	5,  // 82: gitpod.v1.RunnerConfigurationService.CreateHostAuthenticationToken:output_type -> gitpod.v1.CreateHostAuthenticationTokenResponse
-	8,  // 83: gitpod.v1.RunnerConfigurationService.GetHostAuthenticationToken:output_type -> gitpod.v1.GetHostAuthenticationTokenResponse
-	10, // 84: gitpod.v1.RunnerConfigurationService.ListHostAuthenticationTokens:output_type -> gitpod.v1.ListHostAuthenticationTokensResponse
-	12, // 85: gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationToken:output_type -> gitpod.v1.UpdateHostAuthenticationTokenResponse
-	14, // 86: gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationTokenMetadata:output_type -> gitpod.v1.UpdateHostAuthenticationTokenMetadataResponse
-	16, // 87: gitpod.v1.RunnerConfigurationService.DeleteHostAuthenticationToken:output_type -> gitpod.v1.DeleteHostAuthenticationTokenResponse
-	20, // 88: gitpod.v1.RunnerConfigurationService.GetRunnerConfigurationSchema:output_type -> gitpod.v1.GetRunnerConfigurationSchemaResponse
-	22, // 89: gitpod.v1.RunnerConfigurationService.CreateSCMIntegration:output_type -> gitpod.v1.CreateSCMIntegrationResponse
-	26, // 90: gitpod.v1.RunnerConfigurationService.GetSCMIntegration:output_type -> gitpod.v1.GetSCMIntegrationResponse
-	28, // 91: gitpod.v1.RunnerConfigurationService.ListSCMIntegrations:output_type -> gitpod.v1.ListSCMIntegrationsResponse
-	30, // 92: gitpod.v1.RunnerConfigurationService.UpdateSCMIntegration:output_type -> gitpod.v1.UpdateSCMIntegrationResponse
-	32, // 93: gitpod.v1.RunnerConfigurationService.DeleteSCMIntegration:output_type -> gitpod.v1.DeleteSCMIntegrationResponse
-	35, // 94: gitpod.v1.RunnerConfigurationService.CreateEnvironmentClass:output_type -> gitpod.v1.CreateEnvironmentClassResponse
-	37, // 95: gitpod.v1.RunnerConfigurationService.GetEnvironmentClass:output_type -> gitpod.v1.GetEnvironmentClassResponse
-	39, // 96: gitpod.v1.RunnerConfigurationService.ListEnvironmentClasses:output_type -> gitpod.v1.ListEnvironmentClassesResponse
-	41, // 97: gitpod.v1.RunnerConfigurationService.UpdateEnvironmentClass:output_type -> gitpod.v1.UpdateEnvironmentClassResponse
-	46, // 98: gitpod.v1.RunnerConfigurationService.ValidateRunnerConfiguration:output_type -> gitpod.v1.ValidateRunnerConfigurationResponse
-	51, // 99: gitpod.v1.RunnerConfigurationService.CreateLLMIntegration:output_type -> gitpod.v1.CreateLLMIntegrationResponse
-	53, // 100: gitpod.v1.RunnerConfigurationService.GetLLMIntegration:output_type -> gitpod.v1.GetLLMIntegrationResponse
-	55, // 101: gitpod.v1.RunnerConfigurationService.ListLLMIntegrations:output_type -> gitpod.v1.ListLLMIntegrationsResponse
-	57, // 102: gitpod.v1.RunnerConfigurationService.UpdateLLMIntegration:output_type -> gitpod.v1.UpdateLLMIntegrationResponse
-	59, // 103: gitpod.v1.RunnerConfigurationService.DeleteLLMIntegration:output_type -> gitpod.v1.DeleteLLMIntegrationResponse
-	82, // [82:104] is the sub-list for method output_type
-	60, // [60:82] is the sub-list for method input_type
-	60, // [60:60] is the sub-list for extension type_name
-	60, // [60:60] is the sub-list for extension extendee
-	0,  // [0:60] is the sub-list for field type_name
+	74, // 5: gitpod.v1.HostAuthenticationToken.expires_at:type_name -> google.protobuf.Timestamp
+	75, // 6: gitpod.v1.HostAuthenticationToken.subject:type_name -> gitpod.v1.Subject
+	7,  // 7: gitpod.v1.GetHostAuthenticationTokenResponse.token:type_name -> gitpod.v1.HostAuthenticationToken
+	76, // 8: gitpod.v1.ListHostAuthenticationTokensRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	59, // 9: gitpod.v1.ListHostAuthenticationTokensRequest.filter:type_name -> gitpod.v1.ListHostAuthenticationTokensRequest.Filter
+	77, // 10: gitpod.v1.ListHostAuthenticationTokensResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	7,  // 11: gitpod.v1.ListHostAuthenticationTokensResponse.tokens:type_name -> gitpod.v1.HostAuthenticationToken
+	74, // 12: gitpod.v1.UpdateHostAuthenticationTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
+	46, // 13: gitpod.v1.GetRunnerConfigurationSchemaResponse.schema:type_name -> gitpod.v1.RunnerConfigurationSchema
+	22, // 14: gitpod.v1.SCMIntegration.oauth:type_name -> gitpod.v1.SCMIntegrationOAuthConfig
+	23, // 15: gitpod.v1.GetSCMIntegrationResponse.integration:type_name -> gitpod.v1.SCMIntegration
+	76, // 16: gitpod.v1.ListSCMIntegrationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	60, // 17: gitpod.v1.ListSCMIntegrationsRequest.filter:type_name -> gitpod.v1.ListSCMIntegrationsRequest.Filter
+	77, // 18: gitpod.v1.ListSCMIntegrationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	23, // 19: gitpod.v1.ListSCMIntegrationsResponse.integrations:type_name -> gitpod.v1.SCMIntegration
+	16, // 20: gitpod.v1.EnvironmentClass.configuration:type_name -> gitpod.v1.FieldValue
+	16, // 21: gitpod.v1.CreateEnvironmentClassRequest.configuration:type_name -> gitpod.v1.FieldValue
+	32, // 22: gitpod.v1.GetEnvironmentClassResponse.environment_class:type_name -> gitpod.v1.EnvironmentClass
+	76, // 23: gitpod.v1.ListEnvironmentClassesRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	61, // 24: gitpod.v1.ListEnvironmentClassesRequest.filter:type_name -> gitpod.v1.ListEnvironmentClassesRequest.Filter
+	77, // 25: gitpod.v1.ListEnvironmentClassesResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	32, // 26: gitpod.v1.ListEnvironmentClassesResponse.environment_classes:type_name -> gitpod.v1.EnvironmentClass
+	32, // 27: gitpod.v1.ValidateRunnerConfigurationRequest.environment_class:type_name -> gitpod.v1.EnvironmentClass
+	62, // 28: gitpod.v1.ValidateRunnerConfigurationRequest.scm_integration:type_name -> gitpod.v1.ValidateRunnerConfigurationRequest.ValidateSCMIntegration
+	42, // 29: gitpod.v1.EnvironmentClassValidationResult.configuration_errors:type_name -> gitpod.v1.FieldValidationError
+	43, // 30: gitpod.v1.ValidateRunnerConfigurationResponse.environment_class:type_name -> gitpod.v1.EnvironmentClassValidationResult
+	44, // 31: gitpod.v1.ValidateRunnerConfigurationResponse.scm_integration:type_name -> gitpod.v1.SCMIntegrationValidationResult
+	68, // 32: gitpod.v1.RunnerConfigurationSchema.runner_config:type_name -> gitpod.v1.RunnerConfigurationSchema.Field
+	68, // 33: gitpod.v1.RunnerConfigurationSchema.environment_classes:type_name -> gitpod.v1.RunnerConfigurationSchema.Field
+	71, // 34: gitpod.v1.RunnerConfigurationSchema.scm:type_name -> gitpod.v1.RunnerConfigurationSchema.SCMConfigSchema
+	3,  // 35: gitpod.v1.LLMIntegrationRequestHeader.header_type:type_name -> gitpod.v1.LLMIntegrationRequestHeaderType
+	78, // 36: gitpod.v1.LLMIntegration.models:type_name -> gitpod.v1.SupportedModel
+	79, // 37: gitpod.v1.LLMIntegration.phase:type_name -> gitpod.v1.LLMIntegrationPhase
+	47, // 38: gitpod.v1.LLMIntegration.request_headers:type_name -> gitpod.v1.LLMIntegrationRequestHeader
+	4,  // 39: gitpod.v1.LLMIntegration.provider:type_name -> gitpod.v1.LLMProvider
+	78, // 40: gitpod.v1.CreateLLMIntegrationRequest.models:type_name -> gitpod.v1.SupportedModel
+	48, // 41: gitpod.v1.GetLLMIntegrationResponse.integration:type_name -> gitpod.v1.LLMIntegration
+	76, // 42: gitpod.v1.ListLLMIntegrationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	73, // 43: gitpod.v1.ListLLMIntegrationsRequest.filter:type_name -> gitpod.v1.ListLLMIntegrationsRequest.Filter
+	77, // 44: gitpod.v1.ListLLMIntegrationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	48, // 45: gitpod.v1.ListLLMIntegrationsResponse.integrations:type_name -> gitpod.v1.LLMIntegration
+	4,  // 46: gitpod.v1.ListLLMIntegrationsResponse.ona_intelligence_providers:type_name -> gitpod.v1.LLMProvider
+	78, // 47: gitpod.v1.UpdateLLMIntegrationRequest.models:type_name -> gitpod.v1.SupportedModel
+	79, // 48: gitpod.v1.UpdateLLMIntegrationRequest.phase:type_name -> gitpod.v1.LLMIntegrationPhase
+	47, // 49: gitpod.v1.UpdateLLMIntegrationRequest.request_headers:type_name -> gitpod.v1.LLMIntegrationRequestHeader
+	1,  // 50: gitpod.v1.ListEnvironmentClassesRequest.Filter.runner_kinds:type_name -> gitpod.v1.RunnerKind
+	2,  // 51: gitpod.v1.ListEnvironmentClassesRequest.Filter.runner_providers:type_name -> gitpod.v1.RunnerProvider
+	72, // 52: gitpod.v1.RunnerConfigurationSchema.EnumField.default_value:type_name -> gitpod.v1.RunnerConfigurationSchema.EnumField.Value
+	72, // 53: gitpod.v1.RunnerConfigurationSchema.EnumField.possible_values:type_name -> gitpod.v1.RunnerConfigurationSchema.EnumField.Value
+	63, // 54: gitpod.v1.RunnerConfigurationSchema.Field.string:type_name -> gitpod.v1.RunnerConfigurationSchema.StringField
+	64, // 55: gitpod.v1.RunnerConfigurationSchema.Field.bool:type_name -> gitpod.v1.RunnerConfigurationSchema.BoolField
+	65, // 56: gitpod.v1.RunnerConfigurationSchema.Field.int:type_name -> gitpod.v1.RunnerConfigurationSchema.IntField
+	66, // 57: gitpod.v1.RunnerConfigurationSchema.Field.enum:type_name -> gitpod.v1.RunnerConfigurationSchema.EnumField
+	67, // 58: gitpod.v1.RunnerConfigurationSchema.Field.display:type_name -> gitpod.v1.RunnerConfigurationSchema.DisplayField
+	69, // 59: gitpod.v1.RunnerConfigurationSchema.SCMConfigSchema.oauth:type_name -> gitpod.v1.RunnerConfigurationSchema.OAuth
+	70, // 60: gitpod.v1.RunnerConfigurationSchema.SCMConfigSchema.pat:type_name -> gitpod.v1.RunnerConfigurationSchema.PersonalAccessToken
+	5,  // 61: gitpod.v1.RunnerConfigurationService.CreateHostAuthenticationToken:input_type -> gitpod.v1.CreateHostAuthenticationTokenRequest
+	8,  // 62: gitpod.v1.RunnerConfigurationService.GetHostAuthenticationToken:input_type -> gitpod.v1.GetHostAuthenticationTokenRequest
+	10, // 63: gitpod.v1.RunnerConfigurationService.ListHostAuthenticationTokens:input_type -> gitpod.v1.ListHostAuthenticationTokensRequest
+	12, // 64: gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationToken:input_type -> gitpod.v1.UpdateHostAuthenticationTokenRequest
+	14, // 65: gitpod.v1.RunnerConfigurationService.DeleteHostAuthenticationToken:input_type -> gitpod.v1.DeleteHostAuthenticationTokenRequest
+	18, // 66: gitpod.v1.RunnerConfigurationService.GetRunnerConfigurationSchema:input_type -> gitpod.v1.GetRunnerConfigurationSchemaRequest
+	20, // 67: gitpod.v1.RunnerConfigurationService.CreateSCMIntegration:input_type -> gitpod.v1.CreateSCMIntegrationRequest
+	24, // 68: gitpod.v1.RunnerConfigurationService.GetSCMIntegration:input_type -> gitpod.v1.GetSCMIntegrationRequest
+	26, // 69: gitpod.v1.RunnerConfigurationService.ListSCMIntegrations:input_type -> gitpod.v1.ListSCMIntegrationsRequest
+	28, // 70: gitpod.v1.RunnerConfigurationService.UpdateSCMIntegration:input_type -> gitpod.v1.UpdateSCMIntegrationRequest
+	30, // 71: gitpod.v1.RunnerConfigurationService.DeleteSCMIntegration:input_type -> gitpod.v1.DeleteSCMIntegrationRequest
+	33, // 72: gitpod.v1.RunnerConfigurationService.CreateEnvironmentClass:input_type -> gitpod.v1.CreateEnvironmentClassRequest
+	35, // 73: gitpod.v1.RunnerConfigurationService.GetEnvironmentClass:input_type -> gitpod.v1.GetEnvironmentClassRequest
+	37, // 74: gitpod.v1.RunnerConfigurationService.ListEnvironmentClasses:input_type -> gitpod.v1.ListEnvironmentClassesRequest
+	39, // 75: gitpod.v1.RunnerConfigurationService.UpdateEnvironmentClass:input_type -> gitpod.v1.UpdateEnvironmentClassRequest
+	41, // 76: gitpod.v1.RunnerConfigurationService.ValidateRunnerConfiguration:input_type -> gitpod.v1.ValidateRunnerConfigurationRequest
+	49, // 77: gitpod.v1.RunnerConfigurationService.CreateLLMIntegration:input_type -> gitpod.v1.CreateLLMIntegrationRequest
+	51, // 78: gitpod.v1.RunnerConfigurationService.GetLLMIntegration:input_type -> gitpod.v1.GetLLMIntegrationRequest
+	53, // 79: gitpod.v1.RunnerConfigurationService.ListLLMIntegrations:input_type -> gitpod.v1.ListLLMIntegrationsRequest
+	55, // 80: gitpod.v1.RunnerConfigurationService.UpdateLLMIntegration:input_type -> gitpod.v1.UpdateLLMIntegrationRequest
+	57, // 81: gitpod.v1.RunnerConfigurationService.DeleteLLMIntegration:input_type -> gitpod.v1.DeleteLLMIntegrationRequest
+	6,  // 82: gitpod.v1.RunnerConfigurationService.CreateHostAuthenticationToken:output_type -> gitpod.v1.CreateHostAuthenticationTokenResponse
+	9,  // 83: gitpod.v1.RunnerConfigurationService.GetHostAuthenticationToken:output_type -> gitpod.v1.GetHostAuthenticationTokenResponse
+	11, // 84: gitpod.v1.RunnerConfigurationService.ListHostAuthenticationTokens:output_type -> gitpod.v1.ListHostAuthenticationTokensResponse
+	13, // 85: gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationToken:output_type -> gitpod.v1.UpdateHostAuthenticationTokenResponse
+	15, // 86: gitpod.v1.RunnerConfigurationService.DeleteHostAuthenticationToken:output_type -> gitpod.v1.DeleteHostAuthenticationTokenResponse
+	19, // 87: gitpod.v1.RunnerConfigurationService.GetRunnerConfigurationSchema:output_type -> gitpod.v1.GetRunnerConfigurationSchemaResponse
+	21, // 88: gitpod.v1.RunnerConfigurationService.CreateSCMIntegration:output_type -> gitpod.v1.CreateSCMIntegrationResponse
+	25, // 89: gitpod.v1.RunnerConfigurationService.GetSCMIntegration:output_type -> gitpod.v1.GetSCMIntegrationResponse
+	27, // 90: gitpod.v1.RunnerConfigurationService.ListSCMIntegrations:output_type -> gitpod.v1.ListSCMIntegrationsResponse
+	29, // 91: gitpod.v1.RunnerConfigurationService.UpdateSCMIntegration:output_type -> gitpod.v1.UpdateSCMIntegrationResponse
+	31, // 92: gitpod.v1.RunnerConfigurationService.DeleteSCMIntegration:output_type -> gitpod.v1.DeleteSCMIntegrationResponse
+	34, // 93: gitpod.v1.RunnerConfigurationService.CreateEnvironmentClass:output_type -> gitpod.v1.CreateEnvironmentClassResponse
+	36, // 94: gitpod.v1.RunnerConfigurationService.GetEnvironmentClass:output_type -> gitpod.v1.GetEnvironmentClassResponse
+	38, // 95: gitpod.v1.RunnerConfigurationService.ListEnvironmentClasses:output_type -> gitpod.v1.ListEnvironmentClassesResponse
+	40, // 96: gitpod.v1.RunnerConfigurationService.UpdateEnvironmentClass:output_type -> gitpod.v1.UpdateEnvironmentClassResponse
+	45, // 97: gitpod.v1.RunnerConfigurationService.ValidateRunnerConfiguration:output_type -> gitpod.v1.ValidateRunnerConfigurationResponse
+	50, // 98: gitpod.v1.RunnerConfigurationService.CreateLLMIntegration:output_type -> gitpod.v1.CreateLLMIntegrationResponse
+	52, // 99: gitpod.v1.RunnerConfigurationService.GetLLMIntegration:output_type -> gitpod.v1.GetLLMIntegrationResponse
+	54, // 100: gitpod.v1.RunnerConfigurationService.ListLLMIntegrations:output_type -> gitpod.v1.ListLLMIntegrationsResponse
+	56, // 101: gitpod.v1.RunnerConfigurationService.UpdateLLMIntegration:output_type -> gitpod.v1.UpdateLLMIntegrationResponse
+	58, // 102: gitpod.v1.RunnerConfigurationService.DeleteLLMIntegration:output_type -> gitpod.v1.DeleteLLMIntegrationResponse
+	82, // [82:103] is the sub-list for method output_type
+	61, // [61:82] is the sub-list for method input_type
+	61, // [61:61] is the sub-list for extension type_name
+	61, // [61:61] is the sub-list for extension extendee
+	0,  // [0:61] is the sub-list for field type_name
 }
 
 func init() { file_gitpod_v1_runner_configuration_proto_init() }
@@ -5398,30 +5310,29 @@ func file_gitpod_v1_runner_configuration_proto_init() {
 	file_gitpod_v1_model_proto_init()
 	file_gitpod_v1_pagination_proto_init()
 	file_gitpod_v1_runner_configuration_proto_msgTypes[7].OneofWrappers = []any{}
-	file_gitpod_v1_runner_configuration_proto_msgTypes[9].OneofWrappers = []any{}
-	file_gitpod_v1_runner_configuration_proto_msgTypes[14].OneofWrappers = []any{}
-	file_gitpod_v1_runner_configuration_proto_msgTypes[17].OneofWrappers = []any{}
-	file_gitpod_v1_runner_configuration_proto_msgTypes[20].OneofWrappers = []any{}
-	file_gitpod_v1_runner_configuration_proto_msgTypes[25].OneofWrappers = []any{}
-	file_gitpod_v1_runner_configuration_proto_msgTypes[36].OneofWrappers = []any{}
-	file_gitpod_v1_runner_configuration_proto_msgTypes[38].OneofWrappers = []any{
+	file_gitpod_v1_runner_configuration_proto_msgTypes[12].OneofWrappers = []any{}
+	file_gitpod_v1_runner_configuration_proto_msgTypes[15].OneofWrappers = []any{}
+	file_gitpod_v1_runner_configuration_proto_msgTypes[18].OneofWrappers = []any{}
+	file_gitpod_v1_runner_configuration_proto_msgTypes[23].OneofWrappers = []any{}
+	file_gitpod_v1_runner_configuration_proto_msgTypes[34].OneofWrappers = []any{}
+	file_gitpod_v1_runner_configuration_proto_msgTypes[36].OneofWrappers = []any{
 		(*ValidateRunnerConfigurationRequest_EnvironmentClass)(nil),
 		(*ValidateRunnerConfigurationRequest_ScmIntegration)(nil),
 	}
-	file_gitpod_v1_runner_configuration_proto_msgTypes[40].OneofWrappers = []any{}
-	file_gitpod_v1_runner_configuration_proto_msgTypes[41].OneofWrappers = []any{}
-	file_gitpod_v1_runner_configuration_proto_msgTypes[42].OneofWrappers = []any{
+	file_gitpod_v1_runner_configuration_proto_msgTypes[38].OneofWrappers = []any{}
+	file_gitpod_v1_runner_configuration_proto_msgTypes[39].OneofWrappers = []any{}
+	file_gitpod_v1_runner_configuration_proto_msgTypes[40].OneofWrappers = []any{
 		(*ValidateRunnerConfigurationResponse_EnvironmentClass)(nil),
 		(*ValidateRunnerConfigurationResponse_ScmIntegration)(nil),
 	}
-	file_gitpod_v1_runner_configuration_proto_msgTypes[52].OneofWrappers = []any{}
+	file_gitpod_v1_runner_configuration_proto_msgTypes[50].OneofWrappers = []any{}
+	file_gitpod_v1_runner_configuration_proto_msgTypes[54].OneofWrappers = []any{}
 	file_gitpod_v1_runner_configuration_proto_msgTypes[56].OneofWrappers = []any{}
-	file_gitpod_v1_runner_configuration_proto_msgTypes[58].OneofWrappers = []any{}
-	file_gitpod_v1_runner_configuration_proto_msgTypes[59].OneofWrappers = []any{
+	file_gitpod_v1_runner_configuration_proto_msgTypes[57].OneofWrappers = []any{
 		(*ValidateRunnerConfigurationRequest_ValidateSCMIntegration_OauthPlaintextClientSecret)(nil),
 		(*ValidateRunnerConfigurationRequest_ValidateSCMIntegration_OauthEncryptedClientSecret)(nil),
 	}
-	file_gitpod_v1_runner_configuration_proto_msgTypes[65].OneofWrappers = []any{
+	file_gitpod_v1_runner_configuration_proto_msgTypes[63].OneofWrappers = []any{
 		(*RunnerConfigurationSchema_Field_String_)(nil),
 		(*RunnerConfigurationSchema_Field_Bool)(nil),
 		(*RunnerConfigurationSchema_Field_Int)(nil),
@@ -5433,8 +5344,8 @@ func file_gitpod_v1_runner_configuration_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gitpod_v1_runner_configuration_proto_rawDesc), len(file_gitpod_v1_runner_configuration_proto_rawDesc)),
-			NumEnums:      4,
-			NumMessages:   71,
+			NumEnums:      5,
+			NumMessages:   69,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

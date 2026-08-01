@@ -48,7 +48,6 @@ const (
 	OrganizationService_DeleteDomainVerification_FullMethodName           = "/gitpod.v1.OrganizationService/DeleteDomainVerification"
 	OrganizationService_GetOrganizationPolicies_FullMethodName            = "/gitpod.v1.OrganizationService/GetOrganizationPolicies"
 	OrganizationService_UpdateOrganizationPolicies_FullMethodName         = "/gitpod.v1.OrganizationService/UpdateOrganizationPolicies"
-	OrganizationService_GetOrganizationLLMCapabilities_FullMethodName     = "/gitpod.v1.OrganizationService/GetOrganizationLLMCapabilities"
 	OrganizationService_GetOIDCConfig_FullMethodName                      = "/gitpod.v1.OrganizationService/GetOIDCConfig"
 	OrganizationService_UpdateOIDCConfig_FullMethodName                   = "/gitpod.v1.OrganizationService/UpdateOIDCConfig"
 	OrganizationService_GetAnnouncementBanner_FullMethodName              = "/gitpod.v1.OrganizationService/GetAnnouncementBanner"
@@ -59,7 +58,6 @@ const (
 	OrganizationService_ListTermsOfServiceVersions_FullMethodName         = "/gitpod.v1.OrganizationService/ListTermsOfServiceVersions"
 	OrganizationService_ListTermsOfServiceAcceptances_FullMethodName      = "/gitpod.v1.OrganizationService/ListTermsOfServiceAcceptances"
 	OrganizationService_GetTermsOfServiceAcceptancesExport_FullMethodName = "/gitpod.v1.OrganizationService/GetTermsOfServiceAcceptancesExport"
-	OrganizationService_SetTier_FullMethodName                            = "/gitpod.v1.OrganizationService/SetTier"
 	OrganizationService_SetStripeCustomerID_FullMethodName                = "/gitpod.v1.OrganizationService/SetStripeCustomerID"
 	OrganizationService_CreateCustomDomain_FullMethodName                 = "/gitpod.v1.OrganizationService/CreateCustomDomain"
 	OrganizationService_GetCustomDomain_FullMethodName                    = "/gitpod.v1.OrganizationService/GetCustomDomain"
@@ -729,26 +727,6 @@ type OrganizationServiceClient interface {
 	//	maximumEnvironmentsPerUser: "20"
 	//	```
 	UpdateOrganizationPolicies(ctx context.Context, in *UpdateOrganizationPoliciesRequest, opts ...grpc.CallOption) (*UpdateOrganizationPoliciesResponse, error)
-	// Retrieves the LLM provider capabilities that are unavailable for the
-	// organization. These are determined by the configured LLM provider, not by
-	// admin policy: a capability listed here cannot be served regardless of what
-	// the organization's agent policy permits.
-	//
-	// The dashboard uses this to render unavailable options as disabled. The
-	// authoritative per-execution enforcement happens in the agent runtime via
-	// disabled capabilities carried on the LLM access token.
-	//
-	// Use this method to:
-	// - Determine which agent capabilities to surface as disabled in the UI
-	//
-	// ### Examples
-	//
-	// - Get LLM capabilities:
-	//
-	//	```yaml
-	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
-	//	```
-	GetOrganizationLLMCapabilities(ctx context.Context, in *GetOrganizationLLMCapabilitiesRequest, opts ...grpc.CallOption) (*GetOrganizationLLMCapabilitiesResponse, error)
 	// Retrieves the OIDC token configuration for an organization.
 	//
 	// Use this method to:
@@ -866,22 +844,6 @@ type OrganizationServiceClient interface {
 	ListTermsOfServiceAcceptances(ctx context.Context, in *ListTermsOfServiceAcceptancesRequest, opts ...grpc.CallOption) (*ListTermsOfServiceAcceptancesResponse, error)
 	// Returns a signed download URL for a CSV export of per-member acceptance of a Terms of Service version.
 	GetTermsOfServiceAcceptancesExport(ctx context.Context, in *GetTermsOfServiceAcceptancesExportRequest, opts ...grpc.CallOption) (*GetTermsOfServiceAcceptancesExportResponse, error)
-	// Sets the tier of an organization.
-	//
-	// Use this method to:
-	// - Change an organization's tier between free, core, and enterprise
-	//
-	// ### Examples
-	//
-	// - Set organization tier:
-	//
-	//	Changes organization tier to enterprise.
-	//
-	//	```yaml
-	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
-	//	tier: ORGANIZATION_TIER_ENTERPRISE
-	//	```
-	SetTier(ctx context.Context, in *SetTierRequest, opts ...grpc.CallOption) (*SetTierResponse, error)
 	// Deprecated: Do not use.
 	// Sets the Stripe customer ID for an organization's billing configuration.
 	//
@@ -1269,16 +1231,6 @@ func (c *organizationServiceClient) UpdateOrganizationPolicies(ctx context.Conte
 	return out, nil
 }
 
-func (c *organizationServiceClient) GetOrganizationLLMCapabilities(ctx context.Context, in *GetOrganizationLLMCapabilitiesRequest, opts ...grpc.CallOption) (*GetOrganizationLLMCapabilitiesResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetOrganizationLLMCapabilitiesResponse)
-	err := c.cc.Invoke(ctx, OrganizationService_GetOrganizationLLMCapabilities_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *organizationServiceClient) GetOIDCConfig(ctx context.Context, in *GetOIDCConfigRequest, opts ...grpc.CallOption) (*GetOIDCConfigResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetOIDCConfigResponse)
@@ -1373,16 +1325,6 @@ func (c *organizationServiceClient) GetTermsOfServiceAcceptancesExport(ctx conte
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetTermsOfServiceAcceptancesExportResponse)
 	err := c.cc.Invoke(ctx, OrganizationService_GetTermsOfServiceAcceptancesExport_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *organizationServiceClient) SetTier(ctx context.Context, in *SetTierRequest, opts ...grpc.CallOption) (*SetTierResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SetTierResponse)
-	err := c.cc.Invoke(ctx, OrganizationService_SetTier_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2102,26 +2044,6 @@ type OrganizationServiceServer interface {
 	//	maximumEnvironmentsPerUser: "20"
 	//	```
 	UpdateOrganizationPolicies(context.Context, *UpdateOrganizationPoliciesRequest) (*UpdateOrganizationPoliciesResponse, error)
-	// Retrieves the LLM provider capabilities that are unavailable for the
-	// organization. These are determined by the configured LLM provider, not by
-	// admin policy: a capability listed here cannot be served regardless of what
-	// the organization's agent policy permits.
-	//
-	// The dashboard uses this to render unavailable options as disabled. The
-	// authoritative per-execution enforcement happens in the agent runtime via
-	// disabled capabilities carried on the LLM access token.
-	//
-	// Use this method to:
-	// - Determine which agent capabilities to surface as disabled in the UI
-	//
-	// ### Examples
-	//
-	// - Get LLM capabilities:
-	//
-	//	```yaml
-	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
-	//	```
-	GetOrganizationLLMCapabilities(context.Context, *GetOrganizationLLMCapabilitiesRequest) (*GetOrganizationLLMCapabilitiesResponse, error)
 	// Retrieves the OIDC token configuration for an organization.
 	//
 	// Use this method to:
@@ -2239,22 +2161,6 @@ type OrganizationServiceServer interface {
 	ListTermsOfServiceAcceptances(context.Context, *ListTermsOfServiceAcceptancesRequest) (*ListTermsOfServiceAcceptancesResponse, error)
 	// Returns a signed download URL for a CSV export of per-member acceptance of a Terms of Service version.
 	GetTermsOfServiceAcceptancesExport(context.Context, *GetTermsOfServiceAcceptancesExportRequest) (*GetTermsOfServiceAcceptancesExportResponse, error)
-	// Sets the tier of an organization.
-	//
-	// Use this method to:
-	// - Change an organization's tier between free, core, and enterprise
-	//
-	// ### Examples
-	//
-	// - Set organization tier:
-	//
-	//	Changes organization tier to enterprise.
-	//
-	//	```yaml
-	//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
-	//	tier: ORGANIZATION_TIER_ENTERPRISE
-	//	```
-	SetTier(context.Context, *SetTierRequest) (*SetTierResponse, error)
 	// Deprecated: Do not use.
 	// Sets the Stripe customer ID for an organization's billing configuration.
 	//
@@ -2439,9 +2345,6 @@ func (UnimplementedOrganizationServiceServer) GetOrganizationPolicies(context.Co
 func (UnimplementedOrganizationServiceServer) UpdateOrganizationPolicies(context.Context, *UpdateOrganizationPoliciesRequest) (*UpdateOrganizationPoliciesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateOrganizationPolicies not implemented")
 }
-func (UnimplementedOrganizationServiceServer) GetOrganizationLLMCapabilities(context.Context, *GetOrganizationLLMCapabilitiesRequest) (*GetOrganizationLLMCapabilitiesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetOrganizationLLMCapabilities not implemented")
-}
 func (UnimplementedOrganizationServiceServer) GetOIDCConfig(context.Context, *GetOIDCConfigRequest) (*GetOIDCConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOIDCConfig not implemented")
 }
@@ -2471,9 +2374,6 @@ func (UnimplementedOrganizationServiceServer) ListTermsOfServiceAcceptances(cont
 }
 func (UnimplementedOrganizationServiceServer) GetTermsOfServiceAcceptancesExport(context.Context, *GetTermsOfServiceAcceptancesExportRequest) (*GetTermsOfServiceAcceptancesExportResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTermsOfServiceAcceptancesExport not implemented")
-}
-func (UnimplementedOrganizationServiceServer) SetTier(context.Context, *SetTierRequest) (*SetTierResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetTier not implemented")
 }
 func (UnimplementedOrganizationServiceServer) SetStripeCustomerID(context.Context, *SetStripeCustomerIDRequest) (*SetStripeCustomerIDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetStripeCustomerID not implemented")
@@ -3033,24 +2933,6 @@ func _OrganizationService_UpdateOrganizationPolicies_Handler(srv interface{}, ct
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OrganizationService_GetOrganizationLLMCapabilities_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetOrganizationLLMCapabilitiesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrganizationServiceServer).GetOrganizationLLMCapabilities(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: OrganizationService_GetOrganizationLLMCapabilities_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrganizationServiceServer).GetOrganizationLLMCapabilities(ctx, req.(*GetOrganizationLLMCapabilitiesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _OrganizationService_GetOIDCConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetOIDCConfigRequest)
 	if err := dec(in); err != nil {
@@ -3227,24 +3109,6 @@ func _OrganizationService_GetTermsOfServiceAcceptancesExport_Handler(srv interfa
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OrganizationServiceServer).GetTermsOfServiceAcceptancesExport(ctx, req.(*GetTermsOfServiceAcceptancesExportRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _OrganizationService_SetTier_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetTierRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrganizationServiceServer).SetTier(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: OrganizationService_SetTier_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrganizationServiceServer).SetTier(ctx, req.(*SetTierRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3463,10 +3327,6 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OrganizationService_UpdateOrganizationPolicies_Handler,
 		},
 		{
-			MethodName: "GetOrganizationLLMCapabilities",
-			Handler:    _OrganizationService_GetOrganizationLLMCapabilities_Handler,
-		},
-		{
 			MethodName: "GetOIDCConfig",
 			Handler:    _OrganizationService_GetOIDCConfig_Handler,
 		},
@@ -3505,10 +3365,6 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTermsOfServiceAcceptancesExport",
 			Handler:    _OrganizationService_GetTermsOfServiceAcceptancesExport_Handler,
-		},
-		{
-			MethodName: "SetTier",
-			Handler:    _OrganizationService_SetTier_Handler,
 		},
 		{
 			MethodName: "SetStripeCustomerID",

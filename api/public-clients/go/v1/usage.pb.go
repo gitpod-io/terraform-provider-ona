@@ -8,8 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -3684,7 +3682,7 @@ var File_gitpod_v1_usage_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_usage_proto_rawDesc = "" +
 	"\n" +
-	"\x15gitpod/v1/usage.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x15gitpod/v1/model.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gitpod/v1/runner_configuration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x8d\x01\n" +
+	"\x15gitpod/v1/usage.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x15gitpod/v1/model.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gitpod/v1/runner_configuration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x8d\x01\n" +
 	"\tDateRange\x12A\n" +
 	"\n" +
 	"start_time\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\tstartTime\x12=\n" +
@@ -3703,31 +3701,25 @@ const file_gitpod_v1_usage_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"stopped_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tstoppedAt\"\xb2\x01\n" +
+	"stopped_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tstoppedAt\"\x91\x01\n" +
 	"\x1aGetActiveUsersCountRequest\x12;\n" +
 	"\n" +
-	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12/\n" +
+	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12&\n" +
-	"\ateam_id\x18\x03 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"I\n" +
+	"project_id\x18\x02 \x01(\tR\tprojectId\x12\x17\n" +
+	"\ateam_id\x18\x03 \x01(\tR\x06teamId\"I\n" +
 	"\x1bGetActiveUsersCountResponse\x12\x14\n" +
 	"\x05count\x18\x01 \x01(\x03R\x05count\x12\x14\n" +
-	"\x05trend\x18\x02 \x01(\x01R\x05trend\"\xee\x01\n" +
-	"\x18GetTopActiveUsersRequest\x12/\n" +
+	"\x05trend\x18\x02 \x01(\x01R\x05trend\"\xcd\x01\n" +
+	"\x18GetTopActiveUsersRequest\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12;\n" +
+	"project_id\x18\x01 \x01(\tR\tprojectId\x12;\n" +
 	"\n" +
 	"date_range\x18\x02 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12<\n" +
 	"\n" +
 	"pagination\x18\x03 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
-	"pagination\x12&\n" +
-	"\ateam_id\x18\x04 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"\xcc\x02\n" +
+	"pagination\x12\x17\n" +
+	"\ateam_id\x18\x04 \x01(\tR\x06teamId\"\xcc\x02\n" +
 	"\x19GetTopActiveUsersResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
@@ -3737,99 +3729,81 @@ const file_gitpod_v1_usage_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
 	"\tuser_name\x18\x02 \x01(\tR\buserName\x12&\n" +
 	"\x0fuser_avatar_url\x18\x03 \x01(\tR\ruserAvatarUrl\x122\n" +
-	"\x15total_runtime_seconds\x18\x04 \x01(\x01R\x13totalRuntimeSeconds\"\xf8\x01\n" +
-	"\x1fGetActiveUsersTimeSeriesRequest\x12/\n" +
+	"\x15total_runtime_seconds\x18\x04 \x01(\x01R\x13totalRuntimeSeconds\"\xd7\x01\n" +
+	"\x1fGetActiveUsersTimeSeriesRequest\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12;\n" +
+	"project_id\x18\x01 \x01(\tR\tprojectId\x12;\n" +
 	"\n" +
 	"date_range\x18\x02 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12?\n" +
 	"\n" +
 	"resolution\x18\x03 \x01(\x0e2\x15.gitpod.v1.ResolutionB\b\xbaH\x05\x82\x01\x02\x10\x01R\n" +
-	"resolution\x12&\n" +
-	"\ateam_id\x18\x04 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"\xcd\x01\n" +
+	"resolution\x12\x17\n" +
+	"\ateam_id\x18\x04 \x01(\tR\x06teamId\"\xcd\x01\n" +
 	" GetActiveUsersTimeSeriesResponse\x12J\n" +
 	"\x13weekly_active_users\x18\x01 \x03(\v2\x1a.gitpod.v1.TimeSeriesPointR\x11weeklyActiveUsers\x12]\n" +
-	"\x1dweekly_active_returning_users\x18\x02 \x03(\v2\x1a.gitpod.v1.TimeSeriesPointR\x1aweeklyActiveReturningUsers\"\xa8\x02\n" +
+	"\x1dweekly_active_returning_users\x18\x02 \x03(\v2\x1a.gitpod.v1.TimeSeriesPointR\x1aweeklyActiveReturningUsers\"\x96\x02\n" +
 	"\"ListEnvironmentUsageRecordsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12L\n" +
-	"\x06filter\x18\x02 \x01(\v24.gitpod.v1.ListEnvironmentUsageRecordsRequest.FilterR\x06filter\x1av\n" +
-	"\x06Filter\x12/\n" +
+	"\x06filter\x18\x02 \x01(\v24.gitpod.v1.ListEnvironmentUsageRecordsRequest.FilterR\x06filter\x1ad\n" +
+	"\x06Filter\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12;\n" +
+	"project_id\x18\x01 \x01(\tR\tprojectId\x12;\n" +
 	"\n" +
 	"date_range\x18\x02 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\"\xa1\x01\n" +
 	"#ListEnvironmentUsageRecordsResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12;\n" +
-	"\arecords\x18\x02 \x03(\v2!.gitpod.v1.EnvironmentUsageRecordR\arecords\"\xb9\x01\n" +
+	"\arecords\x18\x02 \x03(\v2!.gitpod.v1.EnvironmentUsageRecordR\arecords\"\x98\x01\n" +
 	"!GetActiveEnvironmentsCountRequest\x12;\n" +
 	"\n" +
-	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12/\n" +
+	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12&\n" +
-	"\ateam_id\x18\x03 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"P\n" +
+	"project_id\x18\x02 \x01(\tR\tprojectId\x12\x17\n" +
+	"\ateam_id\x18\x03 \x01(\tR\x06teamId\"P\n" +
 	"\"GetActiveEnvironmentsCountResponse\x12\x14\n" +
 	"\x05count\x18\x01 \x01(\x03R\x05count\x12\x14\n" +
-	"\x05trend\x18\x02 \x01(\x01R\x05trend\"\xff\x01\n" +
+	"\x05trend\x18\x02 \x01(\x01R\x05trend\"\xde\x01\n" +
 	"&GetActiveEnvironmentsTimeSeriesRequest\x12;\n" +
 	"\n" +
-	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12/\n" +
+	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12?\n" +
+	"project_id\x18\x02 \x01(\tR\tprojectId\x12?\n" +
 	"\n" +
 	"resolution\x18\x03 \x01(\x0e2\x15.gitpod.v1.ResolutionB\b\xbaH\x05\x82\x01\x02\x10\x01R\n" +
-	"resolution\x12&\n" +
-	"\ateam_id\x18\x04 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"v\n" +
+	"resolution\x12\x17\n" +
+	"\ateam_id\x18\x04 \x01(\tR\x06teamId\"v\n" +
 	"'GetActiveEnvironmentsTimeSeriesResponse\x12K\n" +
-	"\x13active_environments\x18\x01 \x03(\v2\x1a.gitpod.v1.TimeSeriesPointR\x12activeEnvironments\"\xb4\x01\n" +
+	"\x13active_environments\x18\x01 \x03(\v2\x1a.gitpod.v1.TimeSeriesPointR\x12activeEnvironments\"\x93\x01\n" +
 	"\x1cGetEnvironmentRuntimeRequest\x12;\n" +
 	"\n" +
-	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12/\n" +
+	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12&\n" +
-	"\ateam_id\x18\x03 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"i\n" +
+	"project_id\x18\x02 \x01(\tR\tprojectId\x12\x17\n" +
+	"\ateam_id\x18\x03 \x01(\tR\x06teamId\"i\n" +
 	"\x1dGetEnvironmentRuntimeResponse\x122\n" +
 	"\x15total_runtime_seconds\x18\x01 \x01(\x03R\x13totalRuntimeSeconds\x12\x14\n" +
-	"\x05trend\x18\x02 \x01(\x01R\x05trend\"\xff\x01\n" +
+	"\x05trend\x18\x02 \x01(\x01R\x05trend\"\xde\x01\n" +
 	"&GetEnvironmentRuntimeTimeSeriesRequest\x12;\n" +
 	"\n" +
-	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12/\n" +
+	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12?\n" +
+	"project_id\x18\x02 \x01(\tR\tprojectId\x12?\n" +
 	"\n" +
 	"resolution\x18\x03 \x01(\x0e2\x15.gitpod.v1.ResolutionB\b\xbaH\x05\x82\x01\x02\x10\x01R\n" +
-	"resolution\x12&\n" +
-	"\ateam_id\x18\x04 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"j\n" +
+	"resolution\x12\x17\n" +
+	"\ateam_id\x18\x04 \x01(\tR\x06teamId\"j\n" +
 	"'GetEnvironmentRuntimeTimeSeriesResponse\x12?\n" +
-	"\rtotal_runtime\x18\x01 \x03(\v2\x1a.gitpod.v1.TimeSeriesPointR\ftotalRuntime\"\xba\x01\n" +
+	"\rtotal_runtime\x18\x01 \x03(\v2\x1a.gitpod.v1.TimeSeriesPointR\ftotalRuntime\"\xab\x01\n" +
 	"\x15GetTopProjectsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12;\n" +
 	"\n" +
-	"date_range\x18\x02 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12&\n" +
-	"\ateam_id\x18\x03 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"\xb6\x02\n" +
+	"date_range\x18\x02 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x17\n" +
+	"\ateam_id\x18\x03 \x01(\tR\x06teamId\"\xb6\x02\n" +
 	"\x16GetTopProjectsResponse\x12P\n" +
 	"\bprojects\x18\x01 \x03(\v24.gitpod.v1.GetTopProjectsResponse.ProjectRuntimeInfoR\bprojects\x12=\n" +
 	"\n" +
@@ -3839,19 +3813,16 @@ const file_gitpod_v1_usage_proto_rawDesc = "" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tR\tprojectId\x12!\n" +
 	"\fproject_name\x18\x02 \x01(\tR\vprojectName\x122\n" +
-	"\x15total_runtime_seconds\x18\x03 \x01(\x03R\x13totalRuntimeSeconds\"\xf5\x01\n" +
+	"\x15total_runtime_seconds\x18\x03 \x01(\x03R\x13totalRuntimeSeconds\"\xd4\x01\n" +
 	"\x1fGetTopEnvironmentClassesRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12;\n" +
 	"\n" +
-	"date_range\x18\x02 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12/\n" +
+	"date_range\x18\x02 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x03 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12&\n" +
-	"\ateam_id\x18\x04 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"\xf0\x03\n" +
+	"project_id\x18\x03 \x01(\tR\tprojectId\x12\x17\n" +
+	"\ateam_id\x18\x04 \x01(\tR\x06teamId\"\xf0\x03\n" +
 	" GetTopEnvironmentClassesResponse\x12x\n" +
 	"\x13environment_classes\x18\x01 \x03(\v2G.gitpod.v1.GetTopEnvironmentClassesResponse.EnvironmentClassRuntimeInfoR\x12environmentClasses\x12=\n" +
 	"\n" +
@@ -3864,18 +3835,14 @@ const file_gitpod_v1_usage_proto_rawDesc = "" +
 	"\vrunner_name\x18\x03 \x01(\tR\n" +
 	"runnerName\x124\n" +
 	"\x16environment_class_name\x18\x04 \x01(\tR\x14environmentClassName\x122\n" +
-	"\x15total_runtime_seconds\x18\x05 \x01(\x03R\x13totalRuntimeSeconds\"\xde\x01\n" +
+	"\x15total_runtime_seconds\x18\x05 \x01(\x03R\x13totalRuntimeSeconds\"\xae\x01\n" +
 	"\x1eGetAdoptionUsageSummaryRequest\x12;\n" +
 	"\n" +
-	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12/\n" +
+	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12&\n" +
-	"\auser_id\x18\x03 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\x12&\n" +
-	"\ateam_id\x18\x04 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"\x9c\x04\n" +
+	"project_id\x18\x02 \x01(\tR\tprojectId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\tR\x06userId\x12\x17\n" +
+	"\ateam_id\x18\x04 \x01(\tR\x06teamId\"\x9c\x04\n" +
 	"\x1fGetAdoptionUsageSummaryResponse\x12>\n" +
 	"\x1cenv_runtime_per_user_seconds\x18\x01 \x01(\x01R\x18envRuntimePerUserSeconds\x12:\n" +
 	"\x1aenv_runtime_per_user_trend\x18\x02 \x01(\x01R\x16envRuntimePerUserTrend\x12,\n" +
@@ -3887,19 +3854,16 @@ const file_gitpod_v1_usage_proto_rawDesc = "" +
 	"\x0esessions_count\x18\b \x01(\x03R\rsessionsCount\x12%\n" +
 	"\x0esessions_trend\x18\t \x01(\x01R\rsessionsTrend\x128\n" +
 	"\tsparkline\x18\n" +
-	" \x03(\v2\x1a.gitpod.v1.TimeSeriesPointR\tsparkline\"\x80\x02\n" +
+	" \x03(\v2\x1a.gitpod.v1.TimeSeriesPointR\tsparkline\"\xdf\x01\n" +
 	"'GetEnvironmentSessionsTimeSeriesRequest\x12;\n" +
 	"\n" +
-	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12/\n" +
+	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12?\n" +
+	"project_id\x18\x02 \x01(\tR\tprojectId\x12?\n" +
 	"\n" +
 	"resolution\x18\x03 \x01(\x0e2\x15.gitpod.v1.ResolutionB\b\xbaH\x05\x82\x01\x02\x10\x01R\n" +
-	"resolution\x12&\n" +
-	"\ateam_id\x18\x04 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"b\n" +
+	"resolution\x12\x17\n" +
+	"\ateam_id\x18\x04 \x01(\tR\x06teamId\"b\n" +
 	"(GetEnvironmentSessionsTimeSeriesResponse\x126\n" +
 	"\bsessions\x18\x01 \x03(\v2\x1a.gitpod.v1.TimeSeriesPointR\bsessions\"\xc7\x01\n" +
 	"\rToolBreakdown\x12+\n" +
@@ -3964,97 +3928,73 @@ const file_gitpod_v1_usage_proto_rawDesc = "" +
 	"\x11lead_time_seconds\x18\x02 \x01(\x01R\x0fleadTimeSeconds\x12(\n" +
 	"\x10prs_merged_count\x18\x03 \x01(\x03R\x0eprsMergedCount\x12B\n" +
 	"\x1etime_to_first_approval_seconds\x18\x04 \x01(\x01R\x1atimeToFirstApprovalSeconds\x12\x18\n" +
-	"\adeploys\x18\x05 \x01(\x03R\adeploys\"\xd9\x01\n" +
+	"\adeploys\x18\x05 \x01(\x03R\adeploys\"\xa9\x01\n" +
 	"\x19GetCoAuthorSummaryRequest\x12;\n" +
 	"\n" +
-	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12/\n" +
+	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12&\n" +
-	"\auser_id\x18\x03 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\x12&\n" +
-	"\ateam_id\x18\x04 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"\x8c\x01\n" +
+	"project_id\x18\x02 \x01(\tR\tprojectId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\tR\x06userId\x12\x17\n" +
+	"\ateam_id\x18\x04 \x01(\tR\x06teamId\"\x8c\x01\n" +
 	"\x1aGetCoAuthorSummaryResponse\x124\n" +
 	"\asummary\x18\x01 \x01(\v2\x1a.gitpod.v1.CoAuthorSummaryR\asummary\x128\n" +
-	"\tsparkline\x18\x02 \x03(\v2\x1a.gitpod.v1.TimeSeriesPointR\tsparkline\"\x9d\x02\n" +
+	"\tsparkline\x18\x02 \x03(\v2\x1a.gitpod.v1.TimeSeriesPointR\tsparkline\"\xed\x01\n" +
 	"\x1cGetCoAuthorTimeSeriesRequest\x12;\n" +
 	"\n" +
-	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12/\n" +
+	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12?\n" +
+	"project_id\x18\x02 \x01(\tR\tprojectId\x12?\n" +
 	"\n" +
 	"resolution\x18\x03 \x01(\x0e2\x15.gitpod.v1.ResolutionB\b\xbaH\x05\x82\x01\x02\x10\x01R\n" +
-	"resolution\x12&\n" +
-	"\auser_id\x18\x04 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\x12&\n" +
-	"\ateam_id\x18\x05 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"_\n" +
+	"resolution\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\tR\x06userId\x12\x17\n" +
+	"\ateam_id\x18\x05 \x01(\tR\x06teamId\"_\n" +
 	"\x1dGetCoAuthorTimeSeriesResponse\x12>\n" +
 	"\vtime_series\x18\x01 \x03(\v2\x1d.gitpod.v1.CoAuthorTimeBucketR\n" +
-	"timeSeries\"\xdb\x01\n" +
+	"timeSeries\"\xab\x01\n" +
 	"\x1bGetAgentTraceSummaryRequest\x12;\n" +
 	"\n" +
-	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12/\n" +
+	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12&\n" +
-	"\auser_id\x18\x03 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\x12&\n" +
-	"\ateam_id\x18\x04 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"\x90\x01\n" +
+	"project_id\x18\x02 \x01(\tR\tprojectId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\tR\x06userId\x12\x17\n" +
+	"\ateam_id\x18\x04 \x01(\tR\x06teamId\"\x90\x01\n" +
 	"\x1cGetAgentTraceSummaryResponse\x126\n" +
 	"\asummary\x18\x01 \x01(\v2\x1c.gitpod.v1.AgentTraceSummaryR\asummary\x128\n" +
-	"\tsparkline\x18\x02 \x03(\v2\x1a.gitpod.v1.TimeSeriesPointR\tsparkline\"\x9f\x02\n" +
+	"\tsparkline\x18\x02 \x03(\v2\x1a.gitpod.v1.TimeSeriesPointR\tsparkline\"\xef\x01\n" +
 	"\x1eGetAgentTraceTimeSeriesRequest\x12;\n" +
 	"\n" +
-	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12/\n" +
+	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12?\n" +
+	"project_id\x18\x02 \x01(\tR\tprojectId\x12?\n" +
 	"\n" +
 	"resolution\x18\x03 \x01(\x0e2\x15.gitpod.v1.ResolutionB\b\xbaH\x05\x82\x01\x02\x10\x01R\n" +
-	"resolution\x12&\n" +
-	"\auser_id\x18\x04 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\x12&\n" +
-	"\ateam_id\x18\x05 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"c\n" +
+	"resolution\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\tR\x06userId\x12\x17\n" +
+	"\ateam_id\x18\x05 \x01(\tR\x06teamId\"c\n" +
 	"\x1fGetAgentTraceTimeSeriesResponse\x12@\n" +
 	"\vtime_series\x18\x01 \x03(\v2\x1f.gitpod.v1.AgentTraceTimeBucketR\n" +
-	"timeSeries\"\xd3\x01\n" +
+	"timeSeries\"\xa3\x01\n" +
 	"\x13GetPrSummaryRequest\x12;\n" +
 	"\n" +
-	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12/\n" +
+	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12&\n" +
-	"\auser_id\x18\x03 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\x12&\n" +
-	"\ateam_id\x18\x04 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"\x80\x01\n" +
+	"project_id\x18\x02 \x01(\tR\tprojectId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\tR\x06userId\x12\x17\n" +
+	"\ateam_id\x18\x04 \x01(\tR\x06teamId\"\x80\x01\n" +
 	"\x14GetPrSummaryResponse\x12.\n" +
 	"\asummary\x18\x01 \x01(\v2\x14.gitpod.v1.PrSummaryR\asummary\x128\n" +
-	"\tsparkline\x18\x02 \x03(\v2\x1a.gitpod.v1.TimeSeriesPointR\tsparkline\"\x97\x02\n" +
+	"\tsparkline\x18\x02 \x03(\v2\x1a.gitpod.v1.TimeSeriesPointR\tsparkline\"\xe7\x01\n" +
 	"\x16GetPrTimeSeriesRequest\x12;\n" +
 	"\n" +
-	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12/\n" +
+	"date_range\x18\x01 \x01(\v2\x14.gitpod.v1.DateRangeB\x06\xbaH\x03\xc8\x01\x01R\tdateRange\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\tB\x10\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12?\n" +
+	"project_id\x18\x02 \x01(\tR\tprojectId\x12?\n" +
 	"\n" +
 	"resolution\x18\x03 \x01(\x0e2\x15.gitpod.v1.ResolutionB\b\xbaH\x05\x82\x01\x02\x10\x01R\n" +
-	"resolution\x12&\n" +
-	"\auser_id\x18\x04 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\x12&\n" +
-	"\ateam_id\x18\x05 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\ateam.idR\x06teamId\"S\n" +
+	"resolution\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\tR\x06userId\x12\x17\n" +
+	"\ateam_id\x18\x05 \x01(\tR\x06teamId\"S\n" +
 	"\x17GetPrTimeSeriesResponse\x128\n" +
 	"\vtime_series\x18\x01 \x03(\v2\x17.gitpod.v1.PrTimeBucketR\n" +
 	"timeSeries*\x84\x01\n" +
@@ -4074,27 +4014,26 @@ const file_gitpod_v1_usage_proto_rawDesc = "" +
 	"\x15CO_AUTHOR_TOOL_CURSOR\x10\x05\x12\x18\n" +
 	"\x14CO_AUTHOR_TOOL_OTHER\x10\x06\x12\x19\n" +
 	"\x15CO_AUTHOR_TOOL_CLAUDE\x10\a\x12\x18\n" +
-	"\x14CO_AUTHOR_TOOL_CODEX\x10\b2\xbc\x12\n" +
+	"\x14CO_AUTHOR_TOOL_CODEX\x10\b2\xc0\x10\n" +
 	"\fUsageService\x12i\n" +
 	"\x13GetActiveUsersCount\x12%.gitpod.v1.GetActiveUsersCountRequest\x1a&.gitpod.v1.GetActiveUsersCountResponse\"\x03\x90\x02\x01\x12c\n" +
 	"\x11GetTopActiveUsers\x12#.gitpod.v1.GetTopActiveUsersRequest\x1a$.gitpod.v1.GetTopActiveUsersResponse\"\x03\x90\x02\x01\x12x\n" +
-	"\x18GetActiveUsersTimeSeries\x12*.gitpod.v1.GetActiveUsersTimeSeriesRequest\x1a+.gitpod.v1.GetActiveUsersTimeSeriesResponse\"\x03\x90\x02\x01\x12\xa7\x01\n" +
-	"\x1bListEnvironmentUsageRecords\x12-.gitpod.v1.ListEnvironmentUsageRecordsRequest\x1a..gitpod.v1.ListEnvironmentUsageRecordsResponse\")\xb2\xab\x1e\"\x12 list_environment_runtime_records\x90\x02\x01\x12~\n" +
+	"\x18GetActiveUsersTimeSeries\x12*.gitpod.v1.GetActiveUsersTimeSeriesRequest\x1a+.gitpod.v1.GetActiveUsersTimeSeriesResponse\"\x03\x90\x02\x01\x12\x81\x01\n" +
+	"\x1bListEnvironmentUsageRecords\x12-.gitpod.v1.ListEnvironmentUsageRecordsRequest\x1a..gitpod.v1.ListEnvironmentUsageRecordsResponse\"\x03\x90\x02\x01\x12~\n" +
 	"\x1aGetActiveEnvironmentsCount\x12,.gitpod.v1.GetActiveEnvironmentsCountRequest\x1a-.gitpod.v1.GetActiveEnvironmentsCountResponse\"\x03\x90\x02\x01\x12\x8d\x01\n" +
 	"\x1fGetActiveEnvironmentsTimeSeries\x121.gitpod.v1.GetActiveEnvironmentsTimeSeriesRequest\x1a2.gitpod.v1.GetActiveEnvironmentsTimeSeriesResponse\"\x03\x90\x02\x01\x12o\n" +
 	"\x15GetEnvironmentRuntime\x12'.gitpod.v1.GetEnvironmentRuntimeRequest\x1a(.gitpod.v1.GetEnvironmentRuntimeResponse\"\x03\x90\x02\x01\x12\x8d\x01\n" +
 	"\x1fGetEnvironmentRuntimeTimeSeries\x121.gitpod.v1.GetEnvironmentRuntimeTimeSeriesRequest\x1a2.gitpod.v1.GetEnvironmentRuntimeTimeSeriesResponse\"\x03\x90\x02\x01\x12Z\n" +
 	"\x0eGetTopProjects\x12 .gitpod.v1.GetTopProjectsRequest\x1a!.gitpod.v1.GetTopProjectsResponse\"\x03\x90\x02\x01\x12x\n" +
-	"\x18GetTopEnvironmentClasses\x12*.gitpod.v1.GetTopEnvironmentClassesRequest\x1a+.gitpod.v1.GetTopEnvironmentClassesResponse\"\x03\x90\x02\x01\x12\x95\x01\n" +
-	"\x17GetAdoptionUsageSummary\x12).gitpod.v1.GetAdoptionUsageSummaryRequest\x1a*.gitpod.v1.GetAdoptionUsageSummaryResponse\"#\xb2\xab\x1e\x1c\x12\x1aget_adoption_usage_summary\x90\x02\x01\x12\x90\x01\n" +
-	" GetEnvironmentSessionsTimeSeries\x122.gitpod.v1.GetEnvironmentSessionsTimeSeriesRequest\x1a3.gitpod.v1.GetEnvironmentSessionsTimeSeriesResponse\"\x03\x90\x02\x01\x12\x81\x01\n" +
-	"\x12GetCoAuthorSummary\x12$.gitpod.v1.GetCoAuthorSummaryRequest\x1a%.gitpod.v1.GetCoAuthorSummaryResponse\"\x1e\xb2\xab\x1e\x17\x12\x15get_co_author_summary\x90\x02\x01\x12\x8e\x01\n" +
-	"\x15GetCoAuthorTimeSeries\x12'.gitpod.v1.GetCoAuthorTimeSeriesRequest\x1a(.gitpod.v1.GetCoAuthorTimeSeriesResponse\"\"\xb2\xab\x1e\x1b\x12\x19get_co_author_time_series\x90\x02\x01\x12\x89\x01\n" +
-	"\x14GetAgentTraceSummary\x12&.gitpod.v1.GetAgentTraceSummaryRequest\x1a'.gitpod.v1.GetAgentTraceSummaryResponse\" \xb2\xab\x1e\x19\x12\x17get_agent_trace_summary\x90\x02\x01\x12\x96\x01\n" +
-	"\x17GetAgentTraceTimeSeries\x12).gitpod.v1.GetAgentTraceTimeSeriesRequest\x1a*.gitpod.v1.GetAgentTraceTimeSeriesResponse\"$\xb2\xab\x1e\x1d\x12\x1bget_agent_trace_time_series\x90\x02\x01\x12h\n" +
-	"\fGetPrSummary\x12\x1e.gitpod.v1.GetPrSummaryRequest\x1a\x1f.gitpod.v1.GetPrSummaryResponse\"\x17\xb2\xab\x1e\x10\x12\x0eget_pr_summary\x90\x02\x01\x12u\n" +
-	"\x0fGetPrTimeSeries\x12!.gitpod.v1.GetPrTimeSeriesRequest\x1a\".gitpod.v1.GetPrTimeSeriesResponse\"\x1b\xb2\xab\x1e\x14\x12\x12get_pr_time_series\x90\x02\x01\x1a\v\xaa\xab\x1e\a\n" +
-	"\x05usageB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x18GetTopEnvironmentClasses\x12*.gitpod.v1.GetTopEnvironmentClassesRequest\x1a+.gitpod.v1.GetTopEnvironmentClassesResponse\"\x03\x90\x02\x01\x12u\n" +
+	"\x17GetAdoptionUsageSummary\x12).gitpod.v1.GetAdoptionUsageSummaryRequest\x1a*.gitpod.v1.GetAdoptionUsageSummaryResponse\"\x03\x90\x02\x01\x12\x90\x01\n" +
+	" GetEnvironmentSessionsTimeSeries\x122.gitpod.v1.GetEnvironmentSessionsTimeSeriesRequest\x1a3.gitpod.v1.GetEnvironmentSessionsTimeSeriesResponse\"\x03\x90\x02\x01\x12f\n" +
+	"\x12GetCoAuthorSummary\x12$.gitpod.v1.GetCoAuthorSummaryRequest\x1a%.gitpod.v1.GetCoAuthorSummaryResponse\"\x03\x90\x02\x01\x12o\n" +
+	"\x15GetCoAuthorTimeSeries\x12'.gitpod.v1.GetCoAuthorTimeSeriesRequest\x1a(.gitpod.v1.GetCoAuthorTimeSeriesResponse\"\x03\x90\x02\x01\x12l\n" +
+	"\x14GetAgentTraceSummary\x12&.gitpod.v1.GetAgentTraceSummaryRequest\x1a'.gitpod.v1.GetAgentTraceSummaryResponse\"\x03\x90\x02\x01\x12u\n" +
+	"\x17GetAgentTraceTimeSeries\x12).gitpod.v1.GetAgentTraceTimeSeriesRequest\x1a*.gitpod.v1.GetAgentTraceTimeSeriesResponse\"\x03\x90\x02\x01\x12T\n" +
+	"\fGetPrSummary\x12\x1e.gitpod.v1.GetPrSummaryRequest\x1a\x1f.gitpod.v1.GetPrSummaryResponse\"\x03\x90\x02\x01\x12]\n" +
+	"\x0fGetPrTimeSeries\x12!.gitpod.v1.GetPrTimeSeriesRequest\x1a\".gitpod.v1.GetPrTimeSeriesResponse\"\x03\x90\x02\x01B'Z%github.com/gitpod-io/gitpod-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_usage_proto_rawDescOnce sync.Once

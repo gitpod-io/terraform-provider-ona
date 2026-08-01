@@ -19,24 +19,23 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	EnvironmentAutomationService_CreateService_FullMethodName             = "/gitpod.v1.EnvironmentAutomationService/CreateService"
-	EnvironmentAutomationService_GetService_FullMethodName                = "/gitpod.v1.EnvironmentAutomationService/GetService"
-	EnvironmentAutomationService_ListServices_FullMethodName              = "/gitpod.v1.EnvironmentAutomationService/ListServices"
-	EnvironmentAutomationService_UpdateService_FullMethodName             = "/gitpod.v1.EnvironmentAutomationService/UpdateService"
-	EnvironmentAutomationService_DeleteService_FullMethodName             = "/gitpod.v1.EnvironmentAutomationService/DeleteService"
-	EnvironmentAutomationService_StartService_FullMethodName              = "/gitpod.v1.EnvironmentAutomationService/StartService"
-	EnvironmentAutomationService_StopService_FullMethodName               = "/gitpod.v1.EnvironmentAutomationService/StopService"
-	EnvironmentAutomationService_UpsertAutomationsFile_FullMethodName     = "/gitpod.v1.EnvironmentAutomationService/UpsertAutomationsFile"
-	EnvironmentAutomationService_CreateTask_FullMethodName                = "/gitpod.v1.EnvironmentAutomationService/CreateTask"
-	EnvironmentAutomationService_GetTask_FullMethodName                   = "/gitpod.v1.EnvironmentAutomationService/GetTask"
-	EnvironmentAutomationService_ListTasks_FullMethodName                 = "/gitpod.v1.EnvironmentAutomationService/ListTasks"
-	EnvironmentAutomationService_UpdateTask_FullMethodName                = "/gitpod.v1.EnvironmentAutomationService/UpdateTask"
-	EnvironmentAutomationService_DeleteTask_FullMethodName                = "/gitpod.v1.EnvironmentAutomationService/DeleteTask"
-	EnvironmentAutomationService_StartTask_FullMethodName                 = "/gitpod.v1.EnvironmentAutomationService/StartTask"
-	EnvironmentAutomationService_ListTaskExecutions_FullMethodName        = "/gitpod.v1.EnvironmentAutomationService/ListTaskExecutions"
-	EnvironmentAutomationService_GetTaskExecution_FullMethodName          = "/gitpod.v1.EnvironmentAutomationService/GetTaskExecution"
-	EnvironmentAutomationService_StopTaskExecution_FullMethodName         = "/gitpod.v1.EnvironmentAutomationService/StopTaskExecution"
-	EnvironmentAutomationService_UpdateTaskExecutionStatus_FullMethodName = "/gitpod.v1.EnvironmentAutomationService/UpdateTaskExecutionStatus"
+	EnvironmentAutomationService_CreateService_FullMethodName         = "/gitpod.v1.EnvironmentAutomationService/CreateService"
+	EnvironmentAutomationService_GetService_FullMethodName            = "/gitpod.v1.EnvironmentAutomationService/GetService"
+	EnvironmentAutomationService_ListServices_FullMethodName          = "/gitpod.v1.EnvironmentAutomationService/ListServices"
+	EnvironmentAutomationService_UpdateService_FullMethodName         = "/gitpod.v1.EnvironmentAutomationService/UpdateService"
+	EnvironmentAutomationService_DeleteService_FullMethodName         = "/gitpod.v1.EnvironmentAutomationService/DeleteService"
+	EnvironmentAutomationService_StartService_FullMethodName          = "/gitpod.v1.EnvironmentAutomationService/StartService"
+	EnvironmentAutomationService_StopService_FullMethodName           = "/gitpod.v1.EnvironmentAutomationService/StopService"
+	EnvironmentAutomationService_UpsertAutomationsFile_FullMethodName = "/gitpod.v1.EnvironmentAutomationService/UpsertAutomationsFile"
+	EnvironmentAutomationService_CreateTask_FullMethodName            = "/gitpod.v1.EnvironmentAutomationService/CreateTask"
+	EnvironmentAutomationService_GetTask_FullMethodName               = "/gitpod.v1.EnvironmentAutomationService/GetTask"
+	EnvironmentAutomationService_ListTasks_FullMethodName             = "/gitpod.v1.EnvironmentAutomationService/ListTasks"
+	EnvironmentAutomationService_UpdateTask_FullMethodName            = "/gitpod.v1.EnvironmentAutomationService/UpdateTask"
+	EnvironmentAutomationService_DeleteTask_FullMethodName            = "/gitpod.v1.EnvironmentAutomationService/DeleteTask"
+	EnvironmentAutomationService_StartTask_FullMethodName             = "/gitpod.v1.EnvironmentAutomationService/StartTask"
+	EnvironmentAutomationService_ListTaskExecutions_FullMethodName    = "/gitpod.v1.EnvironmentAutomationService/ListTaskExecutions"
+	EnvironmentAutomationService_GetTaskExecution_FullMethodName      = "/gitpod.v1.EnvironmentAutomationService/GetTaskExecution"
+	EnvironmentAutomationService_StopTaskExecution_FullMethodName     = "/gitpod.v1.EnvironmentAutomationService/StopTaskExecution"
 )
 
 // EnvironmentAutomationServiceClient is the client API for EnvironmentAutomationService service.
@@ -493,42 +492,6 @@ type EnvironmentAutomationServiceClient interface {
 	//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 	//	```
 	StopTaskExecution(ctx context.Context, in *StopTaskExecutionRequest, opts ...grpc.CallOption) (*StopTaskExecutionResponse, error)
-	// Updates the status of a task execution.
-	// Only the environment executing a task execution is expected to call this function.
-	//
-	// Use this method to:
-	// - Report execution progress
-	// - Update step status
-	// - Set failure messages
-	// - Provide log URLs
-	//
-	// ### Examples
-	//
-	// - Update execution status:
-	//
-	//	Updates status with step information.
-	//
-	//	```yaml
-	//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
-	//	steps:
-	//	  - id: "step-1"
-	//	    phase: TASK_EXECUTION_PHASE_SUCCEEDED
-	//	logUrl: "https://logs.gitpod.io/task-123"
-	//	```
-	//
-	// - Report failure:
-	//
-	//	Updates status with failure information.
-	//
-	//	```yaml
-	//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
-	//	failureMessage: "Build failed due to missing dependencies"
-	//	steps:
-	//	  - id: "step-1"
-	//	    phase: TASK_EXECUTION_PHASE_FAILED
-	//	    failureMessage: "npm install failed"
-	//	```
-	UpdateTaskExecutionStatus(ctx context.Context, in *UpdateTaskExecutionStatusRequest, opts ...grpc.CallOption) (*UpdateTaskExecutionStatusResponse, error)
 }
 
 type environmentAutomationServiceClient struct {
@@ -703,16 +666,6 @@ func (c *environmentAutomationServiceClient) StopTaskExecution(ctx context.Conte
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(StopTaskExecutionResponse)
 	err := c.cc.Invoke(ctx, EnvironmentAutomationService_StopTaskExecution_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *environmentAutomationServiceClient) UpdateTaskExecutionStatus(ctx context.Context, in *UpdateTaskExecutionStatusRequest, opts ...grpc.CallOption) (*UpdateTaskExecutionStatusResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateTaskExecutionStatusResponse)
-	err := c.cc.Invoke(ctx, EnvironmentAutomationService_UpdateTaskExecutionStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1173,42 +1126,6 @@ type EnvironmentAutomationServiceServer interface {
 	//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 	//	```
 	StopTaskExecution(context.Context, *StopTaskExecutionRequest) (*StopTaskExecutionResponse, error)
-	// Updates the status of a task execution.
-	// Only the environment executing a task execution is expected to call this function.
-	//
-	// Use this method to:
-	// - Report execution progress
-	// - Update step status
-	// - Set failure messages
-	// - Provide log URLs
-	//
-	// ### Examples
-	//
-	// - Update execution status:
-	//
-	//	Updates status with step information.
-	//
-	//	```yaml
-	//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
-	//	steps:
-	//	  - id: "step-1"
-	//	    phase: TASK_EXECUTION_PHASE_SUCCEEDED
-	//	logUrl: "https://logs.gitpod.io/task-123"
-	//	```
-	//
-	// - Report failure:
-	//
-	//	Updates status with failure information.
-	//
-	//	```yaml
-	//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
-	//	failureMessage: "Build failed due to missing dependencies"
-	//	steps:
-	//	  - id: "step-1"
-	//	    phase: TASK_EXECUTION_PHASE_FAILED
-	//	    failureMessage: "npm install failed"
-	//	```
-	UpdateTaskExecutionStatus(context.Context, *UpdateTaskExecutionStatusRequest) (*UpdateTaskExecutionStatusResponse, error)
 	mustEmbedUnimplementedEnvironmentAutomationServiceServer()
 }
 
@@ -1269,9 +1186,6 @@ func (UnimplementedEnvironmentAutomationServiceServer) GetTaskExecution(context.
 }
 func (UnimplementedEnvironmentAutomationServiceServer) StopTaskExecution(context.Context, *StopTaskExecutionRequest) (*StopTaskExecutionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StopTaskExecution not implemented")
-}
-func (UnimplementedEnvironmentAutomationServiceServer) UpdateTaskExecutionStatus(context.Context, *UpdateTaskExecutionStatusRequest) (*UpdateTaskExecutionStatusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateTaskExecutionStatus not implemented")
 }
 func (UnimplementedEnvironmentAutomationServiceServer) mustEmbedUnimplementedEnvironmentAutomationServiceServer() {
 }
@@ -1601,24 +1515,6 @@ func _EnvironmentAutomationService_StopTaskExecution_Handler(srv interface{}, ct
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EnvironmentAutomationService_UpdateTaskExecutionStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateTaskExecutionStatusRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EnvironmentAutomationServiceServer).UpdateTaskExecutionStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: EnvironmentAutomationService_UpdateTaskExecutionStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EnvironmentAutomationServiceServer).UpdateTaskExecutionStatus(ctx, req.(*UpdateTaskExecutionStatusRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // EnvironmentAutomationService_ServiceDesc is the grpc.ServiceDesc for EnvironmentAutomationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1693,10 +1589,6 @@ var EnvironmentAutomationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "StopTaskExecution",
 			Handler:    _EnvironmentAutomationService_StopTaskExecution_Handler,
-		},
-		{
-			MethodName: "UpdateTaskExecutionStatus",
-			Handler:    _EnvironmentAutomationService_UpdateTaskExecutionStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
