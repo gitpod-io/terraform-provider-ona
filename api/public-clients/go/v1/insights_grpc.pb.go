@@ -22,8 +22,6 @@ const (
 	InsightsService_EnableProjectInsights_FullMethodName    = "/gitpod.v1.InsightsService/EnableProjectInsights"
 	InsightsService_DisableProjectInsights_FullMethodName   = "/gitpod.v1.InsightsService/DisableProjectInsights"
 	InsightsService_GetProjectInsightsStatus_FullMethodName = "/gitpod.v1.InsightsService/GetProjectInsightsStatus"
-	InsightsService_ReportInsightsBatch_FullMethodName      = "/gitpod.v1.InsightsService/ReportInsightsBatch"
-	InsightsService_ReportAgentTrace_FullMethodName         = "/gitpod.v1.InsightsService/ReportAgentTrace"
 	InsightsService_GetInsightsSummary_FullMethodName       = "/gitpod.v1.InsightsService/GetInsightsSummary"
 )
 
@@ -42,17 +40,6 @@ type InsightsServiceClient interface {
 	DisableProjectInsights(ctx context.Context, in *DisableProjectInsightsRequest, opts ...grpc.CallOption) (*DisableProjectInsightsResponse, error)
 	// Returns whether co-author insights is enabled for a project.
 	GetProjectInsightsStatus(ctx context.Context, in *GetProjectInsightsStatusRequest, opts ...grpc.CallOption) (*GetProjectInsightsStatusResponse, error)
-	// Reports a single batch containing both co-author and PR stats for a
-	// window, and advances project_insights_settings.data_collected_through
-	// in the same transaction as the upserts.
-	//
-	// Empty coauthor_stats and empty pr_stats with collected_through set is
-	// valid: it records an empty window so it is not re-fetched on the next
-	// run.
-	ReportInsightsBatch(ctx context.Context, in *ReportInsightsBatchRequest, opts ...grpc.CallOption) (*ReportInsightsBatchResponse, error)
-	// Reports an agent trace session for a project environment.
-	// Stores the raw trace alongside denormalized line-change totals.
-	ReportAgentTrace(ctx context.Context, in *ReportAgentTraceRequest, opts ...grpc.CallOption) (*ReportAgentTraceResponse, error)
 	// Returns how many projects have insights enabled vs total projects in the org.
 	GetInsightsSummary(ctx context.Context, in *GetInsightsSummaryRequest, opts ...grpc.CallOption) (*GetInsightsSummaryResponse, error)
 }
@@ -95,26 +82,6 @@ func (c *insightsServiceClient) GetProjectInsightsStatus(ctx context.Context, in
 	return out, nil
 }
 
-func (c *insightsServiceClient) ReportInsightsBatch(ctx context.Context, in *ReportInsightsBatchRequest, opts ...grpc.CallOption) (*ReportInsightsBatchResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ReportInsightsBatchResponse)
-	err := c.cc.Invoke(ctx, InsightsService_ReportInsightsBatch_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *insightsServiceClient) ReportAgentTrace(ctx context.Context, in *ReportAgentTraceRequest, opts ...grpc.CallOption) (*ReportAgentTraceResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ReportAgentTraceResponse)
-	err := c.cc.Invoke(ctx, InsightsService_ReportAgentTrace_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *insightsServiceClient) GetInsightsSummary(ctx context.Context, in *GetInsightsSummaryRequest, opts ...grpc.CallOption) (*GetInsightsSummaryResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetInsightsSummaryResponse)
@@ -140,17 +107,6 @@ type InsightsServiceServer interface {
 	DisableProjectInsights(context.Context, *DisableProjectInsightsRequest) (*DisableProjectInsightsResponse, error)
 	// Returns whether co-author insights is enabled for a project.
 	GetProjectInsightsStatus(context.Context, *GetProjectInsightsStatusRequest) (*GetProjectInsightsStatusResponse, error)
-	// Reports a single batch containing both co-author and PR stats for a
-	// window, and advances project_insights_settings.data_collected_through
-	// in the same transaction as the upserts.
-	//
-	// Empty coauthor_stats and empty pr_stats with collected_through set is
-	// valid: it records an empty window so it is not re-fetched on the next
-	// run.
-	ReportInsightsBatch(context.Context, *ReportInsightsBatchRequest) (*ReportInsightsBatchResponse, error)
-	// Reports an agent trace session for a project environment.
-	// Stores the raw trace alongside denormalized line-change totals.
-	ReportAgentTrace(context.Context, *ReportAgentTraceRequest) (*ReportAgentTraceResponse, error)
 	// Returns how many projects have insights enabled vs total projects in the org.
 	GetInsightsSummary(context.Context, *GetInsightsSummaryRequest) (*GetInsightsSummaryResponse, error)
 	mustEmbedUnimplementedInsightsServiceServer()
@@ -171,12 +127,6 @@ func (UnimplementedInsightsServiceServer) DisableProjectInsights(context.Context
 }
 func (UnimplementedInsightsServiceServer) GetProjectInsightsStatus(context.Context, *GetProjectInsightsStatusRequest) (*GetProjectInsightsStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProjectInsightsStatus not implemented")
-}
-func (UnimplementedInsightsServiceServer) ReportInsightsBatch(context.Context, *ReportInsightsBatchRequest) (*ReportInsightsBatchResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ReportInsightsBatch not implemented")
-}
-func (UnimplementedInsightsServiceServer) ReportAgentTrace(context.Context, *ReportAgentTraceRequest) (*ReportAgentTraceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ReportAgentTrace not implemented")
 }
 func (UnimplementedInsightsServiceServer) GetInsightsSummary(context.Context, *GetInsightsSummaryRequest) (*GetInsightsSummaryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetInsightsSummary not implemented")
@@ -256,42 +206,6 @@ func _InsightsService_GetProjectInsightsStatus_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InsightsService_ReportInsightsBatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReportInsightsBatchRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InsightsServiceServer).ReportInsightsBatch(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: InsightsService_ReportInsightsBatch_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InsightsServiceServer).ReportInsightsBatch(ctx, req.(*ReportInsightsBatchRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _InsightsService_ReportAgentTrace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReportAgentTraceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InsightsServiceServer).ReportAgentTrace(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: InsightsService_ReportAgentTrace_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InsightsServiceServer).ReportAgentTrace(ctx, req.(*ReportAgentTraceRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _InsightsService_GetInsightsSummary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetInsightsSummaryRequest)
 	if err := dec(in); err != nil {
@@ -328,14 +242,6 @@ var InsightsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetProjectInsightsStatus",
 			Handler:    _InsightsService_GetProjectInsightsStatus_Handler,
-		},
-		{
-			MethodName: "ReportInsightsBatch",
-			Handler:    _InsightsService_ReportInsightsBatch_Handler,
-		},
-		{
-			MethodName: "ReportAgentTrace",
-			Handler:    _InsightsService_ReportAgentTrace_Handler,
 		},
 		{
 			MethodName: "GetInsightsSummary",
