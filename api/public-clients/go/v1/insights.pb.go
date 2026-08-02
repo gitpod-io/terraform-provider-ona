@@ -8,8 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/terraform"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -697,145 +695,6 @@ func (x *GetProjectInsightsStatusResponse) GetDataCollectedThrough() *timestampp
 	return nil
 }
 
-// ReportAgentTraceRequest pushes an agent trace session containing one or more
-// trace lines (typically JSONL) for storage.
-type ReportAgentTraceRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Project the trace belongs to.
-	ProjectId string `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
-	// Environment that produced the trace.
-	EnvironmentId string `protobuf:"bytes,2,opt,name=environment_id,json=environmentId,proto3" json:"environment_id,omitempty"`
-	// Agent execution that produced the trace.
-	AgentExecutionId string `protobuf:"bytes,3,opt,name=agent_execution_id,json=agentExecutionId,proto3" json:"agent_execution_id,omitempty"`
-	// Total lines added across all edits in the trace session.
-	LinesAdded int64 `protobuf:"varint,4,opt,name=lines_added,json=linesAdded,proto3" json:"lines_added,omitempty"`
-	// Total lines removed across all edits in the trace session.
-	LinesRemoved int64 `protobuf:"varint,5,opt,name=lines_removed,json=linesRemoved,proto3" json:"lines_removed,omitempty"`
-	// The LLM model used during this agent session.
-	Model SupportedModel `protobuf:"varint,7,opt,name=model,proto3,enum=gitpod.v1.SupportedModel" json:"model,omitempty"`
-	// Individual trace lines (typically one JSON object per line).
-	// May be empty when only line-count aggregates are reported.
-	// Each line is capped at 5 MiB.
-	Traces        []string `protobuf:"bytes,6,rep,name=traces,proto3" json:"traces,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ReportAgentTraceRequest) Reset() {
-	*x = ReportAgentTraceRequest{}
-	mi := &file_gitpod_v1_insights_proto_msgTypes[8]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ReportAgentTraceRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReportAgentTraceRequest) ProtoMessage() {}
-
-func (x *ReportAgentTraceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_insights_proto_msgTypes[8]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReportAgentTraceRequest.ProtoReflect.Descriptor instead.
-func (*ReportAgentTraceRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_insights_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *ReportAgentTraceRequest) GetProjectId() string {
-	if x != nil {
-		return x.ProjectId
-	}
-	return ""
-}
-
-func (x *ReportAgentTraceRequest) GetEnvironmentId() string {
-	if x != nil {
-		return x.EnvironmentId
-	}
-	return ""
-}
-
-func (x *ReportAgentTraceRequest) GetAgentExecutionId() string {
-	if x != nil {
-		return x.AgentExecutionId
-	}
-	return ""
-}
-
-func (x *ReportAgentTraceRequest) GetLinesAdded() int64 {
-	if x != nil {
-		return x.LinesAdded
-	}
-	return 0
-}
-
-func (x *ReportAgentTraceRequest) GetLinesRemoved() int64 {
-	if x != nil {
-		return x.LinesRemoved
-	}
-	return 0
-}
-
-func (x *ReportAgentTraceRequest) GetModel() SupportedModel {
-	if x != nil {
-		return x.Model
-	}
-	return SupportedModel_SUPPORTED_MODEL_UNSPECIFIED
-}
-
-func (x *ReportAgentTraceRequest) GetTraces() []string {
-	if x != nil {
-		return x.Traces
-	}
-	return nil
-}
-
-type ReportAgentTraceResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ReportAgentTraceResponse) Reset() {
-	*x = ReportAgentTraceResponse{}
-	mi := &file_gitpod_v1_insights_proto_msgTypes[9]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ReportAgentTraceResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReportAgentTraceResponse) ProtoMessage() {}
-
-func (x *ReportAgentTraceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_insights_proto_msgTypes[9]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReportAgentTraceResponse.ProtoReflect.Descriptor instead.
-func (*ReportAgentTraceResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_insights_proto_rawDescGZIP(), []int{9}
-}
-
 // PullRequestStat represents speed metrics for a single merged pull request.
 type PullRequestStat struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -867,7 +726,7 @@ type PullRequestStat struct {
 
 func (x *PullRequestStat) Reset() {
 	*x = PullRequestStat{}
-	mi := &file_gitpod_v1_insights_proto_msgTypes[10]
+	mi := &file_gitpod_v1_insights_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -879,7 +738,7 @@ func (x *PullRequestStat) String() string {
 func (*PullRequestStat) ProtoMessage() {}
 
 func (x *PullRequestStat) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_insights_proto_msgTypes[10]
+	mi := &file_gitpod_v1_insights_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -892,7 +751,7 @@ func (x *PullRequestStat) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PullRequestStat.ProtoReflect.Descriptor instead.
 func (*PullRequestStat) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_insights_proto_rawDescGZIP(), []int{10}
+	return file_gitpod_v1_insights_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *PullRequestStat) GetPrNumber() int32 {
@@ -958,182 +817,6 @@ func (x *PullRequestStat) GetAuthorScmId() string {
 	return ""
 }
 
-// ReportInsightsBatchRequest carries one collection window's worth of
-// co-author and PR stats together with the upper bound of the window. The
-// backend writes both stat types and advances the watermark
-// (data_collected_through = max(current, collected_through)) in a single
-// transaction.
-//
-// When collection_outcome is an error variant the backend persists the
-// outcome and error message but skips stat upserts and watermark
-// advancement, so the next run re-attempts the same window.
-type ReportInsightsBatchRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Project that was analyzed.
-	ProjectId string `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
-	// Co-author stats for this batch window. May be empty.
-	CoauthorStats []*CommitCoAuthorStat `protobuf:"bytes,2,rep,name=coauthor_stats,json=coauthorStats,proto3" json:"coauthor_stats,omitempty"`
-	// PR stats for this batch window. May be empty.
-	PrStats []*PullRequestStat `protobuf:"bytes,3,rep,name=pr_stats,json=prStats,proto3" json:"pr_stats,omitempty"`
-	// Upper bound of this batch window. Required when collection_outcome is
-	// SUCCESS or EMPTY_WINDOW. Optional (may be nil) for error outcomes
-	// where the CLI has no valid window end timestamp.
-	CollectedThrough *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=collected_through,json=collectedThrough,proto3" json:"collected_through,omitempty"`
-	// Outcome of this collection batch. Old CLIs omit this field
-	// (UNSPECIFIED); the backend treats UNSPECIFIED as SUCCESS.
-	CollectionOutcome CollectionOutcome `protobuf:"varint,5,opt,name=collection_outcome,json=collectionOutcome,proto3,enum=gitpod.v1.CollectionOutcome" json:"collection_outcome,omitempty"`
-	// Human-readable error detail when collection_outcome is an error
-	// variant. Empty for SUCCESS / EMPTY_WINDOW.
-	// The backend truncates values longer than 1024 characters.
-	CollectionErrorMessage string `protobuf:"bytes,6,opt,name=collection_error_message,json=collectionErrorMessage,proto3" json:"collection_error_message,omitempty"`
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
-}
-
-func (x *ReportInsightsBatchRequest) Reset() {
-	*x = ReportInsightsBatchRequest{}
-	mi := &file_gitpod_v1_insights_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ReportInsightsBatchRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReportInsightsBatchRequest) ProtoMessage() {}
-
-func (x *ReportInsightsBatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_insights_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReportInsightsBatchRequest.ProtoReflect.Descriptor instead.
-func (*ReportInsightsBatchRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_insights_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *ReportInsightsBatchRequest) GetProjectId() string {
-	if x != nil {
-		return x.ProjectId
-	}
-	return ""
-}
-
-func (x *ReportInsightsBatchRequest) GetCoauthorStats() []*CommitCoAuthorStat {
-	if x != nil {
-		return x.CoauthorStats
-	}
-	return nil
-}
-
-func (x *ReportInsightsBatchRequest) GetPrStats() []*PullRequestStat {
-	if x != nil {
-		return x.PrStats
-	}
-	return nil
-}
-
-func (x *ReportInsightsBatchRequest) GetCollectedThrough() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CollectedThrough
-	}
-	return nil
-}
-
-func (x *ReportInsightsBatchRequest) GetCollectionOutcome() CollectionOutcome {
-	if x != nil {
-		return x.CollectionOutcome
-	}
-	return CollectionOutcome_COLLECTION_OUTCOME_UNSPECIFIED
-}
-
-func (x *ReportInsightsBatchRequest) GetCollectionErrorMessage() string {
-	if x != nil {
-		return x.CollectionErrorMessage
-	}
-	return ""
-}
-
-type ReportInsightsBatchResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Number of co-author rows inserted (new commits).
-	CoauthorInsertedCount int64 `protobuf:"varint,1,opt,name=coauthor_inserted_count,json=coauthorInsertedCount,proto3" json:"coauthor_inserted_count,omitempty"`
-	// Number of co-author rows updated (re-reported commits).
-	CoauthorUpdatedCount int64 `protobuf:"varint,2,opt,name=coauthor_updated_count,json=coauthorUpdatedCount,proto3" json:"coauthor_updated_count,omitempty"`
-	// Number of PR rows inserted (new PRs).
-	PrInsertedCount int64 `protobuf:"varint,3,opt,name=pr_inserted_count,json=prInsertedCount,proto3" json:"pr_inserted_count,omitempty"`
-	// Number of PR rows updated (re-reported PRs).
-	PrUpdatedCount int64 `protobuf:"varint,4,opt,name=pr_updated_count,json=prUpdatedCount,proto3" json:"pr_updated_count,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *ReportInsightsBatchResponse) Reset() {
-	*x = ReportInsightsBatchResponse{}
-	mi := &file_gitpod_v1_insights_proto_msgTypes[12]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ReportInsightsBatchResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReportInsightsBatchResponse) ProtoMessage() {}
-
-func (x *ReportInsightsBatchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_insights_proto_msgTypes[12]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReportInsightsBatchResponse.ProtoReflect.Descriptor instead.
-func (*ReportInsightsBatchResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_insights_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *ReportInsightsBatchResponse) GetCoauthorInsertedCount() int64 {
-	if x != nil {
-		return x.CoauthorInsertedCount
-	}
-	return 0
-}
-
-func (x *ReportInsightsBatchResponse) GetCoauthorUpdatedCount() int64 {
-	if x != nil {
-		return x.CoauthorUpdatedCount
-	}
-	return 0
-}
-
-func (x *ReportInsightsBatchResponse) GetPrInsertedCount() int64 {
-	if x != nil {
-		return x.PrInsertedCount
-	}
-	return 0
-}
-
-func (x *ReportInsightsBatchResponse) GetPrUpdatedCount() int64 {
-	if x != nil {
-		return x.PrUpdatedCount
-	}
-	return 0
-}
-
 // GetInsightsSummaryRequest returns project-level insights adoption for the org.
 type GetInsightsSummaryRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -1145,7 +828,7 @@ type GetInsightsSummaryRequest struct {
 
 func (x *GetInsightsSummaryRequest) Reset() {
 	*x = GetInsightsSummaryRequest{}
-	mi := &file_gitpod_v1_insights_proto_msgTypes[13]
+	mi := &file_gitpod_v1_insights_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1157,7 +840,7 @@ func (x *GetInsightsSummaryRequest) String() string {
 func (*GetInsightsSummaryRequest) ProtoMessage() {}
 
 func (x *GetInsightsSummaryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_insights_proto_msgTypes[13]
+	mi := &file_gitpod_v1_insights_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1170,7 +853,7 @@ func (x *GetInsightsSummaryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInsightsSummaryRequest.ProtoReflect.Descriptor instead.
 func (*GetInsightsSummaryRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_insights_proto_rawDescGZIP(), []int{13}
+	return file_gitpod_v1_insights_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetInsightsSummaryRequest) GetOrganizationId() string {
@@ -1192,7 +875,7 @@ type GetInsightsSummaryResponse struct {
 
 func (x *GetInsightsSummaryResponse) Reset() {
 	*x = GetInsightsSummaryResponse{}
-	mi := &file_gitpod_v1_insights_proto_msgTypes[14]
+	mi := &file_gitpod_v1_insights_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1204,7 +887,7 @@ func (x *GetInsightsSummaryResponse) String() string {
 func (*GetInsightsSummaryResponse) ProtoMessage() {}
 
 func (x *GetInsightsSummaryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_insights_proto_msgTypes[14]
+	mi := &file_gitpod_v1_insights_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1217,7 +900,7 @@ func (x *GetInsightsSummaryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInsightsSummaryResponse.ProtoReflect.Descriptor instead.
 func (*GetInsightsSummaryResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_insights_proto_rawDescGZIP(), []int{14}
+	return file_gitpod_v1_insights_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetInsightsSummaryResponse) GetEnabledProjectCount() int64 {
@@ -1238,7 +921,7 @@ var File_gitpod_v1_insights_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_insights_proto_rawDesc = "" +
 	"\n" +
-	"\x18gitpod/v1/insights.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x15gitpod/v1/model.proto\x1a\x15gitpod/v1/usage.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x9e\x03\n" +
+	"\x18gitpod/v1/insights.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x15gitpod/v1/usage.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x9e\x03\n" +
 	"\x12CommitCoAuthorStat\x12*\n" +
 	"\vcommit_hash\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18@R\n" +
 	"commitHash\x12C\n" +
@@ -1253,12 +936,10 @@ const file_gitpod_v1_insights_proto_rawDesc = "" +
 	"\xbaH\ar\x05\x10\x01\x18\x80\x01R\n" +
 	"authorHash\x12+\n" +
 	"\fraw_coauthor\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xc0\x02R\vrawCoauthor\x12,\n" +
-	"\rauthor_scm_id\x18\b \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02R\vauthorScmId\"[\n" +
-	"\x1cEnableProjectInsightsRequest\x12;\n" +
+	"\rauthor_scm_id\x18\b \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02R\vauthorScmId\"G\n" +
+	"\x1cEnableProjectInsightsRequest\x12'\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idګ\x1e\x00R\tprojectId\"\x1f\n" +
+	"project_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tprojectId\"\x1f\n" +
 	"\x1dEnableProjectInsightsResponse\"\x94\x03\n" +
 	"\x13InsightsHealthIssue\x12C\n" +
 	"\bcategory\x18\x01 \x01(\x0e2'.gitpod.v1.InsightsHealthIssue.CategoryR\bcategory\x12\x1d\n" +
@@ -1273,38 +954,19 @@ const file_gitpod_v1_insights_proto_rawDesc = "" +
 	"\bCategory\x12\x18\n" +
 	"\x14CATEGORY_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15CATEGORY_PREREQUISITE\x10\x01\x12\x14\n" +
-	"\x10CATEGORY_RUNTIME\x10\x02\"\\\n" +
-	"\x1dDisableProjectInsightsRequest\x12;\n" +
+	"\x10CATEGORY_RUNTIME\x10\x02\"H\n" +
+	"\x1dDisableProjectInsightsRequest\x12'\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
+	"project_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tprojectId\" \n" +
+	"\x1eDisableProjectInsightsResponse\"J\n" +
+	"\x1fGetProjectInsightsStatusRequest\x12'\n" +
 	"\n" +
-	"project.idګ\x1e\x00R\tprojectId\" \n" +
-	"\x1eDisableProjectInsightsResponse\"^\n" +
-	"\x1fGetProjectInsightsStatusRequest\x12;\n" +
-	"\n" +
-	"project_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idګ\x1e\x00R\tprojectId\"\x99\x02\n" +
-	" GetProjectInsightsStatusResponse\x12\x1e\n" +
-	"\aenabled\x18\x01 \x01(\bB\x04ګ\x1e\x00R\aenabled\x12:\n" +
+	"project_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tprojectId\"\x93\x02\n" +
+	" GetProjectInsightsStatusResponse\x12\x18\n" +
+	"\aenabled\x18\x01 \x01(\bR\aenabled\x12:\n" +
 	"\vlast_ran_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tlastRanAt\x12G\n" +
 	"\x0finsights_health\x18\x03 \x03(\v2\x1e.gitpod.v1.InsightsHealthIssueR\x0einsightsHealth\x12P\n" +
-	"\x16data_collected_through\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x14dataCollectedThrough\"\x9a\x03\n" +
-	"\x17ReportAgentTraceRequest\x127\n" +
-	"\n" +
-	"project_id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12C\n" +
-	"\x0eenvironment_id\x18\x02 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x12M\n" +
-	"\x12agent_execution_id\x18\x03 \x01(\tB\x1f\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x13\n" +
-	"\x11agentExecution.idR\x10agentExecutionId\x12(\n" +
-	"\vlines_added\x18\x04 \x01(\x03B\a\xbaH\x04\"\x02(\x00R\n" +
-	"linesAdded\x12,\n" +
-	"\rlines_removed\x18\x05 \x01(\x03B\a\xbaH\x04\"\x02(\x00R\flinesRemoved\x12/\n" +
-	"\x05model\x18\a \x01(\x0e2\x19.gitpod.v1.SupportedModelR\x05model\x12)\n" +
-	"\x06traces\x18\x06 \x03(\tB\x11\xbaH\x0e\x92\x01\v\"\tr\a\x10\x01\x18\x80\x80\xc0\x02R\x06traces\"\x1a\n" +
-	"\x18ReportAgentTraceResponse\"\xa4\x04\n" +
+	"\x16data_collected_through\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x14dataCollectedThrough\"\xa4\x04\n" +
 	"\x0fPullRequestStat\x12$\n" +
 	"\tpr_number\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\bprNumber\x12-\n" +
 	"\fauthor_login\x18\x02 \x01(\tB\n" +
@@ -1318,25 +980,9 @@ const file_gitpod_v1_insights_proto_rawDesc = "" +
 	"\xbaH\ar\x05\x10\x01\x18\x80\x02R\ftargetBranch\x12E\n" +
 	"\fscm_provider\x18\b \x01(\x0e2\x16.gitpod.v1.ScmProviderB\n" +
 	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\vscmProvider\x12,\n" +
-	"\rauthor_scm_id\x18\t \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02R\vauthorScmId\"\xb8\x03\n" +
-	"\x1aReportInsightsBatchRequest\x127\n" +
-	"\n" +
-	"project_id\x18\x01 \x01(\tB\x18\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\f\n" +
-	"\n" +
-	"project.idR\tprojectId\x12O\n" +
-	"\x0ecoauthor_stats\x18\x02 \x03(\v2\x1d.gitpod.v1.CommitCoAuthorStatB\t\xbaH\x06\x92\x01\x03\x10\x90NR\rcoauthorStats\x12@\n" +
-	"\bpr_stats\x18\x03 \x03(\v2\x1a.gitpod.v1.PullRequestStatB\t\xbaH\x06\x92\x01\x03\x10\x90NR\aprStats\x12G\n" +
-	"\x11collected_through\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x10collectedThrough\x12K\n" +
-	"\x12collection_outcome\x18\x05 \x01(\x0e2\x1c.gitpod.v1.CollectionOutcomeR\x11collectionOutcome\x128\n" +
-	"\x18collection_error_message\x18\x06 \x01(\tR\x16collectionErrorMessage\"\xe1\x01\n" +
-	"\x1bReportInsightsBatchResponse\x126\n" +
-	"\x17coauthor_inserted_count\x18\x01 \x01(\x03R\x15coauthorInsertedCount\x124\n" +
-	"\x16coauthor_updated_count\x18\x02 \x01(\x03R\x14coauthorUpdatedCount\x12*\n" +
-	"\x11pr_inserted_count\x18\x03 \x01(\x03R\x0fprInsertedCount\x12(\n" +
-	"\x10pr_updated_count\x18\x04 \x01(\x03R\x0eprUpdatedCount\"c\n" +
-	"\x19GetInsightsSummaryRequest\x12F\n" +
-	"\x0forganization_id\x18\x01 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\"\x80\x01\n" +
+	"\rauthor_scm_id\x18\t \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02R\vauthorScmId\"N\n" +
+	"\x19GetInsightsSummaryRequest\x121\n" +
+	"\x0forganization_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\"\x80\x01\n" +
 	"\x1aGetInsightsSummaryResponse\x122\n" +
 	"\x15enabled_project_count\x18\x01 \x01(\x03R\x13enabledProjectCount\x12.\n" +
 	"\x13total_project_count\x18\x02 \x01(\x03R\x11totalProjectCount*y\n" +
@@ -1352,14 +998,12 @@ const file_gitpod_v1_insights_proto_rawDesc = "" +
 	" COLLECTION_OUTCOME_GIT_LOG_ERROR\x10\x03\x12%\n" +
 	"!COLLECTION_OUTCOME_PR_FETCH_ERROR\x10\x04\x12\"\n" +
 	"\x1eCOLLECTION_OUTCOME_SETUP_ERROR\x10\x05\x12$\n" +
-	" COLLECTION_OUTCOME_UNKNOWN_ERROR\x10\x062\x99\x05\n" +
+	" COLLECTION_OUTCOME_UNKNOWN_ERROR\x10\x062\xd2\x03\n" +
 	"\x0fInsightsService\x12l\n" +
 	"\x15EnableProjectInsights\x12'.gitpod.v1.EnableProjectInsightsRequest\x1a(.gitpod.v1.EnableProjectInsightsResponse\"\x00\x12o\n" +
 	"\x16DisableProjectInsights\x12(.gitpod.v1.DisableProjectInsightsRequest\x1a).gitpod.v1.DisableProjectInsightsResponse\"\x00\x12x\n" +
 	"\x18GetProjectInsightsStatus\x12*.gitpod.v1.GetProjectInsightsStatusRequest\x1a+.gitpod.v1.GetProjectInsightsStatusResponse\"\x03\x90\x02\x01\x12f\n" +
-	"\x13ReportInsightsBatch\x12%.gitpod.v1.ReportInsightsBatchRequest\x1a&.gitpod.v1.ReportInsightsBatchResponse\"\x00\x12]\n" +
-	"\x10ReportAgentTrace\x12\".gitpod.v1.ReportAgentTraceRequest\x1a#.gitpod.v1.ReportAgentTraceResponse\"\x00\x12f\n" +
-	"\x12GetInsightsSummary\x12$.gitpod.v1.GetInsightsSummaryRequest\x1a%.gitpod.v1.GetInsightsSummaryResponse\"\x03\x90\x02\x01B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x12GetInsightsSummary\x12$.gitpod.v1.GetInsightsSummaryRequest\x1a%.gitpod.v1.GetInsightsSummaryResponse\"\x03\x90\x02\x01B'Z%github.com/gitpod-io/gitpod-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_insights_proto_rawDescOnce sync.Once
@@ -1374,7 +1018,7 @@ func file_gitpod_v1_insights_proto_rawDescGZIP() []byte {
 }
 
 var file_gitpod_v1_insights_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_gitpod_v1_insights_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_gitpod_v1_insights_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_gitpod_v1_insights_proto_goTypes = []any{
 	(ScmProvider)(0),                         // 0: gitpod.v1.ScmProvider
 	(CollectionOutcome)(0),                   // 1: gitpod.v1.CollectionOutcome
@@ -1387,54 +1031,40 @@ var file_gitpod_v1_insights_proto_goTypes = []any{
 	(*DisableProjectInsightsResponse)(nil),   // 8: gitpod.v1.DisableProjectInsightsResponse
 	(*GetProjectInsightsStatusRequest)(nil),  // 9: gitpod.v1.GetProjectInsightsStatusRequest
 	(*GetProjectInsightsStatusResponse)(nil), // 10: gitpod.v1.GetProjectInsightsStatusResponse
-	(*ReportAgentTraceRequest)(nil),          // 11: gitpod.v1.ReportAgentTraceRequest
-	(*ReportAgentTraceResponse)(nil),         // 12: gitpod.v1.ReportAgentTraceResponse
-	(*PullRequestStat)(nil),                  // 13: gitpod.v1.PullRequestStat
-	(*ReportInsightsBatchRequest)(nil),       // 14: gitpod.v1.ReportInsightsBatchRequest
-	(*ReportInsightsBatchResponse)(nil),      // 15: gitpod.v1.ReportInsightsBatchResponse
-	(*GetInsightsSummaryRequest)(nil),        // 16: gitpod.v1.GetInsightsSummaryRequest
-	(*GetInsightsSummaryResponse)(nil),       // 17: gitpod.v1.GetInsightsSummaryResponse
-	nil,                                      // 18: gitpod.v1.InsightsHealthIssue.MetadataEntry
-	(*timestamppb.Timestamp)(nil),            // 19: google.protobuf.Timestamp
-	(CoAuthorTool)(0),                        // 20: gitpod.v1.CoAuthorTool
-	(SupportedModel)(0),                      // 21: gitpod.v1.SupportedModel
+	(*PullRequestStat)(nil),                  // 11: gitpod.v1.PullRequestStat
+	(*GetInsightsSummaryRequest)(nil),        // 12: gitpod.v1.GetInsightsSummaryRequest
+	(*GetInsightsSummaryResponse)(nil),       // 13: gitpod.v1.GetInsightsSummaryResponse
+	nil,                                      // 14: gitpod.v1.InsightsHealthIssue.MetadataEntry
+	(*timestamppb.Timestamp)(nil),            // 15: google.protobuf.Timestamp
+	(CoAuthorTool)(0),                        // 16: gitpod.v1.CoAuthorTool
 }
 var file_gitpod_v1_insights_proto_depIdxs = []int32{
-	19, // 0: gitpod.v1.CommitCoAuthorStat.commit_date:type_name -> google.protobuf.Timestamp
-	20, // 1: gitpod.v1.CommitCoAuthorStat.tool:type_name -> gitpod.v1.CoAuthorTool
+	15, // 0: gitpod.v1.CommitCoAuthorStat.commit_date:type_name -> google.protobuf.Timestamp
+	16, // 1: gitpod.v1.CommitCoAuthorStat.tool:type_name -> gitpod.v1.CoAuthorTool
 	2,  // 2: gitpod.v1.InsightsHealthIssue.category:type_name -> gitpod.v1.InsightsHealthIssue.Category
-	18, // 3: gitpod.v1.InsightsHealthIssue.metadata:type_name -> gitpod.v1.InsightsHealthIssue.MetadataEntry
-	19, // 4: gitpod.v1.InsightsHealthIssue.detected_at:type_name -> google.protobuf.Timestamp
-	19, // 5: gitpod.v1.GetProjectInsightsStatusResponse.last_ran_at:type_name -> google.protobuf.Timestamp
+	14, // 3: gitpod.v1.InsightsHealthIssue.metadata:type_name -> gitpod.v1.InsightsHealthIssue.MetadataEntry
+	15, // 4: gitpod.v1.InsightsHealthIssue.detected_at:type_name -> google.protobuf.Timestamp
+	15, // 5: gitpod.v1.GetProjectInsightsStatusResponse.last_ran_at:type_name -> google.protobuf.Timestamp
 	6,  // 6: gitpod.v1.GetProjectInsightsStatusResponse.insights_health:type_name -> gitpod.v1.InsightsHealthIssue
-	19, // 7: gitpod.v1.GetProjectInsightsStatusResponse.data_collected_through:type_name -> google.protobuf.Timestamp
-	21, // 8: gitpod.v1.ReportAgentTraceRequest.model:type_name -> gitpod.v1.SupportedModel
-	19, // 9: gitpod.v1.PullRequestStat.created_at:type_name -> google.protobuf.Timestamp
-	19, // 10: gitpod.v1.PullRequestStat.merged_at:type_name -> google.protobuf.Timestamp
-	19, // 11: gitpod.v1.PullRequestStat.first_commit_at:type_name -> google.protobuf.Timestamp
-	19, // 12: gitpod.v1.PullRequestStat.first_approval_at:type_name -> google.protobuf.Timestamp
-	0,  // 13: gitpod.v1.PullRequestStat.scm_provider:type_name -> gitpod.v1.ScmProvider
-	3,  // 14: gitpod.v1.ReportInsightsBatchRequest.coauthor_stats:type_name -> gitpod.v1.CommitCoAuthorStat
-	13, // 15: gitpod.v1.ReportInsightsBatchRequest.pr_stats:type_name -> gitpod.v1.PullRequestStat
-	19, // 16: gitpod.v1.ReportInsightsBatchRequest.collected_through:type_name -> google.protobuf.Timestamp
-	1,  // 17: gitpod.v1.ReportInsightsBatchRequest.collection_outcome:type_name -> gitpod.v1.CollectionOutcome
-	4,  // 18: gitpod.v1.InsightsService.EnableProjectInsights:input_type -> gitpod.v1.EnableProjectInsightsRequest
-	7,  // 19: gitpod.v1.InsightsService.DisableProjectInsights:input_type -> gitpod.v1.DisableProjectInsightsRequest
-	9,  // 20: gitpod.v1.InsightsService.GetProjectInsightsStatus:input_type -> gitpod.v1.GetProjectInsightsStatusRequest
-	14, // 21: gitpod.v1.InsightsService.ReportInsightsBatch:input_type -> gitpod.v1.ReportInsightsBatchRequest
-	11, // 22: gitpod.v1.InsightsService.ReportAgentTrace:input_type -> gitpod.v1.ReportAgentTraceRequest
-	16, // 23: gitpod.v1.InsightsService.GetInsightsSummary:input_type -> gitpod.v1.GetInsightsSummaryRequest
-	5,  // 24: gitpod.v1.InsightsService.EnableProjectInsights:output_type -> gitpod.v1.EnableProjectInsightsResponse
-	8,  // 25: gitpod.v1.InsightsService.DisableProjectInsights:output_type -> gitpod.v1.DisableProjectInsightsResponse
-	10, // 26: gitpod.v1.InsightsService.GetProjectInsightsStatus:output_type -> gitpod.v1.GetProjectInsightsStatusResponse
-	15, // 27: gitpod.v1.InsightsService.ReportInsightsBatch:output_type -> gitpod.v1.ReportInsightsBatchResponse
-	12, // 28: gitpod.v1.InsightsService.ReportAgentTrace:output_type -> gitpod.v1.ReportAgentTraceResponse
-	17, // 29: gitpod.v1.InsightsService.GetInsightsSummary:output_type -> gitpod.v1.GetInsightsSummaryResponse
-	24, // [24:30] is the sub-list for method output_type
-	18, // [18:24] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	15, // 7: gitpod.v1.GetProjectInsightsStatusResponse.data_collected_through:type_name -> google.protobuf.Timestamp
+	15, // 8: gitpod.v1.PullRequestStat.created_at:type_name -> google.protobuf.Timestamp
+	15, // 9: gitpod.v1.PullRequestStat.merged_at:type_name -> google.protobuf.Timestamp
+	15, // 10: gitpod.v1.PullRequestStat.first_commit_at:type_name -> google.protobuf.Timestamp
+	15, // 11: gitpod.v1.PullRequestStat.first_approval_at:type_name -> google.protobuf.Timestamp
+	0,  // 12: gitpod.v1.PullRequestStat.scm_provider:type_name -> gitpod.v1.ScmProvider
+	4,  // 13: gitpod.v1.InsightsService.EnableProjectInsights:input_type -> gitpod.v1.EnableProjectInsightsRequest
+	7,  // 14: gitpod.v1.InsightsService.DisableProjectInsights:input_type -> gitpod.v1.DisableProjectInsightsRequest
+	9,  // 15: gitpod.v1.InsightsService.GetProjectInsightsStatus:input_type -> gitpod.v1.GetProjectInsightsStatusRequest
+	12, // 16: gitpod.v1.InsightsService.GetInsightsSummary:input_type -> gitpod.v1.GetInsightsSummaryRequest
+	5,  // 17: gitpod.v1.InsightsService.EnableProjectInsights:output_type -> gitpod.v1.EnableProjectInsightsResponse
+	8,  // 18: gitpod.v1.InsightsService.DisableProjectInsights:output_type -> gitpod.v1.DisableProjectInsightsResponse
+	10, // 19: gitpod.v1.InsightsService.GetProjectInsightsStatus:output_type -> gitpod.v1.GetProjectInsightsStatusResponse
+	13, // 20: gitpod.v1.InsightsService.GetInsightsSummary:output_type -> gitpod.v1.GetInsightsSummaryResponse
+	17, // [17:21] is the sub-list for method output_type
+	13, // [13:17] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_gitpod_v1_insights_proto_init() }
@@ -1442,7 +1072,6 @@ func file_gitpod_v1_insights_proto_init() {
 	if File_gitpod_v1_insights_proto != nil {
 		return
 	}
-	file_gitpod_v1_model_proto_init()
 	file_gitpod_v1_usage_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -1450,7 +1079,7 @@ func file_gitpod_v1_insights_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gitpod_v1_insights_proto_rawDesc), len(file_gitpod_v1_insights_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   16,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
