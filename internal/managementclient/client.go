@@ -86,32 +86,28 @@ func New(baseURL string, opts ...Option) (*ManagementPlane, error) {
 
 	return NewWithServices(Services{
 		AccountService:               v1connect.NewAccountServiceClient(o.httpClient, o.baseURL, clientOpts...),
-		AgentSecurityService:         v1connect.NewAgentSecurityServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		AgentService:                 v1connect.NewAgentServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		BillingService:               v1connect.NewBillingServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		EditorService:                v1connect.NewEditorServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		EnvironmentAutomationService: v1connect.NewEnvironmentAutomationServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		EnvironmentService:           v1connect.NewEnvironmentServiceClient(o.httpClient, o.baseURL, clientOpts...),
-		ErrorsService:                v1connect.NewErrorsServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		EventService:                 v1connect.NewEventServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		GatewayService:               v1connect.NewGatewayServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		GroupService:                 v1connect.NewGroupServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		IdentityService:              v1connect.NewIdentityServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		InsightsService:              v1connect.NewInsightsServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		IntegrationService:           v1connect.NewIntegrationServiceClient(o.httpClient, o.baseURL, clientOpts...),
-		OnaIntelligenceService:       v1connect.NewOnaIntelligenceServiceClient(o.httpClient, o.baseURL, clientOpts...),
+		NotificationService:          v1connect.NewNotificationServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		OrganizationService:          v1connect.NewOrganizationServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		PrebuildService:              v1connect.NewPrebuildServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		ProjectService:               v1connect.NewProjectServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		RunnerConfigurationService:   v1connect.NewRunnerConfigurationServiceClient(o.httpClient, o.baseURL, clientOpts...),
-		RunnerInteractionService:     v1connect.NewRunnerInteractionServiceClient(o.httpClient, o.baseURL, clientOpts...),
-		RunnerManagerService:         v1connect.NewRunnerManagerServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		RunnerService:                v1connect.NewRunnerServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		SecretService:                v1connect.NewSecretServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		SecurityService:              v1connect.NewSecurityServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		ServiceAccountService:        v1connect.NewServiceAccountServiceClient(o.httpClient, o.baseURL, clientOpts...),
-		SessionService:               v1connect.NewSessionServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		TeamService:                  v1connect.NewTeamServiceClient(o.httpClient, o.baseURL, clientOpts...),
+		UsageService:                 v1connect.NewUsageServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		UserService:                  v1connect.NewUserServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		WebhookService:               v1connect.NewWebhookServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		WorkflowService:              v1connect.NewWorkflowServiceClient(o.httpClient, o.baseURL, clientOpts...),
@@ -120,32 +116,28 @@ func New(baseURL string, opts ...Option) (*ManagementPlane, error) {
 
 type Services struct {
 	AccountService               v1connect.AccountServiceClient
-	AgentSecurityService         v1connect.AgentSecurityServiceClient
 	AgentService                 v1connect.AgentServiceClient
 	BillingService               v1connect.BillingServiceClient
 	EditorService                v1connect.EditorServiceClient
 	EnvironmentAutomationService v1connect.EnvironmentAutomationServiceClient
 	EnvironmentService           v1connect.EnvironmentServiceClient
-	ErrorsService                v1connect.ErrorsServiceClient
 	EventService                 v1connect.EventServiceClient
 	GatewayService               v1connect.GatewayServiceClient
 	GroupService                 v1connect.GroupServiceClient
 	IdentityService              v1connect.IdentityServiceClient
 	InsightsService              v1connect.InsightsServiceClient
 	IntegrationService           v1connect.IntegrationServiceClient
-	OnaIntelligenceService       v1connect.OnaIntelligenceServiceClient
+	NotificationService          v1connect.NotificationServiceClient
 	OrganizationService          v1connect.OrganizationServiceClient
 	PrebuildService              v1connect.PrebuildServiceClient
 	ProjectService               v1connect.ProjectServiceClient
 	RunnerConfigurationService   v1connect.RunnerConfigurationServiceClient
-	RunnerInteractionService     v1connect.RunnerInteractionServiceClient
-	RunnerManagerService         v1connect.RunnerManagerServiceClient
 	RunnerService                v1connect.RunnerServiceClient
 	SecretService                v1connect.SecretServiceClient
 	SecurityService              v1connect.SecurityServiceClient
 	ServiceAccountService        v1connect.ServiceAccountServiceClient
-	SessionService               v1connect.SessionServiceClient
 	TeamService                  v1connect.TeamServiceClient
+	UsageService                 v1connect.UsageServiceClient
 	UserService                  v1connect.UserServiceClient
 	WebhookService               v1connect.WebhookServiceClient
 	WorkflowService              v1connect.WorkflowServiceClient
@@ -154,32 +146,28 @@ type Services struct {
 func NewWithServices(services Services) *ManagementPlane {
 	return &ManagementPlane{
 		accountService:               services.AccountService,
-		agentSecurityService:         services.AgentSecurityService,
 		agentService:                 services.AgentService,
 		billingService:               services.BillingService,
 		editorService:                services.EditorService,
 		environmentAutomationService: services.EnvironmentAutomationService,
 		environmentService:           services.EnvironmentService,
-		errorsService:                services.ErrorsService,
 		eventService:                 services.EventService,
 		gatewayService:               services.GatewayService,
 		groupService:                 services.GroupService,
 		identityService:              services.IdentityService,
 		insightsService:              services.InsightsService,
 		integrationService:           services.IntegrationService,
-		onaIntelligenceService:       services.OnaIntelligenceService,
+		notificationService:          services.NotificationService,
 		organizationService:          services.OrganizationService,
 		prebuildService:              services.PrebuildService,
 		projectService:               services.ProjectService,
 		runnerConfigurationService:   services.RunnerConfigurationService,
-		runnerInteractionService:     services.RunnerInteractionService,
-		runnerManagerService:         services.RunnerManagerService,
 		runnerService:                services.RunnerService,
 		secretService:                services.SecretService,
 		securityService:              services.SecurityService,
 		serviceAccountService:        services.ServiceAccountService,
-		sessionService:               services.SessionService,
 		teamService:                  services.TeamService,
+		usageService:                 services.UsageService,
 		userService:                  services.UserService,
 		webhookService:               services.WebhookService,
 		workflowService:              services.WorkflowService,
@@ -188,32 +176,28 @@ func NewWithServices(services Services) *ManagementPlane {
 
 type ManagementPlane struct {
 	accountService               v1connect.AccountServiceClient
-	agentSecurityService         v1connect.AgentSecurityServiceClient
 	agentService                 v1connect.AgentServiceClient
 	billingService               v1connect.BillingServiceClient
 	editorService                v1connect.EditorServiceClient
 	environmentAutomationService v1connect.EnvironmentAutomationServiceClient
 	environmentService           v1connect.EnvironmentServiceClient
-	errorsService                v1connect.ErrorsServiceClient
 	eventService                 v1connect.EventServiceClient
 	gatewayService               v1connect.GatewayServiceClient
 	groupService                 v1connect.GroupServiceClient
 	identityService              v1connect.IdentityServiceClient
 	insightsService              v1connect.InsightsServiceClient
 	integrationService           v1connect.IntegrationServiceClient
-	onaIntelligenceService       v1connect.OnaIntelligenceServiceClient
+	notificationService          v1connect.NotificationServiceClient
 	organizationService          v1connect.OrganizationServiceClient
 	prebuildService              v1connect.PrebuildServiceClient
 	projectService               v1connect.ProjectServiceClient
 	runnerConfigurationService   v1connect.RunnerConfigurationServiceClient
-	runnerInteractionService     v1connect.RunnerInteractionServiceClient
-	runnerManagerService         v1connect.RunnerManagerServiceClient
 	runnerService                v1connect.RunnerServiceClient
 	secretService                v1connect.SecretServiceClient
 	securityService              v1connect.SecurityServiceClient
 	serviceAccountService        v1connect.ServiceAccountServiceClient
-	sessionService               v1connect.SessionServiceClient
 	teamService                  v1connect.TeamServiceClient
+	usageService                 v1connect.UsageServiceClient
 	userService                  v1connect.UserServiceClient
 	webhookService               v1connect.WebhookServiceClient
 	workflowService              v1connect.WorkflowServiceClient
@@ -221,10 +205,6 @@ type ManagementPlane struct {
 
 func (g *ManagementPlane) AccountService() v1connect.AccountServiceClient {
 	return g.accountService
-}
-
-func (g *ManagementPlane) AgentSecurityService() v1connect.AgentSecurityServiceClient {
-	return g.agentSecurityService
 }
 
 func (g *ManagementPlane) AgentService() v1connect.AgentServiceClient {
@@ -245,10 +225,6 @@ func (g *ManagementPlane) EnvironmentAutomationService() v1connect.EnvironmentAu
 
 func (g *ManagementPlane) EnvironmentService() v1connect.EnvironmentServiceClient {
 	return g.environmentService
-}
-
-func (g *ManagementPlane) ErrorsService() v1connect.ErrorsServiceClient {
-	return g.errorsService
 }
 
 func (g *ManagementPlane) EventService() v1connect.EventServiceClient {
@@ -275,8 +251,8 @@ func (g *ManagementPlane) IntegrationService() v1connect.IntegrationServiceClien
 	return g.integrationService
 }
 
-func (g *ManagementPlane) OnaIntelligenceService() v1connect.OnaIntelligenceServiceClient {
-	return g.onaIntelligenceService
+func (g *ManagementPlane) NotificationService() v1connect.NotificationServiceClient {
+	return g.notificationService
 }
 
 func (g *ManagementPlane) OrganizationService() v1connect.OrganizationServiceClient {
@@ -295,14 +271,6 @@ func (g *ManagementPlane) RunnerConfigurationService() v1connect.RunnerConfigura
 	return g.runnerConfigurationService
 }
 
-func (g *ManagementPlane) RunnerInteractionService() v1connect.RunnerInteractionServiceClient {
-	return g.runnerInteractionService
-}
-
-func (g *ManagementPlane) RunnerManagerService() v1connect.RunnerManagerServiceClient {
-	return g.runnerManagerService
-}
-
 func (g *ManagementPlane) RunnerService() v1connect.RunnerServiceClient {
 	return g.runnerService
 }
@@ -319,12 +287,12 @@ func (g *ManagementPlane) ServiceAccountService() v1connect.ServiceAccountServic
 	return g.serviceAccountService
 }
 
-func (g *ManagementPlane) SessionService() v1connect.SessionServiceClient {
-	return g.sessionService
-}
-
 func (g *ManagementPlane) TeamService() v1connect.TeamServiceClient {
 	return g.teamService
+}
+
+func (g *ManagementPlane) UsageService() v1connect.UsageServiceClient {
+	return g.usageService
 }
 
 func (g *ManagementPlane) UserService() v1connect.UserServiceClient {
