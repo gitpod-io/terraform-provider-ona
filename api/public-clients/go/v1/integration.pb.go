@@ -8,12 +8,9 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/terraform"
 	_ "github.com/google/gnostic/openapiv3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -143,59 +140,7 @@ func (x ValidationCheck_Check) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ValidationCheck_Check.Descriptor instead.
 func (ValidationCheck_Check) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{36, 0}
-}
-
-type CompleteCodexDeviceLoginResponse_Status int32
-
-const (
-	CompleteCodexDeviceLoginResponse_STATUS_UNSPECIFIED CompleteCodexDeviceLoginResponse_Status = 0
-	CompleteCodexDeviceLoginResponse_STATUS_PENDING     CompleteCodexDeviceLoginResponse_Status = 1
-	CompleteCodexDeviceLoginResponse_STATUS_CONNECTED   CompleteCodexDeviceLoginResponse_Status = 2
-	CompleteCodexDeviceLoginResponse_STATUS_EXPIRED     CompleteCodexDeviceLoginResponse_Status = 3
-)
-
-// Enum value maps for CompleteCodexDeviceLoginResponse_Status.
-var (
-	CompleteCodexDeviceLoginResponse_Status_name = map[int32]string{
-		0: "STATUS_UNSPECIFIED",
-		1: "STATUS_PENDING",
-		2: "STATUS_CONNECTED",
-		3: "STATUS_EXPIRED",
-	}
-	CompleteCodexDeviceLoginResponse_Status_value = map[string]int32{
-		"STATUS_UNSPECIFIED": 0,
-		"STATUS_PENDING":     1,
-		"STATUS_CONNECTED":   2,
-		"STATUS_EXPIRED":     3,
-	}
-)
-
-func (x CompleteCodexDeviceLoginResponse_Status) Enum() *CompleteCodexDeviceLoginResponse_Status {
-	p := new(CompleteCodexDeviceLoginResponse_Status)
-	*p = x
-	return p
-}
-
-func (x CompleteCodexDeviceLoginResponse_Status) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (CompleteCodexDeviceLoginResponse_Status) Descriptor() protoreflect.EnumDescriptor {
-	return file_gitpod_v1_integration_proto_enumTypes[2].Descriptor()
-}
-
-func (CompleteCodexDeviceLoginResponse_Status) Type() protoreflect.EnumType {
-	return &file_gitpod_v1_integration_proto_enumTypes[2]
-}
-
-func (x CompleteCodexDeviceLoginResponse_Status) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use CompleteCodexDeviceLoginResponse_Status.Descriptor instead.
-func (CompleteCodexDeviceLoginResponse_Status) EnumDescriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{40, 0}
+	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{30, 0}
 }
 
 // IntegrationDefinition defines a service that can be integrated with
@@ -1917,158 +1862,6 @@ func (x *ListIntegrationsResponse) GetIntegrations() []*Integration {
 	return nil
 }
 
-type CreateIntegrationDefinitionRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// name is the human-readable name for this integration type
-	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// description provides a human-readable description of the integration
-	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	// icon_url is the URL for this integration's icon
-	IconUrl string `protobuf:"bytes,3,opt,name=icon_url,json=iconUrl,proto3" json:"icon_url,omitempty"`
-	// capabilities defines what this integration can do
-	Capabilities *IntegrationCapabilities `protobuf:"bytes,4,opt,name=capabilities,proto3" json:"capabilities,omitempty"`
-	// auth defines the authentication requirements for this integration
-	Auth *IntegrationAuthentication `protobuf:"bytes,5,opt,name=auth,proto3" json:"auth,omitempty"`
-	// host is the hostname for this integration (e.g., "linear.app")
-	Host string `protobuf:"bytes,6,opt,name=host,proto3" json:"host,omitempty"`
-	// experimental indicates if this integration is experimental and requires feature flag
-	Experimental bool `protobuf:"varint,7,opt,name=experimental,proto3" json:"experimental,omitempty"`
-	// categories classifies this integration for filtering and display
-	Categories    []IntegrationCategory `protobuf:"varint,8,rep,packed,name=categories,proto3,enum=gitpod.v1.IntegrationCategory" json:"categories,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateIntegrationDefinitionRequest) Reset() {
-	*x = CreateIntegrationDefinitionRequest{}
-	mi := &file_gitpod_v1_integration_proto_msgTypes[26]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateIntegrationDefinitionRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateIntegrationDefinitionRequest) ProtoMessage() {}
-
-func (x *CreateIntegrationDefinitionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_integration_proto_msgTypes[26]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateIntegrationDefinitionRequest.ProtoReflect.Descriptor instead.
-func (*CreateIntegrationDefinitionRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{26}
-}
-
-func (x *CreateIntegrationDefinitionRequest) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *CreateIntegrationDefinitionRequest) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-func (x *CreateIntegrationDefinitionRequest) GetIconUrl() string {
-	if x != nil {
-		return x.IconUrl
-	}
-	return ""
-}
-
-func (x *CreateIntegrationDefinitionRequest) GetCapabilities() *IntegrationCapabilities {
-	if x != nil {
-		return x.Capabilities
-	}
-	return nil
-}
-
-func (x *CreateIntegrationDefinitionRequest) GetAuth() *IntegrationAuthentication {
-	if x != nil {
-		return x.Auth
-	}
-	return nil
-}
-
-func (x *CreateIntegrationDefinitionRequest) GetHost() string {
-	if x != nil {
-		return x.Host
-	}
-	return ""
-}
-
-func (x *CreateIntegrationDefinitionRequest) GetExperimental() bool {
-	if x != nil {
-		return x.Experimental
-	}
-	return false
-}
-
-func (x *CreateIntegrationDefinitionRequest) GetCategories() []IntegrationCategory {
-	if x != nil {
-		return x.Categories
-	}
-	return nil
-}
-
-type CreateIntegrationDefinitionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Definition    *IntegrationDefinition `protobuf:"bytes,1,opt,name=definition,proto3" json:"definition,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateIntegrationDefinitionResponse) Reset() {
-	*x = CreateIntegrationDefinitionResponse{}
-	mi := &file_gitpod_v1_integration_proto_msgTypes[27]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateIntegrationDefinitionResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateIntegrationDefinitionResponse) ProtoMessage() {}
-
-func (x *CreateIntegrationDefinitionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_integration_proto_msgTypes[27]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateIntegrationDefinitionResponse.ProtoReflect.Descriptor instead.
-func (*CreateIntegrationDefinitionResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{27}
-}
-
-func (x *CreateIntegrationDefinitionResponse) GetDefinition() *IntegrationDefinition {
-	if x != nil {
-		return x.Definition
-	}
-	return nil
-}
-
 type GetIntegrationDefinitionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -2078,7 +1871,7 @@ type GetIntegrationDefinitionRequest struct {
 
 func (x *GetIntegrationDefinitionRequest) Reset() {
 	*x = GetIntegrationDefinitionRequest{}
-	mi := &file_gitpod_v1_integration_proto_msgTypes[28]
+	mi := &file_gitpod_v1_integration_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2090,7 +1883,7 @@ func (x *GetIntegrationDefinitionRequest) String() string {
 func (*GetIntegrationDefinitionRequest) ProtoMessage() {}
 
 func (x *GetIntegrationDefinitionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_integration_proto_msgTypes[28]
+	mi := &file_gitpod_v1_integration_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2103,7 +1896,7 @@ func (x *GetIntegrationDefinitionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetIntegrationDefinitionRequest.ProtoReflect.Descriptor instead.
 func (*GetIntegrationDefinitionRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{28}
+	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *GetIntegrationDefinitionRequest) GetId() string {
@@ -2122,7 +1915,7 @@ type GetIntegrationDefinitionResponse struct {
 
 func (x *GetIntegrationDefinitionResponse) Reset() {
 	*x = GetIntegrationDefinitionResponse{}
-	mi := &file_gitpod_v1_integration_proto_msgTypes[29]
+	mi := &file_gitpod_v1_integration_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2134,7 +1927,7 @@ func (x *GetIntegrationDefinitionResponse) String() string {
 func (*GetIntegrationDefinitionResponse) ProtoMessage() {}
 
 func (x *GetIntegrationDefinitionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_integration_proto_msgTypes[29]
+	mi := &file_gitpod_v1_integration_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2147,7 +1940,7 @@ func (x *GetIntegrationDefinitionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetIntegrationDefinitionResponse.ProtoReflect.Descriptor instead.
 func (*GetIntegrationDefinitionResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{29}
+	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *GetIntegrationDefinitionResponse) GetDefinition() *IntegrationDefinition {
@@ -2155,246 +1948,6 @@ func (x *GetIntegrationDefinitionResponse) GetDefinition() *IntegrationDefinitio
 		return x.Definition
 	}
 	return nil
-}
-
-type UpdateIntegrationDefinitionRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// name is the human-readable name for this integration type
-	Name *string `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`
-	// description provides a human-readable description of the integration
-	Description *string `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	// icon_url is the URL for this integration's icon
-	IconUrl *string `protobuf:"bytes,4,opt,name=icon_url,json=iconUrl,proto3,oneof" json:"icon_url,omitempty"`
-	// capabilities defines what this integration can do
-	Capabilities *IntegrationCapabilities `protobuf:"bytes,5,opt,name=capabilities,proto3,oneof" json:"capabilities,omitempty"`
-	// auth defines the authentication requirements for this integration
-	Auth *IntegrationAuthentication `protobuf:"bytes,6,opt,name=auth,proto3,oneof" json:"auth,omitempty"`
-	// host is the hostname for this integration (e.g., "linear.app")
-	Host *string `protobuf:"bytes,7,opt,name=host,proto3,oneof" json:"host,omitempty"`
-	// experimental indicates if this integration is experimental and requires feature flag
-	Experimental *bool `protobuf:"varint,8,opt,name=experimental,proto3,oneof" json:"experimental,omitempty"`
-	// categories classifies this integration for filtering and display
-	Categories    []IntegrationCategory `protobuf:"varint,9,rep,packed,name=categories,proto3,enum=gitpod.v1.IntegrationCategory" json:"categories,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateIntegrationDefinitionRequest) Reset() {
-	*x = UpdateIntegrationDefinitionRequest{}
-	mi := &file_gitpod_v1_integration_proto_msgTypes[30]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateIntegrationDefinitionRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateIntegrationDefinitionRequest) ProtoMessage() {}
-
-func (x *UpdateIntegrationDefinitionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_integration_proto_msgTypes[30]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateIntegrationDefinitionRequest.ProtoReflect.Descriptor instead.
-func (*UpdateIntegrationDefinitionRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{30}
-}
-
-func (x *UpdateIntegrationDefinitionRequest) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *UpdateIntegrationDefinitionRequest) GetName() string {
-	if x != nil && x.Name != nil {
-		return *x.Name
-	}
-	return ""
-}
-
-func (x *UpdateIntegrationDefinitionRequest) GetDescription() string {
-	if x != nil && x.Description != nil {
-		return *x.Description
-	}
-	return ""
-}
-
-func (x *UpdateIntegrationDefinitionRequest) GetIconUrl() string {
-	if x != nil && x.IconUrl != nil {
-		return *x.IconUrl
-	}
-	return ""
-}
-
-func (x *UpdateIntegrationDefinitionRequest) GetCapabilities() *IntegrationCapabilities {
-	if x != nil {
-		return x.Capabilities
-	}
-	return nil
-}
-
-func (x *UpdateIntegrationDefinitionRequest) GetAuth() *IntegrationAuthentication {
-	if x != nil {
-		return x.Auth
-	}
-	return nil
-}
-
-func (x *UpdateIntegrationDefinitionRequest) GetHost() string {
-	if x != nil && x.Host != nil {
-		return *x.Host
-	}
-	return ""
-}
-
-func (x *UpdateIntegrationDefinitionRequest) GetExperimental() bool {
-	if x != nil && x.Experimental != nil {
-		return *x.Experimental
-	}
-	return false
-}
-
-func (x *UpdateIntegrationDefinitionRequest) GetCategories() []IntegrationCategory {
-	if x != nil {
-		return x.Categories
-	}
-	return nil
-}
-
-type UpdateIntegrationDefinitionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Definition    *IntegrationDefinition `protobuf:"bytes,1,opt,name=definition,proto3" json:"definition,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateIntegrationDefinitionResponse) Reset() {
-	*x = UpdateIntegrationDefinitionResponse{}
-	mi := &file_gitpod_v1_integration_proto_msgTypes[31]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateIntegrationDefinitionResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateIntegrationDefinitionResponse) ProtoMessage() {}
-
-func (x *UpdateIntegrationDefinitionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_integration_proto_msgTypes[31]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateIntegrationDefinitionResponse.ProtoReflect.Descriptor instead.
-func (*UpdateIntegrationDefinitionResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{31}
-}
-
-func (x *UpdateIntegrationDefinitionResponse) GetDefinition() *IntegrationDefinition {
-	if x != nil {
-		return x.Definition
-	}
-	return nil
-}
-
-type DeleteIntegrationDefinitionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteIntegrationDefinitionRequest) Reset() {
-	*x = DeleteIntegrationDefinitionRequest{}
-	mi := &file_gitpod_v1_integration_proto_msgTypes[32]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteIntegrationDefinitionRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteIntegrationDefinitionRequest) ProtoMessage() {}
-
-func (x *DeleteIntegrationDefinitionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_integration_proto_msgTypes[32]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeleteIntegrationDefinitionRequest.ProtoReflect.Descriptor instead.
-func (*DeleteIntegrationDefinitionRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{32}
-}
-
-func (x *DeleteIntegrationDefinitionRequest) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-type DeleteIntegrationDefinitionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteIntegrationDefinitionResponse) Reset() {
-	*x = DeleteIntegrationDefinitionResponse{}
-	mi := &file_gitpod_v1_integration_proto_msgTypes[33]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteIntegrationDefinitionResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteIntegrationDefinitionResponse) ProtoMessage() {}
-
-func (x *DeleteIntegrationDefinitionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_integration_proto_msgTypes[33]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeleteIntegrationDefinitionResponse.ProtoReflect.Descriptor instead.
-func (*DeleteIntegrationDefinitionResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{33}
 }
 
 type ValidateIntegrationRequest struct {
@@ -2406,7 +1959,7 @@ type ValidateIntegrationRequest struct {
 
 func (x *ValidateIntegrationRequest) Reset() {
 	*x = ValidateIntegrationRequest{}
-	mi := &file_gitpod_v1_integration_proto_msgTypes[34]
+	mi := &file_gitpod_v1_integration_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2418,7 +1971,7 @@ func (x *ValidateIntegrationRequest) String() string {
 func (*ValidateIntegrationRequest) ProtoMessage() {}
 
 func (x *ValidateIntegrationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_integration_proto_msgTypes[34]
+	mi := &file_gitpod_v1_integration_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2431,7 +1984,7 @@ func (x *ValidateIntegrationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ValidateIntegrationRequest.ProtoReflect.Descriptor instead.
 func (*ValidateIntegrationRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{34}
+	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ValidateIntegrationRequest) GetIntegrationId() string {
@@ -2454,7 +2007,7 @@ type ValidateIntegrationResponse struct {
 
 func (x *ValidateIntegrationResponse) Reset() {
 	*x = ValidateIntegrationResponse{}
-	mi := &file_gitpod_v1_integration_proto_msgTypes[35]
+	mi := &file_gitpod_v1_integration_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2466,7 +2019,7 @@ func (x *ValidateIntegrationResponse) String() string {
 func (*ValidateIntegrationResponse) ProtoMessage() {}
 
 func (x *ValidateIntegrationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_integration_proto_msgTypes[35]
+	mi := &file_gitpod_v1_integration_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2479,7 +2032,7 @@ func (x *ValidateIntegrationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ValidateIntegrationResponse.ProtoReflect.Descriptor instead.
 func (*ValidateIntegrationResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{35}
+	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *ValidateIntegrationResponse) GetValid() bool {
@@ -2514,7 +2067,7 @@ type ValidationCheck struct {
 
 func (x *ValidationCheck) Reset() {
 	*x = ValidationCheck{}
-	mi := &file_gitpod_v1_integration_proto_msgTypes[36]
+	mi := &file_gitpod_v1_integration_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2526,7 +2079,7 @@ func (x *ValidationCheck) String() string {
 func (*ValidationCheck) ProtoMessage() {}
 
 func (x *ValidationCheck) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_integration_proto_msgTypes[36]
+	mi := &file_gitpod_v1_integration_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2539,7 +2092,7 @@ func (x *ValidationCheck) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ValidationCheck.ProtoReflect.Descriptor instead.
 func (*ValidationCheck) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{36}
+	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *ValidationCheck) GetCheck() ValidationCheck_Check {
@@ -2570,320 +2123,98 @@ func (x *ValidationCheck) GetDocumentationUrl() string {
 	return ""
 }
 
-type StartCodexDeviceLoginRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	IntegrationId string                 `protobuf:"bytes,1,opt,name=integration_id,json=integrationId,proto3" json:"integration_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *StartCodexDeviceLoginRequest) Reset() {
-	*x = StartCodexDeviceLoginRequest{}
-	mi := &file_gitpod_v1_integration_proto_msgTypes[37]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *StartCodexDeviceLoginRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*StartCodexDeviceLoginRequest) ProtoMessage() {}
-
-func (x *StartCodexDeviceLoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_integration_proto_msgTypes[37]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use StartCodexDeviceLoginRequest.ProtoReflect.Descriptor instead.
-func (*StartCodexDeviceLoginRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{37}
-}
-
-func (x *StartCodexDeviceLoginRequest) GetIntegrationId() string {
-	if x != nil {
-		return x.IntegrationId
-	}
-	return ""
-}
-
-type StartCodexDeviceLoginResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// login_id is an opaque signed handle used to complete this device login.
-	LoginId string `protobuf:"bytes,1,opt,name=login_id,json=loginId,proto3" json:"login_id,omitempty"`
-	// verification_url is the Codex authorization page where the user enters user_code.
-	VerificationUrl string `protobuf:"bytes,2,opt,name=verification_url,json=verificationUrl,proto3" json:"verification_url,omitempty"`
-	// user_code is the short code the user enters on the verification page.
-	UserCode string `protobuf:"bytes,3,opt,name=user_code,json=userCode,proto3" json:"user_code,omitempty"`
-	// interval_seconds is the provider-recommended polling interval.
-	IntervalSeconds uint32 `protobuf:"varint,4,opt,name=interval_seconds,json=intervalSeconds,proto3" json:"interval_seconds,omitempty"`
-	// expires_at is when login_id and user_code expire.
-	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *StartCodexDeviceLoginResponse) Reset() {
-	*x = StartCodexDeviceLoginResponse{}
-	mi := &file_gitpod_v1_integration_proto_msgTypes[38]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *StartCodexDeviceLoginResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*StartCodexDeviceLoginResponse) ProtoMessage() {}
-
-func (x *StartCodexDeviceLoginResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_integration_proto_msgTypes[38]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use StartCodexDeviceLoginResponse.ProtoReflect.Descriptor instead.
-func (*StartCodexDeviceLoginResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{38}
-}
-
-func (x *StartCodexDeviceLoginResponse) GetLoginId() string {
-	if x != nil {
-		return x.LoginId
-	}
-	return ""
-}
-
-func (x *StartCodexDeviceLoginResponse) GetVerificationUrl() string {
-	if x != nil {
-		return x.VerificationUrl
-	}
-	return ""
-}
-
-func (x *StartCodexDeviceLoginResponse) GetUserCode() string {
-	if x != nil {
-		return x.UserCode
-	}
-	return ""
-}
-
-func (x *StartCodexDeviceLoginResponse) GetIntervalSeconds() uint32 {
-	if x != nil {
-		return x.IntervalSeconds
-	}
-	return 0
-}
-
-func (x *StartCodexDeviceLoginResponse) GetExpiresAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.ExpiresAt
-	}
-	return nil
-}
-
-type CompleteCodexDeviceLoginRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	LoginId       string                 `protobuf:"bytes,1,opt,name=login_id,json=loginId,proto3" json:"login_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CompleteCodexDeviceLoginRequest) Reset() {
-	*x = CompleteCodexDeviceLoginRequest{}
-	mi := &file_gitpod_v1_integration_proto_msgTypes[39]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CompleteCodexDeviceLoginRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CompleteCodexDeviceLoginRequest) ProtoMessage() {}
-
-func (x *CompleteCodexDeviceLoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_integration_proto_msgTypes[39]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CompleteCodexDeviceLoginRequest.ProtoReflect.Descriptor instead.
-func (*CompleteCodexDeviceLoginRequest) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{39}
-}
-
-func (x *CompleteCodexDeviceLoginRequest) GetLoginId() string {
-	if x != nil {
-		return x.LoginId
-	}
-	return ""
-}
-
-type CompleteCodexDeviceLoginResponse struct {
-	state  protoimpl.MessageState                  `protogen:"open.v1"`
-	Status CompleteCodexDeviceLoginResponse_Status `protobuf:"varint,1,opt,name=status,proto3,enum=gitpod.v1.CompleteCodexDeviceLoginResponse_Status" json:"status,omitempty"`
-	// host_authentication_token_id is set when status is STATUS_CONNECTED.
-	HostAuthenticationTokenId string `protobuf:"bytes,2,opt,name=host_authentication_token_id,json=hostAuthenticationTokenId,proto3" json:"host_authentication_token_id,omitempty"`
-	unknownFields             protoimpl.UnknownFields
-	sizeCache                 protoimpl.SizeCache
-}
-
-func (x *CompleteCodexDeviceLoginResponse) Reset() {
-	*x = CompleteCodexDeviceLoginResponse{}
-	mi := &file_gitpod_v1_integration_proto_msgTypes[40]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CompleteCodexDeviceLoginResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CompleteCodexDeviceLoginResponse) ProtoMessage() {}
-
-func (x *CompleteCodexDeviceLoginResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_integration_proto_msgTypes[40]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CompleteCodexDeviceLoginResponse.ProtoReflect.Descriptor instead.
-func (*CompleteCodexDeviceLoginResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_integration_proto_rawDescGZIP(), []int{40}
-}
-
-func (x *CompleteCodexDeviceLoginResponse) GetStatus() CompleteCodexDeviceLoginResponse_Status {
-	if x != nil {
-		return x.Status
-	}
-	return CompleteCodexDeviceLoginResponse_STATUS_UNSPECIFIED
-}
-
-func (x *CompleteCodexDeviceLoginResponse) GetHostAuthenticationTokenId() string {
-	if x != nil {
-		return x.HostAuthenticationTokenId
-	}
-	return ""
-}
-
 var File_gitpod_v1_integration_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_integration_proto_rawDesc = "" +
 	"\n" +
-	"\x1bgitpod/v1/integration.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/terraform.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb9\x03\n" +
-	"\x15IntegrationDefinition\x12\x14\n" +
-	"\x02id\x18\x01 \x01(\tB\x04ګ\x1e\x00R\x02id\x12\x18\n" +
-	"\x04name\x18\x02 \x01(\tB\x04ګ\x1e\x00R\x04name\x12&\n" +
-	"\vdescription\x18\x03 \x01(\tB\x04ګ\x1e\x00R\vdescription\x12\x1f\n" +
-	"\bicon_url\x18\x04 \x01(\tB\x04ګ\x1e\x00R\aiconUrl\x12L\n" +
-	"\fcapabilities\x18\x05 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesB\x04ګ\x1e\x00R\fcapabilities\x12>\n" +
-	"\x04auth\x18\x06 \x01(\v2$.gitpod.v1.IntegrationAuthenticationB\x04ګ\x1e\x00R\x04auth\x12\x18\n" +
-	"\x04host\x18\a \x01(\tB\x04ګ\x1e\x00R\x04host\x12(\n" +
-	"\fexperimental\x18\b \x01(\bB\x04ګ\x1e\x00R\fexperimental\x12D\n" +
+	"\x1bgitpod/v1/integration.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gnostic/openapi/v3/annotations.proto\"\x83\x03\n" +
+	"\x15IntegrationDefinition\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x19\n" +
+	"\bicon_url\x18\x04 \x01(\tR\aiconUrl\x12F\n" +
+	"\fcapabilities\x18\x05 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesR\fcapabilities\x128\n" +
+	"\x04auth\x18\x06 \x01(\v2$.gitpod.v1.IntegrationAuthenticationR\x04auth\x12\x12\n" +
+	"\x04host\x18\a \x01(\tR\x04host\x12\"\n" +
+	"\fexperimental\x18\b \x01(\bR\fexperimental\x12>\n" +
 	"\n" +
-	"categories\x18\t \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryB\x04ګ\x1e\x00R\n" +
-	"categories:\x0f\xbaG\f\xba\x01\x02id\xba\x01\x04name\"\x8b\x04\n" +
-	"\x17IntegrationCapabilities\x12;\n" +
-	"\x03mcp\x18\x01 \x01(\v2#.gitpod.v1.IntegrationMCPCapabilityB\x04ګ\x1e\x00R\x03mcp\x12]\n" +
-	"\x0fcontext_parsing\x18\x02 \x01(\v2..gitpod.v1.IntegrationContextParsingCapabilityB\x04ګ\x1e\x00R\x0econtextParsing\x12d\n" +
-	"\x12source_code_access\x18\x03 \x01(\v20.gitpod.v1.IntegrationSourceCodeAccessCapabilityB\x04ګ\x1e\x00R\x10sourceCodeAccess\x12A\n" +
-	"\x05login\x18\x04 \x01(\v2%.gitpod.v1.IntegrationLoginCapabilityB\x04ګ\x1e\x00R\x05login\x12T\n" +
-	"\fagent_client\x18\x05 \x01(\v2+.gitpod.v1.IntegrationAgentClientCapabilityB\x04ګ\x1e\x00R\vagentClient\x12U\n" +
-	"\rscm_pr_events\x18\x06 \x01(\v2+.gitpod.v1.IntegrationScmPrEventsCapabilityB\x04ګ\x1e\x00R\vscmPrEvents\":\n" +
-	"\x18IntegrationMCPCapability\x12\x1e\n" +
-	"\x03url\x18\x01 \x01(\tB\f\xbaH\x05r\x03\x18\xff\x01ګ\x1e\x00R\x03url\"%\n" +
+	"categories\x18\t \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryR\n" +
+	"categories:\x0f\xbaG\f\xba\x01\x02id\xba\x01\x04name\"\xe7\x03\n" +
+	"\x17IntegrationCapabilities\x125\n" +
+	"\x03mcp\x18\x01 \x01(\v2#.gitpod.v1.IntegrationMCPCapabilityR\x03mcp\x12W\n" +
+	"\x0fcontext_parsing\x18\x02 \x01(\v2..gitpod.v1.IntegrationContextParsingCapabilityR\x0econtextParsing\x12^\n" +
+	"\x12source_code_access\x18\x03 \x01(\v20.gitpod.v1.IntegrationSourceCodeAccessCapabilityR\x10sourceCodeAccess\x12;\n" +
+	"\x05login\x18\x04 \x01(\v2%.gitpod.v1.IntegrationLoginCapabilityR\x05login\x12N\n" +
+	"\fagent_client\x18\x05 \x01(\v2+.gitpod.v1.IntegrationAgentClientCapabilityR\vagentClient\x12O\n" +
+	"\rscm_pr_events\x18\x06 \x01(\v2+.gitpod.v1.IntegrationScmPrEventsCapabilityR\vscmPrEvents\"6\n" +
+	"\x18IntegrationMCPCapability\x12\x1a\n" +
+	"\x03url\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x03url\"%\n" +
 	"#IntegrationContextParsingCapability\"'\n" +
 	"%IntegrationSourceCodeAccessCapability\"\x1c\n" +
-	"\x1aIntegrationLoginCapability\"\xc3\x01\n" +
-	" IntegrationAgentClientCapability\x123\n" +
-	"\x12severity_threshold\x18\x02 \x01(\tB\x04ګ\x1e\x00R\x11severityThreshold\x12=\n" +
-	"\x12default_project_id\x18\x03 \x01(\tB\x0f\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01ګ\x1e\x00R\x10defaultProjectIdJ\x04\b\x01\x10\x02J\x04\b\x04\x10\x05R\x16webhook_signing_secretR\aapi_key\"\"\n" +
-	" IntegrationScmPrEventsCapability\"\xa3\x02\n" +
-	"\x19IntegrationAuthentication\x12)\n" +
-	"\rrequires_auth\x18\x01 \x01(\bB\x04ګ\x1e\x00R\frequiresAuth\x12A\n" +
-	"\aapi_key\x18\x02 \x01(\v2\".gitpod.v1.IntegrationAPIKeyConfigB\x04ګ\x1e\x00R\x06apiKey\x12=\n" +
-	"\x05oauth\x18\x03 \x01(\v2!.gitpod.v1.IntegrationOAuthConfigB\x04ګ\x1e\x00R\x05oauth\x12Y\n" +
-	"\x0fproprietary_app\x18\x04 \x01(\v2*.gitpod.v1.IntegrationProprietaryAppConfigB\x04ګ\x1e\x00R\x0eproprietaryApp\"\x19\n" +
-	"\x17IntegrationAPIKeyConfig\"\xc3\x03\n" +
-	"\x16IntegrationOAuthConfig\x12\x1f\n" +
-	"\bauth_url\x18\x01 \x01(\tB\x04ګ\x1e\x00R\aauthUrl\x12!\n" +
-	"\ttoken_url\x18\x02 \x01(\tB\x04ګ\x1e\x00R\btokenUrl\x12\x1c\n" +
-	"\x06scopes\x18\x03 \x03(\tB\x04ګ\x1e\x00R\x06scopes\x12!\n" +
-	"\tclient_id\x18\x04 \x01(\tB\x04ګ\x1e\x00R\bclientId\x12)\n" +
-	"\rclient_secret\x18\x05 \x01(\tB\x04ګ\x1e\x00R\fclientSecret\x12'\n" +
-	"\fredirect_url\x18\x06 \x01(\tB\x04ګ\x1e\x00R\vredirectUrl\x127\n" +
-	"\x14dynamic_registration\x18\a \x01(\bB\x04ګ\x1e\x00R\x13dynamicRegistration\x12X\n" +
-	"\vauth_params\x18\b \x03(\v21.gitpod.v1.IntegrationOAuthConfig.AuthParamsEntryB\x04ګ\x1e\x00R\n" +
+	"\x1aIntegrationLoginCapability\"\xb9\x01\n" +
+	" IntegrationAgentClientCapability\x12-\n" +
+	"\x12severity_threshold\x18\x02 \x01(\tR\x11severityThreshold\x129\n" +
+	"\x12default_project_id\x18\x03 \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\x10defaultProjectIdJ\x04\b\x01\x10\x02J\x04\b\x04\x10\x05R\x16webhook_signing_secretR\aapi_key\"\"\n" +
+	" IntegrationScmPrEventsCapability\"\x8b\x02\n" +
+	"\x19IntegrationAuthentication\x12#\n" +
+	"\rrequires_auth\x18\x01 \x01(\bR\frequiresAuth\x12;\n" +
+	"\aapi_key\x18\x02 \x01(\v2\".gitpod.v1.IntegrationAPIKeyConfigR\x06apiKey\x127\n" +
+	"\x05oauth\x18\x03 \x01(\v2!.gitpod.v1.IntegrationOAuthConfigR\x05oauth\x12S\n" +
+	"\x0fproprietary_app\x18\x04 \x01(\v2*.gitpod.v1.IntegrationProprietaryAppConfigR\x0eproprietaryApp\"\x19\n" +
+	"\x17IntegrationAPIKeyConfig\"\x93\x03\n" +
+	"\x16IntegrationOAuthConfig\x12\x19\n" +
+	"\bauth_url\x18\x01 \x01(\tR\aauthUrl\x12\x1b\n" +
+	"\ttoken_url\x18\x02 \x01(\tR\btokenUrl\x12\x16\n" +
+	"\x06scopes\x18\x03 \x03(\tR\x06scopes\x12\x1b\n" +
+	"\tclient_id\x18\x04 \x01(\tR\bclientId\x12#\n" +
+	"\rclient_secret\x18\x05 \x01(\tR\fclientSecret\x12!\n" +
+	"\fredirect_url\x18\x06 \x01(\tR\vredirectUrl\x121\n" +
+	"\x14dynamic_registration\x18\a \x01(\bR\x13dynamicRegistration\x12R\n" +
+	"\vauth_params\x18\b \x03(\v21.gitpod.v1.IntegrationOAuthConfig.AuthParamsEntryR\n" +
 	"authParams\x1a=\n" +
 	"\x0fAuthParamsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x8a\x04\n" +
-	"\x1fIntegrationProprietaryAppConfig\x12!\n" +
-	"\tclient_id\x18\x01 \x01(\tB\x04ګ\x1e\x00R\bclientId\x12)\n" +
-	"\rclient_secret\x18\x02 \x01(\tB\x04ګ\x1e\x00R\fclientSecret\x12+\n" +
-	"\x0ewebhook_secret\x18\x03 \x01(\tB\x04ګ\x1e\x00R\rwebhookSecret\x12a\n" +
-	"\vauth_params\x18\x04 \x03(\v2:.gitpod.v1.IntegrationProprietaryAppConfig.AuthParamsEntryB\x04ګ\x1e\x00R\n" +
-	"authParams\x12#\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xce\x03\n" +
+	"\x1fIntegrationProprietaryAppConfig\x12\x1b\n" +
+	"\tclient_id\x18\x01 \x01(\tR\bclientId\x12#\n" +
+	"\rclient_secret\x18\x02 \x01(\tR\fclientSecret\x12%\n" +
+	"\x0ewebhook_secret\x18\x03 \x01(\tR\rwebhookSecret\x12[\n" +
+	"\vauth_params\x18\x04 \x03(\v2:.gitpod.v1.IntegrationProprietaryAppConfig.AuthParamsEntryR\n" +
+	"authParams\x12\x1d\n" +
 	"\n" +
-	"app_scopes\x18\x05 \x03(\tB\x04ګ\x1e\x00R\tappScopes\x12!\n" +
-	"\ttoken_url\x18\x06 \x01(\tB\x04ګ\x1e\x00R\btokenUrl\x12\x1b\n" +
-	"\x06app_id\x18\a \x01(\tB\x04ګ\x1e\x00R\x05appId\x12%\n" +
-	"\vprivate_key\x18\b \x01(\tB\x04ګ\x1e\x00R\n" +
-	"privateKey\x12\x1f\n" +
-	"\bapp_slug\x18\t \x01(\tB\x04ګ\x1e\x00R\aappSlug\x12\x1d\n" +
+	"app_scopes\x18\x05 \x03(\tR\tappScopes\x12\x1b\n" +
+	"\ttoken_url\x18\x06 \x01(\tR\btokenUrl\x12\x15\n" +
+	"\x06app_id\x18\a \x01(\tR\x05appId\x12\x1f\n" +
+	"\vprivate_key\x18\b \x01(\tR\n" +
+	"privateKey\x12\x19\n" +
+	"\bapp_slug\x18\t \x01(\tR\aappSlug\x12\x17\n" +
 	"\aapi_key\x18\n" +
-	" \x01(\tB\x04ګ\x1e\x00R\x06apiKey\x1a=\n" +
+	" \x01(\tR\x06apiKey\x1a=\n" +
 	"\x0fAuthParamsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xcd\x05\n" +
-	"\vIntegration\x12\x14\n" +
-	"\x02id\x18\x01 \x01(\tB\x04ګ\x1e\x00R\x02id\x12-\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB\x04ګ\x1e\x00R\x0eorganizationId\x12@\n" +
-	"\x19integration_definition_id\x18\x03 \x01(\tB\x04ګ\x1e\x00R\x17integrationDefinitionId\x12\x1e\n" +
-	"\aenabled\x18\x04 \x01(\bB\x04ګ\x1e\x00R\aenabled\x12L\n" +
-	"\fcapabilities\x18\x05 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesB\x04ګ\x1e\x00R\fcapabilities\x12!\n" +
-	"\trunner_id\x18\x06 \x01(\tB\x04ګ\x1e\x00R\brunnerId\x12>\n" +
-	"\x04auth\x18\a \x01(\v2$.gitpod.v1.IntegrationAuthenticationB\x04ګ\x1e\x00R\x04auth\x12\x18\n" +
-	"\x04host\x18\b \x01(\tB\x04ګ\x1e\x00R\x04host\x12\x18\n" +
-	"\x04name\x18\t \x01(\tB\x04ګ\x1e\x00R\x04name\x12&\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xfb\x04\n" +
+	"\vIntegration\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
+	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12:\n" +
+	"\x19integration_definition_id\x18\x03 \x01(\tR\x17integrationDefinitionId\x12\x18\n" +
+	"\aenabled\x18\x04 \x01(\bR\aenabled\x12F\n" +
+	"\fcapabilities\x18\x05 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesR\fcapabilities\x12\x1b\n" +
+	"\trunner_id\x18\x06 \x01(\tR\brunnerId\x128\n" +
+	"\x04auth\x18\a \x01(\v2$.gitpod.v1.IntegrationAuthenticationR\x04auth\x12\x12\n" +
+	"\x04host\x18\b \x01(\tR\x04host\x12\x12\n" +
+	"\x04name\x18\t \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\n" +
-	" \x01(\tB\x04ګ\x1e\x00R\vdescription\x12\x1f\n" +
-	"\bicon_url\x18\v \x01(\tB\x04ګ\x1e\x00R\aiconUrl\x12D\n" +
+	" \x01(\tR\vdescription\x12\x19\n" +
+	"\bicon_url\x18\v \x01(\tR\aiconUrl\x12>\n" +
 	"\n" +
-	"categories\x18\f \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryB\x04ګ\x1e\x00R\n" +
-	"categories\x12j\n" +
-	"\x15external_installation\x18\r \x01(\v2*.gitpod.v1.IntegrationExternalInstallationB\x04ګ\x1e\x00H\x00R\x14externalInstallation\x88\x01\x01:\x1d\xbaG\x16\xba\x01\x02id\xba\x01\x0eorganizationIdҫ\x1e\x00B\x18\n" +
-	"\x16_external_installation\"\x89\x01\n" +
-	"\x1fIntegrationExternalInstallation\x12\x14\n" +
-	"\x02id\x18\x01 \x01(\tB\x04ګ\x1e\x00R\x02id\x12'\n" +
-	"\faccount_name\x18\x02 \x01(\tB\x04ګ\x1e\x00R\vaccountName\x12'\n" +
-	"\faccount_type\x18\x03 \x01(\tB\x04ګ\x1e\x00R\vaccountType\"a\n" +
+	"categories\x18\f \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryR\n" +
+	"categories\x12d\n" +
+	"\x15external_installation\x18\r \x01(\v2*.gitpod.v1.IntegrationExternalInstallationH\x00R\x14externalInstallation\x88\x01\x01:\x19\xbaG\x16\xba\x01\x02id\xba\x01\x0eorganizationIdB\x18\n" +
+	"\x16_external_installation\"w\n" +
+	"\x1fIntegrationExternalInstallation\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
+	"\faccount_name\x18\x02 \x01(\tR\vaccountName\x12!\n" +
+	"\faccount_type\x18\x03 \x01(\tR\vaccountType\"a\n" +
 	"!ListIntegrationDefinitionsRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
@@ -2892,39 +2223,35 @@ const file_gitpod_v1_integration_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12B\n" +
-	"\vdefinitions\x18\x02 \x03(\v2 .gitpod.v1.IntegrationDefinitionR\vdefinitions\"\xa0\x04\n" +
-	"\x18CreateIntegrationRequest\x12_\n" +
-	"\x19integration_definition_id\x18\x01 \x01(\tB#\xa2\xab\x1e\x1b\n" +
-	"\x19integration_definition.idګ\x1e\x00R\x17integrationDefinitionId\x12;\n" +
-	"\trunner_id\x18\x02 \x01(\tB\x1e\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01\xa2\xab\x1e\v\n" +
-	"\trunner.idګ\x1e\x00R\brunnerId\x12\x1e\n" +
-	"\aenabled\x18\x03 \x01(\bB\x04ګ\x1e\x00R\aenabled\x12L\n" +
-	"\fcapabilities\x18\x04 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesB\x04ګ\x1e\x00R\fcapabilities\x12>\n" +
-	"\x04auth\x18\x05 \x01(\v2$.gitpod.v1.IntegrationAuthenticationB\x04ګ\x1e\x00R\x04auth\x12 \n" +
-	"\x04host\x18\x06 \x01(\tB\f\xbaH\x05r\x03\x18\xff\x01ګ\x1e\x00R\x04host\x12 \n" +
-	"\x04name\x18\a \x01(\tB\f\xbaH\x05r\x03\x18\xff\x01ګ\x1e\x00R\x04name\x12.\n" +
-	"\vdescription\x18\b \x01(\tB\f\xbaH\x05r\x03\x18\xf4\x03ګ\x1e\x00R\vdescription\x12D\n" +
+	"\vdefinitions\x18\x02 \x03(\v2 .gitpod.v1.IntegrationDefinitionR\vdefinitions\"\xc4\x03\n" +
+	"\x18CreateIntegrationRequest\x12:\n" +
+	"\x19integration_definition_id\x18\x01 \x01(\tR\x17integrationDefinitionId\x12(\n" +
+	"\trunner_id\x18\x02 \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\xb0\x01\x01R\brunnerId\x12\x18\n" +
+	"\aenabled\x18\x03 \x01(\bR\aenabled\x12F\n" +
+	"\fcapabilities\x18\x04 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesR\fcapabilities\x128\n" +
+	"\x04auth\x18\x05 \x01(\v2$.gitpod.v1.IntegrationAuthenticationR\x04auth\x12\x1c\n" +
+	"\x04host\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x04host\x12\x1c\n" +
+	"\x04name\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x04name\x12*\n" +
+	"\vdescription\x18\b \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03R\vdescription\x12>\n" +
 	"\n" +
-	"categories\x18\t \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryB\x04ګ\x1e\x00R\n" +
+	"categories\x18\t \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryR\n" +
 	"categories\"]\n" +
 	"\x19CreateIntegrationResponse\x12@\n" +
-	"\vintegration\x18\x01 \x01(\v2\x16.gitpod.v1.IntegrationB\x06\xbaH\x03\xc8\x01\x01R\vintegration\"E\n" +
-	"\x15GetIntegrationRequest\x12,\n" +
-	"\x02id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eintegration.idR\x02id\"Z\n" +
+	"\vintegration\x18\x01 \x01(\v2\x16.gitpod.v1.IntegrationB\x06\xbaH\x03\xc8\x01\x01R\vintegration\"1\n" +
+	"\x15GetIntegrationRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"Z\n" +
 	"\x16GetIntegrationResponse\x12@\n" +
-	"\vintegration\x18\x01 \x01(\v2\x16.gitpod.v1.IntegrationB\x06\xbaH\x03\xc8\x01\x01R\vintegration\"\x8e\x04\n" +
-	"\x18UpdateIntegrationRequest\x120\n" +
-	"\x02id\x18\x01 \x01(\tB \xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eintegration.idګ\x1e\x00R\x02id\x12#\n" +
-	"\aenabled\x18\x02 \x01(\bB\x04ګ\x1e\x00H\x00R\aenabled\x88\x01\x01\x12Q\n" +
-	"\fcapabilities\x18\x03 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesB\x04ګ\x1e\x00H\x01R\fcapabilities\x88\x01\x01\x12C\n" +
-	"\x04auth\x18\x04 \x01(\v2$.gitpod.v1.IntegrationAuthenticationB\x04ګ\x1e\x00H\x02R\x04auth\x88\x01\x01\x12!\n" +
+	"\vintegration\x18\x01 \x01(\v2\x16.gitpod.v1.IntegrationB\x06\xbaH\x03\xc8\x01\x01R\vintegration\"\xde\x03\n" +
+	"\x18UpdateIntegrationRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12\x1d\n" +
+	"\aenabled\x18\x02 \x01(\bH\x00R\aenabled\x88\x01\x01\x12K\n" +
+	"\fcapabilities\x18\x03 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesH\x01R\fcapabilities\x88\x01\x01\x12=\n" +
+	"\x04auth\x18\x04 \x01(\v2$.gitpod.v1.IntegrationAuthenticationH\x02R\x04auth\x88\x01\x01\x12!\n" +
 	"\x04host\x18\x05 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x03R\x04host\x88\x01\x01\x12!\n" +
 	"\x04name\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x04R\x04name\x88\x01\x01\x12/\n" +
-	"\vdescription\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03H\x05R\vdescription\x88\x01\x01\x12D\n" +
+	"\vdescription\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03H\x05R\vdescription\x88\x01\x01\x12>\n" +
 	"\n" +
-	"categories\x18\b \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryB\x04ګ\x1e\x00R\n" +
+	"categories\x18\b \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryR\n" +
 	"categoriesB\n" +
 	"\n" +
 	"\b_enabledB\x0f\n" +
@@ -2934,10 +2261,9 @@ const file_gitpod_v1_integration_proto_rawDesc = "" +
 	"\x05_nameB\x0e\n" +
 	"\f_description\"]\n" +
 	"\x19UpdateIntegrationResponse\x12@\n" +
-	"\vintegration\x18\x01 \x01(\v2\x16.gitpod.v1.IntegrationB\x06\xbaH\x03\xc8\x01\x01R\vintegration\"H\n" +
-	"\x18DeleteIntegrationRequest\x12,\n" +
-	"\x02id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eintegration.idR\x02id\"\x1b\n" +
+	"\vintegration\x18\x01 \x01(\v2\x16.gitpod.v1.IntegrationB\x06\xbaH\x03\xc8\x01\x01R\vintegration\"4\n" +
+	"\x18DeleteIntegrationRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\"\x1b\n" +
 	"\x19DeleteIntegrationResponse\"W\n" +
 	"\x17ListIntegrationsRequest\x12<\n" +
 	"\n" +
@@ -2947,60 +2273,15 @@ const file_gitpod_v1_integration_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12:\n" +
-	"\fintegrations\x18\x02 \x03(\v2\x16.gitpod.v1.IntegrationR\fintegrations\"\xf8\x02\n" +
-	"\"CreateIntegrationDefinitionRequest\x12\x1b\n" +
-	"\x04name\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x04name\x12 \n" +
-	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x19\n" +
-	"\bicon_url\x18\x03 \x01(\tR\aiconUrl\x12F\n" +
-	"\fcapabilities\x18\x04 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesR\fcapabilities\x128\n" +
-	"\x04auth\x18\x05 \x01(\v2$.gitpod.v1.IntegrationAuthenticationR\x04auth\x12\x12\n" +
-	"\x04host\x18\x06 \x01(\tR\x04host\x12\"\n" +
-	"\fexperimental\x18\a \x01(\bR\fexperimental\x12>\n" +
-	"\n" +
-	"categories\x18\b \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryR\n" +
-	"categories\"o\n" +
-	"#CreateIntegrationDefinitionResponse\x12H\n" +
-	"\n" +
-	"definition\x18\x01 \x01(\v2 .gitpod.v1.IntegrationDefinitionB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"definition\"Y\n" +
-	"\x1fGetIntegrationDefinitionRequest\x126\n" +
-	"\x02id\x18\x01 \x01(\tB&\xbaH\x04r\x02\x10\x01\xa2\xab\x1e\x1b\n" +
-	"\x19integration_definition.idR\x02id\"l\n" +
+	"\fintegrations\x18\x02 \x03(\v2\x16.gitpod.v1.IntegrationR\fintegrations\":\n" +
+	"\x1fGetIntegrationDefinitionRequest\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x02id\"l\n" +
 	" GetIntegrationDefinitionResponse\x12H\n" +
 	"\n" +
 	"definition\x18\x01 \x01(\v2 .gitpod.v1.IntegrationDefinitionB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"definition\"\xa4\x04\n" +
-	"\"UpdateIntegrationDefinitionRequest\x126\n" +
-	"\x02id\x18\x01 \x01(\tB&\xbaH\x04r\x02\x10\x01\xa2\xab\x1e\x1b\n" +
-	"\x19integration_definition.idR\x02id\x12\x17\n" +
-	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\x03 \x01(\tH\x01R\vdescription\x88\x01\x01\x12\x1e\n" +
-	"\bicon_url\x18\x04 \x01(\tH\x02R\aiconUrl\x88\x01\x01\x12K\n" +
-	"\fcapabilities\x18\x05 \x01(\v2\".gitpod.v1.IntegrationCapabilitiesH\x03R\fcapabilities\x88\x01\x01\x12=\n" +
-	"\x04auth\x18\x06 \x01(\v2$.gitpod.v1.IntegrationAuthenticationH\x04R\x04auth\x88\x01\x01\x12\x17\n" +
-	"\x04host\x18\a \x01(\tH\x05R\x04host\x88\x01\x01\x12'\n" +
-	"\fexperimental\x18\b \x01(\bH\x06R\fexperimental\x88\x01\x01\x12>\n" +
-	"\n" +
-	"categories\x18\t \x03(\x0e2\x1e.gitpod.v1.IntegrationCategoryR\n" +
-	"categoriesB\a\n" +
-	"\x05_nameB\x0e\n" +
-	"\f_descriptionB\v\n" +
-	"\t_icon_urlB\x0f\n" +
-	"\r_capabilitiesB\a\n" +
-	"\x05_authB\a\n" +
-	"\x05_hostB\x0f\n" +
-	"\r_experimental\"o\n" +
-	"#UpdateIntegrationDefinitionResponse\x12H\n" +
-	"\n" +
-	"definition\x18\x01 \x01(\v2 .gitpod.v1.IntegrationDefinitionB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"definition\"\\\n" +
-	"\"DeleteIntegrationDefinitionRequest\x126\n" +
-	"\x02id\x18\x01 \x01(\tB&\xbaH\x04r\x02\x10\x01\xa2\xab\x1e\x1b\n" +
-	"\x19integration_definition.idR\x02id\"%\n" +
-	"#DeleteIntegrationDefinitionResponse\"`\n" +
-	"\x1aValidateIntegrationRequest\x12B\n" +
-	"\x0eintegration_id\x18\x01 \x01(\tB\x1b\xbaH\x04r\x02\x10\x01\xa2\xab\x1e\x10\n" +
-	"\x0eintegration.idR\rintegrationId\"g\n" +
+	"definition\"L\n" +
+	"\x1aValidateIntegrationRequest\x12.\n" +
+	"\x0eintegration_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\rintegrationId\"g\n" +
 	"\x1bValidateIntegrationResponse\x12\x14\n" +
 	"\x05valid\x18\x01 \x01(\bR\x05valid\x122\n" +
 	"\x06checks\x18\x02 \x03(\v2\x1a.gitpod.v1.ValidationCheckR\x06checks\"\x82\x02\n" +
@@ -3013,27 +2294,7 @@ const file_gitpod_v1_integration_proto_rawDesc = "" +
 	"\x05Check\x12\x15\n" +
 	"\x11CHECK_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fCHECK_APP_TOKEN\x10\x01\x12\x1a\n" +
-	"\x16CHECK_APP_INSTALLATION\x10\x02\"c\n" +
-	"\x1cStartCodexDeviceLoginRequest\x12C\n" +
-	"\x0eintegration_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eintegration.idR\rintegrationId\"\xe8\x01\n" +
-	"\x1dStartCodexDeviceLoginResponse\x12\x19\n" +
-	"\blogin_id\x18\x01 \x01(\tR\aloginId\x12)\n" +
-	"\x10verification_url\x18\x02 \x01(\tR\x0fverificationUrl\x12\x1b\n" +
-	"\tuser_code\x18\x03 \x01(\tR\buserCode\x12)\n" +
-	"\x10interval_seconds\x18\x04 \x01(\rR\x0fintervalSeconds\x129\n" +
-	"\n" +
-	"expires_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"E\n" +
-	"\x1fCompleteCodexDeviceLoginRequest\x12\"\n" +
-	"\blogin_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\aloginId\"\x8f\x02\n" +
-	" CompleteCodexDeviceLoginResponse\x12J\n" +
-	"\x06status\x18\x01 \x01(\x0e22.gitpod.v1.CompleteCodexDeviceLoginResponse.StatusR\x06status\x12?\n" +
-	"\x1chost_authentication_token_id\x18\x02 \x01(\tR\x19hostAuthenticationTokenId\"^\n" +
-	"\x06Status\x12\x16\n" +
-	"\x12STATUS_UNSPECIFIED\x10\x00\x12\x12\n" +
-	"\x0eSTATUS_PENDING\x10\x01\x12\x14\n" +
-	"\x10STATUS_CONNECTED\x10\x02\x12\x12\n" +
-	"\x0eSTATUS_EXPIRED\x10\x03*\x97\x03\n" +
+	"\x16CHECK_APP_INSTALLATION\x10\x02*\x97\x03\n" +
 	"\x13IntegrationCategory\x12$\n" +
 	" INTEGRATION_CATEGORY_UNSPECIFIED\x10\x00\x12'\n" +
 	"#INTEGRATION_CATEGORY_SOURCE_CONTROL\x10\x01\x12&\n" +
@@ -3044,21 +2305,16 @@ const file_gitpod_v1_integration_proto_rawDesc = "" +
 	"\x1eINTEGRATION_CATEGORY_KNOWLEDGE\x10\x06\x12\x1c\n" +
 	"\x18INTEGRATION_CATEGORY_MCP\x10\a\x12,\n" +
 	"(INTEGRATION_CATEGORY_AUTOMATION_TRIGGERS\x10\b\x12\x1b\n" +
-	"\x17INTEGRATION_CATEGORY_AI\x10\t2\xc2\v\n" +
+	"\x17INTEGRATION_CATEGORY_AI\x10\t2\xdd\x06\n" +
 	"\x12IntegrationService\x12~\n" +
-	"\x1aListIntegrationDefinitions\x12,.gitpod.v1.ListIntegrationDefinitionsRequest\x1a-.gitpod.v1.ListIntegrationDefinitionsResponse\"\x03\x90\x02\x01\x12~\n" +
-	"\x1bCreateIntegrationDefinition\x12-.gitpod.v1.CreateIntegrationDefinitionRequest\x1a..gitpod.v1.CreateIntegrationDefinitionResponse\"\x00\x12x\n" +
-	"\x18GetIntegrationDefinition\x12*.gitpod.v1.GetIntegrationDefinitionRequest\x1a+.gitpod.v1.GetIntegrationDefinitionResponse\"\x03\x90\x02\x01\x12~\n" +
-	"\x1bUpdateIntegrationDefinition\x12-.gitpod.v1.UpdateIntegrationDefinitionRequest\x1a..gitpod.v1.UpdateIntegrationDefinitionResponse\"\x00\x12~\n" +
-	"\x1bDeleteIntegrationDefinition\x12-.gitpod.v1.DeleteIntegrationDefinitionRequest\x1a..gitpod.v1.DeleteIntegrationDefinitionResponse\"\x00\x12`\n" +
+	"\x1aListIntegrationDefinitions\x12,.gitpod.v1.ListIntegrationDefinitionsRequest\x1a-.gitpod.v1.ListIntegrationDefinitionsResponse\"\x03\x90\x02\x01\x12x\n" +
+	"\x18GetIntegrationDefinition\x12*.gitpod.v1.GetIntegrationDefinitionRequest\x1a+.gitpod.v1.GetIntegrationDefinitionResponse\"\x03\x90\x02\x01\x12`\n" +
 	"\x11CreateIntegration\x12#.gitpod.v1.CreateIntegrationRequest\x1a$.gitpod.v1.CreateIntegrationResponse\"\x00\x12Z\n" +
 	"\x0eGetIntegration\x12 .gitpod.v1.GetIntegrationRequest\x1a!.gitpod.v1.GetIntegrationResponse\"\x03\x90\x02\x01\x12`\n" +
 	"\x11UpdateIntegration\x12#.gitpod.v1.UpdateIntegrationRequest\x1a$.gitpod.v1.UpdateIntegrationResponse\"\x00\x12`\n" +
 	"\x11DeleteIntegration\x12#.gitpod.v1.DeleteIntegrationRequest\x1a$.gitpod.v1.DeleteIntegrationResponse\"\x00\x12`\n" +
 	"\x10ListIntegrations\x12\".gitpod.v1.ListIntegrationsRequest\x1a#.gitpod.v1.ListIntegrationsResponse\"\x03\x90\x02\x01\x12i\n" +
-	"\x13ValidateIntegration\x12%.gitpod.v1.ValidateIntegrationRequest\x1a&.gitpod.v1.ValidateIntegrationResponse\"\x03\x90\x02\x01\x12l\n" +
-	"\x15StartCodexDeviceLogin\x12'.gitpod.v1.StartCodexDeviceLoginRequest\x1a(.gitpod.v1.StartCodexDeviceLoginResponse\"\x00\x12u\n" +
-	"\x18CompleteCodexDeviceLogin\x12*.gitpod.v1.CompleteCodexDeviceLoginRequest\x1a+.gitpod.v1.CompleteCodexDeviceLoginResponse\"\x00B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x13ValidateIntegration\x12%.gitpod.v1.ValidateIntegrationRequest\x1a&.gitpod.v1.ValidateIntegrationResponse\"\x03\x90\x02\x01B'Z%github.com/gitpod-io/gitpod-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_integration_proto_rawDescOnce sync.Once
@@ -3072,137 +2328,105 @@ func file_gitpod_v1_integration_proto_rawDescGZIP() []byte {
 	return file_gitpod_v1_integration_proto_rawDescData
 }
 
-var file_gitpod_v1_integration_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_gitpod_v1_integration_proto_msgTypes = make([]protoimpl.MessageInfo, 43)
+var file_gitpod_v1_integration_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_gitpod_v1_integration_proto_msgTypes = make([]protoimpl.MessageInfo, 33)
 var file_gitpod_v1_integration_proto_goTypes = []any{
 	(IntegrationCategory)(0),                      // 0: gitpod.v1.IntegrationCategory
 	(ValidationCheck_Check)(0),                    // 1: gitpod.v1.ValidationCheck.Check
-	(CompleteCodexDeviceLoginResponse_Status)(0),  // 2: gitpod.v1.CompleteCodexDeviceLoginResponse.Status
-	(*IntegrationDefinition)(nil),                 // 3: gitpod.v1.IntegrationDefinition
-	(*IntegrationCapabilities)(nil),               // 4: gitpod.v1.IntegrationCapabilities
-	(*IntegrationMCPCapability)(nil),              // 5: gitpod.v1.IntegrationMCPCapability
-	(*IntegrationContextParsingCapability)(nil),   // 6: gitpod.v1.IntegrationContextParsingCapability
-	(*IntegrationSourceCodeAccessCapability)(nil), // 7: gitpod.v1.IntegrationSourceCodeAccessCapability
-	(*IntegrationLoginCapability)(nil),            // 8: gitpod.v1.IntegrationLoginCapability
-	(*IntegrationAgentClientCapability)(nil),      // 9: gitpod.v1.IntegrationAgentClientCapability
-	(*IntegrationScmPrEventsCapability)(nil),      // 10: gitpod.v1.IntegrationScmPrEventsCapability
-	(*IntegrationAuthentication)(nil),             // 11: gitpod.v1.IntegrationAuthentication
-	(*IntegrationAPIKeyConfig)(nil),               // 12: gitpod.v1.IntegrationAPIKeyConfig
-	(*IntegrationOAuthConfig)(nil),                // 13: gitpod.v1.IntegrationOAuthConfig
-	(*IntegrationProprietaryAppConfig)(nil),       // 14: gitpod.v1.IntegrationProprietaryAppConfig
-	(*Integration)(nil),                           // 15: gitpod.v1.Integration
-	(*IntegrationExternalInstallation)(nil),       // 16: gitpod.v1.IntegrationExternalInstallation
-	(*ListIntegrationDefinitionsRequest)(nil),     // 17: gitpod.v1.ListIntegrationDefinitionsRequest
-	(*ListIntegrationDefinitionsResponse)(nil),    // 18: gitpod.v1.ListIntegrationDefinitionsResponse
-	(*CreateIntegrationRequest)(nil),              // 19: gitpod.v1.CreateIntegrationRequest
-	(*CreateIntegrationResponse)(nil),             // 20: gitpod.v1.CreateIntegrationResponse
-	(*GetIntegrationRequest)(nil),                 // 21: gitpod.v1.GetIntegrationRequest
-	(*GetIntegrationResponse)(nil),                // 22: gitpod.v1.GetIntegrationResponse
-	(*UpdateIntegrationRequest)(nil),              // 23: gitpod.v1.UpdateIntegrationRequest
-	(*UpdateIntegrationResponse)(nil),             // 24: gitpod.v1.UpdateIntegrationResponse
-	(*DeleteIntegrationRequest)(nil),              // 25: gitpod.v1.DeleteIntegrationRequest
-	(*DeleteIntegrationResponse)(nil),             // 26: gitpod.v1.DeleteIntegrationResponse
-	(*ListIntegrationsRequest)(nil),               // 27: gitpod.v1.ListIntegrationsRequest
-	(*ListIntegrationsResponse)(nil),              // 28: gitpod.v1.ListIntegrationsResponse
-	(*CreateIntegrationDefinitionRequest)(nil),    // 29: gitpod.v1.CreateIntegrationDefinitionRequest
-	(*CreateIntegrationDefinitionResponse)(nil),   // 30: gitpod.v1.CreateIntegrationDefinitionResponse
-	(*GetIntegrationDefinitionRequest)(nil),       // 31: gitpod.v1.GetIntegrationDefinitionRequest
-	(*GetIntegrationDefinitionResponse)(nil),      // 32: gitpod.v1.GetIntegrationDefinitionResponse
-	(*UpdateIntegrationDefinitionRequest)(nil),    // 33: gitpod.v1.UpdateIntegrationDefinitionRequest
-	(*UpdateIntegrationDefinitionResponse)(nil),   // 34: gitpod.v1.UpdateIntegrationDefinitionResponse
-	(*DeleteIntegrationDefinitionRequest)(nil),    // 35: gitpod.v1.DeleteIntegrationDefinitionRequest
-	(*DeleteIntegrationDefinitionResponse)(nil),   // 36: gitpod.v1.DeleteIntegrationDefinitionResponse
-	(*ValidateIntegrationRequest)(nil),            // 37: gitpod.v1.ValidateIntegrationRequest
-	(*ValidateIntegrationResponse)(nil),           // 38: gitpod.v1.ValidateIntegrationResponse
-	(*ValidationCheck)(nil),                       // 39: gitpod.v1.ValidationCheck
-	(*StartCodexDeviceLoginRequest)(nil),          // 40: gitpod.v1.StartCodexDeviceLoginRequest
-	(*StartCodexDeviceLoginResponse)(nil),         // 41: gitpod.v1.StartCodexDeviceLoginResponse
-	(*CompleteCodexDeviceLoginRequest)(nil),       // 42: gitpod.v1.CompleteCodexDeviceLoginRequest
-	(*CompleteCodexDeviceLoginResponse)(nil),      // 43: gitpod.v1.CompleteCodexDeviceLoginResponse
-	nil,                                           // 44: gitpod.v1.IntegrationOAuthConfig.AuthParamsEntry
-	nil,                                           // 45: gitpod.v1.IntegrationProprietaryAppConfig.AuthParamsEntry
-	(*PaginationRequest)(nil),                     // 46: gitpod.v1.PaginationRequest
-	(*PaginationResponse)(nil),                    // 47: gitpod.v1.PaginationResponse
-	(*timestamppb.Timestamp)(nil),                 // 48: google.protobuf.Timestamp
+	(*IntegrationDefinition)(nil),                 // 2: gitpod.v1.IntegrationDefinition
+	(*IntegrationCapabilities)(nil),               // 3: gitpod.v1.IntegrationCapabilities
+	(*IntegrationMCPCapability)(nil),              // 4: gitpod.v1.IntegrationMCPCapability
+	(*IntegrationContextParsingCapability)(nil),   // 5: gitpod.v1.IntegrationContextParsingCapability
+	(*IntegrationSourceCodeAccessCapability)(nil), // 6: gitpod.v1.IntegrationSourceCodeAccessCapability
+	(*IntegrationLoginCapability)(nil),            // 7: gitpod.v1.IntegrationLoginCapability
+	(*IntegrationAgentClientCapability)(nil),      // 8: gitpod.v1.IntegrationAgentClientCapability
+	(*IntegrationScmPrEventsCapability)(nil),      // 9: gitpod.v1.IntegrationScmPrEventsCapability
+	(*IntegrationAuthentication)(nil),             // 10: gitpod.v1.IntegrationAuthentication
+	(*IntegrationAPIKeyConfig)(nil),               // 11: gitpod.v1.IntegrationAPIKeyConfig
+	(*IntegrationOAuthConfig)(nil),                // 12: gitpod.v1.IntegrationOAuthConfig
+	(*IntegrationProprietaryAppConfig)(nil),       // 13: gitpod.v1.IntegrationProprietaryAppConfig
+	(*Integration)(nil),                           // 14: gitpod.v1.Integration
+	(*IntegrationExternalInstallation)(nil),       // 15: gitpod.v1.IntegrationExternalInstallation
+	(*ListIntegrationDefinitionsRequest)(nil),     // 16: gitpod.v1.ListIntegrationDefinitionsRequest
+	(*ListIntegrationDefinitionsResponse)(nil),    // 17: gitpod.v1.ListIntegrationDefinitionsResponse
+	(*CreateIntegrationRequest)(nil),              // 18: gitpod.v1.CreateIntegrationRequest
+	(*CreateIntegrationResponse)(nil),             // 19: gitpod.v1.CreateIntegrationResponse
+	(*GetIntegrationRequest)(nil),                 // 20: gitpod.v1.GetIntegrationRequest
+	(*GetIntegrationResponse)(nil),                // 21: gitpod.v1.GetIntegrationResponse
+	(*UpdateIntegrationRequest)(nil),              // 22: gitpod.v1.UpdateIntegrationRequest
+	(*UpdateIntegrationResponse)(nil),             // 23: gitpod.v1.UpdateIntegrationResponse
+	(*DeleteIntegrationRequest)(nil),              // 24: gitpod.v1.DeleteIntegrationRequest
+	(*DeleteIntegrationResponse)(nil),             // 25: gitpod.v1.DeleteIntegrationResponse
+	(*ListIntegrationsRequest)(nil),               // 26: gitpod.v1.ListIntegrationsRequest
+	(*ListIntegrationsResponse)(nil),              // 27: gitpod.v1.ListIntegrationsResponse
+	(*GetIntegrationDefinitionRequest)(nil),       // 28: gitpod.v1.GetIntegrationDefinitionRequest
+	(*GetIntegrationDefinitionResponse)(nil),      // 29: gitpod.v1.GetIntegrationDefinitionResponse
+	(*ValidateIntegrationRequest)(nil),            // 30: gitpod.v1.ValidateIntegrationRequest
+	(*ValidateIntegrationResponse)(nil),           // 31: gitpod.v1.ValidateIntegrationResponse
+	(*ValidationCheck)(nil),                       // 32: gitpod.v1.ValidationCheck
+	nil,                                           // 33: gitpod.v1.IntegrationOAuthConfig.AuthParamsEntry
+	nil,                                           // 34: gitpod.v1.IntegrationProprietaryAppConfig.AuthParamsEntry
+	(*PaginationRequest)(nil),                     // 35: gitpod.v1.PaginationRequest
+	(*PaginationResponse)(nil),                    // 36: gitpod.v1.PaginationResponse
 }
 var file_gitpod_v1_integration_proto_depIdxs = []int32{
-	4,  // 0: gitpod.v1.IntegrationDefinition.capabilities:type_name -> gitpod.v1.IntegrationCapabilities
-	11, // 1: gitpod.v1.IntegrationDefinition.auth:type_name -> gitpod.v1.IntegrationAuthentication
+	3,  // 0: gitpod.v1.IntegrationDefinition.capabilities:type_name -> gitpod.v1.IntegrationCapabilities
+	10, // 1: gitpod.v1.IntegrationDefinition.auth:type_name -> gitpod.v1.IntegrationAuthentication
 	0,  // 2: gitpod.v1.IntegrationDefinition.categories:type_name -> gitpod.v1.IntegrationCategory
-	5,  // 3: gitpod.v1.IntegrationCapabilities.mcp:type_name -> gitpod.v1.IntegrationMCPCapability
-	6,  // 4: gitpod.v1.IntegrationCapabilities.context_parsing:type_name -> gitpod.v1.IntegrationContextParsingCapability
-	7,  // 5: gitpod.v1.IntegrationCapabilities.source_code_access:type_name -> gitpod.v1.IntegrationSourceCodeAccessCapability
-	8,  // 6: gitpod.v1.IntegrationCapabilities.login:type_name -> gitpod.v1.IntegrationLoginCapability
-	9,  // 7: gitpod.v1.IntegrationCapabilities.agent_client:type_name -> gitpod.v1.IntegrationAgentClientCapability
-	10, // 8: gitpod.v1.IntegrationCapabilities.scm_pr_events:type_name -> gitpod.v1.IntegrationScmPrEventsCapability
-	12, // 9: gitpod.v1.IntegrationAuthentication.api_key:type_name -> gitpod.v1.IntegrationAPIKeyConfig
-	13, // 10: gitpod.v1.IntegrationAuthentication.oauth:type_name -> gitpod.v1.IntegrationOAuthConfig
-	14, // 11: gitpod.v1.IntegrationAuthentication.proprietary_app:type_name -> gitpod.v1.IntegrationProprietaryAppConfig
-	44, // 12: gitpod.v1.IntegrationOAuthConfig.auth_params:type_name -> gitpod.v1.IntegrationOAuthConfig.AuthParamsEntry
-	45, // 13: gitpod.v1.IntegrationProprietaryAppConfig.auth_params:type_name -> gitpod.v1.IntegrationProprietaryAppConfig.AuthParamsEntry
-	4,  // 14: gitpod.v1.Integration.capabilities:type_name -> gitpod.v1.IntegrationCapabilities
-	11, // 15: gitpod.v1.Integration.auth:type_name -> gitpod.v1.IntegrationAuthentication
+	4,  // 3: gitpod.v1.IntegrationCapabilities.mcp:type_name -> gitpod.v1.IntegrationMCPCapability
+	5,  // 4: gitpod.v1.IntegrationCapabilities.context_parsing:type_name -> gitpod.v1.IntegrationContextParsingCapability
+	6,  // 5: gitpod.v1.IntegrationCapabilities.source_code_access:type_name -> gitpod.v1.IntegrationSourceCodeAccessCapability
+	7,  // 6: gitpod.v1.IntegrationCapabilities.login:type_name -> gitpod.v1.IntegrationLoginCapability
+	8,  // 7: gitpod.v1.IntegrationCapabilities.agent_client:type_name -> gitpod.v1.IntegrationAgentClientCapability
+	9,  // 8: gitpod.v1.IntegrationCapabilities.scm_pr_events:type_name -> gitpod.v1.IntegrationScmPrEventsCapability
+	11, // 9: gitpod.v1.IntegrationAuthentication.api_key:type_name -> gitpod.v1.IntegrationAPIKeyConfig
+	12, // 10: gitpod.v1.IntegrationAuthentication.oauth:type_name -> gitpod.v1.IntegrationOAuthConfig
+	13, // 11: gitpod.v1.IntegrationAuthentication.proprietary_app:type_name -> gitpod.v1.IntegrationProprietaryAppConfig
+	33, // 12: gitpod.v1.IntegrationOAuthConfig.auth_params:type_name -> gitpod.v1.IntegrationOAuthConfig.AuthParamsEntry
+	34, // 13: gitpod.v1.IntegrationProprietaryAppConfig.auth_params:type_name -> gitpod.v1.IntegrationProprietaryAppConfig.AuthParamsEntry
+	3,  // 14: gitpod.v1.Integration.capabilities:type_name -> gitpod.v1.IntegrationCapabilities
+	10, // 15: gitpod.v1.Integration.auth:type_name -> gitpod.v1.IntegrationAuthentication
 	0,  // 16: gitpod.v1.Integration.categories:type_name -> gitpod.v1.IntegrationCategory
-	16, // 17: gitpod.v1.Integration.external_installation:type_name -> gitpod.v1.IntegrationExternalInstallation
-	46, // 18: gitpod.v1.ListIntegrationDefinitionsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	47, // 19: gitpod.v1.ListIntegrationDefinitionsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	3,  // 20: gitpod.v1.ListIntegrationDefinitionsResponse.definitions:type_name -> gitpod.v1.IntegrationDefinition
-	4,  // 21: gitpod.v1.CreateIntegrationRequest.capabilities:type_name -> gitpod.v1.IntegrationCapabilities
-	11, // 22: gitpod.v1.CreateIntegrationRequest.auth:type_name -> gitpod.v1.IntegrationAuthentication
+	15, // 17: gitpod.v1.Integration.external_installation:type_name -> gitpod.v1.IntegrationExternalInstallation
+	35, // 18: gitpod.v1.ListIntegrationDefinitionsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	36, // 19: gitpod.v1.ListIntegrationDefinitionsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	2,  // 20: gitpod.v1.ListIntegrationDefinitionsResponse.definitions:type_name -> gitpod.v1.IntegrationDefinition
+	3,  // 21: gitpod.v1.CreateIntegrationRequest.capabilities:type_name -> gitpod.v1.IntegrationCapabilities
+	10, // 22: gitpod.v1.CreateIntegrationRequest.auth:type_name -> gitpod.v1.IntegrationAuthentication
 	0,  // 23: gitpod.v1.CreateIntegrationRequest.categories:type_name -> gitpod.v1.IntegrationCategory
-	15, // 24: gitpod.v1.CreateIntegrationResponse.integration:type_name -> gitpod.v1.Integration
-	15, // 25: gitpod.v1.GetIntegrationResponse.integration:type_name -> gitpod.v1.Integration
-	4,  // 26: gitpod.v1.UpdateIntegrationRequest.capabilities:type_name -> gitpod.v1.IntegrationCapabilities
-	11, // 27: gitpod.v1.UpdateIntegrationRequest.auth:type_name -> gitpod.v1.IntegrationAuthentication
+	14, // 24: gitpod.v1.CreateIntegrationResponse.integration:type_name -> gitpod.v1.Integration
+	14, // 25: gitpod.v1.GetIntegrationResponse.integration:type_name -> gitpod.v1.Integration
+	3,  // 26: gitpod.v1.UpdateIntegrationRequest.capabilities:type_name -> gitpod.v1.IntegrationCapabilities
+	10, // 27: gitpod.v1.UpdateIntegrationRequest.auth:type_name -> gitpod.v1.IntegrationAuthentication
 	0,  // 28: gitpod.v1.UpdateIntegrationRequest.categories:type_name -> gitpod.v1.IntegrationCategory
-	15, // 29: gitpod.v1.UpdateIntegrationResponse.integration:type_name -> gitpod.v1.Integration
-	46, // 30: gitpod.v1.ListIntegrationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
-	47, // 31: gitpod.v1.ListIntegrationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
-	15, // 32: gitpod.v1.ListIntegrationsResponse.integrations:type_name -> gitpod.v1.Integration
-	4,  // 33: gitpod.v1.CreateIntegrationDefinitionRequest.capabilities:type_name -> gitpod.v1.IntegrationCapabilities
-	11, // 34: gitpod.v1.CreateIntegrationDefinitionRequest.auth:type_name -> gitpod.v1.IntegrationAuthentication
-	0,  // 35: gitpod.v1.CreateIntegrationDefinitionRequest.categories:type_name -> gitpod.v1.IntegrationCategory
-	3,  // 36: gitpod.v1.CreateIntegrationDefinitionResponse.definition:type_name -> gitpod.v1.IntegrationDefinition
-	3,  // 37: gitpod.v1.GetIntegrationDefinitionResponse.definition:type_name -> gitpod.v1.IntegrationDefinition
-	4,  // 38: gitpod.v1.UpdateIntegrationDefinitionRequest.capabilities:type_name -> gitpod.v1.IntegrationCapabilities
-	11, // 39: gitpod.v1.UpdateIntegrationDefinitionRequest.auth:type_name -> gitpod.v1.IntegrationAuthentication
-	0,  // 40: gitpod.v1.UpdateIntegrationDefinitionRequest.categories:type_name -> gitpod.v1.IntegrationCategory
-	3,  // 41: gitpod.v1.UpdateIntegrationDefinitionResponse.definition:type_name -> gitpod.v1.IntegrationDefinition
-	39, // 42: gitpod.v1.ValidateIntegrationResponse.checks:type_name -> gitpod.v1.ValidationCheck
-	1,  // 43: gitpod.v1.ValidationCheck.check:type_name -> gitpod.v1.ValidationCheck.Check
-	48, // 44: gitpod.v1.StartCodexDeviceLoginResponse.expires_at:type_name -> google.protobuf.Timestamp
-	2,  // 45: gitpod.v1.CompleteCodexDeviceLoginResponse.status:type_name -> gitpod.v1.CompleteCodexDeviceLoginResponse.Status
-	17, // 46: gitpod.v1.IntegrationService.ListIntegrationDefinitions:input_type -> gitpod.v1.ListIntegrationDefinitionsRequest
-	29, // 47: gitpod.v1.IntegrationService.CreateIntegrationDefinition:input_type -> gitpod.v1.CreateIntegrationDefinitionRequest
-	31, // 48: gitpod.v1.IntegrationService.GetIntegrationDefinition:input_type -> gitpod.v1.GetIntegrationDefinitionRequest
-	33, // 49: gitpod.v1.IntegrationService.UpdateIntegrationDefinition:input_type -> gitpod.v1.UpdateIntegrationDefinitionRequest
-	35, // 50: gitpod.v1.IntegrationService.DeleteIntegrationDefinition:input_type -> gitpod.v1.DeleteIntegrationDefinitionRequest
-	19, // 51: gitpod.v1.IntegrationService.CreateIntegration:input_type -> gitpod.v1.CreateIntegrationRequest
-	21, // 52: gitpod.v1.IntegrationService.GetIntegration:input_type -> gitpod.v1.GetIntegrationRequest
-	23, // 53: gitpod.v1.IntegrationService.UpdateIntegration:input_type -> gitpod.v1.UpdateIntegrationRequest
-	25, // 54: gitpod.v1.IntegrationService.DeleteIntegration:input_type -> gitpod.v1.DeleteIntegrationRequest
-	27, // 55: gitpod.v1.IntegrationService.ListIntegrations:input_type -> gitpod.v1.ListIntegrationsRequest
-	37, // 56: gitpod.v1.IntegrationService.ValidateIntegration:input_type -> gitpod.v1.ValidateIntegrationRequest
-	40, // 57: gitpod.v1.IntegrationService.StartCodexDeviceLogin:input_type -> gitpod.v1.StartCodexDeviceLoginRequest
-	42, // 58: gitpod.v1.IntegrationService.CompleteCodexDeviceLogin:input_type -> gitpod.v1.CompleteCodexDeviceLoginRequest
-	18, // 59: gitpod.v1.IntegrationService.ListIntegrationDefinitions:output_type -> gitpod.v1.ListIntegrationDefinitionsResponse
-	30, // 60: gitpod.v1.IntegrationService.CreateIntegrationDefinition:output_type -> gitpod.v1.CreateIntegrationDefinitionResponse
-	32, // 61: gitpod.v1.IntegrationService.GetIntegrationDefinition:output_type -> gitpod.v1.GetIntegrationDefinitionResponse
-	34, // 62: gitpod.v1.IntegrationService.UpdateIntegrationDefinition:output_type -> gitpod.v1.UpdateIntegrationDefinitionResponse
-	36, // 63: gitpod.v1.IntegrationService.DeleteIntegrationDefinition:output_type -> gitpod.v1.DeleteIntegrationDefinitionResponse
-	20, // 64: gitpod.v1.IntegrationService.CreateIntegration:output_type -> gitpod.v1.CreateIntegrationResponse
-	22, // 65: gitpod.v1.IntegrationService.GetIntegration:output_type -> gitpod.v1.GetIntegrationResponse
-	24, // 66: gitpod.v1.IntegrationService.UpdateIntegration:output_type -> gitpod.v1.UpdateIntegrationResponse
-	26, // 67: gitpod.v1.IntegrationService.DeleteIntegration:output_type -> gitpod.v1.DeleteIntegrationResponse
-	28, // 68: gitpod.v1.IntegrationService.ListIntegrations:output_type -> gitpod.v1.ListIntegrationsResponse
-	38, // 69: gitpod.v1.IntegrationService.ValidateIntegration:output_type -> gitpod.v1.ValidateIntegrationResponse
-	41, // 70: gitpod.v1.IntegrationService.StartCodexDeviceLogin:output_type -> gitpod.v1.StartCodexDeviceLoginResponse
-	43, // 71: gitpod.v1.IntegrationService.CompleteCodexDeviceLogin:output_type -> gitpod.v1.CompleteCodexDeviceLoginResponse
-	59, // [59:72] is the sub-list for method output_type
-	46, // [46:59] is the sub-list for method input_type
-	46, // [46:46] is the sub-list for extension type_name
-	46, // [46:46] is the sub-list for extension extendee
-	0,  // [0:46] is the sub-list for field type_name
+	14, // 29: gitpod.v1.UpdateIntegrationResponse.integration:type_name -> gitpod.v1.Integration
+	35, // 30: gitpod.v1.ListIntegrationsRequest.pagination:type_name -> gitpod.v1.PaginationRequest
+	36, // 31: gitpod.v1.ListIntegrationsResponse.pagination:type_name -> gitpod.v1.PaginationResponse
+	14, // 32: gitpod.v1.ListIntegrationsResponse.integrations:type_name -> gitpod.v1.Integration
+	2,  // 33: gitpod.v1.GetIntegrationDefinitionResponse.definition:type_name -> gitpod.v1.IntegrationDefinition
+	32, // 34: gitpod.v1.ValidateIntegrationResponse.checks:type_name -> gitpod.v1.ValidationCheck
+	1,  // 35: gitpod.v1.ValidationCheck.check:type_name -> gitpod.v1.ValidationCheck.Check
+	16, // 36: gitpod.v1.IntegrationService.ListIntegrationDefinitions:input_type -> gitpod.v1.ListIntegrationDefinitionsRequest
+	28, // 37: gitpod.v1.IntegrationService.GetIntegrationDefinition:input_type -> gitpod.v1.GetIntegrationDefinitionRequest
+	18, // 38: gitpod.v1.IntegrationService.CreateIntegration:input_type -> gitpod.v1.CreateIntegrationRequest
+	20, // 39: gitpod.v1.IntegrationService.GetIntegration:input_type -> gitpod.v1.GetIntegrationRequest
+	22, // 40: gitpod.v1.IntegrationService.UpdateIntegration:input_type -> gitpod.v1.UpdateIntegrationRequest
+	24, // 41: gitpod.v1.IntegrationService.DeleteIntegration:input_type -> gitpod.v1.DeleteIntegrationRequest
+	26, // 42: gitpod.v1.IntegrationService.ListIntegrations:input_type -> gitpod.v1.ListIntegrationsRequest
+	30, // 43: gitpod.v1.IntegrationService.ValidateIntegration:input_type -> gitpod.v1.ValidateIntegrationRequest
+	17, // 44: gitpod.v1.IntegrationService.ListIntegrationDefinitions:output_type -> gitpod.v1.ListIntegrationDefinitionsResponse
+	29, // 45: gitpod.v1.IntegrationService.GetIntegrationDefinition:output_type -> gitpod.v1.GetIntegrationDefinitionResponse
+	19, // 46: gitpod.v1.IntegrationService.CreateIntegration:output_type -> gitpod.v1.CreateIntegrationResponse
+	21, // 47: gitpod.v1.IntegrationService.GetIntegration:output_type -> gitpod.v1.GetIntegrationResponse
+	23, // 48: gitpod.v1.IntegrationService.UpdateIntegration:output_type -> gitpod.v1.UpdateIntegrationResponse
+	25, // 49: gitpod.v1.IntegrationService.DeleteIntegration:output_type -> gitpod.v1.DeleteIntegrationResponse
+	27, // 50: gitpod.v1.IntegrationService.ListIntegrations:output_type -> gitpod.v1.ListIntegrationsResponse
+	31, // 51: gitpod.v1.IntegrationService.ValidateIntegration:output_type -> gitpod.v1.ValidateIntegrationResponse
+	44, // [44:52] is the sub-list for method output_type
+	36, // [36:44] is the sub-list for method input_type
+	36, // [36:36] is the sub-list for extension type_name
+	36, // [36:36] is the sub-list for extension extendee
+	0,  // [0:36] is the sub-list for field type_name
 }
 
 func init() { file_gitpod_v1_integration_proto_init() }
@@ -3213,14 +2437,13 @@ func file_gitpod_v1_integration_proto_init() {
 	file_gitpod_v1_pagination_proto_init()
 	file_gitpod_v1_integration_proto_msgTypes[12].OneofWrappers = []any{}
 	file_gitpod_v1_integration_proto_msgTypes[20].OneofWrappers = []any{}
-	file_gitpod_v1_integration_proto_msgTypes[30].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gitpod_v1_integration_proto_rawDesc), len(file_gitpod_v1_integration_proto_rawDesc)),
-			NumEnums:      3,
-			NumMessages:   43,
+			NumEnums:      2,
+			NumMessages:   33,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
