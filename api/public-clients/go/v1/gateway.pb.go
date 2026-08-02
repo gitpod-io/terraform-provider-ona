@@ -8,7 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -190,7 +189,7 @@ var File_gitpod_v1_gateway_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_gateway_proto_rawDesc = "" +
 	"\n" +
-	"\x17gitpod/v1/gateway.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x1agitpod/v1/pagination.proto\"S\n" +
+	"\x17gitpod/v1/gateway.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1agitpod/v1/pagination.proto\"S\n" +
 	"\x13ListGatewaysRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
@@ -203,11 +202,9 @@ const file_gitpod_v1_gateway_proto_rawDesc = "" +
 	"\aGateway\x12\x1a\n" +
 	"\x04name\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x04name\x12\x18\n" +
 	"\x03url\x18\x02 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x03url\x12\x16\n" +
-	"\x06region\x18\x03 \x01(\tR\x06region2\x80\x01\n" +
-	"\x0eGatewayService\x12^\n" +
-	"\fListGateways\x12\x1e.gitpod.v1.ListGatewaysRequest\x1a\x1f.gitpod.v1.ListGatewaysResponse\"\r\xb2\xab\x1e\x06\x12\x04list\x90\x02\x01\x1a\x0e\xaa\xab\x1e\n" +
-	"\n" +
-	"\bgatewaysB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x06region\x18\x03 \x01(\tR\x06region2f\n" +
+	"\x0eGatewayService\x12T\n" +
+	"\fListGateways\x12\x1e.gitpod.v1.ListGatewaysRequest\x1a\x1f.gitpod.v1.ListGatewaysResponse\"\x03\x90\x02\x01B'Z%github.com/gitpod-io/gitpod-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_gateway_proto_rawDescOnce sync.Once
