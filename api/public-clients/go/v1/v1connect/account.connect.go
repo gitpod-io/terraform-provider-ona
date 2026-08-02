@@ -51,18 +51,12 @@ const (
 	// AccountServiceListJoinableOrganizationsProcedure is the fully-qualified name of the
 	// AccountService's ListJoinableOrganizations RPC.
 	AccountServiceListJoinableOrganizationsProcedure = "/gitpod.v1.AccountService/ListJoinableOrganizations"
-	// AccountServiceCreateMagicLinkProcedure is the fully-qualified name of the AccountService's
-	// CreateMagicLink RPC.
-	AccountServiceCreateMagicLinkProcedure = "/gitpod.v1.AccountService/CreateMagicLink"
 	// AccountServiceBlockAccountProcedure is the fully-qualified name of the AccountService's
 	// BlockAccount RPC.
 	AccountServiceBlockAccountProcedure = "/gitpod.v1.AccountService/BlockAccount"
 	// AccountServiceUnblockAccountProcedure is the fully-qualified name of the AccountService's
 	// UnblockAccount RPC.
 	AccountServiceUnblockAccountProcedure = "/gitpod.v1.AccountService/UnblockAccount"
-	// AccountServiceGetChatIdentityTokenProcedure is the fully-qualified name of the AccountService's
-	// GetChatIdentityToken RPC.
-	AccountServiceGetChatIdentityTokenProcedure = "/gitpod.v1.AccountService/GetChatIdentityToken"
 )
 
 // AccountServiceClient is a client for the gitpod.v1.AccountService service.
@@ -177,7 +171,6 @@ type AccountServiceClient interface {
 	//	{}
 	//	```
 	ListJoinableOrganizations(context.Context, *connect.Request[v1.ListJoinableOrganizationsRequest]) (*connect.Response[v1.ListJoinableOrganizationsResponse], error)
-	CreateMagicLink(context.Context, *connect.Request[v1.CreateMagicLinkRequest]) (*connect.Response[v1.CreateMagicLinkResponse], error)
 	// Blocks an account, preventing all API access.
 	//
 	// Use this method to:
@@ -222,25 +215,6 @@ type AccountServiceClient interface {
 	//	accountId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
 	//	```
 	UnblockAccount(context.Context, *connect.Request[v1.UnblockAccountRequest]) (*connect.Response[v1.UnblockAccountResponse], error)
-	// Gets the chat identity token for the currently authenticated account.
-	//
-	// Use this method to:
-	// - Obtain a verification hash for in-app chat identity verification
-	// - Secure chat sessions against impersonation
-	//
-	// The returned hash is an HMAC-SHA256 signature of the account's email,
-	// used by the chat widget to verify user identity.
-	//
-	// ### Examples
-	//
-	// - Get chat identity token:
-	//
-	//	Retrieves the identity verification hash for the authenticated account.
-	//
-	//	```yaml
-	//	{}
-	//	```
-	GetChatIdentityToken(context.Context, *connect.Request[v1.GetChatIdentityTokenRequest]) (*connect.Response[v1.GetChatIdentityTokenResponse], error)
 }
 
 // NewAccountServiceClient constructs a client for the gitpod.v1.AccountService service. By default,
@@ -295,12 +269,6 @@ func NewAccountServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
-		createMagicLink: connect.NewClient[v1.CreateMagicLinkRequest, v1.CreateMagicLinkResponse](
-			httpClient,
-			baseURL+AccountServiceCreateMagicLinkProcedure,
-			connect.WithSchema(accountServiceMethods.ByName("CreateMagicLink")),
-			connect.WithClientOptions(opts...),
-		),
 		blockAccount: connect.NewClient[v1.BlockAccountRequest, v1.BlockAccountResponse](
 			httpClient,
 			baseURL+AccountServiceBlockAccountProcedure,
@@ -311,13 +279,6 @@ func NewAccountServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			httpClient,
 			baseURL+AccountServiceUnblockAccountProcedure,
 			connect.WithSchema(accountServiceMethods.ByName("UnblockAccount")),
-			connect.WithClientOptions(opts...),
-		),
-		getChatIdentityToken: connect.NewClient[v1.GetChatIdentityTokenRequest, v1.GetChatIdentityTokenResponse](
-			httpClient,
-			baseURL+AccountServiceGetChatIdentityTokenProcedure,
-			connect.WithSchema(accountServiceMethods.ByName("GetChatIdentityToken")),
-			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -331,10 +292,8 @@ type accountServiceClient struct {
 	listSSOLogins             *connect.Client[v1.ListSSOLoginsRequest, v1.ListSSOLoginsResponse]
 	listLoginProviders        *connect.Client[v1.ListLoginProvidersRequest, v1.ListLoginProvidersResponse]
 	listJoinableOrganizations *connect.Client[v1.ListJoinableOrganizationsRequest, v1.ListJoinableOrganizationsResponse]
-	createMagicLink           *connect.Client[v1.CreateMagicLinkRequest, v1.CreateMagicLinkResponse]
 	blockAccount              *connect.Client[v1.BlockAccountRequest, v1.BlockAccountResponse]
 	unblockAccount            *connect.Client[v1.UnblockAccountRequest, v1.UnblockAccountResponse]
-	getChatIdentityToken      *connect.Client[v1.GetChatIdentityTokenRequest, v1.GetChatIdentityTokenResponse]
 }
 
 // GetAccount calls gitpod.v1.AccountService.GetAccount.
@@ -367,11 +326,6 @@ func (c *accountServiceClient) ListJoinableOrganizations(ctx context.Context, re
 	return c.listJoinableOrganizations.CallUnary(ctx, req)
 }
 
-// CreateMagicLink calls gitpod.v1.AccountService.CreateMagicLink.
-func (c *accountServiceClient) CreateMagicLink(ctx context.Context, req *connect.Request[v1.CreateMagicLinkRequest]) (*connect.Response[v1.CreateMagicLinkResponse], error) {
-	return c.createMagicLink.CallUnary(ctx, req)
-}
-
 // BlockAccount calls gitpod.v1.AccountService.BlockAccount.
 func (c *accountServiceClient) BlockAccount(ctx context.Context, req *connect.Request[v1.BlockAccountRequest]) (*connect.Response[v1.BlockAccountResponse], error) {
 	return c.blockAccount.CallUnary(ctx, req)
@@ -380,11 +334,6 @@ func (c *accountServiceClient) BlockAccount(ctx context.Context, req *connect.Re
 // UnblockAccount calls gitpod.v1.AccountService.UnblockAccount.
 func (c *accountServiceClient) UnblockAccount(ctx context.Context, req *connect.Request[v1.UnblockAccountRequest]) (*connect.Response[v1.UnblockAccountResponse], error) {
 	return c.unblockAccount.CallUnary(ctx, req)
-}
-
-// GetChatIdentityToken calls gitpod.v1.AccountService.GetChatIdentityToken.
-func (c *accountServiceClient) GetChatIdentityToken(ctx context.Context, req *connect.Request[v1.GetChatIdentityTokenRequest]) (*connect.Response[v1.GetChatIdentityTokenResponse], error) {
-	return c.getChatIdentityToken.CallUnary(ctx, req)
 }
 
 // AccountServiceHandler is an implementation of the gitpod.v1.AccountService service.
@@ -499,7 +448,6 @@ type AccountServiceHandler interface {
 	//	{}
 	//	```
 	ListJoinableOrganizations(context.Context, *connect.Request[v1.ListJoinableOrganizationsRequest]) (*connect.Response[v1.ListJoinableOrganizationsResponse], error)
-	CreateMagicLink(context.Context, *connect.Request[v1.CreateMagicLinkRequest]) (*connect.Response[v1.CreateMagicLinkResponse], error)
 	// Blocks an account, preventing all API access.
 	//
 	// Use this method to:
@@ -544,25 +492,6 @@ type AccountServiceHandler interface {
 	//	accountId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
 	//	```
 	UnblockAccount(context.Context, *connect.Request[v1.UnblockAccountRequest]) (*connect.Response[v1.UnblockAccountResponse], error)
-	// Gets the chat identity token for the currently authenticated account.
-	//
-	// Use this method to:
-	// - Obtain a verification hash for in-app chat identity verification
-	// - Secure chat sessions against impersonation
-	//
-	// The returned hash is an HMAC-SHA256 signature of the account's email,
-	// used by the chat widget to verify user identity.
-	//
-	// ### Examples
-	//
-	// - Get chat identity token:
-	//
-	//	Retrieves the identity verification hash for the authenticated account.
-	//
-	//	```yaml
-	//	{}
-	//	```
-	GetChatIdentityToken(context.Context, *connect.Request[v1.GetChatIdentityTokenRequest]) (*connect.Response[v1.GetChatIdentityTokenResponse], error)
 }
 
 // NewAccountServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -613,12 +542,6 @@ func NewAccountServiceHandler(svc AccountServiceHandler, opts ...connect.Handler
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
-	accountServiceCreateMagicLinkHandler := connect.NewUnaryHandler(
-		AccountServiceCreateMagicLinkProcedure,
-		svc.CreateMagicLink,
-		connect.WithSchema(accountServiceMethods.ByName("CreateMagicLink")),
-		connect.WithHandlerOptions(opts...),
-	)
 	accountServiceBlockAccountHandler := connect.NewUnaryHandler(
 		AccountServiceBlockAccountProcedure,
 		svc.BlockAccount,
@@ -629,13 +552,6 @@ func NewAccountServiceHandler(svc AccountServiceHandler, opts ...connect.Handler
 		AccountServiceUnblockAccountProcedure,
 		svc.UnblockAccount,
 		connect.WithSchema(accountServiceMethods.ByName("UnblockAccount")),
-		connect.WithHandlerOptions(opts...),
-	)
-	accountServiceGetChatIdentityTokenHandler := connect.NewUnaryHandler(
-		AccountServiceGetChatIdentityTokenProcedure,
-		svc.GetChatIdentityToken,
-		connect.WithSchema(accountServiceMethods.ByName("GetChatIdentityToken")),
-		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/gitpod.v1.AccountService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -652,14 +568,10 @@ func NewAccountServiceHandler(svc AccountServiceHandler, opts ...connect.Handler
 			accountServiceListLoginProvidersHandler.ServeHTTP(w, r)
 		case AccountServiceListJoinableOrganizationsProcedure:
 			accountServiceListJoinableOrganizationsHandler.ServeHTTP(w, r)
-		case AccountServiceCreateMagicLinkProcedure:
-			accountServiceCreateMagicLinkHandler.ServeHTTP(w, r)
 		case AccountServiceBlockAccountProcedure:
 			accountServiceBlockAccountHandler.ServeHTTP(w, r)
 		case AccountServiceUnblockAccountProcedure:
 			accountServiceUnblockAccountHandler.ServeHTTP(w, r)
-		case AccountServiceGetChatIdentityTokenProcedure:
-			accountServiceGetChatIdentityTokenHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -693,18 +605,10 @@ func (UnimplementedAccountServiceHandler) ListJoinableOrganizations(context.Cont
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AccountService.ListJoinableOrganizations is not implemented"))
 }
 
-func (UnimplementedAccountServiceHandler) CreateMagicLink(context.Context, *connect.Request[v1.CreateMagicLinkRequest]) (*connect.Response[v1.CreateMagicLinkResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AccountService.CreateMagicLink is not implemented"))
-}
-
 func (UnimplementedAccountServiceHandler) BlockAccount(context.Context, *connect.Request[v1.BlockAccountRequest]) (*connect.Response[v1.BlockAccountResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AccountService.BlockAccount is not implemented"))
 }
 
 func (UnimplementedAccountServiceHandler) UnblockAccount(context.Context, *connect.Request[v1.UnblockAccountRequest]) (*connect.Response[v1.UnblockAccountResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AccountService.UnblockAccount is not implemented"))
-}
-
-func (UnimplementedAccountServiceHandler) GetChatIdentityToken(context.Context, *connect.Request[v1.GetChatIdentityTokenRequest]) (*connect.Response[v1.GetChatIdentityTokenResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.AccountService.GetChatIdentityToken is not implemented"))
 }
