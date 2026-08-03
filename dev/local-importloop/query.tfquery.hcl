@@ -105,3 +105,8 @@ list "ona_service_account" "all" {
   provider         = ona
   include_resource = true
 }
+
+list "ona_skill" "all" {
+  provider         = ona
+  include_resource = true
+}

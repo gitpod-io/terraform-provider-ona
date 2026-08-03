@@ -19,6 +19,7 @@ import (
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/secret"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/security"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/serviceaccount"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/skill"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/user"
 	warmpool "github.com/gitpod-io/terraform-provider-ona/internal/provider/warm_pool"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/webhook"
@@ -158,6 +159,7 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		secret.NewResource,
 		security.NewPolicyResource,
 		serviceaccount.NewResource,
+		skill.NewResource,
 		warmpool.NewWarmPoolResource,
 		webhook.NewResource,
 		workflow.NewResource,
@@ -195,6 +197,7 @@ func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResou
 		security.NewPolicyListResource,
 		secret.NewListResource,
 		serviceaccount.NewListResource,
+		skill.NewListResource,
 		warmpool.NewWarmPoolListResource,
 	}
 }
@@ -210,6 +213,7 @@ func (p *OnaProvider) DataSources(ctx context.Context) []func() datasource.DataS
 		runner.NewCollectionDataSource,
 		runner.NewSingularDataSource,
 		security.NewPolicyCollectionDataSource,
+		skill.NewDataSource,
 		user.NewUserCollectionDataSource,
 		user.NewUserDataSource,
 		warmpool.NewWarmPoolCollectionDataSource,

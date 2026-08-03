@@ -31,6 +31,36 @@ func TestProjectDataSourceIsRegistered(t *testing.T) {
 	t.Fatal("ona_project data source is not registered")
 }
 
+func TestSkillDataSourceIsRegistered(t *testing.T) {
+	t.Parallel()
+
+	provider := &OnaProvider{}
+	for _, newDataSource := range provider.DataSources(t.Context()) {
+		var resp datasource.MetadataResponse
+		newDataSource().Metadata(t.Context(), datasource.MetadataRequest{ProviderTypeName: "ona"}, &resp)
+		if resp.TypeName == "ona_skill" {
+			return
+		}
+	}
+
+	t.Fatal("ona_skill data source is not registered")
+}
+
+func TestSkillResourceIsRegistered(t *testing.T) {
+	t.Parallel()
+
+	provider := &OnaProvider{}
+	for _, newResource := range provider.Resources(t.Context()) {
+		var resp frameworkresource.MetadataResponse
+		newResource().Metadata(t.Context(), frameworkresource.MetadataRequest{ProviderTypeName: "ona"}, &resp)
+		if resp.TypeName == "ona_skill" {
+			return
+		}
+	}
+
+	t.Fatal("ona_skill resource is not registered")
+}
+
 // testAccProtoV6ProviderFactories is used to instantiate a provider during acceptance testing.
 // The factory function is called for each Terraform CLI command to create a provider
 // server that the CLI can connect to and interact with.
@@ -70,6 +100,21 @@ func TestListResourceRegistrationsAreValid(t *testing.T) {
 			t.Errorf("ListResources()[%d]() returned nil", i)
 		}
 	}
+}
+
+func TestSkillListResourceIsRegistered(t *testing.T) {
+	t.Parallel()
+
+	provider := &OnaProvider{}
+	for _, newListResource := range provider.ListResources(t.Context()) {
+		var resp frameworkresource.MetadataResponse
+		newListResource().Metadata(t.Context(), frameworkresource.MetadataRequest{ProviderTypeName: "ona"}, &resp)
+		if resp.TypeName == "ona_skill" {
+			return
+		}
+	}
+
+	t.Fatal("ona_skill list resource is not registered")
 }
 
 func TestConfigureSharesProviderDataWithListResources(t *testing.T) {

@@ -1,0 +1,55 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: "Skills"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+The configured token selects the organization and must have Prompt management permission and access to the Ona Agents feature tier.
+
+## Lifecycle behavior
+
+Changes to `name`, `description`, prompt content, and command additions or renames update the existing skill. Removing `command` replaces the skill because the Ona API cannot safely clear a stored command value.
+
+Removing the resource from configuration or running `terraform destroy` deletes the skill from Ona. Terraform accepts an already-missing skill only when the configured token is still scoped to the organization recorded in private state; changing organizations produces an error instead of deleting or recreating the skill across organizations.
+
+{{ if .HasExamples -}}
+## Example Usage
+
+{{- range .ExampleFiles }}
+
+{{ tffile . }}
+{{- end }}
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+{{- if or .HasImport .HasImportIDConfig .HasImportIdentityConfig }}
+
+## Import
+
+Import is supported using the following syntax:
+{{- end }}
+{{- if .HasImportIdentityConfig }}
+
+In Terraform v1.12.0 and later, the [`import` block](https://developer.hashicorp.com/terraform/language/import) can use the `skill_id` resource identity:
+
+{{tffile .ImportIdentityConfigFile }}
+
+{{ .IdentitySchemaMarkdown | trimspace }}
+{{- end }}
+{{- if .HasImportIDConfig }}
+
+In Terraform v1.5.0 and later, the [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the `id` attribute, for example:
+
+{{tffile .ImportIDConfigFile }}
+{{- end }}
+{{- if .HasImport }}
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) accepts the Prompt UUID, for example:
+
+{{codefile "shell" .ImportFile }}
+{{- end }}
