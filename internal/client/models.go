@@ -4,8 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-
-	gitpod "github.com/gitpod-io/gitpod-sdk-go"
 )
 
 type APIError struct {
@@ -22,10 +20,6 @@ func (e *APIError) Error() string {
 }
 
 func IsNotFound(err error) bool {
-	var sdkErr *gitpod.Error
-	if errors.As(err, &sdkErr) {
-		return sdkErr.StatusCode == http.StatusNotFound || string(sdkErr.Code) == "not_found"
-	}
 	var apiErr *APIError
 	return errors.As(err, &apiErr) && (apiErr.StatusCode == http.StatusNotFound || apiErr.Code == "not_found")
 }

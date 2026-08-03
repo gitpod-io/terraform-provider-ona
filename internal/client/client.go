@@ -1,16 +1,18 @@
 package client
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
 	"net/url"
 	"os"
 	"strings"
 	"sync"
 
-	gitpod "github.com/gitpod-io/gitpod-sdk-go"
-	"github.com/gitpod-io/gitpod-sdk-go/option"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	providerversion "github.com/gitpod-io/terraform-provider-ona/version"
 )
@@ -30,7 +32,9 @@ type Config struct {
 type Client struct {
 	APIBaseURL string
 
-	sdk *gitpod.Client
+	httpClient *http.Client
+	token      string
+	userAgent  string
 
 	mu             sync.Mutex
 	organizationID string
@@ -41,37 +45,35 @@ func DefaultUserAgent() string {
 }
 
 func New(cfg Config) (*Client, error) {
-	sdk, apiBaseURL, err := NewSDK(cfg)
+	apiBaseURL, token, userAgent, err := resolveClientConfig(cfg)
 	if err != nil {
 		return nil, err
 	}
 	return &Client{
 		APIBaseURL: apiBaseURL,
-		sdk:        sdk,
+		httpClient: http.DefaultClient,
+		token:      token,
+		userAgent:  userAgent,
 	}, nil
 }
 
-func NewSDK(cfg Config) (*gitpod.Client, string, error) {
+func resolveClientConfig(cfg Config) (string, string, string, error) {
 	host := resolveHost(cfg.Host)
 	token := resolveToken(cfg.Token)
 	if token == "" {
-		return nil, "", ErrMissingToken
+		return "", "", "", ErrMissingToken
 	}
 
 	apiBaseURL, err := APIBaseURL(host)
 	if err != nil {
-		return nil, "", err
+		return "", "", "", err
 	}
 
 	userAgent := strings.TrimSpace(cfg.UserAgent)
 	if userAgent == "" {
 		userAgent = DefaultUserAgent()
 	}
-	return gitpod.NewClient(
-		option.WithBaseURL(apiBaseURL),
-		option.WithBearerToken(token),
-		option.WithHeader("User-Agent", userAgent),
-	), apiBaseURL, nil
+	return apiBaseURL, token, userAgent, nil
 }
 
 func NewManagementPlane(cfg Config) (*managementclient.ManagementPlane, string, error) {
@@ -232,7 +234,52 @@ func (c *Client) GetOrganizationPolicies(ctx context.Context, req GetOrganizatio
 }
 
 func (c *Client) post(ctx context.Context, path string, in any, out any) error {
-	return c.sdk.Post(ctx, strings.TrimLeft(path, "/"), in, out)
+	body, err := json.Marshal(in)
+	if err != nil {
+		return fmt.Errorf("marshal request body: %w", err)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, strings.TrimRight(c.APIBaseURL, "/")+"/"+strings.TrimLeft(path, "/"), bytes.NewReader(body))
+	if err != nil {
+		return fmt.Errorf("create request: %w", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+c.token)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	if c.userAgent != "" {
+		req.Header.Set("User-Agent", c.userAgent)
+	}
+
+	httpClient := c.httpClient
+	if httpClient == nil {
+		httpClient = http.DefaultClient
+	}
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("post %s: %w", path, err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return decodeAPIError(resp)
+	}
+	if out == nil || resp.Body == nil {
+		return nil
+	}
+	if err := json.NewDecoder(resp.Body).Decode(out); err != nil && !errors.Is(err, io.EOF) {
+		return fmt.Errorf("decode response body: %w", err)
+	}
+	return nil
+}
+
+func decodeAPIError(resp *http.Response) error {
+	apiErr := &APIError{StatusCode: resp.StatusCode}
+	if resp.Body != nil {
+		if err := json.NewDecoder(resp.Body).Decode(apiErr); err != nil && !errors.Is(err, io.EOF) {
+			return fmt.Errorf("ona api error %d: decode error body: %w", resp.StatusCode, err)
+		}
+	}
+	return apiErr
 }
 
 func APIBaseURL(host string) (string, error) {
