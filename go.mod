@@ -1,6 +1,6 @@
 module github.com/gitpod-io/terraform-provider-ona
 
-go 1.26.5
+go 1.25.12
 
 require (
 	connectrpc.com/connect v1.18.1
