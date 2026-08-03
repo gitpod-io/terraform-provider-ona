@@ -227,7 +227,7 @@ const file_gitpod_v1_actionable_error_proto_rawDesc = "" +
 	"\x05label\x18\x02 \x01(\tR\x05label\x12'\n" +
 	"\x0edashboard_path\x18\x03 \x01(\tH\x00R\rdashboardPath\x12#\n" +
 	"\fexternal_url\x18\x04 \x01(\tH\x00R\vexternalUrlB\b\n" +
-	"\x06targetB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x06targetB'Z%github.com/gitpod-io/gitpod-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_actionable_error_proto_rawDescOnce sync.Once
