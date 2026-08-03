@@ -237,7 +237,7 @@ const file_gitpod_v1_model_proto_rawDesc = "" +
 	"!LLM_INTEGRATION_PHASE_UNSPECIFIED\x10\x00\x12#\n" +
 	"\x1fLLM_INTEGRATION_PHASE_AVAILABLE\x10\x01\x12%\n" +
 	"!LLM_INTEGRATION_PHASE_UNAVAILABLE\x10\x02\x12\"\n" +
-	"\x1eLLM_INTEGRATION_PHASE_DISABLED\x10\x03B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x1eLLM_INTEGRATION_PHASE_DISABLED\x10\x03B'Z%github.com/gitpod-io/gitpod-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_model_proto_rawDescOnce sync.Once
