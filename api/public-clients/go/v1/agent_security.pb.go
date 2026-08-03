@@ -8,7 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -119,42 +118,6 @@ func (x *ReportExecEventRequest) GetTimestamp() *timestamppb.Timestamp {
 	return nil
 }
 
-type ReportExecEventResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ReportExecEventResponse) Reset() {
-	*x = ReportExecEventResponse{}
-	mi := &file_gitpod_v1_agent_security_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ReportExecEventResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReportExecEventResponse) ProtoMessage() {}
-
-func (x *ReportExecEventResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_security_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReportExecEventResponse.ProtoReflect.Descriptor instead.
-func (*ReportExecEventResponse) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_security_proto_rawDescGZIP(), []int{1}
-}
-
 // Process describes process metadata for a security event.
 //
 // PID fields use int32 to match the kernel's pid_t (signed int).
@@ -185,7 +148,7 @@ type Process struct {
 
 func (x *Process) Reset() {
 	*x = Process{}
-	mi := &file_gitpod_v1_agent_security_proto_msgTypes[2]
+	mi := &file_gitpod_v1_agent_security_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -197,7 +160,7 @@ func (x *Process) String() string {
 func (*Process) ProtoMessage() {}
 
 func (x *Process) ProtoReflect() protoreflect.Message {
-	mi := &file_gitpod_v1_agent_security_proto_msgTypes[2]
+	mi := &file_gitpod_v1_agent_security_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -210,7 +173,7 @@ func (x *Process) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Process.ProtoReflect.Descriptor instead.
 func (*Process) Descriptor() ([]byte, []int) {
-	return file_gitpod_v1_agent_security_proto_rawDescGZIP(), []int{2}
+	return file_gitpod_v1_agent_security_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Process) GetPid() int32 {
@@ -266,10 +229,9 @@ var File_gitpod_v1_agent_security_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_agent_security_proto_rawDesc = "" +
 	"\n" +
-	"\x1egitpod/v1/agent_security.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xea\x02\n" +
-	"\x16ReportExecEventRequest\x12C\n" +
-	"\x0eenvironment_id\x18\x01 \x01(\tB\x1c\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x10\n" +
-	"\x0eenvironment.idR\renvironmentId\x12(\n" +
+	"\x1egitpod/v1/agent_security.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd6\x02\n" +
+	"\x16ReportExecEventRequest\x12/\n" +
+	"\x0eenvironment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\renvironmentId\x12(\n" +
 	"\n" +
 	"executable\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02R\n" +
 	"executable\x12$\n" +
@@ -277,8 +239,7 @@ const file_gitpod_v1_agent_security_proto_rawDesc = "" +
 	"\x06action\x18\x04 \x01(\x0e2\x1f.gitpod.v1.KernelControlsActionB\n" +
 	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\x06action\x124\n" +
 	"\aprocess\x18\x05 \x01(\v2\x12.gitpod.v1.ProcessB\x06\xbaH\x03\xc8\x01\x01R\aprocess\x12@\n" +
-	"\ttimestamp\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\ttimestamp\"\x19\n" +
-	"\x17ReportExecEventResponse\"\xbf\x01\n" +
+	"\ttimestamp\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\ttimestamp\"\xbf\x01\n" +
 	"\aProcess\x12\x10\n" +
 	"\x03pid\x18\x01 \x01(\x05R\x03pid\x12\x10\n" +
 	"\x03tid\x18\x02 \x01(\x05R\x03tid\x12\x1b\n" +
@@ -287,9 +248,7 @@ const file_gitpod_v1_agent_security_proto_rawDesc = "" +
 	"started_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tstartedAt\x12\x12\n" +
 	"\x04ppid\x18\x06 \x01(\x05R\x04ppid\x12\x12\n" +
 	"\x04pgid\x18\a \x01(\x05R\x04pgid\x12\x10\n" +
-	"\x03sid\x18\b \x01(\x05R\x03sid2r\n" +
-	"\x14AgentSecurityService\x12Z\n" +
-	"\x0fReportExecEvent\x12!.gitpod.v1.ReportExecEventRequest\x1a\".gitpod.v1.ReportExecEventResponse\"\x00B,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x03sid\x18\b \x01(\x05R\x03sidB'Z%github.com/gitpod-io/gitpod-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_agent_security_proto_rawDescOnce sync.Once
@@ -303,23 +262,20 @@ func file_gitpod_v1_agent_security_proto_rawDescGZIP() []byte {
 	return file_gitpod_v1_agent_security_proto_rawDescData
 }
 
-var file_gitpod_v1_agent_security_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_gitpod_v1_agent_security_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_gitpod_v1_agent_security_proto_goTypes = []any{
-	(*ReportExecEventRequest)(nil),  // 0: gitpod.v1.ReportExecEventRequest
-	(*ReportExecEventResponse)(nil), // 1: gitpod.v1.ReportExecEventResponse
-	(*Process)(nil),                 // 2: gitpod.v1.Process
-	(KernelControlsAction)(0),       // 3: gitpod.v1.KernelControlsAction
-	(*timestamppb.Timestamp)(nil),   // 4: google.protobuf.Timestamp
+	(*ReportExecEventRequest)(nil), // 0: gitpod.v1.ReportExecEventRequest
+	(*Process)(nil),                // 1: gitpod.v1.Process
+	(KernelControlsAction)(0),      // 2: gitpod.v1.KernelControlsAction
+	(*timestamppb.Timestamp)(nil),  // 3: google.protobuf.Timestamp
 }
 var file_gitpod_v1_agent_security_proto_depIdxs = []int32{
-	3, // 0: gitpod.v1.ReportExecEventRequest.action:type_name -> gitpod.v1.KernelControlsAction
-	2, // 1: gitpod.v1.ReportExecEventRequest.process:type_name -> gitpod.v1.Process
-	4, // 2: gitpod.v1.ReportExecEventRequest.timestamp:type_name -> google.protobuf.Timestamp
-	4, // 3: gitpod.v1.Process.started_at:type_name -> google.protobuf.Timestamp
-	0, // 4: gitpod.v1.AgentSecurityService.ReportExecEvent:input_type -> gitpod.v1.ReportExecEventRequest
-	1, // 5: gitpod.v1.AgentSecurityService.ReportExecEvent:output_type -> gitpod.v1.ReportExecEventResponse
-	5, // [5:6] is the sub-list for method output_type
-	4, // [4:5] is the sub-list for method input_type
+	2, // 0: gitpod.v1.ReportExecEventRequest.action:type_name -> gitpod.v1.KernelControlsAction
+	1, // 1: gitpod.v1.ReportExecEventRequest.process:type_name -> gitpod.v1.Process
+	3, // 2: gitpod.v1.ReportExecEventRequest.timestamp:type_name -> google.protobuf.Timestamp
+	3, // 3: gitpod.v1.Process.started_at:type_name -> google.protobuf.Timestamp
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name
 	4, // [4:4] is the sub-list for extension extendee
 	0, // [0:4] is the sub-list for field type_name
@@ -337,9 +293,9 @@ func file_gitpod_v1_agent_security_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gitpod_v1_agent_security_proto_rawDesc), len(file_gitpod_v1_agent_security_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   2,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   0,
 		},
 		GoTypes:           file_gitpod_v1_agent_security_proto_goTypes,
 		DependencyIndexes: file_gitpod_v1_agent_security_proto_depIdxs,

@@ -46,9 +46,6 @@ const (
 	// RunnerConfigurationServiceUpdateHostAuthenticationTokenProcedure is the fully-qualified name of
 	// the RunnerConfigurationService's UpdateHostAuthenticationToken RPC.
 	RunnerConfigurationServiceUpdateHostAuthenticationTokenProcedure = "/gitpod.v1.RunnerConfigurationService/UpdateHostAuthenticationToken"
-	// RunnerConfigurationServiceUpdateHostAuthenticationTokenMetadataProcedure is the fully-qualified
-	// name of the RunnerConfigurationService's UpdateHostAuthenticationTokenMetadata RPC.
-	RunnerConfigurationServiceUpdateHostAuthenticationTokenMetadataProcedure = "/gitpod.v1.RunnerConfigurationService/UpdateHostAuthenticationTokenMetadata"
 	// RunnerConfigurationServiceDeleteHostAuthenticationTokenProcedure is the fully-qualified name of
 	// the RunnerConfigurationService's DeleteHostAuthenticationToken RPC.
 	RunnerConfigurationServiceDeleteHostAuthenticationTokenProcedure = "/gitpod.v1.RunnerConfigurationService/DeleteHostAuthenticationToken"
@@ -194,24 +191,6 @@ type RunnerConfigurationServiceClient interface {
 	//	refreshToken: "ghr_xxxxxxxxxxxx"
 	//	```
 	UpdateHostAuthenticationToken(context.Context, *connect.Request[v1.UpdateHostAuthenticationTokenRequest]) (*connect.Response[v1.UpdateHostAuthenticationTokenResponse], error)
-	// Updates metadata for an existing host authentication token.
-	//
-	// Use this method to:
-	// - Persist provider-derived identity metadata
-	// - Attach external user mappings used by webhook handling
-	//
-	// ### Examples
-	//
-	// - Update external user ID:
-	//
-	//	Persists the provider user ID associated with the token.
-	//
-	//	```yaml
-	//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
-	//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
-	//	externalUserId: "12345678"
-	//	```
-	UpdateHostAuthenticationTokenMetadata(context.Context, *connect.Request[v1.UpdateHostAuthenticationTokenMetadataRequest]) (*connect.Response[v1.UpdateHostAuthenticationTokenMetadataResponse], error)
 	// Deletes a host authentication token.
 	//
 	// Use this method to:
@@ -573,12 +552,6 @@ func NewRunnerConfigurationServiceClient(httpClient connect.HTTPClient, baseURL 
 			connect.WithSchema(runnerConfigurationServiceMethods.ByName("UpdateHostAuthenticationToken")),
 			connect.WithClientOptions(opts...),
 		),
-		updateHostAuthenticationTokenMetadata: connect.NewClient[v1.UpdateHostAuthenticationTokenMetadataRequest, v1.UpdateHostAuthenticationTokenMetadataResponse](
-			httpClient,
-			baseURL+RunnerConfigurationServiceUpdateHostAuthenticationTokenMetadataProcedure,
-			connect.WithSchema(runnerConfigurationServiceMethods.ByName("UpdateHostAuthenticationTokenMetadata")),
-			connect.WithClientOptions(opts...),
-		),
 		deleteHostAuthenticationToken: connect.NewClient[v1.DeleteHostAuthenticationTokenRequest, v1.DeleteHostAuthenticationTokenResponse](
 			httpClient,
 			baseURL+RunnerConfigurationServiceDeleteHostAuthenticationTokenProcedure,
@@ -693,28 +666,27 @@ func NewRunnerConfigurationServiceClient(httpClient connect.HTTPClient, baseURL 
 
 // runnerConfigurationServiceClient implements RunnerConfigurationServiceClient.
 type runnerConfigurationServiceClient struct {
-	createHostAuthenticationToken         *connect.Client[v1.CreateHostAuthenticationTokenRequest, v1.CreateHostAuthenticationTokenResponse]
-	getHostAuthenticationToken            *connect.Client[v1.GetHostAuthenticationTokenRequest, v1.GetHostAuthenticationTokenResponse]
-	listHostAuthenticationTokens          *connect.Client[v1.ListHostAuthenticationTokensRequest, v1.ListHostAuthenticationTokensResponse]
-	updateHostAuthenticationToken         *connect.Client[v1.UpdateHostAuthenticationTokenRequest, v1.UpdateHostAuthenticationTokenResponse]
-	updateHostAuthenticationTokenMetadata *connect.Client[v1.UpdateHostAuthenticationTokenMetadataRequest, v1.UpdateHostAuthenticationTokenMetadataResponse]
-	deleteHostAuthenticationToken         *connect.Client[v1.DeleteHostAuthenticationTokenRequest, v1.DeleteHostAuthenticationTokenResponse]
-	getRunnerConfigurationSchema          *connect.Client[v1.GetRunnerConfigurationSchemaRequest, v1.GetRunnerConfigurationSchemaResponse]
-	createSCMIntegration                  *connect.Client[v1.CreateSCMIntegrationRequest, v1.CreateSCMIntegrationResponse]
-	getSCMIntegration                     *connect.Client[v1.GetSCMIntegrationRequest, v1.GetSCMIntegrationResponse]
-	listSCMIntegrations                   *connect.Client[v1.ListSCMIntegrationsRequest, v1.ListSCMIntegrationsResponse]
-	updateSCMIntegration                  *connect.Client[v1.UpdateSCMIntegrationRequest, v1.UpdateSCMIntegrationResponse]
-	deleteSCMIntegration                  *connect.Client[v1.DeleteSCMIntegrationRequest, v1.DeleteSCMIntegrationResponse]
-	createEnvironmentClass                *connect.Client[v1.CreateEnvironmentClassRequest, v1.CreateEnvironmentClassResponse]
-	getEnvironmentClass                   *connect.Client[v1.GetEnvironmentClassRequest, v1.GetEnvironmentClassResponse]
-	listEnvironmentClasses                *connect.Client[v1.ListEnvironmentClassesRequest, v1.ListEnvironmentClassesResponse]
-	updateEnvironmentClass                *connect.Client[v1.UpdateEnvironmentClassRequest, v1.UpdateEnvironmentClassResponse]
-	validateRunnerConfiguration           *connect.Client[v1.ValidateRunnerConfigurationRequest, v1.ValidateRunnerConfigurationResponse]
-	createLLMIntegration                  *connect.Client[v1.CreateLLMIntegrationRequest, v1.CreateLLMIntegrationResponse]
-	getLLMIntegration                     *connect.Client[v1.GetLLMIntegrationRequest, v1.GetLLMIntegrationResponse]
-	listLLMIntegrations                   *connect.Client[v1.ListLLMIntegrationsRequest, v1.ListLLMIntegrationsResponse]
-	updateLLMIntegration                  *connect.Client[v1.UpdateLLMIntegrationRequest, v1.UpdateLLMIntegrationResponse]
-	deleteLLMIntegration                  *connect.Client[v1.DeleteLLMIntegrationRequest, v1.DeleteLLMIntegrationResponse]
+	createHostAuthenticationToken *connect.Client[v1.CreateHostAuthenticationTokenRequest, v1.CreateHostAuthenticationTokenResponse]
+	getHostAuthenticationToken    *connect.Client[v1.GetHostAuthenticationTokenRequest, v1.GetHostAuthenticationTokenResponse]
+	listHostAuthenticationTokens  *connect.Client[v1.ListHostAuthenticationTokensRequest, v1.ListHostAuthenticationTokensResponse]
+	updateHostAuthenticationToken *connect.Client[v1.UpdateHostAuthenticationTokenRequest, v1.UpdateHostAuthenticationTokenResponse]
+	deleteHostAuthenticationToken *connect.Client[v1.DeleteHostAuthenticationTokenRequest, v1.DeleteHostAuthenticationTokenResponse]
+	getRunnerConfigurationSchema  *connect.Client[v1.GetRunnerConfigurationSchemaRequest, v1.GetRunnerConfigurationSchemaResponse]
+	createSCMIntegration          *connect.Client[v1.CreateSCMIntegrationRequest, v1.CreateSCMIntegrationResponse]
+	getSCMIntegration             *connect.Client[v1.GetSCMIntegrationRequest, v1.GetSCMIntegrationResponse]
+	listSCMIntegrations           *connect.Client[v1.ListSCMIntegrationsRequest, v1.ListSCMIntegrationsResponse]
+	updateSCMIntegration          *connect.Client[v1.UpdateSCMIntegrationRequest, v1.UpdateSCMIntegrationResponse]
+	deleteSCMIntegration          *connect.Client[v1.DeleteSCMIntegrationRequest, v1.DeleteSCMIntegrationResponse]
+	createEnvironmentClass        *connect.Client[v1.CreateEnvironmentClassRequest, v1.CreateEnvironmentClassResponse]
+	getEnvironmentClass           *connect.Client[v1.GetEnvironmentClassRequest, v1.GetEnvironmentClassResponse]
+	listEnvironmentClasses        *connect.Client[v1.ListEnvironmentClassesRequest, v1.ListEnvironmentClassesResponse]
+	updateEnvironmentClass        *connect.Client[v1.UpdateEnvironmentClassRequest, v1.UpdateEnvironmentClassResponse]
+	validateRunnerConfiguration   *connect.Client[v1.ValidateRunnerConfigurationRequest, v1.ValidateRunnerConfigurationResponse]
+	createLLMIntegration          *connect.Client[v1.CreateLLMIntegrationRequest, v1.CreateLLMIntegrationResponse]
+	getLLMIntegration             *connect.Client[v1.GetLLMIntegrationRequest, v1.GetLLMIntegrationResponse]
+	listLLMIntegrations           *connect.Client[v1.ListLLMIntegrationsRequest, v1.ListLLMIntegrationsResponse]
+	updateLLMIntegration          *connect.Client[v1.UpdateLLMIntegrationRequest, v1.UpdateLLMIntegrationResponse]
+	deleteLLMIntegration          *connect.Client[v1.DeleteLLMIntegrationRequest, v1.DeleteLLMIntegrationResponse]
 }
 
 // CreateHostAuthenticationToken calls
@@ -738,12 +710,6 @@ func (c *runnerConfigurationServiceClient) ListHostAuthenticationTokens(ctx cont
 // gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationToken.
 func (c *runnerConfigurationServiceClient) UpdateHostAuthenticationToken(ctx context.Context, req *connect.Request[v1.UpdateHostAuthenticationTokenRequest]) (*connect.Response[v1.UpdateHostAuthenticationTokenResponse], error) {
 	return c.updateHostAuthenticationToken.CallUnary(ctx, req)
-}
-
-// UpdateHostAuthenticationTokenMetadata calls
-// gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationTokenMetadata.
-func (c *runnerConfigurationServiceClient) UpdateHostAuthenticationTokenMetadata(ctx context.Context, req *connect.Request[v1.UpdateHostAuthenticationTokenMetadataRequest]) (*connect.Response[v1.UpdateHostAuthenticationTokenMetadataResponse], error) {
-	return c.updateHostAuthenticationTokenMetadata.CallUnary(ctx, req)
 }
 
 // DeleteHostAuthenticationToken calls
@@ -926,24 +892,6 @@ type RunnerConfigurationServiceHandler interface {
 	//	refreshToken: "ghr_xxxxxxxxxxxx"
 	//	```
 	UpdateHostAuthenticationToken(context.Context, *connect.Request[v1.UpdateHostAuthenticationTokenRequest]) (*connect.Response[v1.UpdateHostAuthenticationTokenResponse], error)
-	// Updates metadata for an existing host authentication token.
-	//
-	// Use this method to:
-	// - Persist provider-derived identity metadata
-	// - Attach external user mappings used by webhook handling
-	//
-	// ### Examples
-	//
-	// - Update external user ID:
-	//
-	//	Persists the provider user ID associated with the token.
-	//
-	//	```yaml
-	//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
-	//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
-	//	externalUserId: "12345678"
-	//	```
-	UpdateHostAuthenticationTokenMetadata(context.Context, *connect.Request[v1.UpdateHostAuthenticationTokenMetadataRequest]) (*connect.Response[v1.UpdateHostAuthenticationTokenMetadataResponse], error)
 	// Deletes a host authentication token.
 	//
 	// Use this method to:
@@ -1301,12 +1249,6 @@ func NewRunnerConfigurationServiceHandler(svc RunnerConfigurationServiceHandler,
 		connect.WithSchema(runnerConfigurationServiceMethods.ByName("UpdateHostAuthenticationToken")),
 		connect.WithHandlerOptions(opts...),
 	)
-	runnerConfigurationServiceUpdateHostAuthenticationTokenMetadataHandler := connect.NewUnaryHandler(
-		RunnerConfigurationServiceUpdateHostAuthenticationTokenMetadataProcedure,
-		svc.UpdateHostAuthenticationTokenMetadata,
-		connect.WithSchema(runnerConfigurationServiceMethods.ByName("UpdateHostAuthenticationTokenMetadata")),
-		connect.WithHandlerOptions(opts...),
-	)
 	runnerConfigurationServiceDeleteHostAuthenticationTokenHandler := connect.NewUnaryHandler(
 		RunnerConfigurationServiceDeleteHostAuthenticationTokenProcedure,
 		svc.DeleteHostAuthenticationToken,
@@ -1426,8 +1368,6 @@ func NewRunnerConfigurationServiceHandler(svc RunnerConfigurationServiceHandler,
 			runnerConfigurationServiceListHostAuthenticationTokensHandler.ServeHTTP(w, r)
 		case RunnerConfigurationServiceUpdateHostAuthenticationTokenProcedure:
 			runnerConfigurationServiceUpdateHostAuthenticationTokenHandler.ServeHTTP(w, r)
-		case RunnerConfigurationServiceUpdateHostAuthenticationTokenMetadataProcedure:
-			runnerConfigurationServiceUpdateHostAuthenticationTokenMetadataHandler.ServeHTTP(w, r)
 		case RunnerConfigurationServiceDeleteHostAuthenticationTokenProcedure:
 			runnerConfigurationServiceDeleteHostAuthenticationTokenHandler.ServeHTTP(w, r)
 		case RunnerConfigurationServiceGetRunnerConfigurationSchemaProcedure:
@@ -1485,10 +1425,6 @@ func (UnimplementedRunnerConfigurationServiceHandler) ListHostAuthenticationToke
 
 func (UnimplementedRunnerConfigurationServiceHandler) UpdateHostAuthenticationToken(context.Context, *connect.Request[v1.UpdateHostAuthenticationTokenRequest]) (*connect.Response[v1.UpdateHostAuthenticationTokenResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationToken is not implemented"))
-}
-
-func (UnimplementedRunnerConfigurationServiceHandler) UpdateHostAuthenticationTokenMetadata(context.Context, *connect.Request[v1.UpdateHostAuthenticationTokenMetadataRequest]) (*connect.Response[v1.UpdateHostAuthenticationTokenMetadataResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.RunnerConfigurationService.UpdateHostAuthenticationTokenMetadata is not implemented"))
 }
 
 func (UnimplementedRunnerConfigurationServiceHandler) DeleteHostAuthenticationToken(context.Context, *connect.Request[v1.DeleteHostAuthenticationTokenRequest]) (*connect.Response[v1.DeleteHostAuthenticationTokenResponse], error) {
