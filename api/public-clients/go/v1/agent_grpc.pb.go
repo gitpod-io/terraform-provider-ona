@@ -19,11 +19,6 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AgentService_ListAgents_FullMethodName                            = "/gitpod.v1.AgentService/ListAgents"
-	AgentService_GetAgent_FullMethodName                              = "/gitpod.v1.AgentService/GetAgent"
-	AgentService_CreateAgent_FullMethodName                           = "/gitpod.v1.AgentService/CreateAgent"
-	AgentService_UpdateAgent_FullMethodName                           = "/gitpod.v1.AgentService/UpdateAgent"
-	AgentService_DeleteAgent_FullMethodName                           = "/gitpod.v1.AgentService/DeleteAgent"
 	AgentService_StartAgent_FullMethodName                            = "/gitpod.v1.AgentService/StartAgent"
 	AgentService_ListAgentExecutions_FullMethodName                   = "/gitpod.v1.AgentService/ListAgentExecutions"
 	AgentService_GetAgentExecution_FullMethodName                     = "/gitpod.v1.AgentService/GetAgentExecution"
@@ -31,13 +26,6 @@ const (
 	AgentService_SendToAgentExecution_FullMethodName                  = "/gitpod.v1.AgentService/SendToAgentExecution"
 	AgentService_CreateAgentExecutionConversationToken_FullMethodName = "/gitpod.v1.AgentService/CreateAgentExecutionConversationToken"
 	AgentService_StopAgentExecution_FullMethodName                    = "/gitpod.v1.AgentService/StopAgentExecution"
-	AgentService_UpdateAgentExecution_FullMethodName                  = "/gitpod.v1.AgentService/UpdateAgentExecution"
-	AgentService_ReportAgentExecutionOutputs_FullMethodName           = "/gitpod.v1.AgentService/ReportAgentExecutionOutputs"
-	AgentService_EmitAgentSessionActivity_FullMethodName              = "/gitpod.v1.AgentService/EmitAgentSessionActivity"
-	AgentService_ImprovePromptForAgent_FullMethodName                 = "/gitpod.v1.AgentService/ImprovePromptForAgent"
-	AgentService_CreateLLMAccessToken_FullMethodName                  = "/gitpod.v1.AgentService/CreateLLMAccessToken"
-	AgentService_ListMCPIntegrations_FullMethodName                   = "/gitpod.v1.AgentService/ListMCPIntegrations"
-	AgentService_CreateMCPAccessToken_FullMethodName                  = "/gitpod.v1.AgentService/CreateMCPAccessToken"
 	AgentService_ListPrompts_FullMethodName                           = "/gitpod.v1.AgentService/ListPrompts"
 	AgentService_GetPrompt_FullMethodName                             = "/gitpod.v1.AgentService/GetPrompt"
 	AgentService_CreatePrompt_FullMethodName                          = "/gitpod.v1.AgentService/CreatePrompt"
@@ -49,53 +37,6 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AgentServiceClient interface {
-	// Lists all agents matching the specified criteria.
-	//
-	// Use this method to find and monitor agents across your organization.
-	// Results are ordered by their creation time with the newest first.
-	//
-	// ### Examples
-	//
-	// - List all agents:
-	//
-	//	Retrieves all agents with pagination.
-	//
-	//	```yaml
-	//	pagination:
-	//	  pageSize: 10
-	//	```
-	ListAgents(ctx context.Context, in *ListAgentsRequest, opts ...grpc.CallOption) (*ListAgentsResponse, error)
-	// Gets details about a specific agent including description,
-	// and required models.
-	//
-	// Use this method to:
-	// - Check if an agent is defined correctly
-	// - Understand which models are required for this agent
-	//
-	// ### Examples
-	//
-	// - Get agent details:
-	//
-	//	```yaml
-	//	agentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
-	//	```
-	GetAgent(ctx context.Context, in *GetAgentRequest, opts ...grpc.CallOption) (*GetAgentResponse, error)
-	// Creates a new agent.
-	//
-	// Use this method to:
-	// - Define new agents with custom prompts and tools
-	CreateAgent(ctx context.Context, in *CreateAgentRequest, opts ...grpc.CallOption) (*CreateAgentResponse, error)
-	// Updates an existing agent.
-	//
-	// Use this method to:
-	// - Modify agent configuration
-	// - Update prompts or required tools
-	UpdateAgent(ctx context.Context, in *UpdateAgentRequest, opts ...grpc.CallOption) (*UpdateAgentResponse, error)
-	// Deletes an agent.
-	//
-	// Use this method to:
-	// - Remove custom agents
-	DeleteAgent(ctx context.Context, in *DeleteAgentRequest, opts ...grpc.CallOption) (*DeleteAgentResponse, error)
 	// Starts (or triggers) an agent run using a provided agent.
 	//
 	// Use this method to:
@@ -199,79 +140,6 @@ type AgentServiceClient interface {
 	//	agentExecutionId: "6fa1a3c7-fbb7-49d1-ba56-1890dc7c4c35"
 	//	```
 	StopAgentExecution(ctx context.Context, in *StopAgentExecutionRequest, opts ...grpc.CallOption) (*StopAgentExecutionResponse, error)
-	// Updates an agent execution's spec.
-	//
-	// Use this method to:
-	// - Set or update loop conditions on an agent execution
-	UpdateAgentExecution(ctx context.Context, in *UpdateAgentExecutionRequest, opts ...grpc.CallOption) (*UpdateAgentExecutionResponse, error)
-	// Reports outputs for an agent execution.
-	//
-	// This method allows agents to report key-value outputs during execution.
-	// Similar to task execution outputs, but with typed values for structured data.
-	// Outputs are merged with any existing outputs. The API automatically infers
-	// the type (int, float, bool, or string) from the value.
-	//
-	// Use this method to:
-	// - Record execution outcomes and metrics
-	// - Track test results, coverage, or success indicators
-	// - Store any execution-related data as key-value pairs
-	//
-	// Type inference rules:
-	// - "true" or "false" → bool
-	// - Valid integer (e.g., "42", "-10") → int
-	// - Valid float (e.g., "85.5", "3.14") → float
-	// - Everything else → string
-	//
-	// Validation limits (matching task execution outputs):
-	// - Keys: 1-128 characters
-	// - String values: max 4096 characters
-	//
-	// ### Examples
-	//
-	// - Report execution outputs (types will be inferred from string_value):
-	//
-	//	```yaml
-	//	agentExecutionId: "6fa1a3c7-fbb7-49d1-ba56-1890dc7c4c35"
-	//	outputs:
-	//	  tests_passed:
-	//	    stringValue: "42"        # inferred as int
-	//	  coverage:
-	//	    stringValue: "85.5"      # inferred as float
-	//	  success:
-	//	    stringValue: "true"      # inferred as bool
-	//	  message:
-	//	    stringValue: "All tests passed"  # stored as string
-	//	```
-	ReportAgentExecutionOutputs(ctx context.Context, in *ReportAgentExecutionOutputsRequest, opts ...grpc.CallOption) (*ReportAgentExecutionOutputsResponse, error)
-	// Emits an activity to the external agent session (e.g., Linear) associated
-	// with this agent execution. The backend resolves the session ID from the
-	// execution's annotations and uses the org's app token to authenticate.
-	EmitAgentSessionActivity(ctx context.Context, in *EmitAgentSessionActivityRequest, opts ...grpc.CallOption) (*EmitAgentSessionActivityResponse, error)
-	// Improves an agent's prompt.
-	//
-	// Use this method to:
-	// - Enhance the agent's understanding of the user's request
-	// - Refine the agent's response to be more accurate and relevant
-	ImprovePromptForAgent(ctx context.Context, in *ImprovePromptForAgentRequest, opts ...grpc.CallOption) (*ImprovePromptForAgentResponse, error)
-	// Creates a token for LLM access with a specific agent run.
-	CreateLLMAccessToken(ctx context.Context, in *CreateLLMAccessTokenRequest, opts ...grpc.CallOption) (*CreateLLMAccessTokenResponse, error)
-	// Lists all MCP integrations.
-	//
-	// Use this method to retrieve all configured MCP integrations.
-	//
-	// ### Examples
-	//
-	// - List all MCP integrations:
-	//
-	//	```yaml
-	//	pagination:
-	//	  pageSize: 10
-	//	```
-	ListMCPIntegrations(ctx context.Context, in *ListMCPIntegrationsRequest, opts ...grpc.CallOption) (*ListMCPIntegrationsResponse, error)
-	// Creates a token for MCP access.
-	//
-	// Use this method to generate an access token for MCP integrations.
-	CreateMCPAccessToken(ctx context.Context, in *CreateMCPAccessTokenRequest, opts ...grpc.CallOption) (*CreateMCPAccessTokenResponse, error)
 	// Lists all prompts matching the specified criteria.
 	//
 	// Use this method to find and browse prompts across your organization.
@@ -328,56 +196,6 @@ type agentServiceClient struct {
 
 func NewAgentServiceClient(cc grpc.ClientConnInterface) AgentServiceClient {
 	return &agentServiceClient{cc}
-}
-
-func (c *agentServiceClient) ListAgents(ctx context.Context, in *ListAgentsRequest, opts ...grpc.CallOption) (*ListAgentsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListAgentsResponse)
-	err := c.cc.Invoke(ctx, AgentService_ListAgents_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *agentServiceClient) GetAgent(ctx context.Context, in *GetAgentRequest, opts ...grpc.CallOption) (*GetAgentResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetAgentResponse)
-	err := c.cc.Invoke(ctx, AgentService_GetAgent_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *agentServiceClient) CreateAgent(ctx context.Context, in *CreateAgentRequest, opts ...grpc.CallOption) (*CreateAgentResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateAgentResponse)
-	err := c.cc.Invoke(ctx, AgentService_CreateAgent_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *agentServiceClient) UpdateAgent(ctx context.Context, in *UpdateAgentRequest, opts ...grpc.CallOption) (*UpdateAgentResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateAgentResponse)
-	err := c.cc.Invoke(ctx, AgentService_UpdateAgent_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *agentServiceClient) DeleteAgent(ctx context.Context, in *DeleteAgentRequest, opts ...grpc.CallOption) (*DeleteAgentResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteAgentResponse)
-	err := c.cc.Invoke(ctx, AgentService_DeleteAgent_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *agentServiceClient) StartAgent(ctx context.Context, in *StartAgentRequest, opts ...grpc.CallOption) (*StartAgentResponse, error) {
@@ -450,76 +268,6 @@ func (c *agentServiceClient) StopAgentExecution(ctx context.Context, in *StopAge
 	return out, nil
 }
 
-func (c *agentServiceClient) UpdateAgentExecution(ctx context.Context, in *UpdateAgentExecutionRequest, opts ...grpc.CallOption) (*UpdateAgentExecutionResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateAgentExecutionResponse)
-	err := c.cc.Invoke(ctx, AgentService_UpdateAgentExecution_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *agentServiceClient) ReportAgentExecutionOutputs(ctx context.Context, in *ReportAgentExecutionOutputsRequest, opts ...grpc.CallOption) (*ReportAgentExecutionOutputsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ReportAgentExecutionOutputsResponse)
-	err := c.cc.Invoke(ctx, AgentService_ReportAgentExecutionOutputs_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *agentServiceClient) EmitAgentSessionActivity(ctx context.Context, in *EmitAgentSessionActivityRequest, opts ...grpc.CallOption) (*EmitAgentSessionActivityResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(EmitAgentSessionActivityResponse)
-	err := c.cc.Invoke(ctx, AgentService_EmitAgentSessionActivity_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *agentServiceClient) ImprovePromptForAgent(ctx context.Context, in *ImprovePromptForAgentRequest, opts ...grpc.CallOption) (*ImprovePromptForAgentResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ImprovePromptForAgentResponse)
-	err := c.cc.Invoke(ctx, AgentService_ImprovePromptForAgent_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *agentServiceClient) CreateLLMAccessToken(ctx context.Context, in *CreateLLMAccessTokenRequest, opts ...grpc.CallOption) (*CreateLLMAccessTokenResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateLLMAccessTokenResponse)
-	err := c.cc.Invoke(ctx, AgentService_CreateLLMAccessToken_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *agentServiceClient) ListMCPIntegrations(ctx context.Context, in *ListMCPIntegrationsRequest, opts ...grpc.CallOption) (*ListMCPIntegrationsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListMCPIntegrationsResponse)
-	err := c.cc.Invoke(ctx, AgentService_ListMCPIntegrations_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *agentServiceClient) CreateMCPAccessToken(ctx context.Context, in *CreateMCPAccessTokenRequest, opts ...grpc.CallOption) (*CreateMCPAccessTokenResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateMCPAccessTokenResponse)
-	err := c.cc.Invoke(ctx, AgentService_CreateMCPAccessToken_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *agentServiceClient) ListPrompts(ctx context.Context, in *ListPromptsRequest, opts ...grpc.CallOption) (*ListPromptsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListPromptsResponse)
@@ -574,53 +322,6 @@ func (c *agentServiceClient) DeletePrompt(ctx context.Context, in *DeletePromptR
 // All implementations must embed UnimplementedAgentServiceServer
 // for forward compatibility.
 type AgentServiceServer interface {
-	// Lists all agents matching the specified criteria.
-	//
-	// Use this method to find and monitor agents across your organization.
-	// Results are ordered by their creation time with the newest first.
-	//
-	// ### Examples
-	//
-	// - List all agents:
-	//
-	//	Retrieves all agents with pagination.
-	//
-	//	```yaml
-	//	pagination:
-	//	  pageSize: 10
-	//	```
-	ListAgents(context.Context, *ListAgentsRequest) (*ListAgentsResponse, error)
-	// Gets details about a specific agent including description,
-	// and required models.
-	//
-	// Use this method to:
-	// - Check if an agent is defined correctly
-	// - Understand which models are required for this agent
-	//
-	// ### Examples
-	//
-	// - Get agent details:
-	//
-	//	```yaml
-	//	agentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
-	//	```
-	GetAgent(context.Context, *GetAgentRequest) (*GetAgentResponse, error)
-	// Creates a new agent.
-	//
-	// Use this method to:
-	// - Define new agents with custom prompts and tools
-	CreateAgent(context.Context, *CreateAgentRequest) (*CreateAgentResponse, error)
-	// Updates an existing agent.
-	//
-	// Use this method to:
-	// - Modify agent configuration
-	// - Update prompts or required tools
-	UpdateAgent(context.Context, *UpdateAgentRequest) (*UpdateAgentResponse, error)
-	// Deletes an agent.
-	//
-	// Use this method to:
-	// - Remove custom agents
-	DeleteAgent(context.Context, *DeleteAgentRequest) (*DeleteAgentResponse, error)
 	// Starts (or triggers) an agent run using a provided agent.
 	//
 	// Use this method to:
@@ -724,79 +425,6 @@ type AgentServiceServer interface {
 	//	agentExecutionId: "6fa1a3c7-fbb7-49d1-ba56-1890dc7c4c35"
 	//	```
 	StopAgentExecution(context.Context, *StopAgentExecutionRequest) (*StopAgentExecutionResponse, error)
-	// Updates an agent execution's spec.
-	//
-	// Use this method to:
-	// - Set or update loop conditions on an agent execution
-	UpdateAgentExecution(context.Context, *UpdateAgentExecutionRequest) (*UpdateAgentExecutionResponse, error)
-	// Reports outputs for an agent execution.
-	//
-	// This method allows agents to report key-value outputs during execution.
-	// Similar to task execution outputs, but with typed values for structured data.
-	// Outputs are merged with any existing outputs. The API automatically infers
-	// the type (int, float, bool, or string) from the value.
-	//
-	// Use this method to:
-	// - Record execution outcomes and metrics
-	// - Track test results, coverage, or success indicators
-	// - Store any execution-related data as key-value pairs
-	//
-	// Type inference rules:
-	// - "true" or "false" → bool
-	// - Valid integer (e.g., "42", "-10") → int
-	// - Valid float (e.g., "85.5", "3.14") → float
-	// - Everything else → string
-	//
-	// Validation limits (matching task execution outputs):
-	// - Keys: 1-128 characters
-	// - String values: max 4096 characters
-	//
-	// ### Examples
-	//
-	// - Report execution outputs (types will be inferred from string_value):
-	//
-	//	```yaml
-	//	agentExecutionId: "6fa1a3c7-fbb7-49d1-ba56-1890dc7c4c35"
-	//	outputs:
-	//	  tests_passed:
-	//	    stringValue: "42"        # inferred as int
-	//	  coverage:
-	//	    stringValue: "85.5"      # inferred as float
-	//	  success:
-	//	    stringValue: "true"      # inferred as bool
-	//	  message:
-	//	    stringValue: "All tests passed"  # stored as string
-	//	```
-	ReportAgentExecutionOutputs(context.Context, *ReportAgentExecutionOutputsRequest) (*ReportAgentExecutionOutputsResponse, error)
-	// Emits an activity to the external agent session (e.g., Linear) associated
-	// with this agent execution. The backend resolves the session ID from the
-	// execution's annotations and uses the org's app token to authenticate.
-	EmitAgentSessionActivity(context.Context, *EmitAgentSessionActivityRequest) (*EmitAgentSessionActivityResponse, error)
-	// Improves an agent's prompt.
-	//
-	// Use this method to:
-	// - Enhance the agent's understanding of the user's request
-	// - Refine the agent's response to be more accurate and relevant
-	ImprovePromptForAgent(context.Context, *ImprovePromptForAgentRequest) (*ImprovePromptForAgentResponse, error)
-	// Creates a token for LLM access with a specific agent run.
-	CreateLLMAccessToken(context.Context, *CreateLLMAccessTokenRequest) (*CreateLLMAccessTokenResponse, error)
-	// Lists all MCP integrations.
-	//
-	// Use this method to retrieve all configured MCP integrations.
-	//
-	// ### Examples
-	//
-	// - List all MCP integrations:
-	//
-	//	```yaml
-	//	pagination:
-	//	  pageSize: 10
-	//	```
-	ListMCPIntegrations(context.Context, *ListMCPIntegrationsRequest) (*ListMCPIntegrationsResponse, error)
-	// Creates a token for MCP access.
-	//
-	// Use this method to generate an access token for MCP integrations.
-	CreateMCPAccessToken(context.Context, *CreateMCPAccessTokenRequest) (*CreateMCPAccessTokenResponse, error)
 	// Lists all prompts matching the specified criteria.
 	//
 	// Use this method to find and browse prompts across your organization.
@@ -855,21 +483,6 @@ type AgentServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAgentServiceServer struct{}
 
-func (UnimplementedAgentServiceServer) ListAgents(context.Context, *ListAgentsRequest) (*ListAgentsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListAgents not implemented")
-}
-func (UnimplementedAgentServiceServer) GetAgent(context.Context, *GetAgentRequest) (*GetAgentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAgent not implemented")
-}
-func (UnimplementedAgentServiceServer) CreateAgent(context.Context, *CreateAgentRequest) (*CreateAgentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateAgent not implemented")
-}
-func (UnimplementedAgentServiceServer) UpdateAgent(context.Context, *UpdateAgentRequest) (*UpdateAgentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateAgent not implemented")
-}
-func (UnimplementedAgentServiceServer) DeleteAgent(context.Context, *DeleteAgentRequest) (*DeleteAgentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteAgent not implemented")
-}
 func (UnimplementedAgentServiceServer) StartAgent(context.Context, *StartAgentRequest) (*StartAgentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StartAgent not implemented")
 }
@@ -890,27 +503,6 @@ func (UnimplementedAgentServiceServer) CreateAgentExecutionConversationToken(con
 }
 func (UnimplementedAgentServiceServer) StopAgentExecution(context.Context, *StopAgentExecutionRequest) (*StopAgentExecutionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StopAgentExecution not implemented")
-}
-func (UnimplementedAgentServiceServer) UpdateAgentExecution(context.Context, *UpdateAgentExecutionRequest) (*UpdateAgentExecutionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateAgentExecution not implemented")
-}
-func (UnimplementedAgentServiceServer) ReportAgentExecutionOutputs(context.Context, *ReportAgentExecutionOutputsRequest) (*ReportAgentExecutionOutputsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ReportAgentExecutionOutputs not implemented")
-}
-func (UnimplementedAgentServiceServer) EmitAgentSessionActivity(context.Context, *EmitAgentSessionActivityRequest) (*EmitAgentSessionActivityResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EmitAgentSessionActivity not implemented")
-}
-func (UnimplementedAgentServiceServer) ImprovePromptForAgent(context.Context, *ImprovePromptForAgentRequest) (*ImprovePromptForAgentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ImprovePromptForAgent not implemented")
-}
-func (UnimplementedAgentServiceServer) CreateLLMAccessToken(context.Context, *CreateLLMAccessTokenRequest) (*CreateLLMAccessTokenResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateLLMAccessToken not implemented")
-}
-func (UnimplementedAgentServiceServer) ListMCPIntegrations(context.Context, *ListMCPIntegrationsRequest) (*ListMCPIntegrationsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListMCPIntegrations not implemented")
-}
-func (UnimplementedAgentServiceServer) CreateMCPAccessToken(context.Context, *CreateMCPAccessTokenRequest) (*CreateMCPAccessTokenResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateMCPAccessToken not implemented")
 }
 func (UnimplementedAgentServiceServer) ListPrompts(context.Context, *ListPromptsRequest) (*ListPromptsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPrompts not implemented")
@@ -946,96 +538,6 @@ func RegisterAgentServiceServer(s grpc.ServiceRegistrar, srv AgentServiceServer)
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&AgentService_ServiceDesc, srv)
-}
-
-func _AgentService_ListAgents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListAgentsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AgentServiceServer).ListAgents(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AgentService_ListAgents_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AgentServiceServer).ListAgents(ctx, req.(*ListAgentsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AgentService_GetAgent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAgentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AgentServiceServer).GetAgent(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AgentService_GetAgent_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AgentServiceServer).GetAgent(ctx, req.(*GetAgentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AgentService_CreateAgent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateAgentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AgentServiceServer).CreateAgent(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AgentService_CreateAgent_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AgentServiceServer).CreateAgent(ctx, req.(*CreateAgentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AgentService_UpdateAgent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateAgentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AgentServiceServer).UpdateAgent(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AgentService_UpdateAgent_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AgentServiceServer).UpdateAgent(ctx, req.(*UpdateAgentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AgentService_DeleteAgent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteAgentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AgentServiceServer).DeleteAgent(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AgentService_DeleteAgent_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AgentServiceServer).DeleteAgent(ctx, req.(*DeleteAgentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _AgentService_StartAgent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1164,132 +666,6 @@ func _AgentService_StopAgentExecution_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AgentService_UpdateAgentExecution_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateAgentExecutionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AgentServiceServer).UpdateAgentExecution(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AgentService_UpdateAgentExecution_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AgentServiceServer).UpdateAgentExecution(ctx, req.(*UpdateAgentExecutionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AgentService_ReportAgentExecutionOutputs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReportAgentExecutionOutputsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AgentServiceServer).ReportAgentExecutionOutputs(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AgentService_ReportAgentExecutionOutputs_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AgentServiceServer).ReportAgentExecutionOutputs(ctx, req.(*ReportAgentExecutionOutputsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AgentService_EmitAgentSessionActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmitAgentSessionActivityRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AgentServiceServer).EmitAgentSessionActivity(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AgentService_EmitAgentSessionActivity_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AgentServiceServer).EmitAgentSessionActivity(ctx, req.(*EmitAgentSessionActivityRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AgentService_ImprovePromptForAgent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ImprovePromptForAgentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AgentServiceServer).ImprovePromptForAgent(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AgentService_ImprovePromptForAgent_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AgentServiceServer).ImprovePromptForAgent(ctx, req.(*ImprovePromptForAgentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AgentService_CreateLLMAccessToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateLLMAccessTokenRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AgentServiceServer).CreateLLMAccessToken(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AgentService_CreateLLMAccessToken_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AgentServiceServer).CreateLLMAccessToken(ctx, req.(*CreateLLMAccessTokenRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AgentService_ListMCPIntegrations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListMCPIntegrationsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AgentServiceServer).ListMCPIntegrations(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AgentService_ListMCPIntegrations_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AgentServiceServer).ListMCPIntegrations(ctx, req.(*ListMCPIntegrationsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AgentService_CreateMCPAccessToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateMCPAccessTokenRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AgentServiceServer).CreateMCPAccessToken(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AgentService_CreateMCPAccessToken_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AgentServiceServer).CreateMCPAccessToken(ctx, req.(*CreateMCPAccessTokenRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _AgentService_ListPrompts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListPromptsRequest)
 	if err := dec(in); err != nil {
@@ -1388,26 +764,6 @@ var AgentService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AgentServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ListAgents",
-			Handler:    _AgentService_ListAgents_Handler,
-		},
-		{
-			MethodName: "GetAgent",
-			Handler:    _AgentService_GetAgent_Handler,
-		},
-		{
-			MethodName: "CreateAgent",
-			Handler:    _AgentService_CreateAgent_Handler,
-		},
-		{
-			MethodName: "UpdateAgent",
-			Handler:    _AgentService_UpdateAgent_Handler,
-		},
-		{
-			MethodName: "DeleteAgent",
-			Handler:    _AgentService_DeleteAgent_Handler,
-		},
-		{
 			MethodName: "StartAgent",
 			Handler:    _AgentService_StartAgent_Handler,
 		},
@@ -1434,34 +790,6 @@ var AgentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "StopAgentExecution",
 			Handler:    _AgentService_StopAgentExecution_Handler,
-		},
-		{
-			MethodName: "UpdateAgentExecution",
-			Handler:    _AgentService_UpdateAgentExecution_Handler,
-		},
-		{
-			MethodName: "ReportAgentExecutionOutputs",
-			Handler:    _AgentService_ReportAgentExecutionOutputs_Handler,
-		},
-		{
-			MethodName: "EmitAgentSessionActivity",
-			Handler:    _AgentService_EmitAgentSessionActivity_Handler,
-		},
-		{
-			MethodName: "ImprovePromptForAgent",
-			Handler:    _AgentService_ImprovePromptForAgent_Handler,
-		},
-		{
-			MethodName: "CreateLLMAccessToken",
-			Handler:    _AgentService_CreateLLMAccessToken_Handler,
-		},
-		{
-			MethodName: "ListMCPIntegrations",
-			Handler:    _AgentService_ListMCPIntegrations_Handler,
-		},
-		{
-			MethodName: "CreateMCPAccessToken",
-			Handler:    _AgentService_CreateMCPAccessToken_Handler,
 		},
 		{
 			MethodName: "ListPrompts",
