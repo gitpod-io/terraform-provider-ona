@@ -1,6 +1,6 @@
 ---
 page_title: "Authentication and Permissions - Ona Provider"
-subcategory: "Identity and Access"
+subcategory: "Guides"
 description: |-
   Configure API credentials and permissions for Terraform runs.
 ---

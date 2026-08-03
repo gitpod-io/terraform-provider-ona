@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2021, 2026
+// Copyright Ona 2026
 // SPDX-License-Identifier: MPL-2.0
 
 package project
@@ -11,12 +11,12 @@ import (
 	"time"
 
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"google.golang.org/protobuf/types/known/durationpb"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -89,7 +89,7 @@ func projectUpdateRequest(ctx context.Context, plan ProjectModel, prior ProjectM
 	req := &v1.UpdateProjectRequest{
 		ProjectId: plan.ID.ValueString(),
 	}
-	if isKnownString(plan.Name) {
+	if tfvalue.IsKnownString(plan.Name) {
 		req.Name = ptr(plan.Name.ValueString())
 	}
 	req.Initializer = environmentInitializerFromRepository(plan)
@@ -171,8 +171,8 @@ func projectEnvironmentClassesFromModel(values []EnvironmentClassModel, root pat
 		seenOrders[order] = i
 
 		idUnknown := value.EnvironmentClassID.IsUnknown()
-		hasID := isKnownString(value.EnvironmentClassID) || (allowUnknown && idUnknown)
-		hasLocalRunner := isKnownBool(value.LocalRunner) && value.LocalRunner.ValueBool()
+		hasID := tfvalue.IsKnownString(value.EnvironmentClassID) || (allowUnknown && idUnknown)
+		hasLocalRunner := tfvalue.IsKnownBool(value.LocalRunner) && value.LocalRunner.ValueBool()
 		if hasID == hasLocalRunner {
 			diags.AddAttributeError(p, "Invalid Project Environment Class", "Set exactly one of environment_class_id or local_runner = true.")
 			continue
@@ -333,19 +333,45 @@ func projectModelFromProto(ctx context.Context, project *v1.Project) (ProjectMod
 		RepositoryCloneURL:   repository.CloneURL,
 		Branch:               repository.Branch,
 		InsightsEnabled:      types.BoolValue(false),
-		DevcontainerFilePath: stringOptionalValue(project.GetDevcontainerFilePath()),
-		AutomationsFilePath:  stringOptionalValue(project.GetAutomationsFilePath()),
+		DevcontainerFilePath: tfvalue.OptionalStringValue(project.GetDevcontainerFilePath()),
+		AutomationsFilePath:  tfvalue.OptionalStringValue(project.GetAutomationsFilePath()),
 		EnvironmentClasses:   environmentClassesFromProto(project.GetEnvironmentClasses()),
 		Prebuild:             prebuildConfigurationFromProto(ctx, project.GetPrebuildConfiguration(), &diags),
-		CreatedAt:            timestampValue(metadata.GetCreatedAt()),
+		CreatedAt:            tfvalue.TimestampRFC3339Value(metadata.GetCreatedAt()),
 		Creator:              subjectObjectFromProto(metadata.GetCreator(), &diags),
 	}
 	return data, diags
 }
 
+// repositoryFields is returned only after both values have been validated as
+// non-empty. Unsupported initializer shapes return an error diagnostic instead.
 type repositoryFields struct {
 	CloneURL types.String
 	Branch   types.String
+}
+
+// unsupportedProjectRepositoryDiagnostic is an error-severity marker. Managed
+// resource operations surface it as an error, while project list discovery can
+// recognize this concrete type and intentionally exclude unsupported projects.
+type unsupportedProjectRepositoryDiagnostic struct{}
+
+var _ diag.Diagnostic = unsupportedProjectRepositoryDiagnostic{}
+
+func (unsupportedProjectRepositoryDiagnostic) Severity() diag.Severity {
+	return diag.SeverityError
+}
+
+func (unsupportedProjectRepositoryDiagnostic) Summary() string {
+	return "Unsupported Ona Project Repository"
+}
+
+func (unsupportedProjectRepositoryDiagnostic) Detail() string {
+	return "Project must have a Git repository clone URL and branch to be managed by Terraform."
+}
+
+func (unsupportedProjectRepositoryDiagnostic) Equal(other diag.Diagnostic) bool {
+	_, ok := other.(unsupportedProjectRepositoryDiagnostic)
+	return ok
 }
 
 func repositoryFromInitializer(initializer *v1.EnvironmentInitializer) (repositoryFields, diag.Diagnostics) {
@@ -356,10 +382,7 @@ func repositoryFromInitializer(initializer *v1.EnvironmentInitializer) (reposito
 			continue
 		}
 		if git.GetRemoteUri() == "" || git.GetCloneTarget() == "" {
-			diags.AddError(
-				"Unsupported Ona Project Repository",
-				"Project must have a Git repository clone URL and branch to be managed by Terraform.",
-			)
+			diags.Append(unsupportedProjectRepositoryDiagnostic{})
 			return repositoryFields{}, diags
 		}
 		return repositoryFields{
@@ -367,10 +390,7 @@ func repositoryFromInitializer(initializer *v1.EnvironmentInitializer) (reposito
 			Branch:   types.StringValue(git.GetCloneTarget()),
 		}, diags
 	}
-	diags.AddError(
-		"Unsupported Ona Project Repository",
-		"Project must have a Git repository clone URL and branch to be managed by Terraform.",
-	)
+	diags.Append(unsupportedProjectRepositoryDiagnostic{})
 	return repositoryFields{}, diags
 }
 
@@ -438,8 +458,8 @@ func subjectFromProto(subject *v1.Subject) *SubjectModel {
 		return nil
 	}
 	return &SubjectModel{
-		ID:        stringOptionalValue(subject.GetId()),
-		Principal: stringOptionalValue(principalToString(subject.GetPrincipal())),
+		ID:        tfvalue.OptionalStringValue(subject.GetId()),
+		Principal: tfvalue.OptionalStringValue(principalToString(subject.GetPrincipal())),
 	}
 }
 
@@ -450,8 +470,8 @@ func subjectObjectFromProto(subject *v1.Subject, diags *diag.Diagnostics) types.
 	result, objectDiags := types.ObjectValue(
 		subjectObjectAttributeTypes,
 		map[string]attr.Value{
-			"id":        stringOptionalValue(subject.GetId()),
-			"principal": stringOptionalValue(principalToString(subject.GetPrincipal())),
+			"id":        tfvalue.OptionalStringValue(subject.GetId()),
+			"principal": tfvalue.OptionalStringValue(principalToString(subject.GetPrincipal())),
 		},
 	)
 	diags.Append(objectDiags...)
@@ -488,20 +508,6 @@ func principalToString(principal v1.Principal) string {
 	}
 }
 
-func timestampValue(ts *timestamppb.Timestamp) types.String {
-	if ts == nil || !ts.IsValid() {
-		return types.StringNull()
-	}
-	return types.StringValue(ts.AsTime().Format("2006-01-02T15:04:05Z07:00"))
-}
-
-func stringOptionalValue(value string) types.String {
-	if value == "" {
-		return types.StringNull()
-	}
-	return types.StringValue(value)
-}
-
 func optionalString(value types.String) string {
 	if value.IsNull() || value.IsUnknown() {
 		return ""
@@ -509,24 +515,16 @@ func optionalString(value types.String) string {
 	return value.ValueString()
 }
 
-func isKnownString(value types.String) bool {
-	return !value.IsNull() && !value.IsUnknown() && value.ValueString() != ""
-}
-
-func isKnownBool(value types.Bool) bool {
-	return !value.IsNull() && !value.IsUnknown()
-}
-
 func ptr[T any](value T) *T {
 	return &value
 }
 
 func preserveProjectPlannedInputs(data *ProjectModel, planned ProjectModel) {
-	data.Name = preserveString(data.Name, planned.Name)
-	data.RepositoryCloneURL = preserveString(data.RepositoryCloneURL, planned.RepositoryCloneURL)
-	data.Branch = preserveString(data.Branch, planned.Branch)
-	data.DevcontainerFilePath = preserveString(data.DevcontainerFilePath, planned.DevcontainerFilePath)
-	data.AutomationsFilePath = preserveString(data.AutomationsFilePath, planned.AutomationsFilePath)
+	data.Name = tfvalue.PreserveString(data.Name, planned.Name)
+	data.RepositoryCloneURL = tfvalue.PreserveString(data.RepositoryCloneURL, planned.RepositoryCloneURL)
+	data.Branch = tfvalue.PreserveString(data.Branch, planned.Branch)
+	data.DevcontainerFilePath = tfvalue.PreserveString(data.DevcontainerFilePath, planned.DevcontainerFilePath)
+	data.AutomationsFilePath = tfvalue.PreserveString(data.AutomationsFilePath, planned.AutomationsFilePath)
 	if len(planned.EnvironmentClasses) > 0 {
 		data.EnvironmentClasses = planned.EnvironmentClasses
 	}
@@ -540,26 +538,12 @@ func preservePrebuildConfiguration(current []PrebuildConfigurationModel, planned
 	if len(current) == 0 {
 		return planned
 	}
-	current[0].Enabled = preserveBool(current[0].Enabled, planned[0].Enabled)
+	current[0].Enabled = tfvalue.PreserveBool(current[0].Enabled, planned[0].Enabled)
 	current[0].EnvironmentClassIDs = planned[0].EnvironmentClassIDs
-	current[0].Timeout = preserveString(current[0].Timeout, planned[0].Timeout)
+	current[0].Timeout = tfvalue.PreserveString(current[0].Timeout, planned[0].Timeout)
 	current[0].DailySchedule = planned[0].DailySchedule
 	current[0].Executor = planned[0].Executor
-	current[0].EnableJetbrainsWarmup = preserveBool(current[0].EnableJetbrainsWarmup, planned[0].EnableJetbrainsWarmup)
-	return current
-}
-
-func preserveString(current types.String, planned types.String) types.String {
-	if !planned.IsNull() && !planned.IsUnknown() {
-		return planned
-	}
-	return current
-}
-
-func preserveBool(current types.Bool, planned types.Bool) types.Bool {
-	if !planned.IsNull() && !planned.IsUnknown() {
-		return planned
-	}
+	current[0].EnableJetbrainsWarmup = tfvalue.PreserveBool(current[0].EnableJetbrainsWarmup, planned[0].EnableJetbrainsWarmup)
 	return current
 }
 

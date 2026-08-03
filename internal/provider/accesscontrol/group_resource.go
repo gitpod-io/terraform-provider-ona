@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2021, 2026
+// Copyright Ona 2026
 // SPDX-License-Identifier: MPL-2.0
 
 package accesscontrol
@@ -9,6 +9,9 @@ import (
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -20,6 +23,7 @@ import (
 
 var _ resource.Resource = &GroupResource{}
 var _ resource.ResourceWithConfigure = &GroupResource{}
+var _ resource.ResourceWithIdentity = &GroupResource{}
 var _ resource.ResourceWithImportState = &GroupResource{}
 var _ resource.ResourceWithValidateConfig = &GroupResource{}
 
@@ -28,7 +32,7 @@ func NewGroupResource() resource.Resource {
 }
 
 type GroupResource struct {
-	clientHolder
+	client *managementclient.ManagementPlane
 }
 
 type GroupModel struct {
@@ -74,7 +78,7 @@ func (r *GroupResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 }
 
 func (r *GroupResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	r.configure(req, resp)
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *GroupResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -92,11 +96,11 @@ func (r *GroupResource) Create(ctx context.Context, req resource.CreateRequest, 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "creating", "ona_group") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_group") {
 		return
 	}
 
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
 		return
@@ -121,6 +125,7 @@ func (r *GroupResource) Create(ctx context.Context, req resource.CreateRequest, 
 	}
 
 	data.ID = types.StringValue(result.Msg.GetGroup().GetId())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, GroupIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -148,7 +153,7 @@ func (r *GroupResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "reading", "ona_group") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_group") {
 		return
 	}
 
@@ -169,6 +174,7 @@ func (r *GroupResource) Read(ctx context.Context, req resource.ReadRequest, resp
 
 	data = GroupModel{}
 	populateGroupModel(&data, group)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, GroupIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -178,7 +184,7 @@ func (r *GroupResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "updating", "ona_group") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", "ona_group") {
 		return
 	}
 
@@ -203,6 +209,7 @@ func (r *GroupResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	planned := data
 	populateGroupModel(&data, result.Msg.GetGroup())
 	preserveGroupPlannedInputs(&data, planned)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, GroupIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -212,7 +219,7 @@ func (r *GroupResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "deleting", "ona_group") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_group") {
 		return
 	}
 	if data.ID.IsNull() || data.ID.IsUnknown() || data.ID.ValueString() == "" {
@@ -229,7 +236,7 @@ func (r *GroupResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 }
 
 func (r *GroupResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("id"), req, resp)
 }
 
 func (r *GroupResource) getGroup(ctx context.Context, id string) (*v1.Group, error) {
@@ -253,8 +260,8 @@ func populateGroupModel(data *GroupModel, group *v1.Group) {
 }
 
 func preserveGroupPlannedInputs(data *GroupModel, planned GroupModel) {
-	data.Name = preserveKnownString(data.Name, planned.Name)
-	data.Description = preserveKnownString(data.Description, planned.Description)
+	data.Name = tfvalue.PreserveString(data.Name, planned.Name)
+	data.Description = tfvalue.PreserveString(data.Description, planned.Description)
 }
 
 func validateGroupModel(data GroupModel, diags *diag.Diagnostics) {

@@ -9,6 +9,8 @@ import (
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -22,6 +24,7 @@ import (
 
 var _ resource.Resource = &OIDCConfigResource{}
 var _ resource.ResourceWithConfigure = &OIDCConfigResource{}
+var _ resource.ResourceWithIdentity = &OIDCConfigResource{}
 var _ resource.ResourceWithImportState = &OIDCConfigResource{}
 var _ resource.ResourceWithValidateConfig = &OIDCConfigResource{}
 
@@ -30,7 +33,7 @@ func NewOIDCConfigResource() resource.Resource {
 }
 
 type OIDCConfigResource struct {
-	clientHolder
+	client *managementclient.ManagementPlane
 }
 
 type OIDCConfigModel struct {
@@ -67,7 +70,7 @@ func (r *OIDCConfigResource) Schema(ctx context.Context, req resource.SchemaRequ
 }
 
 func (r *OIDCConfigResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	r.configure(req, resp)
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *OIDCConfigResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -85,10 +88,10 @@ func (r *OIDCConfigResource) Create(ctx context.Context, req resource.CreateRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "creating", "ona_oidc_config") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_oidc_config") {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
 		return
@@ -107,6 +110,7 @@ func (r *OIDCConfigResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 	data.ID = types.StringValue(organizationID)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, OIDCConfigIdentityModel{OrganizationID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -123,10 +127,10 @@ func (r *OIDCConfigResource) Read(ctx context.Context, req resource.ReadRequest,
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "reading", "ona_oidc_config") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_oidc_config") {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
 		return
@@ -148,6 +152,7 @@ func (r *OIDCConfigResource) Read(ctx context.Context, req resource.ReadRequest,
 	prior := data
 	data = OIDCConfigModel{}
 	populateOIDCConfigModel(ctx, &data, organizationID, result.Msg.GetOidcConfig(), prior, &resp.Diagnostics)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, OIDCConfigIdentityModel{OrganizationID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -162,10 +167,10 @@ func (r *OIDCConfigResource) Update(ctx context.Context, req resource.UpdateRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "updating", "ona_oidc_config") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", "ona_oidc_config") {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
 		return
@@ -189,6 +194,7 @@ func (r *OIDCConfigResource) Update(ctx context.Context, req resource.UpdateRequ
 	planned := data
 	populateOIDCConfigModel(ctx, &data, organizationID, result.Msg.GetOidcConfig(), planned, &resp.Diagnostics)
 	preserveOIDCConfigPlannedInputs(&data, planned)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, OIDCConfigIdentityModel{OrganizationID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -197,10 +203,14 @@ func (r *OIDCConfigResource) Delete(ctx context.Context, req resource.DeleteRequ
 }
 
 func (r *OIDCConfigResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	if !r.requireClient(&resp.Diagnostics, "importing", "ona_oidc_config") {
+	if req.ID == "" {
+		resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("organization_id"), req, resp)
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "importing", "ona_oidc_config") {
+		return
+	}
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
 		return
@@ -213,6 +223,7 @@ func (r *OIDCConfigResource) ImportState(ctx context.Context, req resource.Impor
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), types.StringValue(organizationID))...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, OIDCConfigIdentityModel{OrganizationID: types.StringValue(organizationID)})...)
 }
 
 func validateOIDCOrganizationScope(diags *diag.Diagnostics, stateID types.String, organizationID string) bool {

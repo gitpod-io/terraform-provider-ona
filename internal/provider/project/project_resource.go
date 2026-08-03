@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2021, 2026
+// Copyright Ona 2026
 // SPDX-License-Identifier: MPL-2.0
 
 package project
@@ -23,6 +23,7 @@ import (
 
 var _ resource.Resource = &Resource{}
 var _ resource.ResourceWithConfigure = &Resource{}
+var _ resource.ResourceWithIdentity = &Resource{}
 var _ resource.ResourceWithImportState = &Resource{}
 var _ resource.ResourceWithValidateConfig = &Resource{}
 
@@ -43,20 +44,7 @@ func (r *Resource) Schema(ctx context.Context, req resource.SchemaRequest, resp 
 }
 
 func (r *Resource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = data.Client
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *Resource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -75,11 +63,7 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before creating ona_project resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_project") {
 		return
 	}
 
@@ -98,6 +82,7 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 	}
 
 	data.ID = types.StringValue(result.Msg.GetProject().GetId())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, IdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -146,11 +131,7 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before reading ona_project resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_project") {
 		return
 	}
 
@@ -185,6 +166,7 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, IdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -200,11 +182,7 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before updating ona_project resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", "ona_project") {
 		return
 	}
 
@@ -255,6 +233,7 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, IdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -265,11 +244,7 @@ func (r *Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp 
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before deleting ona_project resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_project") {
 		return
 	}
 
@@ -289,7 +264,7 @@ func (r *Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp 
 }
 
 func (r *Resource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("id"), req, resp)
 }
 
 func (r *Resource) getProject(ctx context.Context, id string) (*v1.Project, error) {
@@ -336,14 +311,7 @@ func (r *Resource) setInsightsEnabled(ctx context.Context, projectID string, ena
 }
 
 func (r *Resource) insightsEnabled(ctx context.Context, projectID string) (types.Bool, error) {
-	result, err := r.client.InsightsService().GetProjectInsightsStatus(ctx, connect.NewRequest(&v1.GetProjectInsightsStatusRequest{ProjectId: projectID}))
-	if err != nil {
-		if connect.CodeOf(err) == connect.CodeNotFound {
-			return types.BoolValue(false), nil
-		}
-		return types.BoolNull(), fmt.Errorf("get project insights status: %w", err)
-	}
-	return types.BoolValue(result.Msg.GetEnabled()), nil
+	return projectInsightsEnabled(ctx, r.client, projectID)
 }
 
 func populateProjectModel(ctx context.Context, data *ProjectModel, project *v1.Project) diag.Diagnostics {

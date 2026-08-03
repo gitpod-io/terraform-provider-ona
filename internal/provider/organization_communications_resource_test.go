@@ -20,6 +20,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfversion"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -116,6 +117,78 @@ func TestAccOrganizationCommunicationsResourcesLifecycle(t *testing.T) {
 	})
 }
 
+func TestAccAnnouncementBannerResourceIdentityImportMatchesLegacy(t *testing.T) {
+	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	server := newOrganizationCommunicationsAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.UnitTest(t, resource.TestCase{
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBelow(tfversion.Version1_12_0),
+		},
+		PreCheck:                 func() {},
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAnnouncementBannerConfig(server.URL, true, "Initial banner"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_announcement_banner.home", "id", organizationCommunicationsOrgID),
+					resource.TestCheckResourceAttr("ona_announcement_banner.home", "enabled", "true"),
+					resource.TestCheckResourceAttr("ona_announcement_banner.home", "message", "Initial banner"),
+				),
+			},
+			{
+				ResourceName:      "ona_announcement_banner.home",
+				ImportState:       true,
+				ImportStateId:     "current",
+				ImportStateVerify: true,
+			},
+			{
+				ResourceName:    "ona_announcement_banner.home",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func TestAccTermsOfServiceImportStateIdentity(t *testing.T) {
+	// not parallel: terraform-plugin-testing manages per-test Terraform workdirs and process state.
+	server := newOrganizationCommunicationsAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() { testAccPreCheck(t) },
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBelow(tfversion.Version1_12_0),
+		},
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccTermsOfServiceConfig(server.URL, true, "Importable terms"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_terms_of_service.org", "id", organizationCommunicationsOrgID),
+					resource.TestCheckResourceAttr("ona_terms_of_service.org", "enabled", "true"),
+					resource.TestCheckResourceAttr("ona_terms_of_service.org", "markdown", "Importable terms"),
+					resource.TestCheckResourceAttr("ona_terms_of_service.org", "current_version_id", "terms-version-1"),
+					resource.TestCheckResourceAttr("ona_terms_of_service.org", "current_version", "1"),
+				),
+			},
+			{
+				ResourceName:    "ona_terms_of_service.org",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithID,
+				ImportStateId:   "current",
+			},
+			{
+				ResourceName:    "ona_terms_of_service.org",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
 func testAccOrganizationCommunicationsConfig(host string, bannerEnabled bool, bannerMessage string, termsEnabled bool, termsMarkdown string) string {
 	return fmt.Sprintf(`
 provider "ona" {
@@ -133,6 +206,34 @@ resource "ona_terms_of_service" "org" {
   markdown = %[5]q
 }
 `, host, bannerEnabled, bannerMessage, termsEnabled, termsMarkdown)
+}
+
+func testAccAnnouncementBannerConfig(host string, enabled bool, message string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_announcement_banner" "home" {
+  enabled = %[2]t
+  message = %[3]q
+}
+`, host, enabled, message)
+}
+
+func testAccTermsOfServiceConfig(host string, enabled bool, markdown string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_terms_of_service" "org" {
+  enabled  = %[2]t
+  markdown = %[3]q
+}
+`, host, enabled, markdown)
 }
 
 func testCheckTermsVersionCount(server *organizationCommunicationsAPIServer, expected int) resource.TestCheckFunc {

@@ -77,6 +77,7 @@ func (r *SCMIntegrationResource) List(ctx context.Context, req list.ListRequest,
 		}
 
 		var token string
+		seenTokens := make(map[string]struct{})
 		var emitted int64
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.RunnerConfigurationService().ListSCMIntegrations(ctx, connect.NewRequest(&v1.ListSCMIntegrationsRequest{
@@ -113,10 +114,15 @@ func (r *SCMIntegrationResource) List(ctx context.Context, req list.ListRequest,
 				emitted++
 			}
 
-			token = result.Msg.GetPagination().GetNextToken()
-			if token == "" {
+			nextToken := result.Msg.GetPagination().GetNextToken()
+			if err := listutil.NextPageToken(seenTokens, nextToken); err != nil {
+				push(listutil.Error("Unable to List Ona SCM Integrations", err))
 				return
 			}
+			if nextToken == "" {
+				return
+			}
+			token = nextToken
 		}
 	}
 }

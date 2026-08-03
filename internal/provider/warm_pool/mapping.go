@@ -9,10 +9,10 @@ import (
 	"sort"
 
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -117,12 +117,12 @@ func populateWarmPoolModel(data *WarmPoolModel, warmPool *v1.WarmPool) {
 	metadata := warmPool.GetMetadata()
 	spec := warmPool.GetSpec()
 
-	data.ID = stringOptionalValue(warmPool.GetId())
-	data.ProjectID = stringOptionalValue(metadata.GetProjectId())
-	data.EnvironmentClassID = stringOptionalValue(metadata.GetEnvironmentClassId())
+	data.ID = tfvalue.OptionalStringValue(warmPool.GetId())
+	data.ProjectID = tfvalue.OptionalStringValue(metadata.GetProjectId())
+	data.EnvironmentClassID = tfvalue.OptionalStringValue(metadata.GetEnvironmentClassId())
 	data.MinSize = types.Int32Value(spec.GetMinSize())
 	data.MaxSize = types.Int32Value(spec.GetMaxSize())
-	data.CreatedAt = timestampValue(metadata.GetCreatedAt())
+	data.CreatedAt = tfvalue.TimestampRFC3339Value(metadata.GetCreatedAt())
 }
 
 func populateWarmPoolDataSourceModel(data *WarmPoolDataSourceModel, warmPool *v1.WarmPool) {
@@ -139,8 +139,8 @@ func populateWarmPoolDataSourceModel(data *WarmPoolDataSourceModel, warmPool *v1
 }
 
 func preserveWarmPoolPlannedInputs(data *WarmPoolModel, planned WarmPoolModel) {
-	data.ProjectID = preserveString(data.ProjectID, planned.ProjectID)
-	data.EnvironmentClassID = preserveString(data.EnvironmentClassID, planned.EnvironmentClassID)
+	data.ProjectID = tfvalue.PreserveString(data.ProjectID, planned.ProjectID)
+	data.EnvironmentClassID = tfvalue.PreserveString(data.EnvironmentClassID, planned.EnvironmentClassID)
 	data.MinSize = preserveInt32(data.MinSize, planned.MinSize)
 	data.MaxSize = preserveInt32(data.MaxSize, planned.MaxSize)
 }
@@ -189,27 +189,6 @@ func validateRequiredString(value types.String, p path.Path, name string, diags 
 	if value.IsNull() || value.ValueString() == "" {
 		diags.AddAttributeError(p, "Missing Warm Pool "+name, name+" must not be empty.")
 	}
-}
-
-func timestampValue(ts *timestamppb.Timestamp) types.String {
-	if ts == nil || !ts.IsValid() {
-		return types.StringNull()
-	}
-	return types.StringValue(ts.AsTime().Format("2006-01-02T15:04:05Z07:00"))
-}
-
-func stringOptionalValue(value string) types.String {
-	if value == "" {
-		return types.StringNull()
-	}
-	return types.StringValue(value)
-}
-
-func preserveString(current types.String, planned types.String) types.String {
-	if !planned.IsNull() && !planned.IsUnknown() {
-		return planned
-	}
-	return current
 }
 
 func preserveInt32(current types.Int32, planned types.Int32) types.Int32 {

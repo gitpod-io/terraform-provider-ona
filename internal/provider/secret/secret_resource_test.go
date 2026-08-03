@@ -4,13 +4,22 @@
 package secret
 
 import (
+	"context"
+	"errors"
 	"strings"
 	"testing"
 
+	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
+	resourceschema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"google.golang.org/protobuf/testing/protocmp"
 )
 
@@ -323,6 +332,116 @@ func TestParseImportID(t *testing.T) {
 	}
 }
 
+func TestImportStateLegacyAndIdentitySeedEquivalentState(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		Name                   string
+		LegacyID               string
+		Identity               IdentityModel
+		LegacyNeedsIdentityAPI bool
+		Expected               importStateSnapshot
+	}{
+		{
+			Name:                   "organization",
+			LegacyID:               "organization/" + testSecretID,
+			LegacyNeedsIdentityAPI: true,
+			Identity: IdentityModel{
+				ID:               types.StringValue(testSecretID),
+				Scope:            types.StringValue(scopeOrganization),
+				OrganizationID:   types.StringValue(testOrgID),
+				ProjectID:        types.StringNull(),
+				UserID:           types.StringNull(),
+				ServiceAccountID: types.StringNull(),
+			},
+			Expected: importStateSnapshot{
+				ID:               testSecretID,
+				Scope:            scopeOrganization,
+				ProjectID:        nullSnapshotValue,
+				UserID:           nullSnapshotValue,
+				ServiceAccountID: nullSnapshotValue,
+			},
+		},
+		{
+			Name:     "project",
+			LegacyID: "project/" + testProjectID + "/" + testSecretID,
+			Identity: IdentityModel{
+				ID:               types.StringValue(testSecretID),
+				Scope:            types.StringValue(scopeProject),
+				OrganizationID:   types.StringNull(),
+				ProjectID:        types.StringValue(testProjectID),
+				UserID:           types.StringNull(),
+				ServiceAccountID: types.StringNull(),
+			},
+			Expected: importStateSnapshot{
+				ID:               testSecretID,
+				Scope:            scopeProject,
+				ProjectID:        testProjectID,
+				UserID:           nullSnapshotValue,
+				ServiceAccountID: nullSnapshotValue,
+			},
+		},
+		{
+			Name:     "user",
+			LegacyID: "user/" + testUserID + "/" + testSecretID,
+			Identity: IdentityModel{
+				ID:               types.StringValue(testSecretID),
+				Scope:            types.StringValue(scopeUser),
+				OrganizationID:   types.StringNull(),
+				ProjectID:        types.StringNull(),
+				UserID:           types.StringValue(testUserID),
+				ServiceAccountID: types.StringNull(),
+			},
+			Expected: importStateSnapshot{
+				ID:               testSecretID,
+				Scope:            scopeUser,
+				ProjectID:        nullSnapshotValue,
+				UserID:           testUserID,
+				ServiceAccountID: nullSnapshotValue,
+			},
+		},
+		{
+			Name:     "service_account",
+			LegacyID: "service_account/" + testServiceAccountID + "/" + testSecretID,
+			Identity: IdentityModel{
+				ID:               types.StringValue(testSecretID),
+				Scope:            types.StringValue(scopeServiceAccount),
+				OrganizationID:   types.StringNull(),
+				ProjectID:        types.StringNull(),
+				UserID:           types.StringNull(),
+				ServiceAccountID: types.StringValue(testServiceAccountID),
+			},
+			Expected: importStateSnapshot{
+				ID:               testSecretID,
+				Scope:            scopeServiceAccount,
+				ProjectID:        nullSnapshotValue,
+				UserID:           nullSnapshotValue,
+				ServiceAccountID: testServiceAccountID,
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			legacy := runImportState(t, resource.ImportStateRequest{ID: tc.LegacyID}, tc.LegacyNeedsIdentityAPI)
+			identity := newTestResourceIdentity(t, tc.Identity)
+			structured := runImportState(t, resource.ImportStateRequest{Identity: identity}, false)
+
+			if diff := cmp.Diff(tc.Expected, legacy); diff != "" {
+				t.Errorf("legacy import state mismatch (-want +got):\n%s", diff)
+			}
+			if diff := cmp.Diff(tc.Expected, structured); diff != "" {
+				t.Errorf("structured import state mismatch (-want +got):\n%s", diff)
+			}
+			if diff := cmp.Diff(legacy, structured); diff != "" {
+				t.Errorf("legacy and structured import state differ (-legacy +structured):\n%s", diff)
+			}
+		})
+	}
+}
+
 func mustStringSet(t *testing.T, values ...string) types.Set {
 	t.Helper()
 
@@ -346,7 +465,146 @@ func diagnosticsString(diags diag.Diagnostics) string {
 	return strings.Join(parts, "\n")
 }
 
+func runImportState(t *testing.T, req resource.ImportStateRequest, expectIdentityLookup bool) importStateSnapshot {
+	t.Helper()
+
+	ctx := t.Context()
+	schema := resourceSchema()
+	identitySchema := testIdentitySchema(t)
+	resp := resource.ImportStateResponse{
+		State:    newTestState(t, ctx, schema),
+		Identity: newTestIdentityData(t, ctx, identitySchema),
+	}
+
+	client := managementclient.NewWithServices(managementclient.Services{
+		IdentityService: &testIdentityClient{t: t, allowLookup: expectIdentityLookup},
+	})
+	r := &Resource{client: client}
+	r.ImportState(ctx, req, &resp)
+	if resp.Diagnostics.HasError() {
+		t.Fatalf("ImportState() returned diagnostics: %s", diagnosticsString(resp.Diagnostics))
+	}
+
+	return snapshotImportState(t, ctx, resp.State)
+}
+
+type testIdentityClient struct {
+	t           *testing.T
+	allowLookup bool
+}
+
+func (c *testIdentityClient) GetAuthenticatedIdentity(context.Context, *connect.Request[v1.GetAuthenticatedIdentityRequest]) (*connect.Response[v1.GetAuthenticatedIdentityResponse], error) {
+	c.t.Helper()
+	if !c.allowLookup {
+		c.t.Fatal("unexpected authenticated identity lookup")
+	}
+	return connect.NewResponse(&v1.GetAuthenticatedIdentityResponse{OrganizationId: testOrgID}), nil
+}
+
+func (c *testIdentityClient) GetIDToken(context.Context, *connect.Request[v1.GetIDTokenRequest]) (*connect.Response[v1.GetIDTokenResponse], error) {
+	c.t.Helper()
+	c.t.Fatal("unexpected ID token request")
+	return nil, errors.New("unexpected ID token request")
+}
+
+func (c *testIdentityClient) ExchangeToken(context.Context, *connect.Request[v1.ExchangeTokenRequest]) (*connect.Response[v1.ExchangeTokenResponse], error) {
+	c.t.Helper()
+	c.t.Fatal("unexpected token exchange")
+	return nil, errors.New("unexpected token exchange")
+}
+
+func newTestResourceIdentity(t *testing.T, data IdentityModel) *tfsdk.ResourceIdentity {
+	t.Helper()
+
+	ctx := t.Context()
+	identity := newTestIdentityData(t, ctx, testIdentitySchema(t))
+	diags := identity.Set(ctx, data)
+	if diags.HasError() {
+		t.Fatalf("identity.Set() failed: %s", diagnosticsString(diags))
+	}
+	return identity
+}
+
+func testIdentitySchema(t *testing.T) identityschema.Schema {
+	t.Helper()
+
+	r := &Resource{}
+	var resp resource.IdentitySchemaResponse
+	r.IdentitySchema(t.Context(), resource.IdentitySchemaRequest{}, &resp)
+	return resp.IdentitySchema
+}
+
+func newTestState(t *testing.T, ctx context.Context, schema resourceschema.Schema) tfsdk.State {
+	t.Helper()
+
+	return tfsdk.State{
+		Schema: schema,
+		Raw:    nullObjectValue(t, schema.Type().TerraformType(ctx)),
+	}
+}
+
+func newTestIdentityData(t *testing.T, ctx context.Context, schema identityschema.Schema) *tfsdk.ResourceIdentity {
+	t.Helper()
+
+	return &tfsdk.ResourceIdentity{
+		Schema: schema,
+		Raw:    nullObjectValue(t, schema.Type().TerraformType(ctx)),
+	}
+}
+
+func nullObjectValue(t *testing.T, typ tftypes.Type) tftypes.Value {
+	t.Helper()
+
+	objectType, ok := typ.(tftypes.Object)
+	if !ok {
+		t.Fatalf("expected object Terraform type, got %T", typ)
+	}
+	values := make(map[string]tftypes.Value, len(objectType.AttributeTypes))
+	for name, attrType := range objectType.AttributeTypes {
+		values[name] = tftypes.NewValue(attrType, nil)
+	}
+	return tftypes.NewValue(typ, values)
+}
+
+func snapshotImportState(t *testing.T, ctx context.Context, state tfsdk.State) importStateSnapshot {
+	t.Helper()
+
+	var model Model
+	diags := state.Get(ctx, &model)
+	if diags.HasError() {
+		t.Fatalf("state.Get() failed: %s", diagnosticsString(diags))
+	}
+	return importStateSnapshot{
+		ID:               snapshotString(model.ID),
+		Scope:            snapshotString(model.Scope),
+		ProjectID:        snapshotString(model.ProjectID),
+		UserID:           snapshotString(model.UserID),
+		ServiceAccountID: snapshotString(model.ServiceAccountID),
+	}
+}
+
+func snapshotString(value types.String) string {
+	switch {
+	case value.IsNull():
+		return nullSnapshotValue
+	case value.IsUnknown():
+		return unknownSnapshotValue
+	default:
+		return value.ValueString()
+	}
+}
+
+type importStateSnapshot struct {
+	ID               string
+	Scope            string
+	ProjectID        string
+	UserID           string
+	ServiceAccountID string
+}
+
 const (
 	redactedSecretValue       = "<redacted>"
 	invalidImportIDDiagnostic = "Invalid Import ID: Expected one of: organization/<secret_id>, project/<project_id>/<secret_id>, user/<user_id>/<secret_id>, or service_account/<service_account_id>/<secret_id>."
+	nullSnapshotValue         = "<null>"
+	unknownSnapshotValue      = "<unknown>"
 )

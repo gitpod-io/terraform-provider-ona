@@ -9,6 +9,7 @@ import (
 	"time"
 
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -188,7 +189,7 @@ func populateModel(ctx context.Context, data *Model, workflow *v1.Workflow, diag
 	}
 	data.ID = stringValue(workflow.GetId())
 	data.Name = stringValue(metadata.GetName())
-	data.Description = optionalStringValue(metadata.GetDescription())
+	data.Description = tfvalue.OptionalStringValue(metadata.GetDescription())
 	data.Triggers = triggersToList(ctx, spec.GetTriggers(), diags)
 	data.Action = actionToObject(ctx, spec.GetAction(), diags)
 	data.Executor = subjectObject(metadata.GetExecutor(), diags)
@@ -227,7 +228,7 @@ func triggersToList(ctx context.Context, remote []*v1.WorkflowTrigger, diags *di
 			eventSet, eventDiags := types.SetValueFrom(ctx, types.StringType, events)
 			diags.Append(eventDiags...)
 			model.PullRequest = objectValueFrom(ctx, pullRequestTriggerAttributeTypes, PullRequestTriggerModel{
-				Events: eventSet, WebhookID: optionalStringValue(value.PullRequest.GetWebhookId()), IntegrationID: optionalStringValue(value.PullRequest.GetIntegrationId()),
+				Events: eventSet, WebhookID: tfvalue.OptionalStringValue(value.PullRequest.GetWebhookId()), IntegrationID: tfvalue.OptionalStringValue(value.PullRequest.GetIntegrationId()),
 			}, diags)
 		default:
 			diags.AddError("Unable to Read Ona Workflow", "The Ona API returned an unsupported workflow trigger type.")
@@ -523,13 +524,6 @@ func optionalStringPointer(value types.String) *string {
 }
 
 func stringValue(value string) types.String { return types.StringValue(value) }
-
-func optionalStringValue(value string) types.String {
-	if value == "" {
-		return types.StringNull()
-	}
-	return types.StringValue(value)
-}
 
 func timestampValue(value *timestamppb.Timestamp, diags *diag.Diagnostics) types.String {
 	if value == nil {

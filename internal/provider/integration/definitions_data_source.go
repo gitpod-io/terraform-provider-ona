@@ -11,6 +11,7 @@ import (
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -37,23 +38,11 @@ func (d *DefinitionsDataSource) Schema(ctx context.Context, req datasource.Schem
 }
 
 func (d *DefinitionsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-	d.client = data.Client
+	d.client = providerdata.DataSourceClient(req.ProviderData, d.client, &resp.Diagnostics)
 }
 
 func (d *DefinitionsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	if d.client == nil {
-		resp.Diagnostics.AddError("Ona API Client Is Not Configured", "Set the provider token argument or ONA_TOKEN before reading ona_integration_definitions data sources.")
+	if !providerdata.RequireDataSourceClient(d.client, &resp.Diagnostics, "ona_integration_definitions") {
 		return
 	}
 
@@ -80,7 +69,7 @@ func (d *DefinitionsDataSource) Read(ctx context.Context, req datasource.ReadReq
 func (d *DefinitionsDataSource) listDefinitions(ctx context.Context) ([]*v1.IntegrationDefinition, error) {
 	var definitions []*v1.IntegrationDefinition
 	token := ""
-	seenTokens := map[string]struct{}{}
+	seenTokens := make(map[string]struct{})
 	for {
 		result, err := d.client.IntegrationService().ListIntegrationDefinitions(ctx, connect.NewRequest(&v1.ListIntegrationDefinitionsRequest{
 			Pagination: &v1.PaginationRequest{PageSize: 100, Token: token},
@@ -93,10 +82,9 @@ func (d *DefinitionsDataSource) listDefinitions(ctx context.Context) ([]*v1.Inte
 		if nextToken == "" {
 			break
 		}
-		if _, ok := seenTokens[nextToken]; ok {
-			return nil, fmt.Errorf("list integration definitions: API repeated pagination token %q", nextToken)
+		if err := listutil.NextPageToken(seenTokens, nextToken); err != nil {
+			return nil, fmt.Errorf("list integration definitions: %w", err)
 		}
-		seenTokens[nextToken] = struct{}{}
 		token = nextToken
 	}
 	sort.SliceStable(definitions, func(i, j int) bool {

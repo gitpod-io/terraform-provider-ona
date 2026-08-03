@@ -6,8 +6,15 @@ and data sources:
 - `ona_runner.devloop`
 - `ona_service_account.devloop`
 - `ona_group.devloop`
+- `ona_team.devloop`
 - `ona_group_membership.devloop`
 - `ona_organization_role_assignment.devloop`
+- `ona_organization_ai_budget.credits`
+- `ona_organization_ai_budget.byok`
+- `ona_user_ai_budget.service_account_credits`
+- `ona_user_ai_budget.service_account_byok_exemption`
+- `ona_team_ai_budget.credits`
+- `ona_team_ai_budget.byok`
 - `ona_environment_class.devloop`
 - `ona_project.devloop`
 - `ona_webhook.devloop`
@@ -58,14 +65,32 @@ terraform -chdir=dev/local-devloop apply -auto-approve -input=false
 ```
 
 The apply output includes `cloudformation_template_url` for AWS EC2 runners,
-`managed_service_account_id` for the managed service account, the managed warm
-pool and integration IDs, and the number of visible integration definitions.
-Runner registration tokens are consumed through
+`managed_service_account_id` and `managed_team_id`, the managed warm pool and
+integration IDs, and the number of visible integration definitions. Runner
+registration tokens are consumed through
 `ephemeral.ona_runner_token` during apply, so they are not written as normal
 Terraform outputs or stored in state.
 
 The integration uses the visible built-in definition for `linear.app`, so the
 dev loop does not require or persist an OAuth client secret.
+
+AI budget resources are opt-in because they require an enterprise organization,
+suitable Billing permissions, and change organization billing policy. Enabling
+them exercises organization, service-account, and team budgets, including
+separate credit and BYOK resources against the shared `ona_team.devloop`
+allocation:
+
+```shell
+ONA_TOKEN=... \
+TF_CLI_CONFIG_FILE="${PWD}/terraformrc" \
+terraform -chdir=dev/local-devloop apply \
+  -var='enable_ai_budgets=true' \
+  -auto-approve -input=false
+```
+
+Both team resources may report the same allocation ID. Updating or destroying
+one mode preserves the complementary mode. Destroy the devloop with the same
+variable values so Terraform can remove every enabled budget resource.
 
 Webhook creation requires a user or administrator token; the Ona API rejects
 service-account credentials for this operation. The dev loop retrieves the

@@ -4,13 +4,13 @@
 package workflow
 
 import (
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	datasourceschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	resourceschema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -18,7 +18,7 @@ func resourceSchema() resourceschema.Schema {
 	return resourceschema.Schema{
 		MarkdownDescription: "Persistent Ona automation. Creating automations requires a permitted user credential; the Ona API rejects automation creation by service accounts. A caller changing automation triggers or actions must own the current user executor or set the executor to themselves or a service account. Removing this resource uses graceful deletion: Ona immediately deletes idle automations, but cancels active executions and finishes their cleanup asynchronously.",
 		Attributes: map[string]resourceschema.Attribute{
-			"id": stableComputedString("Workflow ID. Use this value as the Terraform import ID."),
+			"id": tfvalue.StableComputedString("Workflow ID. Use this value as the Terraform import ID."),
 			"name": resourceschema.StringAttribute{
 				Required:            true,
 				MarkdownDescription: "Workflow display name. Must be between 1 and 80 characters.",
@@ -65,9 +65,9 @@ func resourceSchema() resourceschema.Schema {
 				Default:             booldefault.StaticBool(false),
 				MarkdownDescription: "Whether automatic and manual workflow starts are disabled. Defaults to `false`.",
 			},
-			"webhook_url": stableComputedString("Generated workflow webhook URL. The signing secret is not read or stored."),
+			"webhook_url": tfvalue.StableComputedString("Generated workflow webhook URL. The signing secret is not read or stored."),
 			"creator":     computedSubjectResourceAttribute("Identity that created the workflow."),
-			"created_at":  stableComputedString("Time when the workflow was created, in RFC 3339 format."),
+			"created_at":  tfvalue.StableComputedString("Time when the workflow was created, in RFC 3339 format."),
 			"updated_at": resourceschema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "Time when the workflow was last updated, in RFC 3339 format.",
@@ -304,9 +304,9 @@ func collectionDataSourceSchema() datasourceschema.Schema {
 
 func summaryDataSourceAttributes() map[string]datasourceschema.Attribute {
 	return map[string]datasourceschema.Attribute{
-		"id":          computedDataSourceString("Automation ID."),
-		"name":        computedDataSourceString("Automation display name."),
-		"description": computedDataSourceString("Automation description."),
+		"id":          tfvalue.ComputedDataSourceString("Automation ID."),
+		"name":        tfvalue.ComputedDataSourceString("Automation display name."),
+		"description": tfvalue.ComputedDataSourceString("Automation description."),
 		"disabled": datasourceschema.BoolAttribute{
 			Computed:            true,
 			MarkdownDescription: "Whether automation starts are disabled.",
@@ -317,19 +317,9 @@ func summaryDataSourceAttributes() map[string]datasourceschema.Attribute {
 		},
 		"executor":    computedSubjectDataSourceAttribute("Identity that executes the automation."),
 		"creator":     computedSubjectDataSourceAttribute("Identity that created the automation."),
-		"created_at":  computedDataSourceString("Time when the automation was created, in RFC 3339 format."),
-		"updated_at":  computedDataSourceString("Time when the automation was last updated, in RFC 3339 format."),
-		"webhook_url": computedDataSourceString("Generated automation webhook URL."),
-	}
-}
-
-func stableComputedString(description string) resourceschema.StringAttribute {
-	return resourceschema.StringAttribute{
-		Computed:            true,
-		MarkdownDescription: description,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.UseStateForUnknown(),
-		},
+		"created_at":  tfvalue.ComputedDataSourceString("Time when the automation was created, in RFC 3339 format."),
+		"updated_at":  tfvalue.ComputedDataSourceString("Time when the automation was last updated, in RFC 3339 format."),
+		"webhook_url": tfvalue.ComputedDataSourceString("Generated automation webhook URL."),
 	}
 }
 
@@ -341,8 +331,8 @@ func computedSubjectResourceAttribute(description string) resourceschema.SingleN
 			objectplanmodifier.UseStateForUnknown(),
 		},
 		Attributes: map[string]resourceschema.Attribute{
-			"id":        stableComputedString("Subject UUID."),
-			"principal": stableComputedString("Subject principal type."),
+			"id":        tfvalue.StableComputedString("Subject UUID."),
+			"principal": tfvalue.StableComputedString("Subject principal type."),
 		},
 	}
 }
@@ -352,12 +342,8 @@ func computedSubjectDataSourceAttribute(description string) datasourceschema.Sin
 		Computed:            true,
 		MarkdownDescription: description,
 		Attributes: map[string]datasourceschema.Attribute{
-			"id":        computedDataSourceString("Subject UUID."),
-			"principal": computedDataSourceString("Subject principal type."),
+			"id":        tfvalue.ComputedDataSourceString("Subject UUID."),
+			"principal": tfvalue.ComputedDataSourceString("Subject principal type."),
 		},
 	}
-}
-
-func computedDataSourceString(description string) datasourceschema.StringAttribute {
-	return datasourceschema.StringAttribute{Computed: true, MarkdownDescription: description}
 }

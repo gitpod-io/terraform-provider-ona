@@ -11,6 +11,8 @@ import (
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -26,6 +28,7 @@ const termsOfServiceResourceType = "ona_terms_of_service"
 
 var _ resource.Resource = &TermsOfServiceResource{}
 var _ resource.ResourceWithConfigure = &TermsOfServiceResource{}
+var _ resource.ResourceWithIdentity = &TermsOfServiceResource{}
 var _ resource.ResourceWithImportState = &TermsOfServiceResource{}
 var _ resource.ResourceWithValidateConfig = &TermsOfServiceResource{}
 
@@ -34,7 +37,7 @@ func NewTermsOfServiceResource() resource.Resource {
 }
 
 type TermsOfServiceResource struct {
-	clientHolder
+	client *managementclient.ManagementPlane
 }
 
 type TermsOfServiceModel struct {
@@ -107,7 +110,7 @@ func (r *TermsOfServiceResource) Schema(ctx context.Context, req resource.Schema
 }
 
 func (r *TermsOfServiceResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	r.configure(req, resp)
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *TermsOfServiceResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -120,11 +123,11 @@ func (r *TermsOfServiceResource) Create(ctx context.Context, req resource.Create
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "creating", termsOfServiceResourceType) {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", termsOfServiceResourceType) {
 		return
 	}
 
-	authenticated, err := r.authenticatedOrganization(ctx)
+	authenticated, err := authenticatedOrganizationForClient(ctx, r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
 		return
@@ -147,6 +150,10 @@ func (r *TermsOfServiceResource) Create(ctx context.Context, req resource.Create
 	}
 
 	data.ID = types.StringValue(authenticated.ID)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, TermsOfServiceIdentityModel{OrganizationID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), data.ID)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -167,11 +174,11 @@ func (r *TermsOfServiceResource) Read(ctx context.Context, req resource.ReadRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "reading", termsOfServiceResourceType) {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", termsOfServiceResourceType) {
 		return
 	}
 
-	authenticated, err := r.authenticatedOrganization(ctx)
+	authenticated, err := authenticatedOrganizationForClient(ctx, r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
 		return
@@ -196,6 +203,10 @@ func (r *TermsOfServiceResource) Read(ctx context.Context, req resource.ReadRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, TermsOfServiceIdentityModel{OrganizationID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -207,11 +218,11 @@ func (r *TermsOfServiceResource) Update(ctx context.Context, req resource.Update
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "updating", termsOfServiceResourceType) {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", termsOfServiceResourceType) {
 		return
 	}
 
-	authenticated, err := r.authenticatedOrganization(ctx)
+	authenticated, err := authenticatedOrganizationForClient(ctx, r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
 		return
@@ -251,6 +262,10 @@ func (r *TermsOfServiceResource) Update(ctx context.Context, req resource.Update
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, TermsOfServiceIdentityModel{OrganizationID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -260,11 +275,11 @@ func (r *TermsOfServiceResource) Delete(ctx context.Context, req resource.Delete
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "deleting", termsOfServiceResourceType) {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", termsOfServiceResourceType) {
 		return
 	}
 
-	authenticated, err := r.authenticatedOrganization(ctx)
+	authenticated, err := authenticatedOrganizationForClient(ctx, r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
 		return
@@ -282,11 +297,15 @@ func (r *TermsOfServiceResource) Delete(ctx context.Context, req resource.Delete
 }
 
 func (r *TermsOfServiceResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	if !r.requireClient(&resp.Diagnostics, "importing", termsOfServiceResourceType) {
+	if req.ID == "" {
+		resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("organization_id"), req, resp)
+		return
+	}
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "importing", termsOfServiceResourceType) {
 		return
 	}
 
-	authenticated, err := r.authenticatedOrganization(ctx)
+	authenticated, err := authenticatedOrganizationForClient(ctx, r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
 		return
@@ -296,6 +315,7 @@ func (r *TermsOfServiceResource) ImportState(ctx context.Context, req resource.I
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), types.StringValue(authenticated.ID))...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, TermsOfServiceIdentityModel{OrganizationID: types.StringValue(authenticated.ID)})...)
 }
 
 func (r *TermsOfServiceResource) getTermsOfService(ctx context.Context, organizationID string) (*v1.TermsOfService, error) {

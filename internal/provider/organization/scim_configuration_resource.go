@@ -9,7 +9,10 @@ import (
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -23,6 +26,7 @@ import (
 
 var _ resource.Resource = &SCIMConfigurationResource{}
 var _ resource.ResourceWithConfigure = &SCIMConfigurationResource{}
+var _ resource.ResourceWithIdentity = &SCIMConfigurationResource{}
 var _ resource.ResourceWithImportState = &SCIMConfigurationResource{}
 var _ resource.ResourceWithValidateConfig = &SCIMConfigurationResource{}
 
@@ -31,7 +35,7 @@ func NewSCIMConfigurationResource() resource.Resource {
 }
 
 type SCIMConfigurationResource struct {
-	clientHolder
+	client *managementclient.ManagementPlane
 }
 
 type SCIMConfigurationModel struct {
@@ -108,7 +112,7 @@ func (r *SCIMConfigurationResource) Schema(ctx context.Context, req resource.Sch
 }
 
 func (r *SCIMConfigurationResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	r.configure(req, resp)
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *SCIMConfigurationResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -121,10 +125,10 @@ func (r *SCIMConfigurationResource) Create(ctx context.Context, req resource.Cre
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "creating", "ona_scim_configuration") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_scim_configuration") {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
 		return
@@ -146,11 +150,12 @@ func (r *SCIMConfigurationResource) Create(ctx context.Context, req resource.Cre
 	}
 
 	data.ID = types.StringValue(scim.GetId())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, SCIMConfigurationIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if isKnownBool(data.Enabled) && !data.Enabled.ValueBool() {
+	if tfvalue.IsKnownBool(data.Enabled) && !data.Enabled.ValueBool() {
 		enabled := false
 		updateResult, err := r.client.OrganizationService().UpdateSCIMConfiguration(ctx, connect.NewRequest(&v1.UpdateSCIMConfigurationRequest{
 			ScimConfigurationId: data.ID.ValueString(),
@@ -188,10 +193,10 @@ func (r *SCIMConfigurationResource) Read(ctx context.Context, req resource.ReadR
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "reading", "ona_scim_configuration") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_scim_configuration") {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
 		return
@@ -211,6 +216,7 @@ func (r *SCIMConfigurationResource) Read(ctx context.Context, req resource.ReadR
 	prior := data
 	data = SCIMConfigurationModel{}
 	populateSCIMConfigurationModel(&data, scim, prior)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, SCIMConfigurationIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -220,10 +226,10 @@ func (r *SCIMConfigurationResource) Update(ctx context.Context, req resource.Upd
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "updating", "ona_scim_configuration") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", "ona_scim_configuration") {
 		return
 	}
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Authenticated Ona Organization", "resolving the authenticated Ona organization", err)
 		return
@@ -256,6 +262,7 @@ func (r *SCIMConfigurationResource) Update(ctx context.Context, req resource.Upd
 	planned := data
 	populateSCIMConfigurationModel(&data, scim, planned)
 	preserveSCIMConfigurationPlannedInputs(&data, planned)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, SCIMConfigurationIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -265,7 +272,7 @@ func (r *SCIMConfigurationResource) Delete(ctx context.Context, req resource.Del
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "deleting", "ona_scim_configuration") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_scim_configuration") {
 		return
 	}
 	if data.ID.IsNull() || data.ID.IsUnknown() || data.ID.ValueString() == "" {
@@ -283,7 +290,7 @@ func (r *SCIMConfigurationResource) Delete(ctx context.Context, req resource.Del
 }
 
 func (r *SCIMConfigurationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("id"), req, resp)
 }
 
 func (r *SCIMConfigurationResource) getSCIMConfiguration(ctx context.Context, id string) (*v1.SCIMConfiguration, error) {

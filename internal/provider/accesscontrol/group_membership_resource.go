@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2021, 2026
+// Copyright Ona 2026
 // SPDX-License-Identifier: MPL-2.0
 
 package accesscontrol
@@ -9,6 +9,9 @@ import (
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	resourceschema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -18,6 +21,7 @@ import (
 
 var _ resource.Resource = &GroupMembershipResource{}
 var _ resource.ResourceWithConfigure = &GroupMembershipResource{}
+var _ resource.ResourceWithIdentity = &GroupMembershipResource{}
 var _ resource.ResourceWithImportState = &GroupMembershipResource{}
 
 func NewGroupMembershipResource() resource.Resource {
@@ -25,7 +29,7 @@ func NewGroupMembershipResource() resource.Resource {
 }
 
 type GroupMembershipResource struct {
-	clientHolder
+	client *managementclient.ManagementPlane
 }
 
 type GroupMembershipModel struct {
@@ -68,7 +72,7 @@ func (r *GroupMembershipResource) Schema(ctx context.Context, req resource.Schem
 }
 
 func (r *GroupMembershipResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	r.configure(req, resp)
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *GroupMembershipResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -77,7 +81,7 @@ func (r *GroupMembershipResource) Create(ctx context.Context, req resource.Creat
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "creating", "ona_group_membership") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_group_membership") {
 		return
 	}
 
@@ -98,6 +102,7 @@ func (r *GroupMembershipResource) Create(ctx context.Context, req resource.Creat
 	}
 
 	populateGroupMembershipModel(&data, result.Msg.GetMember())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, GroupMembershipIdentityModel{GroupID: data.GroupID, ServiceAccountID: data.ServiceAccountID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -107,7 +112,7 @@ func (r *GroupMembershipResource) Read(ctx context.Context, req resource.ReadReq
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "reading", "ona_group_membership") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_group_membership") {
 		return
 	}
 
@@ -123,6 +128,7 @@ func (r *GroupMembershipResource) Read(ctx context.Context, req resource.ReadReq
 
 	data = GroupMembershipModel{}
 	populateGroupMembershipModel(&data, member)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, GroupMembershipIdentityModel{GroupID: data.GroupID, ServiceAccountID: data.ServiceAccountID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -136,7 +142,7 @@ func (r *GroupMembershipResource) Delete(ctx context.Context, req resource.Delet
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "deleting", "ona_group_membership") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_group_membership") {
 		return
 	}
 	if data.ID.IsNull() || data.ID.IsUnknown() || data.ID.ValueString() == "" {
@@ -155,13 +161,23 @@ func (r *GroupMembershipResource) Delete(ctx context.Context, req resource.Delet
 }
 
 func (r *GroupMembershipResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	parts, diags := splitImportID(req.ID, 2, "group_id/service_account_id")
+	if req.ID == "" {
+		var identity GroupMembershipIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		tfvalue.SetImportString(ctx, resp, "group_id", identity.GroupID.ValueString())
+		tfvalue.SetImportString(ctx, resp, "service_account_id", identity.ServiceAccountID.ValueString())
+		return
+	}
+	parts, diags := tfvalue.SplitImportID(req.ID, 2, "group_id/service_account_id")
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	setImportString(ctx, resp, "group_id", parts[0])
-	setImportString(ctx, resp, "service_account_id", parts[1])
+	tfvalue.SetImportString(ctx, resp, "group_id", parts[0])
+	tfvalue.SetImportString(ctx, resp, "service_account_id", parts[1])
 }
 
 func (r *GroupMembershipResource) getMembership(ctx context.Context, groupID string, serviceAccountID string) (*v1.GroupMembership, error) {

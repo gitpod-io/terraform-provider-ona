@@ -10,6 +10,7 @@ import (
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -99,20 +100,7 @@ func (d *PolicyCollectionDataSource) Schema(ctx context.Context, req datasource.
 }
 
 func (d *PolicyCollectionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	d.client = data.Client
+	d.client = providerdata.DataSourceClient(req.ProviderData, d.client, &resp.Diagnostics)
 }
 
 func (d *PolicyCollectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -122,11 +110,7 @@ func (d *PolicyCollectionDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	if d.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before reading ona_security_policies data sources.",
-		)
+	if !providerdata.RequireDataSourceClient(d.client, &resp.Diagnostics, "ona_security_policies") {
 		return
 	}
 
@@ -167,6 +151,7 @@ func (d *PolicyCollectionDataSource) Read(ctx context.Context, req datasource.Re
 func (d *PolicyCollectionDataSource) listPolicies(ctx context.Context, organizationID string, search string, ids []string) ([]*v1.SecurityPolicy, error) {
 	var result []*v1.SecurityPolicy
 	var token string
+	seenTokens := make(map[string]struct{})
 	for {
 		response, err := d.client.SecurityService().ListSecurityPolicies(ctx, connect.NewRequest(&v1.ListSecurityPoliciesRequest{
 			Pagination: &v1.PaginationRequest{
@@ -183,10 +168,14 @@ func (d *PolicyCollectionDataSource) listPolicies(ctx context.Context, organizat
 			return nil, fmt.Errorf("list security policies: %w", err)
 		}
 		result = append(result, response.Msg.GetSecurityPolicies()...)
-		token = response.Msg.GetPagination().GetNextToken()
-		if token == "" {
+		nextToken := response.Msg.GetPagination().GetNextToken()
+		if err := listutil.NextPageToken(seenTokens, nextToken); err != nil {
+			return nil, fmt.Errorf("list security policies: %w", err)
+		}
+		if nextToken == "" {
 			return result, nil
 		}
+		token = nextToken
 	}
 }
 

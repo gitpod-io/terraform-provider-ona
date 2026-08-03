@@ -12,7 +12,7 @@ import (
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -41,18 +41,7 @@ func (r *Resource) Schema(ctx context.Context, req resource.SchemaRequest, resp 
 }
 
 func (r *Resource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-	r.client = data.Client
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *Resource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -102,7 +91,7 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "creating") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_integration") {
 		return
 	}
 
@@ -152,10 +141,10 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "reading") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_integration") {
 		return
 	}
-	if !isKnownString(data.ID) {
+	if !tfvalue.IsKnownString(data.ID) {
 		resp.Diagnostics.AddError("Unable to Read Ona Integration", "Integration ID is empty.")
 		return
 	}
@@ -188,7 +177,7 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "updating") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", "ona_integration") {
 		return
 	}
 
@@ -226,10 +215,10 @@ func (r *Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "deleting") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_integration") {
 		return
 	}
-	if !isKnownString(data.ID) {
+	if !tfvalue.IsKnownString(data.ID) {
 		resp.State.RemoveResource(ctx)
 		return
 	}
@@ -255,12 +244,4 @@ func (r *Resource) getIntegration(ctx context.Context, id string) (*v1.Integrati
 		return nil, fmt.Errorf("get integration: %w", err)
 	}
 	return result.Msg.GetIntegration(), nil
-}
-
-func (r *Resource) requireClient(diags *diag.Diagnostics, action string) bool {
-	if r.client != nil {
-		return true
-	}
-	diags.AddError("Ona API Client Is Not Configured", fmt.Sprintf("Set the provider token argument or ONA_TOKEN before %s ona_integration resources.", action))
-	return false
 }

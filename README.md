@@ -1,3 +1,13 @@
+<p align="center">
+  <a href="https://ona.com/media">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://ona.com/ona-symbol.svg">
+      <source media="(prefers-color-scheme: light)" srcset="https://ona.com/ona-symbol-black.svg">
+      <img alt="Ona symbol" src="https://ona.com/ona-symbol-black.svg" width="96">
+    </picture>
+  </a>
+</p>
+
 # Terraform Provider for Ona
 
 ## Overview
@@ -7,7 +17,7 @@ is intended for platform, identity, and security teams that administer Ona
 projects, runners, access controls, policies, secrets, and automations.
 
 The provider is currently beta software. The current published release is
-`0.3.0-beta.5`.
+`0.3.0-beta.37`.
 
 - [Terraform Registry provider documentation](https://registry.terraform.io/providers/gitpod-io/ona/latest/docs)
 - [Ona documentation](https://ona.com/docs/ona/getting-started)
@@ -34,7 +44,7 @@ terraform {
   required_providers {
     ona = {
       source  = "gitpod-io/ona"
-      version = "= 0.3.0-beta.5"
+      version = "= 0.3.0-beta.37"
     }
   }
 }
@@ -139,9 +149,9 @@ make build
 ```
 
 `make test` runs the unit and acceptance test suites. Run it, `make test-acc`,
-or the [local Terraform development loop](dev/local-devloop/README.md) only when
-you are authorized to perform credentialed operations and have the required Ona
-credentials.
+the [local Terraform development loop](dev/local-devloop/README.md), or the
+[local import loop](dev/local-importloop/README.md) only when you are authorized
+to perform credentialed operations and have the required Ona credentials.
 
 Never commit tokens, private keys, Terraform state or saved plans, local
 provider override files, or release signing material.

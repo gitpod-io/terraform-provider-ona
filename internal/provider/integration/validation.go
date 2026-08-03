@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -26,7 +27,7 @@ func validateConfig(ctx context.Context, data Model, diags *diag.Diagnostics) {
 	if data.IntegrationDefinitionID.IsUnknown() {
 		return
 	}
-	if isKnownString(data.IntegrationDefinitionID) {
+	if tfvalue.IsKnownString(data.IntegrationDefinitionID) {
 		validateDefinitionBackedConfig(ctx, data, diags)
 		return
 	}
@@ -34,10 +35,10 @@ func validateConfig(ctx context.Context, data Model, diags *diag.Diagnostics) {
 }
 
 func validateDefinitionBackedConfig(ctx context.Context, data Model, diags *diag.Diagnostics) {
-	if isKnownString(data.Name) {
+	if tfvalue.IsKnownString(data.Name) {
 		diags.AddAttributeError(path.Root("name"), "Invalid Definition-Backed Integration Name", "Do not configure name when integration_definition_id is set. Ona resolves the name from the selected definition.")
 	}
-	if isKnownString(data.Description) {
+	if tfvalue.IsKnownString(data.Description) {
 		diags.AddAttributeError(path.Root("description"), "Invalid Definition-Backed Integration Description", "Do not configure description when integration_definition_id is set. Ona resolves the description from the selected definition.")
 	}
 	if data.Auth.IsNull() || data.Auth.IsUnknown() {
@@ -51,7 +52,7 @@ func validateDefinitionBackedConfig(ctx context.Context, data Model, diags *diag
 }
 
 func validateCustomConfig(ctx context.Context, data Model, diags *diag.Diagnostics) {
-	if !data.Name.IsUnknown() && !isKnownString(data.Name) {
+	if !data.Name.IsUnknown() && !tfvalue.IsKnownString(data.Name) {
 		diags.AddAttributeError(path.Root("name"), "Missing Custom Integration Name", "Set name when integration_definition_id is omitted.")
 	}
 
@@ -80,7 +81,7 @@ func validateCustomConfig(ctx context.Context, data Model, diags *diag.Diagnosti
 		return
 	}
 	if !mcp.URL.IsUnknown() {
-		if !isKnownString(mcp.URL) {
+		if !tfvalue.IsKnownString(mcp.URL) {
 			diags.AddAttributeError(path.Root("capabilities").AtName("mcp").AtName("url"), "Missing Custom Integration MCP URL", "Custom integrations require capabilities.mcp.url.")
 		} else {
 			validateHTTPSURL(mcp.URL.ValueString(), path.Root("capabilities").AtName("mcp").AtName("url"), diags)
@@ -113,7 +114,7 @@ func validateCustomConfig(ctx context.Context, data Model, diags *diag.Diagnosti
 	}
 	credentials := credentialsFromObject(ctx, data.Credentials, diags)
 
-	if isKnownBool(oauth.DynamicRegistration) && oauth.DynamicRegistration.ValueBool() {
+	if tfvalue.IsKnownBool(oauth.DynamicRegistration) && oauth.DynamicRegistration.ValueBool() {
 		for _, field := range []struct {
 			name  string
 			value types.String
@@ -122,26 +123,26 @@ func validateCustomConfig(ctx context.Context, data Model, diags *diag.Diagnosti
 			{"auth_url", oauth.AuthURL},
 			{"token_url", oauth.TokenURL},
 		} {
-			if isKnownString(field.value) {
+			if tfvalue.IsKnownString(field.value) {
 				diags.AddAttributeError(path.Root("auth").AtName("oauth").AtName(field.name), "Invalid Dynamic Registration Configuration", fmt.Sprintf("Do not configure %s when dynamic_registration is true.", field.name))
 			}
 		}
-		if isKnownString(credentials.OAuthClientSecret) {
+		if tfvalue.IsKnownString(credentials.OAuthClientSecret) {
 			diags.AddAttributeError(path.Root("credentials").AtName("oauth_client_secret"), "Invalid Dynamic Registration Configuration", "Do not configure credentials.oauth_client_secret when dynamic_registration is true.")
 		}
 	} else if !oauth.DynamicRegistration.IsUnknown() {
-		if !isKnownString(oauth.ClientID) {
+		if !tfvalue.IsKnownString(oauth.ClientID) {
 			diags.AddAttributeError(path.Root("auth").AtName("oauth").AtName("client_id"), "Missing OAuth Client ID", "Set client_id for a custom integration using manual OAuth, or set dynamic_registration to true.")
 		}
-		if !isKnownString(credentials.OAuthClientSecret) {
+		if !tfvalue.IsKnownString(credentials.OAuthClientSecret) {
 			diags.AddAttributeError(path.Root("credentials").AtName("oauth_client_secret"), "Missing OAuth Client Secret", "Set credentials.oauth_client_secret for a custom integration using manual OAuth.")
 		}
 	}
 
-	if isKnownString(oauth.AuthURL) {
+	if tfvalue.IsKnownString(oauth.AuthURL) {
 		validateHTTPSURL(oauth.AuthURL.ValueString(), path.Root("auth").AtName("oauth").AtName("auth_url"), diags)
 	}
-	if isKnownString(oauth.TokenURL) {
+	if tfvalue.IsKnownString(oauth.TokenURL) {
 		validateHTTPSURL(oauth.TokenURL.ValueString(), path.Root("auth").AtName("oauth").AtName("token_url"), diags)
 	}
 }
@@ -157,7 +158,7 @@ func validateAgentClient(ctx context.Context, capabilities types.Object, diags *
 	}
 	var agent agentClientModel
 	diags.Append(model.AgentClient.As(ctx, &agent, basetypes.ObjectAsOptions{})...)
-	if diags.HasError() || !isKnownString(agent.SeverityThreshold) {
+	if diags.HasError() || !tfvalue.IsKnownString(agent.SeverityThreshold) {
 		return
 	}
 	switch agent.SeverityThreshold.ValueString() {

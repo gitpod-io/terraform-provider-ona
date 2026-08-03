@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2021, 2026
+// Copyright Ona 2026
 // SPDX-License-Identifier: MPL-2.0
 
 package accesscontrol
@@ -11,6 +11,9 @@ import (
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -22,6 +25,7 @@ import (
 
 var _ resource.Resource = &OrganizationRoleAssignmentResource{}
 var _ resource.ResourceWithConfigure = &OrganizationRoleAssignmentResource{}
+var _ resource.ResourceWithIdentity = &OrganizationRoleAssignmentResource{}
 var _ resource.ResourceWithImportState = &OrganizationRoleAssignmentResource{}
 var _ resource.ResourceWithValidateConfig = &OrganizationRoleAssignmentResource{}
 
@@ -30,7 +34,7 @@ func NewOrganizationRoleAssignmentResource() resource.Resource {
 }
 
 type OrganizationRoleAssignmentResource struct {
-	clientHolder
+	client *managementclient.ManagementPlane
 }
 
 type OrganizationRoleAssignmentModel struct {
@@ -93,7 +97,7 @@ func (r *OrganizationRoleAssignmentResource) Schema(ctx context.Context, req res
 }
 
 func (r *OrganizationRoleAssignmentResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	r.configure(req, resp)
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *OrganizationRoleAssignmentResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -111,11 +115,11 @@ func (r *OrganizationRoleAssignmentResource) Create(ctx context.Context, req res
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "creating", "ona_organization_role_assignment") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_organization_role_assignment") {
 		return
 	}
 
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
 		return
@@ -143,6 +147,7 @@ func (r *OrganizationRoleAssignmentResource) Create(ctx context.Context, req res
 	}
 
 	populateOrganizationRoleAssignmentModel(&data, result.Msg.GetAssignment())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, OrganizationRoleAssignmentIdentityModel{GroupID: data.GroupID, OrganizationID: types.StringValue(organizationID), Role: data.Role})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -152,11 +157,11 @@ func (r *OrganizationRoleAssignmentResource) Read(ctx context.Context, req resou
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "reading", "ona_organization_role_assignment") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_organization_role_assignment") {
 		return
 	}
 
-	organizationID, err := r.authenticatedOrganizationID(ctx)
+	organizationID, err := providerdata.AuthenticatedOrganizationID(ctx, r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Resolve Ona Organization", err.Error())
 		return
@@ -174,6 +179,7 @@ func (r *OrganizationRoleAssignmentResource) Read(ctx context.Context, req resou
 
 	data = OrganizationRoleAssignmentModel{}
 	populateOrganizationRoleAssignmentModel(&data, assignment)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, OrganizationRoleAssignmentIdentityModel{GroupID: data.GroupID, OrganizationID: types.StringValue(organizationID), Role: data.Role})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -187,7 +193,7 @@ func (r *OrganizationRoleAssignmentResource) Delete(ctx context.Context, req res
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "deleting", "ona_organization_role_assignment") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_organization_role_assignment") {
 		return
 	}
 	if data.ID.IsNull() || data.ID.IsUnknown() || data.ID.ValueString() == "" {
@@ -206,17 +212,32 @@ func (r *OrganizationRoleAssignmentResource) Delete(ctx context.Context, req res
 }
 
 func (r *OrganizationRoleAssignmentResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	parts := strings.Split(req.ID, "/")
-	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
-		resp.Diagnostics.AddError("Invalid Import ID", "Use group_id/role to import an Ona organization role assignment.")
+	if req.ID == "" {
+		var identity OrganizationRoleAssignmentIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		if _, ok := roleToAPI[identity.Role.ValueString()]; !ok {
+			addInvalidRoleDiagnostic(path.Root("role"), identity.Role.ValueString(), &resp.Diagnostics)
+			return
+		}
+		tfvalue.SetImportString(ctx, resp, "group_id", identity.GroupID.ValueString())
+		tfvalue.SetImportString(ctx, resp, "role", identity.Role.ValueString())
+		resp.Diagnostics.Append(resp.Identity.Set(ctx, identity)...)
+		return
+	}
+	parts, diags := tfvalue.SplitImportID(req.ID, 2, "group_id/role")
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 	if _, ok := roleToAPI[parts[1]]; !ok {
 		addInvalidRoleDiagnostic(path.Root("role"), parts[1], &resp.Diagnostics)
 		return
 	}
-	setImportString(ctx, resp, "group_id", parts[0])
-	setImportString(ctx, resp, "role", parts[1])
+	tfvalue.SetImportString(ctx, resp, "group_id", parts[0])
+	tfvalue.SetImportString(ctx, resp, "role", parts[1])
 }
 
 func (r *OrganizationRoleAssignmentResource) findAssignment(ctx context.Context, groupID string, organizationID string, role string) (*v1.RoleAssignment, error) {

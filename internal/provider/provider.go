@@ -9,6 +9,7 @@ import (
 
 	onaclient "github.com/gitpod-io/terraform-provider-ona/internal/client"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/accesscontrol"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/billing"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/integration"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/organization"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/project"
@@ -132,28 +133,33 @@ func (p *OnaProvider) Configure(ctx context.Context, req provider.ConfigureReque
 
 func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		accesscontrol.NewGroupMembershipResource,
+		accesscontrol.NewGroupResource,
+		accesscontrol.NewOrganizationRoleAssignmentResource,
+		accesscontrol.NewTeamResource,
+		billing.NewOrganizationAIBudgetResource,
+		billing.NewTeamAIBudgetResource,
+		billing.NewUserAIBudgetResource,
+		integration.NewResource,
+		organization.NewAnnouncementBannerResource,
+		organization.NewCustomDomainResource,
+		organization.NewOIDCConfigResource,
+		organization.NewPoliciesResource,
+		organization.NewSCIMConfigurationResource,
+		organization.NewSSOConfigurationResource,
+		organization.NewTermsOfServiceResource,
+		project.NewInsightsResource,
+		project.NewResource,
+		runner.NewEnvironmentClassResource,
+		runner.NewLLMIntegrationResource,
+		runner.NewPolicyResource,
 		runner.NewResource,
 		runner.NewSCMIntegrationResource,
-		runner.NewLLMIntegrationResource,
-		runner.NewEnvironmentClassResource,
-		runner.NewPolicyResource,
-		project.NewResource,
-		security.NewPolicyResource,
 		secret.NewResource,
-		organization.NewPoliciesResource,
-		organization.NewAnnouncementBannerResource,
-		organization.NewTermsOfServiceResource,
-		organization.NewCustomDomainResource,
-		organization.NewSSOConfigurationResource,
-		organization.NewSCIMConfigurationResource,
-		organization.NewOIDCConfigResource,
-		warmpool.NewWarmPoolResource,
+		security.NewPolicyResource,
 		serviceaccount.NewResource,
-		accesscontrol.NewGroupResource,
-		accesscontrol.NewGroupMembershipResource,
-		accesscontrol.NewOrganizationRoleAssignmentResource,
+		warmpool.NewWarmPoolResource,
 		webhook.NewResource,
-		integration.NewResource,
 		workflow.NewResource,
 	}
 }
@@ -170,8 +176,26 @@ func (p *OnaProvider) EphemeralResources(ctx context.Context) []func() ephemeral
 // registered by the provider. Resource-specific PRs add constructors here.
 func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResource {
 	return []func() list.ListResource{
+		accesscontrol.NewGroupListResource,
+		accesscontrol.NewGroupMembershipListResource,
+		accesscontrol.NewOrganizationRoleAssignmentListResource,
+		organization.NewAnnouncementBannerListResource,
+		organization.NewCustomDomainListResource,
+		organization.NewOIDCConfigListResource,
+		organization.NewPoliciesListResource,
+		organization.NewSCIMConfigurationListResource,
+		organization.NewSSOConfigurationListResource,
+		organization.NewTermsOfServiceListResource,
+		project.NewInsightsListResource,
+		project.NewListResource,
+		runner.NewEnvironmentClassListResource,
 		runner.NewRunnerListResource,
+		runner.NewRunnerPolicyListResource,
 		runner.NewSCMIntegrationListResource,
+		security.NewPolicyListResource,
+		secret.NewListResource,
+		serviceaccount.NewListResource,
+		warmpool.NewWarmPoolListResource,
 	}
 }
 
@@ -181,15 +205,16 @@ func pathRoot(name string) path.Path {
 
 func (p *OnaProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		runner.NewSingularDataSource,
-		runner.NewCollectionDataSource,
-		warmpool.NewWarmPoolDataSource,
-		warmpool.NewWarmPoolCollectionDataSource,
-		security.NewPolicyCollectionDataSource,
 		integration.NewDefinitionsDataSource,
-		workflow.NewCollectionDataSource,
-		user.NewUserDataSource,
+		project.NewProjectDataSource,
+		runner.NewCollectionDataSource,
+		runner.NewSingularDataSource,
+		security.NewPolicyCollectionDataSource,
 		user.NewUserCollectionDataSource,
+		user.NewUserDataSource,
+		warmpool.NewWarmPoolCollectionDataSource,
+		warmpool.NewWarmPoolDataSource,
+		workflow.NewCollectionDataSource,
 	}
 }
 

@@ -6,6 +6,7 @@ package provider
 import (
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	frameworkprovider "github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	frameworkresource "github.com/hashicorp/terraform-plugin-framework/resource"
@@ -14,6 +15,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/hashicorp/terraform-plugin-testing/echoprovider"
 )
+
+func TestProjectDataSourceIsRegistered(t *testing.T) {
+	t.Parallel()
+
+	provider := &OnaProvider{}
+	for _, newDataSource := range provider.DataSources(t.Context()) {
+		var resp datasource.MetadataResponse
+		newDataSource().Metadata(t.Context(), datasource.MetadataRequest{ProviderTypeName: "ona"}, &resp)
+		if resp.TypeName == "ona_project" {
+			return
+		}
+	}
+
+	t.Fatal("ona_project data source is not registered")
+}
 
 // testAccProtoV6ProviderFactories is used to instantiate a provider during acceptance testing.
 // The factory function is called for each Terraform CLI command to create a provider

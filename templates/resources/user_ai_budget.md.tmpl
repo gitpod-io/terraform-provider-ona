@@ -1,0 +1,41 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: "Billing"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+This resource manages a direct override for a user or service account. An inherited organization policy is not imported or stored as an `ona_user_ai_budget` resource. Use separate resources for `credits` and `byok`; set `no_cap = true` without limit or currency fields to exempt the identity from the selected organization default.
+
+{{ if .HasExamples -}}
+## Example Usage
+
+{{- range .ExampleFiles }}
+
+{{ tffile . }}
+{{- end }}
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+{{- if or .HasImport .HasImportIDConfig .HasImportIdentityConfig }}
+
+## Import
+
+Import is supported with `organization_id/user_id/mode`. Only a direct user or service-account override can be imported.
+{{- end }}
+{{- if .HasImportIDConfig }}
+
+In Terraform v1.5.0 and later, the [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the `id` attribute, for example:
+
+{{tffile .ImportIDConfigFile }}
+{{- end }}
+{{- if .HasImport }}
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
+{{codefile "shell" .ImportFile }}
+{{- end }}

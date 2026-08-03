@@ -19,9 +19,9 @@ runner environment classes, runner SCM integrations, security policies, and
 organization policies, announcement banners, Terms of Service, groups, group
 runner environment classes, runner SCM integrations, security policies,
 organization policies, announcement banners, Terms of Service, custom domains,
-groups, group memberships, and organization role assignments. Terraform can
-create, read, update, delete where the Ona API supports deletion, and import
-those resource types directly.
+groups, group memberships, teams, and organization role assignments. Terraform
+can create, read, update, delete where the Ona API supports deletion, and
+import those resource types directly.
 
 Terraform cannot discover or import a resource type natively until each resource has:
 
@@ -37,8 +37,8 @@ resource graph for inventory and future reference rewriting, but it writes
 import blocks only for resource types enabled in the helper's selection path,
 which currently includes project, runner, and environment class resources.
 Security policies, organization policies, custom domains, groups, group
-memberships, and organization role assignments are provider-native resources,
-but the helper does not yet select them for generated import blocks.
+memberships, teams, and organization role assignments are provider-native
+resources, but the helper does not yet select them for generated import blocks.
 
 Direct `terraform import` uses these resource IDs:
 
@@ -55,10 +55,16 @@ Direct `terraform import` uses these resource IDs:
 | `ona_custom_domain` | `current` |
 | `ona_group` | Group ID |
 | `ona_group_membership` | `group_id/service_account_id` |
+| `ona_team` | Team ID |
 | `ona_organization_role_assignment` | `group_id/organization_id/role` |
+| `ona_organization_ai_budget` | `organization_id/mode` |
+| `ona_user_ai_budget` | `organization_id/user_id/mode` |
+| `ona_team_ai_budget` | `organization_id/team_id/mode` |
 | `ona_webhook` | Webhook ID |
 | `ona_integration` | Integration ID |
 | `ona_automation` | Workflow ID |
+
+AI budget imports are mode-specific. User imports manage only a direct override; an inherited effective organization policy does not create an `ona_user_ai_budget` resource. Team credit and BYOK resources can import separate dimensions of the same remote allocation ID, and each resource preserves the other mode.
 
 Importing `ona_integration` restores API-observable configuration, but Ona
 censors stored credentials in read responses. Terraform therefore leaves the
@@ -99,7 +105,7 @@ terraform {
   required_providers {
     ona = {
       source  = "gitpod-io/ona"
-      version = "~> 0.1"
+      version = "= 0.3.0-beta.37"
     }
   }
 }
@@ -238,16 +244,16 @@ import blocks, including groups, group memberships, organization role
 assignments, announcement banners, Terms of Service, teams, security policies,
 organization policies, automations, or AI budget policies. Security policies,
 organization policies, announcement banners, Terms of Service, groups, group
-memberships, and organization role assignments can still be imported directly
-with Terraform import blocks because the provider now implements those
-resources.
+memberships, teams, and organization role assignments can still be imported
+directly with Terraform import blocks because the provider now implements
+those resources.
 import blocks, including custom domains, groups, group memberships,
 organization role assignments, announcement banners, Terms of Service, teams,
 security policies, organization policies, automations, or AI budget policies.
 Security policies, organization policies, announcement banners, Terms of
-Service, custom domains, groups, group memberships, and organization role
-assignments can still be imported directly with Terraform import blocks because
-the provider now implements those resources.
+Service, custom domains, groups, group memberships, teams, and organization
+role assignments can still be imported directly with Terraform import blocks
+because the provider now implements those resources.
 
 ## Output Files
 

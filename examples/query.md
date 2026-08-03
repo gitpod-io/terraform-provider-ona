@@ -1,6 +1,8 @@
 # Terraform Query for Existing Ona Resources
 
-Terraform Query discovers existing Ona resources through provider list resources. Use it to inspect importable resources and to generate starter Terraform configuration before deciding what to import or manage.
+Terraform Query discovers existing Ona resources through provider list resources. Use it to inspect importable resources and generate the `resource` and identity-based `import` blocks needed to bring them under Terraform management.
+
+Treat Query as a bootstrap step: Terraform's [bulk import workflow](https://developer.hashicorp.com/terraform/language/import/bulk) generates `resource` and `import` blocks that you copy into your configuration before applying. Generated resource labels may reflect current Ona display names; review and rename them before using the generated HCL as your managed Terraform configuration.
 
 The query example requires Terraform 1.14 or later.
 
@@ -36,6 +38,14 @@ Set `include_resource = true` when you want Terraform to generate resource confi
 
 ## Output
 
-`terraform query -generate-config-out=generated.tf` writes Terraform resource configuration for the discovered runners. The generated file is a starting point. Review it before applying, rename resource labels as needed, and keep it with import blocks when moving existing resources under Terraform management.
+`terraform query -generate-config-out=generated.tf` writes `resource` blocks and identity-based `import` blocks for the discovered resources. It does not modify Terraform state.
 
-Query does not import resources into Terraform state. To manage a discovered runner after reviewing the generated configuration, use Terraform import blocks or the import helper described in [import.md](import.md).
+Review the generated configuration, rename resource labels as needed, and copy the blocks into the target Terraform configuration. Then preview and apply the imports:
+
+```shell
+terraform plan
+terraform apply
+terraform plan
+```
+
+The first plan should show imports without remote mutations. `terraform apply` imports the resources into state, and the final plan should be empty. Write-only values such as SCM OAuth client secrets are not recoverable from Ona and are omitted from generated configuration.

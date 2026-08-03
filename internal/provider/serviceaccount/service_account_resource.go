@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2021, 2026
+// Copyright Ona 2026
 // SPDX-License-Identifier: MPL-2.0
 
 package serviceaccount
@@ -13,6 +13,7 @@ import (
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -26,6 +27,7 @@ import (
 
 var _ resource.Resource = &Resource{}
 var _ resource.ResourceWithConfigure = &Resource{}
+var _ resource.ResourceWithIdentity = &Resource{}
 var _ resource.ResourceWithImportState = &Resource{}
 var _ resource.ResourceWithValidateConfig = &Resource{}
 
@@ -109,20 +111,7 @@ func (r *Resource) Schema(ctx context.Context, req resource.SchemaRequest, resp 
 }
 
 func (r *Resource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = data.Client
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *Resource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -141,11 +130,7 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before creating ona_service_account resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_service_account") {
 		return
 	}
 
@@ -168,6 +153,7 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 	planned := data
 	populateModelFromServiceAccount(&data, result.Msg.GetServiceAccount())
 	preservePlannedInputs(&data, planned)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, IdentityModel{ServiceAccountID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -178,11 +164,7 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before reading ona_service_account resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_service_account") {
 		return
 	}
 
@@ -204,6 +186,7 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 
 	data = Model{}
 	populateModelFromServiceAccount(&data, account)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, IdentityModel{ServiceAccountID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -214,11 +197,7 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before updating ona_service_account resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", "ona_service_account") {
 		return
 	}
 
@@ -253,6 +232,7 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 	planned := data
 	populateModelFromServiceAccount(&data, result.Msg.GetServiceAccount())
 	preservePlannedInputs(&data, planned)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, IdentityModel{ServiceAccountID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -263,11 +243,7 @@ func (r *Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp 
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before deleting ona_service_account resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_service_account") {
 		return
 	}
 
@@ -289,7 +265,7 @@ func (r *Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp 
 }
 
 func (r *Resource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("service_account_id"), req, resp)
 }
 
 func (r *Resource) getServiceAccount(ctx context.Context, id string) (*v1.ServiceAccount, error) {
@@ -335,16 +311,9 @@ func populateModelFromServiceAccount(data *Model, account *v1.ServiceAccount) {
 }
 
 func preservePlannedInputs(data *Model, planned Model) {
-	data.Name = preserveString(data.Name, planned.Name)
-	data.Description = preserveString(data.Description, planned.Description)
-	data.ValidUntil = preserveString(data.ValidUntil, planned.ValidUntil)
-}
-
-func preserveString(current types.String, planned types.String) types.String {
-	if planned.IsNull() || planned.IsUnknown() {
-		return current
-	}
-	return planned
+	data.Name = tfvalue.PreserveString(data.Name, planned.Name)
+	data.Description = tfvalue.PreserveString(data.Description, planned.Description)
+	data.ValidUntil = tfvalue.PreserveString(data.ValidUntil, planned.ValidUntil)
 }
 
 func serviceAccountID(data Model) string {
@@ -392,13 +361,6 @@ func timestampValue(value *timestamppb.Timestamp) types.String {
 	return types.StringValue(value.AsTime().UTC().Format(time.RFC3339))
 }
 
-func stringOptionalValue(value string) types.String {
-	if value == "" {
-		return types.StringNull()
-	}
-	return types.StringValue(value)
-}
-
 func creatorAttributeTypes() map[string]attr.Type {
 	return map[string]attr.Type{
 		"id":        types.StringType,
@@ -411,7 +373,7 @@ func creatorModel(creator *v1.Subject) types.Object {
 		return types.ObjectNull(creatorAttributeTypes())
 	}
 	return types.ObjectValueMust(creatorAttributeTypes(), map[string]attr.Value{
-		"id":        stringOptionalValue(creator.GetId()),
+		"id":        tfvalue.OptionalStringValue(creator.GetId()),
 		"principal": types.StringValue(principalToString(creator.GetPrincipal())),
 	})
 }

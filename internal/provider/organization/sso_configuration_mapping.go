@@ -8,6 +8,7 @@ import (
 	"sort"
 
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
@@ -25,7 +26,7 @@ const (
 func createSSOConfigurationRequest(ctx context.Context, organizationID string, data SSOConfigurationModel, secret types.String) (*v1.CreateSSOConfigurationRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	validateSSOConfigurationModel(ctx, data, &diags)
-	if !isKnownString(secret) {
+	if !tfvalue.IsKnownString(secret) {
 		diags.AddAttributeError(path.Root("client_secret"), "Missing SSO Client Secret", "Set client_secret when creating ona_sso_configuration resources.")
 	}
 	if diags.HasError() {
@@ -41,7 +42,7 @@ func createSSOConfigurationRequest(ctx context.Context, organizationID string, d
 		DisplayName:      data.DisplayName.ValueString(),
 		AdditionalScopes: stringSliceFromSet(ctx, data.AdditionalScopes, &diags),
 	}
-	if isKnownString(data.ClaimsExpression) {
+	if tfvalue.IsKnownString(data.ClaimsExpression) {
 		req.ClaimsExpression = ptr(data.ClaimsExpression.ValueString())
 	}
 	if diags.HasError() {
@@ -81,7 +82,7 @@ func updateSSOConfigurationRequestFromConfig(ctx context.Context, plan SSOConfig
 	if value, ok := stringFromConfig(ctx, cfg, path.Root("claims_expression"), plan.ClaimsExpression, &diags); ok {
 		req.ClaimsExpression = value
 	}
-	if isKnownString(plan.State) {
+	if tfvalue.IsKnownString(plan.State) {
 		state, ok := ssoStateFromString(plan.State.ValueString())
 		if !ok {
 			diags.AddAttributeError(path.Root("state"), "Invalid SSO Configuration State", "Supported values are \"active\" and \"inactive\".")
@@ -90,7 +91,7 @@ func updateSSOConfigurationRequestFromConfig(ctx context.Context, plan SSOConfig
 		}
 	}
 	if ssoSecretRequiredForUpdate(plan, prior) {
-		if !isKnownString(secret) {
+		if !tfvalue.IsKnownString(secret) {
 			diags.AddAttributeError(path.Root("client_secret"), "Missing SSO Client Secret", "Set client_secret when changing client_id or client_secret_version.")
 			return nil, diags
 		}
@@ -117,24 +118,24 @@ func populateSSOConfigurationModel(ctx context.Context, data *SSOConfigurationMo
 }
 
 func preserveSSOConfigurationPlannedInputs(data *SSOConfigurationModel, planned SSOConfigurationModel) {
-	data.ClientID = preserveString(data.ClientID, planned.ClientID)
+	data.ClientID = tfvalue.PreserveString(data.ClientID, planned.ClientID)
 	data.ClientSecret = types.StringNull()
-	data.ClientSecretVersion = preserveString(data.ClientSecretVersion, planned.ClientSecretVersion)
-	data.IssuerURL = preserveString(data.IssuerURL, planned.IssuerURL)
-	data.DisplayName = preserveString(data.DisplayName, planned.DisplayName)
+	data.ClientSecretVersion = tfvalue.PreserveString(data.ClientSecretVersion, planned.ClientSecretVersion)
+	data.IssuerURL = tfvalue.PreserveString(data.IssuerURL, planned.IssuerURL)
+	data.DisplayName = tfvalue.PreserveString(data.DisplayName, planned.DisplayName)
 	data.EmailDomains = preserveSet(data.EmailDomains, planned.EmailDomains)
 	data.AdditionalScopes = preserveOptionalSet(data.AdditionalScopes, planned.AdditionalScopes)
 	data.ClaimsExpression = preserveOptionalString(data.ClaimsExpression, planned.ClaimsExpression)
-	data.State = preserveString(data.State, planned.State)
+	data.State = tfvalue.PreserveString(data.State, planned.State)
 }
 
 func validateSSOConfigurationModel(ctx context.Context, data SSOConfigurationModel, diags *diag.Diagnostics) {
-	if isKnownString(data.State) {
+	if tfvalue.IsKnownString(data.State) {
 		if _, ok := ssoStateFromString(data.State.ValueString()); !ok {
 			diags.AddAttributeError(path.Root("state"), "Invalid SSO Configuration State", "Supported values are \"active\" and \"inactive\".")
 		}
 	}
-	if isKnownString(data.DisplayName) && len(data.DisplayName.ValueString()) > 128 {
+	if tfvalue.IsKnownString(data.DisplayName) && len(data.DisplayName.ValueString()) > 128 {
 		diags.AddAttributeError(path.Root("display_name"), "Invalid SSO Display Name", "display_name must be at most 128 characters.")
 	}
 	if !data.EmailDomains.IsNull() && !data.EmailDomains.IsUnknown() && len(data.EmailDomains.Elements()) == 0 {
@@ -209,7 +210,7 @@ func preserveOptionalString(current types.String, planned types.String) types.St
 	if planned.IsNull() {
 		return types.StringNull()
 	}
-	return preserveString(current, planned)
+	return tfvalue.PreserveString(current, planned)
 }
 
 func preserveOptionalSet(current types.Set, planned types.Set) types.Set {

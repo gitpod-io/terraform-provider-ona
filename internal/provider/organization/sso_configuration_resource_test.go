@@ -9,7 +9,13 @@ import (
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	frameworkpath "github.com/hashicorp/terraform-plugin-framework/path"
+	frameworkresource "github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
+	resourceschema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"google.golang.org/protobuf/testing/protocmp"
 )
 
@@ -263,6 +269,31 @@ func TestPopulateSSOConfigurationOptionalOnlyFields(t *testing.T) {
 	}
 }
 
+func TestSSOConfigurationImportStateSetsEquivalentIDFromLegacyAndIdentity(t *testing.T) {
+	t.Parallel()
+
+	resource := &SSOConfigurationResource{}
+	schema := ssoConfigurationResourceSchema(t, resource)
+	identitySchema := ssoConfigurationIdentitySchema(t, resource)
+
+	legacyState := importSSOConfigurationState(t, resource, frameworkresource.ImportStateRequest{
+		ID: "sso-import",
+	}, schema)
+	identityState := importSSOConfigurationState(t, resource, frameworkresource.ImportStateRequest{
+		Identity: ssoConfigurationIdentity(t, identitySchema, "sso-import"),
+	}, schema)
+
+	if !legacyState.Raw.Equal(identityState.Raw) {
+		t.Fatalf("legacy and identity imports produced different state:\nlegacy: %#v\nidentity: %#v", legacyState.Raw, identityState.Raw)
+	}
+	if got := ssoConfigurationStateID(t, legacyState); got != "sso-import" {
+		t.Fatalf("legacy import state id = %q, want %q", got, "sso-import")
+	}
+	if got := ssoConfigurationStateID(t, identityState); got != "sso-import" {
+		t.Fatalf("identity import state id = %q, want %q", got, "sso-import")
+	}
+}
+
 func ssoOptionalFieldState(t *testing.T, data SSOConfigurationModel) ssoOptionalFieldStateResult {
 	t.Helper()
 
@@ -280,4 +311,79 @@ func ssoOptionalFieldState(t *testing.T, data SSOConfigurationModel) ssoOptional
 		result.ClaimsExpression = data.ClaimsExpression.ValueString()
 	}
 	return result
+}
+
+func ssoConfigurationResourceSchema(t *testing.T, resource *SSOConfigurationResource) resourceschema.Schema {
+	t.Helper()
+
+	var resp frameworkresource.SchemaResponse
+	resource.Schema(t.Context(), frameworkresource.SchemaRequest{}, &resp)
+	if resp.Diagnostics.HasError() {
+		t.Fatalf("Schema() diagnostics: %v", resp.Diagnostics)
+	}
+	return resp.Schema
+}
+
+func ssoConfigurationIdentitySchema(t *testing.T, resource *SSOConfigurationResource) identityschema.Schema {
+	t.Helper()
+
+	var resp frameworkresource.IdentitySchemaResponse
+	resource.IdentitySchema(t.Context(), frameworkresource.IdentitySchemaRequest{}, &resp)
+	if resp.Diagnostics.HasError() {
+		t.Fatalf("IdentitySchema() diagnostics: %v", resp.Diagnostics)
+	}
+	return resp.IdentitySchema
+}
+
+func ssoConfigurationIdentity(t *testing.T, schema identityschema.Schema, id string) *tfsdk.ResourceIdentity {
+	t.Helper()
+
+	identity := &tfsdk.ResourceIdentity{Schema: schema}
+	diags := identity.Set(t.Context(), SSOConfigurationIdentityModel{ID: types.StringValue(id)})
+	if diags.HasError() {
+		t.Fatalf("identity.Set() diagnostics: %v", diags)
+	}
+	return identity
+}
+
+func importSSOConfigurationState(t *testing.T, resource *SSOConfigurationResource, req frameworkresource.ImportStateRequest, schema resourceschema.Schema) tfsdk.State {
+	t.Helper()
+
+	resp := frameworkresource.ImportStateResponse{
+		State: emptySSOConfigurationState(t, schema),
+	}
+	resource.ImportState(t.Context(), req, &resp)
+	if resp.Diagnostics.HasError() {
+		t.Fatalf("ImportState() diagnostics: %v", resp.Diagnostics)
+	}
+	return resp.State
+}
+
+func emptySSOConfigurationState(t *testing.T, schema resourceschema.Schema) tfsdk.State {
+	t.Helper()
+
+	stateType := schema.Type().TerraformType(t.Context())
+	stateObject, ok := stateType.(tftypes.Object)
+	if !ok {
+		t.Fatalf("SSO configuration state type = %T, want tftypes.Object", stateType)
+	}
+	values := make(map[string]tftypes.Value, len(stateObject.AttributeTypes))
+	for name, typ := range stateObject.AttributeTypes {
+		values[name] = tftypes.NewValue(typ, nil)
+	}
+	return tfsdk.State{
+		Schema: schema,
+		Raw:    tftypes.NewValue(stateType, values),
+	}
+}
+
+func ssoConfigurationStateID(t *testing.T, state tfsdk.State) string {
+	t.Helper()
+
+	var id types.String
+	diags := state.GetAttribute(t.Context(), frameworkpath.Root("id"), &id)
+	if diags.HasError() {
+		t.Fatalf("state.GetAttribute(id) diagnostics: %v", diags)
+	}
+	return id.ValueString()
 }

@@ -23,9 +23,38 @@ output "managed_group_id" {
   value       = ona_group.devloop.id
 }
 
+output "managed_team_id" {
+  description = "ID of the team managed by this module."
+  value       = ona_team.devloop.id
+}
+
 output "managed_group_membership_id" {
   description = "ID of the group membership managed by this module."
   value       = ona_group_membership.devloop.id
+}
+
+output "managed_organization_ai_budget_ids" {
+  description = "Mode-specific organization AI budget policy IDs when AI budget testing is enabled."
+  value = {
+    credits = try(ona_organization_ai_budget.credits[0].id, null)
+    byok    = try(ona_organization_ai_budget.byok[0].id, null)
+  }
+}
+
+output "managed_user_ai_budget_ids" {
+  description = "Mode-specific direct service-account AI budget policy IDs when AI budget testing is enabled."
+  value = {
+    credits = try(ona_user_ai_budget.service_account_credits[0].id, null)
+    byok    = try(ona_user_ai_budget.service_account_byok_exemption[0].id, null)
+  }
+}
+
+output "managed_team_ai_budget_ids" {
+  description = "Mode-specific team AI budget allocation IDs when AI budget testing is enabled. Both modes may share one API ID."
+  value = {
+    credits = try(ona_team_ai_budget.credits[0].id, null)
+    byok    = try(ona_team_ai_budget.byok[0].id, null)
+  }
 }
 
 output "managed_organization_role_assignment_id" {
@@ -63,14 +92,4 @@ output "warm_pool_count_from_collection_data_source" {
 output "runner_count_from_collection_data_source" {
   description = "Number of runners returned by the collection data source."
   value       = length(data.ona_runners.all.runners)
-}
-
-output "managed_integration_id" {
-  description = "ID of the Linear integration managed by this module."
-  value       = ona_integration.linear.id
-}
-
-output "integration_definition_count" {
-  description = "Number of visible integration definitions returned by the data source."
-  value       = length(data.ona_integration_definitions.available.definitions)
 }

@@ -13,6 +13,7 @@ import (
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -25,6 +26,7 @@ import (
 
 var _ resource.Resource = &PolicyResource{}
 var _ resource.ResourceWithConfigure = &PolicyResource{}
+var _ resource.ResourceWithIdentity = &PolicyResource{}
 var _ resource.ResourceWithImportState = &PolicyResource{}
 var _ resource.ResourceWithUpgradeState = &PolicyResource{}
 var _ resource.ResourceWithValidateConfig = &PolicyResource{}
@@ -181,20 +183,7 @@ func effectAttribute(description string) resourceschema.StringAttribute {
 }
 
 func (r *PolicyResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = data.Client
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *PolicyResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -214,11 +203,7 @@ func (r *PolicyResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before creating ona_security_policy resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_security_policy") {
 		return
 	}
 
@@ -240,6 +225,10 @@ func (r *PolicyResource) Create(ctx context.Context, req resource.CreateRequest,
 	}
 
 	data.ID = types.StringValue(policy.GetId())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, PolicyIdentityModel{ID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -258,11 +247,7 @@ func (r *PolicyResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before reading ona_security_policy resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_security_policy") {
 		return
 	}
 
@@ -286,6 +271,10 @@ func (r *PolicyResource) Read(ctx context.Context, req resource.ReadRequest, res
 	data = PolicyModel{}
 	populatePolicyModel(&data, policy)
 	preservePolicyPlannedInputs(&data, prior)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, PolicyIdentityModel{ID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -296,11 +285,7 @@ func (r *PolicyResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before updating ona_security_policy resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", "ona_security_policy") {
 		return
 	}
 
@@ -324,6 +309,10 @@ func (r *PolicyResource) Update(ctx context.Context, req resource.UpdateRequest,
 	planned := data
 	populatePolicyModel(&data, policy)
 	preservePolicyPlannedInputs(&data, planned)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, PolicyIdentityModel{ID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -334,11 +323,7 @@ func (r *PolicyResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before deleting ona_security_policy resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_security_policy") {
 		return
 	}
 
@@ -360,7 +345,7 @@ func (r *PolicyResource) Delete(ctx context.Context, req resource.DeleteRequest,
 }
 
 func (r *PolicyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("id"), req, resp)
 }
 
 func (r *PolicyResource) getPolicy(ctx context.Context, id string) (*v1.SecurityPolicy, error) {
@@ -414,8 +399,8 @@ func populatePolicyModel(data *PolicyModel, policy *v1.SecurityPolicy) {
 }
 
 func preservePolicyPlannedInputs(data *PolicyModel, planned PolicyModel) {
-	data.OrganizationID = preserveString(data.OrganizationID, planned.OrganizationID)
-	data.Name = preserveString(data.Name, planned.Name)
+	data.OrganizationID = tfvalue.PreserveString(data.OrganizationID, planned.OrganizationID)
+	data.Name = tfvalue.PreserveString(data.Name, planned.Name)
 }
 
 func timestampValue(ts *timestamppb.Timestamp) types.String {
@@ -423,11 +408,4 @@ func timestampValue(ts *timestamppb.Timestamp) types.String {
 		return types.StringNull()
 	}
 	return types.StringValue(ts.AsTime().UTC().Format(time.RFC3339Nano))
-}
-
-func preserveString(current types.String, planned types.String) types.String {
-	if !planned.IsNull() && !planned.IsUnknown() {
-		return planned
-	}
-	return current
 }

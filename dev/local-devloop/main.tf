@@ -22,6 +22,10 @@ resource "ona_group" "devloop" {
   description = "Group created by the Terraform provider local dev loop."
 }
 
+resource "ona_team" "devloop" {
+  name = var.team_name
+}
+
 resource "ona_group_membership" "devloop" {
   group_id           = ona_group.devloop.id
   service_account_id = ona_service_account.devloop.id
@@ -36,6 +40,54 @@ resource "ona_organization_role_assignment" "devloop" {
 
   group_id = ona_group.devloop.id
   role     = each.value
+}
+
+resource "ona_organization_ai_budget" "credits" {
+  count = var.enable_ai_budgets ? 1 : 0
+
+  mode                 = "credits"
+  monthly_credit_limit = var.organization_monthly_credit_limit
+}
+
+resource "ona_organization_ai_budget" "byok" {
+  count = var.enable_ai_budgets ? 1 : 0
+
+  mode                          = "byok"
+  monthly_cost_limit_microunits = var.organization_monthly_cost_limit_microunits
+  currency                      = "usd"
+}
+
+resource "ona_user_ai_budget" "service_account_credits" {
+  count = var.enable_ai_budgets ? 1 : 0
+
+  user_id              = ona_service_account.devloop.id
+  mode                 = "credits"
+  monthly_credit_limit = var.service_account_monthly_credit_limit
+}
+
+resource "ona_user_ai_budget" "service_account_byok_exemption" {
+  count = var.enable_ai_budgets ? 1 : 0
+
+  user_id = ona_service_account.devloop.id
+  mode    = "byok"
+  no_cap  = true
+}
+
+resource "ona_team_ai_budget" "credits" {
+  count = var.enable_ai_budgets ? 1 : 0
+
+  team_id       = ona_team.devloop.id
+  mode          = "credits"
+  credit_budget = var.team_credit_budget
+}
+
+resource "ona_team_ai_budget" "byok" {
+  count = var.enable_ai_budgets ? 1 : 0
+
+  team_id                = ona_team.devloop.id
+  mode                   = "byok"
+  cost_budget_microunits = var.team_cost_budget_microunits
+  cost_budget_currency   = "usd"
 }
 
 resource "ona_runner" "devloop" {
@@ -159,8 +211,8 @@ data "ona_warm_pools" "devloop" {
 resource "ona_scm_integration" "github_oauth" {
   runner_id = ona_runner.devloop.runner_id
 
-  scm_id = "github"
-  host   = "github.com"
+  kind = "github"
+  host = "github.com"
 
   auth_mode = "pat"
 }
@@ -168,8 +220,8 @@ resource "ona_scm_integration" "github_oauth" {
 resource "ona_scm_integration" "gitlab_pat" {
   runner_id = ona_runner.devloop.runner_id
 
-  scm_id = "gitlab"
-  host   = "gitlab.com"
+  kind = "gitlab"
+  host = "gitlab.com"
 
   auth_mode = "pat"
 }
@@ -177,8 +229,8 @@ resource "ona_scm_integration" "gitlab_pat" {
 resource "ona_scm_integration" "azuredevops_entra" {
   runner_id = ona_runner.devloop.runner_id
 
-  scm_id = "azuredevops_entra"
-  host   = "dev.azure.com"
+  kind = "azuredevops_entra"
+  host = "dev.azure.com"
 
   auth_mode = "pat"
 }
@@ -186,23 +238,9 @@ resource "ona_scm_integration" "azuredevops_entra" {
 resource "ona_scm_integration" "azuredevops_server" {
   runner_id = ona_runner.devloop.runner_id
 
-  scm_id = "azuredevops_server"
-  host   = "azuredevops.example.com"
+  kind = "azuredevops_server"
+  host = "azuredevops.example.com"
 
   auth_mode         = "pat"
   virtual_directory = "/tfs"
-}
-
-data "ona_integration_definitions" "available" {}
-
-locals {
-  linear_integration_definition = one([
-    for definition in data.ona_integration_definitions.available.definitions : definition
-    if definition.host == "linear.app"
-  ])
-}
-
-resource "ona_integration" "linear" {
-  integration_definition_id = local.linear_integration_definition.id
-  enabled                   = true
 }

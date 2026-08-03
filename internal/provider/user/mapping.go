@@ -11,6 +11,7 @@ import (
 	"unicode/utf8"
 
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -124,11 +125,11 @@ func userModelFromMember(member *v1.OrganizationMember) (UserModel, error) {
 		ID:            types.StringValue(userID),
 		UserID:        types.StringValue(userID),
 		Name:          types.StringValue(member.GetFullName()),
-		Email:         optionalStringValue(member.GetEmail()),
+		Email:         tfvalue.OptionalStringValue(member.GetEmail()),
 		Status:        types.StringValue(status),
 		Role:          types.StringValue(role),
 		MemberSince:   memberSince,
-		LoginProvider: optionalStringValue(member.GetLoginProvider()),
+		LoginProvider: tfvalue.OptionalStringValue(member.GetLoginProvider()),
 	}, nil
 }
 
@@ -151,7 +152,7 @@ func userModelFromResponses(apiUser *v1.User, member *v1.OrganizationMember) (Us
 		return UserModel{}, err
 	}
 	result.Name = types.StringValue(apiUser.GetName())
-	result.Email = optionalStringValue(apiUser.GetEmail())
+	result.Email = tfvalue.OptionalStringValue(apiUser.GetEmail())
 	return result, nil
 }
 
@@ -211,11 +212,4 @@ func timestampValue(value *timestamppb.Timestamp) (types.String, error) {
 		return types.StringNull(), err
 	}
 	return types.StringValue(value.AsTime().UTC().Format(time.RFC3339Nano)), nil
-}
-
-func optionalStringValue(value string) types.String {
-	if value == "" {
-		return types.StringNull()
-	}
-	return types.StringValue(value)
 }

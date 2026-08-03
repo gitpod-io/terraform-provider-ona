@@ -26,6 +26,7 @@ import (
 
 var _ resource.Resource = &PolicyResource{}
 var _ resource.ResourceWithConfigure = &PolicyResource{}
+var _ resource.ResourceWithIdentity = &PolicyResource{}
 var _ resource.ResourceWithImportState = &PolicyResource{}
 var _ resource.ResourceWithValidateConfig = &PolicyResource{}
 
@@ -101,20 +102,7 @@ func (r *PolicyResource) Schema(ctx context.Context, req resource.SchemaRequest,
 }
 
 func (r *PolicyResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = data.Client
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *PolicyResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -132,7 +120,7 @@ func (r *PolicyResource) Create(ctx context.Context, req resource.CreateRequest,
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "creating", "ona_runner_policy") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_runner_policy") {
 		return
 	}
 
@@ -153,6 +141,10 @@ func (r *PolicyResource) Create(ctx context.Context, req resource.CreateRequest,
 	}
 
 	data.ID = types.StringValue(runnerPolicyID(data.RunnerID.ValueString(), data.GroupID.ValueString()))
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, RunnerPolicyIdentityModel{RunnerID: data.RunnerID, GroupID: data.GroupID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -178,7 +170,7 @@ func (r *PolicyResource) Read(ctx context.Context, req resource.ReadRequest, res
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "reading", "ona_runner_policy") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_runner_policy") {
 		return
 	}
 
@@ -203,6 +195,10 @@ func (r *PolicyResource) Read(ctx context.Context, req resource.ReadRequest, res
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, RunnerPolicyIdentityModel{RunnerID: data.RunnerID, GroupID: data.GroupID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -216,7 +212,7 @@ func (r *PolicyResource) Delete(ctx context.Context, req resource.DeleteRequest,
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !r.requireClient(&resp.Diagnostics, "deleting", "ona_runner_policy") {
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_runner_policy") {
 		return
 	}
 
@@ -238,27 +234,35 @@ func (r *PolicyResource) Delete(ctx context.Context, req resource.DeleteRequest,
 }
 
 func (r *PolicyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	parts, diags := parseRunnerPolicyImportID(req.ID)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
+	var runnerID, groupID string
+	if req.ID != "" {
+		parts, diags := parseRunnerPolicyImportID(req.ID)
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		runnerID, groupID = parts[0], parts[1]
+	} else {
+		if req.Identity == nil {
+			resp.Diagnostics.AddError("Invalid Import Identity", "Set runner_id and group_id in the structured identity.")
+			return
+		}
+		var identity RunnerPolicyIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		runnerID, groupID = identity.RunnerID.ValueString(), identity.GroupID.ValueString()
+		if runnerID == "" || groupID == "" {
+			resp.Diagnostics.AddError("Invalid Import Identity", "Set non-empty runner_id and group_id values in the structured identity.")
+			return
+		}
 	}
 
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), types.StringValue(req.ID))...)
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("runner_id"), types.StringValue(parts[0]))...)
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("group_id"), types.StringValue(parts[1]))...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), types.StringValue(runnerPolicyID(runnerID, groupID)))...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("runner_id"), types.StringValue(runnerID))...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("group_id"), types.StringValue(groupID))...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("role"), types.StringValue(runnerPolicyRoleUser))...)
-}
-
-func (r *PolicyResource) requireClient(resp *diag.Diagnostics, action string, resourceType string) bool {
-	if r.client != nil {
-		return true
-	}
-	resp.AddError(
-		"Ona API Client Is Not Configured",
-		fmt.Sprintf("Set the provider token argument or ONA_TOKEN before %s %s resources.", action, resourceType),
-	)
-	return false
 }
 
 func (r *PolicyResource) findRunnerPolicy(ctx context.Context, runnerID string, groupID string) (*v1.RunnerPolicy, error) {

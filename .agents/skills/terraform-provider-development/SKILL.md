@@ -41,7 +41,8 @@ Load the relevant reference before editing provider behavior. Use:
 5. Align schema, model structs, Terraform field names, validators, plan modifiers, diagnostics, and import state behavior.
 6. Add tests near the changed behavior.
 7. Update examples and docs sources when users need new Terraform configuration.
-8. Run generation and verification commands that match the change.
+8. Add every new managed resource to `dev/local-devloop`. Include a safe representative configuration, any input variable needed to avoid hard-coded environment-specific values, a useful output such as its ID, and the resource address in `dev/local-devloop/README.md`.
+9. Run generation and verification commands that match the change.
 
 ## Terraform Query
 
@@ -72,6 +73,14 @@ list resources. A query-enabled managed resource needs all of these pieces:
    mapping/import unit tests, and a hermetic Terraform 1.14+ Query acceptance
    test that checks identity, display name, filters, limits, resource values,
    and secret omission where applicable.
+8. Add `templates/list-resources/<resource_name>.md.tmpl` for every list
+   resource. Set a non-empty `subcategory` that matches the corresponding
+   managed-resource template unless there is a documented reason to differ.
+   Preserve the standard list-resource title, description, examples, and schema
+   layout.
+9. After `make generate`, verify every `docs/list-resources/*.md` has a
+   matching template and non-empty `subcategory`. Treat an empty category or
+   missing template as incomplete documentation.
 
 Shared list helpers belong in `internal/provider/listutil`; API-specific
 discovery stays in the resource package or an `internal/client` wrapper. Run
@@ -98,6 +107,9 @@ discovery stays in the resource package or an `internal/client` wrapper. Run
 - Build: `make build`.
 - Lint: `make lint` when code changes warrant it.
 - Generation: `make generate`, then `git diff --exit-code` when schemas, examples, docs, or codegen inputs change.
+- List-resource docs: inventory `docs/list-resources/` against
+  `templates/list-resources/` and verify each category matches its related
+  managed resource.
 
 ## Local Terraform Dev Loop
 
@@ -123,7 +135,7 @@ Do not commit `.bin/`, `terraformrc`, Terraform state, or real tokens.
 
 ## Done Criteria
 
-A provider change is done when it has correct lifecycle behavior, tests for changed behavior, generated docs/examples when needed, no unintended generated diff, and a clear note about whether acceptance tests were run.
+A provider change is done when it has correct lifecycle behavior, tests for changed behavior, generated docs/examples when needed, every new managed resource is exercised by `dev/local-devloop` and listed in its README, there is no unintended generated diff, and the result clearly notes whether acceptance tests were run.
 
 ## When Stuck
 

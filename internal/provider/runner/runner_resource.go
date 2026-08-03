@@ -15,12 +15,12 @@ import (
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var _ resource.Resource = &Resource{}
@@ -103,20 +103,7 @@ func (r *Resource) Schema(ctx context.Context, req resource.SchemaRequest, resp 
 }
 
 func (r *Resource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*providerdata.Data)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *providerdata.Data, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = data.Client
+	r.client = providerdata.ResourceClient(req.ProviderData, r.client, &resp.Diagnostics)
 }
 
 func (r *Resource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -143,11 +130,7 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before creating ona_runner resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "creating", "ona_runner") {
 		return
 	}
 
@@ -196,11 +179,7 @@ func (r *Resource) Read(ctx context.Context, req resource.ReadRequest, resp *res
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before reading ona_runner resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "reading", "ona_runner") {
 		return
 	}
 
@@ -251,11 +230,7 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before updating ona_runner resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "updating", "ona_runner") {
 		return
 	}
 
@@ -306,11 +281,7 @@ func (r *Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp 
 		return
 	}
 
-	if r.client == nil {
-		resp.Diagnostics.AddError(
-			"Ona API Client Is Not Configured",
-			"Set the provider token argument or ONA_TOKEN before deleting ona_runner resources.",
-		)
+	if !providerdata.RequireResourceClient(r.client, &resp.Diagnostics, "deleting", "ona_runner") {
 		return
 	}
 
@@ -625,9 +596,9 @@ func populateModelFromRunner(data *RunnerModel, runner *v1.Runner) {
 	data.ID = types.StringValue(id)
 	data.RunnerID = types.StringValue(id)
 	data.Name = types.StringValue(runner.GetName())
-	data.RunnerProvider = stringValue(providerToString(runner.GetProvider()))
-	data.Kind = stringValue(kindToString(runner.GetKind()))
-	data.CreatedAt = timestampValue(runner.GetCreatedAt())
+	data.RunnerProvider = tfvalue.OptionalStringValue(providerToString(runner.GetProvider()))
+	data.Kind = tfvalue.OptionalStringValue(kindToString(runner.GetKind()))
+	data.CreatedAt = tfvalue.TimestampRFC3339Value(runner.GetCreatedAt())
 	data.Configuration = configurationModel(runner.GetSpec().GetConfiguration())
 	data.Creator = creatorModel(runner.GetCreator())
 	populateCloudFormationTemplateURL(data)
@@ -650,8 +621,8 @@ func populateCloudFormationTemplateURL(data *RunnerModel) {
 }
 
 func preservePlannedInputs(data *RunnerModel, planned RunnerModel) {
-	data.Name = preserveString(data.Name, planned.Name)
-	data.RunnerProvider = preserveString(data.RunnerProvider, planned.RunnerProvider)
+	data.Name = tfvalue.PreserveString(data.Name, planned.Name)
+	data.RunnerProvider = tfvalue.PreserveString(data.RunnerProvider, planned.RunnerProvider)
 	data.Configuration = preserveConfiguration(data.Configuration, planned.Configuration)
 }
 
@@ -662,12 +633,12 @@ func preserveConfiguration(data *ConfigurationModel, planned *ConfigurationModel
 	if data == nil {
 		data = &ConfigurationModel{}
 	}
-	data.Region = preserveString(data.Region, planned.Region)
-	data.ReleaseChannel = preserveString(data.ReleaseChannel, planned.ReleaseChannel)
-	data.AutoUpdate = preserveBool(data.AutoUpdate, planned.AutoUpdate)
+	data.Region = tfvalue.PreserveString(data.Region, planned.Region)
+	data.ReleaseChannel = tfvalue.PreserveString(data.ReleaseChannel, planned.ReleaseChannel)
+	data.AutoUpdate = tfvalue.PreserveBool(data.AutoUpdate, planned.AutoUpdate)
 	data.Metrics = preserveMetrics(data.Metrics, planned.Metrics)
-	data.DevcontainerImageCacheEnabled = preserveBool(data.DevcontainerImageCacheEnabled, planned.DevcontainerImageCacheEnabled)
-	data.LogLevel = preserveString(data.LogLevel, planned.LogLevel)
+	data.DevcontainerImageCacheEnabled = tfvalue.PreserveBool(data.DevcontainerImageCacheEnabled, planned.DevcontainerImageCacheEnabled)
+	data.LogLevel = tfvalue.PreserveString(data.LogLevel, planned.LogLevel)
 	data.UpdateWindow = preserveUpdateWindow(data.UpdateWindow, planned.UpdateWindow)
 	return data
 }
@@ -683,7 +654,7 @@ func preserveMetrics(data *MetricsModel, planned *MetricsModel) *MetricsModel {
 		if data.Managed == nil {
 			data.Managed = &ManagedMetricsModel{}
 		}
-		data.Managed.Enabled = preserveBool(data.Managed.Enabled, planned.Managed.Enabled)
+		data.Managed.Enabled = tfvalue.PreserveBool(data.Managed.Enabled, planned.Managed.Enabled)
 	} else {
 		data.Managed = nil
 	}
@@ -691,11 +662,11 @@ func preserveMetrics(data *MetricsModel, planned *MetricsModel) *MetricsModel {
 		if data.Custom == nil {
 			data.Custom = &CustomMetricsModel{}
 		}
-		data.Custom.Enabled = preserveBool(data.Custom.Enabled, planned.Custom.Enabled)
-		data.Custom.URL = preserveString(data.Custom.URL, planned.Custom.URL)
-		data.Custom.Username = preserveString(data.Custom.Username, planned.Custom.Username)
+		data.Custom.Enabled = tfvalue.PreserveBool(data.Custom.Enabled, planned.Custom.Enabled)
+		data.Custom.URL = tfvalue.PreserveString(data.Custom.URL, planned.Custom.URL)
+		data.Custom.Username = tfvalue.PreserveString(data.Custom.Username, planned.Custom.Username)
 		data.Custom.Password = types.StringNull()
-		data.Custom.PasswordVersion = preserveString(data.Custom.PasswordVersion, planned.Custom.PasswordVersion)
+		data.Custom.PasswordVersion = tfvalue.PreserveString(data.Custom.PasswordVersion, planned.Custom.PasswordVersion)
 	} else {
 		data.Custom = nil
 	}
@@ -740,17 +711,13 @@ func metricsInactive(model *MetricsModel) bool {
 func customMetricsInactive(model *CustomMetricsModel) bool {
 	return model != nil &&
 		!knownBoolValue(model.Enabled) &&
-		!knownStringValue(model.URL) &&
-		!knownStringValue(model.Username) &&
-		!knownStringValue(model.Password)
+		!tfvalue.IsKnownString(model.URL) &&
+		!tfvalue.IsKnownString(model.Username) &&
+		!tfvalue.IsKnownString(model.Password)
 }
 
 func knownBoolValue(value types.Bool) bool {
 	return !value.IsNull() && !value.IsUnknown() && value.ValueBool()
-}
-
-func knownStringValue(value types.String) bool {
-	return !value.IsNull() && !value.IsUnknown() && value.ValueString() != ""
 }
 
 func preserveUpdateWindow(data *UpdateWindowModel, planned *UpdateWindowModel) *UpdateWindowModel {
@@ -760,23 +727,9 @@ func preserveUpdateWindow(data *UpdateWindowModel, planned *UpdateWindowModel) *
 	if data == nil {
 		data = &UpdateWindowModel{}
 	}
-	data.Start = preserveString(data.Start, planned.Start)
-	data.End = preserveString(data.End, planned.End)
+	data.Start = tfvalue.PreserveString(data.Start, planned.Start)
+	data.End = tfvalue.PreserveString(data.End, planned.End)
 	return data
-}
-
-func preserveString(current types.String, planned types.String) types.String {
-	if planned.IsNull() || planned.IsUnknown() {
-		return current
-	}
-	return planned
-}
-
-func preserveBool(current types.Bool, planned types.Bool) types.Bool {
-	if planned.IsNull() || planned.IsUnknown() {
-		return current
-	}
-	return planned
 }
 
 func configurationModel(config *v1.RunnerConfiguration) *ConfigurationModel {
@@ -784,13 +737,13 @@ func configurationModel(config *v1.RunnerConfiguration) *ConfigurationModel {
 		return nil
 	}
 	return &ConfigurationModel{
-		Region:                        stringOptionalValue(config.GetRegion()),
-		ReleaseChannel:                stringValue(releaseChannelToString(config.GetReleaseChannel())),
+		Region:                        tfvalue.OptionalStringValue(config.GetRegion()),
+		ReleaseChannel:                tfvalue.OptionalStringValue(releaseChannelToString(config.GetReleaseChannel())),
 		AutoUpdate:                    types.BoolValue(config.GetAutoUpdate()),
 		Metrics:                       metricsModel(config.GetMetrics()),
 		UpdateWindow:                  updateWindowModel(config.GetUpdateWindow()),
 		DevcontainerImageCacheEnabled: types.BoolValue(config.GetDevcontainerImageCacheEnabled()),
-		LogLevel:                      stringValue(logLevelToString(config.GetLogLevel())),
+		LogLevel:                      tfvalue.OptionalStringValue(logLevelToString(config.GetLogLevel())),
 	}
 }
 
@@ -805,8 +758,8 @@ func metricsModel(metrics *v1.MetricsConfiguration) *MetricsModel {
 	if metrics.GetEnabled() || metrics.GetUrl() != "" || metrics.GetUsername() != "" || metrics.GetPassword() != "" {
 		result.Custom = &CustomMetricsModel{
 			Enabled:         types.BoolValue(metrics.GetEnabled()),
-			URL:             stringOptionalValue(metrics.GetUrl()),
-			Username:        stringOptionalValue(metrics.GetUsername()),
+			URL:             tfvalue.OptionalStringValue(metrics.GetUrl()),
+			Username:        tfvalue.OptionalStringValue(metrics.GetUsername()),
 			Password:        types.StringNull(),
 			PasswordVersion: types.StringNull(),
 		}
@@ -837,8 +790,8 @@ func creatorModel(creator *v1.Subject) *CreatorModel {
 		return nil
 	}
 	return &CreatorModel{
-		ID:        stringOptionalValue(creator.GetId()),
-		Principal: stringValue(principalToString(creator.GetPrincipal())),
+		ID:        tfvalue.OptionalStringValue(creator.GetId()),
+		Principal: tfvalue.OptionalStringValue(principalToString(creator.GetPrincipal())),
 	}
 }
 
@@ -879,7 +832,7 @@ func validateCustomMetricsPassword(metrics *MetricsModel, diags *diag.Diagnostic
 	if metrics.Custom.Password.IsUnknown() {
 		return
 	}
-	if !isKnownString(metrics.Custom.Password) {
+	if !tfvalue.IsKnownString(metrics.Custom.Password) {
 		diags.AddAttributeError(
 			path.Root("configuration").AtName("metrics").AtName("custom").AtName("password"),
 			"Missing Custom Metrics Password",
@@ -1128,27 +1081,6 @@ func principalToString(principal v1.Principal) string {
 	default:
 		return ""
 	}
-}
-
-func timestampValue(ts *timestamppb.Timestamp) types.String {
-	if ts == nil || !ts.IsValid() {
-		return types.StringNull()
-	}
-	return types.StringValue(ts.AsTime().Format("2006-01-02T15:04:05Z07:00"))
-}
-
-func stringValue(value string) types.String {
-	if value == "" {
-		return types.StringNull()
-	}
-	return types.StringValue(value)
-}
-
-func stringOptionalValue(value string) types.String {
-	if value == "" {
-		return types.StringNull()
-	}
-	return types.StringValue(value)
 }
 
 func ptr[T any](value T) *T {

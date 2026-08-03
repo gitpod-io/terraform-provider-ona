@@ -4,6 +4,7 @@
 package warmpool
 
 import (
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	datasourceschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	resourceschema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int32default"
@@ -104,13 +105,13 @@ func warmPoolCollectionDataSourceSchema() datasourceschema.Schema {
 
 func warmPoolDataSourceAttributes(warmPoolID datasourceschema.StringAttribute) map[string]datasourceschema.Attribute {
 	return map[string]datasourceschema.Attribute{
-		"id":                   computedDataSourceString("Terraform data source ID. This is the same value as `warm_pool_id`."),
+		"id":                   tfvalue.ComputedDataSourceString("Terraform data source ID. This is the same value as `warm_pool_id`."),
 		"warm_pool_id":         warmPoolID,
-		"project_id":           computedDataSourceString("Project ID this warm pool belongs to."),
-		"environment_class_id": computedDataSourceString("Environment class ID whose instances are warmed."),
+		"project_id":           tfvalue.ComputedDataSourceString("Project ID this warm pool belongs to."),
+		"environment_class_id": tfvalue.ComputedDataSourceString("Environment class ID whose instances are warmed."),
 		"min_size":             computedDataSourceInt32("Minimum number of warm instances to maintain."),
 		"max_size":             computedDataSourceInt32("Maximum number of warm instances to maintain."),
-		"created_at":           computedDataSourceString("Time when the warm pool was created."),
+		"created_at":           tfvalue.ComputedDataSourceString("Time when the warm pool was created."),
 	}
 }
 
@@ -121,13 +122,6 @@ func computedResourceString(description string) resourceschema.StringAttribute {
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
 		},
-	}
-}
-
-func computedDataSourceString(description string) datasourceschema.StringAttribute {
-	return datasourceschema.StringAttribute{
-		Computed:            true,
-		MarkdownDescription: description,
 	}
 }
 

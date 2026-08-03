@@ -1,6 +1,6 @@
 ---
 page_title: "Troubleshooting and Support - Ona Provider"
-subcategory: "Integrations and Automation"
+subcategory: "Guides"
 description: |-
   Diagnose provider installation, authentication, permission, host, and secret-rotation issues.
 ---
@@ -18,7 +18,7 @@ terraform {
   required_providers {
     ona = {
       source  = "gitpod-io/ona"
-      version = "= 0.2.0-beta.2"
+      version = "= 0.3.0-beta.37"
     }
   }
 }

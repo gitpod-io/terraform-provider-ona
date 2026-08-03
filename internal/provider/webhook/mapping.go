@@ -9,12 +9,12 @@ import (
 	"sort"
 
 	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func createWebhookRequest(ctx context.Context, data Model) (*v1.CreateWebhookRequest, diag.Diagnostics) {
@@ -118,12 +118,12 @@ func populateModel(ctx context.Context, data *Model, webhook *v1.Webhook, diags 
 
 	data.ID = stringValue(webhook.GetId())
 	data.Name = stringValue(metadata.GetName())
-	data.Description = optionalStringValue(metadata.GetDescription())
+	data.Description = tfvalue.OptionalStringValue(metadata.GetDescription())
 	data.Type = types.StringValue(webhookType)
 	data.Provider = types.StringValue(provider)
 	data.URL = stringValue(webhook.GetUrl())
 	data.Creator = creatorObject(metadata.GetCreator(), diags)
-	data.CreatedAt = timestampValue(metadata.GetCreatedAt())
+	data.CreatedAt = tfvalue.TimestampRFC3339Value(metadata.GetCreatedAt())
 	data.SecretVersion = types.StringNull()
 
 	data.RepositoryScopes = types.SetNull(types.ObjectType{AttrTypes: repositoryScopeAttributeTypes})
@@ -171,7 +171,7 @@ func creatorObject(subject *v1.Subject, diags *diag.Diagnostics) types.Object {
 	principal := principalToString(subject.GetPrincipal())
 	values := map[string]attr.Value{
 		"id":        stringValue(subject.GetId()),
-		"principal": optionalStringValue(principal),
+		"principal": tfvalue.OptionalStringValue(principal),
 	}
 	result, objectDiags := types.ObjectValue(creatorAttributeTypes, values)
 	diags.Append(objectDiags...)
@@ -253,18 +253,4 @@ func stringValue(value string) types.String {
 		return types.StringNull()
 	}
 	return types.StringValue(value)
-}
-
-func optionalStringValue(value string) types.String {
-	if value == "" {
-		return types.StringNull()
-	}
-	return types.StringValue(value)
-}
-
-func timestampValue(value *timestamppb.Timestamp) types.String {
-	if value == nil || !value.IsValid() {
-		return types.StringNull()
-	}
-	return types.StringValue(value.AsTime().Format("2006-01-02T15:04:05Z07:00"))
 }

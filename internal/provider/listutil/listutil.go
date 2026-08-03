@@ -7,9 +7,6 @@ import (
 	"context"
 	"fmt"
 
-	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
-	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/list"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -69,15 +66,13 @@ func PageSize(limit, emitted int64) int32 {
 	return DefaultPageSize
 }
 
-// AuthenticatedOrganizationID resolves the organization associated with the
-// configured provider identity.
-func AuthenticatedOrganizationID(ctx context.Context, client *managementclient.ManagementPlane) (string, error) {
-	result, err := client.IdentityService().GetAuthenticatedIdentity(ctx, connect.NewRequest(&v1.GetAuthenticatedIdentityRequest{}))
-	if err != nil {
-		return "", fmt.Errorf("get authenticated identity: %w", err)
+func NextPageToken(seen map[string]struct{}, token string) error {
+	if token == "" {
+		return nil
 	}
-	if result.Msg.GetOrganizationId() == "" {
-		return "", fmt.Errorf("authenticated identity did not include an organization ID")
+	if _, ok := seen[token]; ok {
+		return fmt.Errorf("ona API returned repeated pagination token %q", token)
 	}
-	return result.Msg.GetOrganizationId(), nil
+	seen[token] = struct{}{}
+	return nil
 }
