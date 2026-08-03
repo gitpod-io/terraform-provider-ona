@@ -8,8 +8,6 @@ package v1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/logfields"
-	_ "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/tools/stainless"
 	_ "github.com/google/gnostic/openapiv3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -1740,71 +1738,60 @@ var File_gitpod_v1_user_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_user_proto_rawDesc = "" +
 	"\n" +
-	"\x14gitpod/v1/user.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgitpod/tools/v1/logfields.proto\x1a\x1fgitpod/tools/v1/stainless.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x1d\n" +
+	"\x14gitpod/v1/user.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x18gitpod/v1/identity.proto\x1a\x1agitpod/v1/pagination.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x1d\n" +
 	"\x1bGetAuthenticatedUserRequest\"K\n" +
 	"\x1cGetAuthenticatedUserResponse\x12+\n" +
-	"\x04user\x18\x01 \x01(\v2\x0f.gitpod.v1.UserB\x06\xbaH\x03\xc8\x01\x01R\x04user\"@\n" +
-	"\x0eGetUserRequest\x12.\n" +
-	"\auser_id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\">\n" +
+	"\x04user\x18\x01 \x01(\v2\x0f.gitpod.v1.UserB\x06\xbaH\x03\xc8\x01\x01R\x04user\"3\n" +
+	"\x0eGetUserRequest\x12!\n" +
+	"\auser_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06userId\">\n" +
 	"\x0fGetUserResponse\x12+\n" +
-	"\x04user\x18\x01 \x01(\v2\x0f.gitpod.v1.UserB\x06\xbaH\x03\xc8\x01\x01R\x04user\"c\n" +
-	"\x13SetSuspendedRequest\x12.\n" +
-	"\auser_id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\x12\x1c\n" +
+	"\x04user\x18\x01 \x01(\v2\x0f.gitpod.v1.UserB\x06\xbaH\x03\xc8\x01\x01R\x04user\"V\n" +
+	"\x13SetSuspendedRequest\x12!\n" +
+	"\auser_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06userId\x12\x1c\n" +
 	"\tsuspended\x18\x02 \x01(\bR\tsuspended\"\x16\n" +
-	"\x14SetSuspendedResponse\"C\n" +
-	"\x11DeleteUserRequest\x12.\n" +
-	"\auser_id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\"\x14\n" +
-	"\x12DeleteUserResponse\"\xb2\x02\n" +
-	"\x04User\x12%\n" +
-	"\x02id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idR\x02id\x12F\n" +
-	"\x0forganization_id\x18\x02 \x01(\tB\x1d\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0forganization.idR\x0eorganizationId\x12\x12\n" +
+	"\x14SetSuspendedResponse\"6\n" +
+	"\x11DeleteUserRequest\x12!\n" +
+	"\auser_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06userId\"\x14\n" +
+	"\x12DeleteUserResponse\"\x90\x02\n" +
+	"\x04User\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x121\n" +
+	"\x0forganization_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x0eorganizationId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x1d\n" +
 	"\n" +
 	"avatar_url\x18\x04 \x01(\tR\tavatarUrl\x129\n" +
 	"\n" +
 	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12-\n" +
 	"\x06status\x18\x06 \x01(\x0e2\x15.gitpod.v1.UserStatusR\x06status\x12\x14\n" +
-	"\x05email\x18\a \x01(\tR\x05email:\b\xbaG\x05\xba\x01\x02id\"\xda\x01\n" +
-	" CreatePersonalAccessTokenRequest\x12.\n" +
-	"\auser_id\x18\x01 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\x12 \n" +
+	"\x05email\x18\a \x01(\tR\x05email:\b\xbaG\x05\xba\x01\x02id\"\xcd\x01\n" +
+	" CreatePersonalAccessTokenRequest\x12!\n" +
+	"\auser_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06userId\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12G\n" +
 	"\tvalid_for\x18\x03 \x01(\v2\x19.google.protobuf.DurationB\x0f\xbaH\f\xaa\x01\t\"\x05\b\x80\xce\xda\x032\x00R\bvalidFor\x12\x1b\n" +
 	"\tread_only\x18\x04 \x01(\bR\breadOnly\"A\n" +
 	"!CreatePersonalAccessTokenResponse\x12\x1c\n" +
-	"\x05token\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x05token\"n\n" +
-	"\x1dGetPersonalAccessTokenRequest\x12M\n" +
-	"\x18personal_access_token_id\x18\x01 \x01(\tB\x14\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\b\n" +
-	"\x06pat.idR\x15personalAccessTokenId\"Z\n" +
+	"\x05token\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x05token\"b\n" +
+	"\x1dGetPersonalAccessTokenRequest\x12A\n" +
+	"\x18personal_access_token_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x15personalAccessTokenId\"Z\n" +
 	"\x1eGetPersonalAccessTokenResponse\x128\n" +
-	"\x03pat\x18\x01 \x01(\v2\x1e.gitpod.v1.PersonalAccessTokenB\x06\xbaH\x03\xc8\x01\x01R\x03pat\"\xf7\x01\n" +
+	"\x03pat\x18\x01 \x01(\v2\x1e.gitpod.v1.PersonalAccessTokenB\x06\xbaH\x03\xc8\x01\x01R\x03pat\"\xe2\x01\n" +
 	"\x1fListPersonalAccessTokensRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
 	"pagination\x12I\n" +
-	"\x06filter\x18\x02 \x01(\v21.gitpod.v1.ListPersonalAccessTokensRequest.FilterR\x06filter\x1aK\n" +
-	"\x06Filter\x12A\n" +
-	"\buser_ids\x18\x03 \x03(\tB&\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01\xa2\xab\x1e\x11\n" +
-	"\x0ffilter.user_idsR\auserIds\"\xb7\x01\n" +
+	"\x06filter\x18\x02 \x01(\v21.gitpod.v1.ListPersonalAccessTokensRequest.FilterR\x06filter\x1a6\n" +
+	"\x06Filter\x12,\n" +
+	"\buser_ids\x18\x03 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\auserIds\"\xb7\x01\n" +
 	" ListPersonalAccessTokensResponse\x12=\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12T\n" +
-	"\x16personal_access_tokens\x18\x02 \x03(\v2\x1e.gitpod.v1.PersonalAccessTokenR\x14personalAccessTokens\"q\n" +
-	" DeletePersonalAccessTokenRequest\x12M\n" +
-	"\x18personal_access_token_id\x18\x01 \x01(\tB\x14\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\b\n" +
-	"\x06pat.idR\x15personalAccessTokenId\"#\n" +
-	"!DeletePersonalAccessTokenResponse\"\x87\x03\n" +
-	"\x13PersonalAccessToken\x12$\n" +
-	"\x02id\x18\x01 \x01(\tB\x14\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\b\n" +
-	"\x06pat.idR\x02id\x12.\n" +
-	"\auser_id\x18\x02 \x01(\tB\x15\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\t\n" +
-	"\auser.idR\x06userId\x12 \n" +
+	"\x16personal_access_tokens\x18\x02 \x03(\v2\x1e.gitpod.v1.PersonalAccessTokenR\x14personalAccessTokens\"e\n" +
+	" DeletePersonalAccessTokenRequest\x12A\n" +
+	"\x18personal_access_token_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x15personalAccessTokenId\"#\n" +
+	"!DeletePersonalAccessTokenResponse\"\xee\x02\n" +
+	"\x13PersonalAccessToken\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x12!\n" +
+	"\auser_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06userId\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12,\n" +
 	"\acreator\x18\x04 \x01(\v2\x12.gitpod.v1.SubjectR\acreator\x129\n" +
 	"\n" +
@@ -1818,12 +1805,10 @@ const file_gitpod_v1_user_proto_rawDesc = "" +
 	"\xbaH\ar\x05\x10\x01\x18\xff\x01R\x03key\x12 \n" +
 	"\x05value\x18\x02 \x01(\tB\n" +
 	"\xbaH\ar\x05\x10\x01\x18\x80PR\x05value\"\x17\n" +
-	"\x15SetPreferenceResponse\"\xd2\x01\n" +
-	"\x14GetPreferenceRequest\x12A\n" +
-	"\x12user_preference_id\x18\x01 \x01(\tB\x13\xa2\xab\x1e\r\n" +
-	"\vuserpref.id\x18\x01R\x10userPreferenceId\x124\n" +
-	"\rpreference_id\x18\x02 \x01(\tB\r\xa2\xab\x1e\t\n" +
-	"\apref.idH\x00R\fpreferenceId\x123\n" +
+	"\x15SetPreferenceResponse\"\xb2\x01\n" +
+	"\x14GetPreferenceRequest\x120\n" +
+	"\x12user_preference_id\x18\x01 \x01(\tB\x02\x18\x01R\x10userPreferenceId\x12%\n" +
+	"\rpreference_id\x18\x02 \x01(\tH\x00R\fpreferenceId\x123\n" +
 	"\x0epreference_key\x18\x03 \x01(\tB\n" +
 	"\xbaH\ar\x05\x10\x01\x18\xff\x01H\x00R\rpreferenceKeyB\f\n" +
 	"\n" +
@@ -1840,18 +1825,16 @@ const file_gitpod_v1_user_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1d.gitpod.v1.PaginationResponseR\n" +
 	"pagination\x12;\n" +
-	"\vpreferences\x18\x02 \x03(\v2\x19.gitpod.v1.UserPreferenceR\vpreferences\"b\n" +
-	"\x17DeletePreferenceRequest\x12G\n" +
-	"\x12user_preference_id\x18\x01 \x01(\tB\x19\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vuserpref.idR\x10userPreferenceId\"\x1a\n" +
-	"\x18DeletePreferenceResponse\"\xf1\x01\n" +
+	"\vpreferences\x18\x02 \x03(\v2\x19.gitpod.v1.UserPreferenceR\vpreferences\"Q\n" +
+	"\x17DeletePreferenceRequest\x126\n" +
+	"\x12user_preference_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x10userPreferenceId\"\x1a\n" +
+	"\x18DeletePreferenceResponse\"\xe0\x01\n" +
 	"\x0eUserPreference\x12\x1c\n" +
 	"\x03key\x18\x01 \x01(\tB\n" +
 	"\xbaH\ar\x05\x10\x01\x18\xff\x01R\x03key\x12 \n" +
 	"\x05value\x18\x02 \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x01\x18\xb0\x13R\x05value\x12)\n" +
-	"\x02id\x18\x03 \x01(\tB\x19\xbaH\x05r\x03\xb0\x01\x01\xa2\xab\x1e\r\n" +
-	"\vuserpref.idR\x02id\x129\n" +
+	"\xbaH\ar\x05\x10\x01\x18\xb0\x13R\x05value\x12\x18\n" +
+	"\x02id\x18\x03 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x129\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
@@ -1867,40 +1850,29 @@ const file_gitpod_v1_user_proto_rawDesc = "" +
 	"\x15DotfilesConfiguration\x12+\n" +
 	"\n" +
 	"repository\x18\x01 \x01(\tB\v\xbaH\b\xd8\x01\x01r\x03\x88\x01\x01R\n" +
-	"repository*\x81\x01\n" +
+	"repository*r\n" +
 	"\n" +
 	"UserStatus\x12\x1b\n" +
 	"\x17USER_STATUS_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12USER_STATUS_ACTIVE\x10\x01\x12\x19\n" +
 	"\x15USER_STATUS_SUSPENDED\x10\x02\x12\x14\n" +
-	"\x10USER_STATUS_LEFT\x10\x03\x1a\r«\x1e\t\n" +
-	"\a$shared2\xf8\f\n" +
-	"\vUserService\x12\x88\x01\n" +
-	"\x14GetAuthenticatedUser\x12&.gitpod.v1.GetAuthenticatedUserRequest\x1a'.gitpod.v1.GetAuthenticatedUserResponse\"\x1f\xb2\xab\x1e\x18\x12\x16get_authenticated_user\x90\x02\x01\x12S\n" +
-	"\aGetUser\x12\x19.gitpod.v1.GetUserRequest\x1a\x1a.gitpod.v1.GetUserResponse\"\x11\xb2\xab\x1e\n" +
-	"\x12\bget_user\x90\x02\x01\x12d\n" +
-	"\fSetSuspended\x12\x1e.gitpod.v1.SetSuspendedRequest\x1a\x1f.gitpod.v1.SetSuspendedResponse\"\x13\xb2\xab\x1e\x0f\x12\rset_suspended\x12\\\n" +
+	"\x10USER_STATUS_LEFT\x10\x032\xa2\v\n" +
+	"\vUserService\x12l\n" +
+	"\x14GetAuthenticatedUser\x12&.gitpod.v1.GetAuthenticatedUserRequest\x1a'.gitpod.v1.GetAuthenticatedUserResponse\"\x03\x90\x02\x01\x12E\n" +
+	"\aGetUser\x12\x19.gitpod.v1.GetUserRequest\x1a\x1a.gitpod.v1.GetUserResponse\"\x03\x90\x02\x01\x12Q\n" +
+	"\fSetSuspended\x12\x1e.gitpod.v1.SetSuspendedRequest\x1a\x1f.gitpod.v1.SetSuspendedResponse\"\x00\x12K\n" +
 	"\n" +
-	"DeleteUser\x12\x1c.gitpod.v1.DeleteUserRequest\x1a\x1d.gitpod.v1.DeleteUserResponse\"\x11\xb2\xab\x1e\r\x12\vdelete_user\x12x\n" +
-	"\x19CreatePersonalAccessToken\x12+.gitpod.v1.CreatePersonalAccessTokenRequest\x1a,.gitpod.v1.CreatePersonalAccessTokenResponse\"\x00\x12\x87\x01\n" +
-	"\x16GetPersonalAccessToken\x12(.gitpod.v1.GetPersonalAccessTokenRequest\x1a).gitpod.v1.GetPersonalAccessTokenResponse\"\x18\xb2\xab\x1e\x11\n" +
-	"\n" +
-	"users.pats\x12\x03get\x90\x02\x01\x12\x8e\x01\n" +
-	"\x18ListPersonalAccessTokens\x12*.gitpod.v1.ListPersonalAccessTokensRequest\x1a+.gitpod.v1.ListPersonalAccessTokensResponse\"\x19\xb2\xab\x1e\x12\n" +
-	"\n" +
-	"users.pats\x12\x04list\x90\x02\x01\x12\x90\x01\n" +
-	"\x19DeletePersonalAccessToken\x12+.gitpod.v1.DeletePersonalAccessTokenRequest\x1a,.gitpod.v1.DeletePersonalAccessTokenResponse\"\x18\xb2\xab\x1e\x14\n" +
-	"\n" +
-	"users.pats\x12\x06delete\x12T\n" +
+	"DeleteUser\x12\x1c.gitpod.v1.DeleteUserRequest\x1a\x1d.gitpod.v1.DeleteUserResponse\"\x00\x12x\n" +
+	"\x19CreatePersonalAccessToken\x12+.gitpod.v1.CreatePersonalAccessTokenRequest\x1a,.gitpod.v1.CreatePersonalAccessTokenResponse\"\x00\x12r\n" +
+	"\x16GetPersonalAccessToken\x12(.gitpod.v1.GetPersonalAccessTokenRequest\x1a).gitpod.v1.GetPersonalAccessTokenResponse\"\x03\x90\x02\x01\x12x\n" +
+	"\x18ListPersonalAccessTokens\x12*.gitpod.v1.ListPersonalAccessTokensRequest\x1a+.gitpod.v1.ListPersonalAccessTokensResponse\"\x03\x90\x02\x01\x12x\n" +
+	"\x19DeletePersonalAccessToken\x12+.gitpod.v1.DeletePersonalAccessTokenRequest\x1a,.gitpod.v1.DeletePersonalAccessTokenResponse\"\x00\x12T\n" +
 	"\rSetPreference\x12\x1f.gitpod.v1.SetPreferenceRequest\x1a .gitpod.v1.SetPreferenceResponse\"\x00\x12W\n" +
 	"\rGetPreference\x12\x1f.gitpod.v1.GetPreferenceRequest\x1a .gitpod.v1.GetPreferenceResponse\"\x03\x90\x02\x01\x12]\n" +
 	"\x0fListPreferences\x12!.gitpod.v1.ListPreferencesRequest\x1a\".gitpod.v1.ListPreferencesResponse\"\x03\x90\x02\x01\x12]\n" +
-	"\x10DeletePreference\x12\".gitpod.v1.DeletePreferenceRequest\x1a#.gitpod.v1.DeletePreferenceResponse\"\x00\x12\x91\x01\n" +
-	"\x18GetDotfilesConfiguration\x12*.gitpod.v1.GetDotfilesConfigurationRequest\x1a+.gitpod.v1.GetDotfilesConfigurationResponse\"\x1c\xb2\xab\x1e\x15\n" +
-	"\x0eusers.dotfiles\x12\x03get\x90\x02\x01\x12\x8e\x01\n" +
-	"\x18SetDotfilesConfiguration\x12*.gitpod.v1.SetDotfilesConfigurationRequest\x1a+.gitpod.v1.SetDotfilesConfigurationResponse\"\x19\xb2\xab\x1e\x15\n" +
-	"\x0eusers.dotfiles\x12\x03set\x1a\v\xaa\xab\x1e\a\n" +
-	"\x05usersB,Z*github.com/gitpod-io/gitpod-next/api/go/v1b\x06proto3"
+	"\x10DeletePreference\x12\".gitpod.v1.DeletePreferenceRequest\x1a#.gitpod.v1.DeletePreferenceResponse\"\x00\x12x\n" +
+	"\x18GetDotfilesConfiguration\x12*.gitpod.v1.GetDotfilesConfigurationRequest\x1a+.gitpod.v1.GetDotfilesConfigurationResponse\"\x03\x90\x02\x01\x12u\n" +
+	"\x18SetDotfilesConfiguration\x12*.gitpod.v1.SetDotfilesConfigurationRequest\x1a+.gitpod.v1.SetDotfilesConfigurationResponse\"\x00B'Z%github.com/gitpod-io/gitpod-sdk-go/v1b\x06proto3"
 
 var (
 	file_gitpod_v1_user_proto_rawDescOnce sync.Once

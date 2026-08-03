@@ -1,16 +1,18 @@
 package client
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
 	"net/url"
 	"os"
 	"strings"
 	"sync"
 
-	gitpod "github.com/gitpod-io/gitpod-sdk-go"
-	"github.com/gitpod-io/gitpod-sdk-go/option"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	providerversion "github.com/gitpod-io/terraform-provider-ona/version"
 )
@@ -30,7 +32,9 @@ type Config struct {
 type Client struct {
 	APIBaseURL string
 
-	sdk *gitpod.Client
+	token      string
+	userAgent  string
+	httpClient *http.Client
 
 	mu             sync.Mutex
 	organizationID string
@@ -41,37 +45,27 @@ func DefaultUserAgent() string {
 }
 
 func New(cfg Config) (*Client, error) {
-	sdk, apiBaseURL, err := NewSDK(cfg)
-	if err != nil {
-		return nil, err
-	}
-	return &Client{
-		APIBaseURL: apiBaseURL,
-		sdk:        sdk,
-	}, nil
-}
-
-func NewSDK(cfg Config) (*gitpod.Client, string, error) {
 	host := resolveHost(cfg.Host)
 	token := resolveToken(cfg.Token)
 	if token == "" {
-		return nil, "", ErrMissingToken
+		return nil, ErrMissingToken
 	}
 
 	apiBaseURL, err := APIBaseURL(host)
 	if err != nil {
-		return nil, "", err
+		return nil, err
 	}
 
 	userAgent := strings.TrimSpace(cfg.UserAgent)
 	if userAgent == "" {
 		userAgent = DefaultUserAgent()
 	}
-	return gitpod.NewClient(
-		option.WithBaseURL(apiBaseURL),
-		option.WithBearerToken(token),
-		option.WithHeader("User-Agent", userAgent),
-	), apiBaseURL, nil
+	return &Client{
+		APIBaseURL: apiBaseURL,
+		token:      token,
+		userAgent:  userAgent,
+		httpClient: http.DefaultClient,
+	}, nil
 }
 
 func NewManagementPlane(cfg Config) (*managementclient.ManagementPlane, string, error) {
@@ -232,7 +226,48 @@ func (c *Client) GetOrganizationPolicies(ctx context.Context, req GetOrganizatio
 }
 
 func (c *Client) post(ctx context.Context, path string, in any, out any) error {
-	return c.sdk.Post(ctx, strings.TrimLeft(path, "/"), in, out)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(in); err != nil {
+		return fmt.Errorf("encode Ona API request: %w", err)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, strings.TrimRight(c.APIBaseURL, "/")+"/"+strings.TrimLeft(path, "/"), &body)
+	if err != nil {
+		return fmt.Errorf("create Ona API request: %w", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+c.token)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	if c.userAgent != "" {
+		req.Header.Set("User-Agent", c.userAgent)
+	}
+
+	httpClient := c.httpClient
+	if httpClient == nil {
+		httpClient = http.DefaultClient
+	}
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("send Ona API request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 400 {
+		var apiErr APIError
+		apiErr.StatusCode = resp.StatusCode
+		if err := json.NewDecoder(resp.Body).Decode(&apiErr); err != nil && !errors.Is(err, io.EOF) {
+			return &APIError{StatusCode: resp.StatusCode, Message: err.Error()}
+		}
+		return &apiErr
+	}
+
+	if out == nil {
+		return nil
+	}
+	if err := json.NewDecoder(resp.Body).Decode(out); err != nil && !errors.Is(err, io.EOF) {
+		return fmt.Errorf("decode Ona API response: %w", err)
+	}
+	return nil
 }
 
 func APIBaseURL(host string) (string, error) {
