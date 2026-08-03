@@ -85,9 +85,6 @@ const (
 	// EnvironmentAutomationServiceStopTaskExecutionProcedure is the fully-qualified name of the
 	// EnvironmentAutomationService's StopTaskExecution RPC.
 	EnvironmentAutomationServiceStopTaskExecutionProcedure = "/gitpod.v1.EnvironmentAutomationService/StopTaskExecution"
-	// EnvironmentAutomationServiceUpdateTaskExecutionStatusProcedure is the fully-qualified name of the
-	// EnvironmentAutomationService's UpdateTaskExecutionStatus RPC.
-	EnvironmentAutomationServiceUpdateTaskExecutionStatusProcedure = "/gitpod.v1.EnvironmentAutomationService/UpdateTaskExecutionStatus"
 )
 
 // EnvironmentAutomationServiceClient is a client for the gitpod.v1.EnvironmentAutomationService
@@ -543,42 +540,6 @@ type EnvironmentAutomationServiceClient interface {
 	//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 	//	```
 	StopTaskExecution(context.Context, *connect.Request[v1.StopTaskExecutionRequest]) (*connect.Response[v1.StopTaskExecutionResponse], error)
-	// Updates the status of a task execution.
-	// Only the environment executing a task execution is expected to call this function.
-	//
-	// Use this method to:
-	// - Report execution progress
-	// - Update step status
-	// - Set failure messages
-	// - Provide log URLs
-	//
-	// ### Examples
-	//
-	// - Update execution status:
-	//
-	//	Updates status with step information.
-	//
-	//	```yaml
-	//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
-	//	steps:
-	//	  - id: "step-1"
-	//	    phase: TASK_EXECUTION_PHASE_SUCCEEDED
-	//	logUrl: "https://logs.gitpod.io/task-123"
-	//	```
-	//
-	// - Report failure:
-	//
-	//	Updates status with failure information.
-	//
-	//	```yaml
-	//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
-	//	failureMessage: "Build failed due to missing dependencies"
-	//	steps:
-	//	  - id: "step-1"
-	//	    phase: TASK_EXECUTION_PHASE_FAILED
-	//	    failureMessage: "npm install failed"
-	//	```
-	UpdateTaskExecutionStatus(context.Context, *connect.Request[v1.UpdateTaskExecutionStatusRequest]) (*connect.Response[v1.UpdateTaskExecutionStatusResponse], error)
 }
 
 // NewEnvironmentAutomationServiceClient constructs a client for the
@@ -700,35 +661,28 @@ func NewEnvironmentAutomationServiceClient(httpClient connect.HTTPClient, baseUR
 			connect.WithSchema(environmentAutomationServiceMethods.ByName("StopTaskExecution")),
 			connect.WithClientOptions(opts...),
 		),
-		updateTaskExecutionStatus: connect.NewClient[v1.UpdateTaskExecutionStatusRequest, v1.UpdateTaskExecutionStatusResponse](
-			httpClient,
-			baseURL+EnvironmentAutomationServiceUpdateTaskExecutionStatusProcedure,
-			connect.WithSchema(environmentAutomationServiceMethods.ByName("UpdateTaskExecutionStatus")),
-			connect.WithClientOptions(opts...),
-		),
 	}
 }
 
 // environmentAutomationServiceClient implements EnvironmentAutomationServiceClient.
 type environmentAutomationServiceClient struct {
-	createService             *connect.Client[v1.CreateServiceRequest, v1.CreateServiceResponse]
-	getService                *connect.Client[v1.GetServiceRequest, v1.GetServiceResponse]
-	listServices              *connect.Client[v1.ListServicesRequest, v1.ListServicesResponse]
-	updateService             *connect.Client[v1.UpdateServiceRequest, v1.UpdateServiceResponse]
-	deleteService             *connect.Client[v1.DeleteServiceRequest, v1.DeleteServiceResponse]
-	startService              *connect.Client[v1.StartServiceRequest, v1.StartServiceResponse]
-	stopService               *connect.Client[v1.StopServiceRequest, v1.StopServiceResponse]
-	upsertAutomationsFile     *connect.Client[v1.UpsertAutomationsFileRequest, v1.UpsertAutomationsFileResponse]
-	createTask                *connect.Client[v1.CreateTaskRequest, v1.CreateTaskResponse]
-	getTask                   *connect.Client[v1.GetTaskRequest, v1.GetTaskResponse]
-	listTasks                 *connect.Client[v1.ListTasksRequest, v1.ListTasksResponse]
-	updateTask                *connect.Client[v1.UpdateTaskRequest, v1.UpdateTaskResponse]
-	deleteTask                *connect.Client[v1.DeleteTaskRequest, v1.DeleteTaskResponse]
-	startTask                 *connect.Client[v1.StartTaskRequest, v1.StartTaskResponse]
-	listTaskExecutions        *connect.Client[v1.ListTaskExecutionsRequest, v1.ListTaskExecutionsResponse]
-	getTaskExecution          *connect.Client[v1.GetTaskExecutionRequest, v1.GetTaskExecutionResponse]
-	stopTaskExecution         *connect.Client[v1.StopTaskExecutionRequest, v1.StopTaskExecutionResponse]
-	updateTaskExecutionStatus *connect.Client[v1.UpdateTaskExecutionStatusRequest, v1.UpdateTaskExecutionStatusResponse]
+	createService         *connect.Client[v1.CreateServiceRequest, v1.CreateServiceResponse]
+	getService            *connect.Client[v1.GetServiceRequest, v1.GetServiceResponse]
+	listServices          *connect.Client[v1.ListServicesRequest, v1.ListServicesResponse]
+	updateService         *connect.Client[v1.UpdateServiceRequest, v1.UpdateServiceResponse]
+	deleteService         *connect.Client[v1.DeleteServiceRequest, v1.DeleteServiceResponse]
+	startService          *connect.Client[v1.StartServiceRequest, v1.StartServiceResponse]
+	stopService           *connect.Client[v1.StopServiceRequest, v1.StopServiceResponse]
+	upsertAutomationsFile *connect.Client[v1.UpsertAutomationsFileRequest, v1.UpsertAutomationsFileResponse]
+	createTask            *connect.Client[v1.CreateTaskRequest, v1.CreateTaskResponse]
+	getTask               *connect.Client[v1.GetTaskRequest, v1.GetTaskResponse]
+	listTasks             *connect.Client[v1.ListTasksRequest, v1.ListTasksResponse]
+	updateTask            *connect.Client[v1.UpdateTaskRequest, v1.UpdateTaskResponse]
+	deleteTask            *connect.Client[v1.DeleteTaskRequest, v1.DeleteTaskResponse]
+	startTask             *connect.Client[v1.StartTaskRequest, v1.StartTaskResponse]
+	listTaskExecutions    *connect.Client[v1.ListTaskExecutionsRequest, v1.ListTaskExecutionsResponse]
+	getTaskExecution      *connect.Client[v1.GetTaskExecutionRequest, v1.GetTaskExecutionResponse]
+	stopTaskExecution     *connect.Client[v1.StopTaskExecutionRequest, v1.StopTaskExecutionResponse]
 }
 
 // CreateService calls gitpod.v1.EnvironmentAutomationService.CreateService.
@@ -814,11 +768,6 @@ func (c *environmentAutomationServiceClient) GetTaskExecution(ctx context.Contex
 // StopTaskExecution calls gitpod.v1.EnvironmentAutomationService.StopTaskExecution.
 func (c *environmentAutomationServiceClient) StopTaskExecution(ctx context.Context, req *connect.Request[v1.StopTaskExecutionRequest]) (*connect.Response[v1.StopTaskExecutionResponse], error) {
 	return c.stopTaskExecution.CallUnary(ctx, req)
-}
-
-// UpdateTaskExecutionStatus calls gitpod.v1.EnvironmentAutomationService.UpdateTaskExecutionStatus.
-func (c *environmentAutomationServiceClient) UpdateTaskExecutionStatus(ctx context.Context, req *connect.Request[v1.UpdateTaskExecutionStatusRequest]) (*connect.Response[v1.UpdateTaskExecutionStatusResponse], error) {
-	return c.updateTaskExecutionStatus.CallUnary(ctx, req)
 }
 
 // EnvironmentAutomationServiceHandler is an implementation of the
@@ -1274,42 +1223,6 @@ type EnvironmentAutomationServiceHandler interface {
 	//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 	//	```
 	StopTaskExecution(context.Context, *connect.Request[v1.StopTaskExecutionRequest]) (*connect.Response[v1.StopTaskExecutionResponse], error)
-	// Updates the status of a task execution.
-	// Only the environment executing a task execution is expected to call this function.
-	//
-	// Use this method to:
-	// - Report execution progress
-	// - Update step status
-	// - Set failure messages
-	// - Provide log URLs
-	//
-	// ### Examples
-	//
-	// - Update execution status:
-	//
-	//	Updates status with step information.
-	//
-	//	```yaml
-	//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
-	//	steps:
-	//	  - id: "step-1"
-	//	    phase: TASK_EXECUTION_PHASE_SUCCEEDED
-	//	logUrl: "https://logs.gitpod.io/task-123"
-	//	```
-	//
-	// - Report failure:
-	//
-	//	Updates status with failure information.
-	//
-	//	```yaml
-	//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
-	//	failureMessage: "Build failed due to missing dependencies"
-	//	steps:
-	//	  - id: "step-1"
-	//	    phase: TASK_EXECUTION_PHASE_FAILED
-	//	    failureMessage: "npm install failed"
-	//	```
-	UpdateTaskExecutionStatus(context.Context, *connect.Request[v1.UpdateTaskExecutionStatusRequest]) (*connect.Response[v1.UpdateTaskExecutionStatusResponse], error)
 }
 
 // NewEnvironmentAutomationServiceHandler builds an HTTP handler from the service implementation. It
@@ -1427,12 +1340,6 @@ func NewEnvironmentAutomationServiceHandler(svc EnvironmentAutomationServiceHand
 		connect.WithSchema(environmentAutomationServiceMethods.ByName("StopTaskExecution")),
 		connect.WithHandlerOptions(opts...),
 	)
-	environmentAutomationServiceUpdateTaskExecutionStatusHandler := connect.NewUnaryHandler(
-		EnvironmentAutomationServiceUpdateTaskExecutionStatusProcedure,
-		svc.UpdateTaskExecutionStatus,
-		connect.WithSchema(environmentAutomationServiceMethods.ByName("UpdateTaskExecutionStatus")),
-		connect.WithHandlerOptions(opts...),
-	)
 	return "/gitpod.v1.EnvironmentAutomationService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case EnvironmentAutomationServiceCreateServiceProcedure:
@@ -1469,8 +1376,6 @@ func NewEnvironmentAutomationServiceHandler(svc EnvironmentAutomationServiceHand
 			environmentAutomationServiceGetTaskExecutionHandler.ServeHTTP(w, r)
 		case EnvironmentAutomationServiceStopTaskExecutionProcedure:
 			environmentAutomationServiceStopTaskExecutionHandler.ServeHTTP(w, r)
-		case EnvironmentAutomationServiceUpdateTaskExecutionStatusProcedure:
-			environmentAutomationServiceUpdateTaskExecutionStatusHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -1546,8 +1451,4 @@ func (UnimplementedEnvironmentAutomationServiceHandler) GetTaskExecution(context
 
 func (UnimplementedEnvironmentAutomationServiceHandler) StopTaskExecution(context.Context, *connect.Request[v1.StopTaskExecutionRequest]) (*connect.Response[v1.StopTaskExecutionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.EnvironmentAutomationService.StopTaskExecution is not implemented"))
-}
-
-func (UnimplementedEnvironmentAutomationServiceHandler) UpdateTaskExecutionStatus(context.Context, *connect.Request[v1.UpdateTaskExecutionStatusRequest]) (*connect.Response[v1.UpdateTaskExecutionStatusResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.v1.EnvironmentAutomationService.UpdateTaskExecutionStatus is not implemented"))
 }
