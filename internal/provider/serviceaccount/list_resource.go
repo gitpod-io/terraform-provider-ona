@@ -49,6 +49,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 		var token string
 		seenTokens := make(map[string]struct{})
 		var emitted int64
+		displayNames := listutil.NewDisplayNames()
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.ServiceAccountService().ListServiceAccounts(ctx, connect.NewRequest(&v1.ListServiceAccountsRequest{
 				Pagination: &v1.PaginationRequest{PageSize: listutil.PageSize(req.Limit, emitted), Token: token},
@@ -68,10 +69,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 					return
 				}
 				item := req.NewListResult(ctx)
-				item.DisplayName = account.GetName()
-				if item.DisplayName == "" {
-					item.DisplayName = account.GetId()
-				}
+				item.DisplayName = displayNames.Next(account.GetName(), account.GetId(), "service_account")
 				item.Diagnostics.Append(item.Identity.Set(ctx, IdentityModel{ServiceAccountID: types.StringValue(account.GetId())})...)
 				if req.IncludeResource && !item.Diagnostics.HasError() {
 					var model Model

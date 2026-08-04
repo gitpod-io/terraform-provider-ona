@@ -79,6 +79,7 @@ func (r *SCMIntegrationResource) List(ctx context.Context, req list.ListRequest,
 		var token string
 		seenTokens := make(map[string]struct{})
 		var emitted int64
+		displayNames := listutil.NewDisplayNames()
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.RunnerConfigurationService().ListSCMIntegrations(ctx, connect.NewRequest(&v1.ListSCMIntegrationsRequest{
 				Pagination: &v1.PaginationRequest{PageSize: listutil.PageSize(req.Limit, emitted), Token: token},
@@ -101,7 +102,7 @@ func (r *SCMIntegrationResource) List(ctx context.Context, req list.ListRequest,
 					return
 				}
 				item := req.NewListResult(ctx)
-				item.DisplayName = scmIntegrationDisplayName(integration)
+				item.DisplayName = displayNames.Next(scmIntegrationDisplayName(integration), integration.GetId(), "scm_integration")
 				item.Diagnostics.Append(item.Identity.Set(ctx, SCMIntegrationIdentityModel{ID: types.StringValue(integration.GetId())})...)
 				if req.IncludeResource && !item.Diagnostics.HasError() {
 					var model SCMIntegrationModel
@@ -205,7 +206,7 @@ func scmIntegrationAuthMode(integration *v1.SCMIntegration) string {
 
 func scmIntegrationDisplayName(integration *v1.SCMIntegration) string {
 	if integration.GetHost() == "" {
-		return integration.GetId()
+		return ""
 	}
 	if integration.GetScmId() == "" {
 		return integration.GetHost()

@@ -22,7 +22,7 @@ func TestAccSecretQuery(t *testing.T) {
 	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{Query: true, Config: secretQueryConfig(), QueryResultChecks: []querycheck.QueryResultCheck{
 		querycheck.ExpectLength("ona_secret.all", 1),
 		querycheck.ExpectIdentity("ona_secret.all", map[string]knownvalue.Check{"id": knownvalue.StringExact(id), "scope": knownvalue.StringExact("organization"), "organization_id": knownvalue.StringExact(secretTestOrgID), "project_id": knownvalue.Null(), "user_id": knownvalue.Null(), "service_account_id": knownvalue.Null()}),
-		querycheck.ExpectResourceKnownValues("ona_secret.all", queryfilter.ByDisplayName(knownvalue.StringExact("THIRD_PARTY_API_KEY")), []querycheck.KnownValueCheck{
+		querycheck.ExpectResourceKnownValues("ona_secret.all", queryfilter.ByDisplayName(knownvalue.StringExact("third_party_api_key")), []querycheck.KnownValueCheck{
 			{Path: tfjsonpath.New("id"), KnownValue: knownvalue.StringExact(id)}, {Path: tfjsonpath.New("scope"), KnownValue: knownvalue.StringExact("organization")}, {Path: tfjsonpath.New("name"), KnownValue: knownvalue.StringExact("THIRD_PARTY_API_KEY")}, {Path: tfjsonpath.New("value"), KnownValue: knownvalue.Null()},
 		}),
 	}}))

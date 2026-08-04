@@ -42,7 +42,7 @@ func TestAccSSOConfigurationQuery(t *testing.T) {
 	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{Query: true, Config: ssoConfigurationQueryConfig(), QueryResultChecks: []querycheck.QueryResultCheck{
 		querycheck.ExpectLength("ona_sso_configuration.all", 1),
 		querycheck.ExpectIdentity("ona_sso_configuration.all", map[string]knownvalue.Check{"id": knownvalue.StringExact("sso-custom")}),
-		querycheck.ExpectResourceKnownValues("ona_sso_configuration.all", queryfilter.ByDisplayName(knownvalue.StringExact("Example IdP")), []querycheck.KnownValueCheck{
+		querycheck.ExpectResourceKnownValues("ona_sso_configuration.all", queryfilter.ByDisplayName(knownvalue.StringExact("example_idp")), []querycheck.KnownValueCheck{
 			{Path: tfjsonpath.New("id"), KnownValue: knownvalue.StringExact("sso-custom")},
 			{Path: tfjsonpath.New("client_id"), KnownValue: knownvalue.StringExact("client-id")},
 			{Path: tfjsonpath.New("client_secret"), KnownValue: knownvalue.Null()},

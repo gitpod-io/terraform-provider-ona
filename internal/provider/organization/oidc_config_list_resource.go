@@ -64,8 +64,9 @@ func (r *OIDCConfigResource) List(ctx context.Context, req list.ListRequest, res
 			return
 		}
 
+		displayNames := listutil.NewDisplayNames()
 		item := req.NewListResult(ctx)
-		item.DisplayName = organizationID
+		item.DisplayName = displayNames.Next(organizationID, "", "oidc_config")
 		item.Diagnostics.Append(item.Identity.Set(ctx, OIDCConfigIdentityModel{OrganizationID: types.StringValue(organizationID)})...)
 		if req.IncludeResource && !item.Diagnostics.HasError() {
 			var model OIDCConfigModel

@@ -39,6 +39,7 @@ func (r *SCIMConfigurationResource) List(ctx context.Context, req list.ListReque
 		var token string
 		seenTokens := make(map[string]struct{})
 		var emitted int64
+		displayNames := listutil.NewDisplayNames()
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.OrganizationService().ListSCIMConfigurations(ctx, connect.NewRequest(&v1.ListSCIMConfigurationsRequest{
 				Pagination: &v1.PaginationRequest{PageSize: listutil.PageSize(req.Limit, emitted), Token: token},
@@ -58,10 +59,7 @@ func (r *SCIMConfigurationResource) List(ctx context.Context, req list.ListReque
 					push(item)
 					return
 				}
-				item.DisplayName = configuration.GetName()
-				if item.DisplayName == "" {
-					item.DisplayName = configuration.GetId()
-				}
+				item.DisplayName = displayNames.Next(configuration.GetName(), configuration.GetId(), "scim_configuration")
 				item.Diagnostics.Append(item.Identity.Set(ctx, SCIMConfigurationIdentityModel{ID: types.StringValue(configuration.GetId())})...)
 				if req.IncludeResource && !item.Diagnostics.HasError() {
 					var model SCIMConfigurationModel

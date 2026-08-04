@@ -92,6 +92,43 @@ creator_ids = [%q]
 	}
 }
 
+func TestAccRunnerQueryDeduplicatesDisplayNames(t *testing.T) {
+	server := newRunnerAPIServer(t, map[string]*v1.Runner{
+		"runner-1": newTestRunner("runner-1", "1 Main Runner!"),
+		"runner-2": newTestRunner("runner-2", "1 Main Runner!"),
+	})
+	t.Cleanup(server.Close)
+
+	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+		Query:  true,
+		Config: runnerQueryConfig(""),
+		QueryResultChecks: []querycheck.QueryResultCheck{
+			expectRunnerQueryResults{
+				Expected: []runnerQueryResult{
+					{
+						Address:                           "list.ona_runner.all",
+						DisplayName:                       "r_1_main_runner",
+						RunnerID:                          "runner-1",
+						Name:                              "1 Main Runner!",
+						RunnerProvider:                    "aws_ec2",
+						RunnerManagerID:                   nil,
+						GeneratedConfigHasRunnerManagerID: false,
+					},
+					{
+						Address:                           "list.ona_runner.all",
+						DisplayName:                       "r_1_main_runner_2",
+						RunnerID:                          "runner-2",
+						Name:                              "1 Main Runner!",
+						RunnerProvider:                    "aws_ec2",
+						RunnerManagerID:                   nil,
+						GeneratedConfigHasRunnerManagerID: false,
+					},
+				},
+			},
+		},
+	}))
+}
+
 func newRunnerQueryAPIServer(t *testing.T) *runnerAPIServer {
 	t.Helper()
 
@@ -148,7 +185,7 @@ func indentRunnerQueryConfig(config string) string {
 func expectedAWSRunnerQueryResult() runnerQueryResult {
 	return runnerQueryResult{
 		Address:                           "list.ona_runner.all",
-		DisplayName:                       "AWS Runner",
+		DisplayName:                       "aws_runner",
 		RunnerID:                          "runner-1",
 		Name:                              "AWS Runner",
 		RunnerProvider:                    "aws_ec2",
@@ -160,7 +197,7 @@ func expectedAWSRunnerQueryResult() runnerQueryResult {
 func expectedGCPRunnerQueryResult() runnerQueryResult {
 	return runnerQueryResult{
 		Address:                           "list.ona_runner.all",
-		DisplayName:                       "GCP Runner",
+		DisplayName:                       "gcp_runner",
 		RunnerID:                          "runner-3",
 		Name:                              "GCP Runner",
 		RunnerProvider:                    "gcp",

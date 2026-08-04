@@ -60,6 +60,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 		var token string
 		seenTokens := make(map[string]struct{})
 		var emitted int64
+		displayNames := listutil.NewDisplayNames()
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.RunnerService().ListRunners(ctx, connect.NewRequest(&v1.ListRunnersRequest{
 				Pagination: &v1.PaginationRequest{
@@ -86,10 +87,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 				}
 
 				item := req.NewListResult(ctx)
-				item.DisplayName = remoteRunner.GetName()
-				if item.DisplayName == "" {
-					item.DisplayName = remoteRunner.GetRunnerId()
-				}
+				item.DisplayName = displayNames.Next(remoteRunner.GetName(), remoteRunner.GetRunnerId(), "runner")
 				item.Diagnostics.Append(item.Identity.Set(ctx, RunnerIdentityModel{
 					RunnerID: types.StringValue(remoteRunner.GetRunnerId()),
 				})...)

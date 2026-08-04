@@ -6,7 +6,6 @@ package runner
 import (
 	"context"
 	"fmt"
-	"regexp"
 	"sort"
 	"strings"
 
@@ -78,7 +77,7 @@ func (r *EnvironmentClassResource) List(ctx context.Context, req list.ListReques
 		var token string
 		seenTokens := make(map[string]struct{})
 		var emitted int64
-		displayNames := newEnvironmentClassDisplayNames()
+		displayNames := listutil.NewDisplayNames()
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.RunnerConfigurationService().ListEnvironmentClasses(ctx, connect.NewRequest(&v1.ListEnvironmentClassesRequest{
 				Pagination: &v1.PaginationRequest{PageSize: listutil.PageSize(req.Limit, emitted), Token: token},
@@ -101,7 +100,7 @@ func (r *EnvironmentClassResource) List(ctx context.Context, req list.ListReques
 					return
 				}
 				item := req.NewListResult(ctx)
-				item.DisplayName = displayNames.forClass(class, runnerNames)
+				item.DisplayName = displayNames.Next(environmentClassPreferredDisplayName(class, runnerNames), class.GetId(), "environment_class")
 				item.Diagnostics.Append(item.Identity.Set(ctx, EnvironmentClassIdentityModel{ID: types.StringValue(class.GetId())})...)
 				if req.IncludeResource && !item.Diagnostics.HasError() {
 					var model EnvironmentClassModel
@@ -199,33 +198,6 @@ func newEnvironmentClassListFilter(ctx context.Context, req list.ListRequest, pu
 	}, true
 }
 
-type environmentClassDisplayNames struct {
-	used map[string]struct{}
-}
-
-func newEnvironmentClassDisplayNames() environmentClassDisplayNames {
-	return environmentClassDisplayNames{used: map[string]struct{}{}}
-}
-
-func (n environmentClassDisplayNames) forClass(class *v1.EnvironmentClass, runnerNames map[string]string) string {
-	base := environmentClassDisplayNameLabel(environmentClassPreferredDisplayName(class, runnerNames))
-	if base == "" {
-		base = environmentClassDisplayNameLabel(class.GetId())
-	}
-	if base == "" {
-		base = "environment_class"
-	}
-
-	candidate := base
-	for i := 2; ; i++ {
-		if _, ok := n.used[candidate]; !ok {
-			n.used[candidate] = struct{}{}
-			return candidate
-		}
-		candidate = fmt.Sprintf("%s_%d", base, i)
-	}
-}
-
 func environmentClassPreferredDisplayName(class *v1.EnvironmentClass, runnerNames map[string]string) string {
 	runnerName := strings.TrimSpace(runnerNames[class.GetRunnerId()])
 	displayName := strings.TrimSpace(class.GetDisplayName())
@@ -236,19 +208,4 @@ func environmentClassPreferredDisplayName(class *v1.EnvironmentClass, runnerName
 		return runnerName
 	}
 	return runnerName + "_" + displayName
-}
-
-var environmentClassDisplayNameInvalidChars = regexp.MustCompile(`[^a-z0-9_]+`)
-
-func environmentClassDisplayNameLabel(value string) string {
-	value = strings.ToLower(strings.TrimSpace(value))
-	value = environmentClassDisplayNameInvalidChars.ReplaceAllString(value, "_")
-	value = strings.Trim(value, "_")
-	if value == "" {
-		return ""
-	}
-	if value[0] >= '0' && value[0] <= '9' {
-		value = "r_" + value
-	}
-	return value
 }

@@ -41,7 +41,7 @@ func TestAccServiceAccountQuery(t *testing.T) {
 		querycheck.ExpectIdentity("ona_service_account.all", map[string]knownvalue.Check{"service_account_id": knownvalue.StringExact(serviceAccountID1)}),
 		querycheck.ExpectNoIdentity("ona_service_account.all", map[string]knownvalue.Check{"service_account_id": knownvalue.StringExact(serviceAccountID2)}),
 		querycheck.ExpectNoIdentity("ona_service_account.all", map[string]knownvalue.Check{"service_account_id": knownvalue.StringExact(serviceAccountID3)}),
-		querycheck.ExpectResourceKnownValues("ona_service_account.all", queryfilter.ByDisplayName(knownvalue.StringExact("Terraform Automation")), []querycheck.KnownValueCheck{
+		querycheck.ExpectResourceKnownValues("ona_service_account.all", queryfilter.ByDisplayName(knownvalue.StringExact("terraform_automation")), []querycheck.KnownValueCheck{
 			{Path: tfjsonpath.New("id"), KnownValue: knownvalue.StringExact(serviceAccountID1)},
 			{Path: tfjsonpath.New("name"), KnownValue: knownvalue.StringExact("Terraform Automation")},
 		}),

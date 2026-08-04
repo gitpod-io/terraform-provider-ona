@@ -54,6 +54,7 @@ func (r *SSOConfigurationResource) List(ctx context.Context, req list.ListReques
 		var token string
 		seenTokens := make(map[string]struct{})
 		var emitted int64
+		displayNames := listutil.NewDisplayNames()
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.OrganizationService().ListSSOConfigurations(ctx, connect.NewRequest(&v1.ListSSOConfigurationsRequest{
 				OrganizationId: organizationID,
@@ -73,10 +74,7 @@ func (r *SSOConfigurationResource) List(ctx context.Context, req list.ListReques
 					return
 				}
 				item := req.NewListResult(ctx)
-				item.DisplayName = configuration.GetDisplayName()
-				if item.DisplayName == "" {
-					item.DisplayName = configuration.GetId()
-				}
+				item.DisplayName = displayNames.Next(configuration.GetDisplayName(), configuration.GetId(), "sso_configuration")
 				item.Diagnostics.Append(item.Identity.Set(ctx, SSOConfigurationIdentityModel{ID: types.StringValue(configuration.GetId())})...)
 				if req.IncludeResource && !item.Diagnostics.HasError() {
 					var model SSOConfigurationModel

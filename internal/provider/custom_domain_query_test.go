@@ -24,7 +24,7 @@ func TestAccCustomDomainQuery(t *testing.T) {
 		QueryResultChecks: []querycheck.QueryResultCheck{
 			querycheck.ExpectLength("ona_custom_domain.all", 1),
 			querycheck.ExpectIdentity("ona_custom_domain.all", map[string]knownvalue.Check{"organization_id": knownvalue.StringExact(customDomainOrgID)}),
-			querycheck.ExpectResourceKnownValues("ona_custom_domain.all", queryfilter.ByDisplayName(knownvalue.StringExact("ona.example.com")), []querycheck.KnownValueCheck{
+			querycheck.ExpectResourceKnownValues("ona_custom_domain.all", queryfilter.ByDisplayName(knownvalue.StringExact("ona_example_com")), []querycheck.KnownValueCheck{
 				{Path: tfjsonpath.New("domain_name"), KnownValue: knownvalue.StringExact("ona.example.com")},
 				{Path: tfjsonpath.New("cloud_provider"), KnownValue: knownvalue.StringExact("aws")},
 				{Path: tfjsonpath.New("cloud_account_id"), KnownValue: knownvalue.StringExact("123456789012")},

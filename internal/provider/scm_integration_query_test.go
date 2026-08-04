@@ -195,7 +195,7 @@ func indentSCMIntegrationQueryConfig(config string) string {
 func expectedOAuthSCMIntegrationQueryResult() scmIntegrationQueryResult {
 	return scmIntegrationQueryResult{
 		Address:                              "list.ona_scm_integration.all",
-		DisplayName:                          "github.com (github)",
+		DisplayName:                          "github_com_github",
 		ID:                                   "scm-1",
 		RunnerID:                             "runner-1",
 		SCMID:                                "github",
@@ -212,7 +212,7 @@ func expectedOAuthSCMIntegrationQueryResult() scmIntegrationQueryResult {
 func expectedPATSCMIntegrationQueryResult() scmIntegrationQueryResult {
 	return scmIntegrationQueryResult{
 		Address:                              "list.ona_scm_integration.all",
-		DisplayName:                          "gitlab.com (gitlab)",
+		DisplayName:                          "gitlab_com_gitlab",
 		ID:                                   "scm-2",
 		RunnerID:                             "runner-2",
 		SCMID:                                "gitlab",

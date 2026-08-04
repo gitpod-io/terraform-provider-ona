@@ -83,8 +83,12 @@ list resources. A query-enabled managed resource needs all of these pieces:
    missing template as incomplete documentation.
 
 Shared list helpers belong in `internal/provider/listutil`; API-specific
-discovery stays in the resource package or an `internal/client` wrapper. Run
-`make generate` after adding list schemas or examples.
+discovery stays in the resource package or an `internal/client` wrapper. Every
+`list.ListResource` must use the shared `listutil` display-name helper for its
+`ListResult.DisplayName`; build any resource-specific preferred label in the
+resource package, then pass it with stable fallbacks to that helper for
+Terraform-safe normalization and deduplication. Run `make generate` after
+adding list schemas or examples.
 
 ## Golden Rules
 

@@ -64,6 +64,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 		var token string
 		seenTokens := make(map[string]struct{})
 		var emitted int64
+		displayNames := listutil.NewDisplayNames()
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.SecretService().ListSecrets(ctx, connect.NewRequest(&v1.ListSecretsRequest{Pagination: &v1.PaginationRequest{PageSize: listutil.PageSize(req.Limit, emitted), Token: token}, Filter: &v1.ListSecretsRequest_Filter{Scope: resolved.Scope}}))
 			if err != nil {
@@ -81,10 +82,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 				populateModelFromSecret(ctx, &model, remote, &itemDiags)
 				model.Value = types.StringNull()
 				item := req.NewListResult(ctx)
-				item.DisplayName = remote.GetName()
-				if item.DisplayName == "" {
-					item.DisplayName = remote.GetId()
-				}
+				item.DisplayName = displayNames.Next(remote.GetName(), remote.GetId(), "secret")
 				item.Diagnostics.Append(itemDiags...)
 				identity := identityFromModel(model, remote.GetScope().GetOrganizationId())
 				item.Diagnostics.Append(item.Identity.Set(ctx, identity)...)
