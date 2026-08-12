@@ -8,7 +8,7 @@ import (
 	"fmt"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/hashicorp/terraform-plugin-framework/list"
@@ -64,8 +64,9 @@ func (r *OIDCConfigResource) List(ctx context.Context, req list.ListRequest, res
 			return
 		}
 
+		displayNames := listutil.NewDisplayNames()
 		item := req.NewListResult(ctx)
-		item.DisplayName = organizationID
+		item.DisplayName = displayNames.Unique(organizationID, "", "oidc_config")
 		item.Diagnostics.Append(item.Identity.Set(ctx, OIDCConfigIdentityModel{OrganizationID: types.StringValue(organizationID)})...)
 		if req.IncludeResource && !item.Diagnostics.HasError() {
 			var model OIDCConfigModel

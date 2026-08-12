@@ -7,7 +7,6 @@ import (
 	"context"
 	"errors"
 
-	onaclient "github.com/gitpod-io/terraform-provider-ona/internal/client"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/accesscontrol"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/billing"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/integration"
@@ -103,27 +102,24 @@ func (p *OnaProvider) Configure(ctx context.Context, req provider.ConfigureReque
 		return
 	}
 
-	var cfg onaclient.Config
+	var host, token string
 	if !data.Host.IsNull() {
-		cfg.Host = data.Host.ValueString()
+		host = data.Host.ValueString()
 	}
 	if !data.Token.IsNull() {
-		cfg.Token = data.Token.ValueString()
+		token = data.Token.ValueString()
 	}
-	cfg.UserAgent = providerversion.UserAgentFor(p.version)
 
-	api, apiBaseURL, err := onaclient.NewManagementPlane(cfg)
-	if err != nil {
-		if !errors.Is(err, onaclient.ErrMissingToken) {
-			providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Configure Ona API Client", "configuring the Ona API client", err)
-			return
-		}
+	api, apiBaseURL, err := newManagementPlane(host, token, providerversion.UserAgentFor(p.version))
+	if err != nil && !errors.Is(err, errMissingToken) {
+		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Configure Ona API Client", "configuring the Ona API client", err)
+		return
 	}
 
 	providerData := &providerdata.Data{
 		Client:     api,
 		APIBaseURL: apiBaseURL,
-		UserAgent:  cfg.UserAgent,
+		UserAgent:  providerversion.UserAgentFor(p.version),
 	}
 
 	resp.DataSourceData = providerData
@@ -134,6 +130,7 @@ func (p *OnaProvider) Configure(ctx context.Context, req provider.ConfigureReque
 
 func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		accesscontrol.NewAutomationRoleAssignmentResource,
 		accesscontrol.NewGroupMembershipResource,
 		accesscontrol.NewGroupResource,
 		accesscontrol.NewOrganizationRoleAssignmentResource,
@@ -156,6 +153,7 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		runner.NewPolicyResource,
 		runner.NewResource,
 		runner.NewSCMIntegrationResource,
+		runner.NewTokenResource,
 		secret.NewResource,
 		security.NewPolicyResource,
 		serviceaccount.NewResource,
@@ -168,7 +166,6 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 
 func (p *OnaProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {
 	return []func() ephemeral.EphemeralResource{
-		runner.NewTokenEphemeralResource,
 		serviceaccount.NewTokenEphemeralResource,
 		webhook.NewSecretEphemeralResource,
 	}
@@ -199,6 +196,7 @@ func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResou
 		serviceaccount.NewListResource,
 		skill.NewListResource,
 		warmpool.NewWarmPoolListResource,
+		workflow.NewListResource,
 	}
 }
 

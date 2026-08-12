@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
 	testresource "github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/querycheck"
@@ -41,7 +41,7 @@ func TestAccServiceAccountQuery(t *testing.T) {
 		querycheck.ExpectIdentity("ona_service_account.all", map[string]knownvalue.Check{"service_account_id": knownvalue.StringExact(serviceAccountID1)}),
 		querycheck.ExpectNoIdentity("ona_service_account.all", map[string]knownvalue.Check{"service_account_id": knownvalue.StringExact(serviceAccountID2)}),
 		querycheck.ExpectNoIdentity("ona_service_account.all", map[string]knownvalue.Check{"service_account_id": knownvalue.StringExact(serviceAccountID3)}),
-		querycheck.ExpectResourceKnownValues("ona_service_account.all", queryfilter.ByDisplayName(knownvalue.StringExact("Terraform Automation")), []querycheck.KnownValueCheck{
+		querycheck.ExpectResourceKnownValues("ona_service_account.all", queryfilter.ByDisplayName(knownvalue.StringExact("terraform_automation")), []querycheck.KnownValueCheck{
 			{Path: tfjsonpath.New("id"), KnownValue: knownvalue.StringExact(serviceAccountID1)},
 			{Path: tfjsonpath.New("name"), KnownValue: knownvalue.StringExact("Terraform Automation")},
 		}),

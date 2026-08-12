@@ -17,6 +17,12 @@ variable "runner_name" {
   default     = "terraform-provider-devloop"
 }
 
+variable "runner_token_version" {
+  type        = string
+  description = "User-managed runner token rotation marker. Change this value to replace the resource and mint a new token."
+  default     = "v1"
+}
+
 variable "service_account_name" {
   type        = string
   description = "Name for the service account managed by this local development module."
@@ -33,6 +39,13 @@ variable "group_name" {
   type        = string
   description = "Name for the group managed by this local development module."
   default     = "Terraform Provider Dev Loop"
+}
+
+variable "automation_sharing_automation_id" {
+  type        = string
+  description = "Existing Automation ID used to exercise custom-group sharing. Requires an Enterprise organization when set."
+  default     = null
+  nullable    = true
 }
 
 variable "enable_ai_budgets" {

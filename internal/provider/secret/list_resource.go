@@ -9,7 +9,7 @@ import (
 	"sort"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -64,6 +64,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 		var token string
 		seenTokens := make(map[string]struct{})
 		var emitted int64
+		displayNames := listutil.NewDisplayNames()
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.SecretService().ListSecrets(ctx, connect.NewRequest(&v1.ListSecretsRequest{Pagination: &v1.PaginationRequest{PageSize: listutil.PageSize(req.Limit, emitted), Token: token}, Filter: &v1.ListSecretsRequest_Filter{Scope: resolved.Scope}}))
 			if err != nil {
@@ -81,10 +82,7 @@ func (r *Resource) List(ctx context.Context, req list.ListRequest, resp *list.Li
 				populateModelFromSecret(ctx, &model, remote, &itemDiags)
 				model.Value = types.StringNull()
 				item := req.NewListResult(ctx)
-				item.DisplayName = remote.GetName()
-				if item.DisplayName == "" {
-					item.DisplayName = remote.GetId()
-				}
+				item.DisplayName = displayNames.Unique(remote.GetName(), remote.GetId(), "secret")
 				item.Diagnostics.Append(itemDiags...)
 				identity := identityFromModel(model, remote.GetScope().GetOrganizationId())
 				item.Diagnostics.Append(item.Identity.Set(ctx, identity)...)

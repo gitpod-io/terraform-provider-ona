@@ -9,7 +9,7 @@ import (
 	"sort"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
 	"github.com/hashicorp/terraform-plugin-framework/list"
 	listschema "github.com/hashicorp/terraform-plugin-framework/list/schema"
@@ -68,6 +68,7 @@ func (r *WarmPoolResource) List(ctx context.Context, req list.ListRequest, resp 
 		var token string
 		seenTokens := make(map[string]struct{})
 		var emitted int64
+		displayNames := listutil.NewDisplayNames()
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.PrebuildService().ListWarmPools(ctx, connect.NewRequest(&v1.ListWarmPoolsRequest{
 				Pagination: &v1.PaginationRequest{
@@ -97,7 +98,7 @@ func (r *WarmPoolResource) List(ctx context.Context, req list.ListRequest, resp 
 				}
 
 				item := req.NewListResult(ctx)
-				item.DisplayName = remote.GetId()
+				item.DisplayName = displayNames.Unique(remote.GetId(), "", "warm_pool")
 				item.Diagnostics.Append(item.Identity.Set(ctx, IdentityModel{
 					ID: types.StringValue(remote.GetId()),
 				})...)

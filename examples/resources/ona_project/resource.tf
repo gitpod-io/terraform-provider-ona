@@ -5,7 +5,6 @@ resource "ona_project" "api" {
   insights_enabled     = true
 
   devcontainer_file_path = ".devcontainer/devcontainer.json"
-  automations_file_path  = ".ona/automations.yaml"
 
   environment_class {
     environment_class_id = ona_environment_class.large.id

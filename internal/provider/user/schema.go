@@ -5,6 +5,8 @@ package user
 
 import (
 	"context"
+	"fmt"
+	"net/mail"
 	"unicode/utf8"
 
 	"github.com/google/uuid"
@@ -51,16 +53,80 @@ func (SearchStringValidator) ValidateString(_ context.Context, req validator.Str
 	}
 }
 
+type EmailSelectorValidator struct{}
+
+func (EmailSelectorValidator) Description(context.Context) string {
+	return "email must be a valid email address between 1 and 256 characters"
+}
+
+func (EmailSelectorValidator) MarkdownDescription(context.Context) string {
+	return "Email must be a valid email address between 1 and 256 characters."
+}
+
+func (EmailSelectorValidator) ValidateString(_ context.Context, req validator.StringRequest, resp *validator.StringResponse) {
+	if req.ConfigValue.IsNull() || req.ConfigValue.IsUnknown() {
+		return
+	}
+	value := req.ConfigValue.ValueString()
+	length := utf8.RuneCountInString(value)
+	if length == 0 || length > 256 {
+		resp.Diagnostics.AddAttributeError(req.Path, "Invalid Ona User Email", "email must contain between 1 and 256 characters.")
+		return
+	}
+	parsed, err := mail.ParseAddress(value)
+	if err != nil || parsed.Name != "" || parsed.Address != value {
+		resp.Diagnostics.AddAttributeError(req.Path, "Invalid Ona User Email", "email must be a valid email address.")
+	}
+}
+
+type LoginProviderValidator struct{}
+
+func (LoginProviderValidator) Description(context.Context) string {
+	return "login_provider must be custom, github, or google"
+}
+
+func (LoginProviderValidator) MarkdownDescription(context.Context) string {
+	return "Login provider must be `custom`, `github`, or `google`."
+}
+
+func (LoginProviderValidator) ValidateString(_ context.Context, req validator.StringRequest, resp *validator.StringResponse) {
+	if req.ConfigValue.IsNull() || req.ConfigValue.IsUnknown() {
+		return
+	}
+	value := req.ConfigValue.ValueString()
+	if value != "custom" && value != "github" && value != "google" {
+		resp.Diagnostics.AddAttributeError(req.Path, "Invalid Ona Login Provider", fmt.Sprintf("Unsupported login_provider %q. Use custom, github, or google.", value))
+	}
+}
+
 func userDataSourceSchema() datasourceschema.Schema {
+	attributes := userAttributes(datasourceschema.StringAttribute{
+		Optional:            true,
+		Computed:            true,
+		MarkdownDescription: "Stable UUID of the existing Ona user. Specify this alone, or omit it and specify both `email` and `login_provider`.",
+		Validators: []validator.String{
+			UUIDStringValidator{},
+		},
+	})
+	attributes["email"] = datasourceschema.StringAttribute{
+		Optional:            true,
+		Computed:            true,
+		MarkdownDescription: "Exact user email to look up, matched case-insensitively. Must be paired with `login_provider` when `user_id` is omitted.",
+		Validators: []validator.String{
+			EmailSelectorValidator{},
+		},
+	}
+	attributes["login_provider"] = datasourceschema.StringAttribute{
+		Optional:            true,
+		Computed:            true,
+		MarkdownDescription: "Exact login provider to pair with `email`. Supported values are `github`, `google`, and `custom` (SSO).",
+		Validators: []validator.String{
+			LoginProviderValidator{},
+		},
+	}
 	return datasourceschema.Schema{
-		MarkdownDescription: "Fetches one Ona user by UUID from the organization associated with the configured token. The user must be visible to that token; suspended or departed users can require organization-admin access.",
-		Attributes: userAttributes(datasourceschema.StringAttribute{
-			Required:            true,
-			MarkdownDescription: "UUID of the existing Ona user to look up.",
-			Validators: []validator.String{
-				UUIDStringValidator{},
-			},
-		}),
+		MarkdownDescription: "Fetches one Ona user by UUID or by an exact email and login-provider pair from the organization associated with the configured token. The user must be visible to that token; suspended or departed users can require organization-admin access.",
+		Attributes:          attributes,
 	}
 }
 

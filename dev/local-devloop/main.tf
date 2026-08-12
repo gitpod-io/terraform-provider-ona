@@ -11,12 +11,6 @@ provider "ona" {
   token = var.ona_token
 }
 
-resource "ona_skill" "devloop" {
-  name        = "Terraform provider development"
-  description = "Repository-specific guidance for developing the Ona Terraform provider."
-  prompt      = file("${path.module}/skills/provider-development.md")
-}
-
 resource "ona_service_account" "devloop" {
   name        = var.service_account_name
   description = "Service account created by the Terraform provider local dev loop."
@@ -46,6 +40,14 @@ resource "ona_organization_role_assignment" "devloop" {
 
   group_id = ona_group.devloop.id
   role     = each.value
+}
+
+resource "ona_automation_role_assignment" "devloop" {
+  count = var.automation_sharing_automation_id == null ? 0 : 1
+
+  automation_id = var.automation_sharing_automation_id
+  group_id      = ona_group.devloop.id
+  role          = "executor"
 }
 
 resource "ona_organization_ai_budget" "credits" {
@@ -122,16 +124,9 @@ data "ona_runner" "devloop" {
   runner_id = ona_runner.devloop.runner_id
 }
 
-ephemeral "ona_runner_token" "devloop" {
-  runner_id = ona_runner.devloop.runner_id
-}
-
-module "token_writer" {
-  source = "./modules/token-writer"
-
-  # Pass the runner token through an ephemeral input so Terraform can use it during apply
-  # without writing the token to plan or state.
-  runner_token = ephemeral.ona_runner_token.devloop.token
+resource "ona_runner_token" "devloop" {
+  runner_id     = ona_runner.devloop.runner_id
+  token_version = var.runner_token_version
 }
 
 resource "ona_environment_class" "devloop" {

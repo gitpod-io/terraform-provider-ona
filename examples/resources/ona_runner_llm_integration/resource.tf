@@ -1,4 +1,4 @@
-resource "ona_runner_llm_integration" "anthropic_byok" {
+resource "ona_runner_llm_integration" "bedrock_mantle" {
   runner_id = ona_runner.aws_primary.runner_id
 
   models = [
@@ -6,8 +6,8 @@ resource "ona_runner_llm_integration" "anthropic_byok" {
     "sonnet_4_extended",
   ]
 
-  endpoint        = "https://api.anthropic.com/v1"
-  api_key         = var.anthropic_api_key
+  endpoint        = "https://bedrock-mantle.us-east-1.api.aws"
+  api_key         = var.bedrock_mantle_token
   api_key_version = "2026-07-14"
   max_tokens      = 8000
 }

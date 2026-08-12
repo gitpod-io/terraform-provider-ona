@@ -13,39 +13,20 @@ Report security vulnerabilities through the process in
 
 ## Development environment
 
-The easiest way to get started is to open the repository in
-[Ona](https://ona.com/) or run the included
-[dev container](.devcontainer/) locally with
-[VS Code Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers)
-or another compatible editor. The dev container includes Go, Terraform,
-`make`, `golangci-lint`, and `shellcheck`.
-
-For a manual setup, install the tool versions defined by the repository:
-
-- [Go](https://go.dev/doc/install), using the version in [go.mod](go.mod)
-- [Terraform](https://developer.hashicorp.com/terraform/install), version
-  1.14 or later
-- [GNU Make](https://www.gnu.org/software/make/)
-- [golangci-lint](https://golangci-lint.run/)
-- [ShellCheck](https://www.shellcheck.net/)
-
-Download dependencies for the provider and documentation tooling:
-
-```shell
-make install-dependencies
-```
+Use the included dev container, or install the Go version in `go.mod`,
+Terraform 1.14 or later, GNU Make, `golangci-lint`, and ShellCheck. Then run
+`make install-dependencies`.
 
 ## Repository structure
 
 | Path | Description |
 | --- | --- |
 | `internal/provider/` | Provider, resource, data source, and ephemeral resource implementations and tests |
-| `internal/client/` | Ona API client wrapper used by the provider |
-| `internal/api/go/` | Copied/generated API client subset; do not hand-edit it for lint-only or style changes |
+| `internal/managementclient/` | Provider-facing wrapper around generated Ona API services |
 | `examples/` | Terraform examples used to generate provider documentation |
 | `docs/` | Generated Terraform Registry documentation |
 | `templates/` | Source templates used by documentation generation |
-| `scripts/` | Import, validation, and release tooling |
+| `scripts/` | Validation and release tooling |
 | `dev/local-devloop/` | Local Terraform configuration for exercising a development build |
 | `dev/local-importloop/` | Local Terraform Query configuration for exercising all supported bulk imports |
 | `tools/` | Separate Go module containing documentation generation tools |
@@ -54,7 +35,8 @@ make install-dependencies
 
 1. Make a focused change and add or update tests where behavior changes.
 2. If you change a provider schema, documentation template, or example, run
-   `make generate` and commit the generated output.
+   `make generate` from the repository root
+   and commit the generated output.
 3. Run the relevant checks described below.
 
 Keep examples and generated documentation aligned. The documentation generator
@@ -73,6 +55,7 @@ Regenerate provider documentation when schemas, templates, or examples change:
 
 ```shell
 make generate
+git diff --exit-code
 ```
 
 Confirm that formatting and generation leave no uncommitted differences:
@@ -81,26 +64,21 @@ Confirm that formatting and generation leave no uncommitted differences:
 git diff --exit-code
 ```
 
-Run linting, unit tests, and a build:
+Run unit tests, acceptance tests, and a build:
 
 ```shell
-make lint
 make test-unit
+make test-acc
 make build
 ```
 
-The full test target also runs acceptance tests:
-
-```shell
-make test
-```
-
-Treat acceptance tests and live Terraform plans as credentialed operations.
-Run `make test-acc` or the configurations under `dev/local-devloop/` and
-`dev/local-importloop/` only when the change requires it, you have been
-explicitly authorized, and the required Ona credentials are available. Never
-commit tokens, private keys, Terraform state, provider override files, or
-release signing material.
+The checked-in acceptance suite uses hermetic test servers and is required in
+CI. Treat the configurations under `dev/local-devloop/` and
+`dev/local-importloop/` as credentialed operations. Run them against a live Ona
+API only when the change requires it,
+you have been explicitly authorized, and the required credentials are
+available. Never commit tokens, private keys, Terraform state, provider
+override files, or release signing material.
 
 ## License
 

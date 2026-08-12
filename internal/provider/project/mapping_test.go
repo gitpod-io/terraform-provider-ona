@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -170,7 +170,9 @@ func TestUnsupportedProjectRepositoryDiagnosticClassification(t *testing.T) {
 		t.Fatal("expected unrelated mapping diagnostic not to be classified as an intentional exclusion")
 	}
 
-	mixed := append(unsupported, other...)
+	mixed := make(diag.Diagnostics, 0, len(unsupported)+len(other))
+	mixed = append(mixed, unsupported...)
+	mixed = append(mixed, other...)
 	if isUnsupportedProjectRepository(mixed) {
 		t.Fatal("expected mixed mapping diagnostics not to be classified as an intentional exclusion")
 	}

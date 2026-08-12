@@ -1,11 +1,18 @@
 resource "ona_automation" "nightly_checks" {
   name        = "Nightly checks"
   description = "Runs repository checks every weekday."
+  agent       = "codex"
   disabled    = false
 
   executor = {
     id        = "<service-account-id>"
     principal = "service_account"
+  }
+
+  codex_settings = {
+    model            = "gpt-5.6-sol"
+    reasoning_effort = "high"
+    service_tier     = "fast"
   }
 
   triggers = [

@@ -5,13 +5,9 @@ package user
 
 import (
 	"context"
-	"fmt"
 	"sort"
 
-	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
-	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdiag"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,7 +55,7 @@ func (d *UserCollectionDataSource) Read(ctx context.Context, req datasource.Read
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Resolve Ona Organization", "resolving the organization for the Ona users data source", err)
 		return
 	}
-	members, err := d.listMembers(ctx, organizationID, filter)
+	members, err := listOrganizationMembers(ctx, d.client, organizationID, filter)
 	if err != nil {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to List Ona Users", "listing Ona users", err)
 		return
@@ -81,37 +77,4 @@ func (d *UserCollectionDataSource) Read(ctx context.Context, req datasource.Read
 		return data.Users[i].UserID.ValueString() < data.Users[j].UserID.ValueString()
 	})
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (d *UserCollectionDataSource) listMembers(ctx context.Context, organizationID string, filter *v1.ListMembersRequest_Filter) ([]*v1.OrganizationMember, error) {
-	var members []*v1.OrganizationMember
-	var token string
-	seenTokens := make(map[string]struct{})
-
-	for {
-		result, err := d.client.OrganizationService().ListMembers(ctx, connect.NewRequest(&v1.ListMembersRequest{
-			Pagination:     &v1.PaginationRequest{PageSize: 100, Token: token},
-			OrganizationId: organizationID,
-			Filter:         filter,
-			Sort: &v1.ListMembersRequest_Sort{
-				Field: v1.ListMembersRequest_SORT_FIELD_NAME,
-				Order: v1.SortOrder_SORT_ORDER_ASC,
-			},
-		}))
-		if err != nil {
-			return nil, fmt.Errorf("list organization members: %w", err)
-		}
-		if result == nil || result.Msg == nil {
-			return nil, fmt.Errorf("list organization members: Ona returned an empty response")
-		}
-		members = append(members, result.Msg.GetMembers()...)
-		nextToken := result.Msg.GetPagination().GetNextToken()
-		if nextToken == "" {
-			return members, nil
-		}
-		if err := listutil.NextPageToken(seenTokens, nextToken); err != nil {
-			return nil, fmt.Errorf("list organization members: %w", err)
-		}
-		token = nextToken
-	}
 }

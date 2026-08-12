@@ -6,6 +6,8 @@ package listutil
 import (
 	"context"
 	"fmt"
+	"regexp"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/list"
@@ -13,6 +15,54 @@ import (
 )
 
 const DefaultPageSize int32 = 100
+
+var displayNameInvalidChars = regexp.MustCompile(`[^a-z0-9_]+`)
+
+type DisplayNames struct {
+	used map[string]struct{}
+}
+
+func NewDisplayNames() DisplayNames {
+	return DisplayNames{used: map[string]struct{}{}}
+}
+
+func (n DisplayNames) Unique(preferred, fallback, defaultName string) string {
+	base := ""
+	for _, candidate := range []string{preferred, fallback, defaultName} {
+		base = displayNameLabel(candidate)
+		if base != "" {
+			break
+		}
+	}
+	if base == "" {
+		base = "resource"
+	}
+
+	for suffix := 1; ; suffix++ {
+		candidate := base
+		if suffix > 1 {
+			candidate = fmt.Sprintf("%s_%d", base, suffix)
+		}
+		if _, ok := n.used[candidate]; ok {
+			continue
+		}
+		n.used[candidate] = struct{}{}
+		return candidate
+	}
+}
+
+func displayNameLabel(value string) string {
+	value = strings.ToLower(strings.TrimSpace(value))
+	value = displayNameInvalidChars.ReplaceAllString(value, "_")
+	value = strings.Trim(value, "_")
+	if value == "" {
+		return ""
+	}
+	if value[0] >= '0' && value[0] <= '9' {
+		return "r_" + value
+	}
+	return value
+}
 
 // Error returns a list result containing one error diagnostic.
 func Error(summary string, err error) list.ListResult {

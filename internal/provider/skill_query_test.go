@@ -12,7 +12,7 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
 	"github.com/google/go-cmp/cmp"
 	testresource "github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
@@ -80,6 +80,8 @@ func skillPromptMatchesFilter(prompt *v1.Prompt, filter *v1.ListPromptsRequest_F
 }
 
 func TestAccSkillQueryIncludesManagedResource(t *testing.T) {
+	t.Parallel()
+
 	server := newSkillAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.seed(testSkillPrompt(skillTestID1, "security-review"))
@@ -120,6 +122,8 @@ func TestAccSkillQueryIncludesManagedResource(t *testing.T) {
 }
 
 func TestAccSkillQueryIdentityOnlyPaginatesPastHybrid(t *testing.T) {
+	t.Parallel()
+
 	server := newSkillAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.listPageSize = 1
@@ -153,6 +157,8 @@ func TestAccSkillQueryIdentityOnlyPaginatesPastHybrid(t *testing.T) {
 }
 
 func TestAccSkillQueryCommandFilter(t *testing.T) {
+	t.Parallel()
+
 	server := newSkillAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.seed(testSkillPrompt(skillTestID1, "security-review"))
@@ -174,6 +180,8 @@ func TestAccSkillQueryCommandFilter(t *testing.T) {
 }
 
 func TestAccSkillQueryReportsListError(t *testing.T) {
+	t.Parallel()
+
 	server := newSkillAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.listErr = connect.NewError(connect.CodePermissionDenied, errors.New("prompt read denied"))

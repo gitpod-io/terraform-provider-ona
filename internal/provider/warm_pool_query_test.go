@@ -6,7 +6,7 @@ package provider
 import (
 	"testing"
 
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
 	testresource "github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/querycheck"
@@ -34,7 +34,7 @@ func TestAccWarmPoolQuery(t *testing.T) {
 			}),
 			querycheck.ExpectResourceKnownValues(
 				"ona_warm_pool.all",
-				queryfilter.ByDisplayName(knownvalue.StringExact("warm-pool-1")),
+				queryfilter.ByDisplayName(knownvalue.StringExact("warm_pool_1")),
 				[]querycheck.KnownValueCheck{
 					{Path: tfjsonpath.New("id"), KnownValue: knownvalue.StringExact("warm-pool-1")},
 					{Path: tfjsonpath.New("project_id"), KnownValue: knownvalue.StringExact("project-1")},

@@ -2,12 +2,12 @@
 page_title: "ona_scm_integration List Resource - ona"
 subcategory: "Runners"
 description: |-
-  Lists Ona runner SCM integrations without retrieving OAuth or PAT secret values.
+  Lists importable Ona runner SCM integrations without retrieving OAuth or PAT secret values. Integrations inherited from managed runner managers are excluded because they do not have an independent Terraform lifecycle.
 ---
 
 # ona_scm_integration (List Resource)
 
-Lists Ona runner SCM integrations without retrieving OAuth or PAT secret values.
+Lists importable Ona runner SCM integrations without retrieving OAuth or PAT secret values. Integrations inherited from managed runner managers are excluded because they do not have an independent Terraform lifecycle.
 
 ## Example Usage
 

@@ -4,18 +4,19 @@
 package provider
 
 import (
-	"connectrpc.com/connect"
 	"context"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"connectrpc.com/connect"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
+	"github.com/gitpod-io/gitpod-sdk-go/v1/v1connect"
 	testresource "github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/querycheck"
 	"github.com/hashicorp/terraform-plugin-testing/querycheck/queryfilter"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 const projectInsightsTestProjectID = "11111111-1111-4111-8111-111111111111"

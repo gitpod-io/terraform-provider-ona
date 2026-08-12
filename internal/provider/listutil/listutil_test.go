@@ -30,6 +30,71 @@ func TestStringList(t *testing.T) {
 	}
 }
 
+func TestDisplayNamesUnique(t *testing.T) {
+	t.Parallel()
+
+	type Input struct {
+		Names [][3]string
+	}
+	type Expectation struct {
+		Result []string
+	}
+
+	tests := []struct {
+		Name     string
+		Input    Input
+		Expected Expectation
+	}{
+		{
+			Name: "normalizes_names_as_terraform_labels",
+			Input: Input{Names: [][3]string{
+				{"  My Project!  ", "", "project"},
+				{"123 Start", "", "project"},
+			}},
+			Expected: Expectation{Result: []string{"my_project", "r_123_start"}},
+		},
+		{
+			Name: "uses_normalized_fallback_then_default",
+			Input: Input{Names: [][3]string{
+				{"!!!", " Project-1 ", "project"},
+				{"!!!", "***", "custom domain"},
+			}},
+			Expected: Expectation{Result: []string{"project_1", "custom_domain"}},
+		},
+		{
+			Name:     "uses_resource_when_every_input_is_unusable",
+			Input:    Input{Names: [][3]string{{"!!!", "***", "___"}}},
+			Expected: Expectation{Result: []string{"resource"}},
+		},
+		{
+			Name: "deduplicates_normalized_and_numbered_names",
+			Input: Input{Names: [][3]string{
+				{"Example", "", "resource"},
+				{"example!", "", "resource"},
+				{"example_2", "", "resource"},
+				{"Example", "", "resource"},
+			}},
+			Expected: Expectation{Result: []string{"example", "example_2", "example_2_2", "example_3"}},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			names := NewDisplayNames()
+			got := Expectation{Result: make([]string, 0, len(tc.Input.Names))}
+			for _, input := range tc.Input.Names {
+				got.Result = append(got.Result, names.Unique(input[0], input[1], input[2]))
+			}
+
+			if diff := cmp.Diff(tc.Expected, got); diff != "" {
+				t.Errorf("DisplayNames.Unique() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
 func TestStringListNullAndUnknown(t *testing.T) {
 	t.Parallel()
 

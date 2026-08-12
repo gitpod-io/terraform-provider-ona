@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
+	"github.com/gitpod-io/gitpod-sdk-go/v1/v1connect"
 	testresource "github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/querycheck"
@@ -49,7 +49,7 @@ func TestAccSCIMConfigurationQuery(t *testing.T) {
 	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{Query: true, Config: scimConfigurationQueryConfig(), QueryResultChecks: []querycheck.QueryResultCheck{
 		querycheck.ExpectLength("ona_scim_configuration.all", 1),
 		querycheck.ExpectIdentity("ona_scim_configuration.all", map[string]knownvalue.Check{"id": knownvalue.StringExact("scim-1")}),
-		querycheck.ExpectResourceKnownValues("ona_scim_configuration.all", queryfilter.ByDisplayName(knownvalue.StringExact("Okta")), []querycheck.KnownValueCheck{
+		querycheck.ExpectResourceKnownValues("ona_scim_configuration.all", queryfilter.ByDisplayName(knownvalue.StringExact("okta")), []querycheck.KnownValueCheck{
 			{Path: tfjsonpath.New("id"), KnownValue: knownvalue.StringExact("scim-1")},
 			{Path: tfjsonpath.New("sso_configuration_id"), KnownValue: knownvalue.StringExact("sso-1")},
 			{Path: tfjsonpath.New("token_expires_at"), KnownValue: knownvalue.StringExact("2027-07-14T00:00:00Z")},

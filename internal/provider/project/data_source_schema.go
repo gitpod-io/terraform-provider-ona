@@ -42,7 +42,7 @@ func dataSourceSchema() datasourceschema.Schema {
 			},
 			"automations_file_path": datasourceschema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "Path to the automations file, relative to the repository root.",
+				MarkdownDescription: "Path to the tasks and services configuration, relative to the repository root.",
 			},
 			"created_at": datasourceschema.StringAttribute{
 				Computed:            true,

@@ -28,7 +28,7 @@ data "ona_project" "example" {
 
 ### Read-Only
 
-- `automations_file_path` (String) Path to the automations file, relative to the repository root.
+- `automations_file_path` (String) Path to the tasks and services configuration, relative to the repository root.
 - `branch` (String) Git branch name Ona uses when creating environments and prebuilds.
 - `created_at` (String) Time when the project was created.
 - `creator` (Attributes) Identity that created the project. (see [below for nested schema](#nestedatt--creator))

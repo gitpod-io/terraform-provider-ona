@@ -8,10 +8,11 @@ import (
 	"fmt"
 	"time"
 
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/tfvalue"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"google.golang.org/protobuf/types/known/durationpb"
@@ -24,6 +25,10 @@ func createWorkflowRequest(ctx context.Context, data Model) (*v1.CreateWorkflowR
 	if diags.HasError() {
 		return nil, diags
 	}
+	validateWritableAgent(data.Agent, "New automations must use the Codex agent.", &diags)
+	if diags.HasError() {
+		return nil, diags
+	}
 	triggers := triggersFromModel(ctx, data.Triggers, &diags)
 	action := actionFromModel(ctx, data.Action, &diags)
 	executor := subjectFromObject(ctx, data.Executor, &diags)
@@ -31,11 +36,13 @@ func createWorkflowRequest(ctx context.Context, data Model) (*v1.CreateWorkflowR
 		return nil, diags
 	}
 	return &v1.CreateWorkflowRequest{
-		Name:        data.Name.ValueString(),
-		Description: optionalString(data.Description),
-		Triggers:    triggers,
-		Action:      action,
-		Executor:    executor,
+		Name:          data.Name.ValueString(),
+		Description:   optionalString(data.Description),
+		Triggers:      triggers,
+		Action:        action,
+		Executor:      executor,
+		AgentId:       codexAgentID,
+		CodexSettings: codexSettingsFromObject(ctx, data.CodexSettings, &diags),
 	}, diags
 }
 
@@ -45,22 +52,39 @@ func updateWorkflowRequest(ctx context.Context, data Model) (*v1.UpdateWorkflowR
 	if diags.HasError() {
 		return nil, diags
 	}
+	validateWritableAgent(data.Agent, "Automations can only be updated using the Codex agent. Set `agent = \"codex\"` to migrate an existing Ona-agent automation in place.", &diags)
+	if diags.HasError() {
+		return nil, diags
+	}
 	name := data.Name.ValueString()
 	description := optionalString(data.Description)
 	disabled := data.Disabled.ValueBool()
+	agentID := codexAgentID
 	request := &v1.UpdateWorkflowRequest{
-		WorkflowId:  data.ID.ValueString(),
-		Name:        &name,
-		Description: &description,
-		Triggers:    triggersFromModel(ctx, data.Triggers, &diags),
-		Action:      actionFromModel(ctx, data.Action, &diags),
-		Executor:    subjectFromObject(ctx, data.Executor, &diags),
-		Disabled:    &disabled,
+		WorkflowId:    data.ID.ValueString(),
+		Name:          &name,
+		Description:   &description,
+		Triggers:      triggersFromModel(ctx, data.Triggers, &diags),
+		Action:        actionFromModel(ctx, data.Action, &diags),
+		Executor:      subjectFromObject(ctx, data.Executor, &diags),
+		Disabled:      &disabled,
+		AgentId:       &agentID,
+		CodexSettings: codexSettingsFromObject(ctx, data.CodexSettings, &diags),
+	}
+	if request.CodexSettings == nil && !diags.HasError() {
+		request.CodexSettings = &v1.CodexSettings{}
 	}
 	if diags.HasError() {
 		return nil, diags
 	}
 	return request, diags
+}
+
+func validateWritableAgent(agent types.String, detail string, diags *diag.Diagnostics) {
+	if agent.IsNull() || agent.IsUnknown() || agent.ValueString() == agentCodex {
+		return
+	}
+	diags.AddAttributeError(path.Root("agent"), "Unsupported Automation Agent", detail)
 }
 
 func triggersFromModel(ctx context.Context, value types.List, diags *diag.Diagnostics) []*v1.WorkflowTrigger {
@@ -142,7 +166,7 @@ func actionFromModel(ctx context.Context, value types.Object, diags *diag.Diagno
 	if !limits.MaxTime.IsNull() {
 		duration, err := parseDuration(limits.MaxTime.ValueString())
 		if err != nil {
-			diags.AddError("Invalid Workflow Action Maximum Time", err.Error())
+			diags.AddError("Invalid Automation Action Maximum Time", err.Error())
 		} else {
 			remoteLimits.PerExecution = &v1.WorkflowAction_Limits_PerExecution{MaxTime: durationpb.New(duration)}
 		}
@@ -175,21 +199,28 @@ func actionFromModel(ctx context.Context, value types.Object, diags *diag.Diagno
 
 func populateModel(ctx context.Context, data *Model, workflow *v1.Workflow, diags *diag.Diagnostics) {
 	if workflow == nil {
-		diags.AddError("Unable to Read Ona Workflow", "The Ona API returned an empty workflow.")
+		diags.AddError("Unable to Read Ona Automation", "The Ona API returned an empty automation.")
 		return
 	}
 	if reason := unsupportedWorkflowReason(workflow); reason != "" {
-		diags.AddError("Unsupported Ona Workflow", reason)
+		diags.AddError("Unsupported Ona Automation", reason)
 		return
 	}
 	metadata, spec := workflow.GetMetadata(), workflow.GetSpec()
 	if metadata == nil || spec == nil || spec.GetAction() == nil {
-		diags.AddError("Unable to Read Ona Workflow", "The Ona API returned incomplete workflow metadata or configuration.")
+		diags.AddError("Unable to Read Ona Automation", "The Ona API returned incomplete automation metadata or configuration.")
 		return
 	}
 	data.ID = stringValue(workflow.GetId())
+	agent, ok := agentFromID(spec.GetAgentId())
+	if !ok {
+		diags.AddAttributeError(path.Root("agent"), "Unsupported Remote Automation Agent", fmt.Sprintf("The Ona API returned unsupported agent ID %q.", spec.GetAgentId()))
+		return
+	}
+	data.Agent = types.StringValue(agent)
 	data.Name = stringValue(metadata.GetName())
 	data.Description = tfvalue.OptionalStringValue(metadata.GetDescription())
+	data.CodexSettings = codexSettingsToObject(ctx, spec.GetCodexSettings(), diags)
 	data.Triggers = triggersToList(ctx, spec.GetTriggers(), diags)
 	data.Action = actionToObject(ctx, spec.GetAction(), diags)
 	data.Executor = subjectObject(metadata.GetExecutor(), diags)
@@ -204,7 +235,7 @@ func triggersToList(ctx context.Context, remote []*v1.WorkflowTrigger, diags *di
 	models := make([]TriggerModel, 0, len(remote))
 	for _, trigger := range remote {
 		if trigger == nil {
-			diags.AddError("Unable to Read Ona Workflow", "The Ona API returned an empty workflow trigger.")
+			diags.AddError("Unable to Read Ona Automation", "The Ona API returned an empty automation trigger.")
 			continue
 		}
 		model := TriggerModel{
@@ -220,7 +251,7 @@ func triggersToList(ctx context.Context, remote []*v1.WorkflowTrigger, diags *di
 			for _, event := range value.PullRequest.GetEvents() {
 				name, ok := pullRequestEventToString(event)
 				if !ok {
-					diags.AddError("Unable to Read Ona Workflow", fmt.Sprintf("The Ona API returned unsupported pull-request event %q.", event.String()))
+					diags.AddError("Unable to Read Ona Automation", fmt.Sprintf("The Ona API returned unsupported pull-request event %q.", event.String()))
 					continue
 				}
 				events = append(events, name)
@@ -231,7 +262,7 @@ func triggersToList(ctx context.Context, remote []*v1.WorkflowTrigger, diags *di
 				Events: eventSet, WebhookID: tfvalue.OptionalStringValue(value.PullRequest.GetWebhookId()), IntegrationID: tfvalue.OptionalStringValue(value.PullRequest.GetIntegrationId()),
 			}, diags)
 		default:
-			diags.AddError("Unable to Read Ona Workflow", "The Ona API returned an unsupported workflow trigger type.")
+			diags.AddError("Unable to Read Ona Automation", "The Ona API returned an unsupported automation trigger type.")
 		}
 		model.Context = contextToObject(ctx, trigger.GetContext(), diags)
 		models = append(models, model)
@@ -246,12 +277,18 @@ func contextToObject(ctx context.Context, remote *v1.WorkflowTriggerContext, dia
 		Projects: types.ObjectNull(projectsContextAttributeTypes), Repositories: types.ObjectNull(repositoriesContextAttributeTypes), Agent: types.ObjectNull(agentContextAttributeTypes), FromTrigger: types.ObjectNull(emptyAttributeTypes),
 	}
 	if remote == nil {
-		diags.AddError("Unable to Read Ona Workflow", "The Ona API returned an empty workflow trigger context.")
+		diags.AddError("Unable to Read Ona Automation", "The Ona API returned an empty automation trigger context.")
 		return types.ObjectNull(contextAttributeTypes)
 	}
 	switch value := remote.GetContext().(type) {
 	case *v1.WorkflowTriggerContext_Projects_:
-		ids, idDiags := types.SetValueFrom(ctx, types.StringType, value.Projects.GetProjectIds())
+		projectIDs := value.Projects.GetProjectIds()
+		if projectIDs == nil {
+			// A nil API slice must remain a known empty set so Query-generated HCL
+			// satisfies the required project_ids attribute instead of emitting null.
+			projectIDs = []string{}
+		}
+		ids, idDiags := types.SetValueFrom(ctx, types.StringType, projectIDs)
 		diags.Append(idDiags...)
 		model.Projects = objectValueFrom(ctx, projectsContextAttributeTypes, ProjectsContextModel{ProjectIDs: ids}, diags)
 	case *v1.WorkflowTriggerContext_Repositories_:
@@ -268,7 +305,7 @@ func contextToObject(ctx context.Context, remote *v1.WorkflowTriggerContext, dia
 				RepositorySearchString: stringValue(selector.RepoSelector.GetRepoSearchString()), SCMHost: stringValue(selector.RepoSelector.GetScmHost()),
 			}, diags)
 		default:
-			diags.AddError("Unable to Read Ona Workflow", "The Ona API returned a repository context without a selector.")
+			diags.AddError("Unable to Read Ona Automation", "The Ona API returned a repository context without a selector.")
 		}
 		model.Repositories = objectValueFrom(ctx, repositoriesContextAttributeTypes, repositories, diags)
 	case *v1.WorkflowTriggerContext_Agent_:
@@ -276,20 +313,20 @@ func contextToObject(ctx context.Context, remote *v1.WorkflowTriggerContext, dia
 	case *v1.WorkflowTriggerContext_FromTrigger_:
 		model.FromTrigger = types.ObjectValueMust(emptyAttributeTypes, map[string]attr.Value{})
 	default:
-		diags.AddError("Unable to Read Ona Workflow", "The Ona API returned an unsupported trigger context type.")
+		diags.AddError("Unable to Read Ona Automation", "The Ona API returned an unsupported trigger context type.")
 	}
 	return objectValueFrom(ctx, contextAttributeTypes, model, diags)
 }
 
 func actionToObject(ctx context.Context, remote *v1.WorkflowAction, diags *diag.Diagnostics) types.Object {
 	if remote == nil || remote.GetLimits() == nil {
-		diags.AddError("Unable to Read Ona Workflow", "The Ona API returned an action without limits.")
+		diags.AddError("Unable to Read Ona Automation", "The Ona API returned an action without limits.")
 		return types.ObjectNull(actionAttributeTypes)
 	}
 	maxTime := types.StringNull()
 	if remote.GetLimits().GetPerExecution() != nil && remote.GetLimits().GetPerExecution().GetMaxTime() != nil {
 		if err := remote.GetLimits().GetPerExecution().GetMaxTime().CheckValid(); err != nil {
-			diags.AddError("Unable to Read Ona Workflow", fmt.Sprintf("The Ona API returned an invalid maximum time: %v", err))
+			diags.AddError("Unable to Read Ona Automation", fmt.Sprintf("The Ona API returned an invalid maximum time: %v", err))
 		} else {
 			maxTime = types.StringValue(remote.GetLimits().GetPerExecution().GetMaxTime().AsDuration().String())
 		}
@@ -301,7 +338,7 @@ func actionToObject(ctx context.Context, remote *v1.WorkflowAction, diags *diag.
 	for _, remoteStep := range remote.GetSteps() {
 		model := StepModel{Task: types.ObjectNull(taskStepAttributeTypes), Agent: types.ObjectNull(agentStepAttributeTypes), PullRequest: types.ObjectNull(pullRequestStepAttributeTypes)}
 		if remoteStep == nil {
-			diags.AddError("Unable to Read Ona Workflow", "The Ona API returned an empty workflow step.")
+			diags.AddError("Unable to Read Ona Automation", "The Ona API returned an empty automation step.")
 			continue
 		}
 		switch value := remoteStep.GetStep().(type) {
@@ -314,7 +351,7 @@ func actionToObject(ctx context.Context, remote *v1.WorkflowAction, diags *diag.
 				Title: stringValue(value.PullRequest.GetTitle()), Description: stringValue(value.PullRequest.GetDescription()), Branch: stringValue(value.PullRequest.GetBranch()), Draft: types.BoolValue(value.PullRequest.GetDraft()),
 			}, diags)
 		default:
-			diags.AddError("Unable to Read Ona Workflow", "The Ona API returned an unsupported workflow step type.")
+			diags.AddError("Unable to Read Ona Automation", "The Ona API returned an unsupported automation step type.")
 		}
 		steps = append(steps, model)
 	}
@@ -326,22 +363,19 @@ func actionToObject(ctx context.Context, remote *v1.WorkflowAction, diags *diag.
 func unsupportedWorkflowReason(workflow *v1.Workflow) string {
 	spec := workflow.GetSpec()
 	if spec == nil {
-		return "The workflow has no specification and cannot be managed by ona_automation."
+		return "The automation has no specification and cannot be managed by ona_automation."
 	}
 	if spec.GetReport() != nil {
-		return "The workflow configures a report action, which is not supported by ona_automation. Remove the report before importing it."
-	}
-	if spec.GetAgentId() != "" || spec.GetCodexSettings() != nil {
-		return "The workflow configures workflow-level agent or Codex settings, which are not supported by ona_automation. Remove those settings before importing it."
+		return "The automation configures a report action, which is not supported by ona_automation. Remove the report before importing it."
 	}
 	for _, step := range spec.GetAction().GetSteps() {
 		if step.GetReport() != nil {
-			return "The workflow contains a report step, which is not supported by ona_automation. Remove the report step before importing it."
+			return "The automation contains a report step, which is not supported by ona_automation. Remove the report step before importing it."
 		}
 	}
 	for _, trigger := range spec.GetTriggers() {
 		if pullRequest := trigger.GetPullRequest(); pullRequest != nil && pullRequest.GetWebhookId() == "" && pullRequest.GetIntegrationId() == "" {
-			return "The workflow contains a legacy pull-request trigger without a webhook or integration ID. The current create API cannot reproduce that trigger."
+			return "The automation contains a legacy pull-request trigger without a webhook or integration ID. The current create API cannot reproduce that trigger."
 		}
 	}
 	return ""
@@ -349,7 +383,7 @@ func unsupportedWorkflowReason(workflow *v1.Workflow) string {
 
 func summaryFromWorkflow(workflow *v1.Workflow, diags *diag.Diagnostics) SummaryModel {
 	if workflow == nil || workflow.GetMetadata() == nil || workflow.GetSpec() == nil {
-		diags.AddError("Unable to List Ona Workflows", "The Ona API returned an incomplete workflow summary.")
+		diags.AddError("Unable to List Ona Automations", "The Ona API returned an incomplete automation summary.")
 		return SummaryModel{}
 	}
 	metadata, spec := workflow.GetMetadata(), workflow.GetSpec()
@@ -368,7 +402,7 @@ func subjectFromObject(ctx context.Context, value types.Object, diags *diag.Diag
 	diags.Append(value.As(ctx, &subject, basetypes.ObjectAsOptions{})...)
 	principal, ok := principalFromString(subject.Principal.ValueString())
 	if !ok {
-		diags.AddError("Invalid Workflow Executor", fmt.Sprintf("Unsupported principal %q.", subject.Principal.ValueString()))
+		diags.AddError("Invalid Automation Executor", fmt.Sprintf("Unsupported principal %q.", subject.Principal.ValueString()))
 		return nil
 	}
 	return &v1.Subject{Id: subject.ID.ValueString(), Principal: principal}
@@ -380,7 +414,7 @@ func subjectObject(subject *v1.Subject, diags *diag.Diagnostics) types.Object {
 	}
 	principal, ok := principalToString(subject.GetPrincipal())
 	if !ok {
-		diags.AddError("Unable to Read Ona Workflow", fmt.Sprintf("The Ona API returned unsupported subject principal %q.", subject.GetPrincipal().String()))
+		diags.AddError("Unable to Read Ona Automation", fmt.Sprintf("The Ona API returned unsupported subject principal %q.", subject.GetPrincipal().String()))
 		return types.ObjectNull(subjectAttributeTypes)
 	}
 	value, objectDiags := types.ObjectValue(subjectAttributeTypes, map[string]attr.Value{
@@ -401,6 +435,7 @@ func preservePlannedInputs(ctx context.Context, data *Model, planned Model, diag
 		data.Description = planned.Description
 	}
 	preserveMaxTimeLexeme(ctx, data, planned, diags)
+	preserveDefaultCodexSettings(&data.CodexSettings, planned.CodexSettings)
 }
 
 func preserveTerraformOnlyState(ctx context.Context, data *Model, prior Model, diags *diag.Diagnostics) {
@@ -408,6 +443,7 @@ func preserveTerraformOnlyState(ctx context.Context, data *Model, prior Model, d
 		data.Description = prior.Description
 	}
 	preserveMaxTimeLexeme(ctx, data, prior, diags)
+	preserveDefaultCodexSettings(&data.CodexSettings, prior.CodexSettings)
 }
 
 func preserveMaxTimeLexeme(ctx context.Context, data *Model, source Model, diags *diag.Diagnostics) {
@@ -530,7 +566,7 @@ func timestampValue(value *timestamppb.Timestamp, diags *diag.Diagnostics) types
 		return types.StringNull()
 	}
 	if err := value.CheckValid(); err != nil {
-		diags.AddError("Unable to Read Ona Workflow", fmt.Sprintf("The Ona API returned an invalid timestamp: %v", err))
+		diags.AddError("Unable to Read Ona Automation", fmt.Sprintf("The Ona API returned an invalid timestamp: %v", err))
 		return types.StringNull()
 	}
 	return types.StringValue(value.AsTime().UTC().Format(time.RFC3339Nano))
