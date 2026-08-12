@@ -13,8 +13,8 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
+	"github.com/gitpod-io/gitpod-sdk-go/v1/v1connect"
 	testresource "github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/querycheck"
@@ -100,7 +100,7 @@ func TestAccOIDCConfigQuery(t *testing.T) {
 		Query: true, Config: oidcConfigQueryConfig(), QueryResultChecks: []querycheck.QueryResultCheck{
 			querycheck.ExpectLength("ona_oidc_config.all", 1),
 			querycheck.ExpectIdentity("ona_oidc_config.all", map[string]knownvalue.Check{"organization_id": knownvalue.StringExact("org-1")}),
-			querycheck.ExpectResourceKnownValues("ona_oidc_config.all", queryfilter.ByDisplayName(knownvalue.StringExact("org-1")), []querycheck.KnownValueCheck{
+			querycheck.ExpectResourceKnownValues("ona_oidc_config.all", queryfilter.ByDisplayName(knownvalue.StringExact("org_1")), []querycheck.KnownValueCheck{
 				{Path: tfjsonpath.New("id"), KnownValue: knownvalue.StringExact("org-1")},
 				{Path: tfjsonpath.New("custom_claim_fields"), KnownValue: knownvalue.SetExact([]knownvalue.Check{knownvalue.StringExact("project_id")})},
 			}),

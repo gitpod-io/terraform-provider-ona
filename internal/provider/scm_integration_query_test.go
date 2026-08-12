@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
 	"github.com/google/go-cmp/cmp"
 	testresource "github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/querycheck"
@@ -37,6 +37,47 @@ func TestAccSCMIntegrationQuery(t *testing.T) {
 	if got := server.service.scmSecretUpdateCount(); got != 0 {
 		t.Fatalf("SCM integration query wrote %d OAuth secret values", got)
 	}
+}
+
+func TestAccSCMIntegrationQueryExcludesListOnlyIntegrations(t *testing.T) {
+	t.Parallel()
+
+	server := newSCMIntegrationQueryAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.scmListOnlyIntegrations["static-scm-1"] = &v1.SCMIntegration{
+		Id:       "static-scm-1",
+		RunnerId: "managed-runner-1",
+		ScmId:    "github",
+		Host:     "github.com",
+		Oauth:    &v1.SCMIntegrationOAuthConfig{ClientId: "hosted-client"},
+	}
+
+	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+		Query:  true,
+		Config: scmIntegrationQueryConfig(""),
+		QueryResultChecks: []querycheck.QueryResultCheck{
+			expectSCMIntegrationQueryResults{
+				Expected: []scmIntegrationQueryResult{
+					expectedOAuthSCMIntegrationQueryResult(),
+					expectedPATSCMIntegrationQueryResult(),
+				},
+			},
+		},
+	}))
+}
+
+func TestAccSCMIntegrationQueryGetFailure(t *testing.T) {
+	t.Parallel()
+
+	server := newSCMIntegrationQueryAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.scmGetErr = fmt.Errorf("get failed")
+
+	testresource.UnitTest(t, QueryTestCase(server.URL, testresource.TestStep{
+		Query:       true,
+		Config:      scmIntegrationQueryConfig(""),
+		ExpectError: regexp.MustCompile("verify SCM integration is importable: .*get failed"),
+	}))
 }
 
 func TestAccSCMIntegrationQueryFilters(t *testing.T) {
@@ -195,7 +236,7 @@ func indentSCMIntegrationQueryConfig(config string) string {
 func expectedOAuthSCMIntegrationQueryResult() scmIntegrationQueryResult {
 	return scmIntegrationQueryResult{
 		Address:                              "list.ona_scm_integration.all",
-		DisplayName:                          "github.com (github)",
+		DisplayName:                          "github_com_github",
 		ID:                                   "scm-1",
 		RunnerID:                             "runner-1",
 		SCMID:                                "github",
@@ -212,7 +253,7 @@ func expectedOAuthSCMIntegrationQueryResult() scmIntegrationQueryResult {
 func expectedPATSCMIntegrationQueryResult() scmIntegrationQueryResult {
 	return scmIntegrationQueryResult{
 		Address:                              "list.ona_scm_integration.all",
-		DisplayName:                          "gitlab.com (gitlab)",
+		DisplayName:                          "gitlab_com_gitlab",
 		ID:                                   "scm-2",
 		RunnerID:                             "runner-2",
 		SCMID:                                "gitlab",

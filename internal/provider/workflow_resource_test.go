@@ -12,17 +12,19 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
+	"strings"
 	"sync"
 	"testing"
 	"time"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
+	"github.com/gitpod-io/gitpod-sdk-go/v1/v1connect"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/durationpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -32,6 +34,21 @@ func TestAccAutomationResource(t *testing.T) {
 	server := newWorkflowAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.gracefulDelete = true
+	fullCodexSettings := `
+  codex_settings = {
+    model            = "gpt-5.6-sol"
+    reasoning_effort = "high"
+    service_tier     = "fast"
+  }
+`
+	partialCodexSettings := `
+  codex_settings = {
+    reasoning_effort = "medium"
+  }
+`
+	emptyCodexSettings := `
+  codex_settings = {}
+`
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -48,9 +65,10 @@ func TestAccAutomationResource(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccWorkflowConfig(server.URL, "Nightly checks", "Runs checks", "make test", true, false),
+				Config: testAccWorkflowConfigWithCodexSettings(server.URL, "Nightly checks", "Runs checks", "make test", true, false, fullCodexSettings),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_automation.test", "id", workflowAccID1),
+					resource.TestCheckResourceAttr("ona_automation.test", "agent", "codex"),
 					resource.TestCheckResourceAttr("ona_automation.test", "name", "Nightly checks"),
 					resource.TestCheckResourceAttr("ona_automation.test", "description", "Runs checks"),
 					resource.TestCheckResourceAttr("ona_automation.test", "disabled", "true"),
@@ -60,16 +78,23 @@ func TestAccAutomationResource(t *testing.T) {
 					resource.TestCheckResourceAttr("ona_automation.test", "action.limits.max_parallel", "2"),
 					resource.TestCheckResourceAttr("ona_automation.test", "action.limits.max_time", "60m"),
 					resource.TestCheckResourceAttr("ona_automation.test", "action.steps.0.task.command", "make test"),
+					resource.TestCheckResourceAttr("ona_automation.test", "codex_settings.model", "gpt-5.6-sol"),
+					resource.TestCheckResourceAttr("ona_automation.test", "codex_settings.reasoning_effort", "high"),
+					resource.TestCheckResourceAttr("ona_automation.test", "codex_settings.service_tier", "fast"),
 					func(*terraform.State) error {
 						if got := server.service.disabledUpdateCount(); got != 1 {
 							return fmt.Errorf("initial disabled update count = %d, want 1", got)
+						}
+						create, _ := server.service.requestStats()
+						if create == nil || create.GetAgentId() != workflowCodexAgentID {
+							return fmt.Errorf("CreateWorkflow agent_id = %q, want %q", create.GetAgentId(), workflowCodexAgentID)
 						}
 						return nil
 					},
 				),
 			},
 			{
-				Config:           testAccWorkflowConfig(server.URL, "Nightly checks", "Runs checks", "make test", true, false),
+				Config:           testAccWorkflowConfigWithCodexSettings(server.URL, "Nightly checks", "Runs checks", "make test", true, false, fullCodexSettings),
 				ConfigPlanChecks: resource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()}},
 			},
 			{
@@ -79,21 +104,42 @@ func TestAccAutomationResource(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"action.limits.max_time"},
 			},
 			{
-				Config:           testAccWorkflowConfig(server.URL, "Nightly checks", "Runs checks", "make test", true, false),
+				Config:           testAccWorkflowConfigWithCodexSettings(server.URL, "Nightly checks", "Runs checks", "make test", true, false, fullCodexSettings),
 				ConfigPlanChecks: resource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()}},
 			},
 			{
-				Config: testAccWorkflowConfig(server.URL, "Nightly checks updated", "Updated checks", "make test-unit", false, true),
+				Config: testAccWorkflowConfigWithCodexSettings(server.URL, "Nightly checks updated", "Updated checks", "make test-unit", false, true, partialCodexSettings),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_automation.test", "name", "Nightly checks updated"),
 					resource.TestCheckResourceAttr("ona_automation.test", "disabled", "false"),
 					resource.TestCheckResourceAttr("ona_automation.test", "executor.id", workflowServiceAccountID),
 					resource.TestCheckResourceAttr("ona_automation.test", "executor.principal", "service_account"),
 					resource.TestCheckResourceAttr("ona_automation.test", "action.steps.0.task.command", "make test-unit"),
+					resource.TestCheckNoResourceAttr("ona_automation.test", "codex_settings.model"),
+					resource.TestCheckResourceAttr("ona_automation.test", "codex_settings.reasoning_effort", "medium"),
+					func(*terraform.State) error {
+						_, update := server.service.requestStats()
+						if update == nil || update.AgentId == nil || update.GetAgentId() != workflowCodexAgentID {
+							return fmt.Errorf("UpdateWorkflow agent_id = %q, want %q", update.GetAgentId(), workflowCodexAgentID)
+						}
+						return nil
+					},
 				),
 			},
 			{
-				Config: testAccWorkflowConfig(server.URL, "Nightly checks updated", "", "make test-unit", false, false),
+				Config: testAccWorkflowConfigWithCodexSettings(server.URL, "Nightly checks updated", "Updated checks", "make test-unit", false, true, emptyCodexSettings),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckNoResourceAttr("ona_automation.test", "codex_settings.model"),
+					resource.TestCheckNoResourceAttr("ona_automation.test", "codex_settings.reasoning_effort"),
+					resource.TestCheckNoResourceAttr("ona_automation.test", "codex_settings.service_tier"),
+				),
+			},
+			{
+				Config:           testAccWorkflowConfigWithCodexSettings(server.URL, "Nightly checks updated", "Updated checks", "make test-unit", false, true, emptyCodexSettings),
+				ConfigPlanChecks: resource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()}},
+			},
+			{
+				Config: testAccWorkflowConfig(server.URL, "Nightly checks updated", "", "make test-unit", false),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_automation.test", "description", ""),
 					resource.TestCheckResourceAttr("ona_automation.test", "executor.id", workflowServiceAccountID),
@@ -101,23 +147,44 @@ func TestAccAutomationResource(t *testing.T) {
 				),
 			},
 			{
-				Config:           testAccWorkflowConfig(server.URL, "Nightly checks updated", "", "make test-unit", false, false),
+				Config:           testAccWorkflowConfig(server.URL, "Nightly checks updated", "", "make test-unit", false),
+				ConfigPlanChecks: resource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()}},
+			},
+			{
+				PreConfig: func() {
+					server.service.updateCodexSettings(workflowAccID1, &v1.CodexSettings{Model: v1.CodexOpenAIModel_CODEX_OPEN_AI_MODEL_GPT_5_5})
+				},
+				Config:           testAccWorkflowConfig(server.URL, "Nightly checks updated", "", "make test-unit", false),
+				ConfigPlanChecks: resource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{plancheck.ExpectNonEmptyPlan()}},
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckNoResourceAttr("ona_automation.test", "codex_settings.model"),
+					func(*terraform.State) error {
+						_, update := server.service.requestStats()
+						if update == nil || update.GetCodexSettings() == nil || update.GetCodexSettings().GetModel() != v1.CodexOpenAIModel_CODEX_OPEN_AI_MODEL_UNSPECIFIED {
+							return fmt.Errorf("UpdateWorkflow codex_settings = %#v, want explicit defaults", update.GetCodexSettings())
+						}
+						return nil
+					},
+				),
+			},
+			{
+				Config:           testAccWorkflowConfig(server.URL, "Nightly checks updated", "", "make test-unit", false),
 				ConfigPlanChecks: resource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()}},
 			},
 			{
 				PreConfig:        func() { server.service.updateName(workflowAccID1, "Out-of-band name") },
-				Config:           testAccWorkflowConfig(server.URL, "Nightly checks updated", "", "make test-unit", false, false),
+				Config:           testAccWorkflowConfig(server.URL, "Nightly checks updated", "", "make test-unit", false),
 				ConfigPlanChecks: resource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{plancheck.ExpectNonEmptyPlan()}},
 				Check:            resource.TestCheckResourceAttr("ona_automation.test", "name", "Nightly checks updated"),
 			},
 			{
 				PreConfig: func() { server.service.markDeleting(workflowAccID1) },
-				Config:    testAccWorkflowConfig(server.URL, "Nightly checks updated", "", "make test-unit", false, false),
+				Config:    testAccWorkflowConfig(server.URL, "Nightly checks updated", "", "make test-unit", false),
 				Check:     resource.TestCheckResourceAttr("ona_automation.test", "id", workflowAccID2),
 			},
 			{
 				PreConfig: func() { server.service.remove(workflowAccID2) },
-				Config:    testAccWorkflowConfig(server.URL, "Nightly checks updated", "", "make test-unit", false, false),
+				Config:    testAccWorkflowConfig(server.URL, "Nightly checks updated", "", "make test-unit", false),
 				Check:     resource.TestCheckResourceAttr("ona_automation.test", "id", workflowAccID3),
 			},
 		},
@@ -170,7 +237,7 @@ func TestAccWorkflowCreateAPIError(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{{
-			Config:      testAccWorkflowConfig(server.URL, "Nightly checks", "", "make test", false, false),
+			Config:      testAccWorkflowConfig(server.URL, "Nightly checks", "", "make test", false),
 			ExpectError: regexp.MustCompile("service accounts cannot create automations"),
 		}},
 	})
@@ -188,11 +255,11 @@ func TestAccWorkflowInitialDisableRetry(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccWorkflowConfig(server.URL, "Retry disable", "", "make test", true, false),
+				Config:      testAccWorkflowConfig(server.URL, "Retry disable", "", "make test", true),
 				ExpectError: regexp.MustCompile("disable failed"),
 			},
 			{
-				Config: testAccWorkflowConfig(server.URL, "Retry disable", "", "make test", true, false),
+				Config: testAccWorkflowConfig(server.URL, "Retry disable", "", "make test", true),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_automation.test", "id", workflowAccID2),
 					resource.TestCheckResourceAttr("ona_automation.test", "disabled", "true"),
@@ -209,6 +276,67 @@ func TestAccWorkflowInitialDisableRetry(t *testing.T) {
 	})
 }
 
+func TestAccWorkflowCreateResponseRequiresCodex(t *testing.T) {
+	t.Parallel()
+
+	server := newWorkflowAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.createResponseAgentID = workflowOnaAgentID
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(*terraform.State) error {
+			_, deletes, active := server.service.lifecycleCounts()
+			if deletes != 1 || active != 0 {
+				return fmt.Errorf("workflow cleanup = deletes:%d active:%d, want 1/0", deletes, active)
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{{
+			Config:      testAccWorkflowConfig(server.URL, "Invalid create response", "", "make test", false),
+			ExpectError: regexp.MustCompile("Unable to Create Codex Automation"),
+		}},
+	})
+}
+
+func TestAccWorkflowCreateRejectsOnaAgent(t *testing.T) {
+	t.Parallel()
+
+	server := newWorkflowAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{{
+			Config:      testAccWorkflowConfigWithAgent(server.URL, "Ona agent", "", "make test", false, "ona"),
+			ExpectError: regexp.MustCompile("Unsupported Automation Agent"),
+		}},
+	})
+
+	if got := server.service.createCallCount(); got != 0 {
+		t.Errorf("CreateWorkflow call count = %d, want 0", got)
+	}
+}
+
+func TestAccWorkflowInitialDisableResponseRequiresCodex(t *testing.T) {
+	t.Parallel()
+
+	server := newWorkflowAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.setNextUpdateResponseAgent(workflowOnaAgentID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{{
+			Config:      testAccWorkflowConfig(server.URL, "Invalid disable response", "", "make test", true),
+			ExpectError: regexp.MustCompile("Unable to Disable Codex Automation"),
+		}},
+	})
+}
+
 func TestAccWorkflowUpdateOwnershipError(t *testing.T) {
 	t.Parallel()
 
@@ -219,13 +347,55 @@ func TestAccWorkflowUpdateOwnershipError(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
-			{Config: testAccWorkflowConfig(server.URL, "Ownership", "", "make test", false, false)},
+			{Config: testAccWorkflowConfig(server.URL, "Ownership", "", "make test", false)},
 			{
 				PreConfig: func() {
 					server.service.setUpdateError(connect.NewError(connect.CodeFailedPrecondition, errors.New("updating automation spec requires setting the executor to yourself or a service account")))
 				},
-				Config:      testAccWorkflowConfig(server.URL, "Ownership", "", "make test-unit", false, false),
+				Config:      testAccWorkflowConfig(server.URL, "Ownership", "", "make test-unit", false),
 				ExpectError: regexp.MustCompile("(?s)requires setting.*executor"),
+			},
+		},
+	})
+}
+
+func TestAccWorkflowUpdatePreflightError(t *testing.T) {
+	t.Parallel()
+
+	server := newWorkflowAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{Config: testAccWorkflowConfig(server.URL, "Preflight", "", "make test", false)},
+			{
+				PreConfig: func() {
+					server.service.setGetErrorAfter(1, connect.NewError(connect.CodeInternal, errors.New("preflight failed")))
+				},
+				Config:      testAccWorkflowConfig(server.URL, "Preflight updated", "", "make test", false),
+				ExpectError: regexp.MustCompile("preflight failed"),
+			},
+		},
+	})
+}
+
+func TestAccWorkflowUpdatePreflightNotFound(t *testing.T) {
+	t.Parallel()
+
+	server := newWorkflowAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{Config: testAccWorkflowConfig(server.URL, "Preflight missing", "", "make test", false)},
+			{
+				PreConfig:   func() { server.service.setGetNotFoundAfter(1) },
+				Config:      testAccWorkflowConfig(server.URL, "Preflight missing updated", "", "make test", false),
+				ExpectError: regexp.MustCompile("automation no longer exists"),
 			},
 		},
 	})
@@ -265,12 +435,138 @@ func TestAccWorkflowUnsupportedImport(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{{
-			Config:        testAccWorkflowConfig(server.URL, "Unsupported", "", "make test", false, false),
+			Config:        testAccWorkflowConfig(server.URL, "Unsupported", "", "make test", false),
 			ResourceName:  "ona_automation.test",
 			ImportState:   true,
 			ImportStateId: workflowUnsupportedID,
-			ExpectError:   regexp.MustCompile("Unsupported Ona Workflow"),
+			ExpectError:   regexp.MustCompile("Unsupported Ona Automation"),
 		}},
+	})
+}
+
+func TestAccWorkflowUnpinnedAgentDefaultsToCodex(t *testing.T) {
+	t.Parallel()
+
+	server := newWorkflowAPIServer(t)
+	t.Cleanup(server.Close)
+	workflow := testImportedAPIWorkflow("")
+	server.service.seed(workflow)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:             testAccImportedWorkflowConfig(server.URL, "Existing automation", "Existing description", "make test"),
+				ResourceName:       "ona_automation.test",
+				ImportState:        true,
+				ImportStateId:      workflowUnsupportedID,
+				ImportStatePersist: true,
+				Check:              resource.TestCheckResourceAttr("ona_automation.test", "agent", "codex"),
+			},
+			{
+				Config:           testAccImportedWorkflowConfig(server.URL, "Existing automation", "Existing description", "make test"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()}},
+			},
+			{
+				Config: testAccImportedWorkflowConfig(server.URL, "Changed automation", "Existing description", "make test"),
+				Check:  resource.TestCheckResourceAttr("ona_automation.test", "agent", "codex"),
+			},
+		},
+	})
+}
+
+func TestAccWorkflowOnaAgentTransition(t *testing.T) {
+	t.Parallel()
+
+	server := newWorkflowAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seed(testImportedAPIWorkflow(workflowOnaAgentID))
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:             testAccImportedWorkflowConfigWithAgent(server.URL, "Existing automation", "Existing description", "make test", "ona"),
+				ResourceName:       "ona_automation.test",
+				ImportState:        true,
+				ImportStateId:      workflowUnsupportedID,
+				ImportStatePersist: true,
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_automation.test", "id", workflowUnsupportedID),
+					resource.TestCheckResourceAttr("ona_automation.test", "agent", "ona"),
+					resource.TestCheckResourceAttr("ona_automation.test", "webhook_url", "https://example.com/workflows/"+workflowUnsupportedID+"/webhooks"),
+				),
+			},
+			{
+				Config:           testAccImportedWorkflowConfigWithAgent(server.URL, "Existing automation", "Existing description", "make test", "ona"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()}},
+			},
+			{
+				Config:      testAccImportedWorkflowConfigWithAgent(server.URL, "Changed automation", "Existing description", "make test", "ona"),
+				ExpectError: regexp.MustCompile("Unsupported Automation Agent"),
+			},
+			{
+				Config: testAccImportedWorkflowConfig(server.URL, "Changed automation", "Existing description", "make test"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_automation.test", "id", workflowUnsupportedID),
+					resource.TestCheckResourceAttr("ona_automation.test", "agent", "codex"),
+					resource.TestCheckResourceAttr("ona_automation.test", "webhook_url", "https://example.com/workflows/"+workflowUnsupportedID+"/webhooks"),
+					func(*terraform.State) error {
+						_, update := server.service.requestStats()
+						if update == nil || update.AgentId == nil || update.GetAgentId() != workflowCodexAgentID {
+							return fmt.Errorf("UpdateWorkflow agent_id = %q, want %q", update.GetAgentId(), workflowCodexAgentID)
+						}
+						return nil
+					},
+				),
+			},
+		},
+	})
+
+	if got := server.service.updateCallCount(); got != 1 {
+		t.Errorf("UpdateWorkflow call count = %d, want 1", got)
+	}
+}
+
+func TestAccWorkflowUnknownAgentImport(t *testing.T) {
+	t.Parallel()
+
+	server := newWorkflowAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seed(testImportedAPIWorkflow("00000000-0000-0000-0000-000000009999"))
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{{
+			Config:        testAccImportedWorkflowConfig(server.URL, "Existing automation", "Existing description", "make test"),
+			ResourceName:  "ona_automation.test",
+			ImportState:   true,
+			ImportStateId: workflowUnsupportedID,
+			ExpectError:   regexp.MustCompile("Unsupported Remote Automation Agent"),
+		}},
+	})
+}
+
+func TestAccWorkflowUpdateResponseLosesCodexAgent(t *testing.T) {
+	t.Parallel()
+
+	server := newWorkflowAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{Config: testAccWorkflowConfig(server.URL, "Codex automation", "", "make test", false)},
+			{
+				PreConfig:   func() { server.service.setNextUpdateResponseAgent(workflowOnaAgentID) },
+				Config:      testAccWorkflowConfig(server.URL, "Changed automation", "", "make test", false),
+				ExpectError: regexp.MustCompile("Unable to Update Codex Automation"),
+			},
+		},
 	})
 }
 
@@ -284,11 +580,11 @@ func TestAccWorkflowEmptyGetResponse(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
-			{Config: testAccWorkflowConfig(server.URL, "Empty response", "", "make test", false, false)},
+			{Config: testAccWorkflowConfig(server.URL, "Empty response", "", "make test", false)},
 			{
 				PreConfig:   func() { server.service.setEmptyGetResponse(true) },
-				Config:      testAccWorkflowConfig(server.URL, "Empty response", "", "make test", false, false),
-				ExpectError: regexp.MustCompile("the Ona API returned an empty workflow"),
+				Config:      testAccWorkflowConfig(server.URL, "Empty response", "", "make test", false),
+				ExpectError: regexp.MustCompile("the Ona API returned an empty automation"),
 			},
 		},
 	})
@@ -312,12 +608,30 @@ func TestAccWorkflowDeleteNotFound(t *testing.T) {
 			return nil
 		},
 		Steps: []resource.TestStep{{
-			Config: testAccWorkflowConfig(server.URL, "Delete missing", "", "make test", false, false),
+			Config: testAccWorkflowConfig(server.URL, "Delete missing", "", "make test", false),
 		}},
 	})
 }
 
-func testAccWorkflowConfig(host, name, description, command string, disabled, explicitExecutor bool) string {
+func testAccWorkflowConfig(host, name, description, command string, disabled bool) string {
+	return testAccWorkflowConfigWithCodexSettings(host, name, description, command, disabled, false, "")
+}
+
+func testAccWorkflowConfigWithAgent(host, name, description, command string, disabled bool, agent string) string {
+	config := testAccWorkflowConfig(host, name, description, command, disabled)
+	return strings.Replace(config, `resource "ona_automation" "test" {`, fmt.Sprintf("resource \"ona_automation\" \"test\" {\n  agent = %q", agent), 1)
+}
+
+func testAccImportedWorkflowConfig(host, name, description, command string) string {
+	return strings.Replace(testAccWorkflowConfig(host, name, description, command, false), `max_time     = "60m"`, `max_time     = "1h0m0s"`, 1)
+}
+
+func testAccImportedWorkflowConfigWithAgent(host, name, description, command, agent string) string {
+	config := testAccImportedWorkflowConfig(host, name, description, command)
+	return strings.Replace(config, `resource "ona_automation" "test" {`, fmt.Sprintf("resource \"ona_automation\" \"test\" {\n  agent = %q", agent), 1)
+}
+
+func testAccWorkflowConfigWithCodexSettings(host, name, description, command string, disabled, explicitExecutor bool, codexSettings string) string {
 	executor := ""
 	if explicitExecutor {
 		executor = fmt.Sprintf(`
@@ -338,6 +652,7 @@ resource "ona_automation" "test" {
   description = %[3]q
   disabled    = %[5]t
 %[6]s
+%[8]s
   triggers = [{
     manual = {}
     context = {
@@ -360,7 +675,7 @@ resource "ona_automation" "test" {
     }]
   }
 }
-`, host, name, description, command, disabled, executor, workflowProjectID)
+`, host, name, description, command, disabled, executor, workflowProjectID, codexSettings)
 }
 
 func testAccAutomationsDataSourceConfig(host string) string {
@@ -399,25 +714,35 @@ func newWorkflowAPIServer(t *testing.T) *workflowAPIServer {
 type fakeWorkflowService struct {
 	v1connect.UnimplementedWorkflowServiceHandler
 
-	mu              sync.Mutex
-	workflows       map[string]*v1.Workflow
-	nextID          int
-	now             time.Time
-	createErr       error
-	updateErr       error
-	listErr         error
-	listErrAfter    int
-	emptyGet        bool
-	deleteNotFound  bool
-	disableErrOnce  bool
-	gracefulDelete  bool
-	createCalls     int
-	listPageSize    int
-	listCalls       int
-	lastFilter      *v1.ListWorkflowsRequest_Filter
-	disableUpdates  int
-	deleteCalls     int
-	lastDeleteForce bool
+	mu                    sync.Mutex
+	workflows             map[string]*v1.Workflow
+	nextID                int
+	now                   time.Time
+	createErr             error
+	updateErr             error
+	listErr               error
+	listErrAfter          int
+	emptyGet              bool
+	getErr                error
+	getErrAfter           int
+	getNotFoundAfter      int
+	getCalls              int
+	deleteNotFound        bool
+	disableErrOnce        bool
+	gracefulDelete        bool
+	createCalls           int
+	updateCalls           int
+	listPageSize          int
+	listPageSizes         []int32
+	listCalls             int
+	lastFilter            *v1.ListWorkflowsRequest_Filter
+	disableUpdates        int
+	deleteCalls           int
+	lastDeleteForce       bool
+	lastCreate            *v1.CreateWorkflowRequest
+	lastUpdate            *v1.UpdateWorkflowRequest
+	nextResponseAgentID   string
+	createResponseAgentID string
 }
 
 func (s *fakeWorkflowService) CreateWorkflow(ctx context.Context, req *connect.Request[v1.CreateWorkflowRequest]) (*connect.Response[v1.CreateWorkflowResponse], error) {
@@ -427,6 +752,7 @@ func (s *fakeWorkflowService) CreateWorkflow(ctx context.Context, req *connect.R
 		return nil, s.createErr
 	}
 	s.createCalls++
+	s.lastCreate = cloneCreateWorkflowRequest(req.Msg)
 	s.nextID++
 	id := fmt.Sprintf("00000000-0000-0000-0000-%012d", s.nextID)
 	executor := req.Msg.GetExecutor()
@@ -439,8 +765,13 @@ func (s *fakeWorkflowService) CreateWorkflow(ctx context.Context, req *connect.R
 			Name: req.Msg.GetName(), Description: req.Msg.GetDescription(), Creator: &v1.Subject{Id: workflowCreatorID, Principal: v1.Principal_PRINCIPAL_USER},
 			Executor: cloneSubject(executor), CreatedAt: timestamppb.New(s.now), UpdatedAt: timestamppb.New(s.now),
 		},
-		Spec:       &v1.Workflow_Spec{Triggers: cloneTriggers(req.Msg.GetTriggers()), Action: cloneAction(req.Msg.GetAction())},
+		Spec: &v1.Workflow_Spec{
+			Triggers: cloneTriggers(req.Msg.GetTriggers()), Action: cloneAction(req.Msg.GetAction()), AgentId: req.Msg.GetAgentId(), CodexSettings: cloneCodexSettings(req.Msg.GetCodexSettings()),
+		},
 		WebhookUrl: "https://example.com/workflows/" + id + "/webhooks",
+	}
+	if s.createResponseAgentID != "" {
+		workflow.Spec.AgentId = s.createResponseAgentID
 	}
 	s.workflows[id] = workflow
 	return connect.NewResponse(&v1.CreateWorkflowResponse{Workflow: cloneWorkflow(workflow)}), nil
@@ -449,6 +780,13 @@ func (s *fakeWorkflowService) CreateWorkflow(ctx context.Context, req *connect.R
 func (s *fakeWorkflowService) GetWorkflow(ctx context.Context, req *connect.Request[v1.GetWorkflowRequest]) (*connect.Response[v1.GetWorkflowResponse], error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	s.getCalls++
+	if s.getErr != nil && s.getErrAfter > 0 && s.getCalls > s.getErrAfter {
+		return nil, s.getErr
+	}
+	if s.getNotFoundAfter > 0 && s.getCalls > s.getNotFoundAfter {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("workflow not found"))
+	}
 	if s.emptyGet {
 		return connect.NewResponse(&v1.GetWorkflowResponse{}), nil
 	}
@@ -465,12 +803,27 @@ func (s *fakeWorkflowService) setEmptyGetResponse(value bool) {
 	s.emptyGet = value
 }
 
+func (s *fakeWorkflowService) setGetErrorAfter(successfulCalls int, err error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.getErrAfter = s.getCalls + successfulCalls
+	s.getErr = err
+}
+
+func (s *fakeWorkflowService) setGetNotFoundAfter(successfulCalls int) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.getNotFoundAfter = s.getCalls + successfulCalls
+}
+
 func (s *fakeWorkflowService) UpdateWorkflow(ctx context.Context, req *connect.Request[v1.UpdateWorkflowRequest]) (*connect.Response[v1.UpdateWorkflowResponse], error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.updateErr != nil {
 		return nil, s.updateErr
 	}
+	s.updateCalls++
+	s.lastUpdate = cloneUpdateWorkflowRequest(req.Msg)
 	workflow := s.workflows[req.Msg.GetWorkflowId()]
 	if workflow == nil {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("workflow not found"))
@@ -500,6 +853,16 @@ func (s *fakeWorkflowService) UpdateWorkflow(ctx context.Context, req *connect.R
 			s.disableUpdates++
 		}
 	}
+	if req.Msg.AgentId != nil {
+		workflow.Spec.AgentId = req.Msg.GetAgentId()
+	}
+	if req.Msg.CodexSettings != nil {
+		workflow.Spec.CodexSettings = cloneCodexSettings(req.Msg.GetCodexSettings())
+	}
+	if s.nextResponseAgentID != "" {
+		workflow.Spec.AgentId = s.nextResponseAgentID
+		s.nextResponseAgentID = ""
+	}
 	workflow.Metadata.UpdatedAt = timestamppb.New(s.now.Add(time.Minute))
 	return connect.NewResponse(&v1.UpdateWorkflowResponse{Workflow: cloneWorkflow(workflow)}), nil
 }
@@ -527,6 +890,7 @@ func (s *fakeWorkflowService) ListWorkflows(ctx context.Context, req *connect.Re
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.listCalls++
+	s.listPageSizes = append(s.listPageSizes, req.Msg.GetPagination().GetPageSize())
 	if s.listErr != nil && (s.listErrAfter == 0 || s.listCalls > s.listErrAfter) {
 		return nil, s.listErr
 	}
@@ -556,8 +920,11 @@ func (s *fakeWorkflowService) ListWorkflows(ctx context.Context, req *connect.Re
 	if req.Msg.GetPagination().GetToken() != "" {
 		start, _ = strconv.Atoi(req.Msg.GetPagination().GetToken())
 	}
-	pageSize := len(workflows)
-	if s.listPageSize > 0 {
+	pageSize := int(req.Msg.GetPagination().GetPageSize())
+	if pageSize <= 0 || pageSize > len(workflows) {
+		pageSize = len(workflows)
+	}
+	if s.listPageSize > 0 && s.listPageSize < pageSize {
 		pageSize = s.listPageSize
 	}
 	end := start + pageSize
@@ -582,6 +949,14 @@ func (s *fakeWorkflowService) updateName(id, name string) {
 	defer s.mu.Unlock()
 	if workflow := s.workflows[id]; workflow != nil {
 		workflow.Metadata.Name = name
+	}
+}
+
+func (s *fakeWorkflowService) updateCodexSettings(id string, settings *v1.CodexSettings) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if workflow := s.workflows[id]; workflow != nil {
+		workflow.Spec.CodexSettings = cloneCodexSettings(settings)
 	}
 }
 
@@ -629,6 +1004,38 @@ func (s *fakeWorkflowService) listStats() (*v1.ListWorkflowsRequest_Filter, int)
 	return cloneWorkflowFilter(s.lastFilter), s.listCalls
 }
 
+func (s *fakeWorkflowService) requestStats() (*v1.CreateWorkflowRequest, *v1.UpdateWorkflowRequest) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	var create *v1.CreateWorkflowRequest
+	if s.lastCreate != nil {
+		create = cloneCreateWorkflowRequest(s.lastCreate)
+	}
+	var update *v1.UpdateWorkflowRequest
+	if s.lastUpdate != nil {
+		update = cloneUpdateWorkflowRequest(s.lastUpdate)
+	}
+	return create, update
+}
+
+func (s *fakeWorkflowService) updateCallCount() int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.updateCalls
+}
+
+func (s *fakeWorkflowService) createCallCount() int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.createCalls
+}
+
+func (s *fakeWorkflowService) setNextUpdateResponseAgent(agentID string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.nextResponseAgentID = agentID
+}
+
 func testAPIWorkflow(id, name string) *v1.Workflow {
 	return &v1.Workflow{
 		Id: id,
@@ -642,6 +1049,15 @@ func testAPIWorkflow(id, name string) *v1.Workflow {
 		},
 		WebhookUrl: "https://example.com/workflows/" + id + "/webhooks",
 	}
+}
+
+func testImportedAPIWorkflow(agentID string) *v1.Workflow {
+	workflow := testAPIWorkflow(workflowUnsupportedID, "Existing automation")
+	workflow.Metadata.Description = "Existing description"
+	workflow.Spec.AgentId = agentID
+	workflow.Spec.CodexSettings = &v1.CodexSettings{}
+	workflow.Spec.Action.Limits.PerExecution = &v1.WorkflowAction_Limits_PerExecution{MaxTime: durationpb.New(time.Hour)}
+	return workflow
 }
 
 func cloneWorkflow(value *v1.Workflow) *v1.Workflow {
@@ -681,6 +1097,33 @@ func cloneSubject(value *v1.Subject) *v1.Subject {
 	return result
 }
 
+func cloneCodexSettings(value *v1.CodexSettings) *v1.CodexSettings {
+	if value == nil {
+		return nil
+	}
+	result := &v1.CodexSettings{}
+	proto.Merge(result, value)
+	return result
+}
+
+func cloneCreateWorkflowRequest(value *v1.CreateWorkflowRequest) *v1.CreateWorkflowRequest {
+	if value == nil {
+		return nil
+	}
+	result := &v1.CreateWorkflowRequest{}
+	proto.Merge(result, value)
+	return result
+}
+
+func cloneUpdateWorkflowRequest(value *v1.UpdateWorkflowRequest) *v1.UpdateWorkflowRequest {
+	if value == nil {
+		return nil
+	}
+	result := &v1.UpdateWorkflowRequest{}
+	proto.Merge(result, value)
+	return result
+}
+
 func cloneWorkflowFilter(value *v1.ListWorkflowsRequest_Filter) *v1.ListWorkflowsRequest_Filter {
 	if value == nil {
 		return nil
@@ -698,4 +1141,6 @@ const (
 	workflowCreatorID        = "00000000-0000-0000-0000-000000000010"
 	workflowServiceAccountID = "00000000-0000-0000-0000-000000000020"
 	workflowProjectID        = "00000000-0000-0000-0000-000000000030"
+	workflowCodexAgentID     = "00000000-0000-0000-0000-000000007800"
+	workflowOnaAgentID       = "00000000-0000-0000-0000-000000007100"
 )

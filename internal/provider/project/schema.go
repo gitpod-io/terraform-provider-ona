@@ -50,7 +50,7 @@ func resourceSchema() resourceschema.Schema {
 			"automations_file_path": resourceschema.StringAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Path to the automations file, relative to the repository root. Omit to let Ona use its default discovery behavior.",
+				MarkdownDescription: "Path to the tasks and services configuration, relative to the repository root. Omit to let Ona use its default discovery behavior.",
 			},
 			"created_at": resourceschema.StringAttribute{
 				Computed:            true,

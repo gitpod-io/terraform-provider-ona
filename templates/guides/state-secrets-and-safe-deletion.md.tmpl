@@ -15,6 +15,10 @@ Terraform `Sensitive` fields are redacted from CLI output and downstream express
 
 Use a remote backend with encryption at rest and access controls. Do not write local `terraform.tfstate`, plan files, tokens, private keys, or provider override files into source control.
 
+## Values Stored in Plan and State
+
+`ona_runner_token.token` is a sensitive computed output on a normal managed resource. Terraform redacts the value from normal CLI output but stores it in state so ordinary resources and module variables can consume it. The token is valid for 24 hours and can only be used once. Terraform does not rotate it when it expires; downstream consumers own the one-time consumption lifecycle, and operators must deliberately change `token_version` to mint a replacement token. Store this resource only in an encrypted, access-controlled remote state backend.
+
 ## Values Not Stored in Plan or State
 
 Write-only arguments are sent to Ona and are not stored in Terraform plan or state. The provider currently uses write-only arguments for:
@@ -26,7 +30,6 @@ Write-only arguments are sent to Ona and are not stored in Terraform plan or sta
 
 Ephemeral resources produce values that are not stored in Terraform plan or state. The provider currently exposes:
 
-- `ona_runner_token.token`
 - `ona_service_account_token.token`
 - `ona_webhook_secret.secret`
 
@@ -34,15 +37,16 @@ Only pass ephemeral values to Terraform ephemeral contexts, write-only arguments
 
 ## Rotation Markers
 
-Write-only arguments cannot produce diffs by themselves because Terraform does not keep their prior value. Rotate write-only values by changing the corresponding stored marker:
+Rotation markers let users explicitly request changes that Terraform cannot infer from a secret value or token lifetime. Change the corresponding stored marker when rotating:
 
 - `value_version` for `ona_secret.value`
 - `oauth_client_secret_version` for `ona_scm_integration.oauth_client_secret`
 - `api_key_version` for `ona_runner_llm_integration.api_key`
 - `client_secret_version` for `ona_sso_configuration.client_secret`
 - `secret_version` for `ona_webhook`, which rotates the generated signing secret
+- `token_version` for `ona_runner_token`, which replaces the resource and mints a new registration token
 
-Changing a secret value without changing its rotation marker can leave the remote value unchanged.
+Changing a write-only secret value without changing its rotation marker can leave the remote value unchanged. Terraform also leaves an expired or consumed runner token unchanged until `token_version` changes.
 
 ## Delete Versus State Removal
 
@@ -58,6 +62,7 @@ Some resources have special destroy behavior:
 - `ona_organization_policies` restores the server-defined policy configuration captured before Terraform first managed it, then removes the resource from state.
 - `ona_oidc_config` removes Terraform state only and does not reset remote organization settings.
 - `ona_webhook` deletes the webhook and converts triggers on bound workflows to manual triggers.
+- `ona_runner_token` removes Terraform state only because Ona does not expose a durable token object to revoke or delete.
 
 To disable Insights without deleting its project, set `ona_project.insights_enabled` to `false`.
 

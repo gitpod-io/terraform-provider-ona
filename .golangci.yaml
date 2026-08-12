@@ -36,10 +36,6 @@ linters:
       - third_party$
       - builtin$
       - examples$
-      # Synced verbatim from the private api/go module. The copied subset is
-      # recorded in sync/api-subset.manifest; do not hand-edit copied source to
-      # satisfy lint.
-      - internal/api
   settings:
     depguard:
       rules:
@@ -70,5 +66,3 @@ formatters:
       - third_party$
       - builtin$
       - examples$
-      # See the linters exclusion note above: synced code is not hand-edited.
-      - internal/api

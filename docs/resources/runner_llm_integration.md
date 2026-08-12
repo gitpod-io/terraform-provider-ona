@@ -14,7 +14,7 @@ For product context, see [Model access](https://ona.com/docs/ona/agents/llm-prov
 ## Example Usage
 
 ```terraform
-resource "ona_runner_llm_integration" "anthropic_byok" {
+resource "ona_runner_llm_integration" "bedrock_mantle" {
   runner_id = ona_runner.aws_primary.runner_id
 
   models = [
@@ -22,8 +22,8 @@ resource "ona_runner_llm_integration" "anthropic_byok" {
     "sonnet_4_extended",
   ]
 
-  endpoint        = "https://api.anthropic.com/v1"
-  api_key         = var.anthropic_api_key
+  endpoint        = "https://bedrock-mantle.us-east-1.api.aws"
+  api_key         = var.bedrock_mantle_token
   api_key_version = "2026-07-14"
   max_tokens      = 8000
 }
@@ -73,5 +73,5 @@ The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/c
 ```shell
 #!/usr/bin/env sh
 
-terraform import ona_runner_llm_integration.anthropic_byok 01980ed3-a090-7b5b-a74c-9bf5d8cfe53c
+terraform import ona_runner_llm_integration.bedrock_mantle 01980ed3-a090-7b5b-a74c-9bf5d8cfe53c
 ```

@@ -2,32 +2,54 @@
 page_title: "ona_group_membership Resource - ona"
 subcategory: "Identity and Access"
 description: |-
-  Ona service-account group membership. Use this resource to add one service account to one group.
+  Ona group membership. Use this resource to add one user or service account to one group.
 ---
 
 # ona_group_membership (Resource)
 
-Ona service-account group membership. Use this resource to add one service account to one group.
+Ona group membership. Use this resource to add one user or service account to one group.
 
 For product context, see [Manage groups](https://ona.com/docs/ona/organizations/groups) and [Service accounts](https://ona.com/docs/ona/organizations/service-accounts).
 
 ## Example Usage
 
 ```terraform
-resource "ona_group" "terraform_admins" {
-  name        = "Terraform Admins"
-  description = "Service accounts that administer Terraform-managed organization settings."
+resource "ona_group" "runner_admins" {
+  name        = "Runner Admins"
+  description = "Users and service accounts that administer runners."
 }
 
-resource "ona_service_account" "terraform" {
-  name        = "terraform"
-  description = "Terraform organization automation"
+locals {
+  runner_admins = {
+    alice = { email = "alice@example.com", login_provider = "github" }
+    bob   = { email = "bob@example.com", login_provider = "google" }
+    carol = { email = "carol@example.com", login_provider = "custom" }
+  }
+}
+
+data "ona_user" "runner_admins" {
+  for_each = local.runner_admins
+
+  email          = each.value.email
+  login_provider = each.value.login_provider
+}
+
+resource "ona_group_membership" "runner_admins" {
+  for_each = data.ona_user.runner_admins
+
+  group_id = ona_group.runner_admins.id
+  user_id  = each.value.user_id
+}
+
+resource "ona_service_account" "runner_admin_automation" {
+  name        = "runner-admin-automation"
+  description = "Runner administration automation"
   valid_until = "2099-01-01T00:00:00Z"
 }
 
-resource "ona_group_membership" "terraform_service_account" {
-  group_id           = ona_group.terraform_admins.id
-  service_account_id = ona_service_account.terraform.id
+resource "ona_group_membership" "runner_admin_automation" {
+  group_id           = ona_group.runner_admins.id
+  service_account_id = ona_service_account.runner_admin_automation.id
 }
 ```
 
@@ -36,8 +58,12 @@ resource "ona_group_membership" "terraform_service_account" {
 
 ### Required
 
-- `group_id` (String) Group ID to add the service account to. Changing this value replaces the membership.
-- `service_account_id` (String) Service account ID to add to the group. Changing this value replaces the membership.
+- `group_id` (String) Group ID to add the member to. Changing this value replaces the membership.
+
+### Optional
+
+- `service_account_id` (String) Service account ID to add to the group. Set exactly one of service_account_id or user_id. Changing this value replaces the membership.
+- `user_id` (String) User ID to add to the group. Set exactly one of user_id or service_account_id. Changing this value replaces the membership.
 
 ### Read-Only
 
@@ -52,5 +78,11 @@ The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/c
 ```shell
 #!/usr/bin/env sh
 
+# Legacy service-account import.
 terraform import ona_group_membership.terraform_service_account 11111111-1111-4111-8111-111111111111/22222222-2222-4222-8222-222222222222
+
+# The typed service-account form is equivalent to the legacy form above.
+# terraform import ona_group_membership.terraform_service_account 11111111-1111-4111-8111-111111111111/service_account/22222222-2222-4222-8222-222222222222
+
+terraform import ona_group_membership.existing_user 11111111-1111-4111-8111-111111111111/user/33333333-3333-4333-8333-333333333333
 ```

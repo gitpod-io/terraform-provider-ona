@@ -3,9 +3,10 @@ output "managed_runner_id" {
   value       = ona_runner.devloop.runner_id
 }
 
-output "managed_skill_id" {
-  description = "ID of the organization skill managed by this module."
-  value       = ona_skill.devloop.id
+output "managed_runner_token" {
+  description = "Runner registration token for downstream consumers."
+  value       = ona_runner_token.devloop.token
+  sensitive   = true
 }
 
 output "cloudformation_template_url" {
@@ -67,6 +68,11 @@ output "managed_organization_role_assignment_id" {
   value = {
     for role, assignment in ona_organization_role_assignment.devloop : role => assignment.id
   }
+}
+
+output "managed_automation_role_assignment_id" {
+  description = "ID of the Automation role assignment when Automation sharing is enabled."
+  value       = try(ona_automation_role_assignment.devloop[0].id, null)
 }
 
 output "managed_project_id" {

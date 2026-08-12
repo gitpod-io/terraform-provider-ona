@@ -9,7 +9,7 @@ import (
 	"sort"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
 	"github.com/hashicorp/terraform-plugin-framework/list"
 	listschema "github.com/hashicorp/terraform-plugin-framework/list/schema"
@@ -38,7 +38,7 @@ type scmIntegrationListFilter struct {
 
 func (r *SCMIntegrationResource) ListResourceConfigSchema(ctx context.Context, req list.ListResourceSchemaRequest, resp *list.ListResourceSchemaResponse) {
 	resp.Schema = listschema.Schema{
-		MarkdownDescription: "Lists Ona runner SCM integrations without retrieving OAuth or PAT secret values.",
+		MarkdownDescription: "Lists importable Ona runner SCM integrations without retrieving OAuth or PAT secret values. Integrations inherited from managed runner managers are excluded because they do not have an independent Terraform lifecycle.",
 		Attributes: map[string]listschema.Attribute{
 			"auth_modes": listschema.ListAttribute{
 				Optional:            true,
@@ -79,6 +79,7 @@ func (r *SCMIntegrationResource) List(ctx context.Context, req list.ListRequest,
 		var token string
 		seenTokens := make(map[string]struct{})
 		var emitted int64
+		displayNames := listutil.NewDisplayNames()
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.RunnerConfigurationService().ListSCMIntegrations(ctx, connect.NewRequest(&v1.ListSCMIntegrationsRequest{
 				Pagination: &v1.PaginationRequest{PageSize: listutil.PageSize(req.Limit, emitted), Token: token},
@@ -97,11 +98,23 @@ func (r *SCMIntegrationResource) List(ctx context.Context, req list.ListRequest,
 				if !filter.matches(integration) {
 					continue
 				}
+
+				// The list API also returns virtual SCM templates inherited from managed
+				// runner managers. Only integrations returned by Get have a resource
+				// lifecycle that Terraform can import and manage.
+				integration, err = r.getSCMIntegration(ctx, integration.GetId())
+				if err != nil {
+					push(listutil.Error("Unable to List Ona SCM Integrations", fmt.Errorf("verify SCM integration is importable: %w", err)))
+					return
+				}
+				if integration == nil {
+					continue
+				}
 				if !listutil.HasCapacity(req.Limit, emitted) {
 					return
 				}
 				item := req.NewListResult(ctx)
-				item.DisplayName = scmIntegrationDisplayName(integration)
+				item.DisplayName = displayNames.Unique(scmIntegrationDisplayName(integration), integration.GetId(), "scm_integration")
 				item.Diagnostics.Append(item.Identity.Set(ctx, SCMIntegrationIdentityModel{ID: types.StringValue(integration.GetId())})...)
 				if req.IncludeResource && !item.Diagnostics.HasError() {
 					var model SCMIntegrationModel
@@ -205,7 +218,7 @@ func scmIntegrationAuthMode(integration *v1.SCMIntegration) string {
 
 func scmIntegrationDisplayName(integration *v1.SCMIntegration) string {
 	if integration.GetHost() == "" {
-		return integration.GetId()
+		return ""
 	}
 	if integration.GetScmId() == "" {
 		return integration.GetHost()

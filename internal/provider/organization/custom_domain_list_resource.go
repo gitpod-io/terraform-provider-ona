@@ -38,6 +38,7 @@ func (r *CustomDomainResource) List(ctx context.Context, req list.ListRequest, r
 			push(listutil.Error("Ona API Client Is Not Configured", fmt.Errorf("set the provider token argument or ONA_TOKEN before listing ona_custom_domain resources")))
 			return
 		}
+		displayNames := listutil.NewDisplayNames()
 		if !listutil.HasCapacity(req.Limit, 0) {
 			return
 		}
@@ -64,10 +65,7 @@ func (r *CustomDomainResource) List(ctx context.Context, req list.ListRequest, r
 		}
 
 		item := req.NewListResult(ctx)
-		item.DisplayName = customDomain.GetDomainName()
-		if item.DisplayName == "" {
-			item.DisplayName = organizationID
-		}
+		item.DisplayName = displayNames.Unique(customDomain.GetDomainName(), organizationID, "custom_domain")
 		item.Diagnostics.Append(item.Identity.Set(ctx, CustomDomainIdentityModel{OrganizationID: types.StringValue(organizationID)})...)
 		if req.IncludeResource && !item.Diagnostics.HasError() {
 			var model CustomDomainModel

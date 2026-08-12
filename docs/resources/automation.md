@@ -2,12 +2,12 @@
 page_title: "ona_automation Resource - ona"
 subcategory: "Integrations and Automation"
 description: |-
-  Persistent Ona automation. Creating automations requires a permitted user credential; the Ona API rejects automation creation by service accounts. A caller changing automation triggers or actions must own the current user executor or set the executor to themselves or a service account. Removing this resource uses graceful deletion: Ona immediately deletes idle automations, but cancels active executions and finishes their cleanup asynchronously.
+  Persistent Ona automation. New automations use the Codex agent. Existing Ona-agent automations can be imported, read, and deleted; change agent to codex to migrate one in place. Creating automations requires a permitted user credential; the Ona API rejects automation creation by service accounts. A caller changing automation triggers or actions must own the current user executor or set the executor to themselves or a service account. Removing this resource uses graceful deletion: Ona immediately deletes idle automations, but cancels active executions and finishes their cleanup asynchronously.
 ---
 
 # ona_automation (Resource)
 
-Persistent Ona automation. Creating automations requires a permitted user credential; the Ona API rejects automation creation by service accounts. A caller changing automation triggers or actions must own the current user executor or set the executor to themselves or a service account. Removing this resource uses graceful deletion: Ona immediately deletes idle automations, but cancels active executions and finishes their cleanup asynchronously.
+Persistent Ona automation. New automations use the Codex agent. Existing Ona-agent automations can be imported, read, and deleted; change `agent` to `codex` to migrate one in place. Creating automations requires a permitted user credential; the Ona API rejects automation creation by service accounts. A caller changing automation triggers or actions must own the current user executor or set the executor to themselves or a service account. Removing this resource uses graceful deletion: Ona immediately deletes idle automations, but cancels active executions and finishes their cleanup asynchronously.
 
 For product context, see [Background automations](https://ona.com/docs/ona/automations/overview), [Configure Automations](https://ona.com/docs/ona/automations/configure-automations), and [Webhooks](https://ona.com/docs/ona/automations/webhooks).
 
@@ -19,13 +19,15 @@ The provider supports:
 - Project, repository, agent-prompt, and inherited trigger contexts
 - Shell-task, agent-prompt, and pull-request action steps
 - Executors, execution limits, and disabling automations
+- Codex agent selection and in-place migration from the Ona agent
+- Codex model, reasoning-effort, and service-tier settings
 
 It does not model:
 
 - Top-level report actions
 - Report steps
-- Workflow-level `agent_id`
-- Workflow-level Codex model, reasoning-effort, or service-tier settings
+
+The `agent` attribute defaults to `codex`. Imported automations that use the Ona agent report `ona`; change `agent` to `codex`, or omit it so the default applies, to migrate the existing automation in place. The automation ID and webhook URL remain unchanged. New automations and updates cannot use `agent = "ona"`.
 
 Legacy pull-request triggers without a webhook or integration cannot be imported or managed.
 
@@ -35,11 +37,18 @@ Legacy pull-request triggers without a webhook or integration cannot be imported
 resource "ona_automation" "nightly_checks" {
   name        = "Nightly checks"
   description = "Runs repository checks every weekday."
+  agent       = "codex"
   disabled    = false
 
   executor = {
     id        = "<service-account-id>"
     principal = "service_account"
+  }
+
+  codex_settings = {
+    model            = "gpt-5.6-sol"
+    reasoning_effort = "high"
+    service_tier     = "fast"
   }
 
   triggers = [
@@ -92,23 +101,25 @@ resource "ona_automation" "nightly_checks" {
 
 ### Required
 
-- `action` (Attributes) Workflow action and its ordered execution steps. (see [below for nested schema](#nestedatt--action))
-- `name` (String) Workflow display name. Must be between 1 and 80 characters.
-- `triggers` (Attributes List) Ordered workflow triggers. Configure between 1 and 10 entries. (see [below for nested schema](#nestedatt--triggers))
+- `action` (Attributes) Automation action and its ordered execution steps. (see [below for nested schema](#nestedatt--action))
+- `name` (String) Automation display name. Must be between 1 and 80 characters.
+- `triggers` (Attributes List) Ordered automation triggers. Configure between 1 and 10 entries. (see [below for nested schema](#nestedatt--triggers))
 
 ### Optional
 
-- `description` (String) Optional workflow description. Must not exceed 500 characters. Set an empty string to clear it.
-- `disabled` (Boolean) Whether automatic and manual workflow starts are disabled. Defaults to `false`.
-- `executor` (Attributes) Identity that executes the workflow. Omit to use the creating user. A user executor must be the API caller; a service-account executor may be selected by ID. Removing this block retains the resolved remote executor because the API has no clear operation. (see [below for nested schema](#nestedatt--executor))
+- `agent` (String) Automation agent. Supported values are `codex` and `ona`; the default is `codex`. New automations must use `codex`. Imported Ona-agent automations report `ona`; change this value to `codex` to migrate the existing automation in place. An omitted agent on an imported Ona-agent automation also plans that migration because the default is `codex`.
+- `codex_settings` (Attributes) Codex model, reasoning, and service settings. Omit this object or use an empty object to select runtime defaults. Ona applies these settings only to Codex automations. (see [below for nested schema](#nestedatt--codex_settings))
+- `description` (String) Optional automation description. Must not exceed 500 characters. Set an empty string to clear it.
+- `disabled` (Boolean) Whether automatic and manual automation starts are disabled. Defaults to `false`.
+- `executor` (Attributes) Identity that executes the automation. Omit to use the creating user. A user executor must be the API caller; a service-account executor may be selected by ID. Removing this block retains the resolved remote executor because the API has no clear operation. (see [below for nested schema](#nestedatt--executor))
 
 ### Read-Only
 
-- `created_at` (String) Time when the workflow was created, in RFC 3339 format.
-- `creator` (Attributes) Identity that created the workflow. (see [below for nested schema](#nestedatt--creator))
-- `id` (String) Workflow ID. Use this value as the Terraform import ID.
-- `updated_at` (String) Time when the workflow was last updated, in RFC 3339 format.
-- `webhook_url` (String) Generated workflow webhook URL. The signing secret is not read or stored.
+- `created_at` (String) Time when the automation was created, in RFC 3339 format.
+- `creator` (Attributes) Identity that created the automation. (see [below for nested schema](#nestedatt--creator))
+- `id` (String) Automation ID. Use this value as the Terraform import ID.
+- `updated_at` (String) Time when the automation was last updated, in RFC 3339 format.
+- `webhook_url` (String) Generated automation webhook URL. The signing secret is not read or stored.
 
 <a id="nestedatt--action"></a>
 ### Nested Schema for `action`
@@ -192,8 +203,8 @@ Optional:
 
 - `agent` (Attributes) Agent-managed execution context. (see [below for nested schema](#nestedatt--triggers--context--agent))
 - `from_trigger` (Attributes) Use context from the pull-request event. Valid only for pull_request triggers. (see [below for nested schema](#nestedatt--triggers--context--from_trigger))
-- `projects` (Attributes) Project environments in which the workflow runs. (see [below for nested schema](#nestedatt--triggers--context--projects))
-- `repositories` (Attributes) Repository environments in which the workflow runs. (see [below for nested schema](#nestedatt--triggers--context--repositories))
+- `projects` (Attributes) Project environments in which the automation runs. (see [below for nested schema](#nestedatt--triggers--context--projects))
+- `repositories` (Attributes) Repository environments in which the automation runs. (see [below for nested schema](#nestedatt--triggers--context--repositories))
 
 <a id="nestedatt--triggers--context--agent"></a>
 ### Nested Schema for `triggers.context.agent`
@@ -262,6 +273,16 @@ Required:
 
 - `cron_expression` (String) Five-field cron expression or supported cron descriptor. Must be between 1 and 100 characters.
 
+
+
+<a id="nestedatt--codex_settings"></a>
+### Nested Schema for `codex_settings`
+
+Optional:
+
+- `model` (String) Codex model. Supported values are `gpt-5.5`, `gpt-5.4`, `gpt-5.6-sol`, `gpt-5.6-terra`, and `gpt-5.6-luna`. Deprecated model values remain readable for existing automations but cannot be configured.
+- `reasoning_effort` (String) Codex reasoning effort. Supported values are `low`, `medium`, `high`, and `xhigh`. Feature-flagged `max` and `ultra` values remain readable for existing automations but cannot be configured.
+- `service_tier` (String) Codex service tier. The supported value is `fast`.
 
 
 <a id="nestedatt--executor"></a>

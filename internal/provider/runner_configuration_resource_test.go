@@ -15,8 +15,8 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
+	"github.com/gitpod-io/gitpod-sdk-go/v1/v1connect"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
@@ -565,29 +565,111 @@ func TestAccEnvironmentClassResourceDefaultDescription(t *testing.T) {
 	})
 }
 
-func TestAccRunnerTokenEphemeralResource(t *testing.T) {
+func TestAccRunnerTokenResourceLifecycle(t *testing.T) {
 	t.Parallel()
 
-	server := newRunnerAPIServer(t, map[string]*v1.Runner{
-		"runner-1": newTestRunner("runner-1", "Token Runner"),
-	})
-	t.Cleanup(server.Close)
+	type Input struct {
+		RunnerID     string
+		TokenVersion string
+	}
+	type Expectation struct {
+		Token string
+	}
+	tests := []struct {
+		Name     string
+		Input    Input
+		Expected Expectation
+	}{
+		{
+			Name:  "runner_id",
+			Input: Input{RunnerID: "runner-2", TokenVersion: "v1"},
+			Expected: Expectation{
+				Token: "exchange-token-runner-2-2",
+			},
+		},
+		{
+			Name:  "token_version",
+			Input: Input{RunnerID: "runner-1", TokenVersion: "v2"},
+			Expected: Expectation{
+				Token: "exchange-token-runner-1-2",
+			},
+		},
+	}
 
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccRunnerTokenEphemeralConfig(server.URL),
-				Check: func(state *terraform.State) error {
-					if !server.service.tokenCreated("exchange-token-runner-1") {
-						return errors.New("runner token was not created")
+	for _, tc := range tests {
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			server := newRunnerAPIServer(t, map[string]*v1.Runner{
+				"runner-1": newTestRunner("runner-1", "First Token Runner"),
+				"runner-2": newTestRunner("runner-2", "Second Token Runner"),
+			})
+			t.Cleanup(server.Close)
+
+			resource.Test(t, resource.TestCase{
+				PreCheck:                 func() { testAccPreCheck(t) },
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				CheckDestroy: func(state *terraform.State) error {
+					if got := server.service.tokenCount(); got != 2 {
+						return fmt.Errorf("runner token create count after destroy = %d, want 2", got)
 					}
 					return nil
 				},
-			},
-		},
-	})
+				Steps: []resource.TestStep{
+					{
+						Config: testAccRunnerTokenConfig(server.URL, "runner-1", "v1"),
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttrSet("ona_runner_token.test", "id"),
+							resource.TestCheckResourceAttr("ona_runner_token.test", "runner_id", "runner-1"),
+							resource.TestCheckResourceAttr("ona_runner_token.test", "token_version", "v1"),
+							resource.TestCheckResourceAttr("ona_runner_token.test", "token", "exchange-token-runner-1-1"),
+							resource.TestCheckResourceAttr("terraform_data.consumer", "input", "exchange-token-runner-1-1"),
+							func(state *terraform.State) error {
+								if got := server.service.tokenCount(); got != 1 {
+									return fmt.Errorf("runner token create count = %d, want 1", got)
+								}
+								return nil
+							},
+						),
+					},
+					{
+						Config: testAccRunnerTokenConfig(server.URL, "runner-1", "v1"),
+						ConfigPlanChecks: resource.ConfigPlanChecks{
+							PreApply: []plancheck.PlanCheck{
+								plancheck.ExpectEmptyPlan(),
+							},
+						},
+						Check: func(state *terraform.State) error {
+							if got := server.service.tokenCount(); got != 1 {
+								return fmt.Errorf("runner token create count after refresh = %d, want 1", got)
+							}
+							return nil
+						},
+					},
+					{
+						Config: testAccRunnerTokenConfig(server.URL, tc.Input.RunnerID, tc.Input.TokenVersion),
+						ConfigPlanChecks: resource.ConfigPlanChecks{
+							PreApply: []plancheck.PlanCheck{
+								plancheck.ExpectResourceAction("ona_runner_token.test", plancheck.ResourceActionReplace),
+							},
+						},
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr("ona_runner_token.test", "runner_id", tc.Input.RunnerID),
+							resource.TestCheckResourceAttr("ona_runner_token.test", "token_version", tc.Input.TokenVersion),
+							resource.TestCheckResourceAttr("ona_runner_token.test", "token", tc.Expected.Token),
+							resource.TestCheckResourceAttr("terraform_data.consumer", "input", tc.Expected.Token),
+							func(state *terraform.State) error {
+								if got := server.service.tokenCount(); got != 2 {
+									return fmt.Errorf("runner token create count after replacement = %d, want 2", got)
+								}
+								return nil
+							},
+						),
+					},
+				},
+			})
+		})
+	}
 }
 
 func testAccSCMIntegrationOAuthConfig(host string, clientID string, secret string, secretVersion string) string {
@@ -888,23 +970,22 @@ resource "ona_environment_class" "test" {
 `, host)
 }
 
-func testAccRunnerTokenEphemeralConfig(host string) string {
+func testAccRunnerTokenConfig(host string, runnerID string, tokenVersion string) string {
 	return fmt.Sprintf(`
 provider "ona" {
   host  = %[1]q
   token = "test-token"
 }
 
-ephemeral "ona_runner_token" "test" {
-  runner_id = "runner-1"
+resource "ona_runner_token" "test" {
+  runner_id     = %[2]q
+  token_version = %[3]q
 }
 
-provider "echo" {
-  data = ephemeral.ona_runner_token.test
+resource "terraform_data" "consumer" {
+  input = ona_runner_token.test.token
 }
-
-resource "echo" "test" {}
-`, host)
+`, host, runnerID, tokenVersion)
 }
 
 type runnerConfigurationAPIServer struct {
@@ -918,6 +999,7 @@ func newRunnerConfigurationAPIServer(t *testing.T) *runnerConfigurationAPIServer
 
 	service := &fakeRunnerConfigurationService{
 		scmIntegrations:                 map[string]*v1.SCMIntegration{},
+		scmListOnlyIntegrations:         map[string]*v1.SCMIntegration{},
 		scmCreateRequests:               map[string]*v1.CreateSCMIntegrationRequest{},
 		scmUpdateRequests:               map[string][]*v1.UpdateSCMIntegrationRequest{},
 		llmIntegrations:                 map[string]*v1.LLMIntegration{},
@@ -947,11 +1029,13 @@ type fakeRunnerConfigurationService struct {
 
 	mu                              sync.Mutex
 	scmIntegrations                 map[string]*v1.SCMIntegration
+	scmListOnlyIntegrations         map[string]*v1.SCMIntegration
 	scmCreateRequests               map[string]*v1.CreateSCMIntegrationRequest
 	scmUpdateRequests               map[string][]*v1.UpdateSCMIntegrationRequest
 	scmDeletes                      []string
 	scmSecretUpdates                map[string][]string
 	scmCreateErr                    error
+	scmGetErr                       error
 	scmUpdateErr                    error
 	llmIntegrations                 map[string]*v1.LLMIntegration
 	llmCreateRequests               map[string]*v1.CreateLLMIntegrationRequest
@@ -1001,6 +1085,10 @@ func (s *fakeRunnerConfigurationService) GetSCMIntegration(ctx context.Context, 
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	if s.scmGetErr != nil {
+		return nil, s.scmGetErr
+	}
+
 	integration := s.scmIntegrations[req.Msg.GetId()]
 	if integration == nil {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("SCM integration not found"))
@@ -1019,6 +1107,14 @@ func (s *fakeRunnerConfigurationService) ListSCMIntegrations(ctx context.Context
 
 	var integrations []*v1.SCMIntegration
 	for _, integration := range s.scmIntegrations {
+		if len(runnerIDs) > 0 {
+			if _, ok := runnerIDs[integration.GetRunnerId()]; !ok {
+				continue
+			}
+		}
+		integrations = append(integrations, cloneSCMIntegration(integration))
+	}
+	for _, integration := range s.scmListOnlyIntegrations {
 		if len(runnerIDs) > 0 {
 			if _, ok := runnerIDs[integration.GetRunnerId()]; !ok {
 				continue

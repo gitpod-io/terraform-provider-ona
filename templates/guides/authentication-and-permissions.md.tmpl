@@ -43,7 +43,9 @@ Write operations include managed resources and ephemeral resources that issue to
 
 For organization-level settings, service accounts need access through groups and organization roles. Manage custom groups with `ona_group`, add service accounts with `ona_group_membership`, and grant roles with `ona_organization_role_assignment`.
 
-Official documentation: [Manage groups](https://ona.com/docs/ona/organizations/groups) and [Organization roles](https://ona.com/docs/ona/organizations/organization-roles).
+For access to one Automation, use `ona_automation_role_assignment` to grant a group the `viewer`, `executor`, or `admin` role. Sharing an Automation with a custom group requires the Enterprise plan.
+
+Official documentation: [Manage groups](https://ona.com/docs/ona/organizations/groups), [Organization roles](https://ona.com/docs/ona/organizations/organization-roles), and [Share automations](https://ona.com/docs/ona/automations/sharing-automations).
 
 ## Host Configuration
 

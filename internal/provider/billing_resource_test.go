@@ -14,11 +14,12 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
+	"github.com/gitpod-io/gitpod-sdk-go/v1/v1connect"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -233,9 +234,7 @@ func cloneTeamAllocation(value *v1.TeamCreditAllocationInfo) *v1.TeamCreditAlloc
 	if value == nil {
 		return nil
 	}
-	cloned := *value
-	cloned.CostBudgetMicrounits = copyInt64(value.CostBudgetMicrounits)
-	return &cloned
+	return proto.CloneOf(value)
 }
 
 func copyInt64(value *int64) *int64 {

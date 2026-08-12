@@ -10,14 +10,17 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"regexp"
+	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
 	"time"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
+	"github.com/gitpod-io/gitpod-sdk-go/v1/v1connect"
+	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -30,15 +33,21 @@ import (
 )
 
 const (
-	accessControlOrgID            = "11111111-1111-4111-8111-111111111111"
-	accessControlGroupID          = "22222222-2222-4222-8222-222222222222"
-	accessControlMembershipID     = "33333333-3333-4333-8333-333333333333"
-	accessControlServiceAccountID = "44444444-4444-4444-8444-444444444444"
-	accessControlAssignmentID     = "55555555-5555-4555-8555-555555555555"
-	accessControlOtherServiceID   = "66666666-6666-4666-8666-666666666666"
-	accessControlTeamID           = "77777777-7777-4777-8777-777777777777"
-	accessControlCreatedAt        = "2026-01-02T03:04:05Z"
-	accessControlUpdatedAt        = "2026-01-03T03:04:05Z"
+	accessControlOrgID             = "11111111-1111-4111-8111-111111111111"
+	accessControlGroupID           = "22222222-2222-4222-8222-222222222222"
+	accessControlOtherGroupID      = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+	accessControlMembershipID      = "33333333-3333-4333-8333-333333333333"
+	accessControlServiceAccountID  = "44444444-4444-4444-8444-444444444444"
+	accessControlAssignmentID      = "55555555-5555-4555-8555-555555555555"
+	accessControlOtherServiceID    = "66666666-6666-4666-8666-666666666666"
+	accessControlTeamID            = "77777777-7777-4777-8777-777777777777"
+	accessControlUserID            = "88888888-8888-4888-8888-888888888888"
+	accessControlOtherUserID       = "99999999-9999-4999-8999-999999999999"
+	accessControlAutomationID      = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"
+	accessControlOtherAutomationID = "cccccccc-cccc-4ccc-8ccc-cccccccccccc"
+	accessControlDuplicateID       = "dddddddd-dddd-4ddd-8ddd-dddddddddddd"
+	accessControlCreatedAt         = "2026-01-02T03:04:05Z"
+	accessControlUpdatedAt         = "2026-01-03T03:04:05Z"
 )
 
 func TestAccGroupResourceLifecycle(t *testing.T) {
@@ -599,6 +608,27 @@ func TestAccTeamResourceAPIErrors(t *testing.T) {
 	})
 }
 
+func TestAccGroupMembershipResourceValidation(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccGroupMembershipResourceConfigWithoutMember(server.URL),
+				ExpectError: regexp.MustCompile(`Missing Attribute Configuration[\s\S]*Exactly one of these attributes must be configured`),
+			},
+			{
+				Config:      testAccGroupMembershipResourceConfigWithBothMembers(server.URL),
+				ExpectError: regexp.MustCompile(`Invalid Attribute Combination[\s\S]*Exactly one of these attributes must be configured`),
+			},
+		},
+	})
+}
+
 func TestAccGroupMembershipResourceLifecycle(t *testing.T) {
 	t.Parallel()
 
@@ -610,7 +640,7 @@ func TestAccGroupMembershipResourceLifecycle(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		CheckDestroy: func(state *terraform.State) error {
-			if !server.service.membershipDeleted(accessControlMembershipID) {
+			if !server.service.membershipDeleted() {
 				return errors.New("membership was not deleted")
 			}
 			return nil
@@ -622,6 +652,7 @@ func TestAccGroupMembershipResourceLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr("ona_group_membership.test", "id", accessControlMembershipID),
 					resource.TestCheckResourceAttr("ona_group_membership.test", "group_id", accessControlGroupID),
 					resource.TestCheckResourceAttr("ona_group_membership.test", "service_account_id", accessControlServiceAccountID),
+					resource.TestCheckNoResourceAttr("ona_group_membership.test", "user_id"),
 					resource.TestCheckNoResourceAttr("ona_group_membership.test", "principal"),
 					resource.TestCheckNoResourceAttr("ona_group_membership.test", "name"),
 					resource.TestCheckNoResourceAttr("ona_group_membership.test", "avatar_url"),
@@ -642,12 +673,212 @@ func TestAccGroupMembershipResourceLifecycle(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
+				ResourceName:      "ona_group_membership.test",
+				ImportState:       true,
+				ImportStateId:     accessControlGroupID + "/service_account/" + accessControlServiceAccountID,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccGroupMembershipResourceConfig(server.URL, accessControlOtherServiceID),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("ona_group_membership.test", plancheck.ResourceActionReplace),
 					},
 				},
+			},
+		},
+	})
+}
+
+func TestAccUserGroupMembershipResourceLifecycle(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seedGroup()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.membershipDeleted() {
+				return errors.New("membership was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccUserGroupMembershipResourceConfig(server.URL, accessControlGroupID, accessControlUserID),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_group_membership.test", "id", accessControlMembershipID),
+					resource.TestCheckResourceAttr("ona_group_membership.test", "group_id", accessControlGroupID),
+					resource.TestCheckResourceAttr("ona_group_membership.test", "user_id", accessControlUserID),
+					resource.TestCheckNoResourceAttr("ona_group_membership.test", "service_account_id"),
+				),
+			},
+			{
+				Config: testAccUserGroupMembershipResourceConfig(server.URL, accessControlGroupID, accessControlUserID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
+			},
+			{
+				ResourceName:      "ona_group_membership.test",
+				ImportState:       true,
+				ImportStateId:     accessControlGroupID + "/user/" + accessControlUserID,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccUserGroupMembershipResourceConfig(server.URL, accessControlGroupID, accessControlOtherUserID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_group_membership.test", plancheck.ResourceActionReplace),
+					},
+				},
+			},
+			{
+				Config: testAccUserGroupMembershipResourceConfig(server.URL, accessControlOtherGroupID, accessControlOtherUserID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_group_membership.test", plancheck.ResourceActionReplace),
+					},
+				},
+			},
+		},
+	})
+}
+
+func TestAccGroupMembershipResourceReplacesPrincipalType(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seedGroup()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.membershipDeleted() {
+				return errors.New("membership was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccGroupMembershipResourceConfig(server.URL, accessControlServiceAccountID),
+			},
+			{
+				Config: testAccUserGroupMembershipResourceConfig(server.URL, accessControlGroupID, accessControlServiceAccountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_group_membership.test", plancheck.ResourceActionReplace),
+					},
+				},
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_group_membership.test", "user_id", accessControlServiceAccountID),
+					resource.TestCheckNoResourceAttr("ona_group_membership.test", "service_account_id"),
+				),
+			},
+			{
+				Config: testAccGroupMembershipResourceConfig(server.URL, accessControlServiceAccountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_group_membership.test", plancheck.ResourceActionReplace),
+					},
+				},
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_group_membership.test", "service_account_id", accessControlServiceAccountID),
+					resource.TestCheckNoResourceAttr("ona_group_membership.test", "user_id"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccGroupMembershipResourcePersistsIDBeforeCreateResponseMappingError(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seedGroup()
+	server.service.setNextMembershipCreateResponsePrincipal(v1.Principal_PRINCIPAL_RUNNER)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.membershipDeleted() {
+				return errors.New("membership was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccGroupMembershipResourceConfig(server.URL, accessControlServiceAccountID),
+				ExpectError: regexp.MustCompile(`Unable to Create Ona Group Membership[\s\S]*unsupported membership principal "PRINCIPAL_RUNNER"`),
+			},
+			{
+				Config: testAccGroupMembershipResourceConfig(server.URL, accessControlServiceAccountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_group_membership.test", plancheck.ResourceActionReplace),
+					},
+				},
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_group_membership.test", "id", accessControlMembershipID),
+					func(state *terraform.State) error {
+						createCalls, deleteCalls := server.service.membershipMutationCalls()
+						if createCalls != 2 || deleteCalls != 1 {
+							return fmt.Errorf("expected two membership creates and one cleanup delete, got %d creates and %d deletes", createCalls, deleteCalls)
+						}
+						return nil
+					},
+				),
+			},
+		},
+	})
+}
+
+func TestAccGroupMembershipResourcePersistsIdentityAfterEmptyCreateResponse(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seedGroup()
+	server.service.setNextMembershipCreateResponseEmpty()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.membershipDeleted() {
+				return errors.New("membership was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccGroupMembershipResourceConfig(server.URL, accessControlServiceAccountID),
+				ExpectError: regexp.MustCompile(`Unable to Create Ona Group Membership[\s\S]*The Ona API returned an empty membership`),
+			},
+			{
+				Config: testAccGroupMembershipResourceConfig(server.URL, accessControlServiceAccountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_group_membership.test", plancheck.ResourceActionReplace),
+					},
+				},
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_group_membership.test", "id", accessControlMembershipID),
+					func(state *terraform.State) error {
+						createCalls, deleteCalls := server.service.membershipMutationCalls()
+						if createCalls != 2 || deleteCalls != 1 {
+							return fmt.Errorf("expected two membership creates and one cleanup delete, got %d creates and %d deletes", createCalls, deleteCalls)
+						}
+						return nil
+					},
+				),
 			},
 		},
 	})
@@ -674,7 +905,7 @@ func TestGroupMembershipImportStateEquivalence(t *testing.T) {
 				ImportState:       true,
 				ImportStateId:     accessControlGroupID + "/" + accessControlServiceAccountID,
 				ImportStateVerify: true,
-				ImportStateCheck:  checkGroupMembershipImportState,
+				ImportStateCheck:  checkGroupMembershipImportState("service_account_id", accessControlServiceAccountID),
 			},
 			{
 				ResourceName:    "ona_group_membership.test",
@@ -685,6 +916,7 @@ func TestGroupMembershipImportStateEquivalence(t *testing.T) {
 						plancheck.ExpectResourceAction("ona_group_membership.test", plancheck.ResourceActionNoop),
 						plancheck.ExpectKnownValue("ona_group_membership.test", tfjsonpath.New("group_id"), knownvalue.StringExact(accessControlGroupID)),
 						plancheck.ExpectKnownValue("ona_group_membership.test", tfjsonpath.New("service_account_id"), knownvalue.StringExact(accessControlServiceAccountID)),
+						plancheck.ExpectKnownValue("ona_group_membership.test", tfjsonpath.New("user_id"), knownvalue.Null()),
 					},
 				},
 			},
@@ -692,21 +924,70 @@ func TestGroupMembershipImportStateEquivalence(t *testing.T) {
 	})
 }
 
-func checkGroupMembershipImportState(states []*terraform.InstanceState) error {
-	if len(states) != 1 {
-		return fmt.Errorf("expected 1 imported state, got %d", len(states))
-	}
+func TestUserGroupMembershipImportStateEquivalence(t *testing.T) {
+	t.Parallel()
 
-	for attribute, expected := range map[string]string{
-		"group_id":           accessControlGroupID,
-		"service_account_id": accessControlServiceAccountID,
-	} {
-		if actual := states[0].Attributes[attribute]; actual != expected {
-			return fmt.Errorf("expected imported %s %q, got %q", attribute, expected, actual)
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seedGroup()
+
+	resource.UnitTest(t, resource.TestCase{
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBelow(tfversion.Version1_12_0),
+		},
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccUserGroupMembershipResourceConfig(server.URL, accessControlGroupID, accessControlUserID),
+			},
+			{
+				ResourceName:      "ona_group_membership.test",
+				ImportState:       true,
+				ImportStateId:     accessControlGroupID + "/user/" + accessControlUserID,
+				ImportStateVerify: true,
+				ImportStateCheck:  checkGroupMembershipImportState("user_id", accessControlUserID),
+			},
+			{
+				ResourceName:    "ona_group_membership.test",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportPlanChecks: resource.ImportPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_group_membership.test", plancheck.ResourceActionNoop),
+						plancheck.ExpectKnownValue("ona_group_membership.test", tfjsonpath.New("group_id"), knownvalue.StringExact(accessControlGroupID)),
+						plancheck.ExpectKnownValue("ona_group_membership.test", tfjsonpath.New("service_account_id"), knownvalue.Null()),
+						plancheck.ExpectKnownValue("ona_group_membership.test", tfjsonpath.New("user_id"), knownvalue.StringExact(accessControlUserID)),
+					},
+				},
+			},
+		},
+	})
+}
+
+func checkGroupMembershipImportState(memberAttribute, memberID string) resource.ImportStateCheckFunc {
+	return func(states []*terraform.InstanceState) error {
+		if len(states) != 1 {
+			return fmt.Errorf("expected 1 imported state, got %d", len(states))
 		}
-	}
 
-	return nil
+		for attribute, expected := range map[string]string{
+			"group_id":      accessControlGroupID,
+			memberAttribute: memberID,
+		} {
+			if actual := states[0].Attributes[attribute]; actual != expected {
+				return fmt.Errorf("expected imported %s %q, got %q", attribute, expected, actual)
+			}
+		}
+		otherAttribute := "user_id"
+		if memberAttribute == otherAttribute {
+			otherAttribute = "service_account_id"
+		}
+		if actual := states[0].Attributes[otherAttribute]; actual != "" {
+			return fmt.Errorf("expected imported %s to be null, got %q", otherAttribute, actual)
+		}
+
+		return nil
+	}
 }
 
 func TestAccGroupMembershipResourceReadRemovesMissingMember(t *testing.T) {
@@ -720,7 +1001,7 @@ func TestAccGroupMembershipResourceReadRemovesMissingMember(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		CheckDestroy: func(state *terraform.State) error {
-			if !server.service.membershipDeleted(accessControlMembershipID) {
+			if !server.service.membershipDeleted() {
 				return errors.New("membership was not deleted")
 			}
 			return nil
@@ -744,6 +1025,66 @@ func TestAccGroupMembershipResourceReadRemovesMissingMember(t *testing.T) {
 	})
 }
 
+func TestAccUserGroupMembershipResourceReadRemovesMissingMember(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seedGroup()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.membershipDeleted() {
+				return errors.New("membership was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccUserGroupMembershipResourceConfig(server.URL, accessControlGroupID, accessControlUserID),
+			},
+			{
+				PreConfig: func() {
+					server.service.deleteMembership(accessControlMembershipID)
+				},
+				Config: testAccUserGroupMembershipResourceConfig(server.URL, accessControlGroupID, accessControlUserID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_group_membership.test", plancheck.ResourceActionCreate),
+					},
+				},
+			},
+		},
+	})
+}
+
+func TestAccGroupMembershipResourceRejectsUnsupportedPrincipalOnRead(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seedGroup()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccGroupMembershipResourceConfig(server.URL, accessControlServiceAccountID),
+			},
+			{
+				PreConfig: func() {
+					server.service.setMembershipPrincipal(accessControlMembershipID, v1.Principal_PRINCIPAL_RUNNER)
+				},
+				Config:      testAccGroupMembershipResourceConfig(server.URL, accessControlServiceAccountID),
+				ExpectError: regexp.MustCompile(`Unable to Read Ona Group Membership[\s\S]*unsupported membership principal "PRINCIPAL_RUNNER"`),
+			},
+		},
+	})
+}
+
 func TestAccOrganizationRoleAssignmentResourceLifecycle(t *testing.T) {
 	t.Parallel()
 
@@ -755,7 +1096,7 @@ func TestAccOrganizationRoleAssignmentResourceLifecycle(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		CheckDestroy: func(state *terraform.State) error {
-			if !server.service.assignmentDeleted(accessControlAssignmentID) {
+			if !server.service.assignmentDeleted() {
 				return errors.New("role assignment was not deleted")
 			}
 			return nil
@@ -856,7 +1197,7 @@ func TestAccOrganizationRoleAssignmentResourceReadRemovesMissingAssignment(t *te
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		CheckDestroy: func(state *terraform.State) error {
-			if !server.service.assignmentDeleted(accessControlAssignmentID) {
+			if !server.service.assignmentDeleted() {
 				return errors.New("role assignment was not deleted")
 			}
 			return nil
@@ -880,6 +1221,571 @@ func TestAccOrganizationRoleAssignmentResourceReadRemovesMissingAssignment(t *te
 	})
 }
 
+func TestAccAutomationRoleAssignmentResourceLifecycle(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seedGroup()
+
+	resource.Test(t, resource.TestCase{
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBelow(tfversion.Version1_12_0),
+		},
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.assignmentDeleted() {
+				return errors.New("Automation role assignment was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "executor"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_automation_role_assignment.test", "id", accessControlAssignmentID),
+					resource.TestCheckResourceAttr("ona_automation_role_assignment.test", "automation_id", accessControlAutomationID),
+					resource.TestCheckResourceAttr("ona_automation_role_assignment.test", "group_id", accessControlGroupID),
+					resource.TestCheckResourceAttr("ona_automation_role_assignment.test", "role", "executor"),
+					checkAutomationRoleAssignmentCreateRequest(server.service, automationRoleAssignmentRequestExpectation{
+						Calls:        1,
+						AutomationID: accessControlAutomationID,
+						GroupID:      accessControlGroupID,
+						ResourceType: v1.ResourceType_RESOURCE_TYPE_WORKFLOW,
+						Role:         v1.ResourceRole_RESOURCE_ROLE_WORKFLOW_EXECUTOR,
+					}),
+				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectIdentity("ona_automation_role_assignment.test", map[string]knownvalue.Check{
+						"automation_id": knownvalue.StringExact(accessControlAutomationID),
+						"group_id":      knownvalue.StringExact(accessControlGroupID),
+						"role":          knownvalue.StringExact("executor"),
+					}),
+				},
+			},
+			{
+				PreConfig: func() {
+					server.service.seedAssignment(&v1.RoleAssignment{
+						Id:           "00000000-0000-4000-8000-000000000000",
+						GroupId:      accessControlOtherGroupID,
+						ResourceId:   accessControlAutomationID,
+						ResourceType: v1.ResourceType_RESOURCE_TYPE_WORKFLOW,
+						ResourceRole: v1.ResourceRole_RESOURCE_ROLE_WORKFLOW_EXECUTOR,
+					})
+					server.service.seedAssignment(&v1.RoleAssignment{
+						Id:           "11111111-0000-4000-8000-000000000000",
+						GroupId:      accessControlGroupID,
+						ResourceId:   accessControlAutomationID,
+						ResourceType: v1.ResourceType_RESOURCE_TYPE_PROJECT,
+						ResourceRole: v1.ResourceRole_RESOURCE_ROLE_WORKFLOW_EXECUTOR,
+					})
+					server.service.seedAssignment(&v1.RoleAssignment{
+						Id:           "22222222-0000-4000-8000-000000000000",
+						GroupId:      accessControlGroupID,
+						ResourceId:   accessControlOtherAutomationID,
+						ResourceType: v1.ResourceType_RESOURCE_TYPE_WORKFLOW,
+						ResourceRole: v1.ResourceRole_RESOURCE_ROLE_WORKFLOW_EXECUTOR,
+					})
+					server.service.setRoleAssignmentListBehavior(1, true)
+				},
+				Config: testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "executor"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				Check: checkAutomationRoleAssignmentListRequests(server.service),
+			},
+			{
+				ResourceName:      "ona_automation_role_assignment.test",
+				ImportState:       true,
+				ImportStateId:     accessControlAutomationID + "/" + accessControlGroupID + "/executor",
+				ImportStateVerify: true,
+			},
+			{
+				ResourceName:    "ona_automation_role_assignment.test",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportPlanChecks: resource.ImportPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectKnownValue("ona_automation_role_assignment.test", tfjsonpath.New("id"), knownvalue.StringExact(accessControlAssignmentID)),
+						plancheck.ExpectKnownValue("ona_automation_role_assignment.test", tfjsonpath.New("automation_id"), knownvalue.StringExact(accessControlAutomationID)),
+						plancheck.ExpectKnownValue("ona_automation_role_assignment.test", tfjsonpath.New("group_id"), knownvalue.StringExact(accessControlGroupID)),
+						plancheck.ExpectKnownValue("ona_automation_role_assignment.test", tfjsonpath.New("role"), knownvalue.StringExact("executor")),
+					},
+				},
+			},
+			{
+				Config: testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "admin"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_automation_role_assignment.test", plancheck.ResourceActionReplace),
+					},
+				},
+			},
+			{
+				Config: testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlOtherAutomationID, accessControlGroupID, "admin"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_automation_role_assignment.test", plancheck.ResourceActionReplace),
+					},
+				},
+			},
+			{
+				Config: testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlOtherAutomationID, accessControlOtherGroupID, "admin"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_automation_role_assignment.test", plancheck.ResourceActionReplace),
+					},
+				},
+			},
+		},
+	})
+}
+
+func TestAccAutomationRoleAssignmentResourceDetectsDrift(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seedGroup()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.assignmentDeleted() {
+				return errors.New("Automation role assignment was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "executor"),
+			},
+			{
+				PreConfig: func() {
+					server.service.deleteAssignment(accessControlAssignmentID)
+				},
+				Config: testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "executor"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_automation_role_assignment.test", plancheck.ResourceActionCreate),
+					},
+				},
+			},
+			{
+				PreConfig: func() {
+					server.service.replaceAssignmentRole(accessControlAssignmentID, v1.ResourceRole_RESOURCE_ROLE_WORKFLOW_ADMIN)
+				},
+				Config: testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "executor"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_automation_role_assignment.test", plancheck.ResourceActionCreate),
+					},
+				},
+			},
+		},
+	})
+
+	type Expectation struct {
+		CreateCalls int
+	}
+	expected := Expectation{CreateCalls: 3}
+	createCalls, _ := server.service.roleAssignmentMutationCalls()
+	got := Expectation{CreateCalls: createCalls}
+	if diff := cmp.Diff(expected, got); diff != "" {
+		t.Errorf("Automation role assignment drift calls mismatch (-want +got):\n%s", diff)
+	}
+}
+
+func TestAccAutomationRoleAssignmentResourceCreateErrors(t *testing.T) {
+	t.Parallel()
+
+	type Expectation struct {
+		CreateCalls int
+	}
+	tests := []struct {
+		Name        string
+		Configure   func(*fakeGroupService)
+		ExpectError *regexp.Regexp
+	}{
+		{
+			Name: "enterprise_tier_error",
+			Configure: func(service *fakeGroupService) {
+				service.setNextRoleAssignmentCreateError(connect.NewError(connect.CodeFailedPrecondition, errors.New("sharing Automations with custom groups requires the Enterprise plan")))
+			},
+			ExpectError: regexp.MustCompile(`Unable to Create Ona Automation Role Assignment[\s\S]*required state[\s\S]*requires the Enterprise plan`),
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			server := newAccessControlAPIServer(t)
+			t.Cleanup(server.Close)
+			server.service.seedGroup()
+			tc.Configure(server.service)
+
+			resource.Test(t, resource.TestCase{
+				PreCheck:                 func() { testAccPreCheck(t) },
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config:      testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "executor"),
+						ExpectError: tc.ExpectError,
+					},
+				},
+			})
+
+			expected := Expectation{CreateCalls: 1}
+			createCalls, _ := server.service.roleAssignmentMutationCalls()
+			got := Expectation{CreateCalls: createCalls}
+			if diff := cmp.Diff(expected, got); diff != "" {
+				t.Errorf("Automation role assignment create calls mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestAccAutomationRoleAssignmentResourceCreateRequiresImportForExistingAssignment(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seedGroup()
+	server.service.seedAssignment(&v1.RoleAssignment{
+		Id:           accessControlAssignmentID,
+		GroupId:      accessControlGroupID,
+		ResourceId:   accessControlAutomationID,
+		ResourceType: v1.ResourceType_RESOURCE_TYPE_WORKFLOW,
+		ResourceRole: v1.ResourceRole_RESOURCE_ROLE_WORKFLOW_EXECUTOR,
+	})
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "executor"),
+				ExpectError: regexp.MustCompile(`already exists[\s\S]*ID "` + accessControlAssignmentID + `"[\s\S]*Import the existing[\s\S]*assignment`),
+			},
+		},
+	})
+
+	createCalls, _ := server.service.roleAssignmentMutationCalls()
+	if diff := cmp.Diff(0, createCalls); diff != "" {
+		t.Errorf("Automation role assignment create calls mismatch (-want +got):\n%s", diff)
+	}
+}
+
+func TestAccAutomationRoleAssignmentResourceRejectsDuplicateMatches(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seedGroup()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.assignmentDeleted() {
+				return errors.New("Automation role assignment was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "executor"),
+			},
+			{
+				PreConfig: func() {
+					server.service.seedAssignment(&v1.RoleAssignment{
+						Id:           accessControlDuplicateID,
+						GroupId:      accessControlGroupID,
+						ResourceId:   accessControlAutomationID,
+						ResourceType: v1.ResourceType_RESOURCE_TYPE_WORKFLOW,
+						ResourceRole: v1.ResourceRole_RESOURCE_ROLE_WORKFLOW_EXECUTOR,
+					})
+					server.service.setRoleAssignmentListBehavior(1, false)
+				},
+				Config:      testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "executor"),
+				ExpectError: regexp.MustCompile(`multiple assignments match[\s\S]*` + accessControlAssignmentID + `[\s\S]*` + accessControlDuplicateID),
+			},
+			{
+				PreConfig: func() {
+					server.service.deleteAssignment(accessControlDuplicateID)
+				},
+				Config: testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "executor"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+func TestAccAutomationRoleAssignmentResourceMalformedCreateRecoversState(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		Name        string
+		Configure   func(*fakeGroupService)
+		ExpectError *regexp.Regexp
+	}{
+		{
+			Name: "empty_assignment",
+			Configure: func(service *fakeGroupService) {
+				service.setNextRoleAssignmentCreateEmpty()
+			},
+			ExpectError: regexp.MustCompile(`returned an empty role assignment[\s\S]*recovered[\s\S]*ID "` + accessControlAssignmentID + `"`),
+		},
+		{
+			Name: "assignment_without_id",
+			Configure: func(service *fakeGroupService) {
+				service.setNextRoleAssignmentCreateWithoutID()
+			},
+			ExpectError: regexp.MustCompile(`role assignment without an ID[\s\S]*recovered[\s\S]*ID "` + accessControlAssignmentID + `"`),
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			server := newAccessControlAPIServer(t)
+			t.Cleanup(server.Close)
+			server.service.seedGroup()
+			tc.Configure(server.service)
+
+			resource.Test(t, resource.TestCase{
+				PreCheck:                 func() { testAccPreCheck(t) },
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				CheckDestroy: func(state *terraform.State) error {
+					if !server.service.assignmentDeleted() {
+						return errors.New("Automation role assignment was not deleted")
+					}
+					return nil
+				},
+				Steps: []resource.TestStep{
+					{
+						Config:      testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "executor"),
+						ExpectError: tc.ExpectError,
+					},
+					{
+						Config: testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "executor"),
+						ConfigPlanChecks: resource.ConfigPlanChecks{
+							PreApply: []plancheck.PlanCheck{
+								plancheck.ExpectResourceAction("ona_automation_role_assignment.test", plancheck.ResourceActionReplace),
+							},
+						},
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr("ona_automation_role_assignment.test", "id", accessControlAssignmentID),
+							checkAutomationRoleAssignmentMutationCalls(server.service, 2, 1),
+						),
+					},
+					{
+						Config: testAccProviderConfig(server.URL),
+					},
+				},
+			})
+
+			createCalls, deleteCalls := server.service.roleAssignmentMutationCalls()
+			expected := struct {
+				CreateCalls int
+				DeleteCalls int
+			}{CreateCalls: 2, DeleteCalls: 2}
+			got := struct {
+				CreateCalls int
+				DeleteCalls int
+			}{CreateCalls: createCalls, DeleteCalls: deleteCalls}
+			if diff := cmp.Diff(expected, got); diff != "" {
+				t.Errorf("Automation role assignment recovery calls mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestAccAutomationRoleAssignmentResourceMalformedCreatePreservesState(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seedGroup()
+	server.service.setNextRoleAssignmentCreateMismatched()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.assignmentDeleted() {
+				return errors.New("Automation role assignment was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "executor"),
+				ExpectError: regexp.MustCompile(`Unable to Create Ona Automation Role Assignment[\s\S]*does not match the requested`),
+			},
+			{
+				Config: testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "executor"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_automation_role_assignment.test", plancheck.ResourceActionReplace),
+					},
+				},
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ona_automation_role_assignment.test", "id", accessControlAssignmentID),
+					checkAutomationRoleAssignmentCreateRequest(server.service, automationRoleAssignmentRequestExpectation{
+						Calls:        2,
+						AutomationID: accessControlAutomationID,
+						GroupID:      accessControlGroupID,
+						ResourceType: v1.ResourceType_RESOURCE_TYPE_WORKFLOW,
+						Role:         v1.ResourceRole_RESOURCE_ROLE_WORKFLOW_EXECUTOR,
+					}),
+				),
+			},
+		},
+	})
+}
+
+func TestAccAutomationRoleAssignmentResourceReadAndDeleteErrors(t *testing.T) {
+	t.Parallel()
+
+	server := newAccessControlAPIServer(t)
+	t.Cleanup(server.Close)
+	server.service.seedGroup()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy: func(state *terraform.State) error {
+			if !server.service.assignmentDeleted() {
+				return errors.New("Automation role assignment was not deleted")
+			}
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "viewer"),
+			},
+			{
+				PreConfig: func() {
+					server.service.setNextRoleAssignmentListError(connect.NewError(connect.CodePermissionDenied, errors.New("read denied")))
+				},
+				Config:      testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "viewer"),
+				ExpectError: regexp.MustCompile(`Unable to Read Ona Automation Role Assignment[\s\S]*does not have permission[\s\S]*read denied`),
+			},
+			{
+				Config: testAccAutomationRoleAssignmentResourceConfig(server.URL, accessControlAutomationID, accessControlGroupID, "viewer"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				PreConfig: func() {
+					server.service.setNextRoleAssignmentDeleteError(connect.NewError(connect.CodeUnavailable, errors.New("delete unavailable")))
+				},
+				Config:      testAccProviderConfig(server.URL),
+				ExpectError: regexp.MustCompile(`Unable to Delete Ona Automation Role Assignment[\s\S]*temporarily unavailable[\s\S]*delete unavailable`),
+			},
+			{
+				PreConfig: func() {
+					server.service.setNextRoleAssignmentDeleteError(connect.NewError(connect.CodeNotFound, errors.New("assignment already deleted")))
+				},
+				Config: testAccProviderConfig(server.URL),
+			},
+		},
+	})
+
+	type Expectation struct {
+		CreateCalls int
+		DeleteCalls int
+	}
+	expected := Expectation{CreateCalls: 1, DeleteCalls: 2}
+	createCalls, deleteCalls := server.service.roleAssignmentMutationCalls()
+	got := Expectation{CreateCalls: createCalls, DeleteCalls: deleteCalls}
+	if diff := cmp.Diff(expected, got); diff != "" {
+		t.Errorf("Automation role assignment API error calls mismatch (-want +got):\n%s", diff)
+	}
+}
+
+type automationRoleAssignmentRequestExpectation struct {
+	Calls        int
+	AutomationID string
+	GroupID      string
+	ResourceType v1.ResourceType
+	Role         v1.ResourceRole
+}
+
+func checkAutomationRoleAssignmentCreateRequest(service *fakeGroupService, expected automationRoleAssignmentRequestExpectation) resource.TestCheckFunc {
+	return func(state *terraform.State) error {
+		request, calls := service.latestRoleAssignmentCreateRequest()
+		got := automationRoleAssignmentRequestExpectation{Calls: calls}
+		if request != nil {
+			got.AutomationID = request.GetResourceId()
+			got.GroupID = request.GetGroupId()
+			got.ResourceType = request.GetResourceType()
+			got.Role = request.GetResourceRole()
+		}
+		if diff := cmp.Diff(expected, got); diff != "" {
+			return fmt.Errorf("Automation role assignment create request mismatch (-want +got):\n%s", diff)
+		}
+		return nil
+	}
+}
+
+func checkAutomationRoleAssignmentMutationCalls(service *fakeGroupService, expectedCreateCalls int, expectedDeleteCalls int) resource.TestCheckFunc {
+	return func(state *terraform.State) error {
+		type Expectation struct {
+			CreateCalls int
+			DeleteCalls int
+		}
+		expected := Expectation{CreateCalls: expectedCreateCalls, DeleteCalls: expectedDeleteCalls}
+		createCalls, deleteCalls := service.roleAssignmentMutationCalls()
+		got := Expectation{CreateCalls: createCalls, DeleteCalls: deleteCalls}
+		if diff := cmp.Diff(expected, got); diff != "" {
+			return fmt.Errorf("Automation role assignment mutation calls mismatch (-want +got):\n%s", diff)
+		}
+		return nil
+	}
+}
+
+func checkAutomationRoleAssignmentListRequests(service *fakeGroupService) resource.TestCheckFunc {
+	return func(state *terraform.State) error {
+		type Expectation struct {
+			SawContinuation bool
+			InvalidRequests []int
+		}
+		expected := Expectation{SawContinuation: true}
+		var got Expectation
+		for index, request := range service.roleAssignmentListRequests() {
+			filter := request.GetFilter()
+			if request.GetPagination().GetToken() != "" {
+				got.SawContinuation = true
+			}
+			if filter.GetGroupId() != accessControlGroupID ||
+				filter.GetResourceId() != accessControlAutomationID ||
+				!cmp.Equal(filter.GetResourceTypes(), []v1.ResourceType{v1.ResourceType_RESOURCE_TYPE_WORKFLOW}) ||
+				!cmp.Equal(filter.GetResourceRoles(), []v1.ResourceRole{v1.ResourceRole_RESOURCE_ROLE_WORKFLOW_EXECUTOR}) {
+				got.InvalidRequests = append(got.InvalidRequests, index)
+			}
+		}
+		if diff := cmp.Diff(expected, got); diff != "" {
+			return fmt.Errorf("Automation role assignment list requests mismatch (-want +got):\n%s", diff)
+		}
+		return nil
+	}
+}
+
 func testAccGroupResourceConfig(host string, name string, description string) string {
 	return fmt.Sprintf(`
 provider "ona" {
@@ -895,6 +1801,41 @@ resource "ona_group" "test" {
 }
 
 func testAccGroupMembershipResourceConfig(host string, serviceAccountID string) string {
+	return testAccGroupMembershipResourceConfigWithMember(host, accessControlGroupID, "service_account_id", serviceAccountID)
+}
+
+func testAccUserGroupMembershipResourceConfig(host, groupID, userID string) string {
+	return testAccGroupMembershipResourceConfigWithMember(host, groupID, "user_id", userID)
+}
+
+func testAccGroupMembershipResourceConfigWithMember(host, groupID, memberAttribute, memberID string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_group_membership" "test" {
+  group_id           = %[2]q
+  %[3]s = %[4]q
+}
+`, host, groupID, memberAttribute, memberID)
+}
+
+func testAccGroupMembershipResourceConfigWithoutMember(host string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_group_membership" "test" {
+  group_id = %[2]q
+}
+`, host, accessControlGroupID)
+}
+
+func testAccGroupMembershipResourceConfigWithBothMembers(host string) string {
 	return fmt.Sprintf(`
 provider "ona" {
   host  = %[1]q
@@ -904,8 +1845,9 @@ provider "ona" {
 resource "ona_group_membership" "test" {
   group_id           = %[2]q
   service_account_id = %[3]q
+  user_id            = %[4]q
 }
-`, host, accessControlGroupID, serviceAccountID)
+`, host, accessControlGroupID, accessControlServiceAccountID, accessControlUserID)
 }
 
 func testAccTeamResourceConfig(host string, name string) string {
@@ -942,6 +1884,21 @@ resource "ona_organization_role_assignment" "test" {
   role     = %[3]q
 }
 `, host, accessControlGroupID, role)
+}
+
+func testAccAutomationRoleAssignmentResourceConfig(host string, automationID string, groupID string, role string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_automation_role_assignment" "test" {
+  automation_id = %[2]q
+  group_id      = %[3]q
+  role          = %[4]q
+}
+`, host, automationID, groupID, role)
 }
 
 type accessControlAPIServer struct {
@@ -998,8 +1955,29 @@ type fakeGroupService struct {
 	nextTeamUpdateError error
 	memberships         map[string]*v1.GroupMembership
 	deletedMemberships  map[string]bool
+	membershipTest      struct {
+		nextCreatePrincipal *v1.Principal
+		nextCreateEmpty     bool
+		createCalls         int
+		deleteCalls         int
+	}
+	membershipListCalls []*v1.ListMembershipsRequest
+	membershipPageLimit int32
 	assignments         map[string]*v1.RoleAssignment
 	deletedAssignments  map[string]bool
+	roleAssignmentTest  struct {
+		nextCreateError      error
+		nextCreateEmpty      bool
+		nextCreateWithoutID  bool
+		nextCreateMismatched bool
+		nextListError        error
+		nextDeleteError      error
+		createRequests       []*v1.CreateRoleAssignmentRequest
+		listRequests         []*v1.ListRoleAssignmentsRequest
+		deleteRequests       []*v1.DeleteRoleAssignmentRequest
+		pageLimit            int32
+		ignoreFilters        bool
+	}
 	serviceAccountNames map[string]string
 }
 
@@ -1141,6 +2119,7 @@ func (s *fakeGroupService) DeleteTeam(ctx context.Context, req *connect.Request[
 func (s *fakeGroupService) CreateMembership(ctx context.Context, req *connect.Request[v1.CreateMembershipRequest]) (*connect.Response[v1.CreateMembershipResponse], error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	s.membershipTest.createCalls++
 
 	member := &v1.GroupMembership{
 		Id:      accessControlMembershipID,
@@ -1151,16 +2130,25 @@ func (s *fakeGroupService) CreateMembership(ctx context.Context, req *connect.Re
 		},
 		Name: s.serviceAccountNames[req.Msg.GetSubject().GetId()],
 	}
-	s.memberships[memberKey(member.GetGroupId(), member.GetSubject().GetId())] = member
+	s.memberships[memberKey(member.GetGroupId(), member.GetSubject().GetPrincipal(), member.GetSubject().GetId())] = member
 	s.deletedMemberships[member.GetId()] = false
-	return connect.NewResponse(&v1.CreateMembershipResponse{Member: cloneMembership(member)}), nil
+	if s.membershipTest.nextCreateEmpty {
+		s.membershipTest.nextCreateEmpty = false
+		return connect.NewResponse(&v1.CreateMembershipResponse{}), nil
+	}
+	responseMember := cloneMembership(member)
+	if s.membershipTest.nextCreatePrincipal != nil {
+		responseMember.Subject.Principal = *s.membershipTest.nextCreatePrincipal
+		s.membershipTest.nextCreatePrincipal = nil
+	}
+	return connect.NewResponse(&v1.CreateMembershipResponse{Member: responseMember}), nil
 }
 
 func (s *fakeGroupService) GetMembership(ctx context.Context, req *connect.Request[v1.GetMembershipRequest]) (*connect.Response[v1.GetMembershipResponse], error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	member := s.memberships[memberKey(req.Msg.GetGroupId(), req.Msg.GetSubject().GetId())]
+	member := s.memberships[memberKey(req.Msg.GetGroupId(), req.Msg.GetSubject().GetPrincipal(), req.Msg.GetSubject().GetId())]
 	if member == nil {
 		return connect.NewResponse(&v1.GetMembershipResponse{}), nil
 	}
@@ -1168,6 +2156,9 @@ func (s *fakeGroupService) GetMembership(ctx context.Context, req *connect.Reque
 }
 
 func (s *fakeGroupService) DeleteMembership(ctx context.Context, req *connect.Request[v1.DeleteMembershipRequest]) (*connect.Response[v1.DeleteMembershipResponse], error) {
+	s.mu.Lock()
+	s.membershipTest.deleteCalls++
+	s.mu.Unlock()
 	s.deleteMembership(req.Msg.GetMembershipId())
 	return connect.NewResponse(&v1.DeleteMembershipResponse{}), nil
 }
@@ -1175,6 +2166,12 @@ func (s *fakeGroupService) DeleteMembership(ctx context.Context, req *connect.Re
 func (s *fakeGroupService) CreateRoleAssignment(ctx context.Context, req *connect.Request[v1.CreateRoleAssignmentRequest]) (*connect.Response[v1.CreateRoleAssignmentResponse], error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	s.roleAssignmentTest.createRequests = append(s.roleAssignmentTest.createRequests, proto.CloneOf(req.Msg))
+	if s.roleAssignmentTest.nextCreateError != nil {
+		err := s.roleAssignmentTest.nextCreateError
+		s.roleAssignmentTest.nextCreateError = nil
+		return nil, err
+	}
 
 	assignment := &v1.RoleAssignment{
 		Id:             accessControlAssignmentID,
@@ -1184,27 +2181,83 @@ func (s *fakeGroupService) CreateRoleAssignment(ctx context.Context, req *connec
 		ResourceType:   req.Msg.GetResourceType(),
 		ResourceRole:   req.Msg.GetResourceRole(),
 	}
-	s.assignments[assignmentKey(assignment.GetGroupId(), assignment.GetResourceId(), assignment.GetResourceRole())] = assignment
+	s.assignments[assignment.GetId()] = assignment
 	s.deletedAssignments[assignment.GetId()] = false
-	return connect.NewResponse(&v1.CreateRoleAssignmentResponse{Assignment: cloneAssignment(assignment)}), nil
+	if s.roleAssignmentTest.nextCreateEmpty {
+		s.roleAssignmentTest.nextCreateEmpty = false
+		return connect.NewResponse(&v1.CreateRoleAssignmentResponse{}), nil
+	}
+	responseAssignment := cloneAssignment(assignment)
+	if s.roleAssignmentTest.nextCreateWithoutID {
+		s.roleAssignmentTest.nextCreateWithoutID = false
+		responseAssignment.Id = ""
+	}
+	if s.roleAssignmentTest.nextCreateMismatched {
+		s.roleAssignmentTest.nextCreateMismatched = false
+		responseAssignment.ResourceId = accessControlOtherAutomationID
+	}
+	return connect.NewResponse(&v1.CreateRoleAssignmentResponse{Assignment: responseAssignment}), nil
 }
 
 func (s *fakeGroupService) ListRoleAssignments(ctx context.Context, req *connect.Request[v1.ListRoleAssignmentsRequest]) (*connect.Response[v1.ListRoleAssignmentsResponse], error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	s.roleAssignmentTest.listRequests = append(s.roleAssignmentTest.listRequests, proto.CloneOf(req.Msg))
+	if s.roleAssignmentTest.nextListError != nil {
+		err := s.roleAssignmentTest.nextListError
+		s.roleAssignmentTest.nextListError = nil
+		return nil, err
+	}
 
 	var assignments []*v1.RoleAssignment
 	for _, assignment := range s.assignments {
-		if !matchesRoleAssignmentFilter(assignment, req.Msg.GetFilter()) {
+		if !s.roleAssignmentTest.ignoreFilters && !matchesRoleAssignmentFilter(assignment, req.Msg.GetFilter()) {
 			continue
 		}
 		assignments = append(assignments, cloneAssignment(assignment))
 	}
-	return connect.NewResponse(&v1.ListRoleAssignmentsResponse{Assignments: assignments}), nil
+	sort.Slice(assignments, func(i, j int) bool {
+		return assignments[i].GetId() < assignments[j].GetId()
+	})
+
+	start, _ := strconv.Atoi(req.Msg.GetPagination().GetToken())
+	if start > len(assignments) {
+		start = len(assignments)
+	}
+	pageSize := int(req.Msg.GetPagination().GetPageSize())
+	if pageSize <= 0 {
+		pageSize = len(assignments)
+	}
+	if s.roleAssignmentTest.pageLimit > 0 && int(s.roleAssignmentTest.pageLimit) < pageSize {
+		pageSize = int(s.roleAssignmentTest.pageLimit)
+	}
+	end := start + pageSize
+	if end > len(assignments) {
+		end = len(assignments)
+	}
+	var nextToken string
+	if end < len(assignments) {
+		nextToken = strconv.Itoa(end)
+	}
+	return connect.NewResponse(&v1.ListRoleAssignmentsResponse{
+		Assignments: assignments[start:end],
+		Pagination:  &v1.PaginationResponse{NextToken: nextToken},
+	}), nil
 }
 
 func (s *fakeGroupService) DeleteRoleAssignment(ctx context.Context, req *connect.Request[v1.DeleteRoleAssignmentRequest]) (*connect.Response[v1.DeleteRoleAssignmentResponse], error) {
-	s.deleteAssignment(req.Msg.GetAssignmentId())
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.roleAssignmentTest.deleteRequests = append(s.roleAssignmentTest.deleteRequests, proto.CloneOf(req.Msg))
+	if s.roleAssignmentTest.nextDeleteError != nil {
+		err := s.roleAssignmentTest.nextDeleteError
+		s.roleAssignmentTest.nextDeleteError = nil
+		if connect.CodeOf(err) == connect.CodeNotFound {
+			s.deleteAssignmentLocked(req.Msg.GetAssignmentId())
+		}
+		return nil, err
+	}
+	s.deleteAssignmentLocked(req.Msg.GetAssignmentId())
 	return connect.NewResponse(&v1.DeleteRoleAssignmentResponse{}), nil
 }
 
@@ -1305,6 +2358,24 @@ func (s *fakeGroupService) setNextTeamUpdateError(err error) {
 	s.nextTeamUpdateError = err
 }
 
+func (s *fakeGroupService) setNextMembershipCreateResponsePrincipal(principal v1.Principal) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.membershipTest.nextCreatePrincipal = &principal
+}
+
+func (s *fakeGroupService) setNextMembershipCreateResponseEmpty() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.membershipTest.nextCreateEmpty = true
+}
+
+func (s *fakeGroupService) membershipMutationCalls() (createCalls, deleteCalls int) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.membershipTest.createCalls, s.membershipTest.deleteCalls
+}
+
 func (s *fakeGroupService) deleteMembership(id string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -1316,35 +2387,126 @@ func (s *fakeGroupService) deleteMembership(id string) {
 	s.deletedMemberships[id] = true
 }
 
-func (s *fakeGroupService) membershipDeleted(id string) bool {
+func (s *fakeGroupService) setMembershipPrincipal(id string, principal v1.Principal) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	return s.deletedMemberships[id]
+	for _, member := range s.memberships {
+		if member.GetId() == id {
+			member.Subject.Principal = principal
+		}
+	}
+}
+
+func (s *fakeGroupService) membershipDeleted() bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.deletedMemberships[accessControlMembershipID]
 }
 
 func (s *fakeGroupService) deleteAssignment(id string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	for key, assignment := range s.assignments {
-		if assignment.GetId() == id {
-			delete(s.assignments, key)
-		}
-	}
+	s.deleteAssignmentLocked(id)
+}
+
+func (s *fakeGroupService) deleteAssignmentLocked(id string) {
+	delete(s.assignments, id)
 	s.deletedAssignments[id] = true
 }
 
-func (s *fakeGroupService) assignmentDeleted(id string) bool {
+func (s *fakeGroupService) seedAssignment(assignment *v1.RoleAssignment) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	return s.deletedAssignments[id]
+	s.assignments[assignment.GetId()] = cloneAssignment(assignment)
+	s.deletedAssignments[assignment.GetId()] = false
 }
 
-func memberKey(groupID string, serviceAccountID string) string {
-	return groupID + "/" + serviceAccountID
+func (s *fakeGroupService) replaceAssignmentRole(id string, role v1.ResourceRole) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	assignment := s.assignments[id]
+	if assignment != nil {
+		assignment.ResourceRole = role
+	}
 }
 
-func assignmentKey(groupID string, resourceID string, role v1.ResourceRole) string {
-	return fmt.Sprintf("%s/%s/%d", groupID, resourceID, role)
+func (s *fakeGroupService) setRoleAssignmentListBehavior(pageLimit int32, ignoreFilters bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.roleAssignmentTest.pageLimit = pageLimit
+	s.roleAssignmentTest.ignoreFilters = ignoreFilters
+}
+
+func (s *fakeGroupService) setNextRoleAssignmentCreateError(err error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.roleAssignmentTest.nextCreateError = err
+}
+
+func (s *fakeGroupService) setNextRoleAssignmentCreateEmpty() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.roleAssignmentTest.nextCreateEmpty = true
+}
+
+func (s *fakeGroupService) setNextRoleAssignmentCreateWithoutID() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.roleAssignmentTest.nextCreateWithoutID = true
+}
+
+func (s *fakeGroupService) setNextRoleAssignmentCreateMismatched() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.roleAssignmentTest.nextCreateMismatched = true
+}
+
+func (s *fakeGroupService) setNextRoleAssignmentListError(err error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.roleAssignmentTest.nextListError = err
+}
+
+func (s *fakeGroupService) setNextRoleAssignmentDeleteError(err error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.roleAssignmentTest.nextDeleteError = err
+}
+
+func (s *fakeGroupService) latestRoleAssignmentCreateRequest() (*v1.CreateRoleAssignmentRequest, int) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	requests := s.roleAssignmentTest.createRequests
+	if len(requests) == 0 {
+		return nil, 0
+	}
+	return proto.CloneOf(requests[len(requests)-1]), len(requests)
+}
+
+func (s *fakeGroupService) roleAssignmentListRequests() []*v1.ListRoleAssignmentsRequest {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	requests := make([]*v1.ListRoleAssignmentsRequest, 0, len(s.roleAssignmentTest.listRequests))
+	for _, request := range s.roleAssignmentTest.listRequests {
+		requests = append(requests, proto.CloneOf(request))
+	}
+	return requests
+}
+
+func (s *fakeGroupService) roleAssignmentMutationCalls() (createCalls, deleteCalls int) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return len(s.roleAssignmentTest.createRequests), len(s.roleAssignmentTest.deleteRequests)
+}
+
+func (s *fakeGroupService) assignmentDeleted() bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.deletedAssignments[accessControlAssignmentID]
+}
+
+func memberKey(groupID string, principal v1.Principal, subjectID string) string {
+	return fmt.Sprintf("%s/%d/%s", groupID, principal, subjectID)
 }
 
 func matchesRoleAssignmentFilter(assignment *v1.RoleAssignment, filter *v1.ListRoleAssignmentsRequest_Filter) bool {

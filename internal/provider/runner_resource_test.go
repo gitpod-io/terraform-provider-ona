@@ -15,8 +15,8 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
+	"github.com/gitpod-io/gitpod-sdk-go/v1/v1connect"
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
@@ -598,7 +598,7 @@ func (s *fakeRunnerService) CreateRunnerToken(ctx context.Context, req *connect.
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("runner not found"))
 	}
 
-	token := "exchange-token-" + req.Msg.GetRunnerId()
+	token := fmt.Sprintf("exchange-token-%s-%d", req.Msg.GetRunnerId(), len(s.tokens)+1)
 	s.tokens = append(s.tokens, token)
 	return connect.NewResponse(&v1.CreateRunnerTokenResponse{ExchangeToken: token}), nil
 }
@@ -609,18 +609,6 @@ func (s *fakeRunnerService) deleted(id string) bool {
 
 	for _, deleted := range s.deletes {
 		if deleted == id {
-			return true
-		}
-	}
-	return false
-}
-
-func (s *fakeRunnerService) tokenCreated(token string) bool {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	for _, created := range s.tokens {
-		if created == token {
 			return true
 		}
 	}

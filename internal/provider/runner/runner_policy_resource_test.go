@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
+	"github.com/gitpod-io/gitpod-sdk-go/v1/v1connect"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -19,7 +19,12 @@ import (
 
 type runnerServiceClient struct {
 	v1connect.RunnerServiceClient
+	createRunnerToken  func(context.Context, *connect.Request[v1.CreateRunnerTokenRequest]) (*connect.Response[v1.CreateRunnerTokenResponse], error)
 	listRunnerPolicies func(context.Context, *connect.Request[v1.ListRunnerPoliciesRequest]) (*connect.Response[v1.ListRunnerPoliciesResponse], error)
+}
+
+func (c runnerServiceClient) CreateRunnerToken(ctx context.Context, req *connect.Request[v1.CreateRunnerTokenRequest]) (*connect.Response[v1.CreateRunnerTokenResponse], error) {
+	return c.createRunnerToken(ctx, req)
 }
 
 func (c runnerServiceClient) ListRunnerPolicies(ctx context.Context, req *connect.Request[v1.ListRunnerPoliciesRequest]) (*connect.Response[v1.ListRunnerPoliciesResponse], error) {

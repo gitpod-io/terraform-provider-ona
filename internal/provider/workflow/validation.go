@@ -20,27 +20,29 @@ import (
 var workflowCronParser = cron.NewParser(cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor)
 
 func validateModel(ctx context.Context, data Model, requireKnown bool, diags *diag.Diagnostics) {
+	validateEnumString(data.Agent, path.Root("agent"), agentValues, false, requireKnown, diags)
 	validateString(data.Name, path.Root("name"), 1, 80, true, requireKnown, diags)
 	validateString(data.Description, path.Root("description"), 0, 500, false, requireKnown, diags)
+	validateCodexSettings(ctx, data.CodexSettings, requireKnown, diags)
 	validateExecutor(ctx, data.Executor, requireKnown, diags)
 
 	if data.Triggers.IsUnknown() {
-		unknownRequired(path.Root("triggers"), "Workflow Triggers", requireKnown, diags)
+		unknownRequired(path.Root("triggers"), "Automation Triggers", requireKnown, diags)
 	} else if data.Triggers.IsNull() {
-		diags.AddAttributeError(path.Root("triggers"), "Missing Workflow Triggers", "Configure between 1 and 10 workflow triggers.")
+		diags.AddAttributeError(path.Root("triggers"), "Missing Automation Triggers", "Configure between 1 and 10 automation triggers.")
 	} else {
 		elements := data.Triggers.Elements()
 		if len(elements) < 1 || len(elements) > 10 {
-			diags.AddAttributeError(path.Root("triggers"), "Invalid Workflow Trigger Count", "Configure between 1 and 10 workflow triggers.")
+			diags.AddAttributeError(path.Root("triggers"), "Invalid Automation Trigger Count", "Configure between 1 and 10 automation triggers.")
 		}
 		for i, element := range elements {
 			object, ok := element.(types.Object)
 			if !ok {
-				diags.AddAttributeError(path.Root("triggers").AtListIndex(i), "Invalid Workflow Trigger", "Workflow triggers must be objects.")
+				diags.AddAttributeError(path.Root("triggers").AtListIndex(i), "Invalid Automation Trigger", "Automation triggers must be objects.")
 				continue
 			}
 			if object.IsUnknown() {
-				unknownRequired(path.Root("triggers").AtListIndex(i), "Workflow Trigger", requireKnown, diags)
+				unknownRequired(path.Root("triggers").AtListIndex(i), "Automation Trigger", requireKnown, diags)
 				continue
 			}
 			var trigger TriggerModel
@@ -52,9 +54,9 @@ func validateModel(ctx context.Context, data Model, requireKnown bool, diags *di
 	}
 
 	if data.Action.IsUnknown() {
-		unknownRequired(path.Root("action"), "Workflow Action", requireKnown, diags)
+		unknownRequired(path.Root("action"), "Automation Action", requireKnown, diags)
 	} else if data.Action.IsNull() {
-		diags.AddAttributeError(path.Root("action"), "Missing Workflow Action", "Configure a workflow action.")
+		diags.AddAttributeError(path.Root("action"), "Missing Automation Action", "Configure an automation action.")
 	} else {
 		var action ActionModel
 		diags.Append(data.Action.As(ctx, &action, basetypes.ObjectAsOptions{})...)
@@ -62,6 +64,25 @@ func validateModel(ctx context.Context, data Model, requireKnown bool, diags *di
 			validateAction(ctx, action, path.Root("action"), requireKnown, diags)
 		}
 	}
+}
+
+func validateCodexSettings(ctx context.Context, value types.Object, requireKnown bool, diags *diag.Diagnostics) {
+	p := path.Root("codex_settings")
+	if value.IsNull() {
+		return
+	}
+	if value.IsUnknown() {
+		unknownRequired(p, "Codex Settings", requireKnown, diags)
+		return
+	}
+	var settings CodexSettingsModel
+	diags.Append(value.As(ctx, &settings, basetypes.ObjectAsOptions{})...)
+	if diags.HasError() {
+		return
+	}
+	validateEnumString(settings.Model, p.AtName("model"), codexModelValues, false, requireKnown, diags)
+	validateEnumString(settings.ReasoningEffort, p.AtName("reasoning_effort"), codexReasoningEffortValues, false, requireKnown, diags)
+	validateEnumString(settings.ServiceTier, p.AtName("service_tier"), codexServiceTierValues, false, requireKnown, diags)
 }
 
 func validateExecutor(ctx context.Context, value types.Object, requireKnown bool, diags *diag.Diagnostics) {
@@ -82,7 +103,7 @@ func validateExecutor(ctx context.Context, value types.Object, requireKnown bool
 }
 
 func validateTrigger(ctx context.Context, trigger TriggerModel, p path.Path, requireKnown bool, diags *diag.Diagnostics) {
-	triggerKind, ok := exactlyOneObject(p, "Workflow Trigger Type", map[string]types.Object{
+	triggerKind, ok := exactlyOneObject(p, "Automation Trigger Type", map[string]types.Object{
 		"manual": trigger.Manual, "time": trigger.Time, "pull_request": trigger.PullRequest,
 	}, requireKnown, diags)
 	if !ok {
@@ -99,7 +120,7 @@ func validateTrigger(ctx context.Context, trigger TriggerModel, p path.Path, req
 		validateString(value.CronExpression, p.AtName("time").AtName("cron_expression"), 1, 100, true, requireKnown, diags)
 		if !value.CronExpression.IsNull() && !value.CronExpression.IsUnknown() {
 			if _, err := workflowCronParser.Parse(value.CronExpression.ValueString()); err != nil {
-				diags.AddAttributeError(p.AtName("time").AtName("cron_expression"), "Invalid Workflow Cron Expression", err.Error())
+				diags.AddAttributeError(p.AtName("time").AtName("cron_expression"), "Invalid Automation Cron Expression", err.Error())
 			}
 		}
 	case "pull_request":
@@ -107,11 +128,11 @@ func validateTrigger(ctx context.Context, trigger TriggerModel, p path.Path, req
 	}
 
 	if trigger.Context.IsUnknown() {
-		unknownRequired(p.AtName("context"), "Workflow Trigger Context", requireKnown, diags)
+		unknownRequired(p.AtName("context"), "Automation Trigger Context", requireKnown, diags)
 		return
 	}
 	if trigger.Context.IsNull() {
-		diags.AddAttributeError(p.AtName("context"), "Missing Workflow Trigger Context", "Configure exactly one trigger context.")
+		diags.AddAttributeError(p.AtName("context"), "Missing Automation Trigger Context", "Configure exactly one trigger context.")
 		return
 	}
 	var contextModel ContextModel
@@ -119,7 +140,7 @@ func validateTrigger(ctx context.Context, trigger TriggerModel, p path.Path, req
 	if diags.HasError() {
 		return
 	}
-	contextKind, ok := exactlyOneObject(p.AtName("context"), "Workflow Trigger Context", map[string]types.Object{
+	contextKind, ok := exactlyOneObject(p.AtName("context"), "Automation Trigger Context", map[string]types.Object{
 		"projects": contextModel.Projects, "repositories": contextModel.Repositories, "agent": contextModel.Agent, "from_trigger": contextModel.FromTrigger,
 	}, requireKnown, diags)
 	if !ok {
@@ -210,9 +231,9 @@ func validateRepositoriesContext(ctx context.Context, value types.Object, p path
 
 func validateAction(ctx context.Context, action ActionModel, p path.Path, requireKnown bool, diags *diag.Diagnostics) {
 	if action.Limits.IsUnknown() {
-		unknownRequired(p.AtName("limits"), "Workflow Action Limits", requireKnown, diags)
+		unknownRequired(p.AtName("limits"), "Automation Action Limits", requireKnown, diags)
 	} else if action.Limits.IsNull() {
-		diags.AddAttributeError(p.AtName("limits"), "Missing Workflow Action Limits", "Configure workflow action limits.")
+		diags.AddAttributeError(p.AtName("limits"), "Missing Automation Action Limits", "Configure automation action limits.")
 	} else {
 		var limits LimitsModel
 		diags.Append(action.Limits.As(ctx, &limits, basetypes.ObjectAsOptions{})...)
@@ -220,41 +241,41 @@ func validateAction(ctx context.Context, action ActionModel, p path.Path, requir
 			validateInt32(limits.MaxParallel, p.AtName("limits").AtName("max_parallel"), 1, 25, requireKnown, diags)
 			validateInt32(limits.MaxTotal, p.AtName("limits").AtName("max_total"), 1, 100, requireKnown, diags)
 			if !limits.MaxParallel.IsNull() && !limits.MaxParallel.IsUnknown() && !limits.MaxTotal.IsNull() && !limits.MaxTotal.IsUnknown() && limits.MaxParallel.ValueInt32() > limits.MaxTotal.ValueInt32() {
-				diags.AddAttributeError(p.AtName("limits").AtName("max_parallel"), "Invalid Workflow Action Limits", "max_parallel must not exceed max_total.")
+				diags.AddAttributeError(p.AtName("limits").AtName("max_parallel"), "Invalid Automation Action Limits", "max_parallel must not exceed max_total.")
 			}
 			if !limits.MaxTime.IsNull() && !limits.MaxTime.IsUnknown() {
 				duration, err := parseDuration(limits.MaxTime.ValueString())
 				if err != nil {
-					diags.AddAttributeError(p.AtName("limits").AtName("max_time"), "Invalid Workflow Action Maximum Time", err.Error())
+					diags.AddAttributeError(p.AtName("limits").AtName("max_time"), "Invalid Automation Action Maximum Time", err.Error())
 				} else if err := durationpb.New(duration).CheckValid(); err != nil {
-					diags.AddAttributeError(p.AtName("limits").AtName("max_time"), "Invalid Workflow Action Maximum Time", err.Error())
+					diags.AddAttributeError(p.AtName("limits").AtName("max_time"), "Invalid Automation Action Maximum Time", err.Error())
 				}
 			} else if limits.MaxTime.IsUnknown() {
-				unknownRequired(p.AtName("limits").AtName("max_time"), "Workflow Action Maximum Time", requireKnown, diags)
+				unknownRequired(p.AtName("limits").AtName("max_time"), "Automation Action Maximum Time", requireKnown, diags)
 			}
 		}
 	}
 
 	if action.Steps.IsUnknown() {
-		unknownRequired(p.AtName("steps"), "Workflow Action Steps", requireKnown, diags)
+		unknownRequired(p.AtName("steps"), "Automation Action Steps", requireKnown, diags)
 		return
 	}
 	if action.Steps.IsNull() {
-		diags.AddAttributeError(p.AtName("steps"), "Missing Workflow Action Steps", "Configure between 1 and 50 action steps.")
+		diags.AddAttributeError(p.AtName("steps"), "Missing Automation Action Steps", "Configure between 1 and 50 action steps.")
 		return
 	}
 	elements := action.Steps.Elements()
 	if len(elements) < 1 || len(elements) > 50 {
-		diags.AddAttributeError(p.AtName("steps"), "Invalid Workflow Step Count", "Configure between 1 and 50 action steps.")
+		diags.AddAttributeError(p.AtName("steps"), "Invalid Automation Step Count", "Configure between 1 and 50 action steps.")
 	}
 	for i, element := range elements {
 		object, ok := element.(types.Object)
 		if !ok {
-			diags.AddAttributeError(p.AtName("steps").AtListIndex(i), "Invalid Workflow Step", "Workflow steps must be objects.")
+			diags.AddAttributeError(p.AtName("steps").AtListIndex(i), "Invalid Automation Step", "Automation steps must be objects.")
 			continue
 		}
 		if object.IsUnknown() {
-			unknownRequired(p.AtName("steps").AtListIndex(i), "Workflow Step", requireKnown, diags)
+			unknownRequired(p.AtName("steps").AtListIndex(i), "Automation Step", requireKnown, diags)
 			continue
 		}
 		var step StepModel
@@ -267,7 +288,7 @@ func validateAction(ctx context.Context, action ActionModel, p path.Path, requir
 }
 
 func validateStep(ctx context.Context, step StepModel, p path.Path, requireKnown bool, diags *diag.Diagnostics) {
-	kind, ok := exactlyOneObject(p, "Workflow Step Type", map[string]types.Object{
+	kind, ok := exactlyOneObject(p, "Automation Step Type", map[string]types.Object{
 		"task": step.Task, "agent": step.Agent, "pull_request": step.PullRequest,
 	}, requireKnown, diags)
 	if !ok {

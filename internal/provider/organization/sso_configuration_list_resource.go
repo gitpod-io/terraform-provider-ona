@@ -9,7 +9,7 @@ import (
 	"sort"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
 	"github.com/hashicorp/terraform-plugin-framework/list"
@@ -54,6 +54,7 @@ func (r *SSOConfigurationResource) List(ctx context.Context, req list.ListReques
 		var token string
 		seenTokens := make(map[string]struct{})
 		var emitted int64
+		displayNames := listutil.NewDisplayNames()
 		for listutil.HasCapacity(req.Limit, emitted) {
 			result, err := r.client.OrganizationService().ListSSOConfigurations(ctx, connect.NewRequest(&v1.ListSSOConfigurationsRequest{
 				OrganizationId: organizationID,
@@ -73,10 +74,7 @@ func (r *SSOConfigurationResource) List(ctx context.Context, req list.ListReques
 					return
 				}
 				item := req.NewListResult(ctx)
-				item.DisplayName = configuration.GetDisplayName()
-				if item.DisplayName == "" {
-					item.DisplayName = configuration.GetId()
-				}
+				item.DisplayName = displayNames.Unique(configuration.GetDisplayName(), configuration.GetId(), "sso_configuration")
 				item.Diagnostics.Append(item.Identity.Set(ctx, SSOConfigurationIdentityModel{ID: types.StringValue(configuration.GetId())})...)
 				if req.IncludeResource && !item.Diagnostics.HasError() {
 					var model SSOConfigurationModel

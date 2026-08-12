@@ -18,8 +18,8 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
-	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
+	"github.com/gitpod-io/gitpod-sdk-go/v1/v1connect"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"google.golang.org/protobuf/proto"
@@ -60,6 +60,60 @@ func TestAccUserDataSource(t *testing.T) {
 					resource.TestCheckResourceAttr("echo.consumer", "data", userDataSourceAliceID),
 					checkSingularUserRequests(server, userDataSourceAliceID),
 				),
+			},
+		},
+	})
+}
+
+func TestAccUserDataSourceByEmailAndLoginProvider(t *testing.T) {
+	t.Parallel()
+
+	server := newUserDataSourceAPIServer(t)
+	server.service.pageSize = 1
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccUserDataSourceEmailConfig(server.URL, "ALICE@EXAMPLE.COM", "github"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("data.ona_user.test", "user_id", userDataSourceAliceID),
+					resource.TestCheckResourceAttr("data.ona_user.test", "email", "alice@example.com"),
+					resource.TestCheckResourceAttr("data.ona_user.test", "login_provider", "github"),
+					checkEmailUserRequests(server, "ALICE@EXAMPLE.COM", "github", v1.LoginProviderKind_LOGIN_PROVIDER_KIND_GITHUB, userDataSourceAliceID),
+				),
+			},
+			{
+				Config: testAccUserDataSourceEmailConfig(server.URL, "alice@example.com", "custom"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("data.ona_user.test", "user_id", userDataSourceCarolID),
+					resource.TestCheckResourceAttr("data.ona_user.test", "name", "Carol Former"),
+					resource.TestCheckResourceAttr("data.ona_user.test", "login_provider", "custom"),
+					checkEmailUserRequests(server, "alice@example.com", "custom", v1.LoginProviderKind_LOGIN_PROVIDER_KIND_SSO, userDataSourceCarolID),
+				),
+			},
+		},
+	})
+}
+
+func TestAccUserDataSourceForEach(t *testing.T) {
+	t.Parallel()
+
+	server := newUserDataSourceAPIServer(t)
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:   testAccUserDataSourceForEachConfig(server.URL),
+				PlanOnly: true,
+				PostApplyFunc: func() {
+					checkForEachUserRequests(t, server)
+				},
 			},
 		},
 	})
@@ -156,6 +210,49 @@ func TestAccUserDataSourceDiagnostics(t *testing.T) {
 	})
 }
 
+func TestAccUserDataSourceSelectorDiagnostics(t *testing.T) {
+	t.Parallel()
+
+	server := newUserDataSourceAPIServer(t)
+	server.service.pageSize = 1
+	t.Cleanup(server.Close)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{Config: testAccUserDataSourceSelectorConfig(server.URL, ""), ExpectError: regexp.MustCompile("Missing Ona User Selector")},
+			{Config: testAccUserDataSourceSelectorConfig(server.URL, `email = "alice@example.com"`), ExpectError: regexp.MustCompile("Incomplete Ona User Selector")},
+			{Config: testAccUserDataSourceSelectorConfig(server.URL, `login_provider = "github"`), ExpectError: regexp.MustCompile("Incomplete Ona User Selector")},
+			{Config: testAccUserDataSourceSelectorConfig(server.URL, fmt.Sprintf("user_id = %q\nemail = %q\nlogin_provider = %q", userDataSourceAliceID, "alice@example.com", "github")), ExpectError: regexp.MustCompile("Conflicting Ona User Selectors")},
+			{Config: testAccUserDataSourceEmailConfig(server.URL, "", "github"), ExpectError: regexp.MustCompile("Invalid Ona User Email")},
+			{Config: testAccUserDataSourceEmailConfig(server.URL, strings.Repeat("a", 257), "github"), ExpectError: regexp.MustCompile("Invalid Ona User Email")},
+			{Config: testAccUserDataSourceSelectorConfig(server.URL, `email = "alice@example.com"
+login_provider = "gitlab"`), ExpectError: regexp.MustCompile("Invalid Ona Login Provider")},
+			{Config: testAccUserDataSourceEmailConfig(server.URL, "alice@example.com", "magiclink"), ExpectError: regexp.MustCompile("Invalid Ona Login Provider")},
+			{Config: testAccUserDataSourceEmailConfig(server.URL, "nobody@example.com", "github"), ExpectError: regexp.MustCompile(`(?s)No Ona user.*nobody@example.com.*login_provider.*github`)},
+			{
+				PreConfig: func() {
+					server.service.deleteUser(userDataSourceAliceID)
+				},
+				Config:      testAccUserDataSourceEmailConfig(server.URL, "alice@example.com", "github"),
+				ExpectError: regexp.MustCompile(`(?s)Organization member.*00000000-0000-0000-0000-000000000001.*matched email.*alice@example.com.*user record.*not.*visible`),
+			},
+			{
+				PreConfig: func() {
+					members := []*v1.OrganizationMember{
+						testUserDataSourceMember(userDataSourceAliceID, "Alice Admin", "alice@example.com", v1.UserStatus_USER_STATUS_ACTIVE, v1.OrganizationRole_ORGANIZATION_ROLE_ADMIN, "github"),
+						testUserDataSourceMember(userDataSourceCarolID, "Carol Former", "alice@example.com", v1.UserStatus_USER_STATUS_LEFT, v1.OrganizationRole_ORGANIZATION_ROLE_MEMBER, "github"),
+					}
+					server.service.setMembers(members)
+				},
+				Config:      testAccUserDataSourceEmailConfig(server.URL, "alice@example.com", "github"),
+				ExpectError: regexp.MustCompile(`(?s)Multiple Ona Users Matched.*00000000-0000-0000-0000-000000000001.*status.*active.*00000000-0000-0000-0000-000000000003.*status.*left`),
+			},
+		},
+	})
+}
+
 func testAccUserDataSourceConfig(host string, userID string) string {
 	return fmt.Sprintf(`
 provider "ona" {
@@ -173,6 +270,47 @@ provider "echo" {
 
 resource "echo" "consumer" {}
 `, host, userID)
+}
+
+func testAccUserDataSourceEmailConfig(host string, email string, loginProvider string) string {
+	return testAccUserDataSourceSelectorConfig(host, fmt.Sprintf("email = %q\nlogin_provider = %q", email, loginProvider))
+}
+
+func testAccUserDataSourceSelectorConfig(host string, selector string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+data "ona_user" "test" {
+  %[2]s
+}
+`, host, selector)
+}
+
+func testAccUserDataSourceForEachConfig(host string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+locals {
+  runner_admins = {
+    alice = { email = "alice@example.com", login_provider = "github" }
+    bob   = { email = "bob@example.com", login_provider = "google" }
+    carol = { email = "alice@example.com", login_provider = "custom" }
+  }
+}
+
+data "ona_user" "runner_admins" {
+  for_each = local.runner_admins
+
+  email          = each.value.email
+  login_provider = each.value.login_provider
+}
+`, host)
 }
 
 func testAccUsersDataSourceConfig(host string) string {
@@ -227,7 +365,7 @@ func newUserDataSourceAPIServer(t *testing.T) *userDataSourceAPIServer {
 
 	joined := timestamppb.New(time.Date(2026, 7, 17, 10, 0, 0, 0, time.UTC))
 	members := []*v1.OrganizationMember{
-		testUserDataSourceMember(userDataSourceCarolID, "Carol Former", "carol@example.net", v1.UserStatus_USER_STATUS_LEFT, v1.OrganizationRole_ORGANIZATION_ROLE_MEMBER, "google"),
+		testUserDataSourceMember(userDataSourceCarolID, "Carol Former", "alice@example.com", v1.UserStatus_USER_STATUS_LEFT, v1.OrganizationRole_ORGANIZATION_ROLE_MEMBER, "custom"),
 		testUserDataSourceMember(userDataSourceBobID, "Bob Member", "bob@example.com", v1.UserStatus_USER_STATUS_SUSPENDED, v1.OrganizationRole_ORGANIZATION_ROLE_MEMBER, "google"),
 		testUserDataSourceMember(userDataSourceAliceID, "Alice Admin", "alice@example.com", v1.UserStatus_USER_STATUS_ACTIVE, v1.OrganizationRole_ORGANIZATION_ROLE_ADMIN, "github"),
 	}
@@ -240,7 +378,7 @@ func newUserDataSourceAPIServer(t *testing.T) *userDataSourceAPIServer {
 		users: map[string]*v1.User{
 			userDataSourceAliceID: {Id: userDataSourceAliceID, OrganizationId: userDataSourceOrganizationID, Name: "Alice Admin", Email: "alice@example.com", Status: v1.UserStatus_USER_STATUS_ACTIVE},
 			userDataSourceBobID:   {Id: userDataSourceBobID, OrganizationId: userDataSourceOrganizationID, Name: "Bob Member", Email: "bob@example.com", Status: v1.UserStatus_USER_STATUS_SUSPENDED},
-			userDataSourceCarolID: {Id: userDataSourceCarolID, OrganizationId: userDataSourceOrganizationID, Name: "Carol Former", Email: "carol@example.net", Status: v1.UserStatus_USER_STATUS_LEFT},
+			userDataSourceCarolID: {Id: userDataSourceCarolID, OrganizationId: userDataSourceOrganizationID, Name: "Carol Former", Email: "alice@example.com", Status: v1.UserStatus_USER_STATUS_LEFT},
 		},
 	}
 
@@ -270,6 +408,7 @@ type fakeUserDataSourceService struct {
 	members              []*v1.OrganizationMember
 	pageSize             int
 	getUserCalls         int
+	getUserIDs           []string
 	listMemberRequests   []*v1.ListMembersRequest
 	identityRequestCount int
 }
@@ -288,6 +427,7 @@ func (s *fakeUserDataSourceService) GetUser(_ context.Context, req *connect.Requ
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.getUserCalls++
+	s.getUserIDs = append(s.getUserIDs, req.Msg.GetUserId())
 	user := s.users[req.Msg.GetUserId()]
 	if user == nil {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("user not found"))
@@ -356,6 +496,12 @@ func (s *fakeUserDataSourceService) setUserOrganization(userID string, organizat
 	s.users[userID] = user
 }
 
+func (s *fakeUserDataSourceService) deleteUser(userID string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	delete(s.users, userID)
+}
+
 func memberMatchesFilter(member *v1.OrganizationMember, filter *v1.ListMembersRequest_Filter) bool {
 	if filter == nil {
 		return true
@@ -375,7 +521,26 @@ func memberMatchesFilter(member *v1.OrganizationMember, filter *v1.ListMembersRe
 	if len(filter.GetUserIds()) > 0 && !containsString(filter.GetUserIds(), member.GetUserId()) {
 		return false
 	}
+	if filter.GetEmail() != "" && !strings.EqualFold(filter.GetEmail(), member.GetEmail()) {
+		return false
+	}
+	if filter.GetLoginProvider() != v1.LoginProviderKind_LOGIN_PROVIDER_KIND_UNSPECIFIED && filter.GetLoginProvider() != memberLoginProviderKind(member.GetLoginProvider()) {
+		return false
+	}
 	return true
+}
+
+func memberLoginProviderKind(provider string) v1.LoginProviderKind {
+	switch provider {
+	case "custom":
+		return v1.LoginProviderKind_LOGIN_PROVIDER_KIND_SSO
+	case "github":
+		return v1.LoginProviderKind_LOGIN_PROVIDER_KIND_GITHUB
+	case "google":
+		return v1.LoginProviderKind_LOGIN_PROVIDER_KIND_GOOGLE
+	default:
+		return v1.LoginProviderKind_LOGIN_PROVIDER_KIND_UNSPECIFIED
+	}
 }
 
 func containsUserStatus(values []v1.UserStatus, value v1.UserStatus) bool {
@@ -448,5 +613,41 @@ func checkCollectionUserRequests(server *userDataSourceAPIServer) resource.TestC
 			}
 		}
 		return nil
+	}
+}
+
+func checkEmailUserRequests(server *userDataSourceAPIServer, email string, loginProvider string, filterLoginProvider v1.LoginProviderKind, userID string) resource.TestCheckFunc {
+	return func(_ *terraform.State) error {
+		server.service.mu.Lock()
+		defer server.service.mu.Unlock()
+
+		matchingRequests := 0
+		for _, request := range server.service.listMemberRequests {
+			if request.GetFilter().GetSearch() != "" {
+				return fmt.Errorf("ListMembers search = %q, want exact email and login_provider filters", request.GetFilter().GetSearch())
+			}
+			if request.GetFilter().GetEmail() == email && request.GetFilter().GetLoginProvider() == filterLoginProvider {
+				matchingRequests++
+			}
+		}
+		if matchingRequests == 0 {
+			return fmt.Errorf("ListMembers requests filtering by email %q and login_provider %s = 0, want at least 1", email, filterLoginProvider)
+		}
+		if !containsString(server.service.getUserIDs, userID) {
+			return fmt.Errorf("GetUser IDs = %v, want selected %s user %q", server.service.getUserIDs, loginProvider, userID)
+		}
+		return nil
+	}
+}
+
+func checkForEachUserRequests(t *testing.T, server *userDataSourceAPIServer) {
+	t.Helper()
+
+	server.service.mu.Lock()
+	defer server.service.mu.Unlock()
+	for _, userID := range []string{userDataSourceAliceID, userDataSourceBobID, userDataSourceCarolID} {
+		if !containsString(server.service.getUserIDs, userID) {
+			t.Errorf("GetUser IDs = %v, want for_each lookup of user %q", server.service.getUserIDs, userID)
+		}
 	}
 }

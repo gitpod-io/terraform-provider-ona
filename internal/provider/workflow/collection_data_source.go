@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/providerdata"
@@ -84,12 +84,12 @@ func (d *CollectionDataSource) listWorkflows(ctx context.Context, filter *v1.Lis
 			Filter:     filter,
 		}))
 		if err != nil {
-			return nil, fmt.Errorf("list workflows: %w", err)
+			return nil, fmt.Errorf("list automations: %w", err)
 		}
 		workflows = append(workflows, result.Msg.GetWorkflows()...)
 		nextToken := result.Msg.GetPagination().GetNextToken()
 		if err := listutil.NextPageToken(seenTokens, nextToken); err != nil {
-			return nil, fmt.Errorf("list workflows: %w", err)
+			return nil, fmt.Errorf("list automations: %w", err)
 		}
 		if nextToken == "" {
 			return workflows, nil

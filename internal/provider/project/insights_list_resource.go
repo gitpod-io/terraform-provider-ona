@@ -4,15 +4,16 @@
 package project
 
 import (
-	"connectrpc.com/connect"
 	"context"
 	"fmt"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	"sort"
+
+	"connectrpc.com/connect"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/listutil"
 	"github.com/hashicorp/terraform-plugin-framework/list"
 	listschema "github.com/hashicorp/terraform-plugin-framework/list/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"sort"
 )
 
 var _ list.ListResource = &InsightsResource{}

@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1/v1connect"
+	"github.com/gitpod-io/gitpod-sdk-go/v1/v1connect"
 	"github.com/google/go-cmp/cmp"
 )
 

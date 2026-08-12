@@ -19,13 +19,15 @@ The provider supports:
 - Project, repository, agent-prompt, and inherited trigger contexts
 - Shell-task, agent-prompt, and pull-request action steps
 - Executors, execution limits, and disabling automations
+- Codex agent selection and in-place migration from the Ona agent
+- Codex model, reasoning-effort, and service-tier settings
 
 It does not model:
 
 - Top-level report actions
 - Report steps
-- Workflow-level `agent_id`
-- Workflow-level Codex model, reasoning-effort, or service-tier settings
+
+The `agent` attribute defaults to `codex`. Imported automations that use the Ona agent report `ona`; change `agent` to `codex`, or omit it so the default applies, to migrate the existing automation in place. The automation ID and webhook URL remain unchanged. New automations and updates cannot use `agent = "ona"`.
 
 Legacy pull-request triggers without a webhook or integration cannot be imported or managed.
 

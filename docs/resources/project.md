@@ -21,7 +21,6 @@ resource "ona_project" "api" {
   insights_enabled     = true
 
   devcontainer_file_path = ".devcontainer/devcontainer.json"
-  automations_file_path  = ".ona/automations.yaml"
 
   environment_class {
     environment_class_id = ona_environment_class.large.id
@@ -62,7 +61,7 @@ resource "ona_project" "api" {
 
 ### Optional
 
-- `automations_file_path` (String) Path to the automations file, relative to the repository root. Omit to let Ona use its default discovery behavior.
+- `automations_file_path` (String) Path to the tasks and services configuration, relative to the repository root. Omit to let Ona use its default discovery behavior.
 - `devcontainer_file_path` (String) Path to the devcontainer file, relative to the repository root. Omit to let Ona use its default discovery behavior.
 - `environment_class` (Block List) Environment classes available to this project, in priority order. Configure at least one block. Each block must set exactly one of `environment_class_id` or `local_runner = true`. (see [below for nested schema](#nestedblock--environment_class))
 - `insights_enabled` (Boolean) Whether Ona Insights is enabled for the project. Defaults to `false`.

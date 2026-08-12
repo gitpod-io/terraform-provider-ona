@@ -5,6 +5,7 @@ Query and imports the discovered objects into disposable local Terraform state.
 It covers:
 
 - `ona_announcement_banner`
+- `ona_automation`
 - `ona_runner`
 - `ona_runner_policy`
 - `ona_scm_integration`
@@ -24,6 +25,7 @@ It covers:
 - `ona_security_policy`
 - `ona_secret`
 - `ona_service_account`
+- `ona_skill`
 
 The example only generates imports for objects that already exist and can be
 represented by the provider. To exercise the complete workflow, use an Ona
@@ -38,8 +40,8 @@ applying it.
 
 ## Prepare the Local Provider
 
-Terraform 1.14 or later is required. From the repository root, build the
-provider and configure a development override:
+From the repository root, build the provider and configure a development
+override:
 
 ```shell
 mkdir -p .bin
@@ -65,7 +67,8 @@ plans, or Terraform state.
 
 Run Query to generate resource blocks and identity-based import blocks for all
 registered list resources. Set `TF_VAR_group_membership_group_id` to a
-customer-managed group whose service-account memberships should be included:
+customer-managed group whose user and service-account memberships should be
+included:
 
 ```shell
 export TF_VAR_group_membership_group_id="<group-id>"

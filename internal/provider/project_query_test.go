@@ -13,7 +13,7 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/terraform-provider-ona/api/public-clients/go/v1"
+	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
 	"github.com/google/go-cmp/cmp"
 	testresource "github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
@@ -179,6 +179,8 @@ func (s *fakeProjectService) lastListRequest() *v1.ListProjectsRequest {
 }
 
 func TestAccProjectQueryReturnsRemoteInsightsStatus(t *testing.T) {
+	t.Parallel()
+
 	server := newProjectAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.projects["project-1"] = exampleQueryableProject()
@@ -217,6 +219,8 @@ func TestAccProjectQueryReturnsRemoteInsightsStatus(t *testing.T) {
 }
 
 func TestAccProjectQueryReturnsDisabledInsightsStatus(t *testing.T) {
+	t.Parallel()
+
 	server := newProjectAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.projects["project-1"] = exampleQueryableProject()
@@ -240,6 +244,8 @@ func TestAccProjectQueryReturnsDisabledInsightsStatus(t *testing.T) {
 }
 
 func TestAccProjectQueryExcludesMissingEnvironmentClasses(t *testing.T) {
+	t.Parallel()
+
 	server := newProjectAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.projects["project-1"] = exampleQueryableProject()
@@ -263,6 +269,8 @@ func TestAccProjectQueryExcludesMissingEnvironmentClasses(t *testing.T) {
 }
 
 func TestAccProjectQueryPaginatesAndBackfillsLimit(t *testing.T) {
+	t.Parallel()
+
 	server := newProjectAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.projects["project-1"] = &v1.Project{
@@ -295,6 +303,8 @@ func TestAccProjectQueryPaginatesAndBackfillsLimit(t *testing.T) {
 }
 
 func TestAccProjectQueryFiltersRepositoryCloneURLs(t *testing.T) {
+	t.Parallel()
+
 	server := newProjectAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.projects["project-1"] = queryableProject("project-1", "Selected", "https://github.com/ona/selected.git")
@@ -316,6 +326,8 @@ func TestAccProjectQueryFiltersRepositoryCloneURLs(t *testing.T) {
 }
 
 func TestAccProjectQueryPaginatesEnvironmentClasses(t *testing.T) {
+	t.Parallel()
+
 	server := newProjectAPIServer(t)
 	t.Cleanup(server.Close)
 	project := exampleQueryableProject()
@@ -345,6 +357,8 @@ func TestAccProjectQueryPaginatesEnvironmentClasses(t *testing.T) {
 }
 
 func TestAccProjectQueryReportsListProjectsError(t *testing.T) {
+	t.Parallel()
+
 	server := newProjectAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.listErr = errors.New("projects unavailable")
@@ -357,6 +371,8 @@ func TestAccProjectQueryReportsListProjectsError(t *testing.T) {
 }
 
 func TestAccProjectQueryReportsEnvironmentClassListError(t *testing.T) {
+	t.Parallel()
+
 	server := newProjectAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.projects["project-1"] = exampleQueryableProject()
@@ -370,6 +386,8 @@ func TestAccProjectQueryReportsEnvironmentClassListError(t *testing.T) {
 }
 
 func TestAccProjectQueryReportsInsightsError(t *testing.T) {
+	t.Parallel()
+
 	server := newProjectAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.projects["project-1"] = exampleQueryableProject()
@@ -383,6 +401,8 @@ func TestAccProjectQueryReportsInsightsError(t *testing.T) {
 }
 
 func TestAccProjectQueryIdentityOnlyDoesNotReadInsights(t *testing.T) {
+	t.Parallel()
+
 	server := newProjectAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.projects["project-1"] = exampleQueryableProject()

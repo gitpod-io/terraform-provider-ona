@@ -1,2 +1,2 @@
 # Single source of truth for the Go version used by CI and the devcontainer.
-1.25.12
+1.26.5

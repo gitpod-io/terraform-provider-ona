@@ -16,33 +16,57 @@ import (
 
 func resourceSchema() resourceschema.Schema {
 	return resourceschema.Schema{
-		MarkdownDescription: "Persistent Ona automation. Creating automations requires a permitted user credential; the Ona API rejects automation creation by service accounts. A caller changing automation triggers or actions must own the current user executor or set the executor to themselves or a service account. Removing this resource uses graceful deletion: Ona immediately deletes idle automations, but cancels active executions and finishes their cleanup asynchronously.",
+		MarkdownDescription: "Persistent Ona automation. New automations use the Codex agent. Existing Ona-agent automations can be imported, read, and deleted; change `agent` to `codex` to migrate one in place. Creating automations requires a permitted user credential; the Ona API rejects automation creation by service accounts. A caller changing automation triggers or actions must own the current user executor or set the executor to themselves or a service account. Removing this resource uses graceful deletion: Ona immediately deletes idle automations, but cancels active executions and finishes their cleanup asynchronously.",
 		Attributes: map[string]resourceschema.Attribute{
-			"id": tfvalue.StableComputedString("Workflow ID. Use this value as the Terraform import ID."),
+			"id": tfvalue.StableComputedString("Automation ID. Use this value as the Terraform import ID."),
+			"agent": resourceschema.StringAttribute{
+				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(agentCodex),
+				MarkdownDescription: "Automation agent. Supported values are `codex` and `ona`; the default is `codex`. New automations must use `codex`. Imported Ona-agent automations report `ona`; change this value to `codex` to migrate the existing automation in place. An omitted agent on an imported Ona-agent automation also plans that migration because the default is `codex`.",
+			},
 			"name": resourceschema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Workflow display name. Must be between 1 and 80 characters.",
+				MarkdownDescription: "Automation display name. Must be between 1 and 80 characters.",
 			},
 			"description": resourceschema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: "Optional workflow description. Must not exceed 500 characters. Set an empty string to clear it.",
+				MarkdownDescription: "Optional automation description. Must not exceed 500 characters. Set an empty string to clear it.",
+			},
+			"codex_settings": resourceschema.SingleNestedAttribute{
+				Optional:            true,
+				MarkdownDescription: "Codex model, reasoning, and service settings. Omit this object or use an empty object to select runtime defaults. Ona applies these settings only to Codex automations.",
+				Attributes: map[string]resourceschema.Attribute{
+					"model": resourceschema.StringAttribute{
+						Optional:            true,
+						MarkdownDescription: "Codex model. Supported values are `gpt-5.5`, `gpt-5.4`, `gpt-5.6-sol`, `gpt-5.6-terra`, and `gpt-5.6-luna`. Deprecated model values remain readable for existing automations but cannot be configured.",
+					},
+					"reasoning_effort": resourceschema.StringAttribute{
+						Optional:            true,
+						MarkdownDescription: "Codex reasoning effort. Supported values are `low`, `medium`, `high`, and `xhigh`. Feature-flagged `max` and `ultra` values remain readable for existing automations but cannot be configured.",
+					},
+					"service_tier": resourceschema.StringAttribute{
+						Optional:            true,
+						MarkdownDescription: "Codex service tier. The supported value is `fast`.",
+					},
+				},
 			},
 			"triggers": resourceschema.ListNestedAttribute{
 				Required:            true,
-				MarkdownDescription: "Ordered workflow triggers. Configure between 1 and 10 entries.",
+				MarkdownDescription: "Ordered automation triggers. Configure between 1 and 10 entries.",
 				NestedObject: resourceschema.NestedAttributeObject{
 					Attributes: triggerResourceAttributes(),
 				},
 			},
 			"action": resourceschema.SingleNestedAttribute{
 				Required:            true,
-				MarkdownDescription: "Workflow action and its ordered execution steps.",
+				MarkdownDescription: "Automation action and its ordered execution steps.",
 				Attributes:          actionResourceAttributes(),
 			},
 			"executor": resourceschema.SingleNestedAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "Identity that executes the workflow. Omit to use the creating user. A user executor must be the API caller; a service-account executor may be selected by ID. Removing this block retains the resolved remote executor because the API has no clear operation.",
+				MarkdownDescription: "Identity that executes the automation. Omit to use the creating user. A user executor must be the API caller; a service-account executor may be selected by ID. Removing this block retains the resolved remote executor because the API has no clear operation.",
 				PlanModifiers: []planmodifier.Object{
 					objectplanmodifier.UseStateForUnknown(),
 				},
@@ -63,14 +87,14 @@ func resourceSchema() resourceschema.Schema {
 				Optional:            true,
 				Computed:            true,
 				Default:             booldefault.StaticBool(false),
-				MarkdownDescription: "Whether automatic and manual workflow starts are disabled. Defaults to `false`.",
+				MarkdownDescription: "Whether automatic and manual automation starts are disabled. Defaults to `false`.",
 			},
-			"webhook_url": tfvalue.StableComputedString("Generated workflow webhook URL. The signing secret is not read or stored."),
-			"creator":     computedSubjectResourceAttribute("Identity that created the workflow."),
-			"created_at":  tfvalue.StableComputedString("Time when the workflow was created, in RFC 3339 format."),
+			"webhook_url": tfvalue.StableComputedString("Generated automation webhook URL. The signing secret is not read or stored."),
+			"creator":     computedSubjectResourceAttribute("Identity that created the automation."),
+			"created_at":  tfvalue.StableComputedString("Time when the automation was created, in RFC 3339 format."),
 			"updated_at": resourceschema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "Time when the workflow was last updated, in RFC 3339 format.",
+				MarkdownDescription: "Time when the automation was last updated, in RFC 3339 format.",
 			},
 		},
 	}
@@ -118,7 +142,7 @@ func triggerResourceAttributes() map[string]resourceschema.Attribute {
 			Attributes: map[string]resourceschema.Attribute{
 				"projects": resourceschema.SingleNestedAttribute{
 					Optional:            true,
-					MarkdownDescription: "Project environments in which the workflow runs.",
+					MarkdownDescription: "Project environments in which the automation runs.",
 					Attributes: map[string]resourceschema.Attribute{
 						"project_ids": resourceschema.SetAttribute{
 							Required:            true,
@@ -129,7 +153,7 @@ func triggerResourceAttributes() map[string]resourceschema.Attribute {
 				},
 				"repositories": resourceschema.SingleNestedAttribute{
 					Optional:            true,
-					MarkdownDescription: "Repository environments in which the workflow runs.",
+					MarkdownDescription: "Repository environments in which the automation runs.",
 					Attributes: map[string]resourceschema.Attribute{
 						"repository_urls": resourceschema.SetAttribute{
 							Optional:            true,
