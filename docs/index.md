@@ -8,7 +8,7 @@ description: |-
 
 The Ona provider manages Ona organization configuration from Terraform. It is intended for platform, identity, and security teams that want Ona projects, runners, access controls, policy settings, secrets, and automation integrations to be reviewed, versioned, and applied through Terraform.
 
-The provider is currently a beta release. The current published version is `0.3.0-beta.37`, and the release process publishes beta artifacts from SemVer prerelease versions.
+The provider is currently a beta release. The current published version is `0.3.0-beta.48`, and the release process publishes beta artifacts from SemVer prerelease versions.
 
 ## Requirements
 
@@ -25,7 +25,7 @@ terraform {
   required_providers {
     ona = {
       source  = "gitpod-io/ona"
-      version = "= 0.3.0-beta.37"
+      version = "= 0.3.0-beta.48"
     }
   }
 }
