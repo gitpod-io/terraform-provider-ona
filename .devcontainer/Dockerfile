@@ -1,5 +1,4 @@
-# The official Go image tracks the latest Go 1.25 patch, so it is our toolchain source.
-FROM golang:1.25-bookworm
+FROM golang:1.26.5-bookworm
 ENV DEVCONTAINER_RETRIGGER=0
 
 COPY dev/go/go.version /tmp/go.version
