@@ -2,12 +2,12 @@
 page_title: "ona_scm_integration Resource - ona"
 subcategory: "Runners"
 description: |-
-  Ona runner SCM integration. Use this to configure how a runner authenticates to source control systems for projects assigned to that runner.
+  Ona runner SCM integration. Use this to configure how a runner authenticates to source control systems for projects assigned to that runner. For pat mode, use ona_git_authentication to associate a service account and personal access token with the integration.
 ---
 
 # ona_scm_integration (Resource)
 
-Ona runner SCM integration. Use this to configure how a runner authenticates to source control systems for projects assigned to that runner.
+Ona runner SCM integration. Use this to configure how a runner authenticates to source control systems for projects assigned to that runner. For `pat` mode, use `ona_git_authentication` to associate a service account and personal access token with the integration.
 
 For product context, see [Configuring repository access](https://ona.com/docs/ona/runners/configuring-repository-access) and [Git providers](https://ona.com/docs/ona/source-control/overview).
 

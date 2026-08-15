@@ -325,11 +325,15 @@ func newIntegrationAPIServer(t *testing.T) *integrationAPIServer {
 type fakeIntegrationService struct {
 	v1connect.UnimplementedIntegrationServiceHandler
 
-	mu           sync.Mutex
-	definitions  map[string]*v1.IntegrationDefinition
-	integrations map[string]*v1.Integration
-	nextID       int
-	denyCreate   bool
+	mu            sync.Mutex
+	definitions   map[string]*v1.IntegrationDefinition
+	integrations  map[string]*v1.Integration
+	nextID        int
+	denyCreate    bool
+	listErr       error
+	listPageSize  int
+	listPageSizes []int32
+	listCalls     int
 }
 
 func (s *fakeIntegrationService) ListIntegrationDefinitions(ctx context.Context, req *connect.Request[v1.ListIntegrationDefinitionsRequest]) (*connect.Response[v1.ListIntegrationDefinitionsResponse], error) {
@@ -397,6 +401,53 @@ func (s *fakeIntegrationService) CreateIntegration(ctx context.Context, req *con
 	return connect.NewResponse(&v1.CreateIntegrationResponse{Integration: s.resolvedLocked(integration)}), nil
 }
 
+func (s *fakeIntegrationService) ListIntegrations(ctx context.Context, req *connect.Request[v1.ListIntegrationsRequest]) (*connect.Response[v1.ListIntegrationsResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.listCalls++
+	s.listPageSizes = append(s.listPageSizes, req.Msg.GetPagination().GetPageSize())
+	if s.listErr != nil {
+		return nil, s.listErr
+	}
+
+	ids := make([]string, 0, len(s.integrations))
+	for id := range s.integrations {
+		ids = append(ids, id)
+	}
+	sort.Strings(ids)
+	offset := 0
+	if token := req.Msg.GetPagination().GetToken(); token != "" {
+		var err error
+		offset, err = strconv.Atoi(token)
+		if err != nil {
+			return nil, connect.NewError(connect.CodeInvalidArgument, err)
+		}
+	}
+	pageSize := int(req.Msg.GetPagination().GetPageSize())
+	if pageSize <= 0 {
+		pageSize = len(ids)
+	}
+	if s.listPageSize > 0 && pageSize > s.listPageSize {
+		pageSize = s.listPageSize
+	}
+	end := offset + pageSize
+	if end > len(ids) {
+		end = len(ids)
+	}
+	integrations := make([]*v1.Integration, 0, end-offset)
+	for _, id := range ids[offset:end] {
+		integrations = append(integrations, s.resolvedLocked(s.integrations[id]))
+	}
+	nextToken := ""
+	if end < len(ids) {
+		nextToken = strconv.Itoa(end)
+	}
+	return connect.NewResponse(&v1.ListIntegrationsResponse{
+		Integrations: integrations,
+		Pagination:   &v1.PaginationResponse{NextToken: nextToken},
+	}), nil
+}
+
 func (s *fakeIntegrationService) GetIntegration(ctx context.Context, req *connect.Request[v1.GetIntegrationRequest]) (*connect.Response[v1.GetIntegrationResponse], error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -443,6 +494,18 @@ func (s *fakeIntegrationService) seedDefinition(definition *v1.IntegrationDefini
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.definitions[definition.GetId()] = cloneDefinition(definition)
+}
+
+func (s *fakeIntegrationService) seedIntegration(integration *v1.Integration) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.integrations[integration.GetId()] = proto.CloneOf(integration)
+}
+
+func (s *fakeIntegrationService) integrationListStats() (int, []int32) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.listCalls, append([]int32(nil), s.listPageSizes...)
 }
 
 func (s *fakeIntegrationService) resolvedLocked(integration *v1.Integration) *v1.Integration {

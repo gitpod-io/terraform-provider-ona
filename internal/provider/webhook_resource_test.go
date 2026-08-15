@@ -343,6 +343,9 @@ type fakeWebhookService struct {
 	rotations       map[string]int
 	secretReads     map[string]int
 	lastSecretsRead map[string]string
+	listErr         error
+	listPageLimit   int32
+	listRequests    []*v1.ListWebhooksRequest
 	nextID          int
 	now             time.Time
 	organizationID  string

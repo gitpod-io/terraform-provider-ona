@@ -7,8 +7,10 @@ import (
 	"context"
 	"errors"
 
+	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/accesscontrol"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/billing"
+	gitauthentication "github.com/gitpod-io/terraform-provider-ona/internal/provider/git_authentication"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/integration"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/organization"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/project"
@@ -24,6 +26,7 @@ import (
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/webhook"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/workflow"
 	providerversion "github.com/gitpod-io/terraform-provider-ona/version"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
 	"github.com/hashicorp/terraform-plugin-framework/list"
@@ -31,6 +34,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -49,8 +53,10 @@ type OnaProvider struct {
 
 // OnaProviderModel describes the provider data model.
 type OnaProviderModel struct {
-	Host  types.String `tfsdk:"host"`
-	Token types.String `tfsdk:"token"`
+	Host                   types.String `tfsdk:"host"`
+	Token                  types.String `tfsdk:"token"`
+	RateLimitMaxRetries    types.Int64  `tfsdk:"rate_limit_max_retries"`
+	RateLimitMaxRetryDelay types.String `tfsdk:"rate_limit_max_retry_delay"`
 }
 
 func (p *OnaProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -70,6 +76,20 @@ func (p *OnaProvider) Schema(ctx context.Context, req provider.SchemaRequest, re
 				MarkdownDescription: "Ona API token used by the provider. Defaults to `ONA_TOKEN` when set. Use a personal access token for Terraform write workflows unless Ona has confirmed service-account-token permissions for your organization and use case. Avoid committing this value to configuration.",
 				Optional:            true,
 				Sensitive:           true,
+			},
+			"rate_limit_max_retries": schema.Int64Attribute{
+				MarkdownDescription: "Maximum number of retries after an Ona API request is rejected by the rate limiter. Defaults to `5`; set to `0` to disable rate-limit retries.",
+				Optional:            true,
+				Validators: []validator.Int64{
+					int64validator.AtLeast(0),
+				},
+			},
+			"rate_limit_max_retry_delay": schema.StringAttribute{
+				MarkdownDescription: "Maximum server-provided delay before retrying a rate-limited request, as a positive Go duration. Defaults to `30s`.",
+				Optional:            true,
+				Validators: []validator.String{
+					positiveDurationValidator{},
+				},
 			},
 		},
 	}
@@ -98,6 +118,40 @@ func (p *OnaProvider) Configure(ctx context.Context, req provider.ConfigureReque
 			"The provider cannot configure the Ona API client with an unknown token.",
 		)
 	}
+	if data.RateLimitMaxRetries.IsUnknown() {
+		resp.Diagnostics.AddAttributeError(
+			pathRoot("rate_limit_max_retries"),
+			"Unknown Rate Limit Retry Count",
+			"The provider cannot configure rate-limit retries with an unknown maximum retry count.",
+		)
+	}
+	if data.RateLimitMaxRetryDelay.IsUnknown() {
+		resp.Diagnostics.AddAttributeError(
+			pathRoot("rate_limit_max_retry_delay"),
+			"Unknown Rate Limit Retry Delay",
+			"The provider cannot configure rate-limit retries with an unknown maximum retry delay.",
+		)
+	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	maxRetries, err := configuredRateLimitMaxRetries(data.RateLimitMaxRetries)
+	if err != nil {
+		resp.Diagnostics.AddAttributeError(
+			pathRoot("rate_limit_max_retries"),
+			"Invalid Rate Limit Retry Count",
+			err.Error(),
+		)
+	}
+	maxRetryDelay, err := configuredRateLimitMaxRetryDelay(data.RateLimitMaxRetryDelay)
+	if err != nil {
+		resp.Diagnostics.AddAttributeError(
+			pathRoot("rate_limit_max_retry_delay"),
+			"Invalid Rate Limit Retry Delay",
+			err.Error(),
+		)
+	}
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -110,7 +164,10 @@ func (p *OnaProvider) Configure(ctx context.Context, req provider.ConfigureReque
 		token = data.Token.ValueString()
 	}
 
-	api, apiBaseURL, err := newManagementPlane(host, token, providerversion.UserAgentFor(p.version))
+	api, apiBaseURL, err := newManagementPlane(host, token, providerversion.UserAgentFor(p.version), managementclient.RateLimitRetryConfig{
+		MaxRetries:    maxRetries,
+		MaxRetryDelay: maxRetryDelay,
+	})
 	if err != nil && !errors.Is(err, errMissingToken) {
 		providerdiag.AddAPIError(&resp.Diagnostics, "Unable to Configure Ona API Client", "configuring the Ona API client", err)
 		return
@@ -134,10 +191,14 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		accesscontrol.NewGroupMembershipResource,
 		accesscontrol.NewGroupResource,
 		accesscontrol.NewOrganizationRoleAssignmentResource,
+		accesscontrol.NewProjectRoleAssignmentResource,
+		accesscontrol.NewRunnerRoleAssignmentResource,
+		accesscontrol.NewTeamMembershipResource,
 		accesscontrol.NewTeamResource,
 		billing.NewOrganizationAIBudgetResource,
 		billing.NewTeamAIBudgetResource,
 		billing.NewUserAIBudgetResource,
+		gitauthentication.NewResource,
 		integration.NewResource,
 		organization.NewAnnouncementBannerResource,
 		organization.NewCustomDomainResource,
@@ -146,11 +207,9 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		organization.NewSCIMConfigurationResource,
 		organization.NewSSOConfigurationResource,
 		organization.NewTermsOfServiceResource,
-		project.NewInsightsResource,
 		project.NewResource,
 		runner.NewEnvironmentClassResource,
 		runner.NewLLMIntegrationResource,
-		runner.NewPolicyResource,
 		runner.NewResource,
 		runner.NewSCMIntegrationResource,
 		runner.NewTokenResource,
@@ -175,9 +234,13 @@ func (p *OnaProvider) EphemeralResources(ctx context.Context) []func() ephemeral
 // registered by the provider. Resource-specific PRs add constructors here.
 func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResource {
 	return []func() list.ListResource{
+		gitauthentication.NewListResource,
 		accesscontrol.NewGroupListResource,
 		accesscontrol.NewGroupMembershipListResource,
 		accesscontrol.NewOrganizationRoleAssignmentListResource,
+		integration.NewListResource,
+		accesscontrol.NewTeamListResource,
+		accesscontrol.NewTeamMembershipListResource,
 		organization.NewAnnouncementBannerListResource,
 		organization.NewCustomDomainListResource,
 		organization.NewOIDCConfigListResource,
@@ -185,17 +248,17 @@ func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResou
 		organization.NewSCIMConfigurationListResource,
 		organization.NewSSOConfigurationListResource,
 		organization.NewTermsOfServiceListResource,
-		project.NewInsightsListResource,
 		project.NewListResource,
 		runner.NewEnvironmentClassListResource,
+		runner.NewLLMIntegrationListResource,
 		runner.NewRunnerListResource,
-		runner.NewRunnerPolicyListResource,
 		runner.NewSCMIntegrationListResource,
 		security.NewPolicyListResource,
 		secret.NewListResource,
 		serviceaccount.NewListResource,
 		skill.NewListResource,
 		warmpool.NewWarmPoolListResource,
+		webhook.NewListResource,
 		workflow.NewListResource,
 	}
 }

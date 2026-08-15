@@ -31,7 +31,12 @@ terraform {
 }
 
 # Set ONA_TOKEN in the environment before running Terraform.
-provider "ona" {}
+provider "ona" {
+  # Rate-limit retries default to 5 attempts with a 30-second delay cap.
+  # Set rate_limit_max_retries = 0 to disable them.
+  # rate_limit_max_retries     = 5
+  # rate_limit_max_retry_delay = "30s"
+}
 
 # Optional: set host only when using a non-default Ona API host.
 # provider "ona" {
@@ -74,4 +79,6 @@ export ONA_HOST="https://<ona-hostname>"
 ### Optional
 
 - `host` (String) Ona application host, including scheme when a custom host is used. Defaults to `ONA_HOST` when set, otherwise `https://app.gitpod.io`. Most configurations should omit this attribute.
+- `rate_limit_max_retries` (Number) Maximum number of retries after an Ona API request is rejected by the rate limiter. Defaults to `5`; set to `0` to disable rate-limit retries.
+- `rate_limit_max_retry_delay` (String) Maximum server-provided delay before retrying a rate-limited request, as a positive Go duration. Defaults to `30s`.
 - `token` (String, Sensitive) Ona API token used by the provider. Defaults to `ONA_TOKEN` when set. Use a personal access token for Terraform write workflows unless Ona has confirmed service-account-token permissions for your organization and use case. Avoid committing this value to configuration.

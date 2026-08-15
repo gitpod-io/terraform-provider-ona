@@ -54,7 +54,7 @@ test-acc:
 	TF_ACC=1 go test -v -cover -timeout 120m ./...
 
 check-secondary-go-modules:
-	$(call run-in-go-modules,$(SECONDARY_GO_MODULE_DIRS),check secondary Go module,packages="$$(go list ./...)" && (go test ./... || [ -z "$$packages" ]) && if [ -n "$$packages" ]; then go build ./...; fi)
+	$(call run-in-go-modules,$(SECONDARY_GO_MODULE_DIRS),check secondary Go module,packages="$$(go list ./...)" && (go test ./... || [ -z "$$packages" ]) && if [ -n "$$packages" ]; then go build -o /dev/null ./...; fi)
 
 release-snapshot:
 	VERSION=$(RELEASE_SNAPSHOT_VERSION) ./scripts/build-release-artifacts.sh

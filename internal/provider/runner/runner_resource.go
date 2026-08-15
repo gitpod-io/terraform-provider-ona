@@ -370,8 +370,12 @@ func createRunnerRequest(data RunnerModel, password types.String) (*v1.CreateRun
 
 func createRunnerSpec(config *ConfigurationModel, password types.String) (*v1.RunnerSpec, diag.Diagnostics) {
 	var diags diag.Diagnostics
+	spec := &v1.RunnerSpec{
+		Configuration: &v1.RunnerConfiguration{},
+		Variant:       v1.RunnerVariant_RUNNER_VARIANT_ENTERPRISE,
+	}
 	if config == nil {
-		return nil, diags
+		return spec, diags
 	}
 
 	releaseChannel, ok := releaseChannelFromString(config.ReleaseChannel.ValueString())
@@ -388,9 +392,6 @@ func createRunnerSpec(config *ConfigurationModel, password types.String) (*v1.Ru
 		return nil, diags
 	}
 
-	spec := &v1.RunnerSpec{
-		Configuration: &v1.RunnerConfiguration{},
-	}
 	if !config.Region.IsNull() && !config.Region.IsUnknown() {
 		spec.Configuration.Region = config.Region.ValueString()
 	}

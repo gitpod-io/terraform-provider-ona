@@ -11,4 +11,4 @@ package tools
 //go:generate terraform fmt -recursive ../examples/ ../dev/local-devloop/
 
 // Generate documentation.
-//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs generate --provider-dir .. -provider-name ona
+//go:generate go run ./tfplugindocs generate --provider-dir .. -provider-name ona

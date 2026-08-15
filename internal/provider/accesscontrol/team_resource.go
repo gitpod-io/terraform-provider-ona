@@ -24,6 +24,7 @@ import (
 
 var _ resource.Resource = &TeamResource{}
 var _ resource.ResourceWithConfigure = &TeamResource{}
+var _ resource.ResourceWithIdentity = &TeamResource{}
 var _ resource.ResourceWithImportState = &TeamResource{}
 
 func NewTeamResource() resource.Resource {
@@ -107,6 +108,7 @@ func (r *TeamResource) Create(ctx context.Context, req resource.CreateRequest, r
 	}
 
 	data.ID = types.StringValue(result.Msg.GetTeam().GetId())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, TeamIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -154,6 +156,7 @@ func (r *TeamResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 
 	data = TeamModel{}
 	populateTeamModel(&data, team)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, TeamIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -184,6 +187,7 @@ func (r *TeamResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	planned := data
 	populateTeamModel(&data, result.Msg.GetTeam())
 	preserveTeamPlannedInputs(&data, planned)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, TeamIdentityModel{ID: data.ID})...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -210,7 +214,7 @@ func (r *TeamResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 }
 
 func (r *TeamResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("id"), req, resp)
 }
 
 func (r *TeamResource) getTeam(ctx context.Context, id string) (*v1.Team, error) {

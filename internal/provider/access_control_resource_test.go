@@ -46,6 +46,12 @@ const (
 	accessControlAutomationID      = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"
 	accessControlOtherAutomationID = "cccccccc-cccc-4ccc-8ccc-cccccccccccc"
 	accessControlDuplicateID       = "dddddddd-dddd-4ddd-8ddd-dddddddddddd"
+	accessControlProjectID         = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
+	accessControlOtherProjectID    = "ffffffff-ffff-4fff-8fff-ffffffffffff"
+	accessControlRunnerID          = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
+	accessControlOtherRunnerID     = "ffffffff-ffff-4fff-8fff-ffffffffffff"
+	accessControlReplacementID     = "12121212-1212-4212-8212-121212121212"
+	accessControlOrgMembersGroupID = "13131313-1313-4313-8313-131313131313"
 	accessControlCreatedAt         = "2026-01-02T03:04:05Z"
 	accessControlUpdatedAt         = "2026-01-03T03:04:05Z"
 )
@@ -228,6 +234,16 @@ func TestAccTeamResourceLifecycle(t *testing.T) {
 				ResourceName:      "ona_team.test",
 				ImportState:       true,
 				ImportStateVerify: true,
+			},
+			{
+				ResourceName:    "ona_team.test",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportPlanChecks: resource.ImportPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("ona_team.test", plancheck.ResourceActionNoop),
+					},
+				},
 			},
 			{
 				Config: testAccTeamResourceConfig(server.URL, "Developer Productivity"),
@@ -1950,6 +1966,9 @@ type fakeGroupService struct {
 	teamDeleteCallCount int
 	nextTeamGetEmpty    bool
 	nextTeamGetError    error
+	teamListRequests    []*v1.ListTeamsRequest
+	teamListPageLimit   int32
+	nextTeamListError   error
 	nextTeamDeleteError error
 	nextTeamUpdateEmpty bool
 	nextTeamUpdateError error
@@ -1977,6 +1996,7 @@ type fakeGroupService struct {
 		deleteRequests       []*v1.DeleteRoleAssignmentRequest
 		pageLimit            int32
 		ignoreFilters        bool
+		repeatNextToken      bool
 	}
 	serviceAccountNames map[string]string
 }
@@ -2073,6 +2093,48 @@ func (s *fakeGroupService) GetTeam(ctx context.Context, req *connect.Request[v1.
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("team not found"))
 	}
 	return connect.NewResponse(&v1.GetTeamResponse{Team: cloneTeam(team)}), nil
+}
+
+func (s *fakeGroupService) ListTeams(ctx context.Context, req *connect.Request[v1.ListTeamsRequest]) (*connect.Response[v1.ListTeamsResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.teamListRequests = append(s.teamListRequests, proto.CloneOf(req.Msg))
+	if s.nextTeamListError != nil {
+		err := s.nextTeamListError
+		s.nextTeamListError = nil
+		return nil, err
+	}
+
+	var teams []*v1.Team
+	for _, team := range s.teams {
+		teams = append(teams, cloneTeam(team))
+	}
+	sort.Slice(teams, func(i, j int) bool { return teams[i].GetId() < teams[j].GetId() })
+
+	start, _ := strconv.Atoi(req.Msg.GetPagination().GetToken())
+	if start > len(teams) {
+		start = len(teams)
+	}
+	pageSize := int(req.Msg.GetPagination().GetPageSize())
+	if pageSize <= 0 {
+		pageSize = len(teams)
+	}
+	if s.teamListPageLimit > 0 && int(s.teamListPageLimit) < pageSize {
+		pageSize = int(s.teamListPageLimit)
+	}
+	end := start + pageSize
+	if end > len(teams) {
+		end = len(teams)
+	}
+	var nextToken string
+	if end < len(teams) {
+		nextToken = strconv.Itoa(end)
+	}
+
+	return connect.NewResponse(&v1.ListTeamsResponse{
+		Teams:      teams[start:end],
+		Pagination: &v1.PaginationResponse{NextToken: nextToken},
+	}), nil
 }
 
 func (s *fakeGroupService) UpdateTeam(ctx context.Context, req *connect.Request[v1.UpdateTeamRequest]) (*connect.Response[v1.UpdateTeamResponse], error) {
@@ -2194,7 +2256,13 @@ func (s *fakeGroupService) CreateRoleAssignment(ctx context.Context, req *connec
 	}
 	if s.roleAssignmentTest.nextCreateMismatched {
 		s.roleAssignmentTest.nextCreateMismatched = false
-		responseAssignment.ResourceId = accessControlOtherAutomationID
+		if req.Msg.GetResourceType() == v1.ResourceType_RESOURCE_TYPE_RUNNER {
+			responseAssignment.ResourceId = accessControlOtherRunnerID
+		} else if req.Msg.GetResourceType() == v1.ResourceType_RESOURCE_TYPE_PROJECT {
+			responseAssignment.ResourceId = accessControlOtherProjectID
+		} else {
+			responseAssignment.ResourceId = accessControlOtherAutomationID
+		}
 	}
 	return connect.NewResponse(&v1.CreateRoleAssignmentResponse{Assignment: responseAssignment}), nil
 }
@@ -2238,6 +2306,9 @@ func (s *fakeGroupService) ListRoleAssignments(ctx context.Context, req *connect
 	var nextToken string
 	if end < len(assignments) {
 		nextToken = strconv.Itoa(end)
+	}
+	if s.roleAssignmentTest.repeatNextToken && req.Msg.GetPagination().GetToken() != "" && nextToken != "" {
+		nextToken = req.Msg.GetPagination().GetToken()
 	}
 	return connect.NewResponse(&v1.ListRoleAssignmentsResponse{
 		Assignments: assignments[start:end],
@@ -2430,11 +2501,33 @@ func (s *fakeGroupService) replaceAssignmentRole(id string, role v1.ResourceRole
 	}
 }
 
+func (s *fakeGroupService) replaceAssignment(id, replacementID string, role v1.ResourceRole) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	assignment := s.assignments[id]
+	if assignment == nil {
+		return
+	}
+	delete(s.assignments, id)
+	s.deletedAssignments[id] = true
+	replacement := cloneAssignment(assignment)
+	replacement.Id = replacementID
+	replacement.ResourceRole = role
+	s.assignments[replacementID] = replacement
+	s.deletedAssignments[replacementID] = false
+}
+
 func (s *fakeGroupService) setRoleAssignmentListBehavior(pageLimit int32, ignoreFilters bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.roleAssignmentTest.pageLimit = pageLimit
 	s.roleAssignmentTest.ignoreFilters = ignoreFilters
+}
+
+func (s *fakeGroupService) setRoleAssignmentRepeatedToken(repeat bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.roleAssignmentTest.repeatNextToken = repeat
 }
 
 func (s *fakeGroupService) setNextRoleAssignmentCreateError(err error) {
@@ -2503,6 +2596,12 @@ func (s *fakeGroupService) assignmentDeleted() bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	return s.deletedAssignments[accessControlAssignmentID]
+}
+
+func (s *fakeGroupService) roleAssignmentDeleted(id string) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.deletedAssignments[id]
 }
 
 func memberKey(groupID string, principal v1.Principal, subjectID string) string {

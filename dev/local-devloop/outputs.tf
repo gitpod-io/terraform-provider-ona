@@ -19,9 +19,19 @@ output "managed_runner_name_from_data_source" {
   value       = data.ona_runner.devloop.name
 }
 
+output "managed_runner_role_assignment_id" {
+  description = "ID of the runner role assignment when runner sharing is enabled."
+  value       = try(ona_runner_role_assignment.devloop[0].id, null)
+}
+
 output "managed_service_account_id" {
   description = "ID of the service account managed by this module."
   value       = ona_service_account.devloop.id
+}
+
+output "managed_git_authentication_id" {
+  description = "ID of the optional Git authentication managed by this module."
+  value       = try(ona_git_authentication.devloop[0].id, null)
 }
 
 output "managed_group_id" {
@@ -32,6 +42,11 @@ output "managed_group_id" {
 output "managed_team_id" {
   description = "ID of the team managed by this module."
   value       = ona_team.devloop.id
+}
+
+output "managed_team_membership_id" {
+  description = "ID of the opt-in team membership managed by this module."
+  value       = try(ona_team_membership.devloop[0].id, null)
 }
 
 output "managed_group_membership_id" {
@@ -78,6 +93,11 @@ output "managed_automation_role_assignment_id" {
 output "managed_project_id" {
   description = "ID of the project managed by this module."
   value       = ona_project.devloop.id
+}
+
+output "managed_project_role_assignment_id" {
+  description = "ID of the project role assignment managed by this module."
+  value       = ona_project_role_assignment.devloop.id
 }
 
 output "managed_webhook_id" {

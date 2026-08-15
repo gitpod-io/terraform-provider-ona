@@ -6,20 +6,23 @@ It covers:
 
 - `ona_announcement_banner`
 - `ona_automation`
+- `ona_integration`
 - `ona_runner`
-- `ona_runner_policy`
+- `ona_runner_llm_integration`
 - `ona_scm_integration`
+- `ona_git_authentication`
 - `ona_environment_class`
 - `ona_group_membership`
+- `ona_team_membership`
 - `ona_custom_domain`
 - `ona_group`
+- `ona_team`
 - `ona_sso_configuration`
 - `ona_terms_of_service`
 - `ona_oidc_config`
 - `ona_organization_policies`
 - `ona_organization_role_assignment`
 - `ona_project`
-- `ona_project_insights`
 - `ona_warm_pool`
 - `ona_scim_configuration`
 - `ona_security_policy`
@@ -37,6 +40,10 @@ configuration creates runners, SCM integrations, an environment class, a
 project, and a warm pool. The import loop can also discover other matching
 objects in the organization, so review the generated configuration before
 applying it.
+
+Git authentication is opt-in in the local development loop. Enable its
+`ona_git_authentication.devloop` resource and supply the ephemeral personal
+access token when you need a repeatable Git-authentication import fixture.
 
 ## Prepare the Local Provider
 
@@ -68,10 +75,12 @@ plans, or Terraform state.
 Run Query to generate resource blocks and identity-based import blocks for all
 registered list resources. Set `TF_VAR_group_membership_group_id` to a
 customer-managed group whose user and service-account memberships should be
-included:
+included. Set `TF_VAR_team_membership_team_id` to a team whose user
+memberships should be included:
 
 ```shell
 export TF_VAR_group_membership_group_id="<group-id>"
+export TF_VAR_team_membership_team_id="<team-id>"
 terraform -chdir=dev/local-importloop query \
   -generate-config-out=generated.tf
 ```

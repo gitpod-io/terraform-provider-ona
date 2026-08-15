@@ -4,6 +4,8 @@ go 1.25.12
 
 require github.com/hashicorp/terraform-plugin-docs v0.25.0 // indirect
 
+require github.com/google/go-cmp v0.7.0
+
 require (
 	dario.cat/mergo v1.0.2 // indirect
 	github.com/BurntSushi/toml v1.2.1 // indirect

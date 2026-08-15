@@ -64,10 +64,14 @@ func TestResourcesAreRegistered(t *testing.T) {
 		{Name: "group_membership", TypeName: "ona_group_membership", Expected: registrationExpectation{Count: 1}},
 		{Name: "group", TypeName: "ona_group", Expected: registrationExpectation{Count: 1}},
 		{Name: "organization_role_assignment", TypeName: "ona_organization_role_assignment", Expected: registrationExpectation{Count: 1}},
+		{Name: "project_role_assignment", TypeName: "ona_project_role_assignment", Expected: registrationExpectation{Count: 1}},
+		{Name: "runner_role_assignment", TypeName: "ona_runner_role_assignment", Expected: registrationExpectation{Count: 1}},
 		{Name: "team", TypeName: "ona_team", Expected: registrationExpectation{Count: 1}},
+		{Name: "team_membership", TypeName: "ona_team_membership", Expected: registrationExpectation{Count: 1}},
 		{Name: "organization_ai_budget", TypeName: "ona_organization_ai_budget", Expected: registrationExpectation{Count: 1}},
 		{Name: "team_ai_budget", TypeName: "ona_team_ai_budget", Expected: registrationExpectation{Count: 1}},
 		{Name: "user_ai_budget", TypeName: "ona_user_ai_budget", Expected: registrationExpectation{Count: 1}},
+		{Name: "git_authentication", TypeName: "ona_git_authentication", Expected: registrationExpectation{Count: 1}},
 		{Name: "integration", TypeName: "ona_integration", Expected: registrationExpectation{Count: 1}},
 		{Name: "announcement_banner", TypeName: "ona_announcement_banner", Expected: registrationExpectation{Count: 1}},
 		{Name: "custom_domain", TypeName: "ona_custom_domain", Expected: registrationExpectation{Count: 1}},
@@ -76,11 +80,9 @@ func TestResourcesAreRegistered(t *testing.T) {
 		{Name: "scim_configuration", TypeName: "ona_scim_configuration", Expected: registrationExpectation{Count: 1}},
 		{Name: "sso_configuration", TypeName: "ona_sso_configuration", Expected: registrationExpectation{Count: 1}},
 		{Name: "terms_of_service", TypeName: "ona_terms_of_service", Expected: registrationExpectation{Count: 1}},
-		{Name: "project_insights", TypeName: "ona_project_insights", Expected: registrationExpectation{Count: 1}},
 		{Name: "project", TypeName: "ona_project", Expected: registrationExpectation{Count: 1}},
 		{Name: "environment_class", TypeName: "ona_environment_class", Expected: registrationExpectation{Count: 1}},
 		{Name: "runner_llm_integration", TypeName: "ona_runner_llm_integration", Expected: registrationExpectation{Count: 1}},
-		{Name: "runner_policy", TypeName: "ona_runner_policy", Expected: registrationExpectation{Count: 1}},
 		{Name: "runner", TypeName: "ona_runner", Expected: registrationExpectation{Count: 1}},
 		{Name: "scm_integration", TypeName: "ona_scm_integration", Expected: registrationExpectation{Count: 1}},
 		{Name: "runner_token", TypeName: "ona_runner_token", Expected: registrationExpectation{Count: 1}},
@@ -191,6 +193,10 @@ func TestListResourcesAreRegistered(t *testing.T) {
 		{Name: "group", TypeName: "ona_group", Expected: registrationExpectation{Count: 1}},
 		{Name: "group_membership", TypeName: "ona_group_membership", Expected: registrationExpectation{Count: 1}},
 		{Name: "organization_role_assignment", TypeName: "ona_organization_role_assignment", Expected: registrationExpectation{Count: 1}},
+		{Name: "integration", TypeName: "ona_integration", Expected: registrationExpectation{Count: 1}},
+		{Name: "team", TypeName: "ona_team", Expected: registrationExpectation{Count: 1}},
+		{Name: "team_membership", TypeName: "ona_team_membership", Expected: registrationExpectation{Count: 1}},
+		{Name: "git_authentication", TypeName: "ona_git_authentication", Expected: registrationExpectation{Count: 1}},
 		{Name: "announcement_banner", TypeName: "ona_announcement_banner", Expected: registrationExpectation{Count: 1}},
 		{Name: "custom_domain", TypeName: "ona_custom_domain", Expected: registrationExpectation{Count: 1}},
 		{Name: "oidc_config", TypeName: "ona_oidc_config", Expected: registrationExpectation{Count: 1}},
@@ -198,17 +204,17 @@ func TestListResourcesAreRegistered(t *testing.T) {
 		{Name: "scim_configuration", TypeName: "ona_scim_configuration", Expected: registrationExpectation{Count: 1}},
 		{Name: "sso_configuration", TypeName: "ona_sso_configuration", Expected: registrationExpectation{Count: 1}},
 		{Name: "terms_of_service", TypeName: "ona_terms_of_service", Expected: registrationExpectation{Count: 1}},
-		{Name: "project_insights", TypeName: "ona_project_insights", Expected: registrationExpectation{Count: 1}},
 		{Name: "project", TypeName: "ona_project", Expected: registrationExpectation{Count: 1}},
 		{Name: "environment_class", TypeName: "ona_environment_class", Expected: registrationExpectation{Count: 1}},
+		{Name: "runner_llm_integration", TypeName: "ona_runner_llm_integration", Expected: registrationExpectation{Count: 1}},
 		{Name: "runner", TypeName: "ona_runner", Expected: registrationExpectation{Count: 1}},
-		{Name: "runner_policy", TypeName: "ona_runner_policy", Expected: registrationExpectation{Count: 1}},
 		{Name: "scm_integration", TypeName: "ona_scm_integration", Expected: registrationExpectation{Count: 1}},
 		{Name: "security_policy", TypeName: "ona_security_policy", Expected: registrationExpectation{Count: 1}},
 		{Name: "secret", TypeName: "ona_secret", Expected: registrationExpectation{Count: 1}},
 		{Name: "service_account", TypeName: "ona_service_account", Expected: registrationExpectation{Count: 1}},
 		{Name: "skill", TypeName: "ona_skill", Expected: registrationExpectation{Count: 1}},
 		{Name: "warm_pool", TypeName: "ona_warm_pool", Expected: registrationExpectation{Count: 1}},
+		{Name: "webhook", TypeName: "ona_webhook", Expected: registrationExpectation{Count: 1}},
 		{Name: "automation", TypeName: "ona_automation", Expected: registrationExpectation{Count: 1}},
 	}
 
@@ -258,8 +264,10 @@ func TestConfigureSharesProviderDataWithListResources(t *testing.T) {
 	config := tfsdk.Config{
 		Schema: schemaResp.Schema,
 		Raw: tftypes.NewValue(configType, map[string]tftypes.Value{
-			"host":  tftypes.NewValue(tftypes.String, "https://example.com"),
-			"token": tftypes.NewValue(tftypes.String, "test-token"),
+			"host":                       tftypes.NewValue(tftypes.String, "https://example.com"),
+			"token":                      tftypes.NewValue(tftypes.String, "test-token"),
+			"rate_limit_max_retries":     tftypes.NewValue(tftypes.Number, nil),
+			"rate_limit_max_retry_delay": tftypes.NewValue(tftypes.String, nil),
 		}),
 	}
 
@@ -307,8 +315,10 @@ func TestConfigureAllowsMissingToken(t *testing.T) {
 			config := tfsdk.Config{
 				Schema: schemaResp.Schema,
 				Raw: tftypes.NewValue(configType, map[string]tftypes.Value{
-					"host":  tftypes.NewValue(tftypes.String, nil),
-					"token": tftypes.NewValue(tftypes.String, nil),
+					"host":                       tftypes.NewValue(tftypes.String, nil),
+					"token":                      tftypes.NewValue(tftypes.String, nil),
+					"rate_limit_max_retries":     tftypes.NewValue(tftypes.Number, nil),
+					"rate_limit_max_retry_delay": tftypes.NewValue(tftypes.String, nil),
 				}),
 			}
 

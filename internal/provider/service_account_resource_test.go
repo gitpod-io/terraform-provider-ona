@@ -319,10 +319,12 @@ func newServiceAccountAPIServer(t *testing.T) *serviceAccountAPIServer {
 type fakeServiceAccountService struct {
 	v1connect.UnimplementedServiceAccountServiceHandler
 
-	mu                sync.Mutex
-	accounts          map[string]*v1.ServiceAccount
-	accessTokenCalls  []serviceAccountAccessTokenCall
-	serviceTokenCalls []serviceAccountTokenCall
+	mu                   sync.Mutex
+	accounts             map[string]*v1.ServiceAccount
+	accessTokenCalls     []serviceAccountAccessTokenCall
+	nextAccessTokenErr   error
+	nextAccessTokenEmpty bool
+	serviceTokenCalls    []serviceAccountTokenCall
 }
 
 type serviceAccountAccessTokenCall struct {
@@ -409,12 +411,34 @@ func (s *fakeServiceAccountService) CreateServiceAccountAccessToken(ctx context.
 		ServiceAccountID: req.Msg.GetServiceAccountId(),
 	}
 	s.accessTokenCalls = append(s.accessTokenCalls, call)
+	if s.nextAccessTokenErr != nil {
+		err := s.nextAccessTokenErr
+		s.nextAccessTokenErr = nil
+		return nil, err
+	}
 	if s.accounts[req.Msg.GetServiceAccountId()] == nil {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("service account not found"))
 	}
+	token := "access-token-" + req.Msg.GetServiceAccountId()
+	if s.nextAccessTokenEmpty {
+		s.nextAccessTokenEmpty = false
+		token = ""
+	}
 	return connect.NewResponse(&v1.CreateServiceAccountAccessTokenResponse{
-		Token: "access-token-" + req.Msg.GetServiceAccountId(),
+		Token: token,
 	}), nil
+}
+
+func (s *fakeServiceAccountService) setNextAccessTokenError(err error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.nextAccessTokenErr = err
+}
+
+func (s *fakeServiceAccountService) returnEmptyNextAccessToken() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.nextAccessTokenEmpty = true
 }
 
 func (s *fakeServiceAccountService) CreateServiceAccountToken(ctx context.Context, req *connect.Request[v1.CreateServiceAccountTokenRequest]) (*connect.Response[v1.CreateServiceAccountTokenResponse], error) {

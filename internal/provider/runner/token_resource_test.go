@@ -10,12 +10,22 @@ import (
 
 	"connectrpc.com/connect"
 	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
+	"github.com/gitpod-io/gitpod-sdk-go/v1/v1connect"
 	managementclient "github.com/gitpod-io/terraform-provider-ona/internal/managementclient"
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
+
+type runnerTokenServiceClient struct {
+	v1connect.RunnerServiceClient
+	createRunnerToken func(context.Context, *connect.Request[v1.CreateRunnerTokenRequest]) (*connect.Response[v1.CreateRunnerTokenResponse], error)
+}
+
+func (c runnerTokenServiceClient) CreateRunnerToken(ctx context.Context, req *connect.Request[v1.CreateRunnerTokenRequest]) (*connect.Response[v1.CreateRunnerTokenResponse], error) {
+	return c.createRunnerToken(ctx, req)
+}
 
 func TestTokenResourceCreate(t *testing.T) {
 	t.Parallel()
@@ -81,7 +91,7 @@ func TestTokenResourceCreate(t *testing.T) {
 			var got Expectation
 			tokenResource := &TokenResource{
 				client: managementclient.NewWithServices(managementclient.Services{
-					RunnerService: runnerServiceClient{
+					RunnerService: runnerTokenServiceClient{
 						createRunnerToken: func(_ context.Context, req *connect.Request[v1.CreateRunnerTokenRequest]) (*connect.Response[v1.CreateRunnerTokenResponse], error) {
 							got.RunnerIDs = append(got.RunnerIDs, req.Msg.GetRunnerId())
 							if tc.Input.Err != nil {

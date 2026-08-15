@@ -24,6 +24,7 @@ import (
 
 var _ resource.Resource = &LLMIntegrationResource{}
 var _ resource.ResourceWithConfigure = &LLMIntegrationResource{}
+var _ resource.ResourceWithIdentity = &LLMIntegrationResource{}
 var _ resource.ResourceWithImportState = &LLMIntegrationResource{}
 var _ resource.ResourceWithValidateConfig = &LLMIntegrationResource{}
 
@@ -102,6 +103,10 @@ func (r *LLMIntegrationResource) Create(ctx context.Context, req resource.Create
 	}
 
 	data.ID = types.StringValue(result.Msg.GetId())
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, LLMIntegrationIdentityModel{ID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -158,6 +163,10 @@ func (r *LLMIntegrationResource) Read(ctx context.Context, req resource.ReadRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, LLMIntegrationIdentityModel{ID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -207,6 +216,10 @@ func (r *LLMIntegrationResource) Update(ctx context.Context, req resource.Update
 	planned := data
 	resp.Diagnostics.Append(populateLLMIntegrationModel(ctx, &data, integration)...)
 	preserveLLMIntegrationPlannedInputs(&data, planned)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, LLMIntegrationIdentityModel{ID: data.ID})...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -237,7 +250,7 @@ func (r *LLMIntegrationResource) Delete(ctx context.Context, req resource.Delete
 }
 
 func (r *LLMIntegrationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resource.ImportStatePassthroughWithIdentity(ctx, path.Root("id"), path.Root("id"), req, resp)
 }
 
 func (r *LLMIntegrationResource) getLLMIntegration(ctx context.Context, id string) (*v1.LLMIntegration, error) {

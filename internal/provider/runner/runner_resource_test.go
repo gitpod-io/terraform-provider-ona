@@ -204,6 +204,66 @@ func TestEnumMappings(t *testing.T) {
 	}
 }
 
+func TestCreateRunnerRequestUsesEnterpriseVariant(t *testing.T) {
+	t.Parallel()
+
+	type Expectation struct {
+		Provider v1.RunnerProvider
+		Variant  v1.RunnerVariant
+		Err      string
+	}
+
+	tests := []struct {
+		Name     string
+		Provider string
+		Config   *ConfigurationModel
+		Expected Expectation
+	}{
+		{
+			Name:     "aws_ec2",
+			Provider: "aws_ec2",
+			Config:   &ConfigurationModel{},
+			Expected: Expectation{
+				Provider: v1.RunnerProvider_RUNNER_PROVIDER_AWS_EC2,
+				Variant:  v1.RunnerVariant_RUNNER_VARIANT_ENTERPRISE,
+			},
+		},
+		{
+			Name:     "gcp",
+			Provider: "gcp",
+			Config:   &ConfigurationModel{},
+			Expected: Expectation{
+				Provider: v1.RunnerProvider_RUNNER_PROVIDER_GCP,
+				Variant:  v1.RunnerVariant_RUNNER_VARIANT_ENTERPRISE,
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			request, diags := createRunnerRequest(RunnerModel{
+				Name:           types.StringValue("test-runner"),
+				RunnerProvider: types.StringValue(tc.Provider),
+				Configuration:  tc.Config,
+			}, types.StringNull())
+
+			var got Expectation
+			if diags.HasError() {
+				got.Err = diags[0].Summary()
+			} else {
+				got.Provider = request.GetProvider()
+				got.Variant = request.GetSpec().GetVariant()
+			}
+
+			if diff := cmp.Diff(tc.Expected, got); diff != "" {
+				t.Errorf("createRunnerRequest() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
 func TestParseHour(t *testing.T) {
 	t.Parallel()
 

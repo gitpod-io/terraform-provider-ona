@@ -375,6 +375,21 @@ func TestAccRunnerLLMIntegrationResourceLifecycle(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"api_key", "api_key_version"},
 			},
 			{
+				Config:          testAccRunnerLLMIntegrationImportedConfig(server.URL),
+				ResourceName:    "ona_runner_llm_integration.test",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithResourceIdentity,
+				ImportStateCheck: func(states []*terraform.InstanceState) error {
+					if len(states) != 1 {
+						return fmt.Errorf("expected one imported runner LLM integration state, got %d", len(states))
+					}
+					if states[0].ID != "llm-1" || states[0].Attributes["runner_id"] != "runner-1" {
+						return fmt.Errorf("structured identity imported unexpected runner LLM integration state: %#v", states[0].Attributes)
+					}
+					return nil
+				},
+			},
+			{
 				Config: testAccRunnerLLMIntegrationConfig(server.URL, []string{"sonnet_4", "sonnet_4_extended"}, "https://api.anthropic.com/v2", "api-key-2", "v2", 8000, false),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
@@ -872,6 +887,23 @@ resource "ona_runner_llm_integration" "test" {
 `, host, hclStringList(models), endpoint, apiKey, apiKeyVersion, maxTokens, enabled)
 }
 
+func testAccRunnerLLMIntegrationImportedConfig(host string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %[1]q
+  token = "test-token"
+}
+
+resource "ona_runner_llm_integration" "test" {
+  runner_id  = "runner-1"
+  models     = ["sonnet_3_7"]
+  endpoint   = "https://api.anthropic.com/v1"
+  max_tokens = 4000
+  enabled    = true
+}
+`, host)
+}
+
 func testAccRunnerLLMIntegrationWithoutAPIKeyConfig(host string) string {
 	return fmt.Sprintf(`
 provider "ona" {
@@ -990,64 +1022,247 @@ resource "terraform_data" "consumer" {
 
 type runnerConfigurationAPIServer struct {
 	*httptest.Server
-	service       *fakeRunnerConfigurationService
-	runnerService *fakeRunnerService
+	service               *fakeRunnerConfigurationService
+	runnerService         *fakeRunnerService
+	serviceAccountService *fakeServiceAccountService
 }
 
 func newRunnerConfigurationAPIServer(t *testing.T) *runnerConfigurationAPIServer {
 	t.Helper()
 
 	service := &fakeRunnerConfigurationService{
-		scmIntegrations:                 map[string]*v1.SCMIntegration{},
-		scmListOnlyIntegrations:         map[string]*v1.SCMIntegration{},
-		scmCreateRequests:               map[string]*v1.CreateSCMIntegrationRequest{},
-		scmUpdateRequests:               map[string][]*v1.UpdateSCMIntegrationRequest{},
-		llmIntegrations:                 map[string]*v1.LLMIntegration{},
-		llmCreateRequests:               map[string]*v1.CreateLLMIntegrationRequest{},
-		llmUpdateRequests:               map[string][]*v1.UpdateLLMIntegrationRequest{},
-		environmentClasses:              map[string]*v1.EnvironmentClass{},
-		environmentClassRunnerKinds:     map[string]v1.RunnerKind{},
-		environmentClassRunnerProviders: map[string]v1.RunnerProvider{},
+		hostAuthenticationTokens:               map[string]*v1.HostAuthenticationToken{},
+		hostAuthenticationCreateRequests:       map[string]*v1.CreateHostAuthenticationTokenRequest{},
+		hostAuthenticationCreateAuthorizations: map[string]string{},
+		hostAuthenticationUpdateRequests:       map[string][]*v1.UpdateHostAuthenticationTokenRequest{},
+		hostAuthenticationUpdateCalls:          map[string]int{},
+		hostAuthenticationGetCounts:            map[string]int{},
+		hostAuthenticationGetMisses:            map[string]int{},
+		hostAuthenticationPostUpdateMisses:     map[string]int{},
+		hostAuthenticationDeleteCalls:          map[string]int{},
+		scmIntegrations:                        map[string]*v1.SCMIntegration{},
+		scmListOnlyIntegrations:                map[string]*v1.SCMIntegration{},
+		scmCreateRequests:                      map[string]*v1.CreateSCMIntegrationRequest{},
+		scmUpdateRequests:                      map[string][]*v1.UpdateSCMIntegrationRequest{},
+		llmIntegrations:                        map[string]*v1.LLMIntegration{},
+		llmCreateRequests:                      map[string]*v1.CreateLLMIntegrationRequest{},
+		llmUpdateRequests:                      map[string][]*v1.UpdateLLMIntegrationRequest{},
+		environmentClasses:                     map[string]*v1.EnvironmentClass{},
+		environmentClassRunnerKinds:            map[string]v1.RunnerKind{},
+		environmentClassRunnerProviders:        map[string]v1.RunnerProvider{},
 	}
 	runnerService := &fakeRunnerService{runners: map[string]*v1.Runner{}}
+	serviceAccountService := &fakeServiceAccountService{accounts: map[string]*v1.ServiceAccount{
+		"service-account-1": {Id: "service-account-1"},
+	}}
 
 	runnerConfigurationPath, runnerConfigurationHandler := v1connect.NewRunnerConfigurationServiceHandler(service)
 	runnerPath, runnerHandler := v1connect.NewRunnerServiceHandler(runnerService)
+	serviceAccountPath, serviceAccountHandler := v1connect.NewServiceAccountServiceHandler(serviceAccountService)
 	mux := http.NewServeMux()
 	mux.Handle("/api"+runnerConfigurationPath, http.StripPrefix("/api", runnerConfigurationHandler))
 	mux.Handle("/api"+runnerPath, http.StripPrefix("/api", runnerHandler))
+	mux.Handle("/api"+serviceAccountPath, http.StripPrefix("/api", serviceAccountHandler))
 	server := httptest.NewServer(mux)
 	return &runnerConfigurationAPIServer{
-		Server:        server,
-		service:       service,
-		runnerService: runnerService,
+		Server:                server,
+		service:               service,
+		runnerService:         runnerService,
+		serviceAccountService: serviceAccountService,
 	}
+}
+
+func (s *fakeServiceAccountService) accessTokenRequested(serviceAccountID string) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	for _, requested := range s.accessTokenCalls {
+		if requested.ServiceAccountID == serviceAccountID {
+			return true
+		}
+	}
+	return false
 }
 
 type fakeRunnerConfigurationService struct {
 	v1connect.UnimplementedRunnerConfigurationServiceHandler
 
-	mu                              sync.Mutex
-	scmIntegrations                 map[string]*v1.SCMIntegration
-	scmListOnlyIntegrations         map[string]*v1.SCMIntegration
-	scmCreateRequests               map[string]*v1.CreateSCMIntegrationRequest
-	scmUpdateRequests               map[string][]*v1.UpdateSCMIntegrationRequest
-	scmDeletes                      []string
-	scmSecretUpdates                map[string][]string
-	scmCreateErr                    error
-	scmGetErr                       error
-	scmUpdateErr                    error
-	llmIntegrations                 map[string]*v1.LLMIntegration
-	llmCreateRequests               map[string]*v1.CreateLLMIntegrationRequest
-	llmUpdateRequests               map[string][]*v1.UpdateLLMIntegrationRequest
-	llmDeletes                      map[string]bool
-	llmDeleteForce                  map[string]bool
-	llmAPIKeyUpdates                map[string][]string
-	llmCreateErr                    error
-	environmentClasses              map[string]*v1.EnvironmentClass
-	lastEnvironmentClassListKinds   []v1.RunnerKind
-	environmentClassRunnerKinds     map[string]v1.RunnerKind
-	environmentClassRunnerProviders map[string]v1.RunnerProvider
+	mu                                      sync.Mutex
+	hostAuthenticationTokens                map[string]*v1.HostAuthenticationToken
+	hostAuthenticationCreateRequests        map[string]*v1.CreateHostAuthenticationTokenRequest
+	hostAuthenticationCreateAuthorizations  map[string]string
+	hostAuthenticationCreateCalls           int
+	nextHostAuthenticationCreateErr         error
+	hostAuthenticationUpdateRequests        map[string][]*v1.UpdateHostAuthenticationTokenRequest
+	hostAuthenticationUpdateCalls           map[string]int
+	nextHostAuthenticationUpdateErr         error
+	hostAuthenticationGetCounts             map[string]int
+	hostAuthenticationGetMisses             map[string]int
+	hostAuthenticationPostUpdateMisses      map[string]int
+	hostAuthenticationRequiredAuthorization string
+	hostAuthenticationListRequests          []*v1.ListHostAuthenticationTokensRequest
+	hostAuthenticationPageSizeLimit         int32
+	hostAuthenticationNextPageToken         string
+	hostAuthenticationDeletes               []string
+	hostAuthenticationDeleteCalls           map[string]int
+	nextHostAuthenticationDeleteErr         error
+	hostAuthenticationPATUpdates            map[string][]string
+	scmIntegrations                         map[string]*v1.SCMIntegration
+	scmListOnlyIntegrations                 map[string]*v1.SCMIntegration
+	scmCreateRequests                       map[string]*v1.CreateSCMIntegrationRequest
+	scmUpdateRequests                       map[string][]*v1.UpdateSCMIntegrationRequest
+	scmDeletes                              []string
+	scmSecretUpdates                        map[string][]string
+	scmCreateErr                            error
+	scmGetErr                               error
+	scmUpdateErr                            error
+	llmIntegrations                         map[string]*v1.LLMIntegration
+	llmCreateRequests                       map[string]*v1.CreateLLMIntegrationRequest
+	llmUpdateRequests                       map[string][]*v1.UpdateLLMIntegrationRequest
+	llmDeletes                              map[string]bool
+	llmDeleteForce                          map[string]bool
+	llmAPIKeyUpdates                        map[string][]string
+	llmCreateErr                            error
+	llmListErr                              error
+	llmListPageSize                         int
+	llmListCalls                            int
+	llmListPageSizes                        []int32
+	environmentClasses                      map[string]*v1.EnvironmentClass
+	lastEnvironmentClassListKinds           []v1.RunnerKind
+	environmentClassRunnerKinds             map[string]v1.RunnerKind
+	environmentClassRunnerProviders         map[string]v1.RunnerProvider
+}
+
+func (s *fakeRunnerConfigurationService) CreateHostAuthenticationToken(ctx context.Context, req *connect.Request[v1.CreateHostAuthenticationTokenRequest]) (*connect.Response[v1.CreateHostAuthenticationTokenResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.hostAuthenticationCreateCalls++
+	if required := s.hostAuthenticationRequiredAuthorization; required != "" && req.Header().Get("Authorization") != required {
+		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("permission denied"))
+	}
+	if s.nextHostAuthenticationCreateErr != nil {
+		err := s.nextHostAuthenticationCreateErr
+		s.nextHostAuthenticationCreateErr = nil
+		return nil, err
+	}
+
+	for _, existing := range s.hostAuthenticationTokens {
+		if existing.GetRunnerId() == req.Msg.GetRunnerId() && existing.GetHost() == req.Msg.GetHost() && existing.GetSubject().GetId() == req.Msg.GetSubject().GetId() {
+			return nil, connect.NewError(connect.CodeAlreadyExists, errors.New("host authentication token already exists"))
+		}
+	}
+	id := fmt.Sprintf("git-auth-%d", len(s.hostAuthenticationTokens)+1)
+	token := &v1.HostAuthenticationToken{
+		Id:        id,
+		RunnerId:  req.Msg.GetRunnerId(),
+		Host:      req.Msg.GetHost(),
+		Source:    req.Msg.GetSource(),
+		ExpiresAt: req.Msg.GetExpiresAt(),
+		Scopes:    append([]string(nil), req.Msg.GetScopes()...),
+		Subject:   proto.CloneOf(req.Msg.GetSubject()),
+	}
+	s.hostAuthenticationTokens[id] = token
+	s.hostAuthenticationCreateRequests[id] = proto.CloneOf(req.Msg)
+	s.hostAuthenticationCreateAuthorizations[id] = req.Header().Get("Authorization")
+	s.recordHostAuthenticationPATUpdate(id, req.Msg.GetToken())
+	return connect.NewResponse(&v1.CreateHostAuthenticationTokenResponse{Token: proto.CloneOf(token)}), nil
+}
+
+func (s *fakeRunnerConfigurationService) GetHostAuthenticationToken(ctx context.Context, req *connect.Request[v1.GetHostAuthenticationTokenRequest]) (*connect.Response[v1.GetHostAuthenticationTokenResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	s.hostAuthenticationGetCounts[req.Msg.GetId()]++
+	if required := s.hostAuthenticationRequiredAuthorization; required != "" && req.Header().Get("Authorization") != required {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("host authentication token not found"))
+	}
+	if s.hostAuthenticationGetMisses[req.Msg.GetId()] > 0 {
+		s.hostAuthenticationGetMisses[req.Msg.GetId()]--
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("host authentication token is not visible on the read replica"))
+	}
+	token := s.hostAuthenticationTokens[req.Msg.GetId()]
+	if token == nil {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("host authentication token not found"))
+	}
+	return connect.NewResponse(&v1.GetHostAuthenticationTokenResponse{Token: proto.CloneOf(token)}), nil
+}
+
+func (s *fakeRunnerConfigurationService) ListHostAuthenticationTokens(ctx context.Context, req *connect.Request[v1.ListHostAuthenticationTokensRequest]) (*connect.Response[v1.ListHostAuthenticationTokensResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	s.hostAuthenticationListRequests = append(s.hostAuthenticationListRequests, proto.CloneOf(req.Msg))
+	var tokens []*v1.HostAuthenticationToken
+	for _, token := range s.hostAuthenticationTokens {
+		if runnerID := req.Msg.GetFilter().GetRunnerId(); runnerID != "" && token.GetRunnerId() != runnerID {
+			continue
+		}
+		if subjectID := req.Msg.GetFilter().GetSubjectId(); subjectID != "" && token.GetSubject().GetId() != subjectID {
+			continue
+		}
+		tokens = append(tokens, proto.CloneOf(token))
+	}
+	sort.Slice(tokens, func(i, j int) bool { return tokens[i].GetId() < tokens[j].GetId() })
+	start, end, nextToken := 0, len(tokens), s.hostAuthenticationNextPageToken
+	if nextToken == "" {
+		var err error
+		start, end, nextToken, err = fakePage(req.Msg.GetPagination(), len(tokens), s.hostAuthenticationPageSizeLimit)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return connect.NewResponse(&v1.ListHostAuthenticationTokensResponse{Tokens: tokens[start:end], Pagination: &v1.PaginationResponse{NextToken: nextToken}}), nil
+}
+
+func (s *fakeRunnerConfigurationService) UpdateHostAuthenticationToken(ctx context.Context, req *connect.Request[v1.UpdateHostAuthenticationTokenRequest]) (*connect.Response[v1.UpdateHostAuthenticationTokenResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.hostAuthenticationUpdateCalls[req.Msg.GetId()]++
+	if required := s.hostAuthenticationRequiredAuthorization; required != "" && req.Header().Get("Authorization") != required {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("host authentication token not found"))
+	}
+	if s.nextHostAuthenticationUpdateErr != nil {
+		err := s.nextHostAuthenticationUpdateErr
+		s.nextHostAuthenticationUpdateErr = nil
+		return nil, err
+	}
+
+	if s.hostAuthenticationTokens[req.Msg.GetId()] == nil {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("host authentication token not found"))
+	}
+	s.hostAuthenticationUpdateRequests[req.Msg.GetId()] = append(s.hostAuthenticationUpdateRequests[req.Msg.GetId()], proto.CloneOf(req.Msg))
+	if req.Msg.Token != nil {
+		s.recordHostAuthenticationPATUpdate(req.Msg.GetId(), req.Msg.GetToken())
+	}
+	if misses := s.hostAuthenticationPostUpdateMisses[req.Msg.GetId()]; misses > 0 {
+		s.hostAuthenticationGetMisses[req.Msg.GetId()] = misses
+		delete(s.hostAuthenticationPostUpdateMisses, req.Msg.GetId())
+	}
+	return connect.NewResponse(&v1.UpdateHostAuthenticationTokenResponse{}), nil
+}
+
+func (s *fakeRunnerConfigurationService) DeleteHostAuthenticationToken(ctx context.Context, req *connect.Request[v1.DeleteHostAuthenticationTokenRequest]) (*connect.Response[v1.DeleteHostAuthenticationTokenResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.hostAuthenticationDeleteCalls[req.Msg.GetId()]++
+	if required := s.hostAuthenticationRequiredAuthorization; required != "" && req.Header().Get("Authorization") != required {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("host authentication token not found"))
+	}
+	if s.nextHostAuthenticationDeleteErr != nil {
+		err := s.nextHostAuthenticationDeleteErr
+		s.nextHostAuthenticationDeleteErr = nil
+		if connect.CodeOf(err) == connect.CodeNotFound {
+			delete(s.hostAuthenticationTokens, req.Msg.GetId())
+		}
+		return nil, err
+	}
+
+	if s.hostAuthenticationTokens[req.Msg.GetId()] == nil {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("host authentication token not found"))
+	}
+	delete(s.hostAuthenticationTokens, req.Msg.GetId())
+	s.hostAuthenticationDeletes = append(s.hostAuthenticationDeletes, req.Msg.GetId())
+	return connect.NewResponse(&v1.DeleteHostAuthenticationTokenResponse{}), nil
 }
 
 func (s *fakeRunnerConfigurationService) CreateSCMIntegration(ctx context.Context, req *connect.Request[v1.CreateSCMIntegrationRequest]) (*connect.Response[v1.CreateSCMIntegrationResponse], error) {
@@ -1218,6 +1433,61 @@ func (s *fakeRunnerConfigurationService) GetLLMIntegration(ctx context.Context, 
 	return connect.NewResponse(&v1.GetLLMIntegrationResponse{Integration: cloneLLMIntegration(integration)}), nil
 }
 
+func (s *fakeRunnerConfigurationService) ListLLMIntegrations(ctx context.Context, req *connect.Request[v1.ListLLMIntegrationsRequest]) (*connect.Response[v1.ListLLMIntegrationsResponse], error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	s.llmListCalls++
+	s.llmListPageSizes = append(s.llmListPageSizes, req.Msg.GetPagination().GetPageSize())
+	if s.llmListErr != nil {
+		return nil, s.llmListErr
+	}
+
+	runnerIDs := map[string]struct{}{}
+	for _, id := range req.Msg.GetFilter().GetRunnerIds() {
+		runnerIDs[id] = struct{}{}
+	}
+
+	var integrations []*v1.LLMIntegration
+	for _, integration := range s.llmIntegrations {
+		if len(runnerIDs) > 0 {
+			if _, ok := runnerIDs[integration.GetRunnerId()]; !ok {
+				continue
+			}
+		}
+		integrations = append(integrations, cloneLLMIntegration(integration))
+	}
+	sort.Slice(integrations, func(i, j int) bool {
+		return integrations[i].GetId() < integrations[j].GetId()
+	})
+
+	start := 0
+	if token := req.Msg.GetPagination().GetToken(); token != "" {
+		if _, err := fmt.Sscanf(token, "%d", &start); err != nil {
+			return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("invalid pagination token %q", token))
+		}
+	}
+	pageSize := int(req.Msg.GetPagination().GetPageSize())
+	if s.llmListPageSize > 0 && (pageSize == 0 || s.llmListPageSize < pageSize) {
+		pageSize = s.llmListPageSize
+	}
+	end := start + pageSize
+	if end > len(integrations) {
+		end = len(integrations)
+	}
+	if start > end {
+		start = end
+	}
+	nextToken := ""
+	if end < len(integrations) {
+		nextToken = fmt.Sprintf("%d", end)
+	}
+	return connect.NewResponse(&v1.ListLLMIntegrationsResponse{
+		Integrations: integrations[start:end],
+		Pagination:   &v1.PaginationResponse{NextToken: nextToken},
+	}), nil
+}
+
 func (s *fakeRunnerConfigurationService) UpdateLLMIntegration(ctx context.Context, req *connect.Request[v1.UpdateLLMIntegrationRequest]) (*connect.Response[v1.UpdateLLMIntegrationResponse], error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -1378,6 +1648,118 @@ func (s *fakeRunnerConfigurationService) scmDeleted(id string) bool {
 	return false
 }
 
+func (s *fakeRunnerConfigurationService) hostAuthenticationDeleted(id string) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	for _, deleted := range s.hostAuthenticationDeletes {
+		if deleted == id {
+			return true
+		}
+	}
+	return false
+}
+
+func (s *fakeRunnerConfigurationService) requireHostAuthenticationAuthorization(authorization string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.hostAuthenticationRequiredAuthorization = authorization
+}
+
+func (s *fakeRunnerConfigurationService) hostAuthenticationPATUpdated(id string, pat string) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	for _, updated := range s.hostAuthenticationPATUpdates[id] {
+		if updated == pat {
+			return true
+		}
+	}
+	return false
+}
+
+func (s *fakeRunnerConfigurationService) hostAuthenticationCreateRequest(id string) *v1.CreateHostAuthenticationTokenRequest {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	return proto.CloneOf(s.hostAuthenticationCreateRequests[id])
+}
+
+func (s *fakeRunnerConfigurationService) hostAuthenticationCreateAuthorization(id string) string {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	return s.hostAuthenticationCreateAuthorizations[id]
+}
+
+func (s *fakeRunnerConfigurationService) hostAuthenticationListRequestsSnapshot() []*v1.ListHostAuthenticationTokensRequest {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	requests := make([]*v1.ListHostAuthenticationTokensRequest, 0, len(s.hostAuthenticationListRequests))
+	for _, request := range s.hostAuthenticationListRequests {
+		requests = append(requests, proto.CloneOf(request))
+	}
+	return requests
+}
+
+func (s *fakeRunnerConfigurationService) hostAuthenticationCreateCount() int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	return s.hostAuthenticationCreateCalls
+}
+
+func (s *fakeRunnerConfigurationService) hostAuthenticationGetCount(id string) int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	return s.hostAuthenticationGetCounts[id]
+}
+
+func (s *fakeRunnerConfigurationService) setHostAuthenticationPostUpdateMisses(id string, misses int) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	s.hostAuthenticationPostUpdateMisses[id] = misses
+}
+
+func (s *fakeRunnerConfigurationService) removeHostAuthentication(id string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	delete(s.hostAuthenticationTokens, id)
+}
+
+func (s *fakeRunnerConfigurationService) hostAuthenticationUpdateCallCount(id string) int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.hostAuthenticationUpdateCalls[id]
+}
+
+func (s *fakeRunnerConfigurationService) hostAuthenticationDeleteCallCount(id string) int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.hostAuthenticationDeleteCalls[id]
+}
+
+func (s *fakeRunnerConfigurationService) setNextHostAuthenticationCreateError(err error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.nextHostAuthenticationCreateErr = err
+}
+
+func (s *fakeRunnerConfigurationService) setNextHostAuthenticationUpdateError(err error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.nextHostAuthenticationUpdateErr = err
+}
+
+func (s *fakeRunnerConfigurationService) setNextHostAuthenticationDeleteError(err error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.nextHostAuthenticationDeleteErr = err
+}
+
 func (s *fakeRunnerConfigurationService) scmSecretUpdated(id string, secret string) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -1414,6 +1796,13 @@ func (s *fakeRunnerConfigurationService) llmAPIKeyUpdated(id string, apiKey stri
 		}
 	}
 	return false
+}
+
+func (s *fakeRunnerConfigurationService) llmListStats() (int, []int32) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	return s.llmListCalls, append([]int32(nil), s.llmListPageSizes...)
 }
 
 func (s *fakeRunnerConfigurationService) scmSecretUpdateCount() int {
@@ -1488,6 +1877,13 @@ func (s *fakeRunnerConfigurationService) recordSCMSecretUpdate(id string, secret
 		s.scmSecretUpdates = map[string][]string{}
 	}
 	s.scmSecretUpdates[id] = append(s.scmSecretUpdates[id], secret)
+}
+
+func (s *fakeRunnerConfigurationService) recordHostAuthenticationPATUpdate(id string, pat string) {
+	if s.hostAuthenticationPATUpdates == nil {
+		s.hostAuthenticationPATUpdates = map[string][]string{}
+	}
+	s.hostAuthenticationPATUpdates[id] = append(s.hostAuthenticationPATUpdates[id], pat)
 }
 
 func (s *fakeRunnerConfigurationService) recordLLMAPIKeyUpdate(id string, apiKey string) {

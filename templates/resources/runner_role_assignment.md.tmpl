@@ -1,0 +1,62 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: "Identity and Access"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+Use this resource to manage one group's direct access to one runner. The supported roles are:
+
+- `user`: view and use the runner.
+- `admin`: fully control the runner, including its sharing settings.
+
+Changing the runner, group, or role replaces the assignment. Import existing access before adding it to the configuration so Terraform does not try to create a duplicate.
+
+Sharing with a custom group requires the Enterprise plan. Ona validates this requirement when it creates the assignment.
+
+To manage General access for everyone in the organization, set `group_id` to the system-managed `org-members` group ID and use the `user` role:
+
+```terraform
+resource "ona_runner_role_assignment" "everyone" {
+  runner_id = var.runner_id
+  group_id   = var.org_members_group_id
+  role       = "user"
+}
+```
+
+The provider does not currently discover the `org-members` group, so supply its ID from your existing organization inventory.
+
+For product context, see [Share a runner](https://ona.com/docs/ona/organizations/sharing-resources#share-a-runner) and [Manage groups](https://ona.com/docs/ona/organizations/groups).
+
+{{ if .HasExamples -}}
+## Example Usage
+
+{{- range .ExampleFiles }}
+
+{{ tffile . }}
+{{- end }}
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+{{- if or .HasImport .HasImportIDConfig .HasImportIdentityConfig }}
+
+## Import
+
+Import identifies an assignment by `<runner_id>/<group_id>`. Terraform reads the current role from Ona.
+{{- end }}
+{{- if .HasImportIDConfig }}
+
+In Terraform v1.5.0 and later, the [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the `id` attribute, for example:
+
+{{tffile .ImportIDConfigFile }}
+{{- end }}
+{{- if .HasImport }}
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
+{{codefile "shell" .ImportFile }}
+{{- end }}

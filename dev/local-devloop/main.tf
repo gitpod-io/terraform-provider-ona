@@ -22,8 +22,22 @@ resource "ona_group" "devloop" {
   description = "Group created by the Terraform provider local dev loop."
 }
 
+resource "ona_group" "runner_sharing" {
+  count = var.runner_sharing_role == null ? 0 : 1
+
+  name        = "${var.group_name} Runner Sharing"
+  description = "Empty group created to exercise direct runner sharing without organization-derived access."
+}
+
 resource "ona_team" "devloop" {
   name = var.team_name
+}
+
+resource "ona_team_membership" "devloop" {
+  count = var.team_membership_user_id == null ? 0 : 1
+
+  team_id = ona_team.devloop.id
+  user_id = var.team_membership_user_id
 }
 
 resource "ona_group_membership" "devloop" {
@@ -129,6 +143,14 @@ resource "ona_runner_token" "devloop" {
   token_version = var.runner_token_version
 }
 
+resource "ona_runner_role_assignment" "devloop" {
+  count = var.runner_sharing_role == null ? 0 : 1
+
+  runner_id = ona_runner.devloop.runner_id
+  group_id  = ona_group.runner_sharing[0].id
+  role      = var.runner_sharing_role
+}
+
 resource "ona_environment_class" "devloop" {
   runner_id = ona_runner.devloop.runner_id
 
@@ -164,6 +186,14 @@ resource "ona_project" "devloop" {
       hour_utc = 5
     }
   }
+}
+
+resource "ona_project_role_assignment" "devloop" {
+  project_id = ona_project.devloop.id
+  group_id   = ona_group.devloop.id
+  role       = var.project_sharing_role
+
+  depends_on = [ona_organization_role_assignment.devloop]
 }
 
 resource "ona_webhook" "devloop" {
@@ -209,13 +239,32 @@ data "ona_warm_pools" "devloop" {
   environment_class_ids = [ona_environment_class.devloop.id]
 }
 
-resource "ona_scm_integration" "github_oauth" {
+moved {
+  from = ona_scm_integration.github_oauth
+  to   = ona_scm_integration.github_pat
+}
+
+resource "ona_scm_integration" "github_pat" {
   runner_id = ona_runner.devloop.runner_id
 
   kind = "github"
   host = "github.com"
 
   auth_mode = "pat"
+}
+
+resource "ona_git_authentication" "devloop" {
+  count = var.enable_git_authentication ? 1 : 0
+
+  service_account_id            = ona_service_account.devloop.id
+  scm_integration_id            = ona_scm_integration.github_pat.id
+  personal_access_token         = var.git_personal_access_token
+  personal_access_token_version = var.git_personal_access_token_version
+
+  depends_on = [
+    ona_group_membership.devloop,
+    ona_organization_role_assignment.devloop,
+  ]
 }
 
 resource "ona_scm_integration" "gitlab_pat" {

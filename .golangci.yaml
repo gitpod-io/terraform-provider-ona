@@ -22,7 +22,6 @@ linters:
     - predeclared
     - staticcheck
     - unconvert
-    - unparam
     - unused
     - usetesting
   exclusions:

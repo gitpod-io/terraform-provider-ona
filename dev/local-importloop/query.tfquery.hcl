@@ -8,17 +8,27 @@ list "ona_automation" "all" {
   include_resource = true
 }
 
+list "ona_integration" "all" {
+  provider         = ona
+  include_resource = true
+}
+
 list "ona_runner" "all" {
   provider         = ona
   include_resource = true
 }
 
-list "ona_runner_policy" "all" {
+list "ona_runner_llm_integration" "all" {
   provider         = ona
   include_resource = true
 }
 
 list "ona_scm_integration" "all" {
+  provider         = ona
+  include_resource = true
+}
+
+list "ona_git_authentication" "all" {
   provider         = ona
   include_resource = true
 }
@@ -37,12 +47,26 @@ list "ona_group_membership" "all" {
   }
 }
 
+list "ona_team_membership" "all" {
+  provider         = ona
+  include_resource = true
+
+  config {
+    team_id = var.team_membership_team_id
+  }
+}
+
 list "ona_custom_domain" "all" {
   provider         = ona
   include_resource = true
 }
 
 list "ona_group" "all" {
+  provider         = ona
+  include_resource = true
+}
+
+list "ona_team" "all" {
   provider         = ona
   include_resource = true
 }
@@ -77,12 +101,12 @@ list "ona_project" "all" {
   include_resource = true
 }
 
-list "ona_project_insights" "all" {
+list "ona_warm_pool" "all" {
   provider         = ona
   include_resource = true
 }
 
-list "ona_warm_pool" "all" {
+list "ona_webhook" "all" {
   provider         = ona
   include_resource = true
 }
