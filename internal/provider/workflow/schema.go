@@ -147,7 +147,7 @@ func triggerResourceAttributes() map[string]resourceschema.Attribute {
 						"project_ids": resourceschema.SetAttribute{
 							Required:            true,
 							ElementType:         types.StringType,
-							MarkdownDescription: "Project UUIDs. The API accepts up to 500 entries.",
+							MarkdownDescription: "Project UUIDs. The API accepts up to 1000 entries.",
 						},
 					},
 				},
@@ -212,7 +212,7 @@ func actionResourceAttributes() map[string]resourceschema.Attribute {
 				},
 				"max_total": resourceschema.Int32Attribute{
 					Required:            true,
-					MarkdownDescription: "Maximum total actions, from 1 through 100.",
+					MarkdownDescription: "Maximum total actions, from 1 through 1000.",
 				},
 				"max_time": resourceschema.StringAttribute{
 					Optional:            true,

@@ -94,6 +94,8 @@ func TestAccServiceAccountResourceImportState(t *testing.T) {
 	t.Parallel()
 
 	t.Run("legacy string", func(t *testing.T) {
+		t.Parallel()
+
 		server := newServiceAccountAPIServer(t)
 		t.Cleanup(server.Close)
 		server.service.seed(newTestServiceAccount(serviceAccountID1, "Imported Account", "Managed by Terraform"))
@@ -115,6 +117,8 @@ func TestAccServiceAccountResourceImportState(t *testing.T) {
 	})
 
 	t.Run("structured identity", func(t *testing.T) {
+		t.Parallel()
+
 		server := newServiceAccountAPIServer(t)
 		t.Cleanup(server.Close)
 		server.service.seed(newTestServiceAccount(serviceAccountID1, "Imported Account", "Managed by Terraform"))

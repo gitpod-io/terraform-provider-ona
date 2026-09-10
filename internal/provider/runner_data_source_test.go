@@ -16,6 +16,7 @@ func TestAccRunnerDataSource(t *testing.T) {
 
 	server := newRunnerAPIServer(t, map[string]*v1.Runner{
 		"runner-1": newTestRunnerForDataSource("runner-1", "Frankfurt Runner"),
+		"runner-2": newGCPTestRunnerForDataSource("runner-2", "Iowa Runner"),
 	})
 	t.Cleanup(server.Close)
 
@@ -32,6 +33,7 @@ func TestAccRunnerDataSource(t *testing.T) {
 					resource.TestCheckResourceAttr("data.ona_runner.test", "runner_provider", "aws_ec2"),
 					resource.TestCheckResourceAttr("data.ona_runner.test", "kind", "remote"),
 					resource.TestCheckResourceAttr("data.ona_runner.test", "cloudformation_template_url", "https://gitpod-flex-releases.s3.amazonaws.com/ec2/stable/gitpod-ec2-runner.json"),
+					resource.TestCheckResourceAttr("data.ona_runner.test", "terraform_module_url", "https://github.com/gitpod-io/terraform-aws-ona-runner"),
 					resource.TestCheckResourceAttr("data.ona_runner.test", "configuration.region", "eu-central-1"),
 					resource.TestCheckResourceAttr("data.ona_runner.test", "configuration.release_channel", "stable"),
 					resource.TestCheckResourceAttr("data.ona_runner.test", "configuration.auto_update", "true"),
@@ -51,6 +53,15 @@ func TestAccRunnerDataSource(t *testing.T) {
 					resource.TestCheckNoResourceAttr("data.ona_runner.test", "runner_manager_id"),
 				),
 			},
+			{
+				Config: testAccRunnerDataSourceConfig(server.URL, "runner-2"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("data.ona_runner.test", "runner_id", "runner-2"),
+					resource.TestCheckResourceAttr("data.ona_runner.test", "runner_provider", "gcp"),
+					resource.TestCheckNoResourceAttr("data.ona_runner.test", "cloudformation_template_url"),
+					resource.TestCheckResourceAttr("data.ona_runner.test", "terraform_module_url", "https://registry.terraform.io/modules/gitpod-io/ona-runner/google/latest"),
+				),
+			},
 		},
 	})
 }
@@ -59,7 +70,7 @@ func TestAccRunnersDataSource(t *testing.T) {
 	t.Parallel()
 
 	server := newRunnerAPIServer(t, map[string]*v1.Runner{
-		"runner-2": newTestRunnerForDataSource("runner-2", "Zurich Runner"),
+		"runner-2": newGCPTestRunnerForDataSource("runner-2", "Zurich Runner"),
 		"runner-1": newTestRunnerForDataSource("runner-1", "Frankfurt Runner"),
 	})
 	t.Cleanup(server.Close)
@@ -76,6 +87,7 @@ func TestAccRunnersDataSource(t *testing.T) {
 					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.0.runner_id", "runner-1"),
 					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.0.name", "Frankfurt Runner"),
 					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.0.cloudformation_template_url", "https://gitpod-flex-releases.s3.amazonaws.com/ec2/stable/gitpod-ec2-runner.json"),
+					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.0.terraform_module_url", "https://github.com/gitpod-io/terraform-aws-ona-runner"),
 					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.0.configuration.region", "eu-central-1"),
 					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.0.configuration.metrics.custom.enabled", "true"),
 					resource.TestCheckNoResourceAttr("data.ona_runners.test", "runners.0.configuration.metrics.custom.password"),
@@ -83,6 +95,9 @@ func TestAccRunnersDataSource(t *testing.T) {
 					resource.TestCheckNoResourceAttr("data.ona_runners.test", "runners.0.updated_at"),
 					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.1.runner_id", "runner-2"),
 					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.1.name", "Zurich Runner"),
+					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.1.runner_provider", "gcp"),
+					resource.TestCheckNoResourceAttr("data.ona_runners.test", "runners.1.cloudformation_template_url"),
+					resource.TestCheckResourceAttr("data.ona_runners.test", "runners.1.terraform_module_url", "https://registry.terraform.io/modules/gitpod-io/ona-runner/google/latest"),
 					resource.TestCheckNoResourceAttr("data.ona_runners.test", "runners.0.runner_manager_id"),
 					resource.TestCheckNoResourceAttr("data.ona_runners.test", "runners.1.runner_manager_id"),
 				),
@@ -143,5 +158,12 @@ func newTestRunnerForDataSource(id string, name string) *v1.Runner {
 	runner.Status.LogUrl = "https://example.com/logs"
 	runner.Status.SystemDetails = "linux/amd64"
 	runner.Status.SupportBundleUrl = "https://example.com/support-bundle"
+	return runner
+}
+
+func newGCPTestRunnerForDataSource(id string, name string) *v1.Runner {
+	runner := newTestRunnerForDataSource(id, name)
+	runner.Provider = v1.RunnerProvider_RUNNER_PROVIDER_GCP
+	runner.Spec.Configuration.Region = ""
 	return runner
 }

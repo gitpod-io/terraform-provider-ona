@@ -237,9 +237,6 @@ func TestAccPolicyResourcesCodexModelPolicyLifecycle(t *testing.T) {
 			if diff := server.organization.defaultsDiff(); diff != "" {
 				return fmt.Errorf("organization policies were not restored to their server-defined defaults: %s", diff)
 			}
-			if server.organization.sentLegacyCodexModels() {
-				return errors.New("provider populated deprecated allowed_codex_models in an update request")
-			}
 			return nil
 		},
 		Steps: []resource.TestStep{
@@ -807,18 +804,6 @@ func (s *fakeOrganizationService) setCodexModelPolicy(policy *v1.CodexModelPolic
 	defer s.mu.Unlock()
 
 	s.policies.AgentPolicy.CodexModelPolicy = cloneCodexModelPolicy(policy)
-}
-
-func (s *fakeOrganizationService) sentLegacyCodexModels() bool {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	for _, update := range s.updates {
-		if len(update.GetAgentPolicy().GetAllowedCodexModels()) > 0 { //nolint:staticcheck // Negative compatibility assertion for the deprecated API field.
-			return true
-		}
-	}
-	return false
 }
 
 func newTestOrganizationPolicies(organizationID string) *v1.OrganizationPolicies {

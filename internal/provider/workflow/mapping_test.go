@@ -9,6 +9,7 @@ import (
 
 	v1 "github.com/gitpod-io/gitpod-sdk-go/v1"
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -917,6 +918,61 @@ func TestValidateModelUnknownElements(t *testing.T) {
 	}
 }
 
+func TestValidateModelLimits(t *testing.T) {
+	t.Parallel()
+
+	type Expectation struct {
+		Errors []string
+	}
+	tests := []struct {
+		Name     string
+		Mutate   func(*Model)
+		Expected Expectation
+	}{
+		{
+			Name: "accepts_project_ids_at_limit",
+			Mutate: func(model *Model) {
+				setProjectIDs(t, model, testProjectIDs(t, 1000))
+			},
+		},
+		{
+			Name: "rejects_project_ids_above_limit",
+			Mutate: func(model *Model) {
+				setProjectIDs(t, model, testProjectIDs(t, 1001))
+			},
+			Expected: Expectation{Errors: []string{"Invalid Value Count"}},
+		},
+		{
+			Name: "accepts_total_actions_at_limit",
+			Mutate: func(model *Model) {
+				setMaxTotal(t, model, 1000)
+			},
+		},
+		{
+			Name: "rejects_total_actions_above_limit",
+			Mutate: func(model *Model) {
+				setMaxTotal(t, model, 1001)
+			},
+			Expected: Expectation{Errors: []string{"Integer Out of Range"}},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			model := testWorkflowModel(t)
+			tc.Mutate(&model)
+			var diags diag.Diagnostics
+			validateModel(t.Context(), model, true, &diags)
+			got := Expectation{Errors: diagnosticSummaries(diags)}
+			if diff := cmp.Diff(tc.Expected, got); diff != "" {
+				t.Errorf("validateModel() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
 func testWorkflowModel(t *testing.T) Model {
 	t.Helper()
 	context := ContextModel{
@@ -957,6 +1013,26 @@ func setProjectIDs(t *testing.T, model *Model, projectIDs types.Set) {
 	contextModel.Projects = mustObjectValue(t, projectsContextAttributeTypes, ProjectsContextModel{ProjectIDs: projectIDs})
 	triggers[0].Context = mustObjectValue(t, contextAttributeTypes, contextModel)
 	model.Triggers = mustListValue(t, types.ObjectType{AttrTypes: triggerAttributeTypes}, triggers)
+}
+
+func testProjectIDs(t *testing.T, count int) types.Set {
+	t.Helper()
+	values := make([]attr.Value, count)
+	for idx := range values {
+		values[idx] = types.StringValue(uuid.NewString())
+	}
+	return types.SetValueMust(types.StringType, values)
+}
+
+func setMaxTotal(t *testing.T, model *Model, maxTotal int32) {
+	t.Helper()
+	var action ActionModel
+	mustObjectAs(t, model.Action, &action)
+	var limits LimitsModel
+	mustObjectAs(t, action.Limits, &limits)
+	limits.MaxTotal = types.Int32Value(maxTotal)
+	action.Limits = mustObjectValue(t, limitsAttributeTypes, limits)
+	model.Action = mustObjectValue(t, actionAttributeTypes, action)
 }
 
 func setActionSteps(t *testing.T, model *Model, steps types.List) {

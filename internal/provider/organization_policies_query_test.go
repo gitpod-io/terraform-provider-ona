@@ -15,6 +15,8 @@ import (
 )
 
 func TestAccOrganizationPoliciesQuery(t *testing.T) {
+	t.Parallel()
+
 	server := newPolicyAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -39,6 +41,8 @@ func TestAccOrganizationPoliciesQuery(t *testing.T) {
 }
 
 func TestAccOrganizationPoliciesQueryWithOrganizationID(t *testing.T) {
+	t.Parallel()
+
 	server := newPolicyAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -59,6 +63,8 @@ func TestAccOrganizationPoliciesQueryWithOrganizationID(t *testing.T) {
 }
 
 func TestAccOrganizationPoliciesQueryUnknownOrganization(t *testing.T) {
+	t.Parallel()
+
 	server := newPolicyAPIServer(t)
 	t.Cleanup(server.Close)
 

@@ -15,13 +15,13 @@ import (
 
 func resourceSchema() resourceschema.Schema {
 	return resourceschema.Schema{
-		MarkdownDescription: "Ona organization integration. Use a definition ID from `ona_integration_definitions` for a built-in integration, or omit it to configure a custom MCP integration. Integration writes require organization integration permissions. Removing this resource deletes the remote integration.",
+		MarkdownDescription: "Ona organization integration. Use a definition ID from `ona_integration_definitions` for a built-in integration, whose authentication is managed by Ona, or omit it to configure a custom MCP integration. Integration writes require organization integration permissions. Removing this resource deletes the remote integration.",
 		Attributes: map[string]resourceschema.Attribute{
 			"id":              tfvalue.StableComputedString("Integration ID. Use this value as the Terraform import ID."),
 			"organization_id": tfvalue.StableComputedString("Organization ID that owns the integration."),
 			"integration_definition_id": resourceschema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: "Global integration definition ID. Omit this value for a custom MCP integration. Changing it replaces the integration.",
+				MarkdownDescription: "Global integration definition ID. Omit this value for a custom MCP integration. Definition-backed integrations cannot configure `auth` or `credentials`. Changing it replaces the integration.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -145,7 +145,7 @@ func resourceAuthAttribute() resourceschema.SingleNestedAttribute {
 	return resourceschema.SingleNestedAttribute{
 		Optional:            true,
 		Computed:            true,
-		MarkdownDescription: "Effective authentication configuration. Omitted values may be inherited from the selected definition. Authentication is immutable for custom integrations.",
+		MarkdownDescription: "Authentication configuration for a custom integration. Do not configure this block when `integration_definition_id` is set; definition-backed authentication is managed by Ona. Authentication is immutable after a custom integration is created.",
 		Attributes: map[string]resourceschema.Attribute{
 			"requires_auth": resourceschema.BoolAttribute{
 				Optional:            true,
@@ -206,7 +206,7 @@ func resourceCredentialsAttribute() resourceschema.SingleNestedAttribute {
 		Optional:            true,
 		Sensitive:           true,
 		WriteOnly:           true,
-		MarkdownDescription: "Write-only integration credentials. Values are sent to Ona but are never stored in Terraform plan or state. Pair each value with its version marker under `auth` to rotate it intentionally.",
+		MarkdownDescription: "Write-only credentials for a custom integration. Do not configure this block when `integration_definition_id` is set. Values are sent to Ona but are never stored in Terraform plan or state. Pair each value with its version marker under `auth` to rotate it intentionally.",
 		Attributes: map[string]resourceschema.Attribute{
 			"oauth_client_secret":        credentialResourceString("OAuth client secret."),
 			"proprietary_client_secret":  credentialResourceString("Provider application client secret."),

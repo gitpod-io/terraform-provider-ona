@@ -14,6 +14,8 @@ import (
 )
 
 func TestAdmissionLevelMappings(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name  string
 		value string
@@ -26,6 +28,8 @@ func TestAdmissionLevelMappings(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 			if diff := cmp.Diff(test.enum, admissionLevelFromString(types.StringValue(test.value), path.Root("max_admission_level"), &diags)); diff != "" {
 				t.Fatalf("enum mismatch (-want +got):\n%s", diff)
@@ -41,6 +45,8 @@ func TestAdmissionLevelMappings(t *testing.T) {
 }
 
 func TestAdmissionLevelFromStringRejectsUnsupportedValue(t *testing.T) {
+	t.Parallel()
+
 	var diags diag.Diagnostics
 	got := admissionLevelFromString(types.StringValue("public"), path.Root("max_admission_level"), &diags)
 	if diff := cmp.Diff(v1.AdmissionLevel_ADMISSION_LEVEL_UNSPECIFIED, got); diff != "" {

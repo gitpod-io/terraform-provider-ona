@@ -27,6 +27,8 @@ func (s *fakeServiceAccountService) ListServiceAccounts(ctx context.Context, req
 }
 
 func TestAccServiceAccountQuery(t *testing.T) {
+	t.Parallel()
+
 	server := newServiceAccountAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.seed(newTestServiceAccount(serviceAccountID1, "Terraform Automation", "Managed by Terraform"))

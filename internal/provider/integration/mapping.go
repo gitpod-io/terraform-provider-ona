@@ -21,8 +21,12 @@ func createIntegrationRequest(ctx context.Context, plan Model, config Model) (*v
 	var diags diag.Diagnostics
 	capabilities, capabilityDiags := capabilitiesFromObject(ctx, config.Capabilities)
 	diags.Append(capabilityDiags...)
-	auth, authDiags := authFromObject(ctx, config.Auth, config.Credentials)
-	diags.Append(authDiags...)
+	var auth *v1.IntegrationAuthentication
+	if !tfvalue.IsKnownString(plan.IntegrationDefinitionID) {
+		var authDiags diag.Diagnostics
+		auth, authDiags = authFromObject(ctx, config.Auth, config.Credentials)
+		diags.Append(authDiags...)
+	}
 	categories, categoryDiags := categoriesFromSet(ctx, config.Categories, path.Root("categories"))
 	diags.Append(categoryDiags...)
 	if diags.HasError() {
@@ -61,7 +65,7 @@ func updateIntegrationRequest(ctx context.Context, plan Model, state Model, conf
 		req.Capabilities = capabilities
 	}
 
-	if !plan.Auth.Equal(state.Auth) {
+	if !tfvalue.IsKnownString(plan.IntegrationDefinitionID) && !plan.Auth.Equal(state.Auth) {
 		validateAuthUpdateSecrets(ctx, plan.Auth, state.Auth, config.Credentials, &diags)
 		auth, authDiags := authFromObject(ctx, config.Auth, config.Credentials)
 		diags.Append(authDiags...)

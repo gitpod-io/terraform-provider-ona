@@ -15,6 +15,8 @@ import (
 )
 
 func TestAccSecretQuery(t *testing.T) {
+	t.Parallel()
+
 	server := newSecretAPIServer(t)
 	t.Cleanup(server.Close)
 	id := secretTestSecretID(1)

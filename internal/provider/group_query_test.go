@@ -33,6 +33,8 @@ func (s *fakeGroupService) ListGroups(ctx context.Context, req *connect.Request[
 }
 
 func TestAccGroupQuery(t *testing.T) {
+	t.Parallel()
+
 	server := newAccessControlAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.seedGroup()

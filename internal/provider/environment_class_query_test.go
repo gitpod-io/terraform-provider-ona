@@ -18,6 +18,8 @@ import (
 )
 
 func TestAccEnvironmentClassQuery(t *testing.T) {
+	t.Parallel()
+
 	server := newEnvironmentClassQueryAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -125,6 +127,8 @@ enabled   = true
 }
 
 func TestAccEnvironmentClassQueryRejectsInvalidProvider(t *testing.T) {
+	t.Parallel()
+
 	server := newEnvironmentClassQueryAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -138,6 +142,8 @@ providers = ["managed"]
 }
 
 func TestAccEnvironmentClassQueryDeduplicatesDisplayNames(t *testing.T) {
+	t.Parallel()
+
 	server := newRunnerConfigurationAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -187,6 +193,8 @@ func TestAccEnvironmentClassQueryDeduplicatesDisplayNames(t *testing.T) {
 }
 
 func TestAccEnvironmentClassQueryReportsRunnerListError(t *testing.T) {
+	t.Parallel()
+
 	server := newEnvironmentClassQueryAPIServer(t)
 	t.Cleanup(server.Close)
 

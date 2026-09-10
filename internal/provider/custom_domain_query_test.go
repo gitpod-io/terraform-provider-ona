@@ -15,6 +15,8 @@ import (
 )
 
 func TestAccCustomDomainQuery(t *testing.T) {
+	t.Parallel()
+
 	server := newCustomDomainAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.seed("ona.example.com", v1.CustomDomainProvider_CUSTOM_DOMAIN_PROVIDER_AWS, "123456789012")
@@ -34,6 +36,8 @@ func TestAccCustomDomainQuery(t *testing.T) {
 }
 
 func TestAccCustomDomainQueryNotFound(t *testing.T) {
+	t.Parallel()
+
 	server := newCustomDomainAPIServer(t)
 	t.Cleanup(server.Close)
 

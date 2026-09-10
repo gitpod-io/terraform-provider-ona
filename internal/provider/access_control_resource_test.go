@@ -1156,6 +1156,8 @@ func TestAccOrganizationRoleAssignmentResourceLifecycle(t *testing.T) {
 }
 
 func TestOrganizationRoleAssignmentResourceImports(t *testing.T) {
+	t.Parallel()
+
 	server := newAccessControlAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.seedGroup()

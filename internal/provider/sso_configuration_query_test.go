@@ -34,6 +34,8 @@ func (s *fakeSSOQueryService) ListSSOConfigurations(ctx context.Context, req *co
 }
 
 func TestAccSSOConfigurationQuery(t *testing.T) {
+	t.Parallel()
+
 	path, handler := v1connect.NewOrganizationServiceHandler(&fakeSSOQueryService{})
 	mux := http.NewServeMux()
 	mux.Handle(path, handler)

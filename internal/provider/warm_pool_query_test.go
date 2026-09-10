@@ -15,6 +15,8 @@ import (
 )
 
 func TestAccWarmPoolQuery(t *testing.T) {
+	t.Parallel()
+
 	server := newWarmPoolAPIServer(t)
 	t.Cleanup(server.Close)
 

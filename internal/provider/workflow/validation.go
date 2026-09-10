@@ -154,7 +154,7 @@ func validateTrigger(ctx context.Context, trigger TriggerModel, p path.Path, req
 		var value ProjectsContextModel
 		diags.Append(contextModel.Projects.As(ctx, &value, basetypes.ObjectAsOptions{})...)
 		if !diags.HasError() {
-			validateUUIDSet(value.ProjectIDs, p.AtName("context").AtName("projects").AtName("project_ids"), 0, 500, requireKnown, diags)
+			validateUUIDSet(value.ProjectIDs, p.AtName("context").AtName("projects").AtName("project_ids"), 0, 1000, requireKnown, diags)
 		}
 	case "repositories":
 		validateRepositoriesContext(ctx, contextModel.Repositories, p.AtName("context").AtName("repositories"), requireKnown, diags)
@@ -239,7 +239,7 @@ func validateAction(ctx context.Context, action ActionModel, p path.Path, requir
 		diags.Append(action.Limits.As(ctx, &limits, basetypes.ObjectAsOptions{})...)
 		if !diags.HasError() {
 			validateInt32(limits.MaxParallel, p.AtName("limits").AtName("max_parallel"), 1, 25, requireKnown, diags)
-			validateInt32(limits.MaxTotal, p.AtName("limits").AtName("max_total"), 1, 100, requireKnown, diags)
+			validateInt32(limits.MaxTotal, p.AtName("limits").AtName("max_total"), 1, 1000, requireKnown, diags)
 			if !limits.MaxParallel.IsNull() && !limits.MaxParallel.IsUnknown() && !limits.MaxTotal.IsNull() && !limits.MaxTotal.IsUnknown() && limits.MaxParallel.ValueInt32() > limits.MaxTotal.ValueInt32() {
 				diags.AddAttributeError(p.AtName("limits").AtName("max_parallel"), "Invalid Automation Action Limits", "max_parallel must not exceed max_total.")
 			}

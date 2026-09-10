@@ -7,6 +7,7 @@ It covers:
 - `ona_announcement_banner`
 - `ona_automation`
 - `ona_integration`
+- `ona_github_app_integration`
 - `ona_runner`
 - `ona_runner_llm_integration`
 - `ona_scm_integration`
@@ -84,6 +85,18 @@ export TF_VAR_team_membership_team_id="<team-id>"
 terraform -chdir=dev/local-importloop query \
   -generate-config-out=generated.tf
 ```
+
+An organization-owned GitHub App can appear in both `ona_integration` and
+`ona_github_app_integration` results. Keep only the dedicated resource and its
+import block for each App; remove the matching generic resource and import
+block before applying. Leave App credentials and `credentials_version` unset
+when adopting existing Apps. See the [resource guidance](../../docs/resources/github_app_integration.md)
+for migration from an existing generic resource.
+
+The dedicated Query uses the dashboard's
+[App metadata comparison](../../docs/resources/github_app_integration.md#app-classification).
+An integration matching the shared definition's App ID, slug, and client ID
+is excluded even when its credentials were configured locally.
 
 Review the generated configuration, then create and inspect the import plan:
 

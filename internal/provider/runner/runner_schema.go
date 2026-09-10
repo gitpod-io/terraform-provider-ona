@@ -51,6 +51,10 @@ func resourceSchema() resourceschema.Schema {
 				Computed:            true,
 				MarkdownDescription: "CloudFormation template URL for AWS EC2 runner setup. This is populated only for `aws_ec2` runners and is null for GCP runners.",
 			},
+			"terraform_module_url": resourceschema.StringAttribute{
+				Computed:            true,
+				MarkdownDescription: "Terraform module URL for deploying runner infrastructure with native cloud-provider resources. AWS EC2 runners link to the unversioned public AWS module repository because it has no official release; GCP runners link to the latest published module in the Terraform Registry.",
+			},
 			"created_at": resourceschema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "Time when the runner was created.",

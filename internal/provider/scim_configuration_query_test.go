@@ -38,6 +38,8 @@ func (s *fakeSCIMQueryService) ListSCIMConfigurations(ctx context.Context, req *
 }
 
 func TestAccSCIMConfigurationQuery(t *testing.T) {
+	t.Parallel()
+
 	service := &fakeSCIMQueryService{}
 	mux := http.NewServeMux()
 	organizationPath, organizationHandler := v1connect.NewOrganizationServiceHandler(service)

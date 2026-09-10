@@ -18,6 +18,8 @@ import (
 )
 
 func TestAccSCMIntegrationQuery(t *testing.T) {
+	t.Parallel()
+
 	server := newSCMIntegrationQueryAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -169,6 +171,8 @@ auth_modes = ["pat"]
 }
 
 func TestAccSCMIntegrationQueryRejectsInvalidAuthMode(t *testing.T) {
+	t.Parallel()
+
 	server := newSCMIntegrationQueryAPIServer(t)
 	t.Cleanup(server.Close)
 

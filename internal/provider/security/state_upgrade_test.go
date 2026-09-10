@@ -14,6 +14,8 @@ import (
 )
 
 func TestPolicyResourceUpgradeStateV0(t *testing.T) {
+	t.Parallel()
+
 	ctx := t.Context()
 	upgrader := (&PolicyResource{}).UpgradeState(ctx)[0]
 	priorState := tfsdk.State{Schema: *upgrader.PriorSchema}
@@ -101,6 +103,8 @@ func TestPolicyResourceUpgradeStateV0(t *testing.T) {
 }
 
 func TestPolicyResourceUpgradeStateV1(t *testing.T) {
+	t.Parallel()
+
 	ctx := t.Context()
 	upgrader := (&PolicyResource{}).UpgradeState(ctx)[1]
 	priorState := tfsdk.State{Schema: *upgrader.PriorSchema}

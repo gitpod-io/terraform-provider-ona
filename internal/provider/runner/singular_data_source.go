@@ -36,6 +36,7 @@ type DataSourceModel struct {
 	RunnerProvider            types.String                  `tfsdk:"runner_provider"`
 	Kind                      types.String                  `tfsdk:"kind"`
 	CloudFormationTemplateURL types.String                  `tfsdk:"cloudformation_template_url"`
+	TerraformModuleURL        types.String                  `tfsdk:"terraform_module_url"`
 	CreatedAt                 types.String                  `tfsdk:"created_at"`
 	Configuration             *DataSourceConfigurationModel `tfsdk:"configuration"`
 	Creator                   *CreatorModel                 `tfsdk:"creator"`
@@ -159,6 +160,10 @@ func dataSourceRunnerAttributes(runnerID datasourceschema.StringAttribute) map[s
 			Computed:            true,
 			MarkdownDescription: "CloudFormation template URL for AWS EC2 runner setup. This is populated only for `aws_ec2` runners and is null for GCP runners.",
 		},
+		"terraform_module_url": datasourceschema.StringAttribute{
+			Computed:            true,
+			MarkdownDescription: "Terraform module URL for deploying runner infrastructure with native cloud-provider resources. AWS EC2 runners link to the unversioned public AWS module repository because it has no official release; GCP runners link to the latest published module in the Terraform Registry.",
+		},
 		"created_at": datasourceschema.StringAttribute{
 			Computed:            true,
 			MarkdownDescription: "Time when the runner was created.",
@@ -255,6 +260,7 @@ func populateDataSourceModelFromRunner(data *DataSourceModel, runner *v1.Runner)
 	data.RunnerProvider = model.RunnerProvider
 	data.Kind = model.Kind
 	data.CloudFormationTemplateURL = model.CloudFormationTemplateURL
+	data.TerraformModuleURL = model.TerraformModuleURL
 	data.CreatedAt = model.CreatedAt
 	data.Configuration = dataSourceConfigurationModel(model.Configuration)
 	data.Creator = model.Creator

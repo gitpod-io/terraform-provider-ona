@@ -2,12 +2,12 @@
 page_title: "ona_integration Resource - ona"
 subcategory: "Integrations and Automation"
 description: |-
-  Ona organization integration. Use a definition ID from ona_integration_definitions for a built-in integration, or omit it to configure a custom MCP integration. Integration writes require organization integration permissions. Removing this resource deletes the remote integration.
+  Ona organization integration. Use a definition ID from ona_integration_definitions for a built-in integration, whose authentication is managed by Ona, or omit it to configure a custom MCP integration. Integration writes require organization integration permissions. Removing this resource deletes the remote integration.
 ---
 
 # ona_integration (Resource)
 
-Ona organization integration. Use a definition ID from `ona_integration_definitions` for a built-in integration, or omit it to configure a custom MCP integration. Integration writes require organization integration permissions. Removing this resource deletes the remote integration.
+Ona organization integration. Use a definition ID from `ona_integration_definitions` for a built-in integration, whose authentication is managed by Ona, or omit it to configure a custom MCP integration. Integration writes require organization integration permissions. Removing this resource deletes the remote integration.
 
 For product context, see [Integrations](https://ona.com/docs/ona/integrations/overview), [MCP servers](https://ona.com/docs/ona/mcp), and [Git providers](https://ona.com/docs/ona/source-control/overview).
 
@@ -66,14 +66,14 @@ resource "ona_integration" "custom_mcp" {
 
 > **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
 
-- `auth` (Attributes) Effective authentication configuration. Omitted values may be inherited from the selected definition. Authentication is immutable for custom integrations. (see [below for nested schema](#nestedatt--auth))
+- `auth` (Attributes) Authentication configuration for a custom integration. Do not configure this block when `integration_definition_id` is set; definition-backed authentication is managed by Ona. Authentication is immutable after a custom integration is created. (see [below for nested schema](#nestedatt--auth))
 - `capabilities` (Attributes) Effective integration capabilities. Omitted values may be inherited from the selected definition. Capabilities are immutable for custom integrations. (see [below for nested schema](#nestedatt--capabilities))
 - `categories` (Set of String) Integration categories. Supported values are `source_control`, `communication`, `project_management`, `observability`, `data_analytics`, `knowledge`, `mcp`, `automation_triggers`, and `ai`. Definition-backed integrations inherit categories when omitted. Clearing custom categories replaces the integration; clearing definition-backed categories is not representable and returns a plan diagnostic.
-- `credentials` (Attributes, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) Write-only integration credentials. Values are sent to Ona but are never stored in Terraform plan or state. Pair each value with its version marker under `auth` to rotate it intentionally. (see [below for nested schema](#nestedatt--credentials))
+- `credentials` (Attributes, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) Write-only credentials for a custom integration. Do not configure this block when `integration_definition_id` is set. Values are sent to Ona but are never stored in Terraform plan or state. Pair each value with its version marker under `auth` to rotate it intentionally. (see [below for nested schema](#nestedatt--credentials))
 - `description` (String) Custom integration description. Definition-backed integrations inherit their description. Changing it replaces the integration.
 - `enabled` (Boolean) Whether the integration is enabled. Defaults to `false`.
 - `host` (String) Integration host. Definition-backed integrations inherit it when omitted; custom integrations derive it from the MCP URL when omitted. Changing it replaces the integration.
-- `integration_definition_id` (String) Global integration definition ID. Omit this value for a custom MCP integration. Changing it replaces the integration.
+- `integration_definition_id` (String) Global integration definition ID. Omit this value for a custom MCP integration. Definition-backed integrations cannot configure `auth` or `credentials`. Changing it replaces the integration.
 - `name` (String) Integration display name. Required for custom integrations and inherited for definition-backed integrations. Changing it replaces the integration.
 - `runner_id` (String) Runner ID to which this integration is restricted. Changing it replaces the integration.
 

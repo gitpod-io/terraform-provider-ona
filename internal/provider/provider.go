@@ -11,6 +11,7 @@ import (
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/accesscontrol"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/billing"
 	gitauthentication "github.com/gitpod-io/terraform-provider-ona/internal/provider/git_authentication"
+	"github.com/gitpod-io/terraform-provider-ona/internal/provider/githubapp"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/integration"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/organization"
 	"github.com/gitpod-io/terraform-provider-ona/internal/provider/project"
@@ -200,6 +201,7 @@ func (p *OnaProvider) Resources(ctx context.Context) []func() resource.Resource 
 		billing.NewUserAIBudgetResource,
 		gitauthentication.NewResource,
 		integration.NewResource,
+		githubapp.NewResource,
 		organization.NewAnnouncementBannerResource,
 		organization.NewCustomDomainResource,
 		organization.NewOIDCConfigResource,
@@ -239,6 +241,7 @@ func (p *OnaProvider) ListResources(ctx context.Context) []func() list.ListResou
 		accesscontrol.NewGroupMembershipListResource,
 		accesscontrol.NewOrganizationRoleAssignmentListResource,
 		integration.NewListResource,
+		githubapp.NewListResource,
 		accesscontrol.NewTeamListResource,
 		accesscontrol.NewTeamMembershipListResource,
 		organization.NewAnnouncementBannerListResource,

@@ -55,15 +55,23 @@ func (r *Resource) ValidateConfig(ctx context.Context, req resource.ValidateConf
 }
 
 func (r *Resource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
-	if req.State.Raw.IsNull() || req.Plan.Raw.IsNull() {
+	if req.Plan.Raw.IsNull() {
 		return
 	}
-	var state Model
 	var plan Model
 	var config Model
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	validateResolvedDefinitionBackedConfig(plan, config, &resp.Diagnostics)
+	if resp.Diagnostics.HasError() || req.State.Raw.IsNull() {
+		return
+	}
+
+	var state Model
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -89,6 +97,10 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 	var config Model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	validateResolvedDefinitionBackedConfig(data, config, &resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -183,6 +195,10 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	validateResolvedDefinitionBackedConfig(data, config, &resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}

@@ -253,6 +253,15 @@ resource "ona_scm_integration" "github_pat" {
   auth_mode = "pat"
 }
 
+resource "ona_github_app_integration" "devloop" {
+  count = var.enable_github_app_integration ? 1 : 0
+
+  app_id              = var.github_app_id
+  enabled             = var.github_app_enabled
+  credentials         = var.github_app_credentials
+  credentials_version = var.github_app_credentials_version
+}
+
 resource "ona_git_authentication" "devloop" {
   count = var.enable_git_authentication ? 1 : 0
 

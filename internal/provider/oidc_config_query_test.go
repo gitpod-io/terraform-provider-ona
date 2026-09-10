@@ -91,6 +91,8 @@ func (s *fakeOIDCConfigService) seedOIDCConfig(config *v1.OIDCConfig) {
 }
 
 func TestAccOIDCConfigQuery(t *testing.T) {
+	t.Parallel()
+
 	service := newFakeOIDCConfigService("org-1")
 	service.seedOIDCConfig(oidcConfigV3("project_id"))
 	server := newOIDCConfigAPIServer(t, service)
@@ -109,6 +111,8 @@ func TestAccOIDCConfigQuery(t *testing.T) {
 }
 
 func TestAccOIDCConfigQueryReturnsNoResultsWhenNotFound(t *testing.T) {
+	t.Parallel()
+
 	service := newFakeOIDCConfigService("org-1")
 	server := newOIDCConfigAPIServer(t, service)
 	t.Cleanup(server.Close)
@@ -121,6 +125,8 @@ func TestAccOIDCConfigQueryReturnsNoResultsWhenNotFound(t *testing.T) {
 }
 
 func TestAccOIDCConfigImportStateSupportsLegacyIDAndResourceIdentity(t *testing.T) {
+	t.Parallel()
+
 	service := newFakeOIDCConfigService("org-1")
 	server := newOIDCConfigAPIServer(t, service)
 	t.Cleanup(server.Close)

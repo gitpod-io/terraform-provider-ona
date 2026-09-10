@@ -50,6 +50,7 @@ func TestAccRunnerResourceLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr("ona_runner.test", "runner_provider", "aws_ec2"),
 					resource.TestCheckResourceAttr("ona_runner.test", "kind", "remote"),
 					resource.TestCheckResourceAttr("ona_runner.test", "cloudformation_template_url", "https://gitpod-flex-releases.s3.amazonaws.com/ec2/stable/gitpod-ec2-runner.json"),
+					resource.TestCheckResourceAttr("ona_runner.test", "terraform_module_url", "https://github.com/gitpod-io/terraform-aws-ona-runner"),
 					resource.TestCheckResourceAttr("ona_runner.test", "configuration.region", "eu-central-1"),
 					resource.TestCheckResourceAttr("ona_runner.test", "configuration.release_channel", "stable"),
 					resource.TestCheckResourceAttr("ona_runner.test", "configuration.log_level", "info"),
@@ -84,6 +85,7 @@ func TestAccRunnerResourceLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr("ona_runner.test", "id", "runner-1"),
 					resource.TestCheckResourceAttr("ona_runner.test", "name", "Frankfurt Runner Updated"),
 					resource.TestCheckResourceAttr("ona_runner.test", "cloudformation_template_url", "https://gitpod-flex-releases.s3.amazonaws.com/ec2/stable/gitpod-ec2-runner.json"),
+					resource.TestCheckResourceAttr("ona_runner.test", "terraform_module_url", "https://github.com/gitpod-io/terraform-aws-ona-runner"),
 					resource.TestCheckResourceAttr("ona_runner.test", "configuration.log_level", "debug"),
 				),
 			},
@@ -207,6 +209,7 @@ func TestAccRunnerResourceLatestCloudFormationTemplateURL(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_runner.test", "configuration.release_channel", "stable"),
 					resource.TestCheckResourceAttr("ona_runner.test", "cloudformation_template_url", "https://gitpod-flex-releases.s3.amazonaws.com/ec2/stable/gitpod-ec2-runner.json"),
+					resource.TestCheckResourceAttr("ona_runner.test", "terraform_module_url", "https://github.com/gitpod-io/terraform-aws-ona-runner"),
 				),
 			},
 			{
@@ -214,6 +217,7 @@ func TestAccRunnerResourceLatestCloudFormationTemplateURL(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_runner.test", "configuration.release_channel", "latest"),
 					resource.TestCheckResourceAttr("ona_runner.test", "cloudformation_template_url", "https://gitpod-flex-releases.s3.amazonaws.com/ec2/latest/gitpod-ec2-runner.json"),
+					resource.TestCheckResourceAttr("ona_runner.test", "terraform_module_url", "https://github.com/gitpod-io/terraform-aws-ona-runner"),
 				),
 			},
 		},
@@ -271,6 +275,7 @@ func TestAccRunnerResourceAllowsGCPWithoutRegion(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_runner.test", "runner_provider", "gcp"),
 					resource.TestCheckNoResourceAttr("ona_runner.test", "cloudformation_template_url"),
+					resource.TestCheckResourceAttr("ona_runner.test", "terraform_module_url", "https://registry.terraform.io/modules/gitpod-io/ona-runner/google/latest"),
 					resource.TestCheckNoResourceAttr("ona_runner.test", "configuration.region"),
 				),
 			},

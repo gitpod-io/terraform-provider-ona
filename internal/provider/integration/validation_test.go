@@ -32,6 +32,17 @@ func TestValidateConfig(t *testing.T) {
 		Expected Expectation
 	}{
 		{
+			Name: "definition_backed_without_overrides",
+			Input: Model{
+				IntegrationDefinitionID: types.StringValue("definition-1"),
+				Categories:              types.SetNull(types.StringType),
+				Capabilities:            types.ObjectNull(capabilitiesAttributeTypes),
+				Auth:                    types.ObjectNull(authResourceAttributeTypes),
+				Credentials:             types.ObjectNull(credentialsAttributeTypes),
+			},
+			Expected: Expectation{},
+		},
+		{
 			Name: "definition_backed_rejects_name",
 			Input: Model{
 				IntegrationDefinitionID: types.StringValue("definition-1"),
@@ -39,8 +50,31 @@ func TestValidateConfig(t *testing.T) {
 				Categories:              types.SetNull(types.StringType),
 				Capabilities:            types.ObjectNull(capabilitiesAttributeTypes),
 				Auth:                    types.ObjectNull(authResourceAttributeTypes),
+				Credentials:             types.ObjectNull(credentialsAttributeTypes),
 			},
 			Expected: Expectation{Errors: []string{"Invalid Definition-Backed Integration Name"}},
+		},
+		{
+			Name: "definition_backed_rejects_auth",
+			Input: Model{
+				IntegrationDefinitionID: types.StringValue("definition-1"),
+				Categories:              types.SetNull(types.StringType),
+				Capabilities:            types.ObjectNull(capabilitiesAttributeTypes),
+				Auth:                    manualAuth,
+				Credentials:             types.ObjectNull(credentialsAttributeTypes),
+			},
+			Expected: Expectation{Errors: []string{"Invalid Definition-Backed Integration Authentication"}},
+		},
+		{
+			Name: "definition_backed_rejects_credentials",
+			Input: Model{
+				IntegrationDefinitionID: types.StringValue("definition-1"),
+				Categories:              types.SetNull(types.StringType),
+				Capabilities:            types.ObjectNull(capabilitiesAttributeTypes),
+				Auth:                    types.ObjectNull(authResourceAttributeTypes),
+				Credentials:             manualCredentials,
+			},
+			Expected: Expectation{Errors: []string{"Invalid Definition-Backed Integration Credentials"}},
 		},
 		{
 			Name: "custom_manual_oauth",

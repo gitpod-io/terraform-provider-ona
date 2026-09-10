@@ -15,6 +15,8 @@ import (
 )
 
 func TestAccOrganizationRoleAssignmentQuery(t *testing.T) {
+	t.Parallel()
+
 	server := newAccessControlAPIServer(t)
 	t.Cleanup(server.Close)
 	server.service.assignments["org"] = &v1.RoleAssignment{Id: accessControlAssignmentID, GroupId: accessControlGroupID, ResourceId: accessControlOrgID, OrganizationId: accessControlOrgID, ResourceType: v1.ResourceType_RESOURCE_TYPE_ORGANIZATION, ResourceRole: v1.ResourceRole_RESOURCE_ROLE_ORG_ADMIN}

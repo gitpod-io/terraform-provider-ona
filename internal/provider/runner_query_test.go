@@ -19,6 +19,8 @@ import (
 const runnerQueryGCPCreatorID = "creator-2"
 
 func TestAccRunnerQuery(t *testing.T) {
+	t.Parallel()
+
 	server := newRunnerQueryAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -93,6 +95,8 @@ creator_ids = [%q]
 }
 
 func TestAccRunnerQueryDeduplicatesDisplayNames(t *testing.T) {
+	t.Parallel()
+
 	server := newRunnerAPIServer(t, map[string]*v1.Runner{
 		"runner-1": newTestRunner("runner-1", "1 Main Runner!"),
 		"runner-2": newTestRunner("runner-2", "1 Main Runner!"),
@@ -111,6 +115,7 @@ func TestAccRunnerQueryDeduplicatesDisplayNames(t *testing.T) {
 						RunnerID:                          "runner-1",
 						Name:                              "1 Main Runner!",
 						RunnerProvider:                    "aws_ec2",
+						TerraformModuleURL:                "https://github.com/gitpod-io/terraform-aws-ona-runner",
 						RunnerManagerID:                   nil,
 						GeneratedConfigHasRunnerManagerID: false,
 					},
@@ -120,6 +125,7 @@ func TestAccRunnerQueryDeduplicatesDisplayNames(t *testing.T) {
 						RunnerID:                          "runner-2",
 						Name:                              "1 Main Runner!",
 						RunnerProvider:                    "aws_ec2",
+						TerraformModuleURL:                "https://github.com/gitpod-io/terraform-aws-ona-runner",
 						RunnerManagerID:                   nil,
 						GeneratedConfigHasRunnerManagerID: false,
 					},
@@ -189,6 +195,7 @@ func expectedAWSRunnerQueryResult() runnerQueryResult {
 		RunnerID:                          "runner-1",
 		Name:                              "AWS Runner",
 		RunnerProvider:                    "aws_ec2",
+		TerraformModuleURL:                "https://github.com/gitpod-io/terraform-aws-ona-runner",
 		RunnerManagerID:                   nil,
 		GeneratedConfigHasRunnerManagerID: false,
 	}
@@ -201,6 +208,7 @@ func expectedGCPRunnerQueryResult() runnerQueryResult {
 		RunnerID:                          "runner-3",
 		Name:                              "GCP Runner",
 		RunnerProvider:                    "gcp",
+		TerraformModuleURL:                "https://registry.terraform.io/modules/gitpod-io/ona-runner/google/latest",
 		RunnerManagerID:                   nil,
 		GeneratedConfigHasRunnerManagerID: false,
 	}
@@ -216,6 +224,7 @@ type runnerQueryResult struct {
 	RunnerID                          string
 	Name                              string
 	RunnerProvider                    string
+	TerraformModuleURL                string
 	RunnerManagerID                   any
 	GeneratedConfigHasRunnerManagerID bool
 }
@@ -229,6 +238,7 @@ func (e expectRunnerQueryResults) CheckQuery(_ context.Context, req querycheck.C
 			RunnerID:                          stringMapValue(result.Identity, "runner_id"),
 			Name:                              stringMapValue(result.ResourceObject, "name"),
 			RunnerProvider:                    stringMapValue(result.ResourceObject, "runner_provider"),
+			TerraformModuleURL:                stringMapValue(result.ResourceObject, "terraform_module_url"),
 			RunnerManagerID:                   result.ResourceObject["runner_manager_id"],
 			GeneratedConfigHasRunnerManagerID: strings.Contains(result.Config, "runner_manager_id"),
 		})

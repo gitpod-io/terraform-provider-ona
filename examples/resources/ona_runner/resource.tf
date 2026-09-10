@@ -33,6 +33,10 @@ output "aws_cloudformation_template_url" {
   value = ona_runner.aws_primary.cloudformation_template_url
 }
 
+output "aws_terraform_module_url" {
+  value = ona_runner.aws_primary.terraform_module_url
+}
+
 # GCP runners do not use CloudFormation, so cloudformation_template_url is null.
 resource "ona_runner" "gcp_primary" {
   name            = "gcp-us-central-primary"
@@ -56,4 +60,8 @@ resource "ona_runner" "gcp_primary" {
       }
     }
   }
+}
+
+output "gcp_terraform_module_url" {
+  value = ona_runner.gcp_primary.terraform_module_url
 }

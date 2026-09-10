@@ -20,6 +20,8 @@ import (
 )
 
 func TestAccSecurityPolicyQuery(t *testing.T) {
+	t.Parallel()
+
 	server := newSecurityPolicyQueryAPIServer(t)
 	t.Cleanup(server.Close)
 
@@ -95,6 +97,8 @@ security_policy_ids = ["policy-2"]
 }
 
 func TestAccSecurityPolicyQueryRejectsTooManyIDs(t *testing.T) {
+	t.Parallel()
+
 	server := newSecurityPolicyQueryAPIServer(t)
 	t.Cleanup(server.Close)
 

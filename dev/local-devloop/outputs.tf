@@ -14,6 +14,11 @@ output "cloudformation_template_url" {
   value       = ona_runner.devloop.cloudformation_template_url
 }
 
+output "terraform_module_url" {
+  description = "Terraform module URL for the managed runner's cloud provider."
+  value       = ona_runner.devloop.terraform_module_url
+}
+
 output "managed_runner_name_from_data_source" {
   description = "Name of the managed runner read back through the singular data source."
   value       = data.ona_runner.devloop.name
@@ -32,6 +37,21 @@ output "managed_service_account_id" {
 output "managed_git_authentication_id" {
   description = "ID of the optional Git authentication managed by this module."
   value       = try(ona_git_authentication.devloop[0].id, null)
+}
+
+output "managed_github_app_integration_id" {
+  description = "Ona integration UUID when the GitHub App dev loop is enabled."
+  value       = try(ona_github_app_integration.devloop[0].id, null)
+}
+
+output "github_app_setup" {
+  description = "Callback, webhook, and browser installation URLs for the GitHub App integration."
+  value       = try(ona_github_app_integration.devloop[0].setup, null)
+}
+
+output "github_app_installation" {
+  description = "Saved GitHub installation metadata, or null until browser installation completes."
+  value       = try(ona_github_app_integration.devloop[0].installation, null)
 }
 
 output "managed_group_id" {

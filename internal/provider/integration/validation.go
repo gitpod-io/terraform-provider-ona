@@ -28,26 +28,30 @@ func validateConfig(ctx context.Context, data Model, diags *diag.Diagnostics) {
 		return
 	}
 	if tfvalue.IsKnownString(data.IntegrationDefinitionID) {
-		validateDefinitionBackedConfig(ctx, data, diags)
+		validateDefinitionBackedConfig(data, diags)
 		return
 	}
 	validateCustomConfig(ctx, data, diags)
 }
 
-func validateDefinitionBackedConfig(ctx context.Context, data Model, diags *diag.Diagnostics) {
+func validateResolvedDefinitionBackedConfig(plan, config Model, diags *diag.Diagnostics) {
+	if tfvalue.IsKnownString(plan.IntegrationDefinitionID) {
+		validateDefinitionBackedConfig(config, diags)
+	}
+}
+
+func validateDefinitionBackedConfig(data Model, diags *diag.Diagnostics) {
 	if tfvalue.IsKnownString(data.Name) {
 		diags.AddAttributeError(path.Root("name"), "Invalid Definition-Backed Integration Name", "Do not configure name when integration_definition_id is set. Ona resolves the name from the selected definition.")
 	}
 	if tfvalue.IsKnownString(data.Description) {
 		diags.AddAttributeError(path.Root("description"), "Invalid Definition-Backed Integration Description", "Do not configure description when integration_definition_id is set. Ona resolves the description from the selected definition.")
 	}
-	if data.Auth.IsNull() || data.Auth.IsUnknown() {
-		return
+	if !data.Auth.IsNull() {
+		diags.AddAttributeError(path.Root("auth"), "Invalid Definition-Backed Integration Authentication", "Do not configure auth when integration_definition_id is set. Ona resolves authentication from the selected definition.")
 	}
-	var auth authModel
-	diags.Append(data.Auth.As(ctx, &auth, basetypes.ObjectAsOptions{})...)
-	if !auth.RequiresAuth.IsNull() && !auth.RequiresAuth.IsUnknown() {
-		diags.AddAttributeError(path.Root("auth").AtName("requires_auth"), "Invalid Authentication Override", "Do not configure requires_auth for a definition-backed integration. Ona resolves it from the selected definition.")
+	if !data.Credentials.IsNull() {
+		diags.AddAttributeError(path.Root("credentials"), "Invalid Definition-Backed Integration Credentials", "Do not configure credentials when integration_definition_id is set. Ona uses credentials from the selected definition.")
 	}
 }
 

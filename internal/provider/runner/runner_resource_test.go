@@ -204,6 +204,75 @@ func TestEnumMappings(t *testing.T) {
 	}
 }
 
+func TestTerraformModuleURL(t *testing.T) {
+	t.Parallel()
+
+	type Expectation struct {
+		Value   string
+		IsNull  bool
+		Unknown bool
+	}
+
+	tests := []struct {
+		Name           string
+		RunnerProvider types.String
+		Expected       Expectation
+	}{
+		{
+			Name:           "aws_ec2",
+			RunnerProvider: types.StringValue("aws_ec2"),
+			Expected: Expectation{
+				Value: "https://github.com/gitpod-io/terraform-aws-ona-runner",
+			},
+		},
+		{
+			Name:           "gcp",
+			RunnerProvider: types.StringValue("gcp"),
+			Expected: Expectation{
+				Value: "https://registry.terraform.io/modules/gitpod-io/ona-runner/google/latest",
+			},
+		},
+		{
+			Name:           "unsupported_provider",
+			RunnerProvider: types.StringValue("managed"),
+			Expected: Expectation{
+				IsNull: true,
+			},
+		},
+		{
+			Name:           "null_provider",
+			RunnerProvider: types.StringNull(),
+			Expected: Expectation{
+				IsNull: true,
+			},
+		},
+		{
+			Name:           "unknown_provider",
+			RunnerProvider: types.StringUnknown(),
+			Expected: Expectation{
+				IsNull: true,
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			result := terraformModuleURL(tc.RunnerProvider)
+			got := Expectation{
+				Value:   result.ValueString(),
+				IsNull:  result.IsNull(),
+				Unknown: result.IsUnknown(),
+			}
+
+			if diff := cmp.Diff(tc.Expected, got); diff != "" {
+				t.Errorf("terraformModuleURL() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
 func TestCreateRunnerRequestUsesEnterpriseVariant(t *testing.T) {
 	t.Parallel()
 

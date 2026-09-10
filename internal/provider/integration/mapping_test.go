@@ -56,7 +56,7 @@ func TestCategoryMappings(t *testing.T) {
 	}
 }
 
-func TestCreateIntegrationRequest(t *testing.T) {
+func TestCreateCustomIntegrationRequest(t *testing.T) {
 	t.Parallel()
 
 	capabilities := testCapabilitiesObject(t, "https://mcp.example.com/mcp")
@@ -64,7 +64,7 @@ func TestCreateIntegrationRequest(t *testing.T) {
 	credentials := testCredentialsObject(t, "client-secret")
 	categories := testStringSet(t, "mcp", "ai")
 	plan := Model{
-		IntegrationDefinitionID: types.StringValue("definition-1"),
+		IntegrationDefinitionID: types.StringNull(),
 		RunnerID:                types.StringValue("runner-1"),
 		Enabled:                 types.BoolValue(true),
 	}
@@ -73,6 +73,7 @@ func TestCreateIntegrationRequest(t *testing.T) {
 		Auth:         auth,
 		Credentials:  credentials,
 		Host:         types.StringValue("example.com"),
+		Name:         types.StringValue("Custom MCP"),
 		Categories:   categories,
 	}
 
@@ -81,9 +82,8 @@ func TestCreateIntegrationRequest(t *testing.T) {
 		t.Fatalf("createIntegrationRequest() diagnostics: %v", diags)
 	}
 	expected := &v1.CreateIntegrationRequest{
-		IntegrationDefinitionId: "definition-1",
-		RunnerId:                "runner-1",
-		Enabled:                 true,
+		RunnerId: "runner-1",
+		Enabled:  true,
 		Capabilities: &v1.IntegrationCapabilities{
 			Mcp: &v1.IntegrationMCPCapability{Url: "https://mcp.example.com/mcp"},
 		},
@@ -91,6 +91,7 @@ func TestCreateIntegrationRequest(t *testing.T) {
 			Oauth: &v1.IntegrationOAuthConfig{ClientId: "client-id", ClientSecret: "client-secret"},
 		},
 		Host:       "example.com",
+		Name:       "Custom MCP",
 		Categories: []v1.IntegrationCategory{v1.IntegrationCategory_INTEGRATION_CATEGORY_AI, v1.IntegrationCategory_INTEGRATION_CATEGORY_MCP},
 	}
 	if diff := cmp.Diff(expected, request, protocmp.Transform()); diff != "" {
@@ -167,6 +168,44 @@ func TestUpdateIntegrationRequestRequiresOAuthSecret(t *testing.T) {
 				t.Errorf("updateIntegrationRequest() mismatch (-want +got):\n%s", diff)
 			}
 		})
+	}
+}
+
+func TestUpdateDefinitionBackedIntegrationRequestOmitsAuth(t *testing.T) {
+	t.Parallel()
+
+	stateAuth := testAuthObject(t, false, "definition-client", "")
+	planAuth := testAuthObject(t, false, "definition-client", "computed-version")
+	emptyCategories := testStringSet(t)
+	plan := Model{
+		ID:                      types.StringValue("integration-1"),
+		IntegrationDefinitionID: types.StringValue("definition-1"),
+		Enabled:                 types.BoolValue(true),
+		Capabilities:            types.ObjectNull(capabilitiesAttributeTypes),
+		Auth:                    planAuth,
+		Categories:              emptyCategories,
+	}
+	state := Model{
+		ID:                      types.StringValue("integration-1"),
+		IntegrationDefinitionID: types.StringValue("definition-1"),
+		Enabled:                 types.BoolValue(true),
+		Capabilities:            types.ObjectNull(capabilitiesAttributeTypes),
+		Auth:                    stateAuth,
+		Categories:              emptyCategories,
+	}
+	config := Model{
+		Auth:        types.ObjectNull(authResourceAttributeTypes),
+		Credentials: types.ObjectNull(credentialsAttributeTypes),
+		Categories:  emptyCategories,
+	}
+
+	request, diags := updateIntegrationRequest(t.Context(), plan, state, config)
+	if diags.HasError() {
+		t.Fatalf("updateIntegrationRequest() diagnostics: %v", diags)
+	}
+	want := &v1.UpdateIntegrationRequest{Id: "integration-1"}
+	if diff := cmp.Diff(want, request, protocmp.Transform()); diff != "" {
+		t.Errorf("updateIntegrationRequest() mismatch (-want +got):\n%s", diff)
 	}
 }
 

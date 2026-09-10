@@ -16,6 +16,8 @@ import (
 )
 
 func TestAccTermsOfServiceQuery(t *testing.T) {
+	t.Parallel()
+
 	server := newOrganizationCommunicationsAPIServer(t)
 	t.Cleanup(server.Close)
 	version := &v1.TermsOfServiceVersion{Id: "terms-version-1", Version: 1, Markdown: "# Terms"}
@@ -39,6 +41,8 @@ func TestAccTermsOfServiceQuery(t *testing.T) {
 }
 
 func TestAccTermsOfServiceQueryExcludesUnconfigured(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name           string
 		organizationID string
@@ -62,6 +66,8 @@ func TestAccTermsOfServiceQueryExcludesUnconfigured(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
 			server := newOrganizationCommunicationsAPIServer(t)
 			t.Cleanup(server.Close)
 			if test.configure != nil {

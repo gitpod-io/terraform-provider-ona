@@ -1,3 +1,22 @@
+## 0.5.0-beta (Unreleased)
+
+BREAKING CHANGES:
+
+- Ona now manages authentication for built-in integrations. Remove custom
+  authentication and credential overrides before upgrading.
+  [Migration details](docs/resources/integration.md).
+
+FEATURES:
+
+- Manage [organization-owned GitHub App integrations](docs/resources/github_app_integration.md)
+  through Terraform.
+
+IMPROVEMENTS:
+
+- Runner details now link to [AWS and GCP Terraform deployment modules](docs/resources/runner.md).
+- Manage larger [Enterprise Automations](docs/resources/automation.md), with
+  up to 1,000 projects and 1,000 total actions.
+
 ## 0.4.0-beta (Unreleased)
 
 BREAKING CHANGES:

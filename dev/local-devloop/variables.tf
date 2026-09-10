@@ -55,6 +55,42 @@ variable "git_personal_access_token_version" {
   default     = "v1"
 }
 
+variable "enable_github_app_integration" {
+  type        = bool
+  description = "Whether to manage an existing organization-owned GitHub App's Ona integration."
+  default     = false
+}
+
+variable "github_app_id" {
+  type        = string
+  description = "Existing GitHub App ID used when the GitHub App integration is enabled."
+  default     = null
+}
+
+variable "github_app_enabled" {
+  type        = bool
+  description = "Whether the optional GitHub App integration is enabled in Ona. Match the existing value when importing."
+  default     = true
+}
+
+variable "github_app_credentials" {
+  type = object({
+    private_key    = string
+    client_secret  = string
+    webhook_secret = string
+  })
+  description = "Full GitHub App credential bundle for creation or rotation; omit for import."
+  sensitive   = true
+  ephemeral   = true
+  default     = null
+}
+
+variable "github_app_credentials_version" {
+  type        = number
+  description = "Positive rotation marker supplied with all App credentials. Omit for import."
+  default     = null
+}
+
 variable "group_name" {
   type        = string
   description = "Name for the group managed by this local development module."

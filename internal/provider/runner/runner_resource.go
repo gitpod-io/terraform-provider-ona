@@ -44,6 +44,7 @@ type RunnerModel struct {
 	RunnerProvider            types.String        `tfsdk:"runner_provider"`
 	Kind                      types.String        `tfsdk:"kind"`
 	CloudFormationTemplateURL types.String        `tfsdk:"cloudformation_template_url"`
+	TerraformModuleURL        types.String        `tfsdk:"terraform_module_url"`
 	CreatedAt                 types.String        `tfsdk:"created_at"`
 	Configuration             *ConfigurationModel `tfsdk:"configuration"`
 	Creator                   *CreatorModel       `tfsdk:"creator"`
@@ -163,6 +164,7 @@ func (r *Resource) Create(ctx context.Context, req resource.CreateRequest, resp 
 	populateModelFromRunner(&data, result.Msg.GetRunner())
 	preservePlannedInputs(&data, planned)
 	populateCloudFormationTemplateURL(&data)
+	data.TerraformModuleURL = terraformModuleURL(data.RunnerProvider)
 	resp.Diagnostics.Append(resp.Identity.Set(ctx, RunnerIdentityModel{
 		RunnerID: data.RunnerID,
 	})...)
@@ -265,6 +267,7 @@ func (r *Resource) Update(ctx context.Context, req resource.UpdateRequest, resp 
 	populateModelFromRunner(&data, runner)
 	preservePlannedInputs(&data, planned)
 	populateCloudFormationTemplateURL(&data)
+	data.TerraformModuleURL = terraformModuleURL(data.RunnerProvider)
 	resp.Diagnostics.Append(resp.Identity.Set(ctx, RunnerIdentityModel{
 		RunnerID: data.RunnerID,
 	})...)
@@ -603,6 +606,7 @@ func populateModelFromRunner(data *RunnerModel, runner *v1.Runner) {
 	data.Configuration = configurationModel(runner.GetSpec().GetConfiguration())
 	data.Creator = creatorModel(runner.GetCreator())
 	populateCloudFormationTemplateURL(data)
+	data.TerraformModuleURL = terraformModuleURL(data.RunnerProvider)
 }
 
 func populateCloudFormationTemplateURL(data *RunnerModel) {
@@ -619,6 +623,21 @@ func populateCloudFormationTemplateURL(data *RunnerModel) {
 		releaseChannel = data.Configuration.ReleaseChannel.ValueString()
 	}
 	data.CloudFormationTemplateURL = types.StringValue(fmt.Sprintf("https://gitpod-flex-releases.s3.amazonaws.com/ec2/%s/gitpod-ec2-runner.json", releaseChannel))
+}
+
+func terraformModuleURL(runnerProvider types.String) types.String {
+	if runnerProvider.IsNull() || runnerProvider.IsUnknown() {
+		return types.StringNull()
+	}
+
+	switch runnerProvider.ValueString() {
+	case "aws_ec2":
+		return types.StringValue("https://github.com/gitpod-io/terraform-aws-ona-runner")
+	case "gcp":
+		return types.StringValue("https://registry.terraform.io/modules/gitpod-io/ona-runner/google/latest")
+	default:
+		return types.StringNull()
+	}
 }
 
 func preservePlannedInputs(data *RunnerModel, planned RunnerModel) {

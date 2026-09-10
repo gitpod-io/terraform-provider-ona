@@ -25,6 +25,7 @@ and data sources:
 - `ona_webhook.devloop`
 - `ona_warm_pool.devloop`
 - `ona_scm_integration.github_pat`
+- `ona_github_app_integration.devloop[0]` (opt-in)
 - `ona_git_authentication.devloop` (opt-in)
 - `ona_scm_integration.gitlab_pat`
 - `ona_scm_integration.azuredevops_entra`
@@ -70,7 +71,8 @@ TF_CLI_CONFIG_FILE="${PWD}/terraformrc" \
 terraform -chdir=dev/local-devloop apply -auto-approve -input=false
 ```
 
-The apply output includes `cloudformation_template_url` for AWS EC2 runners,
+The apply output includes `terraform_module_url` for the selected runner cloud
+provider, `cloudformation_template_url` for AWS EC2 runners,
 `managed_runner_token`, `managed_runner_role_assignment_id` when runner sharing
 is enabled, `managed_service_account_id`, `managed_team_id`, the managed project
 role assignment, warm pool and integration IDs, and the number of visible
@@ -110,6 +112,96 @@ terraform -chdir=dev/local-devloop apply \
 
 The integration uses the visible built-in definition for `linear.app`, so the
 dev loop does not require or persist an OAuth client secret.
+
+## Test an organization-managed GitHub App
+
+This resource is disabled by default. Use Terraform 1.14 or later and an
+existing disposable organization-owned GitHub App. A GitHub administrator
+registers the App, selects its permissions and events, and obtains its App ID
+and three credentials. An Ona organization administrator must be able to use
+the preview **Custom GitHub App** browser workflow, with a GitHub user who can
+approve installation and select repositories. See the
+[resource guide](../../templates/resources/github_app_integration.md.tmpl)
+for setup, rotation, and adoption details.
+
+The provider identifies custom Apps using the dashboard's
+[metadata comparison](../../templates/resources/github_app_integration.md.tmpl#app-classification).
+Use an App whose ID, slug, or client ID differs from the shared definition.
+
+Use the local provider override above and supply `ONA_TOKEN` through your
+normal credential source. Set `TF_VAR_github_app_credentials` to a JSON object
+with `private_key`, `client_secret`, and `webhook_secret` through a secret-store
+integration or a masked runtime input. The variable is ephemeral and sensitive,
+and the resource consumes it through a write-only argument, so the bundle is
+not stored in Terraform plan or state. Set the remaining non-secret inputs:
+
+```shell
+export TF_CLI_CONFIG_FILE="${PWD}/terraformrc"
+export TF_VAR_enable_github_app_integration=true
+export TF_VAR_github_app_id='<github-app-id>'
+export TF_VAR_github_app_credentials_version=1
+github_app_target='ona_github_app_integration.devloop[0]'
+
+terraform -chdir=dev/local-devloop apply \
+  -target="${github_app_target}" -input=false
+```
+
+The outputs include `managed_github_app_integration_id`, `github_app_setup`,
+and `github_app_installation`. Use the returned callback and webhook URLs in
+the GitHub App settings, set the same webhook secret on GitHub, and enable
+**Request user authorization (OAuth) during installation**. The callback may
+be on Ona's canonical host even when the provider uses a custom domain. Open
+`github_app_setup.installation_url` in an authenticated browser and select the
+same Ona organization that Terraform manages to install or connect the App.
+The stable URL ends in `/settings/org-integrations`; the browser handles the
+custom-domain handoff.
+Refresh after installation to observe its ID and account metadata:
+
+```shell
+terraform -chdir=dev/local-devloop apply \
+  -refresh-only -target="${github_app_target}" -input=false
+terraform -chdir=dev/local-devloop plan \
+  -target="${github_app_target}" -input=false
+```
+
+The second command should produce an empty plan. For same-App rotation,
+coordinate the secret changes in GitHub, supply the complete replacement
+bundle, and change `TF_VAR_github_app_credentials_version` to `2` before
+applying. Secret changes without a version change do not request rotation.
+The integration ID and installation should remain unchanged, though previously
+issued installation tokens may remain valid until expiry. App ID replacement
+requires a new browser installation handoff.
+
+To test import of an existing integration, leave the credentials and version
+unset and set the opt-in flag and App ID above. Set
+`TF_VAR_github_app_enabled=false` if the integration is disabled. If the object
+already belongs to a Terraform address, back up state and perform the
+state-only handoff in the resource guide before importing. Then import its
+Ona UUID:
+
+```shell
+unset TF_VAR_github_app_credentials TF_VAR_github_app_credentials_version
+terraform -chdir=dev/local-devloop import \
+  "${github_app_target}" '<ona-integration-uuid>'
+terraform -chdir=dev/local-devloop plan \
+  -target="${github_app_target}" -input=false
+```
+
+Import and Query must not require credentials, change the rotation marker, or
+rotate secrets.
+
+Delete only the dev-loop Ona integration with:
+
+```shell
+terraform -chdir=dev/local-devloop destroy \
+  -target="${github_app_target}" -input=false
+unset TF_VAR_enable_github_app_integration TF_VAR_github_app_id TF_VAR_github_app_enabled \
+  TF_VAR_github_app_credentials TF_VAR_github_app_credentials_version
+unset github_app_target
+```
+
+This leaves the GitHub App and its GitHub installation intact. Removing those
+is a separate GitHub administrator action.
 
 ## Test service-account Git authentication
 

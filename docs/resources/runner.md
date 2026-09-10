@@ -49,6 +49,10 @@ output "aws_cloudformation_template_url" {
   value = ona_runner.aws_primary.cloudformation_template_url
 }
 
+output "aws_terraform_module_url" {
+  value = ona_runner.aws_primary.terraform_module_url
+}
+
 # GCP runners do not use CloudFormation, so cloudformation_template_url is null.
 resource "ona_runner" "gcp_primary" {
   name            = "gcp-us-central-primary"
@@ -72,6 +76,10 @@ resource "ona_runner" "gcp_primary" {
       }
     }
   }
+}
+
+output "gcp_terraform_module_url" {
+  value = ona_runner.gcp_primary.terraform_module_url
 }
 ```
 
@@ -97,6 +105,7 @@ resource "ona_runner" "gcp_primary" {
 - `id` (String) Terraform resource ID. This is the same value as `runner_id`.
 - `kind` (String) Runner kind assigned by the Ona API from the selected provider.
 - `runner_id` (String) Ona runner ID. Use this value when configuring runner environment classes, SCM integrations, and runner token flows.
+- `terraform_module_url` (String) Terraform module URL for deploying runner infrastructure with native cloud-provider resources. AWS EC2 runners link to the unversioned public AWS module repository because it has no official release; GCP runners link to the latest published module in the Terraform Registry.
 
 <a id="nestedblock--configuration"></a>
 ### Nested Schema for `configuration`

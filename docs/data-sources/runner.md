@@ -36,6 +36,7 @@ data "ona_runner" "example" {
 - `kind` (String) Runner kind deduced by the API from the provider.
 - `name` (String) Runner display name.
 - `runner_provider` (String) Runner cloud provider, such as `aws_ec2` or `gcp`.
+- `terraform_module_url` (String) Terraform module URL for deploying runner infrastructure with native cloud-provider resources. AWS EC2 runners link to the unversioned public AWS module repository because it has no official release; GCP runners link to the latest published module in the Terraform Registry.
 
 <a id="nestedatt--configuration"></a>
 ### Nested Schema for `configuration`

@@ -45,7 +45,7 @@ func TestAccIntegrationResourceLifecycle(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDefinitionBackedIntegrationConfig(server.URL, false, "https://mcp.example.com/v1", "client-v1", "secret-v1", "v1", "mcp"),
+				Config: testAccDefinitionBackedIntegrationConfig(server.URL, false, "https://mcp.example.com/v1", "mcp"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_integration.test", "id", "integration-1"),
 					resource.TestCheckResourceAttr("ona_integration.test", "organization_id", "organization-1"),
@@ -53,52 +53,39 @@ func TestAccIntegrationResourceLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr("ona_integration.test", "enabled", "false"),
 					resource.TestCheckResourceAttr("ona_integration.test", "name", "Example"),
 					resource.TestCheckResourceAttr("ona_integration.test", "capabilities.mcp.url", "https://mcp.example.com/v1"),
-					resource.TestCheckResourceAttr("ona_integration.test", "auth.oauth.client_id", "client-v1"),
-					resource.TestCheckResourceAttr("ona_integration.test", "auth.oauth.client_secret_version", "v1"),
+					resource.TestCheckResourceAttr("ona_integration.test", "auth.oauth.client_id", "definition-client"),
+					resource.TestCheckNoResourceAttr("ona_integration.test", "auth.oauth.client_secret_version"),
 					resource.TestCheckNoResourceAttr("ona_integration.test", "credentials"),
 					resource.TestCheckResourceAttr("data.ona_integration_definitions.all", "definitions.#", "3"),
 					resource.TestCheckResourceAttr("data.ona_integration_definitions.all", "definitions.0.id", "definition-a"),
 					resource.TestCheckResourceAttr("data.ona_integration_definitions.all", "definitions.1.id", "definition-b"),
 					resource.TestCheckResourceAttr("data.ona_integration_definitions.all", "definitions.2.id", "definition-c"),
-					func(*terraform.State) error {
-						if got := server.service.lastOAuthSecret("integration-1"); got != "secret-v1" {
-							return fmt.Errorf("created OAuth secret = %q, want secret-v1", got)
-						}
-						return nil
-					},
 				),
 			},
 			{
-				Config: testAccDefinitionBackedIntegrationConfig(server.URL, false, "https://mcp.example.com/v1", "client-v1", "secret-v1", "v1", "mcp"),
+				Config: testAccDefinitionBackedIntegrationConfig(server.URL, false, "https://mcp.example.com/v1", "mcp"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
 				},
 			},
 			{
-				Config: testAccDefinitionBackedIntegrationConfig(server.URL, true, "https://mcp.example.com/v2", "client-v2", "secret-v2", "v2", "ai"),
+				Config: testAccDefinitionBackedIntegrationConfig(server.URL, true, "https://mcp.example.com/v2", "ai"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("ona_integration.test", "id", "integration-1"),
 					resource.TestCheckResourceAttr("ona_integration.test", "enabled", "true"),
 					resource.TestCheckResourceAttr("ona_integration.test", "capabilities.mcp.url", "https://mcp.example.com/v2"),
-					resource.TestCheckResourceAttr("ona_integration.test", "auth.oauth.client_id", "client-v2"),
-					resource.TestCheckResourceAttr("ona_integration.test", "auth.oauth.client_secret_version", "v2"),
-					func(*terraform.State) error {
-						if got := server.service.lastOAuthSecret("integration-1"); got != "secret-v2" {
-							return fmt.Errorf("updated OAuth secret = %q, want secret-v2", got)
-						}
-						return nil
-					},
+					resource.TestCheckResourceAttr("ona_integration.test", "auth.oauth.client_id", "definition-client"),
+					resource.TestCheckNoResourceAttr("ona_integration.test", "auth.oauth.client_secret_version"),
 				),
 			},
 			{
-				ResourceName:            "ona_integration.test",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"auth.oauth.client_secret_version"},
+				ResourceName:      "ona_integration.test",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 			{
 				PreConfig: func() { server.service.setEnabled("integration-1", false) },
-				Config:    testAccDefinitionBackedIntegrationConfig(server.URL, true, "https://mcp.example.com/v2", "client-v2", "secret-v2", "v2", "ai"),
+				Config:    testAccDefinitionBackedIntegrationConfig(server.URL, true, "https://mcp.example.com/v2", "ai"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{plancheck.ExpectNonEmptyPlan()},
 				},
@@ -106,7 +93,7 @@ func TestAccIntegrationResourceLifecycle(t *testing.T) {
 			},
 			{
 				PreConfig: func() { server.service.remove("integration-1") },
-				Config:    testAccDefinitionBackedIntegrationConfig(server.URL, true, "https://mcp.example.com/v2", "client-v2", "secret-v2", "v2", "ai"),
+				Config:    testAccDefinitionBackedIntegrationConfig(server.URL, true, "https://mcp.example.com/v2", "ai"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{plancheck.ExpectNonEmptyPlan()},
 				},
@@ -158,7 +145,7 @@ func TestAccIntegrationPermissionDiagnostic(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{{
-			Config:      testAccDefinitionBackedIntegrationConfig(server.URL, false, "https://mcp.example.com/v1", "client-v1", "secret-v1", "v1", "mcp"),
+			Config:      testAccDefinitionBackedIntegrationConfig(server.URL, false, "https://mcp.example.com/v1", "mcp"),
 			ExpectError: regexp.MustCompile(`Unable to Create Ona Integration[\s\S]*permission denied`),
 		}},
 	})
@@ -196,7 +183,7 @@ func TestAccDefinitionBackedCategoryClearingDiagnostic(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDefinitionBackedIntegrationConfig(server.URL, false, "https://mcp.example.com/v1", "client-v1", "secret-v1", "v1", "mcp"),
+				Config: testAccDefinitionBackedIntegrationConfig(server.URL, false, "https://mcp.example.com/v1", "mcp"),
 			},
 			{
 				Config:      testAccDefinitionBackedIntegrationWithoutCategoriesConfig(server.URL),
@@ -206,7 +193,74 @@ func TestAccDefinitionBackedCategoryClearingDiagnostic(t *testing.T) {
 	})
 }
 
-func testAccDefinitionBackedIntegrationConfig(host string, enabled bool, mcpURL, clientID, clientSecret, version, category string) string {
+func TestAccDefinitionBackedAuthenticationOverridesRejected(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		Name                   string
+		DefinitionIDExpression string
+		Configuration          string
+		ExpectedError          string
+	}{
+		{
+			Name:                   "auth",
+			DefinitionIDExpression: `"definition-b"`,
+			Configuration: `auth = {
+    oauth = {
+      token_url = "https://attacker.example/oauth/token"
+    }
+  }`,
+			ExpectedError: "Invalid Definition-Backed Integration Authentication",
+		},
+		{
+			Name:                   "credentials",
+			DefinitionIDExpression: `"definition-b"`,
+			Configuration: `credentials = {
+    oauth_client_secret = "attacker-secret"
+  }`,
+			ExpectedError: "Invalid Definition-Backed Integration Credentials",
+		},
+		{
+			Name:                   "auth with computed definition ID",
+			DefinitionIDExpression: `data.ona_integration_definitions.all.definitions[0].id`,
+			Configuration: `auth = {
+    oauth = {
+      token_url = "https://attacker.example/oauth/token"
+    }
+  }`,
+			ExpectedError: "Invalid Definition-Backed Integration Authentication",
+		},
+		{
+			Name:                   "credentials with computed definition ID",
+			DefinitionIDExpression: `data.ona_integration_definitions.all.definitions[0].id`,
+			Configuration: `credentials = {
+    oauth_client_secret = "attacker-secret"
+  }`,
+			ExpectedError: "Invalid Definition-Backed Integration Credentials",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			server := newIntegrationAPIServer(t)
+			t.Cleanup(server.Close)
+			server.service.seedDefinition(testIntegrationDefinition("definition-b", "Example", "example.com"))
+
+			resource.Test(t, resource.TestCase{
+				PreCheck:                 func() { testAccPreCheck(t) },
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{{
+					Config:      testAccDefinitionBackedAuthenticationOverrideConfig(server.URL, tc.DefinitionIDExpression, tc.Configuration),
+					ExpectError: regexp.MustCompile(tc.ExpectedError),
+				}},
+			})
+		})
+	}
+}
+
+func testAccDefinitionBackedIntegrationConfig(host string, enabled bool, mcpURL, category string) string {
 	return fmt.Sprintf(`
 provider "ona" {
   host  = %[1]q
@@ -218,7 +272,7 @@ data "ona_integration_definitions" "all" {}
 resource "ona_integration" "test" {
   integration_definition_id = "definition-b"
   enabled                   = %[2]t
-  categories                = [%[7]q]
+  categories                = [%[4]q]
 
   capabilities = {
     mcp = {
@@ -226,18 +280,25 @@ resource "ona_integration" "test" {
     }
   }
 
-  auth = {
-    oauth = {
-      client_id             = %[4]q
-      client_secret_version = %[6]q
-    }
-  }
-
-  credentials = {
-    oauth_client_secret = %[5]q
-  }
 }
-`, host, enabled, mcpURL, clientID, clientSecret, version, category)
+`, host, enabled, mcpURL, category)
+}
+
+func testAccDefinitionBackedAuthenticationOverrideConfig(host, definitionIDExpression, configuration string) string {
+	return fmt.Sprintf(`
+provider "ona" {
+  host  = %q
+  token = "test-token"
+}
+
+data "ona_integration_definitions" "all" {}
+
+resource "ona_integration" "test" {
+  integration_definition_id = %s
+
+  %s
+}
+`, host, definitionIDExpression, configuration)
 }
 
 func testAccCustomIntegrationConfig(host, mcpURL, clientSecret, version string) string {
@@ -296,7 +357,7 @@ resource "ona_integration" "custom" {
 }
 
 func testAccDefinitionBackedIntegrationWithoutCategoriesConfig(host string) string {
-	config := testAccDefinitionBackedIntegrationConfig(host, false, "https://mcp.example.com/v1", "client-v1", "secret-v1", "v1", "mcp")
+	config := testAccDefinitionBackedIntegrationConfig(host, false, "https://mcp.example.com/v1", "mcp")
 	return strings.Replace(config, `categories                = ["mcp"]`, `categories                = []`, 1)
 }
 
@@ -378,6 +439,9 @@ func (s *fakeIntegrationService) CreateIntegration(ctx context.Context, req *con
 	}
 	if req.Msg.GetIntegrationDefinitionId() != "" && s.definitions[req.Msg.GetIntegrationDefinitionId()] == nil {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("integration definition not found"))
+	}
+	if req.Msg.GetIntegrationDefinitionId() != "" && req.Msg.Auth != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("auth cannot be configured for definition-backed integrations"))
 	}
 	s.nextID++
 	id := fmt.Sprintf("integration-%d", s.nextID)
@@ -465,6 +529,9 @@ func (s *fakeIntegrationService) UpdateIntegration(ctx context.Context, req *con
 	if integration == nil {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("integration not found"))
 	}
+	if integration.GetIntegrationDefinitionId() != "" && req.Msg.Auth != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("auth cannot be configured for definition-backed integrations"))
+	}
 	if req.Msg.Enabled != nil {
 		integration.Enabled = req.Msg.GetEnabled()
 	}
@@ -526,20 +593,12 @@ func (s *fakeIntegrationService) resolvedLocked(integration *v1.Integration) *v1
 		if resolved.Capabilities == nil {
 			resolved.Capabilities = cloneCapabilities(definition.GetCapabilities())
 		}
-		if resolved.Auth == nil {
-			resolved.Auth = cloneAuth(definition.GetAuth())
-		}
+		resolved.Auth = cloneAuth(definition.GetAuth())
 		if len(resolved.Categories) == 0 {
 			resolved.Categories = append([]v1.IntegrationCategory(nil), definition.GetCategories()...)
 		}
 	}
 	return censorIntegration(resolved)
-}
-
-func (s *fakeIntegrationService) lastOAuthSecret(id string) string {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	return s.integrations[id].GetAuth().GetOauth().GetClientSecret()
 }
 
 func (s *fakeIntegrationService) setEnabled(id string, enabled bool) {

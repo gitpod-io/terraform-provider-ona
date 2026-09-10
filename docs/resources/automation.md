@@ -135,7 +135,7 @@ Required:
 Required:
 
 - `max_parallel` (Number) Maximum concurrent actions, from 1 through 25. Must not exceed max_total.
-- `max_total` (Number) Maximum total actions, from 1 through 100.
+- `max_total` (Number) Maximum total actions, from 1 through 1000.
 
 Optional:
 
@@ -223,7 +223,7 @@ Required:
 
 Required:
 
-- `project_ids` (Set of String) Project UUIDs. The API accepts up to 500 entries.
+- `project_ids` (Set of String) Project UUIDs. The API accepts up to 1000 entries.
 
 
 <a id="nestedatt--triggers--context--repositories"></a>
