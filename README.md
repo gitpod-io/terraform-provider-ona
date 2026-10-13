@@ -16,8 +16,7 @@ The Ona Terraform provider manages Ona organization configuration as code. It
 is intended for platform, identity, and security teams that administer Ona
 projects, runners, access controls, policies, secrets, and automations.
 
-The provider is currently beta software. The current published release is
-`0.3.0-beta.37`.
+The stable provider release is `0.5.0`.
 
 - [Terraform Registry provider documentation](https://registry.terraform.io/providers/gitpod-io/ona/latest/docs)
 - [Ona documentation](https://ona.com/docs/ona/getting-started)
@@ -26,7 +25,7 @@ The provider is currently beta software. The current published release is
 
 ## Requirements
 
-Use Terraform CLI `1.14` or later. The published beta supports:
+Use Terraform CLI `1.14` or later. The provider supports:
 
 - Linux `amd64`
 - Linux `arm64`
@@ -35,7 +34,7 @@ macOS and Windows provider packages are not currently available.
 
 ## Quick start
 
-Pin the published beta version intentionally:
+Use the stable provider.
 
 ```hcl
 terraform {
@@ -44,7 +43,7 @@ terraform {
   required_providers {
     ona = {
       source  = "gitpod-io/ona"
-      version = "= 0.3.0-beta.37"
+      version = "~> 0.5.0"
     }
   }
 }

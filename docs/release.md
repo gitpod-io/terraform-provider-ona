@@ -9,13 +9,12 @@ The copied API client subset lives under `internal/api/go`. Refresh it from the
 monorepo source intentionally and keep `sync/api-subset.manifest` in sync with
 the copied files.
 
-Beta releases intentionally publish Linux artifacts only:
+Provider releases currently publish Linux artifacts only:
 
 - `linux_amd64`
 - `linux_arm64`
 
-Add macOS and Windows packages when beta usage moves beyond Ona-hosted Linux
-environments.
+macOS and Windows packages are not currently available.
 
 ## Prerequisites
 
@@ -39,17 +38,17 @@ key files.
 The provider tracks stable and beta release intent separately:
 
 ```text
-version/STABLE_VERSION -> 0.2.0
-version/BETA_VERSION   -> 0.3.0-beta
+version/STABLE_VERSION -> 0.5.0
+version/BETA_VERSION   -> 0.5.0-beta
 ```
 
 `version/STABLE_VERSION` is exact bare SemVer for manually published stable
 releases. `version/BETA_VERSION` is a beta line, not an exact release version.
 It omits the numeric beta suffix; Git tags carry the auto-incrementing suffix.
 
-For example, if `version/BETA_VERSION` contains `0.3.0-beta` and the latest
-matching tag is `v0.3.0-beta.6`, the next beta publish creates
-`v0.3.0-beta.7`.
+For example, if `version/BETA_VERSION` contains `0.5.0-beta` and the latest
+matching tag is `v0.5.0-beta.1`, the next beta publish creates
+`v0.5.0-beta.2`.
 
 Stable release-prep PRs update both `version/STABLE_VERSION` and the top
 `CHANGELOG.md` heading. Beta-line PRs update only `version/BETA_VERSION`.
@@ -74,7 +73,8 @@ Stable releases remain manual. To publish a stable release, merge a stable
 release-prep PR and then run the manual `Build main` workflow from `main` with
 `release_channel=stable`. The workflow reads `version/STABLE_VERSION`,
 validates the matching `CHANGELOG.md` heading, publishes the stable GitHub
-release, and starts Registry verification.
+release, and starts Registry verification. Updating `STABLE_VERSION` alone does not
+publish the stable release.
 
 Published releases are GitHub releases in
 `gitpod-io/terraform-provider-ona`. After creating the GitHub release, CI starts
@@ -85,7 +85,9 @@ arm64 without blocking the main build.
 After publishing a stable version, prepare the next beta-line PR before the next
 beta publish attempt if the current beta line is not greater than the latest
 stable tag. The release workflow rejects versions that are not greater than the
-existing SemVer tags.
+existing SemVer tags. After publishing `v0.5.0`, advance the beta line in a
+separate PR before another beta publish attempt, for example to `0.6.0-beta`
+if that is the next intended development line.
 
 ## Local Verification
 
@@ -93,10 +95,13 @@ Before merging a release-prep PR, run:
 
 ```shell
 make build
-make test
+make test-unit
 make generate
 git diff --exit-code
 ```
+
+`make test` also runs credentialed acceptance tests. Run it or `make test-acc`
+only when explicitly authorized and the required Ona credentials are available.
 
 Build unsigned local release artifacts:
 
@@ -119,7 +124,7 @@ published assets, and verify them again.
 
 Release binaries embed the resolved release version in provider metadata and
 the default Ona API `User-Agent`, for example
-`terraform-provider-ona/0.3.0-beta.37` or `terraform-provider-ona/0.2.0`.
+`terraform-provider-ona/0.5.0`.
 
 Local publishing is not supported. The publish scripts are CI entrypoints and
 fail unless GitHub Actions runs them from `refs/heads/main`.
@@ -131,6 +136,17 @@ registered and reachable:
 REGISTRY_PROVIDER=gitpod-io/ona scripts/check-registry-provider.sh
 ```
 
+After the stable GitHub release and all signed artifacts are available, manually
+trigger ingestion through the provider's Terraform Registry publishing controls.
+Do not rely on webhook delivery for this promotion. Confirm the available manual
+publishing control with the provider maintainer when carrying out the release.
+The Registry ingests the GitHub release artifacts, not `version/STABLE_VERSION`.
+
+The `Verify Terraform Registry` workflow waits for ingestion and verifies
+installation; it does not request a Registry pull. If verification times out
+before the manual trigger completes, rerun it with `source=gitpod-io/ona` and
+`version=0.5.0` after triggering ingestion.
+
 After Terraform Registry ingestion, run a registry smoke test:
 
 ```shell
@@ -140,7 +156,7 @@ terraform {
   required_providers {
     ona = {
       source  = "gitpod-io/ona"
-      version = "= 0.2.0"
+      version = "= 0.5.0"
     }
   }
 }
@@ -154,14 +170,14 @@ terraform -chdir="${tmpdir}" init
 The smoke test passes when Terraform downloads the provider from the Registry
 and exits successfully.
 
-## Customer Beta Configuration
+## Customer Stable Configuration
 
 ```hcl
 terraform {
   required_providers {
     ona = {
       source  = "gitpod-io/ona"
-      version = "= 0.3.0-beta.37"
+      version = "~> 0.5.0"
     }
   }
 }

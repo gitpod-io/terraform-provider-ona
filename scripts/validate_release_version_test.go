@@ -40,6 +40,56 @@ func TestValidateReleaseVersion(t *testing.T) {
 			},
 		},
 		{
+			Name:          "stable_accepts_plain_changelog_heading",
+			StableVersion: "0.2.0",
+			BetaLine:      "0.3.0-beta",
+			Heading:       "## 0.2.0",
+			Args:          []string{"--channel", "stable"},
+			Expected: Expectation{
+				Success: true,
+			},
+		},
+		{
+			Name:          "stable_accepts_heading_with_unparenthesized_date",
+			StableVersion: "0.2.0",
+			BetaLine:      "0.3.0-beta",
+			Heading:       "## 0.2.0 - 2026-10-13",
+			Args:          []string{"--channel", "stable"},
+			Expected: Expectation{
+				Success: true,
+			},
+		},
+		{
+			Name:          "stable_rejects_different_changelog_version",
+			StableVersion: "0.2.0",
+			BetaLine:      "0.3.0-beta",
+			Heading:       "## 0.3.0",
+			Args:          []string{"--channel", "stable"},
+			Expected: Expectation{
+				Contains: "first version heading must match",
+			},
+		},
+		{
+			Name:          "stable_rejects_changelog_version_prefix",
+			StableVersion: "0.2.0",
+			BetaLine:      "0.3.0-beta",
+			Heading:       "## 0.2.01",
+			Args:          []string{"--channel", "stable"},
+			Expected: Expectation{
+				Contains: "first version heading must match",
+			},
+		},
+		{
+			Name:          "stable_rejects_prerelease_changelog_heading",
+			StableVersion: "0.2.0",
+			BetaLine:      "0.3.0-beta",
+			Heading:       "## 0.2.0-beta.1",
+			Args:          []string{"--channel", "stable"},
+			Expected: Expectation{
+				Contains: "first version heading must match",
+			},
+		},
+		{
 			Name:          "stable_rejects_prerelease_manifest",
 			StableVersion: "0.2.0-beta.1",
 			BetaLine:      "0.3.0-beta",

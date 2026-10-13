@@ -1,3 +1,18 @@
+## 0.5.0
+
+FEATURES:
+
+- First stable release of the Ona Terraform provider for managing projects,
+  runners, identity and access, organization settings, secrets, and automations.
+- Manage [organization-owned GitHub App integrations](docs/resources/github_app_integration.md)
+  through Terraform.
+
+IMPROVEMENTS:
+
+- Runner details now link to [AWS and GCP Terraform deployment modules](docs/resources/runner.md).
+- Manage larger [Enterprise Automations](docs/resources/automation.md), with
+  up to 1,000 projects and 1,000 total actions.
+
 ## 0.5.0-beta (Unreleased)
 
 BREAKING CHANGES:
