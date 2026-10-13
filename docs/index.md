@@ -8,12 +8,12 @@ description: |-
 
 The Ona provider manages Ona organization configuration from Terraform. It is intended for platform, identity, and security teams that want Ona projects, runners, access controls, policy settings, secrets, and automation integrations to be reviewed, versioned, and applied through Terraform.
 
-The stable provider release is `0.5.0`.
+The current stable release is `0.5.0`. Use `~> 0.5.0` to allow patch updates within the `0.5.x` release line. Commit `.terraform.lock.hcl` for reproducible provider selection; normal initialization reuses the locked version. Run `terraform init -upgrade` and review the lockfile changes to select newer allowed patch releases.
 
 ## Requirements
 
 - Terraform CLI `>= 1.14`.
-- Linux `amd64` and Linux `arm64` provider packages. The release configuration does not publish macOS or Windows packages.
+- Linux `amd64` and Linux `arm64` provider packages. The current release configuration does not publish macOS or Windows packages.
 - An Ona API token supplied through `ONA_TOKEN`.
 
 ## Example Usage

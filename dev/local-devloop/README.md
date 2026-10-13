@@ -147,15 +147,10 @@ terraform -chdir=dev/local-devloop apply \
 ```
 
 The outputs include `managed_github_app_integration_id`, `github_app_setup`,
-and `github_app_installation`. Use the returned callback and webhook URLs in
-the GitHub App settings, set the same webhook secret on GitHub, and enable
-**Request user authorization (OAuth) during installation**. The callback may
-be on Ona's canonical host even when the provider uses a custom domain. Open
-`github_app_setup.installation_url` in an authenticated browser and select the
-same Ona organization that Terraform manages to install or connect the App.
-The stable URL ends in `/settings/org-integrations`; the browser handles the
-custom-domain handoff.
-Refresh after installation to observe its ID and account metadata:
+and `github_app_installation`. Configure the webhook and install the App
+from GitHub settings as described in the [resource guide](../../templates/resources/github_app_integration.md.tmpl#configure-and-connect-the-app).
+That guide also covers connecting an existing installation through Ona's
+browser flow. Refresh after installation to observe its ID and account metadata:
 
 ```shell
 terraform -chdir=dev/local-devloop apply \
@@ -169,8 +164,8 @@ coordinate the secret changes in GitHub, supply the complete replacement
 bundle, and change `TF_VAR_github_app_credentials_version` to `2` before
 applying. Secret changes without a version change do not request rotation.
 The integration ID and installation should remain unchanged, though previously
-issued installation tokens may remain valid until expiry. App ID replacement
-requires a new browser installation handoff.
+issued installation tokens may remain valid until expiry. After App ID replacement,
+connect the replacement App using the resource guide above.
 
 To test import of an existing integration, leave the credentials and version
 unset and set the opt-in flag and App ID above. Set

@@ -34,12 +34,12 @@ func resourceSchema() schema.Schema {
 			"credentials_version": schema.Int64Attribute{Optional: true, Validators: []validator.Int64{int64validator.AtLeast(1)}, MarkdownDescription: "Positive local rotation marker. Change it with the complete credentials bundle to rotate credentials in place. Omit when importing; Ona cannot recover this marker or detect secret drift."},
 			"app_slug":            schema.StringAttribute{Computed: true, MarkdownDescription: "Saved GitHub App slug, refreshed during credential rotation."},
 			"client_id":           schema.StringAttribute{Computed: true, MarkdownDescription: "Saved GitHub App OAuth client ID."},
-			"setup": schema.SingleNestedAttribute{Computed: true, MarkdownDescription: "Stable setup URLs. Complete App installation in the Ona dashboard using an authenticated browser.", Attributes: map[string]schema.Attribute{
+			"setup": schema.SingleNestedAttribute{Computed: true, MarkdownDescription: "Stable setup URLs. Configure the App's webhook before installing it from GitHub settings, or use the Ona browser connection flow.", Attributes: map[string]schema.Attribute{
 				"callback_url":     schema.StringAttribute{Computed: true, MarkdownDescription: "Canonical OAuth callback URL from the GitHub definition."},
 				"webhook_url":      schema.StringAttribute{Computed: true, MarkdownDescription: "GitHub App webhook endpoint at the canonical callback origin."},
 				"installation_url": schema.StringAttribute{Computed: true, MarkdownDescription: "Organization integrations dashboard for the configured Ona deployment."},
 			}},
-			"installation": schema.SingleNestedAttribute{Computed: true, MarkdownDescription: "Saved GitHub installation metadata, or null while installation is pending. Refresh does not validate installation access with GitHub.", Attributes: map[string]schema.Attribute{
+			"installation": schema.SingleNestedAttribute{Computed: true, MarkdownDescription: "Legacy single-installation metadata. Null while unlinked or when connections are stored separately, including after another installation connects. A null value does not mean the App is disconnected. Individual connections are not listed. Refresh does not validate installation access with GitHub.", Attributes: map[string]schema.Attribute{
 				"id":           schema.StringAttribute{Computed: true, MarkdownDescription: "GitHub installation ID."},
 				"account_name": schema.StringAttribute{Computed: true, MarkdownDescription: "GitHub account or organization login."},
 				"account_type": schema.StringAttribute{Computed: true, MarkdownDescription: "GitHub account kind."},
