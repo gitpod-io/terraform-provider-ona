@@ -11,14 +11,14 @@ Start with `terraform init`, `terraform validate`, and `terraform plan`. Most pr
 
 ## Provider Installation
 
-Use the Registry source address `gitpod-io/ona` and pin the stable provider version.
+Use the Registry source address `gitpod-io/ona` and use the stable provider.
 
 ```hcl
 terraform {
   required_providers {
     ona = {
       source  = "gitpod-io/ona"
-      version = "= 0.5.0"
+      version = "~> 0.5.0"
     }
   }
 }

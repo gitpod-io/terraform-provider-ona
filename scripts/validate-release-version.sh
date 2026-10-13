@@ -224,7 +224,7 @@ validate_changelog() {
 	[[ -f "$CHANGELOG_FILE" ]] || die "missing ${CHANGELOG_FILE}"
 	heading="$(grep -m1 '^## ' "$CHANGELOG_FILE" || true)"
 	[[ -n "$heading" ]] || die "${CHANGELOG_FILE} must start with a version heading"
-	[[ "$heading" == "## ${version} ("* ]] || \
+	[[ "$heading" == "## ${version}" || "$heading" == "## ${version}"[[:space:]]* ]] || \
 		die "${CHANGELOG_FILE} first version heading must match ${STABLE_VERSION_FILE}: expected '${version}', got '${heading}'"
 }
 

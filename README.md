@@ -34,7 +34,7 @@ macOS and Windows provider packages are not currently available.
 
 ## Quick start
 
-Pin the stable provider version:
+Use the stable provider.
 
 ```hcl
 terraform {
@@ -43,7 +43,7 @@ terraform {
   required_providers {
     ona = {
       source  = "gitpod-io/ona"
-      version = "= 0.5.0"
+      version = "~> 0.5.0"
     }
   }
 }
