@@ -11,20 +11,20 @@ Start with `terraform init`, `terraform validate`, and `terraform plan`. Most pr
 
 ## Provider Installation
 
-Use the Registry source address `gitpod-io/ona` and pin an intentional beta version.
+Use the Registry source address `gitpod-io/ona` and pin the stable provider version.
 
 ```hcl
 terraform {
   required_providers {
     ona = {
       source  = "gitpod-io/ona"
-      version = "= 0.3.0-beta.48"
+      version = "= 0.5.0"
     }
   }
 }
 ```
 
-The current beta release publishes Linux `amd64` and Linux `arm64` artifacts. Terraform installation on macOS or Windows is not supported by the current release artifacts.
+The provider release publishes Linux `amd64` and Linux `arm64` artifacts. Terraform installation on macOS or Windows is not supported by the current release artifacts.
 
 If installation fails, confirm the source address, version constraint, Terraform CLI version, and platform. Then remove `.terraform/` and `.terraform.lock.hcl` in a scratch workspace and run `terraform init -upgrade` again.
 
