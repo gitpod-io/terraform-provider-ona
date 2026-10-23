@@ -1,3 +1,9 @@
+## 0.5.1
+
+BUG FIXES:
+
+- Update Go dependencies to address security vulnerabilities.
+
 ## 0.5.0-beta (Unreleased)
 
 BREAKING CHANGES:
