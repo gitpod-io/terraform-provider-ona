@@ -1,4 +1,4 @@
-FROM golang:1.26.5-bookworm
+FROM golang:1.26.10-bookworm
 ENV DEVCONTAINER_RETRIGGER=0
 
 COPY dev/go/go.version /tmp/go.version
